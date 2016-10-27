@@ -263,13 +263,8 @@ open class KotlinIntroduceParameterHandler(
 
         val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor) ?: return
 
-        val forbiddenRanges =
-                if (targetParent is KtClass) {
-                    targetParent.declarations.filter { isObjectOrNonInnerClass(it) }.map { it.textRange }
-                }
-                else {
-                    Collections.emptyList()
-                }
+        val forbiddenRanges = (targetParent as? KtClass)?.declarations?.filter(::isObjectOrNonInnerClass)?.map { it.textRange }
+                              ?: Collections.emptyList()
 
         val occurrencesToReplace = if (expression is KtProperty) {
             ReferencesSearch.search(expression).mapNotNullTo(SmartList(expression.toRange())) { it.element?.toRange() }

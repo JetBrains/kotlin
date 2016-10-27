@@ -94,12 +94,11 @@ abstract class DeprecatedSymbolUsageFixBase(
                             else -> null
                         } ?: return null
             */
-            val nameExpression: KtSimpleNameExpression = (if (psiElement is KtSimpleNameExpression)
-                psiElement
-            else if (psiElement is KtConstructorCalleeExpression)
-                psiElement.constructorReferenceExpression
-            else
-                null) ?: return null
+            val nameExpression: KtSimpleNameExpression = when (psiElement) {
+                is KtSimpleNameExpression -> psiElement
+                is KtConstructorCalleeExpression -> psiElement.constructorReferenceExpression
+                else -> null
+            } ?: return null
 
             val descriptor = DiagnosticFactory.cast(deprecatedDiagnostic, Errors.DEPRECATION, Errors.DEPRECATION_ERROR).a
             val replacement = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null

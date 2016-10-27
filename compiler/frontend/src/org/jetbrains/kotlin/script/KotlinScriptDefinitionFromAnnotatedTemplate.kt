@@ -134,8 +134,8 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     }
 
     private fun getAnnotationEntriesFromPsiFile(file: PsiFile) =
-            if (file is KtFile) file.annotationEntries
-            else throw IllegalArgumentException("Unable to extract kotlin annotations from ${file.name} (${file.fileType})")
+            (file as? KtFile)?.annotationEntries
+            ?: throw IllegalArgumentException("Unable to extract kotlin annotations from ${file.name} (${file.fileType})")
 
     private fun getAnnotationEntriesFromVirtualFile(file: VirtualFile, project: Project): Iterable<KtAnnotationEntry> {
         val psiFile: PsiFile = PsiManager.getInstance(project).findFile(file)

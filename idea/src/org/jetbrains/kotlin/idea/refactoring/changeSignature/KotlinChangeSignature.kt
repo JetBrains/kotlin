@@ -222,8 +222,7 @@ class KotlinChangeSignature(project: Project,
 ): KotlinChangeInfo? {
     val jetChangeSignature = KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, null)
     val declarations =
-            if (callableDescriptor is CallableMemberDescriptor) callableDescriptor.getDeepestSuperDeclarations()
-            else listOf(callableDescriptor)
+            (callableDescriptor as? CallableMemberDescriptor)?.getDeepestSuperDeclarations() ?: listOf(callableDescriptor)
 
     val adjustedDescriptor = jetChangeSignature.adjustDescriptor(declarations) ?: return null
 

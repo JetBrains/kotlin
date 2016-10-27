@@ -82,12 +82,7 @@ internal class DelegatingDataFlowInfo private constructor(
                 key.immanentNullability
             }
             else {
-                nullabilityInfo[key] ?: if (parent != null) {
-                    parent.getCollectedNullability(key)
-                }
-                else {
-                    key.immanentNullability
-                }
+                nullabilityInfo[key] ?: parent?.getCollectedNullability(key) ?: key.immanentNullability
             }
 
     private fun putNullability(map: MutableMap<DataFlowValue, Nullability>, value: DataFlowValue,

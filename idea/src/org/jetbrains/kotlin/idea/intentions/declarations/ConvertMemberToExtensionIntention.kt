@@ -110,7 +110,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         fun selectBody(declaration: KtDeclarationWithBody) {
             if (bodyToSelect == null) {
                 val body = declaration.bodyExpression
-                bodyToSelect = if (body is KtBlockExpression) body.statements.single() else body
+                bodyToSelect = (body as? KtBlockExpression)?.statements?.single() ?: body
             }
         }
 

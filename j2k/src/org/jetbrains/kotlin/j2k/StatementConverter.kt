@@ -191,10 +191,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             val blockConverted = codeConverter.convertBlock(block)
             val annotations = converter.convertAnnotations(parameter)
             val parameterType = parameter.type
-            val types = if (parameterType is PsiDisjunctionType)
-                parameterType.disjunctions
-            else
-                listOf(parameterType)
+            val types = (parameterType as? PsiDisjunctionType)?.disjunctions ?: listOf(parameterType)
             for (t in types) {
                 val convertedType = codeConverter.typeConverter.convertType(t, Nullability.NotNull)
                 val convertedParameter = FunctionParameter(parameter.declarationIdentifier(),

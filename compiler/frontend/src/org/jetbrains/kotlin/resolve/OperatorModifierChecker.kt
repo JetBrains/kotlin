@@ -64,10 +64,7 @@ object OperatorModifierChecker {
             return
         }
 
-        val errorDescription = if (checkResult is CheckResult.IllegalSignature)
-            checkResult.error
-        else
-            "illegal function name"
+        val errorDescription = (checkResult as? CheckResult.IllegalSignature)?.error ?: "illegal function name"
 
         diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier, errorDescription))
     }

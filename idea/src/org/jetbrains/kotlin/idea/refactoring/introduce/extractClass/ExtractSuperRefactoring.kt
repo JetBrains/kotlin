@@ -199,7 +199,7 @@ class ExtractSuperRefactoring(
                 .asSequence()
                 .flatMap {
                     val (element, info) = it
-                    if (info != null) info.getChildrenToAnalyze().asSequence() else sequenceOf(element)
+                    info?.getChildrenToAnalyze()?.asSequence() ?: sequenceOf(element)
                 }
                 .forEach { it.accept(visitor) }
     }

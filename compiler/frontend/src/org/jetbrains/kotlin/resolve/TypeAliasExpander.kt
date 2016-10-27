@@ -100,10 +100,8 @@ class TypeAliasExpander(
         val originalVariance =
                 if (originalProjection.projectionKind != Variance.INVARIANT)
                     originalProjection.projectionKind
-                else if (typeParameterDescriptor != null)
-                    typeParameterDescriptor.variance
                 else
-                    Variance.INVARIANT
+                    typeParameterDescriptor?.variance ?: Variance.INVARIANT
 
         val argumentVariance = typeAliasArgument.projectionKind
 

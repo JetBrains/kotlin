@@ -62,7 +62,7 @@ class CompoundConstraintPosition(vararg positions: ConstraintPosition) : Constra
         get() = COMPOUND_CONSTRAINT_POSITION
 
     val positions: Collection<ConstraintPosition> =
-            positions.flatMap { if (it is CompoundConstraintPosition) it.positions else listOf(it) }.toSet()
+            positions.flatMap { (it as? CompoundConstraintPosition)?.positions ?: listOf(it) }.toSet()
 
     override fun isStrong() = positions.any { it.isStrong() }
 

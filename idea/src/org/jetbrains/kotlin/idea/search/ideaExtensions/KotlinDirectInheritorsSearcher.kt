@@ -30,18 +30,11 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {
         val baseClass = queryParameters.classToProcess
-        if (baseClass == null) return
 
-        val name = baseClass.name
-        if (name == null) return
+        val name = baseClass.name ?: return
 
         val originalScope = queryParameters.scope
-        val scope = if (originalScope is GlobalSearchScope)
-            originalScope
-        else
-            baseClass.containingFile?.let { file -> file.fileScope() }
-
-        if (scope == null) return
+        val scope = originalScope as? GlobalSearchScope ?: baseClass.containingFile?.fileScope() ?: return
 
         runReadAction {
             val noLibrarySourceScope = KotlinSourceFilterScope.projectSourceAndClassFiles(scope, baseClass.project)

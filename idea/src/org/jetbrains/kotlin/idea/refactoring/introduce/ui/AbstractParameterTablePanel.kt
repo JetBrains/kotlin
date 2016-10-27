@@ -123,26 +123,14 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "invoke_impl")
         actionMap.put("invoke_impl", object : AbstractAction() {
             override fun actionPerformed(e: ActionEvent) {
-                val editor = table.cellEditor
-                if (editor != null) {
-                    editor.stopCellEditing()
-                }
-                else {
-                    onEnterAction()
-                }
+                table.cellEditor?.stopCellEditing() ?: onEnterAction()
             }
         })
 
         // make ESCAPE work when the table has focus
         actionMap.put("doCancel", object : AbstractAction() {
             override fun actionPerformed(e: ActionEvent) {
-                val editor = table.cellEditor
-                if (editor != null) {
-                    editor.stopCellEditing()
-                }
-                else {
-                    onCancelAction()
-                }
+                table.cellEditor?.stopCellEditing() ?: onCancelAction()
             }
         })
 

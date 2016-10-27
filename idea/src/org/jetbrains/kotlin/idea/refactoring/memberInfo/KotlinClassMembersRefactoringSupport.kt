@@ -49,7 +49,7 @@ class KotlinClassMembersRefactoringSupport : ClassMembersRefactoringSupport {
                             private val pullUpData = superClass?.let { KotlinPullUpData(clazz as KtClassOrObject, it as PsiNamedElement, emptyList()) }
 
                             private val possibleContainingClasses =
-                                    listOf(clazz) + if (clazz is KtClass) clazz.getCompanionObjects() else emptyList()
+                                    listOf(clazz) + ((clazz as? KtClass)?.getCompanionObjects() ?: emptyList())
 
                             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                                 val referencedMember = expression.mainReference.resolve() as? KtNamedDeclaration ?: return
