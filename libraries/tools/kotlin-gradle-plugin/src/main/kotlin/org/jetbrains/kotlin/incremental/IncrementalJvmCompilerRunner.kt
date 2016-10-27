@@ -321,10 +321,14 @@ internal class IncrementalJvmCompilerRunner(
             }
 
             val generatedClassFiles = compilerOutput.generatedFiles
-            val sourcesWithPossibleRedeclarations = getSourcesWithPossibleRedeclarations(caches, generatedClassFiles)
-            if (sourcesWithPossibleRedeclarations.isNotEmpty()) {
-                dirtySources.addAll(sourcesWithPossibleRedeclarations)
-                continue
+
+            if (compilationMode is CompilationMode.Incremental) {
+                val dirtySourcesSet = dirtySources.toHashSet()
+                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedClassFiles).filter { it !in dirtySourcesSet }
+                if (additionalDirtyFiles.isNotEmpty()) {
+                    dirtySources.addAll(additionalDirtyFiles)
+                    continue
+                }
             }
 
             allGeneratedFiles.addAll(generatedClassFiles)
@@ -404,23 +408,42 @@ internal class IncrementalJvmCompilerRunner(
         return exitCode
     }
 
-    private fun getSourcesWithPossibleRedeclarations(caches: IncrementalCachesManager, generatedFiles: List<GeneratedFile<TargetId>>): ArrayList<File> {
-        val result = ArrayList<File>()
+    private fun additionalDirtyFiles(
+            caches: IncrementalCachesManager,
+            generatedFiles: List<GeneratedFile<TargetId>>
+    ): Collection<File> {
+        val result = HashSet<File>()
+
+        fun partsByFacadeName(facadeInternalName: String): List<File> {
+            val parts = caches.incrementalCache.getStableMultifileFacadeParts(facadeInternalName) ?: emptyList()
+            return parts.flatMap { caches.incrementalCache.sourcesByInternalName(it) }
+        }
+
         for (generatedFile in generatedFiles) {
             if (generatedFile !is GeneratedJvmClass<*>) continue
 
             val outputClass = generatedFile.outputClass
-            if (outputClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) continue
-            assert(generatedFile.sourceFiles.size == 1) { "KotlinClassHeader.Kind.CLASS cannot be generated from multiple files" }
 
-            val fqName = outputClass.className.fqNameForClassNameWithoutDollars
-            val currentSourceFile = generatedFile.sourceFiles.single()
-            val cachedSourceFile = caches.incrementalCache.getSourceFileIfClass(fqName)
+            when (outputClass.classHeader.kind) {
+                KotlinClassHeader.Kind.CLASS -> {
+                    val fqName = outputClass.className.fqNameForClassNameWithoutDollars
+                    val cachedSourceFile = caches.incrementalCache.getSourceFileIfClass(fqName)
 
-            if (cachedSourceFile != null && cachedSourceFile != currentSourceFile) {
-                result.add(cachedSourceFile)
+                    if (cachedSourceFile != null) {
+                        result.add(cachedSourceFile)
+                    }
+                }
+                // todo: more optimal is to check if public API or parts list changed
+                KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
+                    result.addAll(partsByFacadeName(outputClass.className.internalName))
+                }
+                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                    result.addAll(partsByFacadeName(outputClass.classHeader.multifileClassName!!))
+                }
+
             }
         }
+
         return result
     }
 
