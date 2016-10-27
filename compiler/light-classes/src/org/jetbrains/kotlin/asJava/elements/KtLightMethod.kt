@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.core.JavaCoreBundle
+import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
@@ -92,6 +93,7 @@ sealed class KtLightMethodImpl(
     }
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin?.navigationElement ?: super.getNavigationElement()
+    override fun getPresentation(): ItemPresentation? = kotlinOrigin?.presentation ?: super.getPresentation()
     override fun getParent(): PsiElement? = containingClass
     override fun getText() = kotlinOrigin?.text ?: ""
     override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
