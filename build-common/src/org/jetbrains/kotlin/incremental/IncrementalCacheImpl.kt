@@ -192,13 +192,19 @@ open class IncrementalCacheImpl<Target>(
                 // the class' proto wouldn't ever be deleted,
                 // because we don't write proto for multifile facades.
                 // As a workaround we can remove proto values for multifile facades.
+                val additionalChangeInfo = if (className in protoMap) {
+                    val info = ChangeInfo.SignatureChanged(className.fqNameForClassNameWithoutDollars, areSubclassesAffected = true)
+                    CompilationResult(protoChanged = true, changes = sequenceOf(info))
+                }
+                else CompilationResult.NO_CHANGES
                 protoMap.remove(className)
                 classFqNameToSourceMap.remove(className.fqNameForClassNameWithoutDollars)
                 internalNameToSource.remove(className.internalName)
 
                 // TODO NO_CHANGES? (delegates only)
                 constantsMap.process(kotlinClass, isPackage = true) +
-                inlineFunctionsMap.process(kotlinClass, isPackage = true)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true) +
+                additionalChangeInfo
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
