@@ -24,7 +24,20 @@ class JeName(val name: String) : Name, CharSequence by name {
     override fun contentEquals(cs: CharSequence?) = cs?.toString() == name
     
     override fun toString() = name
-    
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as JeName
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode() = name.hashCode()
+
     companion object {
         val EMPTY = JeName("")
         val INIT = JeName("<init>")
