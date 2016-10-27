@@ -120,16 +120,7 @@ abstract class CompletionSession(
 
     protected val prefixMatcher = CamelHumpMatcher(prefix)
 
-    private val descriptorStringNameFilter: (String) -> Boolean = run {
-        val nameFilter = prefixMatcher.asStringNameFilter()
-        val getOrSetPrefix = listOf("get", "set", "ge", "se", "g", "s").firstOrNull { prefix.startsWith(it) }
-        if (getOrSetPrefix != null)
-            prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() or nameFilter
-        else
-            nameFilter
-    }
-
-    protected val descriptorNameFilter: (Name) -> Boolean = descriptorStringNameFilter.toNameFilter()
+    protected val descriptorNameFilter: (String) -> Boolean = prefixMatcher.asStringNameFilter()
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = configuration.nonAccessibleDeclarations) }
     protected val isVisibleFilterCheckAlways: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = false) }
@@ -307,23 +298,45 @@ abstract class CompletionSession(
         referenceVariants?.let { ReferenceVariants(referenceVariantsHelper.excludeNonInitializedVariable(it.imported, position), it.notImportedExtensions) }
     }
 
-    private fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, nameExpression: KtSimpleNameExpression, runtimeReceiver: ExpressionReceiver? = null): ReferenceVariants {
-        var variants = referenceVariantsHelper.getReferenceVariants(
-                nameExpression,
-                descriptorKindFilter,
-                descriptorNameFilter,
-                filterOutJavaGettersAndSetters = false,
-                filterOutShadowed = false,
-                excludeNonInitializedVariable = false,
-                useReceiverType = runtimeReceiver?.type)
+    private fun collectReferenceVariants(
+            descriptorKindFilter: DescriptorKindFilter,
+            nameExpression: KtSimpleNameExpression,
+            runtimeReceiver: ExpressionReceiver? = null
+    ): ReferenceVariants {
+        fun getReferenceVariants(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+            return referenceVariantsHelper.getReferenceVariants(
+                    nameExpression,
+                    kindFilter,
+                    nameFilter,
+                    filterOutJavaGettersAndSetters = false,
+                    filterOutShadowed = false,
+                    excludeNonInitializedVariable = false,
+                    useReceiverType = runtimeReceiver?.type)
+        }
+
+        var variants = getReferenceVariants(descriptorKindFilter, descriptorNameFilter.toNameFilter())
+
+        val getOrSetPrefix = listOf("get", "set", "ge", "se", "g", "s").firstOrNull { prefix.startsWith(it) }
+        val additionalPropertyNameFilter: ((String) -> Boolean)? = run {
+            getOrSetPrefix?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
+        }
+        if (additionalPropertyNameFilter != null) {
+            variants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES),
+                                             additionalPropertyNameFilter.toNameFilter())
+            variants = variants.distinct()
+        }
 
         var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
         if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
             val indicesHelper = indicesHelper(true)
-            val extensions = if (runtimeReceiver != null)
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), descriptorStringNameFilter)
+            val nameFilter = if (additionalPropertyNameFilter != null)
+                descriptorNameFilter or additionalPropertyNameFilter
             else
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, descriptorStringNameFilter)
+                descriptorNameFilter
+            val extensions = if (runtimeReceiver != null)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
+            else
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, nameFilter)
 
             val pair = extensions.partition { isImportableDescriptorImported(it) }
             variants += pair.first

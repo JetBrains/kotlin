@@ -116,7 +116,7 @@ class KDocNameCompletionSession(
             return true
         }
 
-        scope.collectDescriptorsFiltered(nameFilter = descriptorNameFilter).filter(::isApplicable).forEach {
+        scope.collectDescriptorsFiltered(nameFilter = descriptorNameFilter.toNameFilter()).filter(::isApplicable).forEach {
             val element = basicLookupElementFactory.createLookupElement(it, parametersAndTypeGrayed = true)
             collector.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {
