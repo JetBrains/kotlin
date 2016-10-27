@@ -21,12 +21,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -51,7 +53,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         is KtIfExpression, is KtWhenExpression, is KtTryExpression -> shouldShowStatementType()
         is KtLoopExpression -> false
         is KtConstantExpression -> false
-        else -> getQualifiedExpressionForSelector() == null && parent !is KtCallableReferenceExpression
+        else -> getQualifiedExpressionForSelector() == null && parent !is KtCallableReferenceExpression && !isFunctionCallee()
     }
 
     private fun KtExpression.shouldShowStatementType(): Boolean {
@@ -60,6 +62,12 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
             return analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, this] ?: false
         }
         return false
+    }
+
+    private fun KtExpression.isFunctionCallee(): Boolean {
+        val callExpression = parent as? KtCallExpression ?: return false
+        if (callExpression.calleeExpression != this) return false
+        return mainReference?.resolve() is KtFunction
     }
 
     override fun getInformationHint(element: KtExpression): String {
