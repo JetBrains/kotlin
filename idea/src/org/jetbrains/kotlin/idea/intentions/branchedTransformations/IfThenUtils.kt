@@ -130,8 +130,7 @@ fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Edito
     (this.baseExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtExpression.isStableVariable(): Boolean {
-    val context = this.analyze()
+fun KtExpression.isStableVariable(context: BindingContext = this.analyze()): Boolean {
     val descriptor = BindingContextUtils.extractVariableDescriptorFromReference(context, this)
     return descriptor is VariableDescriptor &&
            DataFlowValueFactory.isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))

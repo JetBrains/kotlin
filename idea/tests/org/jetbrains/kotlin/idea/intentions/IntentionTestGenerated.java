@@ -1302,6 +1302,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCheckForNullableType.kt")
+            public void testIsCheckForNullableType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheckForNullableType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("isCheckWithSelector.kt")
             public void testIsCheckWithSelector() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/isCheckWithSelector.kt");
