@@ -22,6 +22,13 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
         if (currentFunction == declaration.descriptor) return
         val fn = prolog(declaration)
 
+        // TODO: functions without Kotlin body must not have a bitcode body,
+        // which is required to workaround link errors
+        if (declaration.body == null) {
+            trap()
+            return
+        }
+
         var indexOffset = 0
         if (declaration.descriptor is ClassConstructorDescriptor || declaration.descriptor.dispatchReceiverParameter != null) {
             val name = "this"
@@ -125,6 +132,19 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
             args.forEachIndexed { i, llvmOpaqueValue ->  rargs[i].value = args[i]}
             return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), rargs[0], args.size, result)
 	    }
+    }
+
+    fun trap() {
+        // LLVM doesn't seem to provide API to get intrinsics;
+        // workaround this by declaring the intrinsic explicitly:
+        val trapFun = LLVMGetNamedFunction(context.llvmModule, "llvm.trap") ?:
+                LLVMAddFunction(context.llvmModule, "llvm.trap", LLVMFunctionType(LLVMVoidType(), null, 0, 0))!!
+
+        LLVMBuildCall(context.llvmBuilder, trapFun, null, 0, "")
+
+        // LLVM seems to require an explicit return instruction even after noreturn intrinsic:
+        val returnType = LLVMGetReturnType(getFunctionType(currentFunction!!.llvmFunction.getLlvmValue()))
+        LLVMBuildRet(context.llvmBuilder, LLVMConstNull(returnType))
     }
 
     /* to class descriptor */
