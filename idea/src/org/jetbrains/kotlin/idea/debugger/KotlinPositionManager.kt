@@ -50,9 +50,9 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
@@ -116,9 +116,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (lambdaOrFunIfInside != null) {
             return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
         }
-        val property = getParameterIfInConstructor(location, psiFile, lineNumber)
-        if (property != null) {
-            return SourcePosition.createFromElement(property)
+        val elementInDeclaration = getElementForDeclarationLine(location, psiFile, lineNumber)
+        if (elementInDeclaration != null) {
+            return SourcePosition.createFromElement(elementInDeclaration)
         }
 
         if (lineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
@@ -134,18 +134,25 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return SourcePosition.createFromLine(psiFile, lineNumber)
     }
 
-    private fun getParameterIfInConstructor(location: Location, file: KtFile, lineNumber: Int): KtParameter? {
+    // Returns a property or a constructor if debugger stops at class declaration
+    private fun getElementForDeclarationLine(location: Location, file: KtFile, lineNumber: Int): KtElement? {
         val lineStartOffset = file.getLineStartOffset(lineNumber) ?: return null
         val elementAt = file.findElementAt(lineStartOffset)
         val contextElement = KotlinCodeFragmentFactory.getContextElement(elementAt)
+
+        if (contextElement !is KtClass) return null
+
         val methodName = location.method().name()
-        if (contextElement is KtClass && JvmAbi.isGetterName(methodName)) {
-            val parameterForGetter = contextElement.getPrimaryConstructor()?.valueParameters?.firstOrNull() {
-                it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
-            } ?: return null
-            return parameterForGetter
+        return when {
+            JvmAbi.isGetterName(methodName) -> {
+                val parameterForGetter = contextElement.getPrimaryConstructor()?.valueParameters?.firstOrNull() {
+                    it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
+                } ?: return null
+                parameterForGetter
+            }
+            methodName == "<init>" -> contextElement.getPrimaryConstructor()
+            else -> null
         }
-        return null
     }
 
     private fun getLambdaOrFunIfInside(location: Location, file: KtFile, lineNumber: Int): KtFunction? {

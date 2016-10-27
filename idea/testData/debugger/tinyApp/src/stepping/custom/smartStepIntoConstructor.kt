@@ -45,6 +45,14 @@ fun main(args: Array<String>) {
     // RESUME: 1
     //Breakpoint!
     N(1)
+    // SMART_STEP_INTO_BY_INDEX: 1
+    // RESUME: 1
+    //Breakpoint!
+    O(1)
+    // SMART_STEP_INTO_BY_INDEX: 1
+    // RESUME: 1
+    //Breakpoint!
+    O(1, "1")
 
 }
 
@@ -99,5 +107,9 @@ class N {
     }
 
     constructor() {
+    }
+}
+class O<T>(i: T) {
+    constructor(i: Int, j: T): this(j) {
     }
 }
