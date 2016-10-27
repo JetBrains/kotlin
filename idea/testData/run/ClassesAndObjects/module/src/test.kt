@@ -7,10 +7,10 @@ object Foo {
         println("Foo")
     }
 
-    // RUN: q.Foo.InnerFoo
+    // RUN: q.Foo$InnerFoo
     class InnerFoo {
         companion object {
-            // RUN: q.Foo.InnerFoo
+            // RUN: q.Foo$InnerFoo
             @JvmStatic fun main(s: Array<String>) {
                 println("InnerFoo")
             }

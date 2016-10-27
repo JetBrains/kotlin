@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
@@ -44,7 +44,10 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfigurat
         val container = getEntryPointContainer(location)
         val startClassFQName = getStartClassFqName(container) ?: return false
 
-        setupConfigurationByQName(module, configuration, startClassFQName)
+        configuration.setModule(module)
+        configuration.runClass = startClassFQName
+        configuration.setGeneratedName()
+
         return true
     }
 
@@ -61,18 +64,10 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfigurat
         return getEntryPointContainer(locationElement)
     }
 
-    private fun setupConfigurationByQName(module: Module,
-                                          configuration: JetRunConfiguration,
-                                          fqName: FqName) {
-        configuration.setModule(module)
-        configuration.runClass = fqName.asString()
-        configuration.setGeneratedName()
-    }
-
     override fun isConfigurationFromContext(configuration: JetRunConfiguration, context: ConfigurationContext): Boolean {
         val startClassFQName = getStartClassFqName(getEntryPointContainer(context.location)) ?: return false
 
-        return configuration.runClass == startClassFQName.asString() &&
+        return configuration.runClass == startClassFQName &&
                context.module ==  configuration.configurationModule.module
     }
 
@@ -97,15 +92,15 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfigurat
             return null
         }
 
-        fun getStartClassFqName(container: KtDeclarationContainer?): FqName? = when(container) {
+        fun getStartClassFqName(container: KtDeclarationContainer?): String? = when(container) {
             null -> null
-            is KtFile -> container.javaFileFacadeFqName
+            is KtFile -> container.javaFileFacadeFqName.asString()
             is KtClassOrObject -> {
                 if (container is KtObjectDeclaration && container.isCompanion()) {
                     val containerClass = container.getParentOfType<KtClass>(true)
-                    containerClass?.fqName
+                    containerClass?.toLightClass()?.let { ClassUtil.getJVMClassName(it) }
                 } else {
-                    container.fqName
+                    container.toLightClass()?.let { ClassUtil.getJVMClassName(it) }
                 }
             }
             else -> throw IllegalArgumentException("Invalid entry-point container: " + (container as PsiElement).text)
