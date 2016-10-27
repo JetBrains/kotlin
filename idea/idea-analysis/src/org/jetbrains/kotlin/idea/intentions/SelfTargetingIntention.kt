@@ -24,7 +24,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager
+import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -95,7 +95,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         val inspection = findInspection(this.javaClass.kotlin) ?: return false
 
         val key = HighlightDisplayKey.find(inspection.shortName)
-        if (!InspectionProjectProfileManager.getInstance(project).getInspectionProfile(target).isToolEnabled(key)) {
+        if (!InspectionProfileManager.getInstance(project).getCurrentProfile().isToolEnabled(key)) {
             return false
         }
 
