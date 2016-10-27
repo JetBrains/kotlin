@@ -66,9 +66,12 @@ String[] linkerOpts1() {
                     '-lLLVMSupport']
     List<String> ldflags = new ArrayList<>()
     if (System.properties['os.name'].startsWith("Linux"))
-        ldflags.addAll(["-L$llvmDir/lib", "-lc++", "-Wl,-whole-archive"]
+        ldflags.addAll(["-L$llvmDir/lib",
+	        "-Wl,-Bstatic", "-Wl,--whole-archive"]
                 + libs
-                + ["-Wl,-no-whole-archieve", "-L$libffiDir/lib -lffi"])
+                + ["-Wl,--no-whole-archive", "-Wl,-Bdynamic",
+		"-L$libffiDir/lib -lffi",
+		"-lrt", "-ldl","-lpthread", "-lz", "-lm"])
     else
      ldflags.addAll(["-L$llvmDir/lib", "-lc++"] 
              + libs
@@ -81,7 +84,7 @@ String[] linkerOpts1() {
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
-     compilerOpts "-I$llvmDir/include"
+     compilerOpts "-fPIC", "-I$llvmDir/include"
      linkerOpts linkerOpts1()
    }
 
@@ -128,7 +131,7 @@ task run(type: JavaExec) {
 
    args '-output', "$buildDir/out.bc"
 
-   jvmArgs '-ea', "-Djava.library.path=${llvmDir}/lib:${project.buildDir}/nativelibs"
+   jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
 
    dependsOn ':runtime:build'
 
@@ -136,7 +139,6 @@ task run(type: JavaExec) {
        args '-runtime', project(':runtime').build.outputs.files.singleFile
    }
    environment 'LD_LIBRARY_PATH' : "${llvmDir}/lib:${project.buildDir}/nativelibs"
-   
 }
 
 
