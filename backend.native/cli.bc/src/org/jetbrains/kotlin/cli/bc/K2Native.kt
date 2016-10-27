@@ -20,53 +20,64 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import java.lang.System.out
 import java.util.*
-import java.util.Collections.emptyList
 import kotlin.reflect.jvm.internal.impl.load.java.JvmAbi
 
+class NativeAnalyzer(val environment: KotlinCoreEnvironment) :
+    AnalyzerWithCompilerReport.Analyzer {
+  override fun analyze(): AnalysisResult {
+    val sharedTrace =
+        CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+
+    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(
+        environment.project, environment.configuration)
+    return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+        environment.project,
+        environment.getSourceFiles(),
+        sharedTrace,
+        environment.configuration,
+        { scope -> JvmPackagePartProvider(environment, scope) }
+    )
+  }
+
+  override fun reportEnvironmentErrors() {
+  }
+}
+
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
-    override fun doExecute(arguments: K2NativeCompilerArguments, configuration: CompilerConfiguration, rootDisposable: Disposable): ExitCode {
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME)
+  override fun doExecute(arguments     : K2NativeCompilerArguments,
+                         configuration : CompilerConfiguration,
+                         rootDisposable: Disposable): ExitCode {
+    configuration.put(CommonConfigurationKeys.MODULE_NAME,
+                      JvmAbi.DEFAULT_MODULE_NAME)
+    configuration.addKotlinSourceRoots(arguments.freeArgs)
+    val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
+        configuration, Arrays.asList<String>("extensions/common.xml"))
 
-        configuration.addKotlinSourceRoots(arguments.freeArgs)
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, Arrays.asList<String>("extensions/common.xml"))
-        val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
+    val collector = configuration.getNotNull(
+        CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
 
-        analyzerWithCompilerReport.analyzeAndReport(
-                environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
-            override fun analyze(): AnalysisResult {
-                val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+    // Build AST and binding info.
+    analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles(),
+        NativeAnalyzer(environment))
 
-                /* replace this with native specific */
-                val moduleContext =
-                        TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.configuration)
+    // Translate AST to high level IR.
+    val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
+    val module = translator.generateModule(
+        analyzerWithCompilerReport.analysisResult.moduleDescriptor,
+        environment.getSourceFiles(),
+        analyzerWithCompilerReport.analysisResult.bindingContext)
 
+    // Emit LLVM code.
+    module.accept(DumpIrTreeVisitor(out), "")
+    emitLLVM(module, arguments.runtimeFile, arguments.outputFile)
+    return ExitCode.OK
+  }
 
-                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                        environment.project,
-                        environment.getSourceFiles(),
-                        sharedTrace,
-                        environment.configuration,
-                        { scope -> JvmPackagePartProvider(environment, scope) }
-                )
-            }
-            override fun reportEnvironmentErrors() {
-
-                //TODO("implement me")
-            }
-        })
-
-        val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
-        val module = translator.generateModule(analyzerWithCompilerReport.analysisResult.moduleDescriptor,
-                environment.getSourceFiles(),
-                analyzerWithCompilerReport.analysisResult.bindingContext)
-
-        module.accept(DumpIrTreeVisitor(out), "")
-        emitLLVM(module, arguments.runtimeFile, arguments.outputFile)
-        return ExitCode.OK
-    }
-
-    override fun setupPlatformSpecificArgumentsAndServices(configuration: CompilerConfiguration, arguments: K2NativeCompilerArguments, services: Services) {}
+    override fun setupPlatformSpecificArgumentsAndServices(
+        configuration: CompilerConfiguration,
+        arguments    : K2NativeCompilerArguments,
+        services     : Services) {}
 
     override fun createArguments(): K2NativeCompilerArguments {
         return K2NativeCompilerArguments()
