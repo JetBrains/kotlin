@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.Companion.PARTIAL
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
@@ -39,9 +41,9 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         "Replace 'if' expression with elvis expression"
 ) {
 
-    private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression) =
+    private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression, context: BindingContext) =
             !firstClause.isNullOrBlockExpression() &&
-            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this) && !secondClause.isNullableExpression()) &&
+            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this) && !secondClause.isNullableExpression(context)) &&
             !(firstClause is KtThrowExpression && firstClause.throwsNullPointerExceptionWithNoArguments())
 
     private fun KtExpression.checkedExpression() = when (this) {
@@ -55,18 +57,24 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         val thenClause = element.then ?: return false
         val elseClause = element.`else` ?: return false
 
+        val context = condition.analyze(PARTIAL)
+
         val checkedExpression = condition.checkedExpression() ?: return false
-        if (!checkedExpression.isStableVariable()) return false
+        if (!checkedExpression.isStableVariable(context)) return false
 
         return when (condition) {
             is KtBinaryExpression -> when (condition.operationToken) {
-                KtTokens.EQEQ -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause)
-                KtTokens.EXCLEQ -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause)
+                KtTokens.EQEQ -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause, context)
+                KtTokens.EXCLEQ -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause, context)
                 else -> false
             }
-            is KtIsExpression -> when (condition.isNegated) {
-                true -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause)
-                false -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause)
+            is KtIsExpression -> {
+                if (!context[BindingContext.TYPE, condition.typeReference].isNotNull()) return false
+
+                when (condition.isNegated) {
+                    true -> checkedExpression.clausesReplaceableByElvis(thenClause, elseClause, context)
+                    false -> checkedExpression.clausesReplaceableByElvis(elseClause, thenClause, context)
+                }
             }
             else -> false
         }
@@ -77,7 +85,9 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         return innerExpression is KtBlockExpression || innerExpression.node.elementType == KtNodeTypes.NULL
     }
 
-    private fun KtExpression.isNullableExpression() = getType(analyze(PARTIAL))?.nullability() != TypeNullability.NOT_NULL
+    private fun KtExpression.isNullableExpression(context: BindingContext) = !getType(context).isNotNull()
+
+    private fun KotlinType?.isNotNull() = this?.nullability() == TypeNullability.NOT_NULL
 
     private fun KtExpression.hasFirstReceiverOf(receiver: KtExpression): Boolean {
         val actualReceiver = (unwrapBlockOrParenthesis() as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: return false
