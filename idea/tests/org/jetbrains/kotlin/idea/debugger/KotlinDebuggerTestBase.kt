@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import java.io.File
+import java.lang.AssertionError
 import javax.swing.SwingUtilities
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
@@ -213,7 +214,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                 stepTarget ->
                 when (stepTarget) {
                     is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
-                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
+                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.getCallingExpressionLines()!!)
                     is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.method, stepTarget.getCallingExpressionLines())
                     else -> null
                 }
