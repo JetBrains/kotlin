@@ -47,7 +47,7 @@ public class KonanTest extends DefaultTask {
                     "-o", "${exe}"
         }
 
-        def res = project.exec {
+        project.exec {
             commandLine "${exe}"
         }
     }
