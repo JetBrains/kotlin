@@ -11768,6 +11768,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("multipleReceiver.kt")
+        public void testMultipleReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/multipleReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleReceiver2.kt")
+        public void testMultipleReceiver2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/multipleReceiver2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleReceiver3.kt")
+        public void testMultipleReceiver3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/multipleReceiver3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("receiverWithLambda.kt")
+        public void testReceiverWithLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/receiverWithLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("receiverWithLambda2.kt")
+        public void testReceiverWithLambda2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/receiverWithLambda2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("sameLets.kt")
         public void testSameLets() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/sameLets.kt");
