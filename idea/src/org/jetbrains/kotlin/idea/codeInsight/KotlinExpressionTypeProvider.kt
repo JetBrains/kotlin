@@ -36,8 +36,10 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         textFormat = RenderingFormat.HTML
     }
 
-    override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> =
-            elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filter { it.shouldShowType() }.toList()
+    override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> {
+        val candidates = elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filter { it.shouldShowType() }.toList()
+        return candidates.takeWhile { it.textRange.startOffset == candidates.first().textRange.startOffset }
+    }
 
     private fun KtExpression.shouldShowType() = when (this) {
         is KtFunctionLiteral -> false
