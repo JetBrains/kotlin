@@ -7,9 +7,12 @@ class String {
     @SymbolName("Kotlin_String_hashCode")
     external public override fun hashCode(): Int
 
+/* TODO: calling to virtual method (plusImpl) results in link error; uncomment after supporting
+calling virtual methods in translator
     public operator fun plus(other: Any?): String {
         return plusImpl(other.toString())
     }
+*/
 
     public val length: Int
         get() = getStringLength()
