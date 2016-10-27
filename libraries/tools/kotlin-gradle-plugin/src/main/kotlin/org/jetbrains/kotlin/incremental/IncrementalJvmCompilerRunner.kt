@@ -39,7 +39,9 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import java.io.EOFException
 import java.io.File
+import java.io.IOException
 import java.util.*
 
 internal fun makeIncrementally(
@@ -115,6 +117,18 @@ internal class IncrementalJvmCompilerRunner(
         val targetId = TargetId(name = args.moduleName, type = "java-production")
         var caches = IncrementalCachesManager(targetId, cacheDirectory, File(args.destination))
 
+        fun onError(e: Exception): ExitCode {
+            caches.clean()
+            artifactDifferenceRegistryProvider?.clean()
+
+            // todo: warn?
+            reporter.report { "Possible cache corruption. Rebuilding. $e" }
+            // try to rebuild
+            val javaFilesProcessor = ChangedJavaFilesProcessor()
+            caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile)
+            return compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, CompilationMode.Rebuild, messageCollector)
+        }
+
         return try {
             val javaFilesProcessor = ChangedJavaFilesProcessor()
             val changedFiles = getChangedFiles(caches)
@@ -122,14 +136,17 @@ internal class IncrementalJvmCompilerRunner(
             compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
         }
         catch (e: PersistentEnumeratorBase.CorruptedException) {
-            caches.clean()
-            artifactDifferenceRegistryProvider?.clean()
-
-            reporter.report { "Caches are corrupted. Rebuilding. $e" }
-            // try to rebuild
-            val javaFilesProcessor = ChangedJavaFilesProcessor()
-            caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile)
-            compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, CompilationMode.Rebuild, messageCollector)
+            onError(e)
+        }
+        catch (e: IOException) {
+            onError(e)
+        }
+        finally {
+            artifactDifferenceRegistryProvider?.withRegistry(reporter) {
+                it.flush(memoryCachesOnly = true)
+            }
+            caches.close(flush = true)
+            reporter.report { "flushed incremental caches" }
         }
     }
 
@@ -393,12 +410,6 @@ internal class IncrementalJvmCompilerRunner(
                         "[\n\t${dirtySymbolsSorted.joinToString(",\n\t")}]"
             }
         }
-
-        artifactDifferenceRegistryProvider?.withRegistry(reporter) {
-            it.flush(memoryCachesOnly = true)
-        }
-        caches.close(flush = true)
-        reporter.report { "flushed incremental caches" }
 
         if (exitCode == ExitCode.OK) {
             sourceAnnotationsRegistry?.flush()
