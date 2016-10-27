@@ -24,6 +24,14 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     module.acceptVoid(RTTIGeneratorVisitor(context))
     context.runtime.importRuntime(llvmModule)
     module.acceptVoid(CodeGeneratorVisitor(context))
+    memScoped {
+        val errorRef = alloc(Int8Box.ref)
+        // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
+        if (LLVMVerifyModule(
+                llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef) == 1) {
+            throw Error("Invalid module");
+        }
+    }
     LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
 

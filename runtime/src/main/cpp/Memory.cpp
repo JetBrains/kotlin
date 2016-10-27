@@ -13,7 +13,8 @@ ArenaContainer::ArenaContainer(uint32_t size) {
         calloc(size + sizeof(ArenaContainerHeader), 1));
     header_ = header;
     header->ref_count_ = CONTAINER_TAG_INCREMENT;
-    header->current_ = reinterpret_cast<uint8_t*>(header_) + sizeof(ArenaContainerHeader);
+    header->current_ =
+        reinterpret_cast<uint8_t*>(header_) + sizeof(ArenaContainerHeader);
     header->end_ = header->current_ + size;
 }
 
