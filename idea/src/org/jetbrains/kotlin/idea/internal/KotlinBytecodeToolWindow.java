@@ -225,7 +225,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         enableOptimization = new JCheckBox("Optimization", true);
         enableAssertions = new JCheckBox("Assertions", true);
         jvm8Target = new JCheckBox("JVM 8 target", false);
-        ir = new JCheckBox("IR", true);
+        ir = new JCheckBox("IR", false);
         optionPanel.add(enableInline);
         optionPanel.add(enableOptimization);
         optionPanel.add(enableAssertions);
