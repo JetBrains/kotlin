@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 
 class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(ReplaceSingleLineLetIntention::class) {
     override fun inspectionTarget(element: KtCallExpression) = element.calleeExpression
@@ -86,6 +85,9 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         val parameterName = lambdaExpression.getParameterName() ?: return false
         val receiverExpression = dotQualifiedExpression.getLeftMostReceiverExpression()
         if (receiverExpression.text != parameterName) return false
+        dotQualifiedExpression.selectorExpression?.let {
+            if (it.anyDescendantOfType<KtLambdaExpression>()) return false
+        }
         return !dotQualifiedExpression.receiverUsedAsArgument(parameterName)
     }
 
@@ -102,7 +104,16 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
             (receiverExpression as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: receiverExpression
 
     private fun KtDotQualifiedExpression.receiverUsedAsArgument(receiverName: String): Boolean {
-        if ((selectorExpression as? KtCallExpression)?.valueArguments?.firstOrNull { it.text == receiverName } != null) return true
+        if ((selectorExpression as? KtCallExpression)?.valueArguments.receiverUsedAsValueArguments(receiverName)) return true
         return (receiverExpression as? KtDotQualifiedExpression)?.receiverUsedAsArgument(receiverName) ?: false
+    }
+
+    private fun List<KtValueArgument>?.receiverUsedAsValueArguments(receiverName: String): Boolean {
+        this ?: return false
+        return any {
+            valueArgument ->
+            val ktDotQualifiedExpression = valueArgument.findDescendantOfType<KtDotQualifiedExpression>() ?: return@any valueArgument.text == receiverName
+            ktDotQualifiedExpression.getLeftMostReceiverExpression().text == receiverName || ktDotQualifiedExpression.receiverUsedAsArgument(receiverName)
+        }
     }
 }
