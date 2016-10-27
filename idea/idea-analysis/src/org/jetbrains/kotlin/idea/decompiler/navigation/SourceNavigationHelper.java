@@ -251,7 +251,7 @@ public class SourceNavigationHelper {
                 providerFactory,
                 new BindingTraceContext(),
                 TargetPlatform.Default.INSTANCE,
-                LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
+                LanguageVersionSettingsImpl.DEFAULT
         );
 
         newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());

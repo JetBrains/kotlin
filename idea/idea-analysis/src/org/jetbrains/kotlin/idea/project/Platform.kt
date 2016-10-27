@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.project
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -26,3 +29,14 @@ val KtElement.platform: TargetPlatform
 
 val KtElement.builtIns: KotlinBuiltIns
     get() = getResolutionFacade().moduleDescriptor.builtIns
+
+val Module.languageVersionSettings: LanguageVersionSettings
+    get() {
+        val versionInfo = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).versionInfo
+        val languageVersion = versionInfo.languageLevel ?: LanguageVersion.LATEST
+        val apiVersion = versionInfo.apiLevel ?: languageVersion
+        return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion))
+    }
+
+val KtElement.languageVersionSettings: LanguageVersionSettings
+    get() = ModuleUtilCore.findModuleForPsiElement(this)?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT

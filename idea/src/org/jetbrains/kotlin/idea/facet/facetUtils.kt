@@ -129,12 +129,6 @@ internal fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: M
     }
 }
 
-internal fun Module.getKotlinSettings(rootModel: ModuleRootModel? = null): KotlinFacetSettings {
-    val settings = KotlinFacet.get(this)?.configuration?.state ?: KotlinFacetSettings()
-    settings.initializeIfNeeded(this, rootModel)
-    return settings
-}
-
 val TargetPlatformKind<*>.mavenLibraryId: String
     get() {
         return when (this) {

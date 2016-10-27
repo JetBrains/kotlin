@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
+import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
 import org.jetbrains.kotlin.utils.DescriptionAware
 

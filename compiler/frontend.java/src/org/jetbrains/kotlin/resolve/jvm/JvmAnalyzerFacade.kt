@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -88,7 +87,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 targetEnvironment,
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,
-                LanguageVersionSettingsImpl.DEFAULT, // TODO: see KT-12410
+                LanguageVersionSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo),
                 useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
                 useLazyResolve = true
         )

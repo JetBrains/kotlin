@@ -32,6 +32,9 @@
 
 package org.jetbrains.kotlin.config
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -91,4 +94,12 @@ class KotlinCompilerInfo {
 class KotlinFacetSettings {
     var versionInfo = KotlinVersionInfo()
     var compilerInfo = KotlinCompilerInfo()
+}
+
+interface KotlinFacetSettingsProvider {
+    fun getSettings(module: Module): KotlinFacetSettings
+
+    companion object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)!!
+    }
 }
