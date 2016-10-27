@@ -188,7 +188,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrStatementOrigin.MINUS -> return generator.minus(args[0]!!, args[1]!!, tmpVariableName)
             IrStatementOrigin.MUL -> return generator.mul(args[0]!!, args[1]!!, tmpVariableName)
             IrStatementOrigin.DIV -> return generator.div(args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.PERC -> return generator.remainder(args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.PERC -> return generator.srem(args[0]!!, args[1]!!, tmpVariableName)
             else -> {
                 TODO()
             }

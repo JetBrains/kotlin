@@ -105,15 +105,19 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun FunctionDescriptor.registerVariable(varName: String, value:LLVMOpaqueValue?) = variables.put(varName, value)
     private fun FunctionDescriptor.variable(varName: String): LLVMOpaqueValue? = variables[varName]
 
-    fun plus(arg0:LLVMOpaqueValue, arg1:LLVMOpaqueValue, result:String):LLVMOpaqueValue = LLVMBuildAdd(context.llvmBuilder, arg0, arg1, result)!!
-    fun mul(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildMul(context.llvmBuilder, arg0, arg1, result)!!
-    fun minus(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSub(context.llvmBuilder, arg0, arg1, result)!!
-    fun div(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSDiv(context.llvmBuilder, arg0, arg1, result)!!
-    fun remainder(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSRem(context.llvmBuilder, arg0, arg1, result)!!
+    fun plus (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildAdd (context.llvmBuilder, arg0, arg1, result)!!
+    fun mul  (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildMul (context.llvmBuilder, arg0, arg1, result)!!
+    fun minus(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSub (context.llvmBuilder, arg0, arg1, result)!!
+    fun div  (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSDiv(context.llvmBuilder, arg0, arg1, result)!!
+    fun srem (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSRem(context.llvmBuilder, arg0, arg1, result)!!
+
+    fun bitcast(type: LLVMOpaqueType?, value: LLVMOpaqueValue, result: String) = LLVMBuildBitCast(context.llvmBuilder, value, type, result)
+
     fun alloca(type: KotlinType, varName: String):LLVMOpaqueValue = alloca( getLLVMType(type), varName)
     fun alloca(type: LLVMOpaqueType?, varName: String): LLVMOpaqueValue = LLVMBuildAlloca(context.llvmBuilder, type, varName)!!
     fun load(value:LLVMOpaqueValue, varName: String):LLVMOpaqueValue = LLVMBuildLoad(context.llvmBuilder, value, varName)!!
     fun store(value:LLVMOpaqueValue, ptr:LLVMOpaqueValue):LLVMOpaqueValue = LLVMBuildStore(context.llvmBuilder, value, ptr)!!
+
     fun call(descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>, result: String): LLVMOpaqueValue? {
         if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), null, 0, result)
         memScoped {
@@ -122,7 +126,6 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
             return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), rargs[0], args.size, result)
 	    }
     }
-    fun bitcast(type: LLVMOpaqueType?, value: LLVMOpaqueValue, variable: String) = LLVMBuildBitCast(context.llvmBuilder, value, type, variable)
 
     /* to class descriptor */
     fun classType(descriptor: ClassDescriptor):LLVMOpaqueType = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
