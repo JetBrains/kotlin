@@ -3,9 +3,9 @@ import java.io.File
 
 val buildVersionFilePath = "${rootProject.extra["distDir"]}/build.txt"
 
-configurations.create("default")
+val cfg = configurations.create("prepared-build-version")
 
-artifacts.add("default", file(buildVersionFilePath))
+artifacts.add(cfg.name, file(buildVersionFilePath))
 
 task("make-build-version") {
     File(buildVersionFilePath).apply {

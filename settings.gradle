@@ -1,4 +1,5 @@
 // modules
+include "compiler"
 include "core"
 include "core.builtins"
 include "core.builtins.serialized"

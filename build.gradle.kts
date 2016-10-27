@@ -14,6 +14,13 @@ Properties().apply {
     }
 }
 
+extra["versions.protobuf-java"] = "2.6.1"
+extra["versions.javax.inject"] = "1"
+extra["versions.jsr305"] = "1.3.9"
+extra["versions.cli-parser"] = "1.1.2"
+extra["versions.jansi"] = "1.11"
+extra["versions.jline"] = "2.12.1"
+
 //buildscript {
 //    //extra["kotlinVersion"] = "1.1-M01"
 //    extra["kotlinVersion"] = file("kotlin-version-for-gradle.txt").readText().trim()

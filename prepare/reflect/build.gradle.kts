@@ -1,13 +1,12 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.tasks.SourceTask
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.org.objectweb.asm.*
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.zip.ZipOutputStream
 
@@ -28,6 +27,27 @@ repositories {
 
 apply { plugin("com.github.johnrengelman.shadow") }
 
+fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
+    dependsOn(configurations.getByName("build-version"))
+    evaluationDependsOn(":prepare:build.version")
+    manifest.attributes.apply {
+        put("Built-By", rootProject.extra["manifest.impl.vendor"])
+        put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
+        put("Implementation-Title", implementationTitle)
+        put("Implementation-Version", rootProject.extra["build.number"])
+    }
+    from(configurations.getByName("build-version").files) {
+        into("META-INF/")
+    }
+}
+
+fun DependencyHandler.buildVersion(): Dependency {
+    val cfg = configurations.create("build-version")
+    return add(cfg.name, project(":prepare:build.version", configuration = "prepared-build-version"))
+}
+
+// TODO: move most of the code above to the root or utility script
+
 // Set to false to prevent relocation and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection
 val obfuscateReflect = true
 
@@ -42,12 +62,13 @@ dependencies {
     "packed-reflect"(project(":core.reflection")) { isTransitive = false }
     "packed-reflect"(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-lite")) { isTransitive = false }
     "packed-reflect"("javax.inject:javax.inject:1")
-    "packed-reflect"(project(":prepare:build.version", configuration = "default"))
+    buildVersion()
 }
 
 val prePackReflectTask = task<ShadowJar>("pre-pack-reflect") {
     classifier = if (obfuscateReflect) outputReflectJarFileBase + "_beforeStrip" else outputReflectJarFileBase
     configurations = listOf(packReflectCfg)
+    setupRuntimeJar("Kotlin Reflect")
     from(packReflectCfg.files)
     from(project(":core").file("descriptor.loader.java/src")) {
         include("META-INF/services/**")

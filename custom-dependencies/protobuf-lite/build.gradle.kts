@@ -27,7 +27,7 @@ repositories {
 
 val protobufCfg = configurations.create("protobuf-lite")
 
-val protobufVersion = "2.6.1"
+val protobufVersion = rootProject.extra["versions.protobuf-java"]
 val protobufJarPrefix = "protobuf-$protobufVersion"
 val renamedOutputJarPathWithoutExt = "$buildDir/jars/$protobufJarPrefix-relocated"
 val renamedOutputJarPath = "$renamedOutputJarPathWithoutExt.jar"
@@ -52,7 +52,7 @@ val relocateTask = task<ShadowJar>("relocate-protobuf") {
     }
 }
 
-val prepareTask = task("prepare") {
+val prepareTask = task("prepare-protobuf-lite") {
     dependsOn(relocateTask)
     val inputJar = renamedOutputJarPath
     inputs.files(inputJar)
@@ -121,5 +121,5 @@ val prepareTask = task("prepare") {
     }
 }
 
-defaultTasks("prepare")
+defaultTasks("prepare-protobuf-lite")
 

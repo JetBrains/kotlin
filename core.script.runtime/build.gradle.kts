@@ -19,18 +19,22 @@ buildscript {
 apply { plugin("kotlin") }
 
 fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
+    dependsOn(configurations.getByName("build-version"))
+    evaluationDependsOn(":prepare:build.version")
     manifest.attributes.apply {
         put("Built-By", rootProject.extra["manifest.impl.vendor"])
         put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
         put("Implementation-Title", implementationTitle)
         put("Implementation-Version", rootProject.extra["build.number"])
     }
-    from(configurations.getByName("buildVersionCfg").files).into("META-INF")
+    from(configurations.getByName("build-version").files) {
+        into("META-INF/")
+    }
 }
 
 fun DependencyHandler.buildVersion(): Dependency {
-    configurations.create("buildVersionCfg")
-    return add("buildVersionCfg", project(":prepare:build.version", configuration = "default"))
+    val cfg = configurations.create("build-version")
+    return add(cfg.name, project(":prepare:build.version", configuration = "prepared-build-version"))
 }
 
 // TODO: move most of the code above to the root or utility script
@@ -55,4 +59,6 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Jar> {
     setupRuntimeJar("Kotlin Script Runtime")
+    archiveName = "kotlin-script-runtime.jar"
 }
+
