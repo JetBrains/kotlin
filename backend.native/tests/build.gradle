@@ -42,7 +42,6 @@ public class KonanTest extends DefaultTask {
         project.exec {
             commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
                     "-o", "${exe}"
-
         }
         def res = project.exec {
             commandLine "${exe}"
