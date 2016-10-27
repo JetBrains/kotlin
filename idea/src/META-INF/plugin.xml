@@ -1,4 +1,4 @@
-<idea-plugin version="2" url="http://kotlinlang.org" xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" version="2" url="http://kotlinlang.org" allow-bundled-update="true">
     <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
@@ -278,6 +278,12 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.console.KotlinConsoleKeeper"
                     serviceImplementation="org.jetbrains.kotlin.console.KotlinConsoleKeeper"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.analyzer.LanguageVersionSettingsProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.LanguageVersionSettingsProviderImpl"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.facet.KotlinFacetSettingsProviderImpl"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 

@@ -20,7 +20,6 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -57,8 +56,12 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         )
 
         val container = createContainerForLazyResolve(
-                moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform, targetEnvironment,
-                LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
+                moduleContext,
+                declarationProviderFactory,
+                BindingTraceContext(),
+                JsPlatform,
+                targetEnvironment,
+                LanguageVersionSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo)
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 

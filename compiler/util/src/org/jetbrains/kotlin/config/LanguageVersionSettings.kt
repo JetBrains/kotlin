@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
+import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 enum class LanguageFeature(val sinceVersion: LanguageVersion) {

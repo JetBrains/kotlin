@@ -74,12 +74,6 @@ import static org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*;
 
 public class SourceNavigationHelper {
     private static final Logger LOG = Logger.getInstance(SourceNavigationHelper.class);
-
-    public enum NavigationKind {
-        CLASS_FILES_TO_SOURCES,
-        SOURCES_TO_CLASS_FILES
-    }
-
     private static boolean forceResolve = false;
 
     private SourceNavigationHelper() {
@@ -255,7 +249,7 @@ public class SourceNavigationHelper {
                 providerFactory,
                 new BindingTraceContext(),
                 TargetPlatform.Default.INSTANCE,
-                LanguageVersionSettingsImpl.DEFAULT // TODO: see KT-12410
+                LanguageVersionSettingsImpl.DEFAULT
         );
 
         newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());
@@ -467,6 +461,11 @@ public class SourceNavigationHelper {
 
         KtDeclaration result = from.accept(new SourceAndDecompiledConversionVisitor(navigationKind), null);
         return result != null ? result : from;
+    }
+
+    public enum NavigationKind {
+        CLASS_FILES_TO_SOURCES,
+        SOURCES_TO_CLASS_FILES
     }
 
     private static class SourceAndDecompiledConversionVisitor extends KtVisitor<KtDeclaration, Void> {

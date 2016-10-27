@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.analyzer
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -245,5 +249,17 @@ private class DelegatingPackageFragmentProvider(
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         return delegate().getSubPackagesOf(fqName, nameFilter)
+    }
+}
+
+interface LanguageVersionSettingsProvider {
+    fun getLanguageVersionSettings(moduleInfo: ModuleInfo): LanguageVersionSettings
+
+    object Default : LanguageVersionSettingsProvider {
+        override fun getLanguageVersionSettings(moduleInfo: ModuleInfo) = LanguageVersionSettingsImpl.DEFAULT
+    }
+
+    companion object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, LanguageVersionSettingsProvider::class.java) ?: Default
     }
 }
