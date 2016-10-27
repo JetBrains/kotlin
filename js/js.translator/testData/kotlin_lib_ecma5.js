@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-(function (Kotlin) {
-    'use strict';
-
+(function () {
     function toArray(obj) {
         var array;
         if (obj == null) {
@@ -613,9 +611,6 @@
      * @param {Object} declaration
      */
     Kotlin.defineModule = function (id, declaration) {
-        if (typeof declaration.$initializer$ === "function") {
-            declaration.$initializer$.call(declaration); // TODO: temporary hack
-        }
         Kotlin.modules[id] = declaration;
     };
 
@@ -656,4 +651,4 @@
     Kotlin.kotlinModuleMetadata = function (abiVersion, moduleName, data) {
     };
 
-})(Kotlin);
+})();

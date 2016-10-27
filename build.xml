@@ -375,6 +375,19 @@
                 <file name="externs.js"/>
             </externs>
         </closure-compiler>
+
+        <replaceregexp file="${js.stdlib.output.dir}/kotlin.js"
+                       match="module.exports,\s*require\([^)]+\)"
+                       replace=""
+                       byline="true" encoding="UTF-8" />
+        <replaceregexp file="${js.stdlib.output.dir}/kotlin.js"
+                       match="function\s*\(_,\s*Kotlin\)"
+                       replace="function()"
+                       byline="true" encoding="UTF-8" />
+        <replaceregexp file="${js.stdlib.output.dir}/kotlin.js"
+                       match="return\s+_;"
+                       replace=""
+                       byline="true" encoding="UTF-8" />
     </target>
 
     <target name="js-stdlib">
@@ -400,15 +413,6 @@
         <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
         <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
         <move file="${js.stdlib.output.dir}/tmp/${compiled.stdlib.meta.js}" tofile="${js.stdlib.output.dir}/${compiled.stdlib.meta.js}" />
-
-        <replaceregexp file="${js.stdlib.output.dir}/builtins.js"
-                       match="module.exports,\s*require\([^)]+\)"
-                       replace="Kotlin, Kotlin"
-                       byline="true" encoding="UTF-8" />
-        <replaceregexp file="${js.stdlib.output.dir}/${compiled.stdlib.js}"
-                       match="module.exports,\s*require\([^)]+\)"
-                       replace="Kotlin, Kotlin"
-                       byline="true" encoding="UTF-8" />
 
         <condition property="jdk17" value="${env.JDK_17}" else="${env.JAVA_HOME}">
             <isset property="env.JDK_17" />
