@@ -10,24 +10,32 @@ Compiling files:
 End of files
 Marked as dirty by Kotlin:
   src/AChild.kt
+  src/getA.kt
+  src/getAChild.kt
   src/useF.kt
   src/useG.kt
+  src/useH.kt
+  src/useJ.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/AChild.class
+  out/production/module/GetAChildKt.class
   out/production/module/GetAKt.class
   out/production/module/META-INF/module.kotlin_module
   out/production/module/UseFKt.class
   out/production/module/UseGKt.class
   out/production/module/UseHKt.class
+  out/production/module/UseJKt.class
 End of files
 Compiling files:
   src/AChild.kt
   src/getA.kt
+  src/getAChild.kt
   src/useF.kt
   src/useG.kt
   src/useH.kt
+  src/useJ.kt
 End of files
 Exit code: ABORT
 ------------------------------------------
@@ -50,21 +58,9 @@ Compiling files:
   src/AChild.kt
   src/APartF.kt
   src/APartG.kt
+  src/getAChild.kt
   src/useF.kt
   src/useG.kt
-End of files
-Marked as dirty by Kotlin:
-  src/getAChild.kt
-  src/useJ.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Cleaning output files:
-  out/production/module/GetAChildKt.class
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/UseJKt.class
-End of files
-Compiling files:
-  src/getAChild.kt
   src/useJ.kt
 End of files
 Exit code: OK
