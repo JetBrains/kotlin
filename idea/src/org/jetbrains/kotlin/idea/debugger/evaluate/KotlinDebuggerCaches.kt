@@ -168,7 +168,7 @@ class KotlinDebuggerCaches(project: Project) {
         }
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
-                runReadAction { if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
+                runReadAction { element as? KtElement ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
         private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper {
             return runReadAction {

@@ -327,10 +327,7 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
         contextElement is KtDeclarationWithBody && contextElement.hasBlockBody() -> {
             val block = contextElement.bodyExpression as KtBlockExpression
             val last = block.statements.lastOrNull()
-            if (last is KtReturnExpression)
-                last
-            else
-                block.rBrace
+            last as? KtReturnExpression ?: block.rBrace
         }
         contextElement is KtWhenEntry -> {
             val entryExpression = contextElement.expression

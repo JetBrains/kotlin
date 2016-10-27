@@ -171,12 +171,9 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 if (constructor == null || !visitedElements.add(constructor)) return@runRefactoringWithPostprocessing
                 constructor.getValueParameters().lastOrNull()?.let { newParam ->
                     val psiFactory = KtPsiFactory(project)
-                    if (constructor is KtSecondaryConstructor) {
-                        constructor.getOrCreateBody().appendElement(psiFactory.createExpression("this.${element.name} = ${newParam.name!!}"))
-                    }
-                    else {
-                        element.setInitializer(psiFactory.createExpression(newParam.name!!))
-                    }
+                    (constructor as? KtSecondaryConstructor)?.getOrCreateBody()?.appendElement(
+                            psiFactory.createExpression("this.${element.name} = ${newParam.name!!}")
+                    ) ?: element.setInitializer(psiFactory.createExpression(newParam.name!!))
                 }
                 processConstructors(project, propertyDescriptor, descriptorsToProcess)
             }

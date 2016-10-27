@@ -174,7 +174,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         if (element is FunctionWithSupersWrapper) {
             allRenames.remove(element)
         }
-        for (declaration in (if (element is FunctionWithSupersWrapper) element.supers else listOf(element))) {
+        for (declaration in ((element as? FunctionWithSupersWrapper)?.supers ?: listOf(element))) {
             val psiMethod = wrapPsiMethod(declaration) ?: continue
             allRenames[declaration] = newName
             if (psiMethod.containingClass != null) {

@@ -93,8 +93,8 @@ class KotlinChangeSignatureProcessor(project: Project,
             if (u2 is KotlinImplicitReceiverUsage && u1 is KotlinFunctionCallUsage) return@sort 1
             val element1 = u1.element
             val element2 = u2.element
-            val rank1 = if (element1 != null) element1.textOffset else -1
-            val rank2 = if (element2 != null) element2.textOffset else -1
+            val rank1 = element1?.textOffset ?: -1
+            val rank2 = element2?.textOffset ?: -1
             rank2 - rank1 // Reverse order
         }
         refUsages.set(usageArray)

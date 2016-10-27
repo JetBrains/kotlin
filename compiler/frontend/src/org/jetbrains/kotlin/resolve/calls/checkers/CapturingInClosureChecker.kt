@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.expressions.CaptureKind
 
 class CapturingInClosureChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val variableResolvedCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.variableCall else resolvedCall
+        val variableResolvedCall = (resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall ?: resolvedCall
         val variableDescriptor = variableResolvedCall.resultingDescriptor as? VariableDescriptor
         if (variableDescriptor != null) {
             checkCapturingInClosure(variableDescriptor, context.trace, context.scope)

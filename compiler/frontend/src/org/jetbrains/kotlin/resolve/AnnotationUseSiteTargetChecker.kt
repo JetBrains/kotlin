@@ -109,11 +109,11 @@ object AnnotationUseSiteTargetChecker {
     private fun BindingTrace.checkIfMutableProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry) {
         if (!checkIfProperty(annotated, annotation)) return
 
-        val isMutable = if (annotated is KtProperty)
-            annotated.isVar
-        else if (annotated is KtParameter)
-            annotated.isMutable
-        else false
+        val isMutable = when (annotated) {
+            is KtProperty -> annotated.isVar
+            is KtParameter -> annotated.isMutable
+            else -> false
+        }
 
         if (!isMutable) {
             report(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE.on(annotation, annotation.useSiteDescription()))
@@ -121,11 +121,11 @@ object AnnotationUseSiteTargetChecker {
     }
 
     private fun BindingTrace.checkIfProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry): Boolean {
-        val isProperty = if (annotated is KtProperty)
-            !annotated.isLocal
-        else if (annotated is KtParameter)
-            annotated.hasValOrVar()
-        else false
+        val isProperty = when (annotated) {
+            is KtProperty -> !annotated.isLocal
+            is KtParameter -> annotated.hasValOrVar()
+            else -> false
+        }
 
         if (!isProperty) report(INAPPLICABLE_TARGET_ON_PROPERTY.on(annotation, annotation.useSiteDescription()))
         return isProperty

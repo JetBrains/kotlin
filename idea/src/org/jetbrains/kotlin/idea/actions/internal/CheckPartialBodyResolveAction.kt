@@ -127,7 +127,7 @@ class CheckPartialBodyResolveAction : AnAction() {
                 val offset = expression.textOffset
                 val line = document.getLineNumber(offset)
                 val column = offset - document.getLineStartOffset(line)
-                val exprName = if (expression is KtNameReferenceExpression) expression.getReferencedName() else expression.javaClass.simpleName
+                val exprName = (expression as? KtNameReferenceExpression)?.getReferencedName() ?: expression.javaClass.simpleName
                 builder.append("$exprName at (${line + 1}:${column + 1})")
 
                 if (expression is KtReferenceExpression) {

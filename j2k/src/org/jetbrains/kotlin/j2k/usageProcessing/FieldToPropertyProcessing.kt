@@ -106,10 +106,8 @@ class FieldToPropertyProcessing(
 
                 is PsiPrefixExpression, is PsiPostfixExpression -> {
                     //TODO: what if it's used as value?
-                    val operationType = if (parent is PsiPrefixExpression)
-                        parent.operationTokenType
-                    else
-                        (parent as PsiPostfixExpression).operationTokenType
+                    val operationType = (parent as? PsiPrefixExpression)?.operationTokenType
+                                        ?: (parent as PsiPostfixExpression).operationTokenType
                     val opText = when (operationType) {
                         JavaTokenType.PLUSPLUS -> "+"
                         JavaTokenType.MINUSMINUS -> "-"

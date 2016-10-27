@@ -94,7 +94,7 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
             }
             val callHasReceiver = explicitReceiver != null
             if (descriptorHasReceiver != callHasReceiver) return false
-            val callableArgumentsCount = if (callableExpression is KtCallExpression) callableExpression.valueArguments.size else 0
+            val callableArgumentsCount = (callableExpression as? KtCallExpression)?.valueArguments?.size ?: 0
             if (calleeDescriptor.valueParameters.size != callableArgumentsCount) return false
             if (lambdaMustReturnUnit) {
                 calleeDescriptor.returnType.let {

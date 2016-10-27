@@ -101,7 +101,7 @@ class KotlinSelectInProjectViewProvider(private val project: Project) : Selectab
 
         if (current is KtFile) {
             val declaration = current.declarations.singleOrNull()
-            val nameWithoutExtension = if (virtualFile != null) virtualFile.nameWithoutExtension else file.name
+            val nameWithoutExtension = virtualFile?.nameWithoutExtension ?: file.name
             if (declaration is KtClassOrObject && nameWithoutExtension == declaration.name) {
                 current = declaration
             }

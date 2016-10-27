@@ -328,7 +328,7 @@ class KotlinPullUpHelper(
     }
 
     private fun moveSuperInterface(member: PsiNamedElement, substitutor: PsiSubstitutor) {
-        val realMemberPsi = if (member is KtPsiClassWrapper) member.psiClass else member
+        val realMemberPsi = (member as? KtPsiClassWrapper)?.psiClass ?: member
         val classDescriptor = data.memberDescriptors[member] as? ClassDescriptor ?: return
         val currentSpecifier = data.sourceClass.getSuperTypeEntryByDescriptor(classDescriptor, data.sourceClassContext) ?: return
         when (data.targetClass) {

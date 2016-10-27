@@ -41,7 +41,7 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
         val body = element.body!!
         val loopParameter = element.loopParameter!!
 
-        val functionBodyArgument: Any = if (body is KtBlockExpression) body.contentRange() else body
+        val functionBodyArgument: Any = (body as? KtBlockExpression)?.contentRange() ?: body
 
         val psiFactory = KtPsiFactory(element)
         val foreachExpression = psiFactory.createExpressionByPattern(

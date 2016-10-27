@@ -225,7 +225,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
 
                     val arg: Any? = if (n < args.size) args[n] else null /* report wrong number of arguments later */
                     val placeholderText = if (charOrNull(i) != ':' || charOrNull(i + 1) != '\'') {
-                        if (arg is String) arg else "xyz"
+                        arg as? String ?: "xyz"
                     }
                     else {
                         check(arg !is String, "do not specify placeholder text for $$n - plain text argument passed")

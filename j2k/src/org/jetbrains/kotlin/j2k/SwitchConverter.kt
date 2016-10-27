@@ -94,7 +94,7 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
         }
         else {
             val block = case.statements.singleOrNull() as? PsiBlockStatement
-            val statements = if (block != null) block.codeBlock.statements.toList() else case.statements
+            val statements = block?.codeBlock?.statements?.toList() ?: case.statements
             !statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement }
         }
         return if (fallsThrough) // we fall through into the next case

@@ -196,7 +196,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     override fun visitPropertyAccessor(accessor: KtPropertyAccessor, data: Unit?): String? {
         val containingProperty = KtStubbedPsiUtil.getContainingDeclaration(accessor, KtProperty::class.java)
         val what = (if (accessor.isGetter()) "getter" else "setter")
-        return what + " for " + (if (containingProperty != null) containingProperty.getDebugText() else "...")
+        return what + " for " + (containingProperty?.getDebugText() ?: "...")
     }
 
     override fun visitClass(klass: KtClass, data: Unit?): String? {

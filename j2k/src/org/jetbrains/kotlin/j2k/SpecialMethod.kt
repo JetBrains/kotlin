@@ -477,7 +477,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     private fun castQualifierToType(codeConverter: CodeConverter, qualifier: PsiExpression, type: String): TypeCastExpression? {
         val convertedQualifier = codeConverter.convertExpression(qualifier)
         val qualifierType = codeConverter.typeConverter.convertType(qualifier.type)
-        val typeArgs = if (qualifierType is ClassType) qualifierType.referenceElement.typeArgs else emptyList()
+        val typeArgs = (qualifierType as? ClassType)?.referenceElement?.typeArgs ?: emptyList()
         val referenceElement = ReferenceElement(Identifier.withNoPrototype(type), typeArgs).assignNoPrototype()
         val newType = ClassType(referenceElement, Nullability.Default, codeConverter.settings).assignNoPrototype()
         return TypeCastExpression(newType, convertedQualifier).assignNoPrototype()
