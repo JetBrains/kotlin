@@ -29,5 +29,8 @@ interface PsiSourceElement : SourceElement {
 
 class PsiSourceFile(val psiFile: PsiFile): SourceFile {
     override fun equals(other: Any?): Boolean = other is PsiSourceFile && psiFile == other.psiFile
+
     override fun hashCode(): Int = psiFile.hashCode()
+
+    override fun toString(): String = psiFile.virtualFile.path
 }

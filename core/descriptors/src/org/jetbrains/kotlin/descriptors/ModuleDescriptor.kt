@@ -47,5 +47,7 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     fun <T> getCapability(capability: Capability<T>): T?
 
-    class Capability<T>(val name: String)
+    class Capability<T>(val name: String) {
+        override fun toString() = name
+    }
 }

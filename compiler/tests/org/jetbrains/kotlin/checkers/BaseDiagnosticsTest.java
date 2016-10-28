@@ -303,6 +303,11 @@ public abstract class BaseDiagnosticsTest
         public int compareTo(@NotNull TestModule module) {
             return name.compareTo(module.getName());
         }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
     }
 
     public static class DiagnosticTestLanguageVersionSettings implements LanguageVersionSettings {
@@ -509,6 +514,11 @@ public abstract class BaseDiagnosticsTest
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration));
             }
             return jvmSignatureDiagnostics;
+        }
+
+        @Override
+        public String toString() {
+            return jetFile.getName();
         }
     }
 }
