@@ -174,7 +174,31 @@ task hello2(type: RunKonanTest) {
     source = "runtime/basic/hello2.kt"
 } */
 
-// TODO: waiting for boolean to be implemented
-//task bool_yes(type: KonanTest) {
-//    source = "codegen/function/boolean.kt"
-//}
+task if_else(type: UnitKonanTest) {
+    source = "codegen/branching/if_else.kt"
+}
+
+task when2(type: UnitKonanTest) {
+    source = "codegen/branching/when2.kt"
+}
+
+task when5(type: UnitKonanTest) {
+    source = "codegen/branching/when5.kt"
+}
+
+task when_through(type: UnitKonanTest) {
+    source = "codegen/branching/when_through.kt"
+}
+
+task advanced_when2(type: UnitKonanTest) {
+    source = "codegen/branching/advanced_when2.kt"
+}
+
+task advanced_when5(type: UnitKonanTest) {
+    source = "codegen/branching/advanced_when5.kt"
+}
+
+task bool_yes(type: UnitKonanTest) {
+    source = "codegen/function/boolean.kt"
+}
+
