@@ -110,16 +110,16 @@ internal fun getOriginalPositionOfInlinedLine(location: Location, project: Proje
 
 internal fun findAndReadClassFile(
         fqName: FqName, fileName: String, project: Project, searchScope: GlobalSearchScope,
-        sourceFileFilter: (VirtualFile) -> Boolean = { true },
-        libFileFilter: (VirtualFile) -> Boolean = { true }): ByteArray? {
+        fileFilter: (VirtualFile) -> Boolean): ByteArray? {
     val internalName = fqName.asString().replace('.', '/')
     val jvmClassName = JvmClassName.byInternalName(internalName)
 
     val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, jvmClassName, fileName) ?: return null
 
     val virtualFile = file.virtualFile ?: return null
+    if (!fileFilter(virtualFile)) return null
 
-    return readClassFile(project, jvmClassName, virtualFile, sourceFileFilter = sourceFileFilter, libFileFilter = libFileFilter)
+    return readClassFile(project, jvmClassName, virtualFile)
 }
 
 internal fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosition, sourceSearchScope: GlobalSearchScope): List<Location> {
