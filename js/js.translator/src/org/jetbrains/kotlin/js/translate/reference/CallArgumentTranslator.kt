@@ -185,7 +185,7 @@ class CallArgumentTranslator private constructor(
 
             if (CallExpressionTranslator.shouldBeInlined(callDescriptor)) {
                 val typeArgs = resolvedCall.typeArguments
-                return typeArgs.addReifiedTypeArgsTo(result, context)
+                return result.copy(reifiedArguments = typeArgs.buildReifiedTypeArgs(context))
             }
 
             return result
@@ -330,10 +330,9 @@ class CallArgumentTranslator private constructor(
 
 }
 
-private fun Map<TypeParameterDescriptor, KotlinType>.addReifiedTypeArgsTo(
-        info: CallArgumentTranslator.ArgumentsInfo,
+public fun Map<TypeParameterDescriptor, KotlinType>.buildReifiedTypeArgs(
         context: TranslationContext
-): CallArgumentTranslator.ArgumentsInfo {
+): List<JsExpression> {
 
     val reifiedTypeArguments = SmartList<JsExpression>()
     val patternTranslator = PatternTranslator.newInstance(context)
@@ -349,5 +348,5 @@ private fun Map<TypeParameterDescriptor, KotlinType>.addReifiedTypeArgsTo(
         reifiedTypeArguments.add(isCheckCallable)
     }
 
-    return info.copy(reifiedArguments = reifiedTypeArguments)
+    return reifiedTypeArguments
 }

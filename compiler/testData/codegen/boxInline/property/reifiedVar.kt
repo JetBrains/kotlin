@@ -1,11 +1,12 @@
 // WITH_RUNTIME
+// WITH_REFLECT
 // FILE: 1.kt
 package test
 
 var bvalue: String = ""
 
 inline var <reified T : Any> T.value: String
-    get() = T::class.java.simpleName + bvalue
+    get() = T::class.simpleName!! + bvalue
     set(p: String) {
         bvalue = p
     }

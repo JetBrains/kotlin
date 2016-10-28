@@ -29,6 +29,8 @@ abstract class BorrowedInlineTest(relativePath: String) : BasicBoxTest(
 
 abstract class AbstractNonLocalReturnsTest : BorrowedInlineTest("nonLocalReturns/")
 
+abstract class AbstractPropertyAccessorsInlineTests : BorrowedInlineTest("property/")
+
 abstract class AbstractBoxJsTest() : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
