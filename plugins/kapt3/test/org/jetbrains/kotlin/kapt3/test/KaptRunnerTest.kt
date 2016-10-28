@@ -43,8 +43,8 @@ import javax.lang.model.element.TypeElement
  */
 
 class KaptRunnerTest {
-    private companion object {
-        val TEST_DATA_DIR = File("plugins/kapt3/testData/runner")
+    companion object {
+        private val TEST_DATA_DIR = File("plugins/kapt3/testData/runner")
 
         val SIMPLE_PROCESSOR = object : AbstractProcessor() {
             override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {

@@ -131,6 +131,7 @@ import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kapt3.test.AbstractJCTreeConverterTest
+import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptRunnerTest
 import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
@@ -1081,6 +1082,10 @@ fun main(args: Array<String>) {
     testGroup("plugins/kapt3/test", "plugins/kapt3/testData") {
         testClass<AbstractJCTreeConverterTest> {
             model("converter")
+        }
+
+        testClass<AbstractKotlinKaptRunnerTest> {
+            model("kotlinRunner")
         }
     }
 
