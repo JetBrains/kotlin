@@ -41,19 +41,21 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import java.io.File
 
 fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
-    val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return false
-    return lineNumber > linesInFile
+    if (ProjectRootsUtil.isProjectSourceFile(project, file)) {
+        val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return false
+        return lineNumber > linesInFile
+    }
+
+    return true
 }
 
 fun readClassFile(project: Project,
                   jvmName: JvmClassName,
-                  file: VirtualFile,
-                  sourceFileFilter: (VirtualFile) -> Boolean = { true },
-                  libFileFilter: (VirtualFile) -> Boolean = { true }): ByteArray? {
+                  file: VirtualFile): ByteArray? {
     val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
 
     when {
-        ProjectRootsUtil.isLibrarySourceFile(project, file) && libFileFilter(file) -> {
+        ProjectRootsUtil.isLibrarySourceFile(project, file) -> {
             val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
 
             val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
@@ -61,7 +63,7 @@ fun readClassFile(project: Project,
             return classFile.contentsToByteArray()
         }
 
-        ProjectRootsUtil.isProjectSourceFile(project, file) && sourceFileFilter(file) -> {
+        ProjectRootsUtil.isProjectSourceFile(project, file) -> {
             val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
             val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
 
