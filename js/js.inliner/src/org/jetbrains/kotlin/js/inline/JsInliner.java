@@ -23,6 +23,8 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor;
@@ -43,6 +45,7 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatemen
 public class JsInliner extends JsVisitorWithContextImpl {
 
     private final Map<JsName, JsFunction> functions;
+    private final Map<String, JsFunction> accessors;
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
     private final Set<JsFunction> processedFunctions = CollectionUtilsKt.IdentitySet();
     private final Set<JsFunction> inProcessFunctions = CollectionUtilsKt.IdentitySet();
@@ -65,7 +68,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
     public static JsProgram process(@NotNull TranslationContext context) {
         JsProgram program = context.program();
         Map<JsName, JsFunction> functions = CollectUtilsKt.collectNamedFunctions(program);
-        JsInliner inliner = new JsInliner(functions, new FunctionReader(context), context.bindingTrace());
+        Map<String, JsFunction> accessors = CollectUtilsKt.collectAccessors(program);
+        JsInliner inliner = new JsInliner(functions, accessors, new FunctionReader(context), context.bindingTrace());
         inliner.accept(program);
         RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(program, functions);
         return program;
@@ -73,12 +77,83 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private JsInliner(
             @NotNull Map<JsName, JsFunction> functions,
+            @NotNull Map<String, JsFunction> accessors,
             @NotNull FunctionReader functionReader,
             @NotNull DiagnosticSink trace
     ) {
         this.functions = functions;
+        this.accessors = accessors;
         this.functionReader = functionReader;
         this.trace = trace;
+    }
+
+    @Override
+    public boolean visit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
+        JsInvocation dummy = tryCreatePropertyGetterInvocation(x);
+        if (dummy != null) {
+            return visit(dummy, ctx);
+        }
+        return super.visit(x, ctx);
+    }
+
+    @Override
+    public void endVisit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
+        JsInvocation dummy = tryCreatePropertyGetterInvocation(x);
+        if (dummy != null) {
+            endVisit(dummy, ctx);
+        }
+        super.visit(x, ctx);
+    }
+
+    @Override
+    public boolean visit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
+        JsInvocation dummy = tryCreatePropertySetterInvocation(x);
+        if (dummy != null) {
+            return visit(dummy, ctx);
+        }
+        return super.visit(x, ctx);
+    }
+
+    @Override
+    public void endVisit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
+        JsInvocation dummy = tryCreatePropertySetterInvocation(x);
+        if (dummy != null) {
+            // Prevent FunctionInlineMutator from creating a variable for the result (there is none, because assignment is a statement)
+            // TODO is there a better way to achieve this?
+            getInliningContext().getStatementContext().replaceMe(new JsExpressionStatement(dummy));
+            endVisit(dummy, ctx);
+        }
+        super.visit(x, ctx);
+    }
+
+    @Nullable
+    private static JsInvocation tryCreatePropertyGetterInvocation(@NotNull JsNameRef x) {
+        if (MetadataProperties.getInlineStrategy(x) != null && MetadataProperties.getDescriptor(x) instanceof PropertyGetterDescriptor) {
+            JsInvocation dummyInvocation = new JsInvocation(x);
+            copyInlineMetadata(x, dummyInvocation);
+            return dummyInvocation;
+        }
+        return null;
+    }
+
+    @Nullable
+    private static JsInvocation tryCreatePropertySetterInvocation(@NotNull JsBinaryOperation x) {
+        if (!x.getOperator().isAssignment() || !(x.getArg1() instanceof JsNameRef)) return null;
+        JsNameRef name = (JsNameRef) x.getArg1();
+        if (MetadataProperties.getInlineStrategy(name) != null &&
+            MetadataProperties.getDescriptor(name) instanceof PropertySetterDescriptor) {
+
+            JsInvocation dummyInvocation = new JsInvocation(name, x.getArg2());
+            copyInlineMetadata(name, dummyInvocation);
+            return dummyInvocation;
+        }
+        return null;
+    }
+
+    private static void copyInlineMetadata(@NotNull JsNameRef from, @NotNull JsInvocation to) {
+        MetadataProperties.setInlineStrategy(to, MetadataProperties.getInlineStrategy(from));
+        MetadataProperties.setDescriptor(to, MetadataProperties.getDescriptor(from));
+        MetadataProperties.setPsiElement(to, MetadataProperties.getPsiElement(from));
     }
 
     @Override
@@ -247,6 +322,12 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 @Override
                 protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {
                     return functions.get(functionName);
+                }
+
+                @Nullable
+                @Override
+                protected JsFunction lookUpStaticFunctionByTag(@NotNull String functionTag) {
+                    return accessors.get(functionTag);
                 }
             };
         }

@@ -20,12 +20,15 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.inline.FunctionReader
 import org.jetbrains.kotlin.js.inline.util.*
+import org.jetbrains.kotlin.js.translate.context.Namer
 
 abstract class FunctionContext(
         private val function: JsFunction,
         private val functionReader: FunctionReader
 ) {
     protected abstract fun lookUpStaticFunction(functionName: JsName?): JsFunction?
+
+    protected abstract fun lookUpStaticFunctionByTag(functionTag: String): JsFunction?
 
     fun getFunctionDefinition(call: JsInvocation): JsFunction {
         return getFunctionDefinitionImpl(call)!!
@@ -71,7 +74,10 @@ abstract class FunctionContext(
      */
     private fun getFunctionDefinitionImpl(call: JsInvocation): JsFunction? {
         val descriptor = call.descriptor
-        if (descriptor != null && descriptor in functionReader) return functionReader[descriptor]
+        if (descriptor != null) {
+            if (descriptor in functionReader) return functionReader[descriptor]
+            lookUpStaticFunctionByTag(Namer.getFunctionTag(descriptor))?.let { return it }
+        }
 
         /** remove ending `()` */
         val callQualifier: JsExpression = if (isCallInvocation(call)) {
@@ -84,7 +90,9 @@ abstract class FunctionContext(
         /** process cases 2, 3 */
         val qualifier = callQualifier.transitiveStaticRef
         return when (qualifier) {
-            is JsInvocation -> lookUpStaticFunction(getSimpleName(qualifier)!!)?.let { if (isFunctionCreator(it)) it else null }
+            is JsInvocation -> {
+                lookUpStaticFunction(getSimpleName(qualifier)!!)?.let { if (isFunctionCreator(it)) it else null }
+            }
             is JsNameRef -> lookUpStaticFunction(qualifier.name)
             is JsFunction -> qualifier
             else -> null

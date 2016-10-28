@@ -53,6 +53,27 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler("PROPERTY_NOT_USED") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyNotUsed(ast, arguments.getFirst(), false, false);
+        }
+    };
+
+    private static final DirectiveHandler PROPERTY_NOT_READ_FROM = new DirectiveHandler("PROPERTY_NOT_READ_FROM") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyNotUsed(ast, arguments.getFirst(), false, true);
+        }
+    };
+
+    private static final DirectiveHandler PROPERTY_NOT_WRITTEN_TO = new DirectiveHandler("PROPERTY_NOT_WRITTEN_TO") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyNotUsed(ast, arguments.getFirst(), true, false);
+        }
+    };
+
     private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_CALLED_IN_SCOPE") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -232,6 +253,9 @@ public class DirectiveTestUtils {
     private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
             FUNCTION_CONTAINS_NO_CALLS,
             FUNCTION_NOT_CALLED,
+            PROPERTY_NOT_USED,
+            PROPERTY_NOT_READ_FROM,
+            PROPERTY_NOT_WRITTEN_TO,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
@@ -260,6 +284,17 @@ public class DirectiveTestUtils {
         String errorMessage = functionName + " contains calls";
         assertEquals(errorMessage, 0, callsCount);
     }
+
+    public static void checkPropertyNotUsed(JsNode node, String propertyName, boolean isGetAllowed, boolean isSetAllowed) throws Exception {
+        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
+        if (!isGetAllowed) {
+            assertFalse("inline property getter for `" + propertyName + "` is called", counter.hasUnqualifiedReads(propertyName));
+        }
+        if (!isSetAllowed) {
+            assertFalse("inline property setter for `" + propertyName + "` is called", counter.hasUnqualifiedWrites(propertyName));
+        }
+    }
+
 
     public static void checkFunctionNotCalled(JsNode node, String functionName) throws Exception {
         CallCounter counter = CallCounter.countCalls(node);

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
@@ -58,15 +60,21 @@ public final class TranslationUtils {
     public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context) {
+        JsExpression functionExpression = function;
+        if (InlineUtil.isInline(descriptor)) {
+            InlineMetadata metadata = InlineMetadata.compose(function, descriptor);
+            functionExpression = metadata.getFunctionWithMetadata();
+        }
+
         if (DescriptorUtils.isExtension(descriptor) ||
             descriptor instanceof PropertyAccessorDescriptor &&
             shouldAccessViaFunctions(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty())
         ) {
-            return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
+            return translateExtensionFunctionAsEcma5DataDescriptor(functionExpression, descriptor, context);
         }
         else {
             JsStringLiteral getOrSet = context.program().getStringLiteral(getAccessorFunctionName(descriptor));
-            return new JsPropertyInitializer(getOrSet, function);
+            return new JsPropertyInitializer(getOrSet, functionExpression);
         }
     }
 
@@ -82,9 +90,9 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsFunction function,
+    private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsExpression functionExpression,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
-        JsObjectLiteral meta = createDataDescriptor(function, ModalityKt.isOverridable(descriptor), false);
+        JsObjectLiteral meta = createDataDescriptor(functionExpression, ModalityKt.isOverridable(descriptor), false);
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
     }
 

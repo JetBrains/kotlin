@@ -72,7 +72,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     public static boolean shouldBeInlined(@NotNull CallableDescriptor descriptor) {
-        if (descriptor instanceof SimpleFunctionDescriptor) {
+        if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof PropertyAccessorDescriptor) {
             return InlineUtil.isInline(descriptor);
         }
 

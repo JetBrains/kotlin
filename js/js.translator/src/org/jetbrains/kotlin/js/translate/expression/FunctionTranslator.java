@@ -135,7 +135,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         List<JsParameter> jsParameters = new SmartList<JsParameter>();
         Map<DeclarationDescriptor, JsExpression> aliases = new HashMap<DeclarationDescriptor, JsExpression>();
 
-        for (TypeParameterDescriptor type : descriptor.getTypeParameters()) {
+        for (TypeParameterDescriptor type : getTypeParameters(descriptor)) {
             if (type.isReified()) {
                 JsName paramNameForType = context().getNameForDescriptor(type);
                 jsParameters.add(new JsParameter(paramNameForType));
@@ -156,6 +156,13 @@ public final class FunctionTranslator extends AbstractTranslator {
         mayBeAddThisParameterForExtensionFunction(jsParameters);
         addParameters(jsParameters, descriptor, context());
         return jsParameters;
+    }
+
+    private static List<TypeParameterDescriptor> getTypeParameters(FunctionDescriptor functionDescriptor) {
+        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+            return ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty().getTypeParameters();
+        }
+        return functionDescriptor.getTypeParameters();
     }
 
     public static void addParameters(List<JsParameter> list, FunctionDescriptor descriptor, TranslationContext context) {
