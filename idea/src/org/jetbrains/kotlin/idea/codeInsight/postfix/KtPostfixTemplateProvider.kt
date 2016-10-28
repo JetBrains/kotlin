@@ -133,7 +133,7 @@ private class KtExpressionPostfixTemplateSelector(
         var context: BindingContext? = null
         fun getContext(): BindingContext {
             if (context == null) {
-                context = it.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+                context = element.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
             }
             return context!!
         }
@@ -179,7 +179,7 @@ private class KtExpressionPostfixTemplateSelector(
                     .toCollection(filteredByOffset)
         }
 
-        val result = filteredByOffset.filter(this::filterElement)
+        val result = filteredByOffset.filter { filterElement(it) }
 
         if (ApplicationManager.getApplication().isUnitTestMode && result.size > 1) {
             KtPostfixTemplateProvider.previouslySuggestedExpressions = result.map { it.text }

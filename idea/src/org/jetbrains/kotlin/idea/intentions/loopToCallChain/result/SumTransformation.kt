@@ -144,7 +144,7 @@ abstract class SumTransformationBase(
 
         private fun KtExpression.typeWithSmartCast(): KotlinType? {
             val bindingContext = analyze(BodyResolveMode.PARTIAL)
-            return bindingContext[BindingContext.SMARTCAST, this]?.defaultType
+            return bindingContext[BindingContext.SMARTCAST, this]
                    ?: bindingContext.getType(this)
         }
     }
