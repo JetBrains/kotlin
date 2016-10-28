@@ -62,7 +62,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             }
 
             val result = TopLevelFIF.KOTLIN_EQUALS.apply(left, Arrays.asList<JsExpression>(right), context)
-            return if (isNegated) JsAstUtils.negated(result) else result
+            return if (isNegated) JsAstUtils.not(result) else result
         }
 
         private fun canUseSimpleEquals(expression: KtBinaryExpression, context: TranslationContext): Boolean {

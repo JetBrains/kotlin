@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 class Controller {
     var lastSuspension: Continuation<String>? = null
     var result = "fail"

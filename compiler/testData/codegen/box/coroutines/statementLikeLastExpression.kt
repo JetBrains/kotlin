@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 var globalResult = ""
 class Controller {
     suspend fun suspendWithValue(v: String, x: Continuation<String>) {

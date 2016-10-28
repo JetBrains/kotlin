@@ -68,6 +68,12 @@ class NameSuggestion {
             return suggest(descriptor.containingDeclaration!!)
         }
 
+        if (descriptor is FunctionDescriptor && descriptor.isSuspend) {
+            descriptor.initialSignatureDescriptor?.let {
+                return suggest(it)
+            }
+        }
+
         // Dynamic declarations always require stable names as defined in Kotlin source code
         if (descriptor.isDynamic()) {
             return SuggestedName(listOf(descriptor.name.asString()), true, descriptor, descriptor.containingDeclaration!!)

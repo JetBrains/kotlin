@@ -24,6 +24,7 @@
         </fileset>
 
         <fileset dir="${basedir}/core/builtins/src">
+            <include name="kotlin/coroutines/**/*.kt"/>
             <include name="kotlin/reflect/**/*.kt"/>
             <include name="kotlin/annotation/Annotations.kt"/>
             <include name="kotlin/Unit.kt"/>

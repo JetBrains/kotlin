@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not;
 
 public final class WhenTranslator extends AbstractTranslator {
     @Nullable
@@ -141,7 +141,7 @@ public final class WhenTranslator extends AbstractTranslator {
     private JsExpression translateCondition(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
         JsExpression patternMatchExpression = translateWhenConditionToBooleanExpression(condition, context);
         if (isNegated(condition)) {
-            return negated(patternMatchExpression);
+            return not(patternMatchExpression);
         }
         return patternMatchExpression;
     }

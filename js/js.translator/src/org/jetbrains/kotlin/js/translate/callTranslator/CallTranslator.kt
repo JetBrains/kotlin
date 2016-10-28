@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
+import com.google.dart.compiler.backend.js.ast.JsFunction
+import com.google.dart.compiler.backend.js.ast.JsInvocation
+import com.google.dart.compiler.backend.js.ast.metadata.isSuspend
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -115,7 +118,11 @@ private fun translateFunctionCall(context: TranslationContext,
                                   resolvedCall: ResolvedCall<out FunctionDescriptor>,
                                   explicitReceivers: ExplicitReceivers
 ): JsExpression {
-    return context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
+    val callExpression = context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
+    if (resolvedCall.resultingDescriptor.isSuspend) {
+        (callExpression as JsInvocation).isSuspend = true
+    }
+    return callExpression
 }
 
 fun computeExplicitReceiversForInvoke(

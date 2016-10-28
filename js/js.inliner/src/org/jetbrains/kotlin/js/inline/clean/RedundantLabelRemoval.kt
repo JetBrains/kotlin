@@ -112,7 +112,7 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
                     hasChanges = true
                     statement.thenStatement = statement.elseStatement
                     statement.elseStatement = null
-                    statement.ifExpression = JsAstUtils.negated(statement.ifExpression)
+                    statement.ifExpression = JsAstUtils.not(statement.ifExpression)
                     statement
                 }
                 else -> statement

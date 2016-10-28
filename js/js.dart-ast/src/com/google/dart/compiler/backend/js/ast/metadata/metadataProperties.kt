@@ -20,6 +20,7 @@ package com.google.dart.compiler.backend.js.ast.metadata
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
@@ -56,6 +57,14 @@ var JsReturn.returnTarget: FunctionDescriptor? by MetadataProperty(default = nul
 var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
 var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEffectKind.AFFECTS_STATE)
+
+var JsFunction.coroutineType: ClassDescriptor? by MetadataProperty(default = null)
+
+var JsFunction.controllerType: ClassDescriptor? by MetadataProperty(default = null)
+
+var JsInvocation.isSuspend: Boolean by MetadataProperty(default = false)
+
+var JsInvocation.isHandleResult: Boolean by MetadataProperty(default = false)
 
 enum class TypeCheck {
     TYPEOF,

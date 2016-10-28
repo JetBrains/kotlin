@@ -71,7 +71,7 @@ public class InOperationTranslator extends AbstractTranslator {
     private JsExpression translateGeneral(@NotNull ResolvedCall<? extends FunctionDescriptor> call, @NotNull JsExpression rightTranslated) {
         JsExpression result = CallTranslator.translate(context(), call, rightTranslated);
         if (negated) {
-            result = JsAstUtils.negated(result);
+            result = JsAstUtils.not(result);
         }
         return result;
     }

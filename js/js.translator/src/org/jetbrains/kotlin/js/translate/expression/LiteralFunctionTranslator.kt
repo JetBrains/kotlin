@@ -36,7 +36,11 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
-    fun translate(declaration: KtDeclarationWithBody): JsExpression {
+    fun translate(
+            declaration: KtDeclarationWithBody,
+            continuationType: ClassDescriptor? = null,
+            controllerType: ClassDescriptor? = null
+    ): JsExpression {
         val invokingContext = context()
         val descriptor = getFunctionDescriptor(invokingContext.bindingContext(), declaration)
 
@@ -69,6 +73,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
             lambdaCreator.name = invokingContext.getInnerNameForDescriptor(descriptor)
             lambdaCreator.isLocal = true
+            lambdaCreator.coroutineType = continuationType
+            lambdaCreator.controllerType = controllerType
             if (!isRecursive) {
                 lambda.name = null
             }
@@ -77,6 +83,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         }
 
         lambda.isLocal = true
+        lambda.coroutineType = continuationType
+        lambda.controllerType = controllerType
 
         invokingContext.addDeclarationStatement(lambda.makeStmt())
         lambda.name.staticRef = lambda

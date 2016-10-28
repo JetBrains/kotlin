@@ -455,7 +455,7 @@ internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
 /**
  * Returns descendants of receiver, matched by [predicate].
  */
-private fun JsNode.match(predicate: (JsNode) -> Boolean): Set<JsNode> {
+fun JsNode.match(predicate: (JsNode) -> Boolean): Set<JsNode> {
     val visitor = object : JsExpressionVisitor() {
         val matched = IdentitySet<JsNode>()
 
@@ -475,7 +475,7 @@ private fun JsNode.match(predicate: (JsNode) -> Boolean): Set<JsNode> {
 /**
  * Returns set of nodes, that satisfy transitive closure of `is parent` relation, starting from [nodes].
  */
-private fun JsNode.withParentsOfNodes(nodes: Set<JsNode>): Set<JsNode> {
+fun JsNode.withParentsOfNodes(nodes: Set<JsNode>): Set<JsNode> {
     val visitor = object : JsExpressionVisitor() {
         private val stack = SmartList<JsNode>()
         val matched = IdentitySet<JsNode>()

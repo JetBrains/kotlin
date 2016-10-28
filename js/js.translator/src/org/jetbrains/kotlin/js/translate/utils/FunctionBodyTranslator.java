@@ -94,7 +94,19 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             jsBlock.getStatements().addAll(setDefaultValueForArguments(descriptor, context()));
         }
 
-        jsBlock.getStatements().addAll(mayBeWrapWithReturn(Translation.translateExpression(jetBodyExpression, context(), jsBlock)).getStatements());
+        KotlinType returnType = descriptor.getReturnType();
+        assert returnType != null;
+
+
+        TranslationContext handleResultContext = context().innerBlock(jsBlock);
+        JsExpression handleResultExpr = TranslationUtils.tryTranslateHandleResult(handleResultContext, declaration, jetBodyExpression);
+        if (handleResultExpr != null) {
+            jsBlock.getStatements().add(new JsReturn(handleResultExpr));
+        }
+        else {
+            JsNode jsBody = Translation.translateExpression(jetBodyExpression, context(), jsBlock);
+            jsBlock.getStatements().addAll(mayBeWrapWithReturn(jsBody).getStatements());
+        }
         return jsBlock;
     }
 

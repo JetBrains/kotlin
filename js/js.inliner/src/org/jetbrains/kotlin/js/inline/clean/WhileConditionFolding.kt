@@ -141,9 +141,9 @@ class WhileConditionFolding(val body: JsBlock) {
                         val result: JsExpression? = when (nextCondition) {
                             // Just a little optimization. When inner statement is a single `break`, `nextCondition` would be false.
                             // However, `A || false` can be rewritten as simply `A`
-                            JsLiteral.FALSE -> JsAstUtils.negatedOptimized(statement.ifExpression)
+                            JsLiteral.FALSE -> JsAstUtils.notOptimized(statement.ifExpression)
                             null -> null
-                            else -> JsAstUtils.or(JsAstUtils.negatedOptimized(statement.ifExpression), nextCondition)
+                            else -> JsAstUtils.or(JsAstUtils.notOptimized(statement.ifExpression), nextCondition)
                         }
                         result
                     }

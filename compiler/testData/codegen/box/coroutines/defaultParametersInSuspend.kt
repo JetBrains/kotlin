@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 class Controller {
     suspend fun suspendHere(a: String = "abc", i: Int = 2, x: Continuation<String>) {
         x.resume(a + "#" + (i + 1))

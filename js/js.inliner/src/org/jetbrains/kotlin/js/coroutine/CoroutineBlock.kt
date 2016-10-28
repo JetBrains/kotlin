@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package com.google.dart.compiler.backend.js.ast.metadata
+package org.jetbrains.kotlin.js.coroutine
 
-import kotlin.reflect.KProperty
+import com.google.dart.compiler.backend.js.ast.JsBlock
+import com.google.dart.compiler.backend.js.ast.JsStatement
 
-class MetadataProperty<in T : HasMetadata, R>(val default: R) {
-    operator fun getValue(thisRef: T, desc: KProperty<*>): R {
-        if (!thisRef.hasData(desc.name)) return default
-        return thisRef.getData<R>(desc.name)
-    }
-
-    operator fun setValue(thisRef: T, desc: KProperty<*>, value: R) {
-        thisRef.setData(desc.name, value)
-    }
+class CoroutineBlock {
+    val statements = mutableListOf<JsStatement>()
+    val jsBlock = JsBlock(statements)
 }
