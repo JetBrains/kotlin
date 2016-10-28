@@ -328,6 +328,8 @@ internal class IncrementalJvmCompilerRunner(
 
             val compilerOutput = compileChanged(listOf(targetId), sourcesToCompile.toSet(), args, { caches.incrementalCache }, lookupTracker, messageCollector)
             exitCode = compilerOutput.exitCode
+            val generatedClassFiles = compilerOutput.generatedFiles
+            anyClassesCompiled = anyClassesCompiled || generatedClassFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
 
             if (exitCode == ExitCode.OK) {
                 dirtySourcesSinceLastTimeFile.delete()
@@ -336,8 +338,6 @@ internal class IncrementalJvmCompilerRunner(
                 kaptAnnotationsFileUpdater?.revert()
                 break
             }
-
-            val generatedClassFiles = compilerOutput.generatedFiles
 
             if (compilationMode is CompilationMode.Incremental) {
                 val dirtySourcesSet = dirtySources.toHashSet()
@@ -391,8 +391,6 @@ internal class IncrementalJvmCompilerRunner(
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
             buildDirtyFqNames.addAll(dirtyClassFqNames)
-
-            anyClassesCompiled = anyClassesCompiled || generatedClassFiles.isNotEmpty() || removedKotlinSources.isNotEmpty()
         }
 
         if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
