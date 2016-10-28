@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
@@ -100,6 +101,8 @@ public class PackageCodegenImpl implements PackageCodegen {
         List<KtClassOrObject> classOrObjects = new ArrayList<KtClassOrObject>();
 
         for (KtDeclaration declaration : file.getDeclarations()) {
+            if (declaration.hasModifier(KtTokens.PLATFORM_KEYWORD)) continue;
+
             if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
                 generatePackagePart = true;
             }

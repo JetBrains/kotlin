@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -91,6 +92,8 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     @Override
     protected void generateBody() {
         for (KtDeclaration declaration : element.getDeclarations()) {
+            if (declaration.hasModifier(KtTokens.PLATFORM_KEYWORD)) continue;
+
             if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty || declaration instanceof KtTypeAlias) {
                 genSimpleMember(declaration);
             }
