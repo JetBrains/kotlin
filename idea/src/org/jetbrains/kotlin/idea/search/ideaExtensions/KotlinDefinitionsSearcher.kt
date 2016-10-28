@@ -101,7 +101,8 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                                                           searchScope: LocalSearchScope,
                                                           consumer: Processor<PsiElement>): Boolean {
             // workaround for IDEA optimization that uses Java PSI traversal to locate inheritors in local search scope
-            val globalScope = GlobalSearchScope.filesScope(psiClass.project, searchScope.virtualFiles.toList())
+            val virtualFiles = searchScope.scope.mapTo(HashSet()) { it.containingFile.virtualFile }
+            val globalScope = GlobalSearchScope.filesScope(psiClass.project, virtualFiles)
             return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, globalScope, true), Processor<PsiClass> { candidate ->
                 val candidateOrigin = candidate.unwrapped ?: candidate
                 if (candidateOrigin in searchScope) {
