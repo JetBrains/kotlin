@@ -20,7 +20,7 @@ public final class Test {
 
     public final class Inner {
 
-        public Inner(Test $outer) {
+        public Inner() {
             super();
         }
     }

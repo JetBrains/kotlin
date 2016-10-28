@@ -1,11 +1,10 @@
-
 public final class FunctionsTest {
-    
-    public final kotlin.reflect.KProperty1 f() {
+
+    public final kotlin.reflect.KProperty1<java.lang.String, java.lang.Integer> f() {
         return null;
     }
 
-    public final kotlin.jvm.functions.Function2 f2() {
+    public final kotlin.jvm.functions.Function2<java.lang.Integer, java.lang.Integer, java.lang.Boolean> f2() {
         return null;
     }
 
