@@ -55,6 +55,7 @@ class KaptRunner {
 
     init {
         JavacFileManager.preRegister(context)
+        KaptTreeMaker.preRegister(context)
         KaptJavaCompiler.preRegister(context)
 
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
