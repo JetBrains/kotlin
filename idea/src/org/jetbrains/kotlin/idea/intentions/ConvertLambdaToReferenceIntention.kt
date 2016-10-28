@@ -132,7 +132,8 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
             if (callableExpression is KtCallExpression) {
                 if (lambdaValueParameters.size < receiverShift + callableExpression.valueArguments.size) return false
                 val resolvedCall = callableExpression.getResolvedCall(context) ?: return false
-                resolvedCall.valueArguments.entries.forEach { (valueParameter, resolvedArgument) ->
+                resolvedCall.valueArguments.entries.forEach { entry ->
+                    val (valueParameter, resolvedArgument) = entry
                     val argumentExpression =
                             resolvedArgument.arguments.singleOrNull()?.getArgumentExpression() as? KtNameReferenceExpression
                             ?: return false
