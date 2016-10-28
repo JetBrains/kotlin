@@ -1,0 +1,34 @@
+public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.Serializable> {
+}
+
+////////////////////
+
+
+public abstract interface Intf2<T extends java.util.List<? extends java.lang.String>, M extends T> {
+}
+
+////////////////////
+
+
+public abstract interface OtherIntf<O extends java.lang.CharSequence> {
+}
+
+////////////////////
+
+
+public class BaseClass<B extends java.lang.Object> {
+
+    public BaseClass() {
+        super();
+    }
+}
+
+////////////////////
+
+
+public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Object> extends BaseClass<java.lang.RuntimeException> implements Intf<java.lang.Object, java.util.Date>, OtherIntf<java.lang.String> {
+
+    public MyClass() {
+        super();
+    }
+}
