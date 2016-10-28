@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
 import com.intellij.codeInsight.navigation.MethodImplementationsSearch
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
+import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
@@ -29,39 +28,31 @@ import com.intellij.util.QueryExecutor
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.psi.*
-
-import java.util.ArrayList
-
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.psi.*
+import java.util.*
 
 class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
     override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: Processor<PsiElement>): Boolean {
-        var consumer = consumer
+        val consumer = skipDelegatedMethodsConsumer(consumer)
         val element = queryParameters.element
         val scope = queryParameters.scope
-        consumer = skipDelegatedMethodsConsumer(consumer)
 
-        if (element is KtClass) {
-            return processClassImplementations(element, consumer)
+        return when (element) {
+            is KtClass ->
+                processClassImplementations(element, consumer)
+
+            is KtNamedFunction, is KtSecondaryConstructor ->
+                processFunctionImplementations(element as KtFunction, scope, consumer)
+
+            is KtProperty ->
+                processPropertyImplementations(element, scope, consumer)
+
+            is KtParameter ->
+                if (isFieldParameter(element)) processPropertyImplementations(element, scope, consumer) else true
+
+            else -> true
         }
-
-        if (element is KtNamedFunction || element is KtSecondaryConstructor) {
-            return processFunctionImplementations(element as KtFunction, scope, consumer)
-        }
-
-        if (element is KtProperty) {
-            return processPropertyImplementations(element, scope, consumer)
-        }
-
-        if (element is KtParameter) {
-
-            if (isFieldParameter(element)) {
-                return processPropertyImplementations(element, scope, consumer)
-            }
-        }
-
-        return true
     }
 
     companion object {
@@ -75,17 +66,14 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
             }
         }
 
-        private fun isDelegated(element: PsiElement): Boolean {
-            return element is KtLightMethod && element.isDelegated
-        }
+        private fun isDelegated(element: PsiElement): Boolean = element is KtLightMethod && element.isDelegated
 
         private fun isFieldParameter(parameter: KtParameter): Boolean {
-            return ApplicationManager.getApplication().runReadAction(
-                    Computable { KtPsiUtil.getClassIfParameterIsProperty(parameter) != null })
+            return runReadAction { KtPsiUtil.getClassIfParameterIsProperty(parameter) != null }
         }
 
         private fun processClassImplementations(klass: KtClass, consumer: Processor<PsiElement>): Boolean {
-            val psiClass = ApplicationManager.getApplication().runReadAction(Computable<com.intellij.psi.PsiClass> { klass.toLightClass() })
+            val psiClass = runReadAction { klass.toLightClass() }
             if (psiClass != null) {
                 return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer)
             }
@@ -93,23 +81,19 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         }
 
         private fun processFunctionImplementations(function: KtFunction, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val psiMethod = ApplicationManager.getApplication().runReadAction(Computable<com.intellij.psi.PsiMethod> { LightClassUtil.getLightClassMethod(function) })
+            val psiMethod = runReadAction { LightClassUtil.getLightClassMethod(function) }
 
-            if (psiMethod != null) {
-                MethodImplementationsSearch.processImplementations(psiMethod, consumer, scope)
-            }
-
-            return true
+            return psiMethod?.let { MethodImplementationsSearch.processImplementations(it, consumer, scope) } ?: true
         }
 
         private fun processPropertyImplementations(parameter: KtParameter, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = ApplicationManager.getApplication().runReadAction<LightClassUtil.PropertyAccessorsPsiMethods> { LightClassUtil.getLightClassPropertyMethods(parameter) }
+            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
 
             return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
         }
 
         private fun processPropertyImplementations(property: KtProperty, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = ApplicationManager.getApplication().runReadAction<LightClassUtil.PropertyAccessorsPsiMethods> { LightClassUtil.getLightClassPropertyMethods(property) }
+            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(property) }
 
             return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
         }
@@ -122,24 +106,15 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                 for (implementation in implementations) {
                     if (isDelegated(implementation)) continue
 
-                    val mirrorElement = if (implementation is KtLightMethod)
-                        implementation.kotlinOrigin
-                    else
-                        null
-                    if (mirrorElement is KtProperty || mirrorElement is KtParameter) {
-                        if (!consumer.process(mirrorElement)) {
-                            return false
-                        }
+                    val mirrorElement = (implementation as? KtLightMethod)?.kotlinOrigin
+                    val elementToProcess = when(mirrorElement) {
+                        is KtProperty, is KtParameter -> mirrorElement
+                        is KtPropertyAccessor -> if (mirrorElement.parent is KtProperty) mirrorElement.parent else implementation
+                        else -> implementation
                     }
-                    else if (mirrorElement is KtPropertyAccessor && mirrorElement.parent is KtProperty) {
-                        if (!consumer.process(mirrorElement.parent)) {
-                            return false
-                        }
-                    }
-                    else {
-                        if (!consumer.process(implementation)) {
-                            return false
-                        }
+
+                    if (!consumer.process(elementToProcess)) {
+                        return false
                     }
                 }
             }
