@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.ImportFilter
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
@@ -66,6 +67,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
@@ -175,6 +177,8 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
                 result = result.filter { it !is FunctionDescriptor }
             }
         }
+
+        result = result.filter { ImportFilter.shouldImport(file, it.fqNameSafe.asString()) }
 
         return if (result.size > 1)
             reduceCandidatesBasedOnDependencyRuleViolation(result, file)
