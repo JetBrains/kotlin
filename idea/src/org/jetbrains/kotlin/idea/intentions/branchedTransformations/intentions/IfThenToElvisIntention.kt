@@ -29,11 +29,16 @@ import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention::class)
+class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
+        IfThenToElvisIntention::class,
+        { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL)) }
+)
 
 class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
         KtIfExpression::class.java,
