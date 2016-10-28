@@ -19,8 +19,7 @@ buildscript {
 apply { plugin("kotlin") }
 
 fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
-    dependsOn(configurations.getByName("build-version"))
-    evaluationDependsOn(":prepare:build.version")
+    dependsOn(":prepare:build.version:prepare")
     manifest.attributes.apply {
         put("Built-By", rootProject.extra["manifest.impl.vendor"])
         put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
@@ -34,7 +33,7 @@ fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
 
 fun DependencyHandler.buildVersion(): Dependency {
     val cfg = configurations.create("build-version")
-    return add(cfg.name, project(":prepare:build.version", configuration = "prepared-build-version"))
+    return add(cfg.name, project(":prepare:build.version", configuration = "default"))
 }
 
 // TODO: move most of the code above to the root or utility script

@@ -1,6 +1,7 @@
 
+import org.gradle.jvm.tasks.Jar
 import java.io.File
-import java.lang.IllegalStateException
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer
 
 buildscript {
     repositories {
@@ -13,22 +14,32 @@ buildscript {
     }
 }
 
-val serializedCfg = configurations.create("default")
+val mainCfg = configurations.create("default")
 
 val builtinsSrc = File(rootDir, "core/builtins/src")
 val builtinsNative = File(rootDir, "core/builtins/native")
+val builtinsSerialized = File(buildDir, "builtins")
+val builtinsJar = File(buildDir, "builtins.jar")
 
-task("serialize-builtins") {
-    val outDir = File(buildDir, "builtins")
+artifacts.add(mainCfg.name, builtinsJar)
+
+val serialize = task("internal.serialize") {
+    val outDir = builtinsSerialized
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
     outputs.file(outDir)
     inputs.files(*inDirs)
     doLast {
-        org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer(dependOnOldBuiltIns = false)
+        BuiltInsSerializer(dependOnOldBuiltIns = false)
                 .serialize(outDir, inDirs.asList(), listOf()) { totalSize, totalFiles ->
                     println("Total bytes written: $totalSize to $totalFiles files")
                 }
     }
 }
 
-defaultTasks("serialize-builtins")
+val mainTask = task<Jar>("prepare") {
+    dependsOn(serialize)
+    from(builtinsSerialized)
+    into(builtinsJar)
+}
+
+defaultTasks(mainTask.name)

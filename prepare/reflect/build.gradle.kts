@@ -28,8 +28,7 @@ repositories {
 apply { plugin("com.github.johnrengelman.shadow") }
 
 fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
-    dependsOn(configurations.getByName("build-version"))
-    evaluationDependsOn(":prepare:build.version")
+    dependsOn(":prepare:build.version:prepare")
     manifest.attributes.apply {
         put("Built-By", rootProject.extra["manifest.impl.vendor"])
         put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
@@ -43,33 +42,53 @@ fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
 
 fun DependencyHandler.buildVersion(): Dependency {
     val cfg = configurations.create("build-version")
-    return add(cfg.name, project(":prepare:build.version", configuration = "prepared-build-version"))
+    return add(cfg.name, project(":prepare:build.version", configuration = "default"))
 }
 
-// TODO: move most of the code above to the root or utility script
+fun DependencyHandler.projectDep(name: String): Dependency = project(name, configuration = "default")
+fun DependencyHandler.projectDepIntransitive(name: String): Dependency =
+        project(name, configuration = "default").apply { isTransitive = false }
+
+fun commonDep(coord: String): String {
+    val parts = coord.split(':')
+    return when (parts.size) {
+        1 -> "$coord:$coord:${rootProject.extra["versions.$coord"]}"
+        2 -> "${parts[0]}:${parts[1]}:${rootProject.extra["versions.${parts[1]}"]}"
+        3 -> coord
+        else -> throw IllegalArgumentException("Illegal maven coordinates: $coord")
+    }
+}
+
+fun commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
+
+fun KotlinDependencyHandler.protobufLite() = project(":custom-dependencies:protobuf-lite", configuration = "default").apply { isTransitive = false }
+fun protobufLiteTask() = ":custom-dependencies:protobuf-lite:prepare"
+
+// TODO: common ^ 8< ----
 
 // Set to false to prevent relocation and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection
 val obfuscateReflect = true
 
-val packReflectCfg = configurations.create("packed-reflect")
+val mainCfg = configurations.create("default")
 
 val outputReflectJarFileBase = "$buildDir/libs/kotlin-reflect"
 
-artifacts.add("packed-reflect", File(outputReflectJarFileBase + ".jar"))
+artifacts.add(mainCfg.name, File(outputReflectJarFileBase + ".jar"))
 
 dependencies {
-    "packed-reflect"(project(":core")) { isTransitive = false }
-    "packed-reflect"(project(":core.reflection")) { isTransitive = false }
-    "packed-reflect"(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-lite")) { isTransitive = false }
-    "packed-reflect"("javax.inject:javax.inject:1")
+    mainCfg.name(projectDepIntransitive(":core"))
+    mainCfg.name(projectDepIntransitive(":core.reflection"))
+    mainCfg.name(protobufLite())
+    mainCfg.name(commonDep("javax.inject"))
     buildVersion()
 }
 
 val prePackReflectTask = task<ShadowJar>("pre-pack-reflect") {
     classifier = if (obfuscateReflect) outputReflectJarFileBase + "_beforeStrip" else outputReflectJarFileBase
-    configurations = listOf(packReflectCfg)
+    configurations = listOf(mainCfg)
     setupRuntimeJar("Kotlin Reflect")
-    from(packReflectCfg.files)
+    dependsOn(":core:assemble", ":core.reflection:assemble", protobufLiteTask())
+    from(mainCfg.files)
     from(project(":core").file("descriptor.loader.java/src")) {
         include("META-INF/services/**")
     }
@@ -81,7 +100,7 @@ val prePackReflectTask = task<ShadowJar>("pre-pack-reflect") {
     }
 }
 
-task("pack-reflect") {
+val mainTask = task("prepare") {
     dependsOn(prePackReflectTask)
     val inFile = File(outputReflectJarFileBase + "_beforeStrip.jar")
     val outFile = File(outputReflectJarFileBase + ".jar")
@@ -141,5 +160,5 @@ task("pack-reflect") {
     }
 }
 
-defaultTasks("pack-reflect")
+defaultTasks(mainTask.name)
 

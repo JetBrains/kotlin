@@ -3,16 +3,16 @@ import java.io.File
 
 val buildVersionFilePath = "${rootProject.extra["distDir"]}/build.txt"
 
-val cfg = configurations.create("prepared-build-version")
+val mainCfg = configurations.create("default")
 
-artifacts.add(cfg.name, file(buildVersionFilePath))
+artifacts.add(mainCfg.name, file(buildVersionFilePath))
 
-task("make-build-version") {
+val mainTask = task("prepare") {
     File(buildVersionFilePath).apply {
         parentFile.mkdirs()
         writeText(rootProject.extra["build.number"].toString())
     }
 }
 
-defaultTasks("make-build-version")
+defaultTasks(mainTask.name)
 

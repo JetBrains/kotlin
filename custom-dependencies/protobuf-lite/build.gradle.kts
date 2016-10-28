@@ -25,7 +25,7 @@ repositories {
     mavenCentral()
 }
 
-val protobufCfg = configurations.create("protobuf-lite")
+val mainCfg = configurations.create("default")
 
 val protobufVersion = rootProject.extra["versions.protobuf-java"]
 val protobufJarPrefix = "protobuf-$protobufVersion"
@@ -33,16 +33,16 @@ val renamedOutputJarPathWithoutExt = "$buildDir/jars/$protobufJarPrefix-relocate
 val renamedOutputJarPath = "$renamedOutputJarPathWithoutExt.jar"
 val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
 
-artifacts.add("protobuf-lite", File(outputJarPath))
+artifacts.add(mainCfg.name, File(outputJarPath))
 
 dependencies {
-    "protobuf-lite"("com.google.protobuf:protobuf-java:$protobufVersion")
+    mainCfg.name("com.google.protobuf:protobuf-java:$protobufVersion")
 }
 
-val relocateTask = task<ShadowJar>("relocate-protobuf") {
+val relocateTask = task<ShadowJar>("internal.relocate-protobuf") {
     classifier = renamedOutputJarPathWithoutExt // TODO: something fishy about the usage here, according to docs only suffix is enough here, but it doesn't work
-    this.configurations = listOf(protobufCfg)
-    from(protobufCfg.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
+    this.configurations = listOf(mainCfg)
+    from(mainCfg.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
 //    into(jarsDir)
 //    doFirst {
 //        File(jarsDir).mkdirs()
@@ -52,7 +52,7 @@ val relocateTask = task<ShadowJar>("relocate-protobuf") {
     }
 }
 
-val prepareTask = task("prepare-protobuf-lite") {
+val mainTask = task("prepare") {
     dependsOn(relocateTask)
     val inputJar = renamedOutputJarPath
     inputs.files(inputJar)
@@ -121,5 +121,5 @@ val prepareTask = task("prepare-protobuf-lite") {
     }
 }
 
-defaultTasks("prepare-protobuf-lite")
+defaultTasks(mainTask.name)
 

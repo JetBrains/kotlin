@@ -1,4 +1,5 @@
 
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -16,6 +17,23 @@ buildscript {
 
 apply { plugin("kotlin") }
 
+fun commonDep(coord: String): String {
+    val parts = coord.split(':')
+    return when (parts.size) {
+        1 -> "$coord:$coord:${rootProject.extra["versions.$coord"]}"
+        2 -> "${parts[0]}:${parts[1]}:${rootProject.extra["versions.${parts[1]}"]}"
+        3 -> coord
+        else -> throw IllegalArgumentException("Illegal maven coordinates: $coord")
+    }
+}
+
+fun commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
+
+fun KotlinDependencyHandler.protobufLite() = project(":custom-dependencies:protobuf-lite", configuration = "default").apply { isTransitive = false }
+fun protobufLiteTask() = ":custom-dependencies:protobuf-lite:prepare"
+
+// TODO: common ^ 8< ----
+
 repositories {
     mavenLocal()
     maven { setUrl(rootProject.extra["repo"]) }
@@ -25,11 +43,8 @@ repositories {
 dependencies {
     compile(project(":core.builtins"))
     compile(project(":libraries:stdlib"))
-    compile(project(":custom-dependencies:protobuf-lite", configuration = "protobuf-lite")) { isTransitive = false }
-    compile("javax.inject", "javax.inject", "1")
-//    compile("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlinVersion"]}")
-//    compile("org.jetbrains.kotlin:kotlin-reflect:${rootProject.extra["kotlinVersion"]}")
-//    classpath("org.jetbrains.kotlin:kotlin-compiler-embeddable:${rootProject.extra["kotlinVersion"]}")
+    compile(protobufLite())
+    compile(commonDep("javax.inject"))
 }
 
 configure<JavaPluginConvention> {
@@ -48,7 +63,12 @@ configure<JavaPluginConvention> {
     }
 }
 
+tasks.withType<JavaCompile> {
+    dependsOn(protobufLiteTask())
+}
+
 tasks.withType<KotlinCompile> {
+    dependsOn(protobufLiteTask())
     kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
 }
 

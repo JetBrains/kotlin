@@ -31,8 +31,7 @@ repositories {
 apply { plugin("com.github.johnrengelman.shadow") }
 
 fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
-    dependsOn(configurations.getByName("build-version"))
-    evaluationDependsOn(":prepare:build.version")
+    dependsOn(":prepare:build.version:prepare")
     manifest.attributes.apply {
         put("Built-By", rootProject.extra["manifest.impl.vendor"])
         put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
@@ -46,35 +45,35 @@ fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
 
 fun DependencyHandler.buildVersion(): Dependency {
     val cfg = configurations.create("build-version")
-    return add(cfg.name, project(":prepare:build.version", configuration = "prepared-build-version"))
+    return add(cfg.name, project(":prepare:build.version", configuration = "default"))
 }
 
-// TODO: move most of the code above to the root or utility script
-val packRuntimeCfg = configurations.create("packed-runtime")
+fun DependencyHandler.projectDep(name: String): Dependency = project(name, configuration = "default")
+fun DependencyHandler.projectDepIntransitive(name: String): Dependency =
+        project(name, configuration = "default").apply { isTransitive = false }
+
+// TODO: common ^ 8< ----
+
+val mainCfg = configurations.create("default")
 
 val outputRuntimeJarFileBase = "$buildDir/libs/kotlin-runtime"
 
-artifacts.add("packed-runtime", File(outputRuntimeJarFileBase + ".jar"))
+artifacts.add(mainCfg.name, File(outputRuntimeJarFileBase + ".jar"))
 
 dependencies {
-    "packed-runtime"(project(":core.builtins")) { isTransitive = false }
-    "packed-runtime"(project(":libraries:stdlib")) { isTransitive = false }
-    "packed-runtime"(project(":core.builtins.serialized", configuration = "default"))
+    mainCfg.name(projectDepIntransitive(":core.builtins"))
+    mainCfg.name(projectDepIntransitive(":libraries:stdlib"))
+    mainCfg.name(project(":core.builtins.serialized", configuration = "default"))
     buildVersion()
 }
 
-task<ShadowJar>("pack-runtime") {
+val mainTask = task<ShadowJar>("prepare") {
     classifier = outputRuntimeJarFileBase
-    configurations = listOf(packRuntimeCfg)
+    configurations = listOf(mainCfg)
+    dependsOn(":core.builtins.serialized:prepare", ":core.builtins:assemble", ":libraries:stdlib:assemble")
     setupRuntimeJar("Kotlin Runtime")
-    from(packRuntimeCfg.files)
+    from(mainCfg.files)
 }
 
-//task<Jar>("aa") {
-//    from(project(":core").file("descriptor.loader.java/src")) {
-//        include("META-INF/services/**")
-//    }
-//}
-
-defaultTasks("pack-runtime")
+defaultTasks(mainTask.name)
 

@@ -1,4 +1,5 @@
 
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -14,6 +15,15 @@ buildscript {
 }
 
 apply { plugin("kotlin") }
+
+fun KotlinDependencyHandler.protobufLite() = project(":custom-dependencies:protobuf-lite", configuration = "default").apply { isTransitive = false }
+fun protobufLiteTask() = ":custom-dependencies:protobuf-lite:prepare"
+
+// TODO: common ^ 8< ----
+
+dependencies {
+    compile(protobufLite())
+}
 
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
@@ -32,7 +42,12 @@ configure<JavaPluginConvention> {
 //    }
 //}
 
+tasks.withType<JavaCompile> {
+    dependsOn(protobufLiteTask())
+}
+
 tasks.withType<KotlinCompile> {
+    dependsOn(protobufLiteTask())
     kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "moduleName", "kotlin-builtins")
 }
 

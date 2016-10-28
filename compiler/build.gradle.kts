@@ -34,6 +34,8 @@ fun commonDep(coord: String): String {
 
 fun commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
 
+// TODO: common ^ 8< ----
+
 dependencies {
     compile(project(":prepare:runtime", configuration = "packed-runtime"))
     compile(project(":libraries:kotlin.test"))
