@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
 import com.intellij.codeInsight.navigation.MethodImplementationsSearch
-import com.intellij.openapi.application.runReadAction
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
@@ -27,9 +29,13 @@ import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
 
 class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
@@ -41,6 +47,14 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         return when (element) {
             is KtClass ->
                 processClassImplementations(element, consumer)
+
+            is KtLightClass -> {
+                val useScope = runReadAction { element.useScope }
+                if (useScope is LocalSearchScope)
+                    processLightClassLocalImplementations(element, useScope, consumer)
+                else
+                    true
+            }
 
             is KtNamedFunction, is KtSecondaryConstructor ->
                 processFunctionImplementations(element as KtFunction, scope, consumer)
@@ -73,11 +87,30 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         }
 
         private fun processClassImplementations(klass: KtClass, consumer: Processor<PsiElement>): Boolean {
-            val psiClass = runReadAction { klass.toLightClass() }
-            if (psiClass != null) {
-                return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer)
+            val psiClass = runReadAction { klass.toLightClass() } ?: return true
+
+            val searchScope = runReadAction { psiClass.useScope }
+            if (searchScope is LocalSearchScope) {
+                return processLightClassLocalImplementations(psiClass, searchScope, consumer)
             }
-            return true
+
+            return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer)
+        }
+
+        private fun processLightClassLocalImplementations(psiClass: KtLightClass,
+                                                          searchScope: LocalSearchScope,
+                                                          consumer: Processor<PsiElement>): Boolean {
+            // workaround for IDEA optimization that uses Java PSI traversal to locate inheritors in local search scope
+            val globalScope = GlobalSearchScope.filesScope(psiClass.project, searchScope.virtualFiles.toList())
+            return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, globalScope, true), Processor<PsiClass> { candidate ->
+                val candidateOrigin = candidate.unwrapped ?: candidate
+                if (candidateOrigin in searchScope) {
+                    consumer.process(candidate)
+                }
+                else {
+                    true
+                }
+            })
         }
 
         private fun processFunctionImplementations(function: KtFunction, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
