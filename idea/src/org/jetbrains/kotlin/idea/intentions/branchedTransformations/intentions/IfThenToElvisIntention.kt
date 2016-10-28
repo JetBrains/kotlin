@@ -30,11 +30,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.nullability
 
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention::class)
 
@@ -75,6 +72,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
             is KtIsExpression -> {
                 val targetType = context[BindingContext.TYPE, condition.typeReference] ?: return false
                 if (TypeUtils.isNullableType(targetType)) return false
+                // The following check can be removed after fix of KT-14576
                 val originalType = condition.leftHandSide.getType(context) ?: return false
                 if (!targetType.isSubtypeOf(originalType)) return false
 
