@@ -317,6 +317,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("InsideAnonymousObject.kt")
+    public void testInsideAnonymousObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/InsideAnonymousObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IntConstantTypeBug.kt")
     public void testIntConstantTypeBug() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IntConstantTypeBug.kt");

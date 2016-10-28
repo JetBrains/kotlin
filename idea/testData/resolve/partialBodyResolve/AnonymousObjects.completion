@@ -7,18 +7,18 @@ open class C(p: Int) {
 fun foo(p: String?) {
     val o = object : Runnable {
         override fun run() {
-            if (p == null) return
-            print(p.size)
+            /* STATEMENT DELETED: if (p == null) return */
+            /* STATEMENT DELETED: print(p.length) */
         }
     }
 
     val c = object : C(p!!.size) {
         override fun f() {
-            super.f()
-            if (p == null) return
-            print(p.size)
+            /* STATEMENT DELETED: super.f() */
+            /* STATEMENT DELETED: if (p == null) return */
+            /* STATEMENT DELETED: print(p.length) */
         }
     }
 
-    <caret>p?.size
+    <caret>p?.length
 }

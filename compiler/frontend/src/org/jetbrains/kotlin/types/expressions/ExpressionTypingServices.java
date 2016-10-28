@@ -106,7 +106,7 @@ public class ExpressionTypingServices {
             @NotNull ContextDependency contextDependency
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType, contextDependency
+                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(new Function1<KtExpression, KtExpression>() {
