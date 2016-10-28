@@ -89,3 +89,16 @@ task aritmetic(type: KonanTest) {
 task sum1(type: KonanTest) {
     source = "codegen/function/sum_foo_bar.kt"
 }
+
+task sum2(type: KonanTest) {
+    source = "codegen/function/sum_imm.kt"
+}
+
+task sum_3const(type: KonanTest) {
+    source = "codegen/function/sum_3const.kt"
+}
+
+// TODO: waiting for boolean to be implemented
+//task bool_yes(type: KonanTest) {
+//    source = "codegen/function/boolean.kt"
+//}
