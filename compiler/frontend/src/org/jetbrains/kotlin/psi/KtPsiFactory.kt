@@ -78,6 +78,9 @@ class KtPsiFactory(private val project: Project) {
         return if (expression.text == text) expression else null
     }
 
+    fun createThisExpression() =
+                (createExpression("this.x") as KtQualifiedExpression).receiverExpression as KtThisExpression
+
     fun createClassLiteral(className: String): KtClassLiteralExpression =
             createExpression("$className::class") as KtClassLiteralExpression
 
