@@ -11231,6 +11231,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("platformTypes.kt")
+        public void testPlatformTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/platformTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("safeSortedMap.kt")
         public void testSafeSortedMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/safeSortedMap.kt");
