@@ -12548,6 +12548,90 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/multiplatform")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Multiplatform extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInMultiplatform() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TopLevelFun extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInTopLevelFun() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/topLevelFun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("callPlatformFun.kt")
+                public void testCallPlatformFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/callPlatformFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("conflictingPlatformDeclarations.kt")
+                public void testConflictingPlatformDeclarations() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingPlatformDeclarations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("conflictingPlatformDefinitions.kt")
+                public void testConflictingPlatformDefinitions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingPlatformDefinitions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("declarationAndDefinitionInDIfferentPackages.kt")
+                public void testDeclarationAndDefinitionInDIfferentPackages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/declarationAndDefinitionInDIfferentPackages.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("declarationWithoutDefinition.kt")
+                public void testDeclarationWithoutDefinition() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/declarationWithoutDefinition.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("defaultArguments.kt")
+                public void testDefaultArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/defaultArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("definitionWithoutDeclaration.kt")
+                public void testDefinitionWithoutDeclaration() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/definitionWithoutDeclaration.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inlineFun.kt")
+                public void testInlineFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/inlineFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("platformDeclarationWithBody.kt")
+                public void testPlatformDeclarationWithBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/platformDeclarationWithBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("platformDefinitionWithoutBody.kt")
+                public void testPlatformDefinitionWithoutBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/platformDefinitionWithoutBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simplePlatformFun.kt")
+                public void testSimplePlatformFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/simplePlatformFun.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/namedArguments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -252,6 +252,8 @@ class OverloadResolver(
                 if (member1 == member2) continue
                 if (isConstructorsOfDifferentRedeclaredClasses(member1, member2)) continue
                 if (isTopLevelMainInDifferentFiles(member1, member2)) continue
+                if (isDefinitionsForDifferentPlatforms(member1, member2)) continue
+                if (isPlatformDeclarationAndDefinition(member1, member2) || isPlatformDeclarationAndDefinition(member2, member1)) continue
 
                 if (!overloadChecker.isOverloadable(member1, member2)) {
                     redeclarations.add(member1)
@@ -279,6 +281,18 @@ class OverloadResolver(
         val file1 = DescriptorToSourceUtils.getContainingFile(member1)
         val file2 = DescriptorToSourceUtils.getContainingFile(member2)
         return file1 == null || file2 == null || file1 !== file2
+    }
+
+    private fun isPlatformDeclarationAndDefinition(declaration: DeclarationDescriptor, definition: DeclarationDescriptor): Boolean {
+        return declaration is MemberDescriptor && declaration.isPlatform &&
+               definition is MemberDescriptor && !definition.isPlatform
+    }
+
+    private fun isDefinitionsForDifferentPlatforms(member1: DeclarationDescriptorNonRoot, member2: DeclarationDescriptorNonRoot): Boolean {
+        if (member1 !is MemberDescriptor || member2 !is MemberDescriptor) return false
+
+        return member1.isImpl && member2.isImpl &&
+               member1.getMultiTargetPlatform() != member2.getMultiTargetPlatform()
     }
 
     private fun reportRedeclarations(redeclarations: Collection<DeclarationDescriptorNonRoot>) {

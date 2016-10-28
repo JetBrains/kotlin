@@ -257,6 +257,9 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless");
         MAP.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited");
 
+        MAP.put(PLATFORM_DECLARATION_WITH_BODY, "Platform declaration must not have a body");
+        MAP.put(PLATFORM_DECLARATION_WITH_DEFAULT_PARAMETER, "Platform declaration cannot have parameters with default values");
+
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
         MAP.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", NAME);

@@ -1,0 +1,19 @@
+// -- Module: <m1-common> --
+package
+
+public inline platform fun inlineFun(): kotlin.Unit
+public platform fun nonInlineFun(): kotlin.Unit
+
+
+// -- Module: <m2-jvm> --
+package
+
+public impl fun inlineFun(): kotlin.Unit
+public impl fun nonInlineFun(): kotlin.Unit
+
+
+// -- Module: <m3-js> --
+package
+
+public inline impl fun inlineFun(): kotlin.Unit
+public inline impl fun nonInlineFun(): kotlin.Unit

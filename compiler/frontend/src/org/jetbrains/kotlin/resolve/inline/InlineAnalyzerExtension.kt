@@ -134,25 +134,17 @@ object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
                 containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL
             }
 
-    private fun checkHasInlinableAndNullability(
-            functionDescriptor: FunctionDescriptor,
-            function: KtFunction,
-            trace: BindingTrace) {
-        var hasInlinable = false
-        val parameters = functionDescriptor.valueParameters
-        var index = 0
-        for (parameter in parameters) {
-            hasInlinable = hasInlinable or checkInlinableParameter(parameter, function.valueParameters[index++], functionDescriptor, trace)
+    private fun checkHasInlinableAndNullability(functionDescriptor: FunctionDescriptor, function: KtFunction, trace: BindingTrace) {
+        for ((parameter, descriptor) in function.valueParameters.zip(functionDescriptor.valueParameters)) {
+            if (checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)) return
         }
 
-        hasInlinable = hasInlinable or InlineUtil.containsReifiedTypeParameters(functionDescriptor)
+        if (InlineUtil.containsReifiedTypeParameters(functionDescriptor) ||
+            functionDescriptor.isInlineOnlyOrReified() ||
+            functionDescriptor.isPlatform) return
 
-        if (!hasInlinable && !functionDescriptor.isInlineOnlyOrReified()) {
-            val modifierList = function.modifierList
-            val inlineModifier = modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
-            val reportOn = inlineModifier ?: function
-            trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor))
-        }
+        val reportOn = function.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: function
+        trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor))
     }
 
     fun checkInlinableParameter(

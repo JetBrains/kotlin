@@ -1,0 +1,18 @@
+// -- Module: <m1-common> --
+package
+
+public platform fun foo(): kotlin.Unit
+
+
+// -- Module: <m2-jvm> --
+package
+
+public impl fun foo(): kotlin.Unit
+public impl fun foo(): kotlin.Unit
+
+
+// -- Module: <m3-js> --
+package
+
+public impl fun foo(): kotlin.Unit
+public impl fun foo(): kotlin.Unit

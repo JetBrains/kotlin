@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -148,7 +149,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             LanguageVersionSettings languageVersionSettings = loadLanguageVersionSettings(testFilesInModule);
             ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), module);
 
-            boolean separateModules = groupedByModule.size() == 1;
+            boolean separateModules = groupedByModule.size() == 1 && groupedByModule.keySet().iterator().next() == null;
             AnalysisResult result = analyzeModuleContents(moduleContext, jetFiles, moduleTrace, languageVersionSettings, separateModules);
             if (separateModules) {
                 modules.put(testModule, (ModuleDescriptorImpl) result.getModuleDescriptor());
@@ -448,7 +449,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             ModuleDescriptorImpl module =
                     testModule == null ?
                     createSealedModule(storageManager) :
-                    createModule("<" + testModule.getName() + ">", storageManager);
+                    createModule(testModule.getName(), storageManager);
 
             modules.put(testModule, module);
         }
@@ -471,13 +472,24 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return new ModuleDescriptorImpl(Name.special(moduleName), storageManager, new JvmBuiltIns(storageManager));
+        String nameSuffix = StringsKt.substringAfterLast(moduleName, "-", "");
+        MultiTargetPlatform platform =
+                nameSuffix.isEmpty() ? null :
+                nameSuffix.equals("common") ? MultiTargetPlatform.Common.INSTANCE : new MultiTargetPlatform.Specific(nameSuffix);
+        Map capabilities =
+                platform == null
+                ? Collections.emptyMap()
+                : Collections.singletonMap(MultiTargetPlatform.CAPABILITY, platform);
+        return new ModuleDescriptorImpl(
+                Name.special("<" + moduleName + ">"), storageManager, new JvmBuiltIns(storageManager), capabilities
+        );
     }
 
     @NotNull
     protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
-        ModuleDescriptorImpl moduleDescriptor = createModule("<test-module>", storageManager);
+        ModuleDescriptorImpl moduleDescriptor = createModule("test-module", storageManager);
         moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.getBuiltIns().getBuiltInsModule());
         return moduleDescriptor;
     }

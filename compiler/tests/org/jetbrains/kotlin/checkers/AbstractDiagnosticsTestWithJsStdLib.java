@@ -88,13 +88,13 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     @NotNull
     @Override
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return new ModuleDescriptorImpl(Name.special(moduleName), storageManager, JsPlatform.INSTANCE.getBuiltIns());
+        return new ModuleDescriptorImpl(Name.special("<" + moduleName + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns());
     }
 
     @NotNull
     @Override
     protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
-        ModuleDescriptorImpl module = createModule("<kotlin-js-test-module>", storageManager);
+        ModuleDescriptorImpl module = createModule("kotlin-js-test-module", storageManager);
 
         List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
         dependencies.add(module);

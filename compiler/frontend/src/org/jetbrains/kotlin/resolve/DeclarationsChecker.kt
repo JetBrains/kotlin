@@ -732,8 +732,24 @@ class DeclarationsChecker(
             }
         }
         else /* top-level only */ {
-            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
+            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isPlatform) {
                 trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
+            }
+        }
+
+        if (functionDescriptor.isPlatform) {
+            checkPlatformFunction(function)
+        }
+    }
+
+    private fun checkPlatformFunction(function: KtNamedFunction) {
+        if (function.hasBody()) {
+            trace.report(PLATFORM_DECLARATION_WITH_BODY.on(function))
+        }
+
+        for (parameter in function.valueParameters) {
+            if (parameter.hasDefaultValue()) {
+                trace.report(PLATFORM_DECLARATION_WITH_DEFAULT_PARAMETER.on(parameter))
             }
         }
     }

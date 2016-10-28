@@ -184,6 +184,10 @@ class FunctionDescriptorResolver(
         functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
+        functionDescriptor.isPlatform = function.hasModifier(KtTokens.PLATFORM_KEYWORD) ||
+                                        containingDescriptor is ClassDescriptor && containingDescriptor.isPlatform
+        functionDescriptor.isImpl = function.hasModifier(KtTokens.IMPL_KEYWORD)
+
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
             ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.type.annotations)
@@ -293,6 +297,12 @@ class FunctionDescriptorResolver(
                 isPrimary,
                 declarationToTrace.toSourceElement()
         )
+        if (classDescriptor.isPlatform) {
+            constructorDescriptor.isPlatform = true
+        }
+        if (classDescriptor.isImpl) {
+            constructorDescriptor.isImpl = true
+        }
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
                 scope,
