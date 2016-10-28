@@ -133,6 +133,20 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 }
                 TODO()
             }
+
+            is IrConst<*> -> when (value.kind) {
+                IrConstKind.Null    -> TODO() // LLVMConstPointerNull
+                IrConstKind.Boolean -> TODO()
+                IrConstKind.Char    -> TODO()
+                IrConstKind.Byte    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Byte).toLong(),  1)
+                IrConstKind.Short   -> return LLVMConstInt(LLVMInt32Type(), (value.value as Short).toLong(), 1)
+                IrConstKind.Int     -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(),   1)
+                IrConstKind.Long    -> return LLVMConstInt(LLVMInt64Type(),  value.value as Long,            1)
+                IrConstKind.String  -> TODO()
+                IrConstKind.Float   -> TODO()
+                IrConstKind.Double  -> TODO()
+            }
+
             null -> return null
             else -> {
                 TODO()
