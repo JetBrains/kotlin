@@ -54,27 +54,46 @@ fun readClassFile(project: Project,
                   file: VirtualFile): ByteArray? {
     val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
 
-    when {
-        ProjectRootsUtil.isLibrarySourceFile(project, file) -> {
-            val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
+    fun readFromLibrary() : ByteArray? {
+        if (!ProjectRootsUtil.isLibrarySourceFile(project, file)) return null
 
-            val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
-            val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
-            return classFile.contentsToByteArray()
-        }
+        val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
 
-        ProjectRootsUtil.isProjectSourceFile(project, file) -> {
-            val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
-            val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
-
-            val className = fqNameWithInners.asString().replace('.', '$')
-            val classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
-
-            return classByDirectory.readBytes()
-        }
-
-        else -> return null
+        val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
+        val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
+        return classFile.contentsToByteArray()
     }
+
+    fun readFromOutput(isForTestClasses: Boolean): ByteArray? {
+        if (!ProjectRootsUtil.isProjectSourceFile(project, file)) return null
+
+        val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
+        val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ isForTestClasses) ?: return null
+
+        val className = fqNameWithInners.asString().replace('.', '$')
+        var classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir)
+
+        if (classByDirectory == null) {
+            if (!isForTestClasses) {
+                return null
+            }
+
+            val outputModeDirName = outputDir.name
+            val androidTestOutputDir = outputDir.parent?.parent?.findChild("androidTest")?.findChild(outputModeDirName) ?: return null
+
+            classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, androidTestOutputDir) ?: return null
+        }
+
+        return classByDirectory.readBytes()
+    }
+
+    fun readFromSourceOutput() : ByteArray? = readFromOutput(false)
+
+    fun readFromTestOutput() : ByteArray? = readFromOutput(true)
+
+    return readFromLibrary() ?:
+           readFromSourceOutput() ?:
+           readFromTestOutput()
 }
 
 private fun findClassFileByPath(packageName: String, className: String, outputDir: VirtualFile): File? {

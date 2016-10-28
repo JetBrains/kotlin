@@ -264,7 +264,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
         try {
             if (myDebugProcess.isDexDebug()) {
-                val inlineLocations = getLocationsOfInlinedLine(type, position, myDebugProcess.searchScope)
+                val inlineLocations = runReadAction { getLocationsOfInlinedLine(type, position, myDebugProcess.searchScope) }
                 if (!inlineLocations.isEmpty()) {
                     return inlineLocations
                 }
