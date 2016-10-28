@@ -41,6 +41,7 @@ import java.io.PrintStream
 import java.net.URI
 import java.util.jar.Manifest
 import kotlin.reflect.KClass
+import kotlin.test.*
 
 class ScriptUtilIT {
 
@@ -121,9 +122,14 @@ done
         try {
             val configuration = CompilerConfiguration().apply {
                 addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-                val rtJar = System.getProperty("kotlin.java.runtime.jar")
-                Assert.assertNotNull(rtJar)
-                addJvmClasspathRoot(File(rtJar))
+                fun addJarFromSystemProperty(key: String) {
+                    val jarFile = File(System.getProperty(key) ?: fail("'$key' property is not set"))
+                    assertTrue(jarFile.exists())
+                    addJvmClasspathRoot(jarFile)
+                }
+                addJarFromSystemProperty("kotlin.java.runtime.jar")
+                addJarFromSystemProperty("kotlin.java.stdlib.jar")
+
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
                 getResourcePathForClass(DependsOn::class.java).let {

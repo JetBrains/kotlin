@@ -96,7 +96,7 @@ class AnnotationsRemoverTest {
 
         val byteOut = ByteArrayOutputStream()
         val exitCode = PrintStream(byteOut).use { err ->
-            K2JVMCompiler().exec(err, *ktFiles, "-d", outputDir.absolutePath)
+            K2JVMCompiler().exec(err, *ktFiles, "-d", outputDir.absolutePath, "-Xadd-compiler-builtins")
         }
 
         if (exitCode != ExitCode.OK) {
