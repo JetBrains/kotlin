@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.parsing.KotlinParsing;
 
 import java.util.Collections;
 import java.util.List;
@@ -65,6 +66,14 @@ public class KtConstructorDelegationCall extends KtElementImpl implements KtCall
         return findChildByClass(KtConstructorDelegationReferenceExpression.class);
     }
 
+    /**
+     * @return true if this delegation call is not present in the source code. Note that we always parse delegation calls
+     * for secondary constructors, even if there's no explicit call in the source (see {@link KotlinParsing#parseSecondaryConstructor}).
+     *
+     *     class Foo {
+     *         constructor(name: String)   // <--- implicit constructor delegation call (empty element after RPAR)
+     *     }
+     */
     public boolean isImplicit() {
         KtConstructorDelegationReferenceExpression callee = getCalleeExpression();
         return callee != null && callee.getFirstChild() == null;

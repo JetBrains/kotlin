@@ -493,7 +493,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtDeclaration> PLATFORM_DECLARATION_WITH_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtParameter> PLATFORM_DECLARATION_WITH_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
-
+    DiagnosticFactory0<KtConstructorDelegationCall> PLATFORM_CLASS_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtParameter> PLATFORM_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> PLATFORM_PROPERTY_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

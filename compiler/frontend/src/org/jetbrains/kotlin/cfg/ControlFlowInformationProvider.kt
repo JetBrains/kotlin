@@ -636,9 +636,8 @@ class ControlFlowInformationProvider private constructor(
         when (owner) {
             is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
                 val containingClass = owner.getContainingClassOrObject()
-                val containingClassDescriptor = trace.get(
-                        DECLARATION_TO_DESCRIPTOR, containingClass)
-                if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor)) {
+                val containingClassDescriptor = trace.get(DECLARATION_TO_DESCRIPTOR, containingClass) as? ClassDescriptor
+                if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor) && containingClassDescriptor?.isPlatform == false) {
                     report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
                 }
             }
@@ -652,6 +651,7 @@ class ControlFlowInformationProvider private constructor(
                 if (isMain
                     || functionDescriptor.isOverridableOrOverrides
                     || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                    || functionDescriptor.isPlatform || functionDescriptor.isImpl
                     || OperatorNameConventions.GET_VALUE == functionName
                     || OperatorNameConventions.SET_VALUE == functionName
                     || OperatorNameConventions.PROPERTY_DELEGATED == functionName) {

@@ -12556,6 +12556,51 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PlatformClass extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInPlatformClass() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/platformClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("classKinds.kt")
+                public void testClassKinds() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/classKinds.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("explicitConstructorDelegation.kt")
+                public void testExplicitConstructorDelegation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/explicitConstructorDelegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("platformClassMember.kt")
+                public void testPlatformClassMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/platformClassMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("platformClassWithFunctionBody.kt")
+                public void testPlatformClassWithFunctionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/platformClassWithFunctionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simplePlatformClass.kt")
+                public void testSimplePlatformClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/simplePlatformClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superClass.kt")
+                public void testSuperClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/superClass.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -19888,6 +19933,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("noLocalDelegatedPropertyInScript.kt")
             public void testNoLocalDelegatedPropertyInScript() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noLocalDelegatedPropertyInScript.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noMultiplatformProjects.kt")
+            public void testNoMultiplatformProjects() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sourceCompatibility/noMultiplatformProjects.kt");
                 doTest(fileName);
             }
 

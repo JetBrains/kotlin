@@ -228,12 +228,36 @@ class DeclarationsChecker(
         TypeAliasExpander(reportStrategy).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
     }
 
-    private fun checkConstructorDeclaration(constructorDescriptor: ClassConstructorDescriptor, declaration: KtDeclaration) {
+    private fun checkConstructorDeclaration(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
         declaration.checkTypeReferences()
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
         identifierChecker.checkDeclaration(declaration, trace)
         checkVarargParameters(trace, constructorDescriptor)
         checkConstructorVisibility(constructorDescriptor, declaration)
+        checkPlatformClassConstructor(constructorDescriptor, declaration)
+    }
+
+    private fun checkPlatformClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
+        if (!constructorDescriptor.isPlatform) return
+
+        if (declaration.hasBody()) {
+            trace.report(PLATFORM_DECLARATION_WITH_BODY.on(declaration))
+        }
+
+        if (declaration is KtPrimaryConstructor && !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass)) {
+            for (parameter in declaration.valueParameters) {
+                if (parameter.hasValOrVar()) {
+                    trace.report(PLATFORM_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))
+                }
+            }
+        }
+
+        if (declaration is KtSecondaryConstructor) {
+            val delegationCall = declaration.getDelegationCall()
+            if (!delegationCall.isImplicit) {
+                trace.report(PLATFORM_CLASS_CONSTRUCTOR_DELEGATION_CALL.on(delegationCall))
+            }
+        }
     }
 
     private fun checkConstructorVisibility(constructorDescriptor: ClassConstructorDescriptor, declaration: KtDeclaration) {
@@ -711,6 +735,7 @@ class DeclarationsChecker(
 
         if (containingDescriptor is ClassDescriptor) {
             val inInterface = containingDescriptor.kind == ClassKind.INTERFACE
+            val isPlatformClass = containingDescriptor.isPlatform
             if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
             }
@@ -726,7 +751,7 @@ class DeclarationsChecker(
                     trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(function))
                 }
             }
-            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface) {
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isPlatformClass) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
         }

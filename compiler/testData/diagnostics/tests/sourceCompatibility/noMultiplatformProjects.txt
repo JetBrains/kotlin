@@ -1,0 +1,10 @@
+package
+
+public val bar2: kotlin.Int
+public impl fun foo2(): kotlin.Int
+
+public impl interface Baz2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -169,6 +169,11 @@ public class BodyResolver {
             @NotNull KtSecondaryConstructor constructor,
             @NotNull ClassConstructorDescriptor descriptor
     ) {
+        if (descriptor.isPlatform()) {
+            // For platform classes, we do not resolve constructor delegation calls because they are prohibited
+            return DataFlowInfo.Companion.getEMPTY();
+        }
+
         OverloadResolutionResults<?> results = callResolver.resolveConstructorDelegationCall(
                 trace, scope, outerDataFlowInfo,
                 descriptor, constructor.getDelegationCall());
@@ -362,6 +367,7 @@ public class BodyResolver {
                     descriptor.getUnsubstitutedPrimaryConstructor() != null &&
                     superClass.getKind() != ClassKind.INTERFACE &&
                     !superClass.getConstructors().isEmpty() &&
+                    !descriptor.isPlatform() &&
                     !ErrorUtils.isError(superClass)
                 ) {
                     trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
@@ -555,6 +561,9 @@ public class BodyResolver {
         processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
         if (classDescriptor.getConstructors().isEmpty()) {
             trace.report(ANONYMOUS_INITIALIZER_IN_INTERFACE.on(anonymousInitializer));
+        }
+        if (classDescriptor.isPlatform()) {
+            trace.report(PLATFORM_DECLARATION_WITH_BODY.on(anonymousInitializer));
         }
     }
 
