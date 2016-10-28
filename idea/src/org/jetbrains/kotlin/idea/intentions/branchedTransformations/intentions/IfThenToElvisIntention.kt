@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -44,7 +45,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 
     private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression, context: BindingContext) =
             !firstClause.isNullOrBlockExpression() &&
-            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this) && !secondClause.isNullableExpression(context)) &&
+            (secondClause.evaluatesTo(this) || secondClause.hasFirstReceiverOf(this) && !secondClause.hasNullableType(context)) &&
             !(firstClause is KtThrowExpression && firstClause.throwsNullPointerExceptionWithNoArguments())
 
     private fun KtExpression.checkedExpression() = when (this) {
@@ -73,7 +74,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
             }
             is KtIsExpression -> {
                 val targetType = context[BindingContext.TYPE, condition.typeReference] ?: return false
-                if (!targetType.isNotNull()) return false
+                if (TypeUtils.isNullableType(targetType)) return false
                 val originalType = condition.leftHandSide.getType(context) ?: return false
                 if (!targetType.isSubtypeOf(originalType)) return false
 
@@ -91,9 +92,10 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         return innerExpression is KtBlockExpression || innerExpression.node.elementType == KtNodeTypes.NULL
     }
 
-    private fun KtExpression.isNullableExpression(context: BindingContext) = !getType(context).isNotNull()
-
-    private fun KotlinType?.isNotNull() = this?.nullability() == TypeNullability.NOT_NULL
+    private fun KtExpression.hasNullableType(context: BindingContext): Boolean {
+        val type = getType(context) ?: return true
+        return TypeUtils.isNullableType(type)
+    }
 
     private fun KtExpression.hasFirstReceiverOf(receiver: KtExpression): Boolean {
         val actualReceiver = (unwrapBlockOrParenthesis() as? KtDotQualifiedExpression)?.getLeftMostReceiverExpression() ?: return false
