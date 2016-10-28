@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
 
 class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class) {
@@ -71,7 +72,12 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
         return when (this) {
             is KtStringTemplateExpression -> String::class.qualifiedName
             is KtConstantExpression -> getType(analyze())?.getJetTypeFqName(false)
-            else -> getResolvedCall(analyze())?.candidateDescriptor?.returnType?.getJetTypeFqName(false)
+            else -> {
+                getResolvedCall(analyze())?.candidateDescriptor?.returnType?.let {
+                    if (it.isFlexible()) null
+                    else it.getJetTypeFqName(false)
+                }
+            }
         } == qualifiedName
     }
 }
