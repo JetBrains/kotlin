@@ -4,10 +4,16 @@
 
     function define(name, dependencies, body) {
         var resolvedDependencies = [];
+        var currentModule = {};
+        modules[name] = currentModule;
         for (var i = 0; i < dependencies.length; ++i) {
-            resolvedDependencies[i] = modules[dependencies[i]];
+            var dependencyName = dependencies[i];
+            resolvedDependencies[i] = dependencyName === 'exports' ? currentModule : modules[dependencyName];
         }
-        modules[name] = body.apply(body, resolvedDependencies);
+        currentModule = body.apply(body, resolvedDependencies);
+        if (currentModule) {
+            modules[name] = currentModule;
+        }
     }
     define.amd = {};
 

@@ -16,15 +16,9 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import org.jetbrains.kotlin.js.translate.context.Namer
-import com.google.dart.compiler.backend.js.ast.HasName
-import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
+import org.jetbrains.kotlin.js.translate.context.Namer
 
 /**
  * Gets invocation qualifier name.
@@ -60,19 +54,6 @@ fun getSimpleIdent(call: JsInvocation): String? {
     }
     
     return null
-}
-
-/**
- * Checks if JsInvocation is function creator call.
- *
- * Function creator is a function, that creates closure.
- */
-fun isFunctionCreatorInvocation(invocation: JsInvocation): Boolean {
-    val staticRef = getStaticRef(invocation)
-    return when (staticRef) {
-        is JsFunction -> isFunctionCreator(staticRef)
-        else -> false
-    }
 }
 
 /**
@@ -116,12 +97,6 @@ private fun getCallerQualifierImpl(invocation: JsInvocation): JsExpression? {
     return (invocation.qualifier as? JsNameRef)?.qualifier
 }
 
-private fun getStaticRef(invocation: JsInvocation): JsNode? {
-    val qualifier = invocation.qualifier
-    val qualifierName = (qualifier as? HasName)?.name
-    return qualifierName?.staticRef
-}
-
 /**
  * If an expression A references to another expression B, which in turn references to C, or a corresponding expression
  * at the end of a chain of references. They are usually JsNameRef expressions with JsFunction at the very end.
@@ -131,8 +106,16 @@ private fun getStaticRef(invocation: JsInvocation): JsNode? {
 val JsExpression.transitiveStaticRef: JsExpression
     get() {
         var qualifier = this
-        while (qualifier is JsNameRef) {
-            qualifier = qualifier.name?.staticRef as? JsExpression ?: break
+        loop@while (true) {
+            qualifier = when (qualifier) {
+                is JsNameRef -> {
+                    qualifier.name?.staticRef as? JsExpression ?: break@loop
+                }
+                is JsInvocation -> {
+                    getSimpleName(qualifier)?.staticRef as? JsExpression ?: break@loop
+                }
+                else -> break@loop
+            }
         }
         return qualifier
     }

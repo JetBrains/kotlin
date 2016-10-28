@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.naming
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -105,8 +104,29 @@ class NameSuggestion {
             // Local functions and variables are always private with their own names as suggested names
             is CallableDescriptor ->
                 if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) {
-                    val name = getNameForAnnotatedObject(descriptor) ?: getSuggestedName(descriptor)
-                    return SuggestedName(listOf(name), false, descriptor, descriptor.containingDeclaration)
+                    val ownName = getNameForAnnotatedObject(descriptor) ?: getSuggestedName(descriptor)
+                    var name = ownName
+                    var scope = descriptor.containingDeclaration
+
+                    // Local functions always lifted to the closest class or package when they are contained inside public inline function
+                    if (descriptor is FunctionDescriptor) {
+                        var container = descriptor.containingDeclaration
+                        var liftedName = ownName
+                        var hasInline = false
+                        while (container is FunctionDescriptor) {
+                            if (container.isInline && container.visibility.isPublicAPI) {
+                                hasInline = true
+                            }
+                            liftedName = getSuggestedName(container) + "$" + liftedName
+                            container = container.containingDeclaration
+                        }
+                        if (hasInline) {
+                            scope = container
+                            name = liftedName
+                        }
+                    }
+
+                    return SuggestedName(listOf(name), false, descriptor, scope)
                 }
         }
 
