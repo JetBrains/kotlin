@@ -21,7 +21,7 @@ class BuildLogParserParametrizedIT : BaseGradleIT() {
         val logFile = File(testDir, LOG_FILE_NAME)
         assert(logFile.isFile) { "Log file: $logFile does not exist" }
 
-        val actualNormalized = dumpBuildLog(parseTestBuildLog(logFile)).trim()
+        val actualNormalized = dumpBuildLog(parseTestBuildLog(logFile)).replace("\r\n", "\n").trim()
         val expectedFile = File(testDir, EXPECTED_PARSED_LOG_FILE_NAME)
 
         if (!expectedFile.isFile) {
@@ -31,7 +31,7 @@ class BuildLogParserParametrizedIT : BaseGradleIT() {
             throw AssertionError("Expected file log did not exist, created: $expectedFile")
         }
 
-        val expectedNormalized = expectedFile.readText().trim()
+        val expectedNormalized = expectedFile.readText().replace("\r\n", "\n").trim()
         Assert.assertEquals("Parsed content was unexpected: ", expectedNormalized, actualNormalized)
 
         // parse expected, dump again and compare (to check that dumped log can be parsed again)

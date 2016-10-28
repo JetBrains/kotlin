@@ -28,7 +28,7 @@ abstract class BaseGradleIT {
 
     @After
     fun tearDown() {
-        deleteRecursively(workingDir)
+        workingDir.deleteRecursively()
     }
 
     companion object {
@@ -227,13 +227,12 @@ abstract class BaseGradleIT {
     }
 
     private fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
-//        val projectDir = File(workingDir.canonicalFile, project.projectName)
         return map { it.canonicalFile.toRelativeString(project.projectDir) }
     }
 
     fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String): CompiledProject {
-        val expectedSet = expected.toSortedSet().joinToString("\n")
-        val actualSet = actual.toSortedSet().joinToString("\n")
+        val expectedSet = expected.map { it.normalizePath() }.toSortedSet().joinToString("\n")
+        val actualSet = actual.map { it.normalizePath() }.toSortedSet().joinToString("\n")
         Assert.assertEquals(messagePrefix, expectedSet, actualSet)
         return this
     }
@@ -301,18 +300,5 @@ abstract class BaseGradleIT {
         source.listFiles()?.forEach { copyRecursively(it, target) }
     }
 
-    fun deleteRecursively(f: File): Unit {
-        if (f.isDirectory) {
-            f.listFiles()?.forEach { deleteRecursively(it) }
-            val fileList = f.listFiles()
-            if (fileList != null) {
-                if (!fileList.isEmpty()) {
-                    fail("Expected $f to be empty but it has files: ${fileList.joinToString { it.name }}")
-                }
-            } else {
-                fail("Error listing directory content")
-            }
-        }
-        f.delete()
-    }
+    private fun String.normalizePath() = replace("\\", "/")
 }
