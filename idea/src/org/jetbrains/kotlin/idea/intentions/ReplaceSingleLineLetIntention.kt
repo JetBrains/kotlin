@@ -31,18 +31,49 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         "Remove redundant '.let' call"
 ) {
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
-        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return
-        val dotQualifiedExpression = bodyExpression as? KtDotQualifiedExpression ?: return
+        element.lambdaArguments.firstOrNull()?.getLambdaExpression()?.bodyExpression?.children?.singleOrNull()?.let {
+            when (it) {
+                is KtDotQualifiedExpression -> it.applyTo(element)
+                is KtBinaryExpression -> it.applyTo(element)
+            }
+        }
+    }
+
+    private fun KtBinaryExpression.applyTo(element: KtCallExpression) {
+        val left = left ?: return
+        val factory = KtPsiFactory(element.project)
+        val parent = element.parent
+        when (parent) {
+            is KtQualifiedExpression -> {
+                val receiver = parent.receiverExpression
+                val newLeft = when (left) {
+                    is KtDotQualifiedExpression -> left.replaceFirstReceiver(factory, receiver, parent.operationSign == KtTokens.SAFE_ACCESS)
+                    else -> receiver
+                }
+                val newExpression = factory.createExpression("${newLeft.text}${operationReference.text}${right?.text ?: ""}")
+                parent.replace(newExpression)
+            }
+            else -> {
+                val newLeftExpressionTemplate = when (left) {
+                    is KtDotQualifiedExpression -> left.deleteFirstReceiver().text
+                    else -> ""
+                }
+                val newExpression = factory.createExpression("$newLeftExpressionTemplate${operationReference.text}${right?.text ?: ""}")
+                element.replace(newExpression)
+            }
+        }
+    }
+
+    private fun KtDotQualifiedExpression.applyTo(element: KtCallExpression) {
         val parent = element.parent
         when (parent) {
             is KtQualifiedExpression -> {
                 val factory = KtPsiFactory(element.project)
                 val receiver = parent.receiverExpression
-                parent.replace(dotQualifiedExpression.replaceFirstReceiver(factory, receiver, parent.operationSign == KtTokens.SAFE_ACCESS))
+                parent.replace(replaceFirstReceiver(factory, receiver, parent.operationSign == KtTokens.SAFE_ACCESS))
             }
             else -> {
-                element.replace(dotQualifiedExpression.deleteFirstReceiver())
+                element.replace(deleteFirstReceiver())
             }
         }
     }
@@ -59,16 +90,48 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     override fun isApplicableTo(element: KtCallExpression): Boolean {
         if (!isLetMethod(element)) return false
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return false
-        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
-        val dotQualifiedExpression = bodyExpression as? KtDotQualifiedExpression ?: return false
         val parameterName = lambdaExpression.getParameterName() ?: return false
-        val receiverExpression = dotQualifiedExpression.getLeftMostReceiverExpression()
-        if (receiverExpression.text != parameterName) return false
-        dotQualifiedExpression.selectorExpression?.let {
-            if (it.anyDescendantOfType<KtLambdaExpression>()) return false
+        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
+
+        return when (bodyExpression) {
+            is KtBinaryExpression -> bodyExpression.isApplication(parameterName)
+            is KtDotQualifiedExpression -> bodyExpression.isApplicable(parameterName)
+            else -> false
         }
-        return !dotQualifiedExpression.receiverUsedAsArgument(parameterName)
     }
+
+    private fun KtBinaryExpression.isApplication(parameterName: String): Boolean {
+        val left = left ?: return false
+
+        if (when (left) {
+            is KtNameReferenceExpression -> left.text != parameterName
+            is KtDotQualifiedExpression -> !left.isApplicable(parameterName)
+            else -> return false
+        }) return false
+
+        val right = right ?: return false
+        when (right) {
+            is KtNameReferenceExpression -> return right.text != parameterName
+            is KtDotQualifiedExpression -> {
+                if (right.isParameterLeftMostReceiver(parameterName)) return false
+                if (right.hasLambdaExpression()) return false
+                return !right.receiverUsedAsArgument(parameterName)
+            }
+            else -> return true
+        }
+    }
+
+    private fun KtDotQualifiedExpression.isApplicable(parameterName: String): Boolean {
+        if (!isParameterLeftMostReceiver(parameterName)) return false
+        if (hasLambdaExpression()) return false
+        return !receiverUsedAsArgument(parameterName)
+    }
+
+    private fun KtDotQualifiedExpression.hasLambdaExpression()
+            = selectorExpression?.anyDescendantOfType<KtLambdaExpression>() ?: false
+
+    private fun KtDotQualifiedExpression.isParameterLeftMostReceiver(parameterName: String)
+            = getLeftMostReceiverExpression().text == parameterName
 
     private fun isLetMethod(element: KtCallExpression) =
             element.calleeExpression?.text == "let" && element.isMethodCall("kotlin.let")
