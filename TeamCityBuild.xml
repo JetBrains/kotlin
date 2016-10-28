@@ -72,23 +72,26 @@
         </sequential>
     </macrodef>
 
-    <target name="writeVersionToTemplateFiles">
+    <target name="writeCompilerVersionToTemplateFile">
         <mkdir dir="${version_substitute_dir}"/>
 
         <substituteVersionInFile
-                target.file="${plugin.xml}"
-                target.file.bk="${plugin.xml.bk}"
-                target.file.versioned="${plugin.xml.versioned}"
-                test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"
-                version="${plugin.xml.version.number}"/>
+            target.file="${compiler.version.java}"
+            target.file.bk="${compiler.version.java.bk}"
+            target.file.versioned="${compiler.version.java.versioned}"
+            test.string="public static final String VERSION = &quot;@snapshot@&quot;;"/>
+    </target>
+
+    <target name="writePluginVersionToTemplateFile">
+        <mkdir dir="${version_substitute_dir}"/>
 
         <substituteVersionInFile
-                target.file="${compiler.version.java}"
-                target.file.bk="${compiler.version.java.bk}"
-                target.file.versioned="${compiler.version.java.versioned}"
-                test.string="public static final String VERSION = &quot;@snapshot@&quot;;"/>
-
-        </target>
+            target.file="${plugin.xml}"
+            target.file.bk="${plugin.xml.bk}"
+            target.file.versioned="${plugin.xml.versioned}"
+            test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"
+            version="${plugin.xml.version.number}"/>
+    </target>
 
     <target name="revertTemplateFiles">
         <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
@@ -97,7 +100,7 @@
         <delete dir="${version_substitute_dir}" quiet="true"/>
     </target>
 
-    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts"/>
+    <target name="pre_build" depends="writeCompilerVersionToTemplateFile, writePluginVersionToTemplateFile, cleanupArtifacts"/>
 
     <target name="zipArtifacts">
         <macrodef name="zipPlugin">
