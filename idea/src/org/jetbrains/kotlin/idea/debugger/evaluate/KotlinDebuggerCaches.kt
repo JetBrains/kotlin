@@ -21,6 +21,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.LibraryUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -36,11 +37,15 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
+import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
+import org.jetbrains.kotlin.idea.debugger.WeakConcurrentBinaryStorage
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -64,6 +69,13 @@ class KotlinDebuggerCaches(project: Project) {
             {
                 CachedValueProvider.Result<MutableMap<PsiElement, KotlinTypeMapper>>(
                         ConcurrentHashMap<PsiElement, KotlinTypeMapper>(),
+                        PsiModificationTracker.MODIFICATION_COUNT)
+            }, false)
+
+    private val binaryCache = CachedValuesManager.getManager(project).createCachedValue(
+            {
+                CachedValueProvider.Result<WeakConcurrentBinaryStorage>(
+                        WeakConcurrentBinaryStorage(),
                         PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
@@ -165,6 +177,14 @@ class KotlinDebuggerCaches(project: Project) {
                 state.beforeCompile()
                 state.typeMapper
             }
+        }
+
+        fun readFileContent(
+                project: Project,
+                jvmName: JvmClassName,
+                file: VirtualFile): BytecodeDebugInfo? {
+            val cache = getInstance(project)
+            return cache.binaryCache.value[BinaryCacheKey(project, jvmName, file)]
         }
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =

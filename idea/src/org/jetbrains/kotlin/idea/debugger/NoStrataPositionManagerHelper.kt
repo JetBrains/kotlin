@@ -38,10 +38,6 @@ import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.org.objectweb.asm.*
 import java.util.*
 
-// TODO: Don't read same bytecode file again and again
-// TODO: Build line mapping for the whole file
-// TODO: Quick caching for the same location
-
 fun noStrataLineNumber(location: Location, isDexDebug: Boolean, project: Project, preferInlined: Boolean = false): Int {
     if (isDexDebug) {
         if (!preferInlined) {
@@ -68,33 +64,40 @@ fun getLastLineNumberForLocation(location: Location, project: Project, searchSco
     val fileName = location.sourceName()
 
     val method = location.method() ?: return null
+    val name = method.name() ?: return null
+    val signature = method.signature() ?: return null
 
-    val bytes = findAndReadClassFile(fqName, fileName, project, searchScope, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
+    val debugInfo = findAndReadClassFile(fqName, fileName, project, searchScope, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
 
-    fun readLineNumberTableMapping(bytes: ByteArray): Map<String, Set<Int>> {
-        val labelsToAllStrings = HashMap<String, MutableSet<Int>>()
+    val lineMapping = debugInfo.lineTableMapping[BytecodeMethodKey(name, signature)] ?: return null
+    return lineMapping.values.firstOrNull { it.contains(lineNumber) }?.last()
+}
 
-        ClassReader(bytes).accept(object : ClassVisitor(InlineCodegenUtil.API) {
-            override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                if (!(name == method.name() && desc == method.signature())) {
-                    return null
-                }
+fun readLineNumberTableMapping(bytes: ByteArray): Map<BytecodeMethodKey, Map<String, Set<Int>>> {
+    val lineNumberMapping = HashMap<BytecodeMethodKey, Map<String, Set<Int>>>()
 
-                return object : MethodVisitor(Opcodes.ASM5, null) {
-                    override fun visitLineNumber(line: Int, start: Label?) {
-                        if (start != null) {
-                            labelsToAllStrings.getOrPutNullable(start.toString(), { LinkedHashSet<Int>() }).add(line)
-                        }
+    ClassReader(bytes).accept(object : ClassVisitor(InlineCodegenUtil.API) {
+        override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+            if (name == null || desc == null) {
+                // TODO: check constructors
+                return null
+            }
+
+            val methodKey = BytecodeMethodKey(name, desc)
+            val methodLinesMapping = HashMap<String, MutableSet<Int>>()
+            lineNumberMapping[methodKey] = methodLinesMapping
+
+            return object : MethodVisitor(Opcodes.ASM5, null) {
+                override fun visitLineNumber(line: Int, start: Label?) {
+                    if (start != null) {
+                        methodLinesMapping.getOrPutNullable(start.toString(), { LinkedHashSet<Int>() }).add(line)
                     }
                 }
             }
-        }, ClassReader.SKIP_FRAMES and ClassReader.SKIP_CODE)
+        }
+    }, ClassReader.SKIP_FRAMES and ClassReader.SKIP_CODE)
 
-        return labelsToAllStrings
-    }
-
-    val lineMapping = readLineNumberTableMapping(bytes)
-    return lineMapping.values.firstOrNull { it.contains(lineNumber) }?.last()
+    return lineNumberMapping
 }
 
 internal fun getOriginalPositionOfInlinedLine(location: Location, project: Project): Pair<KtFile, Int>? {
@@ -103,14 +106,16 @@ internal fun getOriginalPositionOfInlinedLine(location: Location, project: Proje
     val fileName = location.sourceName()
     val searchScope = GlobalSearchScope.allScope(project)
 
-    val bytes = findAndReadClassFile(fqName, fileName, project, searchScope, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
-    val smapData = readDebugInfo(bytes) ?: return null
+    val debugInfo = findAndReadClassFile(fqName, fileName, project, searchScope, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?:
+                    return null
+    val smapData = debugInfo.smapData ?: return null
+
     return mapStacktraceLineToSource(smapData, lineNumber, project, SourceLineKind.EXECUTED_LINE, searchScope)
 }
 
 internal fun findAndReadClassFile(
         fqName: FqName, fileName: String, project: Project, searchScope: GlobalSearchScope,
-        fileFilter: (VirtualFile) -> Boolean): ByteArray? {
+        fileFilter: (VirtualFile) -> Boolean): BytecodeDebugInfo? {
     val internalName = fqName.asString().replace('.', '/')
     val jvmClassName = JvmClassName.byInternalName(internalName)
 
@@ -151,8 +156,8 @@ private fun inlinedLinesNumbers(
 
     val virtualFile = file.virtualFile ?: return listOf()
 
-    val bytes = readClassFile(project, jvmClassName, virtualFile) ?: return listOf()
-    val smapData = readDebugInfo(bytes) ?: return listOf()
+    val debugInfo = readClassFile(project, jvmClassName, virtualFile) ?: return listOf()
+    val smapData = debugInfo.smapData ?: return listOf()
 
     val smap = smapData.kotlinStrata ?: return listOf()
 
@@ -171,5 +176,5 @@ private fun inlinedLinesNumbers(
 @Volatile var emulateDexDebugInTests: Boolean = false
 
 fun DebugProcess.isDexDebug() =
-        (emulateDexDebugInTests && ApplicationManager.getApplication ().isUnitTestMode) ||
+        (emulateDexDebugInTests && ApplicationManager.getApplication().isUnitTestMode) ||
         (this.virtualMachineProxy as? VirtualMachineProxyImpl)?.virtualMachine?.name() == "Dalvik" // TODO: check other machine names
