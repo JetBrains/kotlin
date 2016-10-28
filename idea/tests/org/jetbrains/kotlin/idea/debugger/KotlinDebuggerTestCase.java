@@ -106,7 +106,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             if (LOCAL_CACHE_DIR.exists()) {
                 if (isLocalCacheOutdated()) {
                     System.out.println("-- Local caches outdated --");
-                    FilesKt.deleteRecursively(LOCAL_CACHE_DIR);
+                    Assert.assertTrue("Failed to delete local cache!", FilesKt.deleteRecursively(LOCAL_CACHE_DIR));
                     localCacheRebuild = true;
                 }
             }
