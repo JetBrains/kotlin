@@ -27,6 +27,16 @@ internal inline fun <T, R> mapValues(values: Iterable<T>?, f: (T) -> R?): JavacL
     return result.reverse()
 }
 
+internal inline fun <T, R> mapValuesIndexed(values: Iterable<T>?, f: (Int, T) -> R?): JavacList<R> {
+    if (values == null) return JavacList.nil()
+
+    var result = JavacList.nil<R>()
+    values.forEachIndexed { index, item ->
+        f(index, item)?.let { result = result.prepend(it) }
+    }
+    return result.reverse()
+}
+
 internal inline fun <T> mapPairedValues(valuePairs: List<Any>?, f: (String, Any) -> T?): JavacList<T> {
     if (valuePairs == null || valuePairs.isEmpty()) return JavacList.nil()
 
