@@ -36,11 +36,20 @@ class SyntheticJavaFileObject(
 
     override fun inferBinaryName(path: MutableIterable<File>?) = throw UnsupportedOperationException()
 
-    override fun isNameCompatible(simpleName: String?, kind: JavaFileObject.Kind?) = true
+    override fun isNameCompatible(simpleName: String?, kind: JavaFileObject.Kind?): Boolean {
+        if (simpleName == null || kind == null) return false
+        return this.kind == kind && simpleName == clazz.simpleName.toString()
+    }
 
     override fun getKind() = JavaFileObject.Kind.SOURCE
 
-    override fun getName() = compilationUnit.packageName.toString().replace('.', '/') + clazz.name + ".java"
+    override fun getName(): String {
+        val packageName = compilationUnit.packageName
+        if (packageName == null || packageName.toString() == "") {
+            return clazz.name.toString() + ".java"
+        }
+        return packageName.toString().replace('.', '/') + '/' + clazz.simpleName.toString() + ".java"
+    }
 
     override fun getAccessLevel(): Modifier? {
         val flags = clazz.modifiers.getFlags()

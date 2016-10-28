@@ -36,5 +36,6 @@
     <orderEntry type="module" module-name="annotation-processing" scope="TEST" />
     <orderEntry type="module" module-name="build-common" scope="TEST" />
     <orderEntry type="module" module-name="jps-tests" scope="TEST" />
+    <orderEntry type="module" module-name="kapt3" scope="TEST" />
   </component>
 </module>

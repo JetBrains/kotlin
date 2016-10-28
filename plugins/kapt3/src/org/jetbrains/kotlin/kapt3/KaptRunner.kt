@@ -23,6 +23,7 @@ import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
+import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Options
 import java.io.File
@@ -51,6 +52,7 @@ class KaptError : RuntimeException {
 class KaptRunner {
     val context = Context()
     val compiler: KaptJavaCompiler
+    val fileManager: JavacFileManager
     private val options: Options
 
     init {
@@ -58,9 +60,15 @@ class KaptRunner {
         KaptTreeMaker.preRegister(context)
         KaptJavaCompiler.preRegister(context)
 
+        fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
 
         options = Options.instance(context)
+    }
+
+    fun close() {
+        compiler.close()
+        fileManager.close()
     }
 
     fun parseJavaFiles(
@@ -85,7 +93,8 @@ class KaptRunner {
             processors: List<Processor>,
             classpath: List<File>,
             sourceOutputDir: File,
-            classOutputDir: File
+            classOutputDir: File,
+            additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
     ) {
         options.put(Option.PROC, "only") // Only process annotations
         classpath.forEach { options.put(Option.CLASSPATH, it.canonicalPath) }
@@ -106,7 +115,7 @@ class KaptRunner {
 
             val compilerAfterAnnotationProcessing: JavaCompiler? = null
             try {
-                compiler.processAnnotations(compiler.enterTrees(parsedJavaFiles))
+                compiler.processAnnotations(compiler.enterTrees(parsedJavaFiles + additionalSources))
             } catch (e: AnnotationProcessingError) {
                 throw KaptError(KaptError.Kind.EXCEPTION, e.cause ?: e)
             }
