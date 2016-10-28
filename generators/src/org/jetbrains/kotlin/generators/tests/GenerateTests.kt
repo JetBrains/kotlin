@@ -21,6 +21,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
+import org.jetbrains.kotlin.android.quickfixes.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.android.intentions.AbstractAndroidResourceIntentionTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
@@ -1157,6 +1158,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidResourceIntentionTest> {
             model("android/resourceIntentions", extension = "test", singleClass = true)
+        }
+
+        testClass<AbstractAndroidQuickFixMultiFileTest>() {
+            model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
         }
     }
 
