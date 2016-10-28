@@ -22,7 +22,6 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
-import com.sun.tools.javac.util.Names
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -67,8 +66,8 @@ class JCTreeConverter(
     }
 
     private val fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
-    private val treeMaker = TreeMaker.instance(context)
-    private val nameTable = Names.instance(context).table
+    private val treeMaker = TreeMaker.instance(context) as KaptTreeMaker
+    private val signatureParser = SignatureParser(treeMaker)
 
     private var done = false
 
@@ -90,7 +89,7 @@ class JCTreeConverter(
 
         val packageAnnotations = JavacList.nil<JCAnnotation>()
         val packageName = ktFile.packageFqName.asString()
-        val packageClause = if (packageName.isEmpty()) null else convertFqName(packageName)
+        val packageClause = if (packageName.isEmpty()) null else treeMaker.convertFqName(packageName)
 
         val imports = JavacList.nil<JCTree>()
         val classes = JavacList.of<JCTree>(classDeclaration)
@@ -102,7 +101,7 @@ class JCTreeConverter(
     }
 
     /**
-     * Returns false for the inner classe or if the origin for the class was not found.
+     * Returns false for the inner classes or if the origin for the class was not found.
      */
     private fun convertClass(clazz: ClassNode, isTopLevel: Boolean): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
@@ -124,15 +123,17 @@ class JCTreeConverter(
             return null
         }
 
-        val simpleName = name(if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString())
+        val simpleName = treeMaker.name(if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString())
 
-        val typeParams = JavacList.nil<JCTypeParameter>()
-        val extending = if (clazz.superName == "java/lang/Object" || isEnum) null else convertFqName(clazz.superName)
-
-        val implementing = mapValues(clazz.interfaces) {
+        val interfaces = mapValues(clazz.interfaces) {
             if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapValues null
-            convertFqName(it)
+            treeMaker.convertFqName(it)
         }
+
+        val superClass = treeMaker.convertFqName(clazz.superName)
+
+        val hasSuperClass = clazz.superName != "java/lang/Object" && !isEnum
+        val genericType = signatureParser.parseClassSignature(clazz.signature, superClass, interfaces)
 
         val fields = mapValues<FieldNode, JCTree>(clazz.fields) { convertField(it) }
         val methods = mapValues<MethodNode, JCTree>(clazz.methods) {
@@ -149,21 +150,27 @@ class JCTreeConverter(
             convertClass(innerClassNode, false)
         }
 
-        return treeMaker.ClassDef(modifiers, simpleName, typeParams, extending, implementing, fields + methods + nestedClasses)
+        return treeMaker.ClassDef(
+                modifiers,
+                simpleName,
+                genericType.typeParameters,
+                if (hasSuperClass) genericType.superClass else null,
+                genericType.interfaces,
+                fields + methods + nestedClasses)
     }
 
     private fun convertField(field: FieldNode): JCVariableDecl? {
         if (isSynthetic(field.access)) return null
 
         val modifiers = convertModifiers(field.access, ElementKind.FIELD, field.visibleAnnotations, field.invisibleAnnotations)
-        val name = name(field.name)
+        val name = treeMaker.name(field.name)
         val type = Type.getType(field.desc)
 
         // Enum type must be an identifier (Javac requirement)
         val typeExpression = if (isEnum(field.access)) {
-            convertSimpleName(type.className.substringAfterLast('.'))
+            treeMaker.convertSimpleName(type.className.substringAfterLast('.'))
         } else {
-            convertType(type)
+            treeMaker.convertType(type)
         }
 
         val value = field.value
@@ -193,23 +200,23 @@ class JCTreeConverter(
                 ElementKind.METHOD, visibleAnnotations, method.invisibleAnnotations)
 
         val isConstructor = method.name == "<init>"
-        val name = name(method.name)
+        val name = treeMaker.name(method.name)
         val typeParameters = JavacList.nil<JCTypeParameter>()
         val receiverParameter = null
 
         val returnType = Type.getReturnType(method.desc)
-        val returnTypeExpr = if (isConstructor) null else convertType(returnType)
+        val returnTypeExpr = if (isConstructor) null else treeMaker.convertType(returnType)
 
         val parametersInfo = method.getParametersInfo(containingClass)
         @Suppress("NAME_SHADOWING")
         val parameters = mapValues(parametersInfo) { info ->
             val modifiers = convertModifiers(info.access, ElementKind.PARAMETER, info.visibleAnnotations, info.invisibleAnnotations)
-            val name = name(info.name)
-            val type = convertType(info.type)
+            val name = treeMaker.name(info.name)
+            val type = treeMaker.convertType(info.type)
             treeMaker.VarDef(modifiers, name, type, null)
         }
 
-        val thrown = mapValues(method.exceptions) { convertFqName(it) }
+        val thrown = mapValues(method.exceptions) { treeMaker.convertFqName(it) }
 
         val defaultValue = method.annotationDefault?.let { convertLiteralExpression(it) }
 
@@ -229,7 +236,7 @@ class JCTreeConverter(
                 val args = mapValues(superClassConstructor.valueParameters) { param ->
                     convertLiteralExpression(getDefaultValue(typeMapper.mapType(param.type)))
                 }
-                val call = treeMaker.Apply(JavacList.nil(), convertSimpleName("super"), args)
+                val call = treeMaker.Apply(JavacList.nil(), treeMaker.convertSimpleName("super"), args)
                 JavacList.of<JCStatement>(treeMaker.Exec(call))
             } else {
                 JavacList.nil<JCStatement>()
@@ -275,9 +282,9 @@ class JCTreeConverter(
         val fqName = annotationType.className
         if (BLACKLISTED_ANNOTATATIONS.any { fqName.startsWith(it) }) return null
 
-        val name = convertType(annotationType)
+        val name = treeMaker.convertType(annotationType)
         val values = mapPairedValues<JCExpression>(annotation.values) { key, value ->
-            treeMaker.Assign(convertSimpleName(key), convertLiteralExpression(value))
+            treeMaker.Assign(treeMaker.convertSimpleName(key), convertLiteralExpression(value))
         }
         return treeMaker.Annotation(name, values)
     }
@@ -300,11 +307,11 @@ class JCTreeConverter(
                 assert(value.size == 2)
                 val enumType = Type.getType(value[0] as String)
                 val valueName = value[1] as String
-                treeMaker.Select(convertType(enumType), name(valueName))
+                treeMaker.Select(treeMaker.convertType(enumType), treeMaker.name(valueName))
             }
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value) { convertLiteralExpression(it) })
 
-            is Type -> treeMaker.Select(convertType(value), name("class"))
+            is Type -> treeMaker.Select(treeMaker.convertType(value), treeMaker.name("class"))
             is AnnotationNode -> convertAnnotation(value) ?: error("Annotation is filtered out")
             else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value.javaClass.canonicalName})")
         }
@@ -321,46 +328,6 @@ class JCTreeConverter(
         Type.DOUBLE_TYPE -> 0.0
         else -> null
     }
-
-    private fun convertType(type: Type): JCExpression {
-        convertBuiltinType(type)?.let { return it }
-        if (type.sort == Type.ARRAY) {
-            return treeMaker.TypeArray(convertType(type.elementType))
-        }
-        return convertFqName(type.className)
-    }
-
-    private fun convertFqName(internalOrFqName: String): JCExpression {
-        val path = internalOrFqName.replace('/', '.').split('.')
-        assert(path.isNotEmpty())
-        if (path.size == 1) return convertSimpleName(path.single())
-
-        var expr = treeMaker.Select(convertSimpleName(path[0]), name(path[1]))
-        for (index in 2..path.lastIndex) {
-            expr = treeMaker.Select(expr, name(path[index]))
-        }
-        return expr
-    }
-
-    private fun convertBuiltinType(type: Type): JCExpression? {
-        val typeTag = when (type) {
-            Type.BYTE_TYPE -> TypeTag.BYTE
-            Type.BOOLEAN_TYPE -> TypeTag.BOOLEAN
-            Type.CHAR_TYPE -> TypeTag.CHAR
-            Type.SHORT_TYPE -> TypeTag.SHORT
-            Type.INT_TYPE -> TypeTag.INT
-            Type.LONG_TYPE -> TypeTag.LONG
-            Type.FLOAT_TYPE -> TypeTag.FLOAT
-            Type.DOUBLE_TYPE -> TypeTag.DOUBLE
-            Type.VOID_TYPE -> TypeTag.VOID
-            else -> null
-        } ?: return null
-        return treeMaker.TypeIdent(typeTag)
-    }
-
-    private fun convertSimpleName(name: String): JCExpression = treeMaker.Ident(name(name))
-
-    private fun name(name: String) = nameTable.fromString(name)
 }
 
 private class ParameterInfo(
@@ -400,36 +367,6 @@ private fun MethodNode.getParametersInfo(containingClass: ClassNode): List<Param
     return parameterInfos
 }
 
-private inline fun <T, R> mapValues(values: Iterable<T>?, f: (T) -> R?): JavacList<R> {
-    if (values == null) return JavacList.nil()
-
-    var result = JavacList.nil<R>()
-    for (item in values) {
-        f(item)?.let { result = result.prepend(it) }
-    }
-    return result.reverse()
-}
-
-private inline fun <T> mapPairedValues(valuePairs: List<Any>?, f: (String, Any) -> T?): JavacList<T> {
-    if (valuePairs == null || valuePairs.isEmpty()) return JavacList.nil()
-
-    val size = valuePairs.size
-    var result = JavacList.nil<T>()
-    assert(size % 2 == 0)
-    var index = 0
-    while (index < size) {
-        val key = valuePairs[index] as String
-        val value = valuePairs[index + 1]
-        f(key, value)?.let { result = result.prepend(it) }
-        index += 2
-    }
-    return result.reverse()
-}
-
-private operator fun <T : Any> JavacList<T>.plus(other: JavacList<T>): JavacList<T> {
-    return this.appendList(other)
-}
-
 private val ClassDescriptor.isNested: Boolean
     get() = containingDeclaration is ClassDescriptor
 
@@ -442,4 +379,4 @@ private fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) > 0
 private fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) > 0
 private fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) > 0
 
-private fun <T> List<T>.isNullOrEmpty() = this == null || this.isEmpty()
+private fun <T> List<T>?.isNullOrEmpty() = this == null || this.isEmpty()

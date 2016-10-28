@@ -65,6 +65,12 @@ public class JCTreeConverterTestGenerated extends AbstractJCTreeConverterTest {
         doTest(fileName);
     }
 
+    @TestMetadata("genericSimple.kt")
+    public void testGenericSimple() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/genericSimple.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inheritanceSimple.kt")
     public void testInheritanceSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/inheritanceSimple.kt");
