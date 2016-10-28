@@ -16,136 +16,16 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.compiler.CompilerPaths
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.containers.ConcurrentWeakFactoryMap
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.codegen.inline.FileMapping
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
-import org.jetbrains.kotlin.idea.refactoring.getLineCount
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
-import java.io.File
-
-fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
-    if (ProjectRootsUtil.isProjectSourceFile(project, file)) {
-        val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return false
-        return lineNumber > linesInFile
-    }
-
-    return true
-}
-
-class WeakConcurrentBinaryStorage : ConcurrentWeakFactoryMap<BinaryCacheKey, BytecodeDebugInfo?>() {
-    override fun create(key: BinaryCacheKey): BytecodeDebugInfo? {
-        val bytes = readClassFileImpl(key.project, key.jvmName, key.file) ?: return null
-
-        val smapData = readDebugInfo(bytes)
-        val lineNumberMapping = readLineNumberTableMapping(bytes)
-
-        return BytecodeDebugInfo(smapData, lineNumberMapping)
-    }
-
-    override fun createMap(): Map<BinaryCacheKey, BytecodeDebugInfo?> {
-        return ContainerUtil.createConcurrentWeakKeyWeakValueMap()
-    }
-}
-
-fun readClassFile(project: Project,
-                  jvmName: JvmClassName,
-                  file: VirtualFile): BytecodeDebugInfo? {
-    return KotlinDebuggerCaches.readFileContent(project, jvmName, file)
-}
-
-class BytecodeDebugInfo(val smapData: SmapData?, val lineTableMapping: Map<BytecodeMethodKey, Map<String, Set<Int>>>)
-
-data class BytecodeMethodKey(val methodName: String, val signature: String)
-data class BinaryCacheKey(val project: Project, val jvmName: JvmClassName, val file: VirtualFile)
-
-private fun readClassFileImpl(project: Project,
-                      jvmName: JvmClassName,
-                      file: VirtualFile): ByteArray? {
-    val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
-
-    fun readFromLibrary(): ByteArray? {
-        if (!ProjectRootsUtil.isLibrarySourceFile(project, file)) return null
-
-        val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
-
-        val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
-        val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
-        return classFile.contentsToByteArray()
-    }
-
-    fun readFromOutput(isForTestClasses: Boolean): ByteArray? {
-        if (!ProjectRootsUtil.isProjectSourceFile(project, file)) return null
-
-        val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
-        val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ isForTestClasses) ?: return null
-
-        val className = fqNameWithInners.asString().replace('.', '$')
-        var classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir)
-
-        if (classByDirectory == null) {
-            if (!isForTestClasses) {
-                return null
-            }
-
-            val outputModeDirName = outputDir.name
-            val androidTestOutputDir = outputDir.parent?.parent?.findChild("androidTest")?.findChild(outputModeDirName) ?: return null
-
-            classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, androidTestOutputDir) ?: return null
-        }
-
-        println("Read file: " + classByDirectory)
-        return classByDirectory.readBytes()
-    }
-
-    fun readFromSourceOutput(): ByteArray? = readFromOutput(false)
-
-    fun readFromTestOutput(): ByteArray? = readFromOutput(true)
-
-    return readFromLibrary() ?:
-           readFromSourceOutput() ?:
-           readFromTestOutput()
-}
-
-private fun findClassFileByPath(packageName: String, className: String, outputDir: VirtualFile): File? {
-    val outDirFile = File(outputDir.path).check(File::exists) ?: return null
-
-    val parentDirectory = File(outDirFile, packageName.replace(".", File.separator))
-    if (!parentDirectory.exists()) return null
-
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-        val beforeDexFileClassFile = File(parentDirectory, className + ".class.before_dex")
-        if (beforeDexFileClassFile.exists()) {
-            return beforeDexFileClassFile
-        }
-    }
-
-    val classFile = File(parentDirectory, className + ".class")
-    if (classFile.exists()) {
-        return classFile
-    }
-
-    return null
-}
 
 enum class SourceLineKind {
     CALL_LINE,

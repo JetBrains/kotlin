@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
 import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
-import org.jetbrains.kotlin.idea.debugger.WeakConcurrentBinaryStorage
+import org.jetbrains.kotlin.idea.debugger.WeakBytecodeDebugInfoStorage
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
@@ -74,10 +74,10 @@ class KotlinDebuggerCaches(project: Project) {
                         PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
-    private val binaryCache = CachedValuesManager.getManager(project).createCachedValue(
+    private val debugInfoCache = CachedValuesManager.getManager(project).createCachedValue(
             {
-                CachedValueProvider.Result<WeakConcurrentBinaryStorage>(
-                        WeakConcurrentBinaryStorage(),
+                CachedValueProvider.Result<WeakBytecodeDebugInfoStorage>(
+                        WeakBytecodeDebugInfoStorage(),
                         PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
@@ -166,12 +166,12 @@ class KotlinDebuggerCaches(project: Project) {
             }
         }
 
-        fun readFileContent(
+        fun getOrReadDebugInfoFromBytecode(
                 project: Project,
                 jvmName: JvmClassName,
                 file: VirtualFile): BytecodeDebugInfo? {
             val cache = getInstance(project)
-            return cache.binaryCache.value[BinaryCacheKey(project, jvmName, file)]
+            return cache.debugInfoCache.value[BinaryCacheKey(project, jvmName, file)]
         }
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
