@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3
 
+import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.tree.JCTree
@@ -44,17 +45,19 @@ class JCTreeConverter(
         val origins: Map<Any, JvmDeclarationOrigin>
 ) {
     private companion object {
-        private val VISIBILITY_MODIFIERS = Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED
-        private val MODALITY_MODIFIERS = Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT
+        private val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
+        private val MODALITY_MODIFIERS = (Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT).toLong()
 
         private val CLASS_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
-                Opcodes.ACC_DEPRECATED or Opcodes.ACC_INTERFACE or Opcodes.ACC_ANNOTATION or Opcodes.ACC_ENUM or Opcodes.ACC_STATIC
+                (Opcodes.ACC_DEPRECATED or Opcodes.ACC_INTERFACE or Opcodes.ACC_ANNOTATION or Opcodes.ACC_ENUM or Opcodes.ACC_STATIC).toLong()
 
         private val METHOD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
-                Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_STATIC or Opcodes.ACC_NATIVE or Opcodes.ACC_DEPRECATED
+                (Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_STATIC or Opcodes.ACC_NATIVE or Opcodes.ACC_DEPRECATED).toLong()
 
         private val FIELD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
-                Opcodes.ACC_STATIC or Opcodes.ACC_VOLATILE or Opcodes.ACC_TRANSIENT or Opcodes.ACC_ENUM
+                (Opcodes.ACC_STATIC or Opcodes.ACC_VOLATILE or Opcodes.ACC_TRANSIENT or Opcodes.ACC_ENUM).toLong()
+
+        private val PARAMETER_MODIFIERS = FIELD_MODIFIERS or Flags.PARAMETER or Flags.VARARGS or Opcodes.ACC_FINAL.toLong()
 
         private val BLACKLISTED_ANNOTATATIONS = listOf(
                 "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
@@ -170,7 +173,7 @@ class JCTreeConverter(
         val typeExpression = if (isEnum(field.access)) {
             treeMaker.convertSimpleName(type.className.substringAfterLast('.'))
         } else {
-            treeMaker.convertType(type)
+            signatureParser.parseFieldSignature(field.signature, treeMaker.convertType(type))
         }
 
         val value = field.value
@@ -196,27 +199,33 @@ class JCTreeConverter(
         }
 
         val modifiers = convertModifiers(
-                if (containingClass.isEnum()) (method.access and VISIBILITY_MODIFIERS.inv()) else method.access,
+                if (containingClass.isEnum()) (method.access.toLong() and VISIBILITY_MODIFIERS.inv()) else method.access.toLong(),
                 ElementKind.METHOD, visibleAnnotations, method.invisibleAnnotations)
 
         val isConstructor = method.name == "<init>"
         val name = treeMaker.name(method.name)
-        val typeParameters = JavacList.nil<JCTypeParameter>()
-        val receiverParameter = null
 
         val returnType = Type.getReturnType(method.desc)
-        val returnTypeExpr = if (isConstructor) null else treeMaker.convertType(returnType)
+        val jcReturnType = if (isConstructor) null else treeMaker.convertType(returnType)
 
         val parametersInfo = method.getParametersInfo(containingClass)
         @Suppress("NAME_SHADOWING")
-        val parameters = mapValues(parametersInfo) { info ->
-            val modifiers = convertModifiers(info.access, ElementKind.PARAMETER, info.visibleAnnotations, info.invisibleAnnotations)
+        val parameters = mapValuesIndexed(parametersInfo) { index, info ->
+            val lastParameter = index == parametersInfo.lastIndex
+            val isArrayType = info.type.sort == Type.ARRAY
+
+            val varargs = if (lastParameter && isArrayType && method.isVarargs()) Flags.VARARGS else 0L
+            val modifiers = convertModifiers(
+                    info.flags or varargs or Flags.PARAMETER,
+                    ElementKind.PARAMETER, info.visibleAnnotations, info.invisibleAnnotations)
             val name = treeMaker.name(info.name)
             val type = treeMaker.convertType(info.type)
             treeMaker.VarDef(modifiers, name, type, null)
         }
 
-        val thrown = mapValues(method.exceptions) { treeMaker.convertFqName(it) }
+        val exceptionTypes = mapValues(method.exceptions) { treeMaker.convertFqName(it) }
+
+        val genericType = signatureParser.parseMethodSignature(method.signature, parameters, exceptionTypes, jcReturnType)
 
         val defaultValue = method.annotationDefault?.let { convertLiteralExpression(it) }
 
@@ -250,12 +259,22 @@ class JCTreeConverter(
             treeMaker.Block(0, JavacList.of(returnStatement))
         }
 
-        return treeMaker.MethodDef(modifiers, name, returnTypeExpr,
-                                   typeParameters, receiverParameter, parameters, thrown, body, defaultValue)
+        return treeMaker.MethodDef(
+                modifiers, name, genericType.returnType, genericType.typeParameters,
+                genericType.parameterTypes, genericType.exceptionTypes,
+                body, defaultValue)
     }
 
-    private fun convertModifiers(
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun convertModifiers(
             access: Int,
+            kind: ElementKind,
+            visibleAnnotations: List<AnnotationNode>?,
+            invisibleAnnotations: List<AnnotationNode>?
+    ): JCModifiers = convertModifiers(access.toLong(), kind, visibleAnnotations, invisibleAnnotations)
+
+    private fun convertModifiers(
+            access: Long,
             kind: ElementKind,
             visibleAnnotations: List<AnnotationNode>?,
             invisibleAnnotations: List<AnnotationNode>?
@@ -271,10 +290,10 @@ class JCTreeConverter(
             ElementKind.CLASS -> access and CLASS_MODIFIERS
             ElementKind.METHOD -> access and METHOD_MODIFIERS
             ElementKind.FIELD -> access and FIELD_MODIFIERS
-            ElementKind.PARAMETER -> access and Opcodes.ACC_FINAL
+            ElementKind.PARAMETER -> access and PARAMETER_MODIFIERS
             else -> throw IllegalArgumentException("Invalid element kind: $kind")
         }
-        return treeMaker.Modifiers(flags.toLong(), annotations)
+        return treeMaker.Modifiers(flags, annotations)
     }
 
     private fun convertAnnotation(annotation: AnnotationNode): JCAnnotation? {
@@ -331,7 +350,7 @@ class JCTreeConverter(
 }
 
 private class ParameterInfo(
-        val access: Int,
+        val flags: Long,
         val name: String,
         val type: Type,
         val visibleAnnotations: List<AnnotationNode>?,
@@ -378,5 +397,6 @@ private fun isStatic(access: Int) = (access and Opcodes.ACC_STATIC) > 0
 private fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) > 0
 private fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) > 0
 private fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) > 0
+private fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) > 0
 
 private fun <T> List<T>?.isNullOrEmpty() = this == null || this.isEmpty()
