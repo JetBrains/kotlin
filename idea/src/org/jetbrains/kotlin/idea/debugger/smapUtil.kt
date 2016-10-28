@@ -22,10 +22,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.containers.ConcurrentWeakFactoryMap
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.codegen.inline.FileMapping
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -49,12 +52,38 @@ fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Proj
     return true
 }
 
+class WeakConcurrentBinaryStorage : ConcurrentWeakFactoryMap<BinaryCacheKey, BytecodeDebugInfo?>() {
+    override fun create(key: BinaryCacheKey): BytecodeDebugInfo? {
+        val bytes = readClassFileImpl(key.project, key.jvmName, key.file) ?: return null
+
+        val smapData = readDebugInfo(bytes)
+        val lineNumberMapping = readLineNumberTableMapping(bytes)
+
+        return BytecodeDebugInfo(smapData, lineNumberMapping)
+    }
+
+    override fun createMap(): Map<BinaryCacheKey, BytecodeDebugInfo?> {
+        return ContainerUtil.createConcurrentWeakKeyWeakValueMap()
+    }
+}
+
 fun readClassFile(project: Project,
                   jvmName: JvmClassName,
-                  file: VirtualFile): ByteArray? {
+                  file: VirtualFile): BytecodeDebugInfo? {
+    return KotlinDebuggerCaches.readFileContent(project, jvmName, file)
+}
+
+class BytecodeDebugInfo(val smapData: SmapData?, val lineTableMapping: Map<BytecodeMethodKey, Map<String, Set<Int>>>)
+
+data class BytecodeMethodKey(val methodName: String, val signature: String)
+data class BinaryCacheKey(val project: Project, val jvmName: JvmClassName, val file: VirtualFile)
+
+private fun readClassFileImpl(project: Project,
+                      jvmName: JvmClassName,
+                      file: VirtualFile): ByteArray? {
     val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
 
-    fun readFromLibrary() : ByteArray? {
+    fun readFromLibrary(): ByteArray? {
         if (!ProjectRootsUtil.isLibrarySourceFile(project, file)) return null
 
         val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
@@ -84,12 +113,13 @@ fun readClassFile(project: Project,
             classByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, androidTestOutputDir) ?: return null
         }
 
+        println("Read file: " + classByDirectory)
         return classByDirectory.readBytes()
     }
 
-    fun readFromSourceOutput() : ByteArray? = readFromOutput(false)
+    fun readFromSourceOutput(): ByteArray? = readFromOutput(false)
 
-    fun readFromTestOutput() : ByteArray? = readFromOutput(true)
+    fun readFromTestOutput(): ByteArray? = readFromOutput(true)
 
     return readFromLibrary() ?:
            readFromSourceOutput() ?:
@@ -128,9 +158,9 @@ fun mapStacktraceLineToSource(smapData: SmapData,
                               lineKind: SourceLineKind,
                               searchScope: GlobalSearchScope): Pair<KtFile, Int>? {
     val smap = when (lineKind) {
-        SourceLineKind.CALL_LINE -> smapData.kotlinDebugStrata
-        SourceLineKind.EXECUTED_LINE -> smapData.kotlinStrata
-    } ?: return null
+                   SourceLineKind.CALL_LINE -> smapData.kotlinDebugStrata
+                   SourceLineKind.EXECUTED_LINE -> smapData.kotlinStrata
+               } ?: return null
 
     val mappingInfo = smap.fileMappings.firstOrNull {
         it.getIntervalIfContains(line) != null
@@ -166,7 +196,7 @@ class SmapData(debugInfo: String) {
 
     init {
         val intervals = debugInfo.split(SMAP.END).filter(String::isNotBlank)
-        when(intervals.count()) {
+        when (intervals.count()) {
             1 -> {
                 kotlinStrata = SMAPParser.parse(intervals[0] + SMAP.END)
                 kotlinDebugStrata = null
