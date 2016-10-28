@@ -26,20 +26,26 @@ internal class IncrementalCachesManager (
 ) {
     private val incrementalCacheDir = File(cacheDirectory, "increCache.${targetId.name}")
     private val lookupCacheDir = File(cacheDirectory, "lookups")
-    private var incrementalCacheOpen = false
-    private var lookupCacheOpen = false
+    private var incrementalCacheField: GradleIncrementalCacheImpl? = null
+    private var lookupCacheField: LookupStorage? = null
 
-    val incrementalCache: GradleIncrementalCacheImpl by lazy {
-        val cache = GradleIncrementalCacheImpl(targetDataRoot = incrementalCacheDir.apply { mkdirs() }, targetOutputDir = outputDir, target = targetId)
-        incrementalCacheOpen = true
-        cache
-    }
+    val incrementalCache: GradleIncrementalCacheImpl
+        get() {
+            if (incrementalCacheField == null) {
+                incrementalCacheField = GradleIncrementalCacheImpl(targetDataRoot = incrementalCacheDir.apply { mkdirs() }, targetOutputDir = outputDir, target = targetId)
+            }
 
-    val lookupCache: LookupStorage by lazy {
-        val cache = LookupStorage(lookupCacheDir.apply { mkdirs() })
-        lookupCacheOpen = true
-        cache
-    }
+            return incrementalCacheField!!
+        }
+
+    val lookupCache: LookupStorage
+        get() {
+            if (lookupCacheField == null) {
+                lookupCacheField = LookupStorage(lookupCacheDir.apply { mkdirs() })
+            }
+
+            return lookupCacheField!!
+        }
 
     fun clean() {
         close(flush = false)
@@ -47,20 +53,20 @@ internal class IncrementalCachesManager (
     }
 
     fun close(flush: Boolean = false) {
-        if (incrementalCacheOpen) {
+        incrementalCacheField?.let {
             if (flush) {
-                incrementalCache.flush(false)
+                it.flush(false)
             }
-            incrementalCache.close()
-            incrementalCacheOpen = false
+            it.close()
+            incrementalCacheField = null
         }
 
-        if (lookupCacheOpen) {
+        lookupCacheField?.let {
             if (flush) {
-                lookupCache.flush(false)
+                it.flush(false)
             }
-            lookupCache.close()
-            lookupCacheOpen = false
+            it.close()
+            lookupCacheField = null
         }
     }
 }

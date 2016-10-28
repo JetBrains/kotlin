@@ -132,7 +132,7 @@ internal class IncrementalJvmCompilerRunner(
         return try {
             val javaFilesProcessor = ChangedJavaFilesProcessor()
             val changedFiles = getChangedFiles(caches)
-            val compilationMode = calculateSourcesToCompile(javaFilesProcessor, caches, changedFiles, args.classpathAsList)
+            val compilationMode = calculateSourcesToCompile(javaFilesProcessor, caches, changedFiles, args)
             compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
         }
         catch (e: PersistentEnumeratorBase.CorruptedException) {
@@ -161,12 +161,13 @@ internal class IncrementalJvmCompilerRunner(
             javaFilesProcessor: ChangedJavaFilesProcessor,
             caches: IncrementalCachesManager,
             changedFiles: ChangedFiles,
-            classpath: Iterable<File>
+            args: K2JVMCompilerArguments
     ): CompilationMode {
         fun rebuild(reason: ()->String): CompilationMode {
             reporter.report {"Non-incremental compilation will be performed: ${reason()}"}
             caches.clean()
             dirtySourcesSinceLastTimeFile.delete()
+            args.destinationAsFile.deleteRecursively()
             return CompilationMode.Rebuild
         }
 
@@ -178,7 +179,7 @@ internal class IncrementalJvmCompilerRunner(
         val modifiedClassFiles = changedFiles.modified.filter(File::isClassFile)
         if (modifiedClassFiles.any()) return rebuild {"Modified class files: ${reporter.pathsAsString(modifiedClassFiles)}"}
 
-        val classpathSet = classpath.toHashSet()
+        val classpathSet = args.classpathAsList.toHashSet()
         val modifiedClasspathEntries = changedFiles.modified.filter {it in classpathSet}
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
         reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
