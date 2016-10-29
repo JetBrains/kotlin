@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_ONLY
 import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
@@ -49,6 +50,9 @@ object Kapt3ConfigurationKeys {
 
     val VERBOSE_MODE: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("verbose mode")
+
+    val APT_ONLY: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("do only annotation processing")
 }
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
@@ -71,6 +75,9 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
         val VERBOSE_MODE_OPTION: CliOption =
                 CliOption("verbose", "true | false", "Enable verbose output", required = false)
+
+        val APT_ONLY_OPTION: CliOption =
+                CliOption("aptOnly", "true | false", "Run only annotation processing, do not compile Kotlin files", required = false)
     }
 
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
@@ -92,6 +99,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             GENERATED_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.GENERATED_OUTPUT_DIR, value)
             CLASS_FILES_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_FILES_OUTPUT_DIR, value)
             VERBOSE_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.VERBOSE_MODE, value)
+            APT_ONLY_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_ONLY, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -122,11 +130,23 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                                ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory())
 
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
+        val isAptOnly = configuration.get(Kapt3ConfigurationKeys.APT_ONLY) == "true"
 
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesKapt3())
 
+        val logger = Logger(isVerbose)
+        if (isVerbose) {
+            logger.info("Kapt3 is enabled.")
+            logger.info("Do annotation processing only: $isAptOnly")
+            logger.info("Source output directory: $sourcesOutputDir")
+            logger.info("Classes output directory: $classesOutputDir")
+            logger.info("Annotation processing classpath: " + classpath.joinToString())
+            logger.info("Java source roots: " + javaSourceRoots.joinToString())
+            logger.info("Options: $apOptions")
+        }
+
         val kapt3AnalysisCompletedHandlerExtension = Kapt3AnalysisCompletedHandlerExtension(
-                classpath, javaSourceRoots, sourcesOutputDir, classesOutputDir, apOptions, isVerbose)
+                classpath, javaSourceRoots, sourcesOutputDir, classesOutputDir, apOptions, isAptOnly, logger)
         AnalysisCompletedHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 }
