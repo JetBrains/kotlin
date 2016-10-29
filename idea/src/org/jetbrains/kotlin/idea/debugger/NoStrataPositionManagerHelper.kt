@@ -61,9 +61,9 @@ fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Proj
     return true
 }
 
-fun readDebugBytecodeInfo(project: Project,
-                          jvmName: JvmClassName,
-                          file: VirtualFile): BytecodeDebugInfo? {
+fun readBytecodeInfo(project: Project,
+                     jvmName: JvmClassName,
+                     file: VirtualFile): BytecodeDebugInfo? {
     return KotlinDebuggerCaches.getOrReadDebugInfoFromBytecode(project, jvmName, file)
 }
 
@@ -240,7 +240,7 @@ private fun findAndReadClassFile(
     val virtualFile = file.virtualFile ?: return null
     if (!fileFilter(virtualFile)) return null
 
-    return readDebugBytecodeInfo(project, jvmClassName, virtualFile)
+    return readBytecodeInfo(project, jvmClassName, virtualFile)
 }
 
 internal fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosition, sourceSearchScope: GlobalSearchScope): List<Location> {
@@ -272,7 +272,7 @@ private fun inlinedLinesNumbers(
 
     val virtualFile = file.virtualFile ?: return listOf()
 
-    val debugInfo = readDebugBytecodeInfo(project, jvmClassName, virtualFile) ?: return listOf()
+    val debugInfo = readBytecodeInfo(project, jvmClassName, virtualFile) ?: return listOf()
     val smapData = debugInfo.smapData ?: return listOf()
 
     val smap = smapData.kotlinStrata ?: return listOf()

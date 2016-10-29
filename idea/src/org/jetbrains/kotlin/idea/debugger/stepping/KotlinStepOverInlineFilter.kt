@@ -24,26 +24,34 @@ import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.debugger.noStrataLineNumber
 
-class KotlinStepOverInlineFilter(
+class StepOverFilterData(
+        val lineNumber: Int,
+        val stepOverLines: Set<Int>,
+        val inlineRangeVariables: List<LocalVariable>,
         val isDexDebug: Boolean,
-        val project: Project,
-        val stepOverLines: Set<Int>, val fromLine: Int,
-        val inlineFunRangeVariables: List<LocalVariable>) : KotlinMethodFilter {
-    private fun Location.ktLineNumber() = noStrataLineNumber(this, isDexDebug, project)
+        val skipAfterCodeIndex: Long = -1
+)
+
+class KotlinStepOverInlineFilter(val project: Project, val data: StepOverFilterData) : KotlinMethodFilter {
+    private fun Location.ktLineNumber() = noStrataLineNumber(this, data.isDexDebug, project)
 
     override fun locationMatches(context: SuspendContextImpl, location: Location): Boolean {
         val frameProxy = context.frameProxy ?: return true
 
+        if (data.skipAfterCodeIndex != -1L && location.codeIndex() > data.skipAfterCodeIndex) {
+            return false
+        }
+
         val currentLine = location.ktLineNumber()
-        if (!(stepOverLines.contains(currentLine))) {
-            return currentLine != fromLine
+        if (!(data.stepOverLines.contains(currentLine))) {
+            return currentLine != data.lineNumber
         }
 
         val visibleInlineVariables = getInlineRangeLocalVariables(frameProxy)
 
         // Our ranges check missed exit from inline function. This is when breakpoint was in last statement of inline functions.
         // This can be observed by inline local range-variables. Absence of any means step out was done.
-        return inlineFunRangeVariables.any { !visibleInlineVariables.contains(it) }
+        return data.inlineRangeVariables.any { !visibleInlineVariables.contains(it) }
     }
 
     override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {

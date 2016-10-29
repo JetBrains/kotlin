@@ -265,17 +265,12 @@ private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallE
     }
 }
 
-
 sealed class Action(val position: XSourcePositionImpl? = null,
-                    val lineNumber: Int? = null,
-                    val stepOverLines: Set<Int>? = null,
-                    val inlineRangeVariables: List<LocalVariable>? = null,
-                    val isDexDebug: Boolean = false) {
+                    val stepOverInlineData: StepOverFilterData? = null) {
     class STEP_OVER : Action()
     class STEP_OUT : Action()
     class RUN_TO_CURSOR(position: XSourcePositionImpl) : Action(position)
-    class STEP_OVER_INLINED(lineNumber: Int, stepOverLines: Set<Int>, inlineVariables: List<LocalVariable>, isDexDebug: Boolean) : Action(
-            lineNumber = lineNumber, stepOverLines = stepOverLines, inlineRangeVariables = inlineVariables, isDexDebug = isDexDebug)
+    class STEP_OVER_INLINED(stepOverInlineData: StepOverFilterData) : Action(stepOverInlineData = stepOverInlineData)
 
     fun apply(debugProcess: DebugProcessImpl,
               suspendContext: SuspendContextImpl,
@@ -289,12 +284,7 @@ sealed class Action(val position: XSourcePositionImpl? = null,
             is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
             is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
             is Action.STEP_OVER_INLINED -> KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
-                    KotlinStepOverInlineFilter(
-                            isDexDebug,
-                            debugProcess.project,
-                            stepOverLines!!,
-                            lineNumber ?: -1,
-                            inlineRangeVariables!!)).contextAction(suspendContext)
+                    KotlinStepOverInlineFilter(debugProcess.project, stepOverInlineData!!)).contextAction(suspendContext)
         }
     }
 }
@@ -336,7 +326,7 @@ fun getStepOverAction(
             return false
         }
 
-        if (nextLocation.ktLineNumber() !in range) {
+        if (nextLocation.lineNumber() !in range) {
             return false
         }
 
@@ -348,8 +338,10 @@ fun getStepOverAction(
         }
     }
 
+    val methodLocations = location.method().allLineLocations()
+
     fun isBackEdgeLocation(): Boolean {
-        val previousSuitableLocation = computedReferenceType.allLineLocations().reversed()
+        val previousSuitableLocation = methodLocations.reversed()
                 .dropWhile { it != location }
                 .drop(1)
                 .filter(::isLocationSuitable)
@@ -361,7 +353,7 @@ fun getStepOverAction(
 
     val patchedLocation = if (isBackEdgeLocation()) {
         // Pretend we had already did a backing step
-        computedReferenceType.allLineLocations()
+        methodLocations
                 .filter(::isLocationSuitable)
                 .first { it.ktLineNumber() == location.ktLineNumber() }
     }
@@ -388,7 +380,7 @@ fun getStepOverAction(
     //
     // It also thinks that too many lines are inlined when there's a call of function argument or other
     // inline function in last statement of inline function. The list of inlineRangeVariables is used to overcome it.
-    val probablyInlinedLocations = computedReferenceType.allLineLocations()
+    val probablyInlinedLocations = methodLocations
             .dropWhile { it != patchedLocation }
             .drop(1)
             .dropWhile { it.ktLineNumber() == patchedLineNumber }
@@ -398,12 +390,25 @@ fun getStepOverAction(
             .dropWhile { it.ktLineNumber() == patchedLineNumber }
 
     if (!probablyInlinedLocations.isEmpty()) {
-        return Action.STEP_OVER_INLINED(
+        // Some Kotlin inlined methods with 'for' (and maybe others) generates bytecode that after dexing have a strange artifact.
+        // GOTO instructions are moved to the end of method and as they don't have proper line, line is obtained from the previous
+        // instruction. It might be method return or previous GOTO from the inlining. Simple stepping over such function is really
+        // terrible. On each iteration position jumps to the method end or some previous inline call and then returns back. To prevent
+        // this filter locations with too big code indexes manually
+        val returnCodeIndex: Long = if (isDexDebug) {
+            // TODO: won't work for situation when breakpoint is in inlined method
+            val locationsOfLine = location.method().locationsOfLine(range.last)
+            locationsOfLine.map { it.codeIndex() }.max() ?: -1L
+        }
+        else -1L
+
+        return Action.STEP_OVER_INLINED(StepOverFilterData(
                 patchedLineNumber,
                 probablyInlinedLocations.map { it.ktLineNumber() }.toSet(),
                 inlineRangeVariables,
-                isDexDebug
-        )
+                isDexDebug,
+                returnCodeIndex
+        ))
     }
 
     return Action.STEP_OVER()
