@@ -45,7 +45,7 @@ public val <T : Any> KClass<T>.javaPrimitiveType: Class<T>?
         val thisJClass = (this as ClassBasedDeclarationContainer).jClass
         if (thisJClass.isPrimitive) return thisJClass as Class<T>
 
-        return when (thisJClass.canonicalName) {
+        return when (thisJClass.name) {
             "java.lang.Boolean"   -> Boolean::class.java
             "java.lang.Character" -> Char::class.java
             "java.lang.Byte"      -> Byte::class.java
@@ -67,7 +67,7 @@ public val <T : Any> KClass<T>.javaObjectType: Class<T>
         val thisJClass = (this as ClassBasedDeclarationContainer).jClass
         if (!thisJClass.isPrimitive) return thisJClass as Class<T>
 
-        return when (thisJClass.canonicalName) {
+        return when (thisJClass.name) {
             "boolean" -> JavaLangBoolean::class.java
             "char"    -> JavaLangCharacter::class.java
             "byte"    -> JavaLangByte::class.java
