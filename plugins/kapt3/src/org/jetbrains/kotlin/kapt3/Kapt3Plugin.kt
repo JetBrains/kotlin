@@ -30,17 +30,19 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_ONLY
 import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 
 object Kapt3ConfigurationKeys {
-    val GENERATED_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("generated files output directory")
+    val SOURCE_OUTPUT_DIR: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("source files output directory")
 
-    val CLASS_FILES_OUTPUT_DIR: CompilerConfigurationKey<String> =
+    val CLASS_OUTPUT_DIR: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("class files output directory")
+
+    val STUBS_OUTPUT_DIR: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("stubs output directory")
 
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation processor classpath")
@@ -59,11 +61,14 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     companion object {
         val ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt3"
 
-        val GENERATED_OUTPUT_DIR_OPTION: CliOption =
-                CliOption("generated", "<path>", "Output path for the generated files", required = false)
+        val SOURCE_OUTPUT_DIR_OPTION: CliOption =
+                CliOption("sources", "<path>", "Output path for the generated files", required = false)
 
-        val CLASS_FILES_OUTPUT_DIR_OPTION: CliOption =
+        val CLASS_OUTPUT_DIR_OPTION: CliOption =
                 CliOption("classes", "<path>", "Output path for the class files", required = false)
+
+        val STUBS_OUTPUT_DIR_OPTION: CliOption =
+                CliOption("stubs", "<path>", "Output path for the Java stubs", required = false)
 
         val ANNOTATION_PROCESSOR_CLASSPATH_OPTION: CliOption =
                 CliOption("apclasspath", "<classpath>", "Annotation processor classpath",
@@ -83,8 +88,8 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> =
-            listOf(GENERATED_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
-                   CLASS_FILES_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION)
+            listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
+                   CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION)
 
     private fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
         val paths = getList(option).toMutableList()
@@ -96,8 +101,9 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
         when (option) {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
             APT_OPTIONS_OPTION -> configuration.appendList(APT_OPTIONS, value)
-            GENERATED_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.GENERATED_OUTPUT_DIR, value)
-            CLASS_FILES_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_FILES_OUTPUT_DIR, value)
+            SOURCE_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR, value)
+            CLASS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR, value)
+            STUBS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR, value)
             VERBOSE_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.VERBOSE_MODE, value)
             APT_ONLY_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_ONLY, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
@@ -107,7 +113,10 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
 class Kapt3ComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val generatedOutputDir = configuration.get(Kapt3ConfigurationKeys.GENERATED_OUTPUT_DIR) ?: return
+        val sourcesOutputDir = configuration.get(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR)?.let(::File) ?: return
+        val classFilesOutputDir = configuration.get(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR)?.let(::File) ?: return
+        val stubsOutputDir = configuration.get(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR)?.let(::File)
+
         val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: return
 
         val apOptions = (configuration.get(APT_OPTIONS) ?: listOf())
@@ -116,7 +125,6 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                 .map { it[0] to it[1] }
                 .toMap()
 
-        val sourcesOutputDir = File(generatedOutputDir)
         sourcesOutputDir.mkdirs()
 
         val contentRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
@@ -125,9 +133,6 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val classpath = apClasspath + compileClasspath
 
         val javaSourceRoots = contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file }
-
-        val classesOutputDir = File(configuration.get(Kapt3ConfigurationKeys.CLASS_FILES_OUTPUT_DIR)
-                               ?: configuration[JVMConfigurationKeys.MODULES]!!.first().getOutputDirectory())
 
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
         val isAptOnly = configuration.get(Kapt3ConfigurationKeys.APT_ONLY) == "true"
@@ -139,14 +144,15 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Kapt3 is enabled.")
             logger.info("Do annotation processing only: $isAptOnly")
             logger.info("Source output directory: $sourcesOutputDir")
-            logger.info("Classes output directory: $classesOutputDir")
+            logger.info("Classes output directory: $classFilesOutputDir")
+            logger.info("Stubs output directory: $stubsOutputDir")
             logger.info("Annotation processing classpath: " + classpath.joinToString())
             logger.info("Java source roots: " + javaSourceRoots.joinToString())
             logger.info("Options: $apOptions")
         }
 
         val kapt3AnalysisCompletedHandlerExtension = Kapt3AnalysisCompletedHandlerExtension(
-                classpath, javaSourceRoots, sourcesOutputDir, classesOutputDir, apOptions, isAptOnly, logger)
+                classpath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions, isAptOnly, logger)
         AnalysisCompletedHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 }
