@@ -7,8 +7,7 @@
     <properties>
         <maven.version>3.0.4</maven.version>
         <old-kapt.src>${basedir}/src/main/kotlin</old-kapt.src>
-        <annotation-processing.src>${basedir}/../../../plugins/annotation-processing/src</annotation-processing.src>
-        <java-model-wrappers.src>${basedir}/../../../plugins/java-model-wrappers/src</java-model-wrappers.src>
+        <annotation-processing.src>${basedir}/../../../plugins/kapt3/src</annotation-processing.src>
         <annotation-processing.target-src>${basedir}/target/src/main/kotlin</annotation-processing.target-src>
         <annotation-processing.target-src-test>${basedir}/target/src/test/kotlin</annotation-processing.target-src-test>
         <annotation-processing.target-resource>${basedir}/target/resource</annotation-processing.target-resource>
@@ -83,7 +82,6 @@
                             <outputDirectory>${annotation-processing.target-src}</outputDirectory>
                             <resources>
                                 <resource><directory>${annotation-processing.src}</directory></resource>
-                                <resource><directory>${java-model-wrappers.src}</directory></resource>
                                 <resource><directory>${old-kapt.src}</directory></resource>
                             </resources>
                         </configuration>
