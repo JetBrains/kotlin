@@ -33,17 +33,17 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
-// apply plugin: 'kotlin-kapt2'
-class Kapt2GradleSubplugin : Plugin<Project> {
+// apply plugin: 'kotlin-kapt'
+class Kapt3GradleSubplugin : Plugin<Project> {
     companion object {
-        fun isEnabled(project: Project) = project.plugins.findPlugin(Kapt2GradleSubplugin::class.java) != null
+        fun isEnabled(project: Project) = project.plugins.findPlugin(Kapt3GradleSubplugin::class.java) != null
     }
 
     override fun apply(project: Project) {}
 }
 
 // Subplugin for the Kotlin Gradle plugin
-class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
+class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     companion object {
         private val VERBOSE_OPTION_NAME = "kapt.verbose"
 
@@ -52,10 +52,10 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
     
-    override fun isApplicable(project: Project, task: KotlinCompile) = Kapt2GradleSubplugin.isEnabled(project)
+    override fun isApplicable(project: Project, task: KotlinCompile) = Kapt3GradleSubplugin.isEnabled(project)
 
     fun getKaptGeneratedDir(project: Project, sourceSetName: String): File {
-        return File(project.project.buildDir, "generated/source/kapt2/$sourceSetName")
+        return File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
     }
 
     private fun Project.findKaptConfiguration(sourceSetName: String): Configuration? {
@@ -75,10 +75,10 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptClasspath = arrayListOf<File>()
 
         fun handleSourceSet(sourceSetName: String) {
-            val kapt2Configuration = project.findKaptConfiguration(sourceSetName)
-            if (kapt2Configuration != null && kapt2Configuration.dependencies.size > 1) {
-                javaCompile.dependsOn(kapt2Configuration.buildDependencies)
-                kaptClasspath.addAll(kapt2Configuration.resolve())
+            val kaptConfiguration = project.findKaptConfiguration(sourceSetName)
+            if (kaptConfiguration != null && kaptConfiguration.dependencies.size > 1) {
+                javaCompile.dependsOn(kaptConfiguration.buildDependencies)
+                kaptClasspath.addAll(kaptConfiguration.resolve())
             }
         }
         
@@ -136,16 +136,13 @@ class Kapt2KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val annotationsFile = File(kotlinCompile.taskBuildDirectory, "source-annotations.txt")
         kotlinCompile.sourceAnnotationsRegistry = SourceAnnotationsRegistry(annotationsFile)
 
-        val incrementalCompilationDataFile = File(project.buildDir, "tmp/kapt2/$sourceSetName/incrementalData.txt")
-        pluginOptions += SubpluginOption("incrementalData", incrementalCompilationDataFile.absolutePath)
-        
         return pluginOptions
     }
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
         get() = variantConfiguration.sortedSourceProviders
 
-    override fun getPluginName() = "org.jetbrains.kotlin.kapt2"
+    override fun getPluginName() = "org.jetbrains.kotlin.kapt3"
     override fun getGroupName() = "org.jetbrains.kotlin"
     override fun getArtifactName() = "kotlin-annotation-processing"
 }
