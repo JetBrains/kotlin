@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.kapt3.stubs
 
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.code.TypeTag
@@ -22,7 +22,10 @@ import com.sun.tools.javac.tree.JCTree.*
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor
 import java.util.*
-import org.jetbrains.kotlin.kapt3.ElementKind.*
+import org.jetbrains.kotlin.kapt3.stubs.ElementKind.*
+import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
+import org.jetbrains.kotlin.kapt3.mapValues
+import org.jetbrains.kotlin.kapt3.mapValuesIndexed
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import com.sun.tools.javac.util.List as JavacList
@@ -76,35 +79,35 @@ import com.sun.tools.javac.util.List as JavacList
         + ClassType
  */
 
-enum class ElementKind {
+internal enum class ElementKind {
     Root, TypeParameter, ClassBound, InterfaceBound, SuperClass, Interface, TypeArgument, ParameterType, ReturnType, ExceptionType,
     ClassType, TypeVariable, PrimitiveType, ArrayType
 }
 
-class SignatureNode(val kind: ElementKind, val name: String? = null) {
+private class SignatureNode(val kind: ElementKind, val name: String? = null) {
     val children: MutableList<SignatureNode> = SmartList<SignatureNode>()
 }
 
 class SignatureParser(val treeMaker: KaptTreeMaker) {
     class ClassGenericSignature(
-            val typeParameters: JavacList<JCTypeParameter>,
+            val typeParameters: com.sun.tools.javac.util.List<JCTypeParameter>,
             val superClass: JCExpression,
-            val interfaces: JavacList<JCExpression>)
+            val interfaces: com.sun.tools.javac.util.List<JCExpression>)
 
     class MethodGenericSignature(
-            val typeParameters: JavacList<JCTypeParameter>,
-            val parameterTypes: JavacList<JCVariableDecl>,
-            val exceptionTypes: JavacList<JCExpression>,
+            val typeParameters: com.sun.tools.javac.util.List<JCTypeParameter>,
+            val parameterTypes: com.sun.tools.javac.util.List<JCVariableDecl>,
+            val exceptionTypes: com.sun.tools.javac.util.List<JCExpression>,
             val returnType: JCExpression?
     )
     
     fun parseClassSignature(
             signature: String?,
             rawSuperClass: JCExpression,
-            rawInterfaces: JavacList<JCExpression>
+            rawInterfaces: com.sun.tools.javac.util.List<JCExpression>
     ): ClassGenericSignature {
         if (signature == null) {
-            return ClassGenericSignature(JavacList.nil(), rawSuperClass, rawInterfaces)
+            return ClassGenericSignature(com.sun.tools.javac.util.List.nil(), rawSuperClass, rawInterfaces)
         }
 
         val root = parse(signature)
@@ -121,12 +124,12 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
 
     fun parseMethodSignature(
             signature: String?,
-            rawParameters: JavacList<JCVariableDecl>,
-            rawExceptionTypes: JavacList<JCExpression>,
+            rawParameters: com.sun.tools.javac.util.List<JCVariableDecl>,
+            rawExceptionTypes: com.sun.tools.javac.util.List<JCExpression>,
             rawReturnType: JCExpression?
     ): MethodGenericSignature {
         if (signature == null) {
-            return MethodGenericSignature(JavacList.nil(), rawParameters, rawExceptionTypes, rawReturnType)
+            return MethodGenericSignature(com.sun.tools.javac.util.List.nil(), rawParameters, rawExceptionTypes, rawReturnType)
         }
 
         val root = parse(signature)
@@ -186,7 +189,7 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
             ClassType -> {
                 val classFqName = node.name!!.replace('/', '.')
                 val args = node.children
-                val fqNameExpression = treeMaker.convertFqName(classFqName)
+                val fqNameExpression = treeMaker.FqName(classFqName)
                 if (args.isEmpty()) return fqNameExpression
 
                 treeMaker.TypeApply(fqNameExpression, mapValues(args) { arg ->
@@ -202,7 +205,7 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
                     }
                 })
             }
-            TypeVariable -> treeMaker.convertSimpleName(node.name!!)
+            TypeVariable -> treeMaker.SimpleName(node.name!!)
             ArrayType -> treeMaker.TypeArray(parseType(node.children.single()))
             PrimitiveType -> {
                 val typeTag = when (node.name!!.single()) {

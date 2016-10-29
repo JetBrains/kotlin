@@ -16,14 +16,16 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
-import org.jetbrains.kotlin.kapt3.KaptError
-import org.jetbrains.kotlin.kapt3.KaptRunner
-import org.jetbrains.kotlin.kapt3.Logger
+import org.jetbrains.kotlin.kapt3.KaptContext
+import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
+import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
 import javax.annotation.processing.AbstractProcessor
+import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
@@ -72,16 +74,20 @@ class KaptRunnerTest {
         }
     }
 
+    private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
+        KaptContext(KaptLogger(isVerbose = true), emptyList(), emptyMap()).doAnnotationProcessing(
+                listOf(javaSourceFile),
+                listOf(processor),
+                emptyList(), // classpath
+                outputDir,
+                outputDir)
+    }
+
     @Test
     fun testSimple() {
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
-            KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
-                    listOf(File(TEST_DATA_DIR, "Simple.java")),
-                    listOf(simpleProcessor()),
-                    emptyList(), // classpath
-                    sourceOutputDir,
-                    sourceOutputDir)
+            doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), simpleProcessor(), sourceOutputDir)
             val myMethodFile = File(sourceOutputDir, "generated/MyMethodMyAnnotation.java")
             assertTrue(myMethodFile.exists())
         } finally {
@@ -102,12 +108,7 @@ class KaptRunnerTest {
         }
 
         try {
-            KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
-                    listOf(File(TEST_DATA_DIR, "Simple.java")),
-                    listOf(processor),
-                    emptyList(),
-                    TEST_DATA_DIR,
-                    TEST_DATA_DIR)
+            doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), processor, TEST_DATA_DIR)
         } catch (e: KaptError) {
             assertEquals(KaptError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)
@@ -116,15 +117,14 @@ class KaptRunnerTest {
 
     @Test
     fun testParsingError() {
+        var catched = false
         try {
-            KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
-                    listOf(File(TEST_DATA_DIR, "ParseError.java")),
-                    listOf(simpleProcessor()),
-                    emptyList(),
-                    TEST_DATA_DIR,
-                    TEST_DATA_DIR)
+            doAnnotationProcessing(File(TEST_DATA_DIR, "ParseError.java"), simpleProcessor(), TEST_DATA_DIR)
         } catch (e: KaptError) {
             assertEquals(KaptError.Kind.JAVA_FILE_PARSING_ERROR, e.kind)
+            catched = true
         }
+
+        assertTrue("Exception was not catched", catched)
     }
 }

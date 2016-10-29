@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.kapt3.javac
 
 import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.main.JavaCompiler
@@ -24,7 +24,7 @@ class KaptJavaCompiler(context: Context) : JavaCompiler(context) {
     public override fun shouldStop(cs: CompileStates.CompileState) = super.shouldStop(cs)
 
     companion object {
-        fun preRegister(context: Context) {
+        internal fun preRegister(context: Context) {
             context.put(compilerKey, Context.Factory<JavaCompiler>(::KaptJavaCompiler))
         }
     }

@@ -18,19 +18,16 @@ package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.comp.CompileStates
-import com.sun.tools.javac.tree.JCTree
+import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.kapt3.JCTreeConverter
-import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
-import org.jetbrains.kotlin.kapt3.KaptRunner
-import org.jetbrains.kotlin.kapt3.Logger
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.kapt3.*
+import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
+import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import com.sun.tools.javac.util.List as JavacList
 import java.io.File
 import java.nio.file.Files
@@ -51,35 +48,29 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val factory = CodegenTestUtil.generateFiles(myEnvironment, myFiles, classBuilderFactory)
         val typeMapper = factory.generationState.typeMapper
 
-        val logger = Logger(isVerbose = true)
-        val kaptRunner = KaptRunner(logger)
+        val logger = KaptLogger(isVerbose = true)
+        val kaptContext = KaptContext(logger, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
         try {
-            check(kaptRunner, typeMapper, classBuilderFactory, txtFile)
+            check(kaptContext, typeMapper, txtFile)
         } finally {
-            kaptRunner.close()
+            kaptContext.close()
         }
     }
 
-    protected fun convert(
-            kaptRunner: KaptRunner,
-            typeMapper: KotlinTypeMapper,
-            compiledClasses: List<ClassNode>,
-            origins: Map<Any, JvmDeclarationOrigin>
-    ): JavacList<JCTree.JCCompilationUnit> {
-        val converter = JCTreeConverter(kaptRunner.context, typeMapper, compiledClasses, origins)
+    protected fun convert(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper): JavacList<JCCompilationUnit> {
+        val converter = ClassFileToSourceStubConverter(kaptRunner, typeMapper)
         return converter.convert()
     }
 
     protected abstract fun check(
-            kaptRunner: KaptRunner,
+            kaptRunner: KaptContext,
             typeMapper: KotlinTypeMapper,
-            classBuilderFactory: Kapt3BuilderFactory,
             txtFile: File)
 }
 
-abstract class AbstractJCTreeConverterTest : AbstractKotlinKapt3Test() {
-    override fun check(kaptRunner: KaptRunner, typeMapper: KotlinTypeMapper, classBuilderFactory: Kapt3BuilderFactory, txtFile: File) {
-        val javaFiles = convert(kaptRunner, typeMapper, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
+abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test() {
+    override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File) {
+        val javaFiles = convert(kaptRunner, typeMapper)
         kaptRunner.compiler.enterTrees(javaFiles)
 
         val actualRaw = javaFiles.joinToString (FILE_SEPARATOR)
@@ -93,8 +84,8 @@ abstract class AbstractJCTreeConverterTest : AbstractKotlinKapt3Test() {
 }
 
 abstract class AbstractKotlinKaptRunnerTest : AbstractKotlinKapt3Test() {
-    override fun check(kaptRunner: KaptRunner, typeMapper: KotlinTypeMapper, classBuilderFactory: Kapt3BuilderFactory, txtFile: File) {
-        val compilationUnits = convert(kaptRunner, typeMapper, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
+    override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File) {
+        val compilationUnits = convert(kaptRunner, typeMapper)
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
             kaptRunner.doAnnotationProcessing(emptyList(), listOf(KaptRunnerTest.simpleProcessor()),

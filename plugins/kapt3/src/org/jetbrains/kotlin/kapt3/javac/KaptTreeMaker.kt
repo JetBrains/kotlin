@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.kapt3.javac
 
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.tree.JCTree
@@ -24,23 +24,23 @@ import com.sun.tools.javac.util.Names
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 
-class KaptTreeMaker(context: Context?) : TreeMaker(context) {
+class KaptTreeMaker(context: Context) : TreeMaker(context) {
     private val nameTable = Names.instance(context).table
 
-    fun convertType(type: Type): JCTree.JCExpression {
+    fun Type(type: Type): JCTree.JCExpression {
         convertBuiltinType(type)?.let { return it }
         if (type.sort == ARRAY) {
-            return TypeArray(convertType(type.elementType))
+            return TypeArray(Type(type.elementType))
         }
-        return convertFqName(type.className)
+        return FqName(type.className)
     }
 
-    fun convertFqName(internalOrFqName: String): JCTree.JCExpression {
+    fun FqName(internalOrFqName: String): JCTree.JCExpression {
         val path = internalOrFqName.replace('/', '.').split('.')
         assert(path.isNotEmpty())
-        if (path.size == 1) return convertSimpleName(path.single())
+        if (path.size == 1) return SimpleName(path.single())
 
-        var expr = Select(convertSimpleName(path[0]), name(path[1]))
+        var expr = Select(SimpleName(path[0]), name(path[1]))
         for (index in 2..path.lastIndex) {
             expr = Select(expr, name(path[index]))
         }
@@ -63,12 +63,12 @@ class KaptTreeMaker(context: Context?) : TreeMaker(context) {
         return TypeIdent(typeTag)
     }
 
-    fun convertSimpleName(name: String): JCTree.JCExpression = Ident(name(name))
+    fun SimpleName(name: String): JCTree.JCExpression = Ident(name(name))
 
     fun name(name: String) = nameTable.fromString(name)
 
     companion object {
-        fun preRegister(context: Context) {
+        internal fun preRegister(context: Context) {
             context.put(treeMakerKey, Context.Factory<TreeMaker>(::KaptTreeMaker))
         }
     }

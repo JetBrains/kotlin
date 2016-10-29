@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
+import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.File
 
@@ -139,7 +140,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesKapt3())
 
-        val logger = Logger(isVerbose)
+        val logger = KaptLogger(isVerbose)
         if (isVerbose) {
             logger.info("Kapt3 is enabled.")
             logger.info("Do annotation processing only: $isAptOnly")
@@ -151,7 +152,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Options: $apOptions")
         }
 
-        val kapt3AnalysisCompletedHandlerExtension = Kapt3AnalysisCompletedHandlerExtension(
+        val kapt3AnalysisCompletedHandlerExtension = Kapt3Extension(
                 classpath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
                 isAptOnly, System.currentTimeMillis(), logger)
         AnalysisCompletedHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
