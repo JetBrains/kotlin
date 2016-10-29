@@ -47,6 +47,7 @@ class Kapt3AnalysisCompletedHandlerExtension(
         val stubsOutputDir: File?,
         val options: Map<String, String>, //TODO
         val aptOnly: Boolean,
+        val pluginInitializedTime: Long,
         val logger: Logger
 ) : AnalysisCompletedHandlerExtension {
     private var annotationProcessingComplete = false
@@ -61,6 +62,8 @@ class Kapt3AnalysisCompletedHandlerExtension(
             return null
         }
 
+        annotationProcessingComplete = true
+
         fun doNotGenerateCode() = AnalysisResult.Companion.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
 
         if (files.isEmpty()) {
@@ -68,6 +71,7 @@ class Kapt3AnalysisCompletedHandlerExtension(
             return if (aptOnly) doNotGenerateCode() else null
         }
 
+        logger.info { "Initial analysis took ${System.currentTimeMillis() - pluginInitializedTime} ms" }
         logger.info { "Kotlin files: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
 
         val processors = loadProcessors(annotationProcessingClasspath)
@@ -90,7 +94,10 @@ class Kapt3AnalysisCompletedHandlerExtension(
                 disableParamAssertions = false)
 
         try {
-            KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
+            val (stubCompilationTime) = measureTimeMillis {
+                KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
+            }
+
             val compiledClasses = builderFactory.compiledClasses
             val origins = builderFactory.origins
             logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
@@ -101,17 +108,28 @@ class Kapt3AnalysisCompletedHandlerExtension(
             logger.info { "Java source files: " + javaFilesFromJavaSourceRoots.joinToString { it.canonicalPath } }
 
             val kaptRunner = KaptRunner(logger)
-            val treeConverter = JCTreeConverter(kaptRunner.context, generationState.typeMapper, compiledClasses, origins)
-            val jcCompilationUnitsForKotlinClasses = treeConverter.convert()
+
+            val (jcStubGenerationTime, jcCompilationUnitsForKotlinClasses) = measureTimeMillis {
+                val treeConverter = JCTreeConverter(kaptRunner.context, generationState.typeMapper, compiledClasses, origins)
+                treeConverter.convert()
+            }
+
             logger.info { "Stubs for Kotlin classes: " + jcCompilationUnitsForKotlinClasses.joinToString { it.sourcefile.name } }
+
+            logger.info { "Stubs compilation took $stubCompilationTime ms" }
+            logger.info { "Java stub generation took $jcStubGenerationTime ms" }
 
             if (stubsOutputDir != null) {
                 saveStubs(stubsOutputDir, jcCompilationUnitsForKotlinClasses)
             }
 
-            kaptRunner.doAnnotationProcessing(
-                    javaFilesFromJavaSourceRoots, processors,
-                    annotationProcessingClasspath, sourcesOutputDir, classFilesOutputDir, jcCompilationUnitsForKotlinClasses)
+            val (annotationProcessingTime) = measureTimeMillis {
+                kaptRunner.doAnnotationProcessing(
+                        javaFilesFromJavaSourceRoots, processors,
+                        annotationProcessingClasspath, sourcesOutputDir, classFilesOutputDir, jcCompilationUnitsForKotlinClasses)
+            }
+
+            logger.info { "Annotation processing took $annotationProcessingTime ms" }
         } catch (thr: Throwable) {
             if (thr !is KaptError || thr.kind != KaptError.Kind.ERROR_RAISED) {
                 logger.exception(thr)
@@ -131,6 +149,12 @@ class Kapt3AnalysisCompletedHandlerExtension(
                     listOf(sourcesOutputDir),
                     addToEnvironment = true)
         }
+    }
+
+    private inline fun <T> measureTimeMillis(block: () -> T) : Pair<Long, T> {
+        val start = System.currentTimeMillis()
+        val result = block()
+        return Pair(System.currentTimeMillis() - start, result)
     }
 
     private fun saveStubs(outputDir: File, stubs: JavacList<JCTree.JCCompilationUnit>) {
