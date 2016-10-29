@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.kapt3.javac
 
 import com.sun.tools.javac.file.BaseFileObject
 import com.sun.tools.javac.file.JavacFileManager
@@ -26,7 +26,7 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.NestingKind
 import javax.tools.JavaFileObject
 
-class SyntheticJavaFileObject(
+class KaptJavaFileObject(
         val compilationUnit: JCTree.JCCompilationUnit,
         val clazz: JCTree.JCClassDecl,
         val timestamp: Long,
@@ -81,7 +81,7 @@ class SyntheticJavaFileObject(
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
-        other as SyntheticJavaFileObject
+        other as KaptJavaFileObject
 
         if (compilationUnit != other.compilationUnit) return false
         if (clazz != other.clazz) return false
