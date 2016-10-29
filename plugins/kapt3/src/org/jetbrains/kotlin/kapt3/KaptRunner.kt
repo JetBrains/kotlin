@@ -21,10 +21,12 @@ import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.processing.AnnotationProcessingError
+import com.sun.tools.javac.processing.JavacFiler
+import com.sun.tools.javac.processing.JavacMessager
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Options
 import java.io.File
 import javax.annotation.processing.Processor
@@ -37,6 +39,7 @@ class KaptError : RuntimeException {
     enum class Kind(val message: String) {
         JAVA_FILE_PARSING_ERROR("Java file parsing error"),
         EXCEPTION("Exception while annotation processing"),
+        ERROR_RAISED("Error while annotation processing"),
         UNKNOWN("Unknown error while annotation processing")
     }
 
@@ -49,7 +52,7 @@ class KaptError : RuntimeException {
     }
 }
 
-class KaptRunner {
+class KaptRunner(val logger: Logger) {
     val context = Context()
     val compiler: KaptJavaCompiler
     val fileManager: JavacFileManager
@@ -92,14 +95,14 @@ class KaptRunner {
             javaSourceFiles: List<File>,
             processors: List<Processor>,
             classpath: List<File>,
-            sourceOutputDir: File,
-            classOutputDir: File,
+            sourcesOutputDir: File,
+            classesOutputDir: File,
             additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
     ) {
         options.put(Option.PROC, "only") // Only process annotations
-        classpath.forEach { options.put(Option.CLASSPATH, it.canonicalPath) }
-        options.put(Option.S, sourceOutputDir.canonicalPath)
-        options.put(Option.D, classOutputDir.canonicalPath)
+        options.put(Option.CLASSPATH, classpath.joinToString(File.pathSeparator) { it.canonicalPath })
+        options.put(Option.S, sourcesOutputDir.canonicalPath)
+        options.put(Option.D, classesOutputDir.canonicalPath)
 
         val fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
         val processingEnvironment = JavacProcessingEnvironment.instance(context)
@@ -113,11 +116,28 @@ class KaptRunner {
                 throw KaptError(KaptError.Kind.JAVA_FILE_PARSING_ERROR)
             }
 
+            val log = Log.instance(context)
+            val errorCountBeforeAp = log.nerrors
+            val warningsBeforeAp = log.nwarnings
+
             val compilerAfterAnnotationProcessing: JavaCompiler? = null
             try {
                 compiler.processAnnotations(compiler.enterTrees(parsedJavaFiles + additionalSources))
             } catch (e: AnnotationProcessingError) {
                 throw KaptError(KaptError.Kind.EXCEPTION, e.cause ?: e)
+            }
+
+            val filer = processingEnvironment.filer as JavacFiler
+            val errorCount = Math.max(log.nerrors, errorCountBeforeAp)
+            val warningCount = log.nwarnings - warningsBeforeAp
+
+            logger.info { "Annotation processing complete, errors: $errorCount, warnings: $warningCount" }
+            if (logger.isVerbose) {
+                filer.displayState()
+            }
+
+            if (log.nerrors > 0) {
+                throw KaptError(KaptError.Kind.ERROR_RAISED)
             }
 
             compilerAfterAnnotationProcessing?.close()

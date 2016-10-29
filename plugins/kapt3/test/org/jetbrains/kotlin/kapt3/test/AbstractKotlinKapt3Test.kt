@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.kapt3.JCTreeConverter
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.KaptRunner
+import org.jetbrains.kotlin.kapt3.Logger
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -50,7 +51,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val factory = CodegenTestUtil.generateFiles(myEnvironment, myFiles, classBuilderFactory)
         val typeMapper = factory.generationState.typeMapper
 
-        val kaptRunner = KaptRunner()
+        val logger = Logger(isVerbose = true)
+        val kaptRunner = KaptRunner(logger)
         try {
             check(kaptRunner, typeMapper, classBuilderFactory, txtFile)
         } finally {
@@ -96,7 +98,7 @@ abstract class AbstractKotlinKaptRunnerTest : AbstractKotlinKapt3Test() {
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
             kaptRunner.doAnnotationProcessing(emptyList(), listOf(KaptRunnerTest.SIMPLE_PROCESSOR),
-                                              classpath = listOf(), sourceOutputDir = sourceOutputDir, classOutputDir = sourceOutputDir,
+                                              classpath = listOf(), sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
                                               additionalSources = compilationUnits)
 
             val javaFiles = sourceOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
