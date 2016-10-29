@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.kapt3
 
 import com.intellij.openapi.project.Project
+import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -36,12 +37,14 @@ import java.io.File
 import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
+import com.sun.tools.javac.util.List as JavacList
 
 class Kapt3AnalysisCompletedHandlerExtension(
         val annotationProcessingClasspath: List<File>,
         val javaSourceRoots: List<File>,
         val sourcesOutputDir: File,
-        val classesOutputDir: File,
+        val classFilesOutputDir: File,
+        val stubsOutputDir: File?,
         val options: Map<String, String>, //TODO
         val aptOnly: Boolean,
         val logger: Logger
@@ -102,9 +105,13 @@ class Kapt3AnalysisCompletedHandlerExtension(
             val jcCompilationUnitsForKotlinClasses = treeConverter.convert()
             logger.info { "Stubs for Kotlin classes: " + jcCompilationUnitsForKotlinClasses.joinToString { it.sourcefile.name } }
 
+            if (stubsOutputDir != null) {
+                saveStubs(stubsOutputDir, jcCompilationUnitsForKotlinClasses)
+            }
+
             kaptRunner.doAnnotationProcessing(
                     javaFilesFromJavaSourceRoots, processors,
-                    annotationProcessingClasspath, sourcesOutputDir, classesOutputDir, jcCompilationUnitsForKotlinClasses)
+                    annotationProcessingClasspath, sourcesOutputDir, classFilesOutputDir, jcCompilationUnitsForKotlinClasses)
         } catch (thr: Throwable) {
             if (thr !is KaptError || thr.kind != KaptError.Kind.ERROR_RAISED) {
                 logger.exception(thr)
@@ -123,6 +130,17 @@ class Kapt3AnalysisCompletedHandlerExtension(
                     module,
                     listOf(sourcesOutputDir),
                     addToEnvironment = true)
+        }
+    }
+
+    private fun saveStubs(outputDir: File, stubs: JavacList<JCTree.JCCompilationUnit>) {
+        for (stub in stubs) {
+            val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
+
+            val packageName = stub.packageName?.toString() ?: ""
+            val packageDir = if (packageName.isEmpty()) outputDir else File(outputDir, packageName.replace('.', '/'))
+            packageDir.mkdirs()
+            File(packageDir, className + ".java").writeText(stub.toString())
         }
     }
 

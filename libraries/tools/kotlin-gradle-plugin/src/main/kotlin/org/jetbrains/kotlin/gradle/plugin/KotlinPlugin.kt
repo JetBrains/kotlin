@@ -21,8 +21,8 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
-import org.jetbrains.kotlin.gradle.internal.Kapt2GradleSubplugin
-import org.jetbrains.kotlin.gradle.internal.Kapt2KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -123,7 +123,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
                 var kotlinAfterJavaTask: KotlinCompile? = null
 
-                if (aptConfiguration.dependencies.size > 1 && !Kapt2GradleSubplugin.isEnabled(project)) {
+                if (aptConfiguration.dependencies.size > 1 && !Kapt3GradleSubplugin.isEnabled(project)) {
                     javaTask.dependsOn(aptConfiguration.buildDependencies)
 
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
@@ -340,7 +340,7 @@ internal open class KotlinAndroidPlugin(
             kotlinTask.description = "Compiles the $variantDataName kotlin."
             kotlinTask.setDependsOn(javaTask.dependsOn)
 
-            val isKapt2Enabled = Kapt2GradleSubplugin.isEnabled(project)
+            val isKapt2Enabled = Kapt3GradleSubplugin.isEnabled(project)
 
             val aptFiles = arrayListOf<File>()
 
@@ -553,7 +553,7 @@ private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, Fi
 }
 
 private fun Project.createAptConfiguration(sourceSetName: String, kotlinPluginVersion: String): Configuration {
-    val aptConfigurationName = Kapt2KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
+    val aptConfigurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
 
     val aptConfiguration = configurations.create(aptConfigurationName)
     val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlinPluginVersion"
