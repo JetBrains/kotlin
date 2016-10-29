@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/testData/converter")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JCTreeConverterTestGenerated extends AbstractJCTreeConverterTest {
+public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFileToSourceStubConverterTest {
     public void testAllFilesPresentInConverter() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/testData/converter"), Pattern.compile("^(.+)\\.kt$"), true);
     }

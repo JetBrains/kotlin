@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.kapt3.diagnostic
 
-class Logger(val isVerbose: Boolean) {
-    private companion object {
-        val PREFIX = "[kapt] "
+class KaptError : RuntimeException {
+    val kind: Kind
+
+    enum class Kind(val message: String) {
+        JAVA_FILE_PARSING_ERROR("Java file parsing error"),
+        EXCEPTION("Exception while annotation processing"),
+        ERROR_RAISED("Error while annotation processing"),
+        UNKNOWN("Unknown error while annotation processing")
     }
 
-    fun info(message: String) {
-        if (isVerbose) println(PREFIX + message)
+    constructor(kind: Kind) : super(kind.message) {
+        this.kind = kind
     }
 
-    inline fun info(message: () -> String) {
-        if (isVerbose) {
-            info(message())
-        }
-    }
-    fun error(message: String) {
-        System.err.println(PREFIX + message)
-    }
-
-    fun exception(e: Throwable) {
-        System.err.println(PREFIX + "An exception occurred:")
-        e.printStackTrace(System.err)
+    constructor(kind: Kind, cause: Throwable) : super(kind.message, cause) {
+        this.kind = kind
     }
 }
