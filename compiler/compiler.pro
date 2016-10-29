@@ -164,6 +164,21 @@ messages/**)
     *** ASM5;
 }
 
+-keep class org.jetbrains.org.objectweb.asm.tree.AnnotationNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.ClassNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.LocalVariableNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.MethodNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.FieldNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.ParameterNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.TypeAnnotationNode { *; }
+
+-keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
+-keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }
+
+-keepclassmembers class org.jetbrains.org.objectweb.asm.Type {
+    *** ARRAY;
+}
+
 -keepclassmembers class org.jetbrains.org.objectweb.asm.ClassReader {
     *** SKIP_CODE;
     *** SKIP_DEBUG;
