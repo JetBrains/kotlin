@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.kapt3.test
 
 import org.jetbrains.kotlin.kapt3.KaptError
 import org.jetbrains.kotlin.kapt3.KaptRunner
+import org.jetbrains.kotlin.kapt3.Logger
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
@@ -75,7 +76,7 @@ class KaptRunnerTest {
     fun testSimple() {
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
-            KaptRunner().doAnnotationProcessing(
+            KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
                     listOf(File(TEST_DATA_DIR, "Simple.java")),
                     listOf(SIMPLE_PROCESSOR),
                     emptyList(), // classpath
@@ -101,7 +102,7 @@ class KaptRunnerTest {
         }
 
         try {
-            KaptRunner().doAnnotationProcessing(
+            KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
                     listOf(File(TEST_DATA_DIR, "Simple.java")),
                     listOf(processor),
                     emptyList(),
@@ -116,7 +117,7 @@ class KaptRunnerTest {
     @Test
     fun testParsingError() {
         try {
-            KaptRunner().doAnnotationProcessing(
+            KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
                     listOf(File(TEST_DATA_DIR, "ParseError.java")),
                     listOf(SIMPLE_PROCESSOR),
                     emptyList(),

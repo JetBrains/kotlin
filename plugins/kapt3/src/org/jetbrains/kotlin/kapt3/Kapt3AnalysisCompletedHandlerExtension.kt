@@ -33,24 +33,47 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
+import java.net.URLClassLoader
+import java.util.*
+import javax.annotation.processing.Processor
 
 class Kapt3AnalysisCompletedHandlerExtension(
-        val classpath: List<File>,
+        val annotationProcessingClasspath: List<File>,
         val javaSourceRoots: List<File>,
         val sourcesOutputDir: File,
         val classesOutputDir: File,
-        val options: Map<String, String>,
-        val isVerbose: Boolean
+        val options: Map<String, String>, //TODO
+        val aptOnly: Boolean,
+        val logger: Logger
 ) : AnalysisCompletedHandlerExtension {
+    private var annotationProcessingComplete = false
+
     override fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,
             bindingTrace: BindingTrace,
             files: Collection<KtFile>
     ): AnalysisResult? {
-        if (files.isEmpty()) {
-            return AnalysisResult.Companion.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
+        if (annotationProcessingComplete) {
+            return null
         }
+
+        fun doNotGenerateCode() = AnalysisResult.Companion.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
+
+        if (files.isEmpty()) {
+            logger.info("No Kotlin source files, aborting")
+            return if (aptOnly) doNotGenerateCode() else null
+        }
+
+        logger.info { "Kotlin files: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
+
+        val processors = loadProcessors(annotationProcessingClasspath)
+        if (processors.isEmpty()) {
+            logger.info("No annotation processors available, aborting")
+            return if (aptOnly) doNotGenerateCode() else null
+        }
+
+        logger.info { "Annotation processors: " + processors.joinToString { it.javaClass.canonicalName } }
 
         val builderFactory = Kapt3BuilderFactory()
 
@@ -67,13 +90,45 @@ class Kapt3AnalysisCompletedHandlerExtension(
             KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
             val compiledClasses = builderFactory.compiledClasses
             val origins = builderFactory.origins
+            logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
+
+            val javaFilesFromJavaSourceRoots = javaSourceRoots.flatMap {
+                root -> root.walk().filter { it.isFile && it.extension == "java" }.toList()
+            }
+            logger.info { "Java source files: " + javaFilesFromJavaSourceRoots.joinToString { it.canonicalPath } }
+
+            val kaptRunner = KaptRunner(logger)
+            val treeConverter = JCTreeConverter(kaptRunner.context, generationState.typeMapper, compiledClasses, origins)
+            val jcCompilationUnitsForKotlinClasses = treeConverter.convert()
+            logger.info { "Stubs for Kotlin classes: " + jcCompilationUnitsForKotlinClasses.joinToString { it.sourcefile.name } }
+
+            kaptRunner.doAnnotationProcessing(
+                    javaFilesFromJavaSourceRoots, processors,
+                    annotationProcessingClasspath, sourcesOutputDir, classesOutputDir, jcCompilationUnitsForKotlinClasses)
         } catch (thr: Throwable) {
+            if (thr !is KaptError || thr.kind != KaptError.Kind.ERROR_RAISED) {
+                logger.exception(thr)
+            }
             bindingTrace.report(ErrorsKapt3.KAPT3_PROCESSING_ERROR.on(files.first()))
+            return null // Compilation will be aborted anyway because of the error above
         } finally {
             generationState.destroy()
         }
 
-        return AnalysisResult.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
+        return if (aptOnly) {
+            doNotGenerateCode()
+        } else {
+            AnalysisResult.RetryWithAdditionalJavaRoots(
+                    bindingTrace.bindingContext,
+                    module,
+                    listOf(sourcesOutputDir),
+                    addToEnvironment = true)
+        }
+    }
+
+    private fun loadProcessors(classpath: List<File>): List<Processor> {
+        val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
+        return ServiceLoader.load(Processor::class.java, classLoader).toList()
     }
 }
 
