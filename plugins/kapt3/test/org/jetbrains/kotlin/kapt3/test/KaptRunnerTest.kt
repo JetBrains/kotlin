@@ -47,7 +47,7 @@ class KaptRunnerTest {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/testData/runner")
 
-        val SIMPLE_PROCESSOR = object : AbstractProcessor() {
+        fun simpleProcessor() = object : AbstractProcessor() {
             override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
                 for (annotation in annotations) {
                     val annotationName = annotation.simpleName.toString()
@@ -78,7 +78,7 @@ class KaptRunnerTest {
         try {
             KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
                     listOf(File(TEST_DATA_DIR, "Simple.java")),
-                    listOf(SIMPLE_PROCESSOR),
+                    listOf(simpleProcessor()),
                     emptyList(), // classpath
                     sourceOutputDir,
                     sourceOutputDir)
@@ -119,7 +119,7 @@ class KaptRunnerTest {
         try {
             KaptRunner(Logger(isVerbose = true)).doAnnotationProcessing(
                     listOf(File(TEST_DATA_DIR, "ParseError.java")),
-                    listOf(SIMPLE_PROCESSOR),
+                    listOf(simpleProcessor()),
                     emptyList(),
                     TEST_DATA_DIR,
                     TEST_DATA_DIR)

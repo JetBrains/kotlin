@@ -97,7 +97,7 @@ abstract class AbstractKotlinKaptRunnerTest : AbstractKotlinKapt3Test() {
         val compilationUnits = convert(kaptRunner, typeMapper, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
-            kaptRunner.doAnnotationProcessing(emptyList(), listOf(KaptRunnerTest.SIMPLE_PROCESSOR),
+            kaptRunner.doAnnotationProcessing(emptyList(), listOf(KaptRunnerTest.simpleProcessor()),
                                               classpath = listOf(), sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
                                               additionalSources = compilationUnits)
 
