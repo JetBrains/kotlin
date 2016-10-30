@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SuggestVariableNameMacro : Macro() {
@@ -71,7 +71,7 @@ class SuggestVariableNameMacro : Macro() {
             suggestIterationVariableName(parent, nameValidator)?.let { return it }
         }
 
-        val descriptor = declaration.resolveToDescriptor() as? VariableDescriptor ?: return emptyList()
+        val descriptor = declaration.resolveToDescriptor(BodyResolveMode.PARTIAL) as? VariableDescriptor ?: return emptyList()
         return KotlinNameSuggester.suggestNamesByType(descriptor.type, nameValidator, null)
     }
 

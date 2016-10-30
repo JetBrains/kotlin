@@ -38,12 +38,13 @@ fun KtElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this))
 }
 
-fun KtDeclaration.resolveToDescriptor(): DeclarationDescriptor {
-    return getResolutionFacade().resolveToDescriptor(this)
+fun KtDeclaration.resolveToDescriptor(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): DeclarationDescriptor {
+    return getResolutionFacade().resolveToDescriptor(this, bodyResolveMode)
 }
 
-fun KtDeclaration.resolveToDescriptorIfAny(): DeclarationDescriptor? {
-    return analyze(BodyResolveMode.PARTIAL).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+//TODO: BodyResolveMode.PARTIAL is not quite safe!
+fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? {
+    return analyze(bodyResolveMode).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 }
 
 fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {

@@ -27,7 +27,6 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -65,7 +64,7 @@ private fun KtExpression.getBundleNameByContext(): String? {
     val expression = KtPsiUtil.safeDeparenthesize(this)
     val parent = expression.parent
 
-    (parent as? KtProperty)?.let { return it.resolveToDescriptor().getBundleNameByAnnotation() }
+    (parent as? KtProperty)?.let { return it.resolveToDescriptor(BodyResolveMode.PARTIAL).getBundleNameByAnnotation() }
 
     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
     val resolvedCall =

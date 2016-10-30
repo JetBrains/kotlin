@@ -34,7 +34,7 @@ interface ResolutionFacade {
 
     fun analyzeFullyAndGetResult(elements: Collection<KtElement>): AnalysisResult
 
-    fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor
+    fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): DeclarationDescriptor
 
     val moduleDescriptor: ModuleDescriptor
 

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -61,7 +62,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                                             KtObjectDeclaration.class);
         if (declaration == null) return;
 
-        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration);
+        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration, BodyResolveMode.PARTIAL);
 
         List<PsiElement> superDeclarations = findSuperDeclarations(descriptor);
 

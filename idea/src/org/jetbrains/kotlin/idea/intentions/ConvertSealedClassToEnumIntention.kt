@@ -37,13 +37,14 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Convert to enum class") {
     override fun applicabilityRange(element: KtClass): TextRange? {
         val nameIdentifier = element.nameIdentifier ?: return null
         val sealedKeyword = element.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return null
 
-        val classDescriptor = element.resolveToDescriptor() as ClassDescriptor
+        val classDescriptor = element.resolveToDescriptor(BodyResolveMode.PARTIAL) as ClassDescriptor
         if (classDescriptor.getSuperClassNotAny() != null) return null
 
         return TextRange(sealedKeyword.startOffset, nameIdentifier.endOffset)

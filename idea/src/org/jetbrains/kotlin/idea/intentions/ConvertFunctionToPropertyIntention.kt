@@ -109,7 +109,7 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
 
                 if (callable is KtNamedFunction) {
                     if (callable.typeReference == null) {
-                        val functionDescriptor = callable.resolveToDescriptor() as FunctionDescriptor
+                        val functionDescriptor = callable.resolveToDescriptor(BodyResolveMode.PARTIAL) as FunctionDescriptor
                         val type = functionDescriptor.returnType
                         val typeToInsert = when {
                                                type == null || type.isError -> null

@@ -24,7 +24,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.*
@@ -293,9 +293,7 @@ class SmartCompletion(
         if (declaration != null) {
             val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration)
             if (originalDeclaration != null) {
-                // we don't use resolveToDescriptor() here because it uses BodyResolveMode.FULL!
-                val bindingContext = originalDeclaration.analyze(BodyResolveMode.PARTIAL)
-                val originalDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, originalDeclaration] as? CallableDescriptor
+                val originalDescriptor = originalDeclaration.resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableDescriptor
                 val returnType = originalDescriptor?.returnType
                 if (returnType != null && !returnType.isError) {
                     return listOf(ExpectedInfo(returnType, declaration.name, null))
