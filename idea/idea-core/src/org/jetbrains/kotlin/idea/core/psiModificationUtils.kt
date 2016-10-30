@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
@@ -205,7 +206,7 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
             else KtTokens.DEFAULT_VISIBILITY_KEYWORD
         }
         else if (hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
-            (resolveToDescriptor() as? CallableMemberDescriptor)
+            (resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableMemberDescriptor)
                     ?.overriddenDescriptors
                     ?.let { OverridingUtil.findMaxVisibility(it) }
                     ?.toKeywordToken()

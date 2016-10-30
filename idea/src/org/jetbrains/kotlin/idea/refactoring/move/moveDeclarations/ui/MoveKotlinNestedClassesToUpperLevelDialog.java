@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
@@ -98,7 +99,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         this.project = project;
         this.innerClass = innerClass;
         this.targetContainer = targetContainer;
-        this.innerClassDescriptor = (ClassDescriptor) ResolutionUtils.resolveToDescriptor(innerClass);
+        this.innerClassDescriptor = (ClassDescriptor) ResolutionUtils.resolveToDescriptor(innerClass, BodyResolveMode.FULL);
         setTitle("Move Nested Classes to Upper Level");
         init();
         packageNameLabel.setLabelFor(packageNameField.getChildComponent());

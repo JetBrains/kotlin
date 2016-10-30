@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -51,7 +51,7 @@ class KotlinNameSuggestionProvider : NameSuggestionProvider {
                     this += KotlinNameSuggester.getCamelNames(name!!, validator, name.first().isLowerCase())
                 }
 
-                val callableDescriptor = element.resolveToDescriptor() as CallableDescriptor
+                val callableDescriptor = element.resolveToDescriptor(BodyResolveMode.PARTIAL) as CallableDescriptor
                 val type = callableDescriptor.returnType
                 if (type != null && !type.isUnit() && !KotlinBuiltIns.isPrimitiveType(type)) {
                     this += KotlinNameSuggester.suggestNamesByType(type, validator)

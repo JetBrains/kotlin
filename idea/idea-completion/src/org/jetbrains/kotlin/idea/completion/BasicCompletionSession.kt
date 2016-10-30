@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.util.supertypesWithAny
@@ -546,7 +547,7 @@ class BasicCompletionSession(
 
         override fun doComplete() {
             val classOrObject = position.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return
-            val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject) as ClassDescriptor
+            val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject, BodyResolveMode.PARTIAL) as ClassDescriptor
             var superClasses = classDescriptor.defaultType.constructor.supertypesWithAny()
                     .mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
 

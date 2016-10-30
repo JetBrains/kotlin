@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.isVisible
@@ -57,7 +56,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         if (type.isError) return emptyList()
 
         val superClass = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: return emptyList()
-        val classDescriptor = delegator.getResolutionFacade().resolveToDescriptor(classOrObjectDeclaration) as ClassDescriptor
+        val classDescriptor = classOrObjectDeclaration.resolveToDescriptor() as ClassDescriptor
         val constructors = superClass.constructors.filter { it.isVisible(classDescriptor) }
         if (constructors.isEmpty()) return emptyList() // no accessible constructor
 

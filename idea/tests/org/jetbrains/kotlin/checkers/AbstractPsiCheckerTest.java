@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.io.File;
 
@@ -82,7 +83,7 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
             @Override
             public void visitDeclaration(@NotNull KtDeclaration dcl) {
                 if (areDescriptorsCreatedForDeclaration(dcl)) {
-                    ResolutionUtils.resolveToDescriptor(dcl); // check for exceptions
+                    ResolutionUtils.resolveToDescriptor(dcl, BodyResolveMode.FULL); // check for exceptions
                 }
                 dcl.acceptChildren(this, null);
             }

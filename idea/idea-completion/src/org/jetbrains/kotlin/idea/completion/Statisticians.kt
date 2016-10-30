@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinCompletionStatistician : CompletionStatistician() {
     override fun serialize(element: LookupElement, location: CompletionLocation): StatisticsInfo? {
@@ -53,7 +54,7 @@ class KotlinCompletionStatistician : CompletionStatistician() {
 class KotlinProximityStatistician : ProximityStatistician() {
     override fun serialize(element: PsiElement, location: ProximityLocation): StatisticsInfo? {
         if (element !is KtDeclaration) return null
-        val descriptor = element.resolveToDescriptor()
+        val descriptor = element.resolveToDescriptor(BodyResolveMode.PARTIAL)
         return KotlinStatisticsInfo.forDescriptor(descriptor)
     }
 }

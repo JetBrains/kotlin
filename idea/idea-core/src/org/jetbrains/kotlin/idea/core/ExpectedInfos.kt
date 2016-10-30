@@ -582,7 +582,7 @@ class ExpectedInfos(
 
         val loopVar = forExpression.loopParameter
         val loopVarType = if (loopVar != null && loopVar.typeReference != null)
-            (resolutionFacade.resolveToDescriptor(loopVar) as VariableDescriptor).type.check { !it.isError }
+            (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, loopVar] as VariableDescriptor).type.check { !it.isError }
         else
             null
 
@@ -617,7 +617,7 @@ class ExpectedInfos(
     private fun calculateForPropertyDelegate(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
         val delegate = expressionWithType.parent as? KtPropertyDelegate ?: return null
         val propertyDeclaration = delegate.parent as? KtProperty ?: return null
-        val property = resolutionFacade.resolveToDescriptor(propertyDeclaration) as? PropertyDescriptor ?: return null
+        val property = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, propertyDeclaration] as? PropertyDescriptor ?: return null
 
         val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
         val propertyOwnerType = property.fuzzyExtensionReceiverType()
