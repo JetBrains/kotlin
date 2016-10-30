@@ -29,6 +29,7 @@ import com.intellij.xdebugger.impl.XSourcePositionImpl
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
+import com.sun.jdi.Method
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
@@ -41,6 +42,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.debugger.noStrataLineNumber
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.GOTO
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.MOVE
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_VOID
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_OBJECT
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_WIDE
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
@@ -326,7 +333,7 @@ fun getStepOverAction(
             return false
         }
 
-        if (nextLocation.lineNumber() !in range) {
+        if (nextLocation.ktLineNumber() !in range) {
             return false
         }
 
@@ -396,9 +403,14 @@ fun getStepOverAction(
         // terrible. On each iteration position jumps to the method end or some previous inline call and then returns back. To prevent
         // this filter locations with too big code indexes manually
         val returnCodeIndex: Long = if (isDexDebug) {
-            // TODO: won't work for situation when breakpoint is in inlined method
-            val locationsOfLine = location.method().locationsOfLine(range.last)
-            locationsOfLine.map { it.codeIndex() }.max() ?: -1L
+            val method = location.method()
+            val locationsOfLine = method.locationsOfLine(range.last)
+            if (locationsOfLine.isNotEmpty()) {
+                locationsOfLine.map { it.codeIndex() }.max() ?: -1L
+            }
+            else {
+                findReturnFromDexBytecode(location.method())
+            }
         }
         else -1L
 
@@ -511,4 +523,57 @@ private fun getInlineArgumentIfAny(elementAt: PsiElement?): KtFunctionLiteral? {
     if (!InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, context, false)) return null
 
     return functionLiteralExpression.functionLiteral
+}
+
+private fun findReturnFromDexBytecode(method: Method): Long {
+    val methodLocations = method.allLineLocations()
+    if (methodLocations.isEmpty())  return -1L
+
+    var lastMethodCodeIndex = methodLocations.last().codeIndex()
+    // Continue while it's possible to get location
+    while (true) {
+        if (method.locationOfCodeIndex(lastMethodCodeIndex + 1) != null) {
+            lastMethodCodeIndex++
+        }
+        else {
+            break
+        }
+    }
+
+    var returnIndex = lastMethodCodeIndex + 1
+
+    val bytecode = method.bytecodes()
+    var i = bytecode.size
+
+    while (i >= 2) {
+        // Can step only through two-byte instructions and abort on any unknown one
+        i -= 2
+        returnIndex -= 1
+
+        val instruction = bytecode[i].toInt()
+
+        if (instruction == RETURN_VOID || instruction == RETURN || instruction == RETURN_WIDE || instruction == RETURN_OBJECT) {
+            // Instruction found
+            return returnIndex
+        }
+        else if (instruction == MOVE || instruction == GOTO) {
+            // proceed
+        }
+        else {
+            // Don't know the instruction and it's length. Abort.
+            break
+        }
+    }
+
+    return -1L
+}
+
+object DexBytecode {
+    val RETURN_VOID = 0x0e
+    val RETURN = 0x0f
+    val RETURN_WIDE = 0x10
+    val RETURN_OBJECT = 0x11
+
+    val GOTO = 0x28
+    val MOVE = 0x01
 }
