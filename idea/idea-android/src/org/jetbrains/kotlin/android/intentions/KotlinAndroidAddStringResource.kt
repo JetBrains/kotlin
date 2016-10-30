@@ -21,24 +21,22 @@ import com.intellij.CommonBundle
 import com.intellij.codeInsight.template.*
 import com.intellij.codeInsight.template.impl.*
 import com.intellij.codeInsight.template.macro.VariableOfTypeMacro
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.undo.UndoUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.*
-import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.android.actions.CreateXmlResourceDialog
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.android.util.AndroidBundle
 import org.jetbrains.android.util.AndroidResourceUtil
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -48,15 +46,24 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTemplateEntry>(KtLiteralStringTemplateEntry::class.java,
                                                                                             "Extract string resource") {
-    private val GET_STRING_METHOD = "getString"
-    private val EXTRACT_RESOURCE_DIALOG_TITLE = "Extract Resource"
-    private val PACKAGE_NOT_FOUND_ERROR = "package.not.found.error"
+    private companion object {
+        private val CLASS_CONTEXT = "android.content.Context"
+        private val CLASS_FRAGMENT = "android.app.Fragment"
+        private val CLASS_SUPPORT_FRAGMENT = "android.support.v4.app.Fragment"
+        private val CLASS_VIEW = "android.view.View"
+
+        private val GET_STRING_METHOD = "getString"
+        private val EXTRACT_RESOURCE_DIALOG_TITLE = "Extract Resource"
+        private val PACKAGE_NOT_FOUND_ERROR = "package.not.found.error"
+    }
 
     override fun isApplicableTo(element: KtLiteralStringTemplateEntry, caretOffset: Int): Boolean {
         if (AndroidFacet.getInstance(element.containingFile) == null) {
             return false
         }
 
+        // Should not be available to strings with template expressions
+        // only to strings with single KtLiteralStringTemplateEntry inside
         return element.parent.children.size == 1
     }
 
@@ -70,7 +77,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
             throw IllegalStateException("This intention requires android facet.")
         }
 
-        val file = element.containingFile
+        val file = element.containingFile as KtFile
         val project = file.project
 
         val manifestPackage = getManifestPackage(facet)
@@ -79,8 +86,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
             return
         }
 
-        val parameters = getCreateXmlResourceParameters(facet.module, element) ?:
-                         return
+        val parameters = getCreateXmlResourceParameters(facet.module, element) ?: return
 
         if (!AndroidResourceUtil.createValueResource(facet.module, parameters.name, ResourceType.STRING,
                                                      parameters.fileName, parameters.directoryNames, parameters.value)) {
@@ -93,7 +99,6 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
     }
 
     private fun getCreateXmlResourceParameters(module: Module, element: KtLiteralStringTemplateEntry): CreateXmlResourceParameters? {
-
         val stringValue = element.text
 
         val showDialog = !ApplicationManager.getApplication().isUnitTestMode
@@ -111,7 +116,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
                                            dialog.dirNames)
     }
 
-    private fun createResourceReference(module: Module, editor: Editor, file: PsiFile, element: PsiElement, aPackage: String,
+    private fun createResourceReference(module: Module, editor: Editor, file: KtFile, element: PsiElement, aPackage: String,
                                         resName: String, resType: ResourceType) {
         val rFieldName = AndroidResourceUtil.getRJavaFieldName(resName)
         val fieldName = "$aPackage.R.$resType.$rFieldName"
@@ -123,7 +128,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
         else {
             template = TemplateImpl("", "\$context\$.$GET_STRING_METHOD($fieldName)", "")
             val marker = MacroCallNode(VariableOfTypeMacro())
-            marker.addParameter(ConstantNode("android.content.Context"))
+            marker.addParameter(ConstantNode(CLASS_CONTEXT))
             template.addVariable("context", marker, ConstantNode("context"), true)
         }
 
@@ -136,18 +141,18 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
 
         TemplateManager.getInstance(module.project).startTemplate(editor, template, false, null, object : TemplateEditingAdapter() {
             override fun waitingForInput(template: Template?) {
-                JavaCodeStyleManager.getInstance(module.project).shortenClassReferences(file, marker.startOffset, marker.endOffset)
+                ShortenReferences.DEFAULT.process(file, marker.startOffset, marker.endOffset)
             }
 
             override fun beforeTemplateFinished(state: TemplateState?, template: Template?) {
-                JavaCodeStyleManager.getInstance(module.project).shortenClassReferences(file, marker.startOffset, marker.endOffset)
+                ShortenReferences.DEFAULT.process(file, marker.startOffset, marker.endOffset)
             }
         })
     }
 
     private fun needContextReceiver(element: PsiElement): Boolean {
-        val classesWithGetSting = listOf("android.content.Context", "android.app.Fragment", "android.support.v4.app.Fragment")
-        val viewClass = listOf("android.view.View")
+        val classesWithGetSting = listOf(CLASS_CONTEXT, CLASS_FRAGMENT, CLASS_SUPPORT_FRAGMENT)
+        val viewClass = listOf(CLASS_VIEW)
         var parent = PsiTreeUtil.findFirstParent(element, true) { it is KtClassOrObject || it is KtFunction || it is KtLambdaExpression }
 
         while (parent != null) {
@@ -184,7 +189,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
 
     private fun KtFunction.isSubclassExtensionOfAny(baseClasses: Collection<String>): Boolean {
         val descriptor = resolveToDescriptor() as FunctionDescriptor
-        val extendedTypeDescriptor = descriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor
+        val extendedTypeDescriptor = descriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor
         return extendedTypeDescriptor != null && baseClasses.any { extendedTypeDescriptor.isSubclassOf(it) }
     }
 
@@ -197,7 +202,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
         }
 
         val extendedTypeDescriptor = type.arguments.first().type.constructor.declarationDescriptor
-        if (extendedTypeDescriptor is ClassDescriptor) {
+        if (extendedTypeDescriptor != null) {
             return baseClasses.any { extendedTypeDescriptor.isSubclassOf(it) }
         }
 
@@ -210,9 +215,11 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
         return baseClasses.any { declarationDescriptor?.isSubclassOf(it) ?: false }
     }
 
-    private fun ClassDescriptor.isSubclassOf(className: String): Boolean {
-        return fqNameSafe.asString() == className || defaultType.constructor.supertypes.any {
-            (it.constructor.declarationDescriptor as? ClassDescriptor)?.isSubclassOf(className) ?: false
-        }
+    private fun ClassifierDescriptor.isSubclassOf(className: String): Boolean {
+        return fqNameSafe.asString() == className || isStrictSubclassOf(className)
+    }
+
+    private fun ClassifierDescriptor.isStrictSubclassOf(className: String) = defaultType.constructor.supertypes.any {
+        it.constructor.declarationDescriptor?.isSubclassOf(className) ?: false
     }
 }
