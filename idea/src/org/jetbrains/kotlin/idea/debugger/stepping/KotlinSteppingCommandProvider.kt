@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.keysToMap
 
 class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
     override fun getStepOverCommand(
@@ -322,18 +323,22 @@ fun getStepOverAction(
         frameProxy: StackFrameProxyImpl,
         isDexDebug: Boolean
 ): Action {
-    val computedReferenceType = location.declaringType() ?: return Action.STEP_OVER()
+    location.declaringType() ?: return Action.STEP_OVER()
 
     val project = file.project
 
-    fun Location.ktLineNumber() = noStrataLineNumber(this, isDexDebug, project, true)
+    val methodLocations = location.method().allLineLocations()
+    val ktLineNumbers = methodLocations.keysToMap { noStrataLineNumber(it, isDexDebug, project, true) }
+
+    fun Location.ktLineNumber(): Int = ktLineNumbers[this] ?: noStrataLineNumber(this, isDexDebug, project, true)
 
     fun isLocationSuitable(nextLocation: Location): Boolean {
         if (nextLocation.method() != location.method()) {
             return false
         }
 
-        if (nextLocation.ktLineNumber() !in range) {
+        val ktLineNumber = nextLocation.ktLineNumber()
+        if (ktLineNumber !in range) {
             return false
         }
 
@@ -344,8 +349,6 @@ fun getStepOverAction(
             return true
         }
     }
-
-    val methodLocations = location.method().allLineLocations()
 
     fun isBackEdgeLocation(): Boolean {
         val previousSuitableLocation = methodLocations.reversed()
