@@ -24,7 +24,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.*
@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -292,7 +293,9 @@ class SmartCompletion(
         if (declaration != null) {
             val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration)
             if (originalDeclaration != null) {
-                val originalDescriptor = originalDeclaration.resolveToDescriptor() as? CallableDescriptor
+                // we don't use resolveToDescriptor() here because it uses BodyResolveMode.FULL!
+                val bindingContext = originalDeclaration.analyze(BodyResolveMode.PARTIAL)
+                val originalDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, originalDeclaration] as? CallableDescriptor
                 val returnType = originalDescriptor?.returnType
                 if (returnType != null && !returnType.isError) {
                     return listOf(ExpectedInfo(returnType, declaration.name, null))
