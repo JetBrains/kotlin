@@ -65,6 +65,12 @@ public class AndroidResourceIntentionTestGenerated extends AbstractAndroidResour
         doTest(fileName);
     }
 
+    @TestMetadata("kotlinAndroidAddStringResource/genericContextExtensionFunction/genericContextExtensionFunction.test")
+    public void testKotlinAndroidAddStringResource_genericContextExtensionFunction_GenericContextExtensionFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/kotlinAndroidAddStringResource/genericContextExtensionFunction/genericContextExtensionFunction.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlinAndroidAddStringResource/innerClassInActivity/innerClassInActivity.test")
     public void testKotlinAndroidAddStringResource_innerClassInActivity_InnerClassInActivity() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/kotlinAndroidAddStringResource/innerClassInActivity/innerClassInActivity.test");
