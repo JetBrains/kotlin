@@ -1,5 +1,4 @@
 buildscript {
-   ext.kotlin_ir_path = "$projectDir/kotlin-ir/dist"
    repositories {
        mavenCentral()
    }
@@ -14,11 +13,29 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
-def deps = files("$kotlin_ir_path/kotlinc/lib/kotlin-compiler.jar",
-                 "$kotlin_ir_path/kotlinc/lib/kotlin-runtime.jar",
-                 "$kotlin_ir_path/kotlinc/lib/kotlin-reflect.jar")
-//export dependencies jars
-ext['deps'] = deps
+String kotlinCompilerModule = 'org.jetbrains.kotlin:kotlin-compiler:1.1.0-dev-4137'
+
+// (gets applied to this project and all its subprojects)
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            url  "http://dl.bintray.com/kotlin/kotlin-dev"
+        }
+    }
+
+    configurations.all {
+        // kotlin-compiler module includes Kotlin runtime bundled;
+        // make Gradle aware of this to avoid multiple Kotlin runtimes in classpath:
+        resolutionStrategy.dependencySubstitution {
+            substitute module('org.jetbrains.kotlin:kotlin-runtime') with module(kotlinCompilerModule)
+            substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinCompilerModule)
+            substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinCompilerModule)
+        }
+        // TODO: probably we should use kotlin-compiler without bundled runtime
+    }
+
+}
 
 sourceSets {
     compiler {
@@ -103,27 +120,35 @@ kotlinNativeInterop {
    }
 }
 
+
+configurations {
+    cli_bcRuntime.extendsFrom compilerRuntime
+
+    cli_bc {
+        extendsFrom cli_bcRuntime
+    }
+}
+
 dependencies {
-   compilerCompile deps
+   compilerCompile kotlinCompilerModule
    compilerCompile kotlinNativeInterop['llvm'].configuration
    compilerCompile kotlinNativeInterop['hash'].configuration
 
-   cli_bcCompile deps
+   cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
    cli_bcCompile sourceSets.compiler.output
 
-   bc_frontendCompile deps
+   bc_frontendCompile kotlinCompilerModule
+
+   cli_bc sourceSets.cli_bc.output
 }
 
-configurations {
-   cli_bcRuntime.extendsFrom compilerRuntime
-}
 
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 
 
 task run(type: JavaExec) {
    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-   classpath sourceSets.cli_bc.runtimeClasspath
+   classpath configurations.cli_bc
 
    args 'tests/codegen/function/sum.kt'
 
@@ -144,13 +169,10 @@ task run(type: JavaExec) {
 
 
 task jars {
-    println "kotlin-ir: $kotlin_ir_path"
+  doFirst {
     project.buildscript.configurations.classpath.each {
       String jarName = it.getName();
       print jarName + ":"
     }
-}
-
-repositories {
-    mavenCentral()
+  }
 }
