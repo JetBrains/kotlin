@@ -24,7 +24,7 @@ abstract class NativeDep extends DefaultTask {
     abstract String getFileName()
 
     protected String getUrl() {
-        return "http://repo.labs.intellij.net/kotlin-native/$fileName"
+        return "https://jetbrains.bintray.com/kotlin-native-dependencies/$fileName"
     }
 
     protected File getBaseOutDir() {
@@ -71,6 +71,7 @@ class TgzNativeDep extends NativeDep {
             throw e
         }
 
+        // TODO: improve downloaded files caching
         // TODO: do not extract if already extracted
     }
 }
