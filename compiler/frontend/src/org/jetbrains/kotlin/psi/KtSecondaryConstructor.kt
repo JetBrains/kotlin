@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitSecondaryConstructor(this, data)
 
-    override fun getContainingClassOrObject() = getParent().getParent() as KtClassOrObject
+    override fun getContainingClassOrObject() = parent.parent as KtClassOrObject
 
     override fun getBodyExpression() = findChildByClass(KtBlockExpression::class.java)
 
@@ -35,16 +35,16 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
 
     fun getDelegationCall(): KtConstructorDelegationCall = findNotNullChildByClass(KtConstructorDelegationCall::class.java)
 
-    fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit()
+    fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit
 
     fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall {
-        val psiFactory = KtPsiFactory(getProject())
+        val psiFactory = KtPsiFactory(project)
         val current = getDelegationCall()
 
-        assert(current.isImplicit()) { "Method should not be called with explicit delegation call: " + getText() }
+        assert(current.isImplicit) { "Method should not be called with explicit delegation call: " + text }
         current.delete()
 
-        val colon = addAfter(psiFactory.createColon(), getValueParameterList())
+        val colon = addAfter(psiFactory.createColon(), valueParameterList)
 
         val delegationName = if (isThis) "this" else "super"
 

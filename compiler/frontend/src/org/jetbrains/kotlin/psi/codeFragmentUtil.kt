@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ var KtFile.suppressDiagnosticsInDebugMode: Boolean
         is KtFile -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
         else -> false
     }
-    set(skip: Boolean) {
+    set(skip) {
         putUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE, skip)
     }
 
@@ -50,8 +50,8 @@ val DEBUG_TYPE_REFERENCE_STRING: String = "DebugTypeKotlinRulezzzz"
 val DEBUG_TYPE_INFO: Key<KotlinType> = Key.create<KotlinType>("DEBUG_TYPE_INFO")
 var KtTypeReference.debugTypeInfo: KotlinType?
     get() = getUserData(DEBUG_TYPE_INFO)
-    set(type: KotlinType?) {
-        if (type != null && this.getText() == DEBUG_TYPE_REFERENCE_STRING) {
+    set(type) {
+        if (type != null && this.text == DEBUG_TYPE_REFERENCE_STRING) {
             putUserData(DEBUG_TYPE_INFO, type)
         }
     }
