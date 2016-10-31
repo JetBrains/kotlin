@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
 
     override fun getValueParameterList() = getStubOrPsiChild(KtStubElementTypes.VALUE_PARAMETER_LIST)
 
-    override fun getValueParameters() = getValueParameterList()?.getParameters() ?: emptyList()
+    override fun getValueParameters() = valueParameterList?.parameters ?: emptyList()
 
     override fun getReceiverTypeReference() = null
 
@@ -51,9 +51,9 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
 
     override fun getEqualsToken() = null
 
-    override fun hasBlockBody() = getBodyExpression() != null
+    override fun hasBlockBody() = bodyExpression != null
 
-    override fun hasBody() = getBodyExpression() != null
+    override fun hasBody() = bodyExpression != null
 
     override fun hasDeclaredReturnType() = false
 
@@ -65,13 +65,13 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
 
     override fun getTypeParameters() = emptyList<KtTypeParameter>()
 
-    override fun getName(): String? = getContainingClassOrObject().getName()
+    override fun getName(): String? = getContainingClassOrObject().name
 
-    override fun getNameAsSafeName() = KtPsiUtil.safeName(getName())
+    override fun getNameAsSafeName() = KtPsiUtil.safeName(name)
 
     override fun getFqName() = null
 
-    override fun getNameAsName() = getNameAsSafeName()
+    override fun getNameAsName() = nameAsSafeName
 
     override fun getNameIdentifier() = null
 
@@ -82,15 +82,15 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
 
     open fun getConstructorKeyword(): PsiElement? = findChildByType(KtTokens.CONSTRUCTOR_KEYWORD)
 
-    fun hasConstructorKeyword(): Boolean = getStub() != null || getConstructorKeyword() != null
+    fun hasConstructorKeyword(): Boolean = stub != null || getConstructorKeyword() != null
 
     override fun getTextOffset(): Int {
-        return getConstructorKeyword()?.getTextOffset()
-               ?: getValueParameterList()?.getTextOffset()
+        return getConstructorKeyword()?.textOffset
+               ?: valueParameterList?.textOffset
                ?: super.getTextOffset()
     }
 
     override fun getUseScope(): SearchScope {
-        return getContainingClassOrObject().getUseScope()
+        return getContainingClassOrObject().useScope
     }
 }

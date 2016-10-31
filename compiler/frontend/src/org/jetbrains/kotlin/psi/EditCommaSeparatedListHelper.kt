@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,10 +63,10 @@ object EditCommaSeparatedListHelper {
             if (anchor != null) {
                 val index = allItems.indexOf(anchor)
                 assert(index >= 0)
-                anchorAfter = if (index > 0) allItems.get(index - 1) else null
+                anchorAfter = if (index > 0) allItems[index - 1] else null
             }
             else {
-                anchorAfter = allItems.get(allItems.size - 1)
+                anchorAfter = allItems[allItems.size - 1]
             }
         }
         return addItemAfter(list, allItems, item, anchorAfter, prefix)
@@ -74,9 +74,9 @@ object EditCommaSeparatedListHelper {
 
     fun <TItem: KtElement> removeItem(item: TItem) {
         var comma = item.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
-        if (comma?.getNode()?.getElementType() != KtTokens.COMMA) {
+        if (comma?.node?.elementType != KtTokens.COMMA) {
             comma = item.siblings(forward = false, withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
-            if (comma?.getNode()?.getElementType() != KtTokens.COMMA) {
+            if (comma?.node?.elementType != KtTokens.COMMA) {
                 comma = null
             }
         }

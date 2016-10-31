@@ -47,7 +47,7 @@ fun KtCallElement.getCallNameExpression(): KtSimpleNameExpression? {
 
     return when (calleeExpression) {
         is KtSimpleNameExpression -> calleeExpression
-        is KtConstructorCalleeExpression -> calleeExpression.getConstructorReferenceExpression()
+        is KtConstructorCalleeExpression -> calleeExpression.constructorReferenceExpression
         else -> null
     }
 }
@@ -82,9 +82,9 @@ fun KtElement.getQualifiedElementSelector(): KtElement? {
         is KtCallExpression -> calleeExpression
         is KtQualifiedExpression -> {
             val selector = selectorExpression
-            if (selector is KtCallExpression) selector.calleeExpression else selector
+            (selector as? KtCallExpression)?.calleeExpression ?: selector
         }
-        is KtUserType -> getReferenceExpression()
+        is KtUserType -> referenceExpression
         else -> null
     }
 }
@@ -111,15 +111,15 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             }
         }
         parent is KtBinaryExpression && parent.operationReference == this -> {
-            return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.right else parent.left
+            return if (parent.operationToken in OperatorConventions.IN_OPERATIONS) parent.right else parent.left
         }
         parent is KtUnaryExpression && parent.operationReference == this -> {
             return parent.baseExpression
         }
         parent is KtUserType -> {
-            val qualifier = parent.getQualifier()
+            val qualifier = parent.qualifier
             if (qualifier != null) {
-                return qualifier.getReferenceExpression()!!
+                return qualifier.referenceExpression!!
             }
         }
     }
@@ -204,11 +204,11 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
     fun addSuperName(result: MutableList<String>, referencedName: String): Unit {
         result.add(referencedName)
 
-        val file = getContainingFile()
+        val file = containingFile
         if (file is KtFile) {
             val directive = file.findImportByAlias(referencedName)
             if (directive != null) {
-                var reference = directive.getImportedReference()
+                var reference = directive.importedReference
                 while (reference is KtDotQualifiedExpression) {
                     reference = reference.selectorExpression
                 }
@@ -221,7 +221,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
     require(this is KtClassOrObject) { "it should be ${KtClassOrObject::class} but it is a ${this.javaClass.name}" }
 
-    val stub = getStub()
+    val stub = stub
     if (stub != null) {
         return stub.getSuperNames()
     }
@@ -231,9 +231,9 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
     val result = ArrayList<String>()
     for (specifier in specifiers) {
-        val superType = specifier.getTypeAsUserType()
+        val superType = specifier.typeAsUserType
         if (superType != null) {
-            val referencedName = superType.getReferencedName()
+            val referencedName = superType.referencedName
             if (referencedName != null) {
                 addSuperName(result, referencedName)
             }
@@ -267,7 +267,7 @@ private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<KtAnn
         child ->
         when (child.stubType) {
             KtNodeTypes.ANNOTATION_ENTRY -> listOf(child.psi as KtAnnotationEntry)
-            KtNodeTypes.ANNOTATION -> (child.psi as KtAnnotation).getEntries()
+            KtNodeTypes.ANNOTATION -> (child.psi as KtAnnotation).entries
             else -> emptyList<KtAnnotationEntry>()
         }
     }
@@ -277,7 +277,7 @@ private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnn
     return children.flatMap { child ->
         when (child) {
             is KtAnnotationEntry -> listOf(child)
-            is KtAnnotation -> child.getEntries()
+            is KtAnnotation -> child.entries
             else -> emptyList<KtAnnotationEntry>()
         }
     }
@@ -307,7 +307,7 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(accumulato
 fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
     return when(this) {
         is KtClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVar() }
-        else -> getDeclarations()
+        else -> declarations
     }
 }
 
@@ -327,7 +327,7 @@ fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && 
 fun PsiElement.parameterIndex(): Int {
     val parent = parent
     return when {
-        this is KtParameter && parent is KtParameterList -> parent.getParameters().indexOf(this)
+        this is KtParameter && parent is KtParameterList -> parent.parameters.indexOf(this)
         this is PsiParameter && parent is PsiParameterList -> parent.getParameterIndex(this)
         else -> -1
     }
@@ -375,7 +375,7 @@ fun KtStringTemplateExpression.isSingleQuoted(): Boolean
         = node.firstChildNode.textLength == 1
 
 fun KtNamedDeclaration.getValueParameters(): List<KtParameter> {
-    return getValueParameterList()?.getParameters() ?: Collections.emptyList()
+    return getValueParameterList()?.parameters ?: Collections.emptyList()
 }
 
 fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
@@ -461,7 +461,7 @@ fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
     return generateSequence(containingClass()) { if (it.isInner()) it.containingClass() else null }
 }
 
-fun KtElement.containingClass(): KtClass? = getStrictParentOfType<KtClass>()
+fun KtElement.containingClass(): KtClass? = getStrictParentOfType()
 
 fun KtClassOrObject.findPropertyByName(name: String): KtNamedDeclaration? {
     return declarations.firstOrNull { it is KtProperty && it.name == name } as KtNamedDeclaration?

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,10 +87,10 @@ private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<Psi
 }
 
 private val SUPPORTED_ARGUMENT_TYPES = listOf(
-        PsiElementArgumentType<KtExpression>(KtExpression::class.java),
-        PsiElementArgumentType<KtTypeReference>(KtTypeReference::class.java),
-        PlainTextArgumentType<String>(String::class.java, toPlainText = { it }),
-        PlainTextArgumentType<Name>(Name::class.java, toPlainText = { it.render() }),
+        PsiElementArgumentType(KtExpression::class.java),
+        PsiElementArgumentType(KtTypeReference::class.java),
+        PlainTextArgumentType(String::class.java, toPlainText = { it }),
+        PlainTextArgumentType(Name::class.java, toPlainText = Name::render),
         PsiChildRangeArgumentType
 )
 
@@ -130,7 +130,7 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
         for ((range, text) in placeholders) {
             val token = resultElement.findElementAt(range.startOffset)!!
             for (element in token.parentsWithSelf) {
-                val elementRange = element.getTextRange().shiftRight(-start)
+                val elementRange = element.textRange.shiftRight(-start)
                 if (elementRange == range && expectedElementType.isInstance(element)) {
                     val pointer = pointerManager.createSmartPsiElementPointer(element)
                     pointers.put(pointer, n)
@@ -208,7 +208,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
     val text = buildString {
         var i = 0
         while (i < pattern.length) {
-            var c = pattern[i]
+            val c = pattern[i]
 
             if (c == '$') {
                 val nextChar = charOrNull(++i)
