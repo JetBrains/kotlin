@@ -27,7 +27,10 @@ class ModuleIndex(val module: IrModuleFragment) {
             override fun visitClass(declaration: IrClass) {
                 super.visitClass(declaration)
 
-                map[declaration.descriptor.classId] = declaration
+                val classId = declaration.descriptor.classId
+                if (classId != null) {
+                    map[classId] = declaration
+                }
             }
 
         })
