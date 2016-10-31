@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class ConcatenatedStringGenerator {
     fun create(element: KtBinaryExpression): String {
-        val binaryExpression = KtPsiUtil.getTopmostParentOfTypes(element, KtBinaryExpression::class.java) as? KtBinaryExpression ?: element
+        val binaryExpression = element.getTopmostParentOfType <KtBinaryExpression>() ?: element
         val stringBuilder = StringBuilder()
         binaryExpression.appendTo(stringBuilder)
         return stringBuilder.toString()

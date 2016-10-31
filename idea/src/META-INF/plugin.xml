@@ -47,6 +47,10 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.caches.KotlinPackageContentModificationListener</implementation-class>
     </component>
+    <component>
+      <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
+      <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
+    </component>
   </project-components>
 
   <application-components>

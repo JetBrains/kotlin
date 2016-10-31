@@ -221,8 +221,8 @@ object ExpectedCompletionUtils {
         return !InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, WITH_ORDER_PREFIX).isEmpty()
     }
 
-    fun assertDirectivesValid(fileText: String) {
-        InTextDirectivesUtils.assertHasUnknownPrefixes(fileText, KNOWN_PREFIXES)
+    fun assertDirectivesValid(fileText: String, additionalValidDirectives: Collection<String> = emptyList()) {
+        InTextDirectivesUtils.assertHasUnknownPrefixes(fileText, KNOWN_PREFIXES + additionalValidDirectives)
     }
 
     fun assertContainsRenderedItems(expected: Array<CompletionProposal>, items: Array<LookupElement>, checkOrder: Boolean, nothingElse: Boolean) {

@@ -28,6 +28,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
@@ -51,7 +52,7 @@ class KotlinCodeBlockModificationListener(
             override fun modelChanged(event: PomModelEvent) {
                 val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
                 val file = changeSet.rootElement.psi.containingFile as? KtFile ?: return
-                if (changeSet.changedElements.any { !isInsideCodeBlock(it.psi) }) {
+                if (changeSet.changedElements.any { getInsideCodeBlockModificationScope(it.psi) == null }) {
                     if (file.isPhysical) {
                         modificationTracker.incCounter()
                     }
@@ -67,39 +68,38 @@ class KotlinCodeBlockModificationListener(
             file.putUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT, count + 1)
         }
 
-        private fun isInsideCodeBlock(element: PsiElement): Boolean {
-            val lambda = KtPsiUtil.getTopmostParentOfTypes(element, KtLambdaExpression::class.java)
+        fun getInsideCodeBlockModificationScope(element: PsiElement): KtElement? {
+            val lambda = element.getTopmostParentOfType<KtLambdaExpression>()
             if (lambda is KtLambdaExpression) {
-                if (KtPsiUtil.getTopmostParentOfTypes(lambda, KtSuperTypeCallEntry::class.java) != null) {
-                    return true
-                }
+                lambda.getTopmostParentOfType<KtSuperTypeCallEntry>()
+                        ?.let { return it }
             }
 
-            val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
-            if (blockDeclaration.parents.any { it !is KtClassBody && it !is KtClassOrObject && it !is KtFile }) return false // should not be local declaration
+            val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return null
+            if (blockDeclaration.parents.any { it !is KtClassBody && it !is KtClassOrObject && it !is KtFile }) return null // should not be local declaration
 
             when (blockDeclaration) {
                 is KtNamedFunction -> {
                     if (blockDeclaration.hasBlockBody()) {
-                        return blockDeclaration.bodyExpression.isAncestor(element)
+                        return blockDeclaration.bodyExpression?.takeIf { it.isAncestor(element) }
                     }
                     else if (blockDeclaration.hasDeclaredReturnType()) {
-                        return blockDeclaration.initializer.isAncestor(element)
+                        return blockDeclaration.initializer?.takeIf { it.isAncestor(element) }
                     }
                 }
 
                 is KtProperty -> {
                     for (accessor in blockDeclaration.accessors) {
-                        if (accessor.initializer.isAncestor(element) || accessor.bodyExpression.isAncestor(element)) {
-                            return true
-                        }
+                        (accessor.initializer ?: accessor.bodyExpression)
+                                ?.takeIf { it.isAncestor(element) }
+                                ?.let { return it }
                     }
                 }
 
                 else -> throw IllegalStateException()
             }
 
-            return false
+            return null
         }
 
         fun isBlockDeclaration(declaration: KtDeclaration): Boolean {
