@@ -26,12 +26,14 @@ import com.intellij.openapi.command.undo.UndoUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.android.actions.CreateXmlResourceDialog
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.android.util.AndroidBundle
 import org.jetbrains.android.util.AndroidResourceUtil
+import org.jetbrains.android.util.AndroidUtils
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -55,6 +57,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
         private val GET_STRING_METHOD = "getString"
         private val EXTRACT_RESOURCE_DIALOG_TITLE = "Extract Resource"
         private val PACKAGE_NOT_FOUND_ERROR = "package.not.found.error"
+        private val RESOURCE_DIR_ERROR = "check.resource.dir.error"
     }
 
     override fun isApplicableTo(element: KtLiteralStringTemplateEntry, caretOffset: Int): Boolean {
@@ -86,9 +89,9 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
             return
         }
 
-        val parameters = getCreateXmlResourceParameters(facet.module, element) ?: return
+        val parameters = getCreateXmlResourceParameters(facet.module, element, file.virtualFile) ?: return
 
-        if (!AndroidResourceUtil.createValueResource(facet.module, parameters.name, ResourceType.STRING,
+        if (!AndroidResourceUtil.createValueResource(project, parameters.resourceDirectory, parameters.name, ResourceType.STRING,
                                                      parameters.fileName, parameters.directoryNames, parameters.value)) {
             return
         }
@@ -98,21 +101,30 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
         UndoUtil.markPsiFileForUndo(file)
     }
 
-    private fun getCreateXmlResourceParameters(module: Module, element: KtLiteralStringTemplateEntry): CreateXmlResourceParameters? {
+    private fun getCreateXmlResourceParameters(module: Module, element: KtLiteralStringTemplateEntry,
+                                               contextFile: VirtualFile): CreateXmlResourceParameters? {
+
         val stringValue = element.text
 
         val showDialog = !ApplicationManager.getApplication().isUnitTestMode
         val resourceName = element.getUserData(CREATE_XML_RESOURCE_PARAMETERS_NAME_KEY)
 
-        val dialog = CreateXmlResourceDialog(module, ResourceType.STRING, resourceName, stringValue, true)
+        val dialog = CreateXmlResourceDialog(module, ResourceType.STRING, resourceName, stringValue, true, null, contextFile)
         dialog.title = EXTRACT_RESOURCE_DIALOG_TITLE
         if (showDialog && !dialog.showAndGet()) {
+            return null
+        }
+
+        val resourceDirectory = dialog.resourceDirectory
+        if (resourceDirectory == null) {
+            AndroidUtils.reportError(module.project, AndroidBundle.message(RESOURCE_DIR_ERROR, module))
             return null
         }
 
         return CreateXmlResourceParameters(dialog.resourceName,
                                            dialog.value,
                                            dialog.fileName,
+                                           resourceDirectory,
                                            dialog.dirNames)
     }
 
