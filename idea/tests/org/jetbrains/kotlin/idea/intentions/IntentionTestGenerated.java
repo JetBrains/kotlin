@@ -10804,6 +10804,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveEmptyPrimaryConstructor extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveEmptyPrimaryConstructor() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeEmptyPrimaryConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/annotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("keyword.kt")
+        public void testKeyword() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/keyword.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("modifier.kt")
+        public void testModifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/modifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondary.kt")
+        public void testSecondary() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/secondary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyPrimaryConstructor/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
