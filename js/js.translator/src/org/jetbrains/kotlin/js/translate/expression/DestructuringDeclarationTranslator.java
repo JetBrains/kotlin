@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -37,7 +38,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor;
 import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
+import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 
 public class DestructuringDeclarationTranslator extends AbstractTranslator {
 
@@ -92,6 +95,11 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
             }
 
             JsName name =  context().getNameForDescriptor(descriptor);
+            if (isVarCapturedInClosure(context().bindingContext(), descriptor)) {
+                JsNameRef alias = getCapturedVarAccessor(name.makeRef());
+                entryInitializer = JsAstUtils.wrapValue(alias, entryInitializer);
+            }
+
             jsVars.add(new JsVars.JsVar(name, entryInitializer));
         }
         return new JsVars(jsVars, true);

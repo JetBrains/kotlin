@@ -31,24 +31,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiDeclarationTestsGenerated extends AbstractMultiDeclarationTests {
-    @TestMetadata("VarCapturedInFunctionLiteral.kt")
-    public void ignoredVarCapturedInFunctionLiteral() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/VarCapturedInFunctionLiteral.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("VarCapturedInLocalFunction.kt")
-    public void ignoredVarCapturedInLocalFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/VarCapturedInLocalFunction.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("VarCapturedInObjectLiteral.kt")
-    public void ignoredVarCapturedInObjectLiteral() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/VarCapturedInObjectLiteral.kt");
-        doTest(fileName);
-    }
-
     public void testAllFilesPresentInMultiDecl() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiDecl"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -116,6 +98,24 @@ public class MultiDeclarationTestsGenerated extends AbstractMultiDeclarationTest
     @TestMetadata("ValCapturedInObjectLiteral.kt")
     public void testValCapturedInObjectLiteral() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/ValCapturedInObjectLiteral.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("VarCapturedInFunctionLiteral.kt")
+    public void testVarCapturedInFunctionLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/VarCapturedInFunctionLiteral.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("VarCapturedInLocalFunction.kt")
+    public void testVarCapturedInLocalFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/VarCapturedInLocalFunction.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("VarCapturedInObjectLiteral.kt")
+    public void testVarCapturedInObjectLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/VarCapturedInObjectLiteral.kt");
         doTest(fileName);
     }
 
