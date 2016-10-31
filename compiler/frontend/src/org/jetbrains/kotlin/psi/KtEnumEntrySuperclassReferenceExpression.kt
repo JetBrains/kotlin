@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,11 @@ class KtEnumEntrySuperclassReferenceExpression :
 
     private fun calcReferencedElement(): KtClass? {
         val owner = this.getStrictParentOfType<KtEnumEntry>() as? KtEnumEntry
-        return owner?.getParent()?.getParent() as? KtClass
+        return owner?.parent?.parent as? KtClass
     }
 
     override fun getReferencedName(): String {
-        val stub = getStub()
+        val stub = stub
         if (stub != null) {
             return stub.getReferencedName()
         }
@@ -54,7 +54,7 @@ class KtEnumEntrySuperclassReferenceExpression :
     }
 
     override fun getReferencedNameAsName(): Name {
-        return referencedElement.getName()?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
+        return referencedElement.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
     }
 
     override fun getReferencedNameElement(): PsiElement {
@@ -62,11 +62,11 @@ class KtEnumEntrySuperclassReferenceExpression :
     }
 
     override fun getIdentifier(): PsiElement? {
-        return referencedElement.getNameIdentifier()
+        return referencedElement.nameIdentifier
     }
 
     override fun getReferencedNameElementType(): IElementType {
-        return getReferencedNameElement().getNode()!!.getElementType()
+        return getReferencedNameElement().node!!.elementType
     }
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
