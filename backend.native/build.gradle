@@ -105,8 +105,8 @@ kotlinNativeInterop {
 
 dependencies {
    compilerCompile deps
-   compilerCompile kotlinNativeInterop['llvm']
-   compilerCompile kotlinNativeInterop['hash']
+   compilerCompile kotlinNativeInterop['llvm'].configuration
+   compilerCompile kotlinNativeInterop['hash'].configuration
 
    cli_bcCompile deps
    cli_bcCompile sourceSets.compiler.output
