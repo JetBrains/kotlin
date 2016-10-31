@@ -28,15 +28,17 @@ struct TypeInfo {
     // Must be pointer to Any for array classes, and null for Any.
     const TypeInfo* superType_;
     // All object references inside this object.
-    const int* objOffsets_;
-    int objOffsetsCount_;
+    const int32_t* objOffsets_;
+    int32_t objOffsetsCount_;
     const TypeInfo* const* implementedInterfaces_;
-    int implementedInterfacesCount_;
-    void* const* vtable_; // TODO: place vtable at the end of TypeInfo to eliminate the indirection
+    int32_t implementedInterfacesCount_;
+    // TODO: place vtable at the end of TypeInfo to eliminate the indirection.
+    void* const* vtable_;
     const MethodTableRecord* openMethods_;
     uint32_t openMethodsCount_;
     const FieldTableRecord* fields_;
-    uint32_t fieldsCount_;
+    // Is negative to mark an interface.
+    int32_t fieldsCount_;
 };
 
 #ifdef __cplusplus
