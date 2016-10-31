@@ -1,5 +1,3 @@
-// TODO: enable JS backend when issue KT-14535 is fixed
-// IGNORE_BACKEND: JS
 class A {
     operator fun component1() = 1
     operator fun component2() = 2

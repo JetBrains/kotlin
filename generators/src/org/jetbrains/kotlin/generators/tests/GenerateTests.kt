@@ -1157,6 +1157,10 @@ fun main(args: Array<String>) {
         testClass<AbstractNonLocalReturnsTest>() {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractMultiDeclarationTests>() {
+            model("codegen/box/multiDecl/", targetBackend = TargetBackend.JS)
+        }
     }
 }
 
