@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.native.llvm
 
 import kotlin_native.interop.*
 import llvm.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -72,6 +73,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         LLVMBuildRet(context.llvmBuilder, generator.load(thisValue!!, generator.tmpVariable()))
     }
 
+    override fun visitBlockBody(body: IrBlockBody) {
+        super.visitBlockBody(body)
+        if (KotlinBuiltIns.isUnit(generator.currentFunction!!.returnType!!)) {
+            LLVMBuildRet(context.llvmBuilder, null)
+        }
+    }
+    
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
         evaluateCall(generator.tmpVariable(), expression)
     }
