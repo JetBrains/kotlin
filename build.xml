@@ -235,6 +235,10 @@
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/backend/src"/>
             <fileset dir="compiler/backend-common/src"/>
+            <fileset dir="compiler/ir/backend.common/src"/>
+            <fileset dir="compiler/ir/backend.jvm/src"/>
+            <fileset dir="compiler/ir/ir.psi2ir/src"/>
+            <fileset dir="compiler/ir/ir.tree/src"/>
             <fileset dir="compiler/builtins-serializer/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
