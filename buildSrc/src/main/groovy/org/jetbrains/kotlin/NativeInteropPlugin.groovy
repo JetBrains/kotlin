@@ -4,6 +4,7 @@ import org.gradle.api.Named
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.api.internal.file.AbstractFileCollection
@@ -12,7 +13,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.reflect.Instantiator
 
-class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
+class NamedNativeInteropConfig implements Named {
 
     private final Project project
     final String name
@@ -30,6 +31,8 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
     private List<String> linkerOpts = []
     private FileCollection linkFiles;
     private List<String> linkTasks = []
+
+    Configuration configuration
 
     void defFile(String value) {
         defFile = value
@@ -117,6 +120,7 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
 
         interopStubs = project.sourceSets.create(name + "InteropStubs")
         genTask = project.task(interopStubs.getTaskName("gen", ""), type: JavaExec)
+        configuration = project.configurations.create(interopStubs.name)
 
         this.configure()
     }
@@ -178,22 +182,9 @@ class NamedNativeInteropConfig extends AbstractFileCollection implements Named {
                 }
             }
         }
-    }
 
-    @Override
-    String getDisplayName() {
-        return "Native interop config $name"
-    }
-
-    @Override
-    Set<File> getFiles() {
-        return interopStubs.output.getFiles() +
-                interopStubs.compileClasspath.files // TODO: workaround to add Interop:Runtime
-    }
-
-    @Override
-    TaskDependency getBuildDependencies() {
-        return interopStubs.output.getBuildDependencies()
+        this.configuration.extendsFrom project.configurations[interopStubs.runtimeConfigurationName]
+        project.dependencies.add(this.configuration.name, interopStubs.output)
     }
 }
 

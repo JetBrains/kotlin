@@ -1,6 +1,10 @@
-import org.gradle.api.internal.file.DefaultCompositeFileTree
-import org.gradle.api.internal.file.FileTreeInternal
+configurations {
+    cli_bc
+}
 
+dependencies {
+    cli_bc project(path: ':backend.native', configuration: 'cli_bc')
+}
 
 public class KonanTest extends DefaultTask {
     protected String source
@@ -16,17 +20,13 @@ public class KonanTest extends DefaultTask {
 
     @TaskAction
     public void compileBc() {
-        def classpathSs = new DefaultCompositeFileTree(new ArrayList<FileTreeInternal>())
-        project.sourceSets.each{classpathSs += it.output}
-        project.project(":Interop:Runtime").sourceSets.each{ classpathSs += it.output }
-        classpathSs += backendNative.ext.deps
         def sourceKt = project.file(source)
         def sourceBc = new File("${sourceKt.absolutePath}.bc")
         def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
         println "${runtimeBc}"
         project.javaexec {
             main='org.jetbrains.kotlin.cli.bc.K2NativeKt'
-            classpath = classpathSs
+            classpath = project.configurations.cli_bc
             args "-output", "${sourceBc.absolutePath}",
                     "-runtime", "${runtimeBc.absolutePath}",
                     "${sourceKt.absolutePath}",
