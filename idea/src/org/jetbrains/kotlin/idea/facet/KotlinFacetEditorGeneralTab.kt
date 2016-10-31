@@ -80,6 +80,14 @@ class KotlinFacetEditorGeneralTab(
         validatorsManager.registerValidator(libraryValidator)
         validatorsManager.registerValidator(versionValidator)
 
+        languageVersionComboBox.addActionListener {
+            validatorsManager.validate()
+        }
+
+        apiVersionComboBox.addActionListener {
+            validatorsManager.validate()
+        }
+
         targetPlatformComboBox.addActionListener {
             validatorsManager.validate()
             updateCompilerTab()
