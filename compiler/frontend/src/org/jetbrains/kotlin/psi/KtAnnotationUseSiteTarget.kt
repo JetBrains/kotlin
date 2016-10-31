@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,9 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.psi.impl.source.tree.TreeElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTargetStub> {
@@ -44,8 +40,8 @@ class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTarge
             }
         }
 
-        val node = getFirstChild().getNode()
-        return when (node.getElementType()) {
+        val node = firstChild.node
+        return when (node.elementType) {
             KtTokens.FIELD_KEYWORD -> AnnotationUseSiteTarget.FIELD
             KtTokens.FILE_KEYWORD -> AnnotationUseSiteTarget.FILE
             KtTokens.PROPERTY_KEYWORD -> AnnotationUseSiteTarget.PROPERTY
@@ -55,7 +51,7 @@ class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTarge
             KtTokens.PARAM_KEYWORD -> AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
             KtTokens.SETPARAM_KEYWORD -> AnnotationUseSiteTarget.SETTER_PARAMETER
             KtTokens.DELEGATE_KEYWORD -> AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-            else -> throw IllegalStateException("Unknown annotation target " + node.getText())
+            else -> throw IllegalStateException("Unknown annotation target " + node.text)
         }
     }
 

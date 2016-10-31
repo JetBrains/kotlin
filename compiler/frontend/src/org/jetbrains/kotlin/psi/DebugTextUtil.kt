@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ fun KtElement.getDebugText(): String {
         return text
     }
     if (this is KtPackageDirective) {
-        val fqName = getFqName()
-        if (fqName.isRoot()) {
+        val fqName = fqName
+        if (fqName.isRoot) {
             return ""
         }
         return "package " + fqName.asString()
@@ -54,12 +54,9 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     }
 
     override fun visitImportDirective(importDirective: KtImportDirective, data: Unit?): String? {
-        val importPath = importDirective.getImportPath()
-        if (importPath == null) {
-            return "import <invalid>"
-        }
-        val aliasStr = if (importPath.hasAlias()) " as " + importPath.getAlias()!!.asString() else ""
-        return "import ${importPath.getPathStr()}" + aliasStr
+        val importPath = importDirective.importPath ?: return "import <invalid>"
+        val aliasStr = if (importPath.hasAlias()) " as " + importPath.alias!!.asString() else ""
+        return "import ${importPath.pathStr}" + aliasStr
     }
 
     override fun visitImportList(importList: KtImportList, data: Unit?): String? {
@@ -67,7 +64,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     }
 
     override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry, data: Unit?): String? {
-        return render(annotationEntry, annotationEntry.getCalleeExpression(), annotationEntry.getTypeArgumentList())
+        return render(annotationEntry, annotationEntry.calleeExpression, annotationEntry.typeArgumentList)
     }
 
     override fun visitTypeReference(typeReference: KtTypeReference, data: Unit?): String? {
@@ -83,7 +80,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     }
 
     override fun visitUserType(userType: KtUserType, data: Unit?): String? {
-        return render(userType, userType.getQualifier(), userType.getReferenceExpression(), userType.getTypeArgumentList())
+        return render(userType, userType.qualifier, userType.referenceExpression, userType.typeArgumentList)
     }
 
     override fun visitDynamicType(type: KtDynamicType, data: Unit?): String? {
@@ -95,11 +92,11 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     }
 
     override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression, data: Unit?): String? {
-        return render(constructorCalleeExpression, constructorCalleeExpression.getConstructorReferenceExpression())
+        return render(constructorCalleeExpression, constructorCalleeExpression.constructorReferenceExpression)
     }
 
     override fun visitSuperTypeListEntry(specifier: KtSuperTypeListEntry, data: Unit?): String? {
-        return render(specifier, specifier.getTypeReference())
+        return render(specifier, specifier.typeReference)
     }
 
     override fun visitSuperTypeList(list: KtSuperTypeList, data: Unit?): String? {
@@ -125,34 +122,34 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit?): String? {
         return buildText {
             append("STUB: ")
-            appendInn(enumEntry.getModifierList(), suffix = " ")
+            appendInn(enumEntry.modifierList, suffix = " ")
             append("enum entry ")
-            appendInn(enumEntry.getNameAsName())
-            appendInn(enumEntry.getInitializerList(), prefix = " : ")
+            appendInn(enumEntry.nameAsName)
+            appendInn(enumEntry.initializerList, prefix = " : ")
         }
     }
 
     override fun visitFunctionType(functionType: KtFunctionType, data: Unit?): String? {
         return buildText {
-            appendInn(functionType.getReceiverTypeReference(), suffix = ".")
-            appendInn(functionType.getParameterList())
-            appendInn(functionType.getReturnTypeReference(), prefix = " -> ")
+            appendInn(functionType.receiverTypeReference, suffix = ".")
+            appendInn(functionType.parameterList)
+            appendInn(functionType.returnTypeReference, prefix = " -> ")
         }
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter, data: Unit?): String? {
         return buildText {
-            appendInn(parameter.getModifierList(), suffix = " ")
-            appendInn(parameter.getNameAsName())
-            appendInn(parameter.getExtendsBound(), prefix = " : ")
+            appendInn(parameter.modifierList, suffix = " ")
+            appendInn(parameter.nameAsName)
+            appendInn(parameter.extendsBound, prefix = " : ")
         }
     }
 
     override fun visitTypeProjection(typeProjection: KtTypeProjection, data: Unit?): String? {
         return buildText {
-            val token = typeProjection.getProjectionKind().getToken()
-            appendInn(token?.getValue())
-            val typeReference = typeProjection.getTypeReference()
+            val token = typeProjection.projectionKind.token
+            appendInn(token?.value)
+            val typeReference = typeProjection.typeReference
             if (token != null && typeReference != null) {
                 append(" ")
             }
@@ -195,17 +192,17 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 
     override fun visitPropertyAccessor(accessor: KtPropertyAccessor, data: Unit?): String? {
         val containingProperty = KtStubbedPsiUtil.getContainingDeclaration(accessor, KtProperty::class.java)
-        val what = (if (accessor.isGetter()) "getter" else "setter")
+        val what = (if (accessor.isGetter) "getter" else "setter")
         return what + " for " + (containingProperty?.getDebugText() ?: "...")
     }
 
     override fun visitClass(klass: KtClass, data: Unit?): String? {
         return buildText {
             append("STUB: ")
-            appendInn(klass.getModifierList(), suffix = " ")
+            appendInn(klass.modifierList, suffix = " ")
             append("class ")
-            appendInn(klass.getNameAsName())
-            appendInn(klass.getTypeParameterList())
+            appendInn(klass.nameAsName)
+            appendInn(klass.typeParameterList)
             appendInn(klass.getPrimaryConstructorModifierList(), prefix = " ", suffix = " ")
             appendInn(klass.getPrimaryConstructorParameterList())
             appendInn(klass.getSuperTypeList(), prefix = " : ")
@@ -215,30 +212,30 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     override fun visitNamedFunction(function: KtNamedFunction, data: Unit?): String? {
         return buildText {
             append("STUB: ")
-            appendInn(function.getModifierList(), suffix = " ")
+            appendInn(function.modifierList, suffix = " ")
             append("fun ")
 
-            val typeParameterList = function.getTypeParameterList()
+            val typeParameterList = function.typeParameterList
             if (function.hasTypeParameterListBeforeFunctionName()) {
                 appendInn(typeParameterList, suffix = " ")
             }
-            appendInn(function.getReceiverTypeReference(), suffix = ".")
-            appendInn(function.getNameAsName())
+            appendInn(function.receiverTypeReference, suffix = ".")
+            appendInn(function.nameAsName)
             if (!function.hasTypeParameterListBeforeFunctionName()) {
                 appendInn(typeParameterList)
             }
-            appendInn(function.getValueParameterList())
-            appendInn(function.getTypeReference(), prefix = ": ")
-            appendInn(function.getTypeConstraintList(), prefix = " ")
+            appendInn(function.valueParameterList)
+            appendInn(function.typeReference, prefix = ": ")
+            appendInn(function.typeConstraintList, prefix = " ")
         }
     }
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration, data: Unit?): String? {
         return buildText {
             append("STUB: ")
-            appendInn(declaration.getModifierList(), suffix = " ")
+            appendInn(declaration.modifierList, suffix = " ")
             append("object ")
-            appendInn(declaration.getNameAsName())
+            appendInn(declaration.nameAsName)
             appendInn(declaration.getSuperTypeList(), prefix = " : ")
         }
     }
@@ -246,11 +243,11 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     override fun visitParameter(parameter: KtParameter, data: Unit?): String? {
         return buildText {
             if (parameter.hasValOrVar()) {
-                if (parameter.isMutable()) append("var ") else append("val ")
+                if (parameter.isMutable) append("var ") else append("val ")
             }
-            val name = parameter.getNameAsName()
+            val name = parameter.nameAsName
             appendInn(name)
-            val typeReference = parameter.getTypeReference()
+            val typeReference = parameter.typeReference
             if (typeReference != null && name != null) {
                 append(": ")
             }
@@ -261,17 +258,17 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     override fun visitProperty(property: KtProperty, data: Unit?): String? {
         return buildText {
             append("STUB: ")
-            appendInn(property.getModifierList(), suffix = " ")
-            append(if (property.isVar()) "var " else "val ")
-            appendInn(property.getNameAsName())
-            appendInn(property.getTypeReference(), prefix = ": ")
+            appendInn(property.modifierList, suffix = " ")
+            append(if (property.isVar) "var " else "val ")
+            appendInn(property.nameAsName)
+            appendInn(property.typeReference, prefix = ": ")
         }
     }
 
     override fun visitTypeConstraint(constraint: KtTypeConstraint, data: Unit?): String? {
         return buildText {
-            appendInn(constraint.getSubjectTypeParameterName())
-            appendInn(constraint.getBoundTypeReference(), prefix = " : ")
+            appendInn(constraint.subjectTypeParameterName)
+            appendInn(constraint.boundTypeReference, prefix = " : ")
         }
     }
 
