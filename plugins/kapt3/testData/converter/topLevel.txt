@@ -32,19 +32,19 @@ public final class another {
         return null;
     }
 
-    public static final void extensionFunction(@test.another.Anno(value = "rec")
-    java.lang.String $receiver, @test.another.Anno(value = "1")
-    java.lang.String a, @test.another.Anno(value = "2")
+    public static final void extensionFunction(@Anno(value = "rec")
+    java.lang.String $receiver, @Anno(value = "1")
+    java.lang.String a, @Anno(value = "2")
     java.lang.String b) {
     }
 
-    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@test.another.Anno(value = "propRec")
+    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@Anno(value = "propRec")
     T $receiver) {
         return null;
     }
 
-    public static final <T extends java.lang.Object>void setExtensionProperty(@test.another.Anno(value = "propRec")
-    T $receiver, @test.another.Anno(value = "setparam")
+    public static final <T extends java.lang.Object>void setExtensionProperty(@Anno(value = "propRec")
+    T $receiver, @Anno(value = "setparam")
     java.lang.String setParamName) {
     }
 }

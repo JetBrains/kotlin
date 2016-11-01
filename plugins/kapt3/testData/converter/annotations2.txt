@@ -1,0 +1,78 @@
+package test;
+
+@Anno(value = "anno-class")
+public abstract @interface Anno {
+
+    public abstract java.lang.String value();
+}
+
+////////////////////
+
+package test;
+
+@Anno(value = "clazz")
+public abstract class Test {
+    private java.lang.String v;
+
+    @Anno(value = "abstract-method")
+    public abstract java.lang.String abstractMethod();
+
+    public abstract java.lang.String getAbstractVal();
+
+    @Anno(value = "v-get")
+    public final java.lang.String getV() {
+        return null;
+    }
+
+    @Anno(value = "v-set")
+    public final void setV(@Anno(value = "v-setparam")
+    java.lang.String p0) {
+    }
+
+    @Anno(value = "test-constructor")
+    protected Test(@Anno(value = "v-param")
+    java.lang.String v) {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+@Anno(value = "enum")
+public enum Enum {
+    /*public static final*/ WHITE /* = null */,
+    /*public static final*/ BLACK /* = null */;
+    private final int x = 0;
+
+    public final int getX() {
+        return 0;
+    }
+
+    @Anno(value = "enum-constructor")
+    Enum(@Anno(value = "x")
+    int x) {
+    }
+}
+
+////////////////////
+
+package test;
+
+public final class test {
+
+    public test() {
+        super();
+    }
+
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
+    java.lang.String $receiver) {
+    }
+
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    int $receiver) {
+        return null;
+    }
+}
