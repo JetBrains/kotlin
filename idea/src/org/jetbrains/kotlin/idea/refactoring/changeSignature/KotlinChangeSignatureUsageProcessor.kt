@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
-import org.jetbrains.kotlin.idea.search.usagesSearch.buildProcessDelegationCallConstructorUsagesTask
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -72,6 +71,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
@@ -535,13 +535,16 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 callableScope.getAllAccessibleFunctions(newName)
             else
                 callableScope.getAllAccessibleVariables(newName)
+            val newTypes = info.newParameters.map { it.currentTypeInfo.type }
             for (conflict in conflicts) {
                 if (conflict === oldDescriptor) continue
 
                 val conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(conflict)
                 if (conflictElement === info.method) continue
 
-                if (conflict.valueParameters.map { it.type } == oldDescriptor.valueParameters.map { it.type }) {
+                val candidateTypes = conflict.extensionReceiverParameter?.type.singletonOrEmptyList() + conflict.valueParameters.map { it.type }
+
+                if (candidateTypes == newTypes) {
                     result.putValue(conflictElement, "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'")
                     break
                 }

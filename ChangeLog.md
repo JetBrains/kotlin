@@ -224,6 +224,10 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 - [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) Convert Property to Function Intention: Search occurrences using progress dialog
 
+#### Refactorings
+
+- [`KT-14583`](https://youtrack.jetbrains.com/issue/KT-14583) Change Signature: Use new signature when looking for redeclaration conflicts
+
 ## 1.0.5
 
 ### IDE
