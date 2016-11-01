@@ -38,14 +38,14 @@
 - [`KT-5044`](https://youtrack.jetbrains.com/issue/KT-5044) Generate more efficient bytecode for `in` on ranges with `double`, `float` and `long` element type
 - [`KT-14357`](https://youtrack.jetbrains.com/issue/KT-14357) Fixed CompilationException in case of try-catch used in false condition
 - [`KT-14012`](https://youtrack.jetbrains.com/issue/KT-14012) Fixed internal error on every first compilation after the source code change
-- [`KT-14304`](https://youtrack.jetbrains.com/issue/KT-14304 Fixed inconsistent reporting of 'variable must be initialized' after assignment 
+- [`KT-14304`](https://youtrack.jetbrains.com/issue/KT-14304) Fixed inconsistent reporting of 'variable must be initialized' after assignment 
 in anonymous object
-- [`KT-14158`](https://youtrack.jetbrains.com/issue/KT-14158 Fixed possible exception thrown when reporting unreachable code diagnostics
-- [`KT-7929`](https://youtrack.jetbrains.com/issue/KT-7929, [`KT-8442`](https://youtrack.jetbrains.com/issue/KT-8442 Fixed various exceptions caused by trying to use destructuring declarations outside of a code block
-- [`KT-14447`](https://youtrack.jetbrains.com/issue/KT-14447 Fixed compiler exception if a value was changed but not used
-- [`KT-14201`](https://youtrack.jetbrains.com/issue/KT-14201 Fixed compiler exception for anonymous object with invoke and non-trivial closure
-- [`KT-13890`](https://youtrack.jetbrains.com/issue/KT-13890 Fixed incorrect bytecode generation causing IllegalAccessError at runtime for invoking protected method with default arguments
-- [`KT-9297`](https://youtrack.jetbrains.com/issue/KT-9297 Report "External declaration cannot be abstract" on property with external accessor
+- [`KT-14158`](https://youtrack.jetbrains.com/issue/KT-14158) Fixed possible exception thrown when reporting unreachable code diagnostics
+- [`KT-7929`](https://youtrack.jetbrains.com/issue/KT-7929), [`KT-8442`](https://youtrack.jetbrains.com/issue/KT-8442) Fixed various exceptions caused by trying to use destructuring declarations outside of a code block
+- [`KT-14447`](https://youtrack.jetbrains.com/issue/KT-14447) Fixed compiler exception if a value was changed but not used
+- [`KT-14201`](https://youtrack.jetbrains.com/issue/KT-14201) Fixed compiler exception for anonymous object with invoke and non-trivial closure
+- [`KT-13890`](https://youtrack.jetbrains.com/issue/KT-13890) Fixed incorrect bytecode generation causing IllegalAccessError at runtime for invoking protected method with default arguments
+- [`KT-9297`](https://youtrack.jetbrains.com/issue/KT-9297) Report "External declaration cannot be abstract" on property with external accessor
 
 ### Reflection
 
@@ -92,12 +92,12 @@ in anonymous object
 - [`KT-13584`](https://youtrack.jetbrains.com/issue/KT-13584) Fixed IDE misbehavior (exceptions, index corruption) after Java to Kotlin conversion
 - [`KT-12402`](https://youtrack.jetbrains.com/issue/KT-12402) Fixed resolve of databinding 
 classes inside the IDE
-- [`KT-14131`](https://youtrack.jetbrains.com/issue/KT-14131 Formatter now removes spaces in labeled expressions
-- [`KT-14327`](https://youtrack.jetbrains.com/issue/KT-14327 Allow to select single word on double click in one line doc comment
-- [`KT-14452`](https://youtrack.jetbrains.com/issue/KT-14452 Fix handling of underscores in Markdown links
-- [`KT-14153`](https://youtrack.jetbrains.com/issue/KT-14153 Use correct fully-qualified name when creating run configurations for nested classes
-- [`KT-13753`](https://youtrack.jetbrains.com/issue/KT-13753 Fixed "Go to implementations" when a class/interface and its implementations are both declared in a local scope
-- [`KT-14508`](https://youtrack.jetbrains.com/issue/KT-14508 Improved performance of certain Find Usages operations
+- [`KT-14131`](https://youtrack.jetbrains.com/issue/KT-14131) Formatter now removes spaces in labeled expressions
+- [`KT-14327`](https://youtrack.jetbrains.com/issue/KT-14327) Allow to select single word on double click in one line doc comment
+- [`KT-14452`](https://youtrack.jetbrains.com/issue/KT-14452) Fix handling of underscores in Markdown links
+- [`KT-14153`](https://youtrack.jetbrains.com/issue/KT-14153) Use correct fully-qualified name when creating run configurations for nested classes
+- [`KT-13753`](https://youtrack.jetbrains.com/issue/KT-13753) Fixed "Go to implementations" when a class/interface and its implementations are both declared in a local scope
+- [`KT-14508`](https://youtrack.jetbrains.com/issue/KT-14508) Improved performance of certain Find Usages operations
 
 
 #### IDE. Code Completion
@@ -112,7 +112,7 @@ classes inside the IDE
 - [`KT-12077`](https://youtrack.jetbrains.com/issue/KT-12077), [`KT-13009`](https://youtrack.jetbrains.com/issue/KT-13009) Code completion and auto-import no longer insert FQN for annotations with use-site target inside primary constructor
 - [`KT-13780`](https://youtrack.jetbrains.com/issue/KT-13780) Fix failure of code completion in certain conditions
 - [`KT-9835`](https://youtrack.jetbrains.com/issue/KT-9835) Fix detection of receiver nullability
-- [`KT-13810`](https://youtrack.jetbrains.com/issue/KT-13810 Fix incorrect deletion of last inserted character
+- [`KT-13810`](https://youtrack.jetbrains.com/issue/KT-13810) Fix incorrect deletion of last inserted character
 
 #### IDE. Refactorings
 
@@ -187,8 +187,8 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-14199`](https://youtrack.jetbrains.com/issue/KT-14199) Add Library: Fix exception due to resolution being run in the "dumb mode"
 - Convert Receiver to Parameter: Fix this replacement
 - [`KT-10871`](https://youtrack.jetbrains.com/issue/KT-10871), [`KT-12625`](https://youtrack.jetbrains.com/issue/KT-12625) Inspection to highlight redundant calls of conversion methods
-- [`KT-14084`](https://youtrack.jetbrains.com/issue/KT-14084 "Replace if expression with elvis operator" is now able to convert chained calls to safe-calls
-- [`KT-12019`](https://youtrack.jetbrains.com/issue/KT-12019 Added inspection to highlight redundant `if` statements
+- [`KT-14084`](https://youtrack.jetbrains.com/issue/KT-14084) "Replace if expression with elvis operator" is now able to convert chained calls to safe-calls
+- [`KT-12019`](https://youtrack.jetbrains.com/issue/KT-12019) Added inspection to highlight redundant `if` statements
 
 ##### Issues fixed
 
@@ -210,13 +210,13 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-13719`](https://youtrack.jetbrains.com/issue/KT-13719) Highlighting range for "`var` can be `val`" no longer includes preceding annotations
 - [`KT-13884`](https://youtrack.jetbrains.com/issue/KT-13884) Fix exception "Invalid root block PSI element" on replacing trivial when-expression to if
 - [`KT-13882`](https://youtrack.jetbrains.com/issue/KT-13882) Convert Receiver to Parameter: Fix AssertionError
-- [`KT-14394`](https://youtrack.jetbrains.com/issue/KT-14394 Lambda to reference: not-null types are now preferred for platform type receivers
-- [`KT-14420`](https://youtrack.jetbrains.com/issue/KT-14420 Fixed false positive of "Convert lambda to reference" with nested lambdas
-- [`KT-14289`](https://youtrack.jetbrains.com/issue/KT-14289 Correctly shorten qualified names when converting an object literal to lambda
-- [`KT-13958`](https://youtrack.jetbrains.com/issue/KT-13958 Fixed behavior of "Surround with null check" inside `if` statements
-- [`KT-14065`](https://youtrack.jetbrains.com/issue/KT-14065 Fixed false positive for "Variable can be declared immutable" for variables initialized in lambdas
-- [`KT-14550`](https://youtrack.jetbrains.com/issue/KT-14550 Fix handling of named arguments in "Lambda to reference"
-- [`KT-14542`](https://youtrack.jetbrains.com/issue/KT-14542 "If to elvis" handles calls with nullable result correctly
+- [`KT-14394`](https://youtrack.jetbrains.com/issue/KT-14394) Lambda to reference: not-null types are now preferred for platform type receivers
+- [`KT-14420`](https://youtrack.jetbrains.com/issue/KT-14420) Fixed false positive of "Convert lambda to reference" with nested lambdas
+- [`KT-14289`](https://youtrack.jetbrains.com/issue/KT-14289) Correctly shorten qualified names when converting an object literal to lambda
+- [`KT-13958`](https://youtrack.jetbrains.com/issue/KT-13958) Fixed behavior of "Surround with null check" inside `if` statements
+- [`KT-14065`](https://youtrack.jetbrains.com/issue/KT-14065) Fixed false positive for "Variable can be declared immutable" for variables initialized in lambdas
+- [`KT-14550`](https://youtrack.jetbrains.com/issue/KT-14550) Fix handling of named arguments in "Lambda to reference"
+- [`KT-14542`](https://youtrack.jetbrains.com/issue/KT-14542) "If to elvis" handles calls with nullable result correctly
 
 #### Debugger
 
@@ -224,12 +224,12 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-13751`](https://youtrack.jetbrains.com/issue/KT-13751) Fix behavior of "step over" for inline calls
 -  [`KT-12924`](https://youtrack.jetbrains.com/issue/KT-12924) Fixed "Step over" diving into recursive call
 - [`KT-14068`](https://youtrack.jetbrains.com/issue/KT-14068) Fixed showing toString() method result in watches when type has delegated properties
-- [`KT-14488`](https://youtrack.jetbrains.com/issue/KT-14488 Fixed stepping into a function starting with a `val` or `var` when "Use simple getters" option is enabled
+- [`KT-14488`](https://youtrack.jetbrains.com/issue/KT-14488) Fixed stepping into a function starting with a `val` or `var` when "Use simple getters" option is enabled
 
 #### Android
 
 - Lint diagnostics updated to Android Studio 2.2
-- [`KT-11715`](https://youtrack.jetbrains.com/issue/KT-11715 "Extract string resource" intention
+- [`KT-11715`](https://youtrack.jetbrains.com/issue/KT-11715) "Extract string resource" intention
 
 ###### Issues fixed
 
@@ -250,9 +250,9 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-13638`](https://youtrack.jetbrains.com/issue/KT-13638) Changed the way "Configure Kotlin in project" sets up Maven build
 - [`KT-13478`](https://youtrack.jetbrains.com/issue/KT-13478) Fixed creating Maven project by archetype
 - [`KT-14253`](https://youtrack.jetbrains.com/issue/KT-14253) Fixed problem when switching from kapt2 to kapt
-- [`KT-14250`](https://youtrack.jetbrains.com/issue/KT-14250 Fixed possible incremental build failure when using kapt
-- [`KT-14055`](https://youtrack.jetbrains.com/issue/KT-14055 Corruption of incremental compilation caches triggers automatic rebuild
-- [`KT-14554`](https://youtrack.jetbrains.com/issue/KT-14554 Newly introduced duplicate declarations correctly lead to failure of incremental build
+- [`KT-14250`](https://youtrack.jetbrains.com/issue/KT-14250) Fixed possible incremental build failure when using kapt
+- [`KT-14055`](https://youtrack.jetbrains.com/issue/KT-14055) Corruption of incremental compilation caches triggers automatic rebuild
+- [`KT-14554`](https://youtrack.jetbrains.com/issue/KT-14554) Newly introduced duplicate declarations correctly lead to failure of incremental build
 - Improvements to the use of local connections in compiler daemon
 
 #### JavaScript
@@ -290,12 +290,12 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-13020`](https://youtrack.jetbrains.com/issue/KT-13020), [`KT-13021`](https://youtrack.jetbrains.com/issue/KT-13021) Do not delete unknown tags when converting Javadoc comments to KDoc
 - [`KT-10885`](https://youtrack.jetbrains.com/issue/KT-10885) Fix conversion of assignments used as expressions
 - [`KT-14205`](https://youtrack.jetbrains.com/issue/KT-14205) Notify user about syntax errors in files being converted
-- [`KT-12677`](https://youtrack.jetbrains.com/issue/KT-12677 Fix detection of SAM constructor redundancy
-- [`KT-5410`](https://youtrack.jetbrains.com/issue/KT-5410 Fix conversion of string concatentations when the first object in an expresion is not a string
-- [`KT-5312`](https://youtrack.jetbrains.com/issue/KT-5312 Fix handling of operator priority when convering complex expressions
-- [`KT-14248`](https://youtrack.jetbrains.com/issue/KT-14248 Fix formatting of constructors after conversion
-- [`KT-12892`](https://youtrack.jetbrains.com/issue/KT-12892 Fix placing of constructor comments after conversion
-- [`KT-13695`](https://youtrack.jetbrains.com/issue/KT-13695, [`KT-13159`](https://youtrack.jetbrains.com/issue/KT-13159, [`KT-14531`](https://youtrack.jetbrains.com/issue/KT-14531 Paste context is now more comprehensively taken into account when converting Java code copied from non-IDE sources
+- [`KT-12677`](https://youtrack.jetbrains.com/issue/KT-12677) Fix detection of SAM constructor redundancy
+- [`KT-5410`](https://youtrack.jetbrains.com/issue/KT-5410) Fix conversion of string concatentations when the first object in an expresion is not a string
+- [`KT-5312`](https://youtrack.jetbrains.com/issue/KT-5312) Fix handling of operator priority when convering complex expressions
+- [`KT-14248`](https://youtrack.jetbrains.com/issue/KT-14248) Fix formatting of constructors after conversion
+- [`KT-12892`](https://youtrack.jetbrains.com/issue/KT-12892) Fix placing of constructor comments after conversion
+- [`KT-13695`](https://youtrack.jetbrains.com/issue/KT-13695), [`KT-13159`](https://youtrack.jetbrains.com/issue/KT-13159), [`KT-14531`](https://youtrack.jetbrains.com/issue/KT-14531) Paste context is now more comprehensively taken into account when converting Java code copied from non-IDE sources
 
 ## 1.0.4
 
