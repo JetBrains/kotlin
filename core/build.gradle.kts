@@ -1,4 +1,7 @@
 
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -29,8 +32,23 @@ fun commonDep(coord: String): String {
 
 fun commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
 
-fun KotlinDependencyHandler.protobufLite() = project(":custom-dependencies:protobuf-lite", configuration = "default").apply { isTransitive = false }
-fun protobufLiteTask() = ":custom-dependencies:protobuf-lite:prepare"
+val protobufLiteProject = ":custom-dependencies:protobuf-lite"
+fun KotlinDependencyHandler.protobufLite(): ProjectDependency =
+        project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
+val protobufLiteTask = "$protobufLiteProject:prepare"
+
+fun Project.fixKotlinTaskDependencies() {
+    val project = this
+    the<JavaPluginConvention>().sourceSets.all { sourceset ->
+        val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
+        project.tasks.withType<Task> {
+            if (name == taskName) {
+                dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
+                println("!!! add $this dependsOn copy${sourceset.name.capitalize()}KotlinClasses")
+            }
+        }
+    }
+}
 
 // TODO: common ^ 8< ----
 
@@ -49,14 +67,13 @@ dependencies {
 
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
-        listOf("core/descriptor.loader.java/src",
-               "core/descriptors/src",
-               "core/descriptors.runtime/src",
-               "core/deserialization/src",
-               "core/util.runtime/src")
-        .map { File(rootDir, it) }
-        .let { java.setSrcDirs(it) }
-//        println(compileClasspath.joinToString("\n    ", prefix = "classpath =\n    ") { it.canonicalFile.relativeTo(rootDir).path })
+        java.setSrcDirs(
+                listOf("core/descriptor.loader.java/src",
+                       "core/descriptors/src",
+                       "core/descriptors.runtime/src",
+                       "core/deserialization/src",
+                       "core/util.runtime/src")
+                .map { File(rootDir, it) })
     }
     sourceSets.getByName("test").apply {
         java.setSrcDirs(emptyList<File>())
@@ -64,14 +81,20 @@ configure<JavaPluginConvention> {
 }
 
 tasks.withType<JavaCompile> {
-    dependsOn(protobufLiteTask())
+    dependsOn(protobufLiteTask)
 }
 
 tasks.withType<KotlinCompile> {
-    dependsOn(protobufLiteTask())
-    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
+    dependsOn(protobufLiteTask)
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-core")
 }
 
-//tasks.withType<Jar> {
-//    enabled = false
-//}
+task("sourcesets") {
+    doLast {
+        the<JavaPluginConvention>().sourceSets.all {
+            println("--> ${it.name}: ${it.java.srcDirs.joinToString()}")
+        }
+    }
+}
+
+fixKotlinTaskDependencies()

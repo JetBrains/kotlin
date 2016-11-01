@@ -63,14 +63,13 @@ artifacts.add(mainCfg.name, File(outputRuntimeJarFileBase + ".jar"))
 dependencies {
     mainCfg.name(projectDepIntransitive(":core.builtins"))
     mainCfg.name(projectDepIntransitive(":libraries:stdlib"))
-    mainCfg.name(project(":core.builtins.serialized", configuration = "default"))
     buildVersion()
 }
 
 val mainTask = task<ShadowJar>("prepare") {
     classifier = outputRuntimeJarFileBase
     configurations = listOf(mainCfg)
-    dependsOn(":core.builtins.serialized:prepare", ":core.builtins:assemble", ":libraries:stdlib:assemble")
+    dependsOn(":core.builtins:assemble", ":libraries:stdlib:assemble")
     setupRuntimeJar("Kotlin Runtime")
     from(mainCfg.files)
 }

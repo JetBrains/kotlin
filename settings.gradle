@@ -2,7 +2,7 @@
 include "compiler"
 include "core"
 include "core.builtins"
-include "core.builtins.serialized"
+//include "core.builtins.serialized"
 include "core.reflection"
 include "core.script.runtime"
 include "custom-dependencies:protobuf-lite"

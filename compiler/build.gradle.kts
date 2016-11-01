@@ -1,4 +1,5 @@
 
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -37,9 +38,9 @@ fun commonDep(group: String, artifact: String): String = "$group:$artifact:${roo
 // TODO: common ^ 8< ----
 
 dependencies {
-    compile(project(":prepare:runtime", configuration = "packed-runtime"))
+    compile(project(":prepare:runtime", configuration = "default"))
     compile(project(":libraries:kotlin.test"))
-    compile(project(":prepare:reflect", configuration = "packed-reflect"))
+    compile(project(":prepare:reflect", configuration = "default"))
     compile(project(":core.script.runtime"))
     compile(fileTree(mapOf("dir" to "$rootDir/ideaSDK/core", "include" to "*.jar")))
     compile(commonDep("com.google.protobuf:protobuf-java"))
@@ -94,7 +95,15 @@ configure<JavaPluginConvention> {
     }
 }
 
+tasks.withType<JavaCompile> {
+    // TODO: automatic from deps
+    dependsOn(":prepare:runtime:prepare")
+    dependsOn(":prepare:reflect:prepare")
+}
+
 tasks.withType<KotlinCompile> {
+    dependsOn(":prepare:runtime:prepare")
+    dependsOn(":prepare:reflect:prepare")
     kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
 }
 

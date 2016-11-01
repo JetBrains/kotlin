@@ -1,4 +1,6 @@
 
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -16,15 +18,31 @@ buildscript {
 
 apply { plugin("kotlin") }
 
+fun Project.fixKotlinTaskDependencies() {
+    val project = this
+    the<JavaPluginConvention>().sourceSets.all { sourceset ->
+        val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
+        project.tasks.withType<Task> {
+            if (name == taskName) {
+                dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
+                println("!!! add $this dependsOn copy${sourceset.name.capitalize()}KotlinClasses")
+            }
+        }
+    }
+}
+
+// TODO: common ^ 8< ----
+
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
         java.setSrcDirs(
                 listOf("shared/src/main/kotlin",
-                        "shared/src/main/kotlin.jvm",
-                        "junit/src/main/kotlin")
-                        .map { File(projectDir, it) }
-        )
-        java.setSrcDirs(emptyList<File>())//listOf(File(projectDir,"test")))
+                       "shared/src/main/kotlin.jvm",
+                       "junit/src/main/kotlin")
+                .map { File(projectDir, it) })
+    }
+    sourceSets.getByName("test").apply {
+        java.setSrcDirs(emptyList<File>())
     }
 }
 
@@ -34,9 +52,11 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-test")
 }
 
 tasks.withType<Jar> {
     exclude("kotlin/internal/OnlyInputTypes*", "kotlin/internal/InlineOnly*", "kotlin/internal")
 }
+
+fixKotlinTaskDependencies()
