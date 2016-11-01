@@ -3,6 +3,8 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.0.6
+
 ## 1.0.5
 
 ### Compiler
