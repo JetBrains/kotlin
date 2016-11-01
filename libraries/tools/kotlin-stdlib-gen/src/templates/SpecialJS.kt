@@ -171,7 +171,7 @@ fun specialJS(): List<GenericFunction> {
         annotations("@native")
         returns("Unit")
         doc { "Sorts the array in-place according to the order specified by the given [comparison] function." }
-        body { "return noImpl" }
+        body { "noImpl" }
     }
 
     templates add f("sortWith(comparator: Comparator<in T>)") {
@@ -194,7 +194,7 @@ fun specialJS(): List<GenericFunction> {
         returns("Unit")
         doc { "Sorts the array in-place." }
         annotations("""@library("primitiveArraySort")""")
-        body { "return noImpl" }
+        body { "noImpl" }
     }
 
     templates add f("sort()") {
