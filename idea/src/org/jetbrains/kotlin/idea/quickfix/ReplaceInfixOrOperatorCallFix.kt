@@ -36,6 +36,7 @@ class ReplaceInfixOrOperatorCallFix(element: KtExpression) : KotlinQuickFixActio
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val psiFactory = KtPsiFactory(file)
         when (element) {
             is KtArrayAccessExpression -> {

@@ -78,7 +78,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
     }
 
     private fun targetPsiElement(): KtDeclaration? {
-        val referenceTarget = element.mainReference.resolve()
+        val referenceTarget = element?.mainReference?.resolve()
         return when (referenceTarget) {
             is KtNamedFunction -> referenceTarget
             is KtProperty -> referenceTarget

@@ -134,7 +134,7 @@ class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTo
         override fun getText() = familyName
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            element.delete()
+            element?.delete()
         }
     }
 }

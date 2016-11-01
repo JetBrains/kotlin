@@ -34,6 +34,7 @@ class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtElement): Ko
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val usedLabels = collectUsedLabels(element)
         val labelName = getUniqueLabelName(usedLabels)
 

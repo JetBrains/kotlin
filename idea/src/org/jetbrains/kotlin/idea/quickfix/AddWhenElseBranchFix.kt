@@ -30,10 +30,12 @@ class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtW
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file) && element.closeBrace != null
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val psiFactory = KtPsiFactory(file)
         val entry = psiFactory.createWhenEntry("else -> {}")
         val whenCloseBrace = element.closeBrace ?: error("isAvailable should check if close brace exist")

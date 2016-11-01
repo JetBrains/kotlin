@@ -53,13 +53,14 @@ class RemoveModifierFix(
     override fun getText() = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = super.isAvailable(project, editor, file) && element.hasModifier(modifier)
+            = super.isAvailable(project, editor, file) && (element?.hasModifier(modifier) ?: false)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         invoke()
     }
 
     fun invoke() {
+        val element = element ?: return
         //TODO: without this copy&replace we get bad formatting on removing last modifier
         val newElement = element.copy() as KtModifierListOwner
         newElement.removeModifier(modifier)

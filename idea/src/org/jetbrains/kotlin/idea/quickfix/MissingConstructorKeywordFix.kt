@@ -31,7 +31,7 @@ class MissingConstructorKeywordFix(element: KtPrimaryConstructor) : KotlinQuickF
     override fun getText(): String = "Add 'constructor' keyword"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element.addConstructorKeyword()
+        element?.addConstructorKeyword()
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

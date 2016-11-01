@@ -34,6 +34,7 @@ class SimplifyComparisonFix(element: KtExpression, val value: Boolean) : KotlinQ
     override fun getText() = "Simplify comparison"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val parent = element.parent
         val replacement = KtPsiFactory(element).createExpression("$value")
         element.replace(replacement)

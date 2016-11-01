@@ -52,6 +52,7 @@ class NumberConversionFix(
     override fun getText() = "Convert expression to '$typePresentation'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val expressionToInsert = KtPsiFactory(file).createExpressionByPattern("$0.to$1()", element, typePresentation)
         val newExpression = element.replaced(expressionToInsert)
         editor?.caretModel?.moveToOffset(newExpression.endOffset)

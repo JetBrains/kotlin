@@ -31,6 +31,7 @@ class RemoveSupertypeFix(superClass: KtSuperTypeListEntry) : KotlinQuickFixActio
     override fun getText() = familyName
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         element.getStrictParentOfType<KtClassOrObject>()?.removeSuperTypeListEntry(element)
     }
 

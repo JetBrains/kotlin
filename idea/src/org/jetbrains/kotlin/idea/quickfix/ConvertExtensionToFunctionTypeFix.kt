@@ -44,6 +44,7 @@ class ConvertExtensionToFunctionTypeFix(element: KtTypeReference, type: KotlinTy
     override fun getFamilyName() = "Convert extension function type to regular function type"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val replaced = element.replaced(KtPsiFactory(project).createType(targetTypeStringLong))
         ShortenReferences.DEFAULT.process(replaced)
     }

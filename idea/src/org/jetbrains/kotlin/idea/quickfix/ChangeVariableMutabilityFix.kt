@@ -36,11 +36,13 @@ class ChangeVariableMutabilityFix(element: KtValVarKeywordOwner, private val mak
     override fun getFamilyName(): String = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         val valOrVar = element.valOrVarKeyword?.node?.elementType ?: return false
         return (valOrVar == KtTokens.VAR_KEYWORD) != makeVar
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val factory = KtPsiFactory(project)
         val newKeyword = if (makeVar) factory.createVarKeyword() else factory.createValKeyword()
         element.valOrVarKeyword!!.replace(newKeyword)

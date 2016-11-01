@@ -54,6 +54,7 @@ class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQui
     }
 
     override fun getText(): String {
+        val element = element ?: return ""
         return if (isPrimaryConstructorParameter)
             "Change parameter '${element.name}' type of primary constructor of class '$containingDeclarationName' to '$typePresentation'"
         else
@@ -63,6 +64,7 @@ class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQui
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val function = element.getStrictParentOfType<KtFunction>() ?: return
         val parameterIndex = function.valueParameters.indexOf(element)
         val context = function.analyze()

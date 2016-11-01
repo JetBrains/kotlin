@@ -45,6 +45,7 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
     private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
     open fun variablePresentation(): String? {
+        val element = element!!
         val name = element.name
         if (name != null) {
             val container = element.resolveToDescriptor().containingDeclaration as? ClassDescriptor
@@ -57,6 +58,8 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
     }
 
     override fun getText(): String {
+        if (element == null) return ""
+
         val variablePresentation = variablePresentation()
         if (variablePresentation != null) {
             return "Change type of $variablePresentation to '$typePresentation'"
@@ -84,6 +87,7 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
             = !typeContainsError && super.isAvailable(project, editor, file)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val psiFactory = KtPsiFactory(file)
 
         assert(element.nameIdentifier != null) { "ChangeVariableTypeFix applied to variable without name" }

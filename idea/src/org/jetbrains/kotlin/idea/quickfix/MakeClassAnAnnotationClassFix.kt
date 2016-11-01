@@ -35,9 +35,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class MakeClassAnAnnotationClassFix(annotationClass: KtClass) : KotlinQuickFixAction<KtClass>(annotationClass) {
     override fun getFamilyName() = "Make class an annotation class"
 
-    override fun getText() = "Make '${element.name}' an annotation class"
+    override fun getText() = element?.let { "Make '${it.name}' an annotation class" } ?: ""
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         element.addModifier(KtTokens.ANNOTATION_KEYWORD)
     }
 

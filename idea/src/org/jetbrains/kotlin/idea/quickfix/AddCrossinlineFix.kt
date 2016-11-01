@@ -30,10 +30,11 @@ class AddInlineModifierFix(
         element: KtNameReferenceExpression,
         private val modifier: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
-    override fun getText() = "Add '${modifier.value}' to parameter '${element.getReferencedName()}'"
+    override fun getText() = element?.let { "Add '${modifier.value}' to parameter '${it.getReferencedName()}'" } ?: ""
     override fun getFamilyName() = "Add '${modifier.value}' to parameter"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val parameter = element.findParameterWithName(element.getReferencedName()) ?: return
         if (!parameter.hasModifier(modifier)) {
             parameter.addModifier(modifier)

@@ -24,20 +24,24 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class WrapWithSafeLetCallFix(
         expression: KtExpression,
-        val nullableExpression: KtExpression
+        nullableExpression: KtExpression
 ) : KotlinQuickFixAction<KtExpression>(expression) {
+    private val nullableExpressionPointer = nullableExpression.createSmartPointer()
 
     override fun getFamilyName() = text
 
     override fun getText() = "Wrap with '?.let { ... }' call"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
+        val nullableExpression = nullableExpressionPointer.element ?: return
         val factory = KtPsiFactory(element)
         val nullableText = nullableExpression.text
         val validator = NewDeclarationNameValidator(element, nullableExpression, NewDeclarationNameValidator.Target.VARIABLES)

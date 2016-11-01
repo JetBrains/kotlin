@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 
-abstract class ExclExclCallFix : IntentionAction {
+abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<PsiElement>(psiElement) {
     override fun getFamilyName(): String = text
 
     override fun startInWriteAction(): Boolean = true
@@ -47,13 +47,13 @@ abstract class ExclExclCallFix : IntentionAction {
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) = file is KtFile
 }
 
-class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix(), CleanupFix {
+class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix {
     override fun getText(): String = KotlinBundle.message("remove.unnecessary.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
         = super.isAvailable(project, editor, file) && getExclExclPostfixExpression() != null
 
-    override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val postfixExpression = getExclExclPostfixExpression() ?: return
@@ -62,7 +62,7 @@ class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix(), Cle
     }
 
     private fun getExclExclPostfixExpression(): KtPostfixExpression? {
-        val operationParent = psiElement.parent
+        val operationParent = element?.parent
         if (operationParent is KtPostfixExpression && operationParent.baseExpression != null) {
             return operationParent
         }
@@ -75,14 +75,14 @@ class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix(), Cle
     }
 }
 
-class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
+class AddExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement) {
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
             = super.isAvailable(project, editor, file) &&
               getExpressionForIntroduceCall() != null
 
-    override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val modifiedExpression = getExpressionForIntroduceCall() ?: return
@@ -91,6 +91,7 @@ class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
     }
 
     private fun getExpressionForIntroduceCall(): KtExpression? {
+        val psiElement = element ?: return null
         if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
             val sibling = psiElement.prevSibling
             if (sibling is KtExpression) {

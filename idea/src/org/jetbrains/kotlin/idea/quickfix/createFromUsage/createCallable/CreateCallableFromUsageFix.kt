@@ -65,7 +65,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         if (descriptor is FunctionClassDescriptor) {
             val psiFactory = KtPsiFactory(project)
             val syntheticClass = psiFactory.createClass(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(descriptor))
-            return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element).add(syntheticClass)
+            return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element!!).add(syntheticClass)
         }
         return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
     }
@@ -78,6 +78,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     }
 
     override fun getText(): String {
+        val element = element ?: return ""
         val renderedCallables = callableInfos.map {
             buildString {
                 if (it.isAbstract) {
@@ -138,6 +139,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
         if (file !is KtFile) return false
+        val element = element ?: return false
 
         val receiverInfo = callableInfos.first().receiverTypeInfo
 
@@ -169,6 +171,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val callableInfo = callableInfos.first()
 
         val callableBuilder =

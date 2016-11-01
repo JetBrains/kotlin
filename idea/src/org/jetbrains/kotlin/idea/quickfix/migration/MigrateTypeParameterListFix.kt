@@ -35,6 +35,7 @@ class MigrateTypeParameterListFix(typeParameterList: KtTypeParameterList)
     override fun getText(): String  = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val function = element.getStrictParentOfType<KtNamedFunction>() ?: return
         function.addBefore(element, function.receiverTypeReference ?: function.nameIdentifier)
         element.delete()

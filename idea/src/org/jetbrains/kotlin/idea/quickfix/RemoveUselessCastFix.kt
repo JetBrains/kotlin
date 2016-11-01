@@ -31,7 +31,7 @@ class RemoveUselessCastFix(element: KtBinaryExpressionWithTypeRHS) : KotlinQuick
     override fun getText(): String = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        invoke(element)
+        invoke(element ?: return)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

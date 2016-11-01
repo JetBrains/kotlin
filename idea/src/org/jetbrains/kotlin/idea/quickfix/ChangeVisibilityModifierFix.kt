@@ -29,6 +29,7 @@ class ChangeVisibilityModifierFix(element: KtDeclaration) : KotlinQuickFixAction
     override fun getText() = familyName
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         element.removeModifier(element.visibilityModifierType()!!)
     }
 

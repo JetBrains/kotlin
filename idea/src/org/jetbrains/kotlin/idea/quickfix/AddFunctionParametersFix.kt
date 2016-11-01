@@ -37,12 +37,17 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 class AddFunctionParametersFix(
-        private val callElement: KtCallElement,
+        callElement: KtCallElement,
         functionDescriptor: FunctionDescriptor,
         private val hasTypeMismatches: Boolean) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
+    private val callElement: KtCallElement?
+        get() = element as? KtCallElement
+
     private val typesToShorten = ArrayList<KotlinType>()
 
     override fun getText(): String {
+        val callElement = callElement ?: return ""
+
         val parameters = functionDescriptor.valueParameters
         val arguments = callElement.valueArguments
         val newParametersCnt = arguments.size - parameters.size
@@ -66,6 +71,7 @@ class AddFunctionParametersFix(
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val callElement = callElement ?: return false
         if (!super.isAvailable(project, editor, file)) return false
 
         // newParametersCnt <= 0: psi for this quickfix is no longer valid
@@ -74,6 +80,7 @@ class AddFunctionParametersFix(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val callElement = callElement ?: return
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), callElement, text)
     }
 
@@ -81,6 +88,7 @@ class AddFunctionParametersFix(
         return object : KotlinChangeSignatureConfiguration {
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify {
+                    val callElement = callElement ?: return@modify
                     val parameters = functionDescriptor.valueParameters
                     val arguments = callElement.valueArguments
                     val validator = CollectingNameValidator()

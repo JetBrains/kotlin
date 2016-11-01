@@ -43,16 +43,18 @@ class AddGenericUpperBoundFix(
 ) : KotlinQuickFixAction<KtTypeParameter>(typeParameter) {
     private val renderedUpperBound: String = IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBound)
 
-    override fun getText() = "Add '$renderedUpperBound' as upper bound for ${element.name}"
+    override fun getText() = element?.let { "Add '$renderedUpperBound' as upper bound for ${it.name}" } ?: ""
     override fun getFamilyName() = "Add generic upper bound"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         if (!super.isAvailable(project, editor, file)) return false
         // TODO: replacing existing upper bounds
         return (element.name != null && element.extendsBound == null)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         assert(element.extendsBound == null) { "Don't know what to do with existing bounds" }
 
         val typeReference = KtPsiFactory(project).createType(renderedUpperBound)

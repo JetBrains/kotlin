@@ -36,6 +36,7 @@ class AddTypeToLHSOfCallableReferenceFix(
     override fun getText() = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val resolvedCall = element.callableReference.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return
         val receiver = with(resolvedCall) {
             dispatchReceiver ?: extensionReceiver ?: return

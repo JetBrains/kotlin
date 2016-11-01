@@ -55,6 +55,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         override fun getFamilyName() = text
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val descriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
             val initializerText = CodeInsightUtils.defaultInitializer(descriptor.type) ?: "null"
             val initializer = element.setInitializer(KtPsiFactory(project).createExpression(initializerText))!!
@@ -72,7 +73,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
 
         override fun startInWriteAction(): Boolean = false
 
-        private fun configureChangeSignature(propertyDescriptor: PropertyDescriptor): KotlinChangeSignatureConfiguration {
+        private fun configureChangeSignature(property: KtProperty, propertyDescriptor: PropertyDescriptor): KotlinChangeSignatureConfiguration {
             return object : KotlinChangeSignatureConfiguration {
                 override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                     return originalDescriptor.modify {
@@ -81,9 +82,9 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = propertyDescriptor.name.asString(),
                                 originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
-                                valOrVar = element.valOrVarKeyword.toValVar(),
-                                modifierList = element.modifierList,
-                                defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
+                                valOrVar = property.valOrVarKeyword.toValVar(),
+                                modifierList = property.modifierList,
+                                defaultValueForCall = KtPsiFactory(property.project).createExpression(initializerText)
                         )
                         it.addParameter(newParam)
                     }
@@ -94,6 +95,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         }
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val klass = element.containingClassOrObject ?: return
             val propertyDescriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
 
@@ -108,7 +110,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
                 val contextElement = constructorDescriptor.source.getPsi() ?: return
                 val constructorPointer = contextElement.createSmartPointer()
-                val config = configureChangeSignature(propertyDescriptor)
+                val config = configureChangeSignature(element, propertyDescriptor)
                 val changeSignature = { runChangeSignature(project, constructorDescriptor, config, contextElement, text) }
                 changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
                     val constructorOrClass = constructorPointer.element
@@ -142,7 +144,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = KotlinNameSuggester.suggestNameByName(propertyDescriptor.name.asString(), validator),
                                 originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
-                                defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
+                                defaultValueForCall = KtPsiFactory(element!!.project).createExpression(initializerText)
                         )
                         it.addParameter(newParam)
                     }
@@ -159,6 +161,8 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 descriptorsToProcess: Iterator<ConstructorDescriptor>,
                 visitedElements: MutableSet<PsiElement> = HashSet()
         ) {
+            val element = element!!
+
             if (!descriptorsToProcess.hasNext()) return
             val descriptor = descriptorsToProcess.next()
             val constructorPointer = descriptor.source.getPsi()?.createSmartPointer()
@@ -180,6 +184,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         }
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val propertyDescriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
             val classDescriptor = propertyDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes ?: return
             val klass = element.containingClassOrObject ?: return

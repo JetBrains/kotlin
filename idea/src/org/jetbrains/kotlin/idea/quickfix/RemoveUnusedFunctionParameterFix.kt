@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.psi.KtParameter
 class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixAction<KtParameter>(parameter) {
     override fun getFamilyName() = ChangeFunctionSignatureFix.FAMILY_NAME
 
-    override fun getText() = "Remove parameter '${element.name}'"
+    override fun getText() = element?.let { "Remove parameter '${it.name}'" } ?: ""
 
     override fun startInWriteAction(): Boolean = false
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val parameterDescriptor = element.resolveToDescriptor() as ValueParameterDescriptor
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
     }

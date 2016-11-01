@@ -32,10 +32,12 @@ abstract class ReplaceCallFix(
     override fun getFamilyName() = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file) && element.selectorExpression != null
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val newExpression = KtPsiFactory(element).createExpressionByPattern("$0$operation$1",
                                                                             element.receiverExpression, element.selectorExpression!!)
         element.replace(newExpression)

@@ -30,6 +30,7 @@ class AddRunToLambdaFix(element: KtLambdaExpression) : KotlinQuickFixAction<KtLa
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val factory = KtPsiFactory(project)
         element.replace(factory.createExpression("run ${element.text}"))
     }
