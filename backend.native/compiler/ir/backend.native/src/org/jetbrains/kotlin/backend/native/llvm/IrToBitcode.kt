@@ -85,7 +85,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     override fun visitCall(expression: IrCall) {
-        evaluateExpression(generator.tmpVariable(), expression)
+        val isUnit = KotlinBuiltIns.isUnit(expression.descriptor.returnType!!)
+        val tmpVariable = if (isUnit) "" else generator.tmpVariable()
+        evaluateExpression(tmpVariable, expression)
     }
 
     override fun visitFunction(declaration: IrFunction) {
@@ -183,8 +185,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     private fun evaluateSimpleFunctionCall(tmpVariableName: String, value: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
-        if (KotlinBuiltIns.isUnit(value.descriptor.returnType!!))
-            return generator.call(value.descriptor as FunctionDescriptor, args, null)
         return generator.call(value.descriptor as FunctionDescriptor, args, tmpVariableName)
     }
 
