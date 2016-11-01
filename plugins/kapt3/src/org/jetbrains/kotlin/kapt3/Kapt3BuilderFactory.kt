@@ -27,9 +27,9 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class Kapt3BuilderFactory : ClassBuilderFactory {
-    val compiledClasses = mutableListOf<ClassNode>()
-    val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
+internal class Kapt3BuilderFactory : ClassBuilderFactory {
+    internal val compiledClasses = mutableListOf<ClassNode>()
+    internal val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
 
     override fun getClassBuilderMode(): ClassBuilderMode = ClassBuilderMode.KAPT3
 

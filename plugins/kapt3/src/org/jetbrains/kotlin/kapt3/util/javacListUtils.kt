@@ -18,27 +18,27 @@ package org.jetbrains.kotlin.kapt3
 
 import com.sun.tools.javac.util.List as JavacList
 
-internal inline fun <T, R> mapValues(values: Iterable<T>?, f: (T) -> R?): JavacList<R> {
+internal inline fun <T, R> mapJList(values: Iterable<T>?, f: (T) -> R?): JavacList<R> {
     if (values == null) return JavacList.nil()
 
     var result = JavacList.nil<R>()
     for (item in values) {
-        f(item)?.let { result = result.prepend(it) }
+        f(item)?.let { result = result.append(it) }
     }
-    return result.reverse()
+    return result
 }
 
-internal inline fun <T, R> mapValuesIndexed(values: Iterable<T>?, f: (Int, T) -> R?): JavacList<R> {
+internal inline fun <T, R> mapJListIndexed(values: Iterable<T>?, f: (Int, T) -> R?): JavacList<R> {
     if (values == null) return JavacList.nil()
 
     var result = JavacList.nil<R>()
     values.forEachIndexed { index, item ->
-        f(index, item)?.let { result = result.prepend(it) }
+        f(index, item)?.let { result = result.append(it) }
     }
-    return result.reverse()
+    return result
 }
 
-internal inline fun <T> mapPairedValues(valuePairs: List<Any>?, f: (String, Any) -> T?): JavacList<T> {
+internal inline fun <T> mapPairedValuesJList(valuePairs: List<Any>?, f: (String, Any) -> T?): JavacList<T> {
     if (valuePairs == null || valuePairs.isEmpty()) return JavacList.nil()
 
     val size = valuePairs.size

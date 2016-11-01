@@ -22,7 +22,6 @@ import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -49,16 +48,16 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
                 (Opcodes.ACC_DEPRECATED or Opcodes.ACC_INTERFACE or Opcodes.ACC_ANNOTATION or Opcodes.ACC_ENUM or Opcodes.ACC_STATIC).toLong()
 
         private val METHOD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
-                (Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_STATIC or Opcodes.ACC_NATIVE or Opcodes.ACC_DEPRECATED).toLong()
+                (Opcodes.ACC_DEPRECATED or Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_NATIVE or Opcodes.ACC_STATIC).toLong()
 
         private val FIELD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
-                (Opcodes.ACC_STATIC or Opcodes.ACC_VOLATILE or Opcodes.ACC_TRANSIENT or Opcodes.ACC_ENUM).toLong()
+                (Opcodes.ACC_VOLATILE or Opcodes.ACC_TRANSIENT or Opcodes.ACC_ENUM or Opcodes.ACC_STATIC).toLong()
 
         private val PARAMETER_MODIFIERS = FIELD_MODIFIERS or Flags.PARAMETER or Flags.VARARGS or Opcodes.ACC_FINAL.toLong()
 
-        private val BLACKLISTED_ANNOTATATIONS = listOf(
+        private val BLACKLISTED_ANNOTATIONS = listOf(
                 "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
-                "java.lang.Synthetic", //
+                "java.lang.Synthetic",
                 "java.lang.annotation.", // Java annotations
                 "org.jetbrains.annotations.", // Nullable/NotNull, ReadOnly, Mutable
                 "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
@@ -74,18 +73,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
     fun convert(): JavacList<JCCompilationUnit> {
         if (done) error(ClassFileToSourceStubConverter::class.java.simpleName + " can convert classes only once")
         done = true
-        return mapValues(kaptContext.compiledClasses) { convertTopLevelClass(it) }
+        return mapJList(kaptContext.compiledClasses) { convertTopLevelClass(it) }
     }
 
     private fun convertTopLevelClass(clazz: ClassNode): JCCompilationUnit? {
         val origin = kaptContext.origins[clazz] ?: return null
+        // ?
         val ktFile = origin.element?.containingFile as? KtFile ?: return null
         val descriptor = origin.descriptor as? ClassDescriptor ?: return null
 
         // Nested classes will be processed during the outer classes conversion
         if (descriptor.isNested) return null
 
-        val classDeclaration = convertClass(clazz, true) ?: return null
+        val classDeclaration = convertClass(clazz) ?: return null
 
         val packageAnnotations = JavacList.nil<JCAnnotation>()
         val packageName = ktFile.packageFqName.asString()
@@ -103,7 +103,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
     /**
      * Returns false for the inner classes or if the origin for the class was not found.
      */
-    private fun convertClass(clazz: ClassNode, isTopLevel: Boolean): JCClassDecl? {
+    private fun convertClass(clazz: ClassNode): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
 
         val descriptor = kaptContext.origins[clazz]?.descriptor as? ClassDescriptor ?: return null
@@ -119,14 +119,14 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
                              && descriptor.kind == ClassKind.INTERFACE
 
         // DefaultImpls without any contents don't have INNERCLASS'es inside it (and inside the parent interface)
-        if (isDefaultImpls && (isTopLevel || (clazz.fields.isNullOrEmpty() && clazz.methods.isNullOrEmpty()))) {
+        if (isDefaultImpls && clazz.fields.isNullOrEmpty() && clazz.methods.isNullOrEmpty()) {
             return null
         }
 
         val simpleName = treeMaker.name(if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString())
 
-        val interfaces = mapValues(clazz.interfaces) {
-            if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapValues null
+        val interfaces = mapJList(clazz.interfaces) {
+            if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapJList null
             treeMaker.FqName(it)
         }
 
@@ -135,19 +135,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
         val hasSuperClass = clazz.superName != "java/lang/Object" && !isEnum
         val genericType = signatureParser.parseClassSignature(clazz.signature, superClass, interfaces)
 
-        val fields = mapValues<FieldNode, JCTree>(clazz.fields) { convertField(it) }
-        val methods = mapValues<MethodNode, JCTree>(clazz.methods) {
+        val fields = mapJList<FieldNode, JCTree>(clazz.fields) { convertField(it) }
+        val methods = mapJList<MethodNode, JCTree>(clazz.methods) {
             if (isEnum) {
-                if (it.name == "values" && it.desc == "()[L${clazz.name};") return@mapValues null
-                if (it.name == "valueOf" && it.desc == "(Ljava/lang/String;)L${clazz.name};") return@mapValues null
+                if (it.name == "values" && it.desc == "()[L${clazz.name};") return@mapJList null
+                if (it.name == "valueOf" && it.desc == "(Ljava/lang/String;)L${clazz.name};") return@mapJList null
             }
 
             convertMethod(it, clazz)
         }
-        val nestedClasses = mapValues<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
-            if (innerClass.outerName != clazz.name) return@mapValues null
-            val innerClassNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: return@mapValues null
-            convertClass(innerClassNode, false)
+        val nestedClasses = mapJList<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
+            if (innerClass.outerName != clazz.name) return@mapJList null
+            val innerClassNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: return@mapJList null
+            convertClass(innerClassNode)
         }
 
         return treeMaker.ClassDef(
@@ -207,20 +207,23 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
 
         val parametersInfo = method.getParametersInfo(containingClass)
         @Suppress("NAME_SHADOWING")
-        val parameters = mapValuesIndexed(parametersInfo) { index, info ->
+        val parameters = mapJListIndexed(parametersInfo) { index, info ->
             val lastParameter = index == parametersInfo.lastIndex
             val isArrayType = info.type.sort == Type.ARRAY
 
             val varargs = if (lastParameter && isArrayType && method.isVarargs()) Flags.VARARGS else 0L
             val modifiers = convertModifiers(
                     info.flags or varargs or Flags.PARAMETER,
-                    ElementKind.PARAMETER, info.visibleAnnotations, info.invisibleAnnotations)
+                    ElementKind.PARAMETER,
+                    info.visibleAnnotations,
+                    info.invisibleAnnotations)
+
             val name = treeMaker.name(info.name)
             val type = treeMaker.Type(info.type)
             treeMaker.VarDef(modifiers, name, type, null)
         }
 
-        val exceptionTypes = mapValues(method.exceptions) { treeMaker.FqName(it) }
+        val exceptionTypes = mapJList(method.exceptions) { treeMaker.FqName(it) }
 
         val genericType = signatureParser.parseMethodSignature(method.signature, parameters, exceptionTypes, jcReturnType)
 
@@ -239,7 +242,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
             val superClassConstructor = superClass.constructors.firstOrNull { it.visibility.isVisible(null, it, declaration) }
 
             val superClassConstructorCall = if (superClassConstructor != null) {
-                val args = mapValues(superClassConstructor.valueParameters) { param ->
+                val args = mapJList(superClassConstructor.valueParameters) { param ->
                     convertLiteralExpression(getDefaultValue(typeMapper.mapType(param.type)))
                 }
                 val call = treeMaker.Apply(JavacList.nil(), treeMaker.SimpleName("super"), args)
@@ -293,13 +296,16 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
         return treeMaker.Modifiers(flags, annotations)
     }
 
-    private fun convertAnnotation(annotation: AnnotationNode): JCAnnotation? {
+    private fun convertAnnotation(annotation: AnnotationNode, filtered: Boolean = true): JCAnnotation? {
         val annotationType = Type.getType(annotation.desc)
         val fqName = annotationType.className
-        if (BLACKLISTED_ANNOTATATIONS.any { fqName.startsWith(it) }) return null
+
+        if (filtered) {
+            if (BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) }) return null
+        }
 
         val name = treeMaker.Type(annotationType)
-        val values = mapPairedValues<JCExpression>(annotation.values) { key, value ->
+        val values = mapPairedValuesJList<JCExpression>(annotation.values) { key, value ->
             treeMaker.Assign(treeMaker.SimpleName(key), convertLiteralExpression(value))
         }
         return treeMaker.Annotation(name, values)
@@ -311,24 +317,24 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
             is Char -> treeMaker.Literal(TypeTag.CHAR, value.toInt())
             is Byte, is Boolean, is Short, is Int, is Long, is Float, is Double, is String -> treeMaker.Literal(value)
 
-            is ByteArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
-            is BooleanArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
-            is CharArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
-            is ShortArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
-            is IntArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
-            is LongArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
-            is FloatArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
-            is DoubleArray -> treeMaker.NewArray(null, JavacList.nil(), mapValues(value.asIterable()) { convertLiteralExpression(it) })
+            is ByteArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is BooleanArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is CharArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is ShortArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is IntArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is LongArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is FloatArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is DoubleArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
             is Array<*> -> { // Two-element String array for enumerations ([desc, fieldName])
                 assert(value.size == 2)
                 val enumType = Type.getType(value[0] as String)
                 val valueName = value[1] as String
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
             }
-            is List<*> -> treeMaker.NewArray(null, JavacList.nil(), org.jetbrains.kotlin.kapt3.mapValues(value) { convertLiteralExpression(it) })
+            is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value) { convertLiteralExpression(it) })
 
             is Type -> treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
-            is AnnotationNode -> convertAnnotation(value) ?: error("Annotation is filtered out")
+            is AnnotationNode -> convertAnnotation(value, false)!!
             else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value.javaClass.canonicalName})")
         }
     }
