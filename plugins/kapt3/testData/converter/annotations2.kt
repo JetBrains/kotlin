@@ -3,8 +3,7 @@ package test
 
 @Anno("anno-class")
 annotation class Anno @Anno("anno-constructor") constructor(
-        @Anno("anno-value") val value: String,
-        val anno: Anno = Anno("anno-default")
+        @Anno("anno-value") val value: String
 )
 
 @Anno("clazz")
