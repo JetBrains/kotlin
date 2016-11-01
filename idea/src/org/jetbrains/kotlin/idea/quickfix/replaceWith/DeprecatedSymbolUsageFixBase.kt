@@ -44,12 +44,14 @@ abstract class DeprecatedSymbolUsageFixBase(
 ) : KotlinQuickFixAction<KtSimpleNameExpression>(element) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         if (!super.isAvailable(project, editor, file)) return false
         val strategy = UsageReplacementStrategy.build(element, replaceWith, recheckAnnotation = true)
         return strategy != null && strategy.createReplacer(element) != null
     }
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val strategy = UsageReplacementStrategy.build(element, replaceWith, recheckAnnotation = false)!!
         invoke(strategy, project, editor)
     }

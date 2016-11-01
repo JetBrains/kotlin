@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ChangeAccessorTypeFix(element: KtPropertyAccessor) : KotlinQuickFixAction<KtPropertyAccessor>(element) {
     private fun getType(): KotlinType? {
-        val type = (element.property.resolveToDescriptor() as VariableDescriptor).type
+        val type = (element!!.property.resolveToDescriptor() as VariableDescriptor).type
         if (type.isError) return null
         return type
     }
@@ -43,6 +43,7 @@ class ChangeAccessorTypeFix(element: KtPropertyAccessor) : KotlinQuickFixAction<
     override fun getFamilyName() = "Change accessor type"
 
     override fun getText(): String {
+        val element = element ?: return ""
         val type = getType() ?: return familyName
         val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
         val target = if (element.isGetter) "getter" else "setter parameter"
@@ -50,6 +51,7 @@ class ChangeAccessorTypeFix(element: KtPropertyAccessor) : KotlinQuickFixAction<
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val type = getType()!!
         val newTypeReference = KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
 

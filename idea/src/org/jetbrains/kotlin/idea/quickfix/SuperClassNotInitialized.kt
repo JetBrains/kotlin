@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
@@ -111,6 +112,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         override fun getText() = familyName
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val newSpecifier = element.replaced(KtPsiFactory(project).createSuperTypeCallEntry(element.text + "()"))
 
             if (putCaretIntoParenthesis) {
@@ -127,11 +129,13 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
     private class AddParametersFix(
             element: KtSuperTypeEntry,
-            private val classDeclaration: KtClass,
-            private val parametersToAdd: Collection<KtParameter>,
+            classDeclaration: KtClass,
+            parametersToAdd: Collection<KtParameter>,
             private val argumentText: String,
             private val text: String
     ) : KotlinQuickFixAction<KtSuperTypeEntry>(element) {
+        private val classDeclarationPointer = classDeclaration.createSmartPointer()
+        private val parametersToAddPointers = parametersToAdd.map { it.createSmartPointer() }
 
         companion object {
             fun create(
@@ -180,6 +184,9 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         override fun getText() = text
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
+            val classDeclaration = classDeclarationPointer.element ?: return
+            val parametersToAdd = parametersToAddPointers.map { it.element ?: return }
             val factory = KtPsiFactory(project)
 
             val typeRefsToShorten = ArrayList<KtTypeReference>()

@@ -30,6 +30,7 @@ class RemoveUselessElvisFix(element: KtBinaryExpression) : KotlinQuickFixAction<
     override fun getText(): String = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         dropEnclosingParenthesesIfPossible(element.replaced(element.left!!))
     }
 

@@ -33,10 +33,12 @@ class MoveWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<Kt
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file) && KtPsiUtil.checkWhenExpressionHasSingleElse(element)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val entries = element.entries
         val lastEntry = entries.lastOrNull() ?: return
         val elseEntry = entries.singleOrNull { it.isElse } ?: return

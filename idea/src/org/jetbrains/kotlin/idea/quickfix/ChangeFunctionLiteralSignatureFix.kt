@@ -40,6 +40,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
     override fun getText() = "Change the signature of lambda expression"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         runChangeSignature(
                 project,
                 functionDescriptor,
@@ -58,7 +59,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
                     override fun performSilently(affectedFunctions: Collection<PsiElement>) = false
                     override fun forcePerformForSelectedFunctionOnly() = false
                 },
-                context,
+                element,
                 text)
     }
 

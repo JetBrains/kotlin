@@ -72,6 +72,7 @@ class LetImplementInterfaceFix(
             super.isAvailable(project, editor, file) && validExpectedType
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val superTypeEntry = KtPsiFactory(element).createSuperTypeEntry(expectedTypeNameSourceCode)
         val entryElement = element.addSuperTypeListEntry(superTypeEntry)
         ShortenReferences.DEFAULT.process(entryElement)

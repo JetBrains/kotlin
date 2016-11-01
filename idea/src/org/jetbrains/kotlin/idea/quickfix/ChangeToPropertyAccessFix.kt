@@ -29,6 +29,7 @@ class ChangeToPropertyAccessFix(element: KtCallExpression) : KotlinQuickFixActio
     override fun getText() = familyName
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         element.replace(element.calleeExpression as KtExpression)
     }
 

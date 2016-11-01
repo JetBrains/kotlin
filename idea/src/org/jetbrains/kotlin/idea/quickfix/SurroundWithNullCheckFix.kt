@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
@@ -38,14 +39,17 @@ import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class SurroundWithNullCheckFix(
         expression: KtExpression,
-        val nullableExpression: KtExpression
+        nullableExpression: KtExpression
 ) : KotlinQuickFixAction<KtExpression>(expression), HighPriorityAction {
+    private val nullableExpressionPointer = nullableExpression.createSmartPointer()
 
     override fun getFamilyName() = text
 
     override fun getText() = "Surround with null check"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
+        val nullableExpression = nullableExpressionPointer.element ?: return
         val factory = KtPsiFactory(element)
         val surrounded = factory.createExpressionByPattern("if ($0 != null) { $1 }", nullableExpression, element)
         element.replace(surrounded)

@@ -75,6 +75,7 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
     override fun getFamilyName() = QuickFixBundle.message("rename.wrong.reference.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file)
                && editor != null
                && element.getStrictParentOfType<KtTypeReference>() == null
@@ -83,6 +84,7 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
     private fun KtExpression.isCallee() = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } != null
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         if (editor == null) return
         val patternExpression = element.getQualifiedElement() as? KtExpression ?: return
 

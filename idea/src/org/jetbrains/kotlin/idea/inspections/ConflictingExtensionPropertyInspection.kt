@@ -190,7 +190,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
         override fun startInWriteAction() = false
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            val declaration = element
+            val declaration = element ?: return
             val fqName = declaration.resolveToDescriptor(BodyResolveMode.PARTIAL).importableFqName
             if (fqName != null) {
                 ProgressManager.getInstance().run(
@@ -231,6 +231,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
         override fun getText() = familyName
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val element = element ?: return
             val factory = KtPsiFactory(project)
             val name = element.nameAsName!!.render()
             element.addAnnotationWithLineBreak(factory.createAnnotationEntry("@Deprecated(\"Is replaced with automatic synthetic extension\", ReplaceWith(\"$name\"), level = DeprecationLevel.HIDDEN)"))

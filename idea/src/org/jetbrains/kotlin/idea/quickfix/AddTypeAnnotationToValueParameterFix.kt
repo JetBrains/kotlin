@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFixAction<KtParameter>(element) {
-
     val typeNameShort : String?
     val typeName: String?
 
@@ -44,13 +43,15 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return element.typeReference == null && typeNameShort != null
     }
 
     override fun getFamilyName() = "Add type annotation"
-    override fun getText() = "Add type '$typeNameShort' to parameter '${element.name}'"
+    override fun getText() = element?.let { "Add type '$typeNameShort' to parameter '${it.name}'" } ?: ""
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         if (typeName != null) {
             element.typeReference = KtPsiFactory(element).createType(typeName)
             ShortenReferences.DEFAULT.process(element)

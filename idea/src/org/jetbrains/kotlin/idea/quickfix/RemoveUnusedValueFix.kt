@@ -65,6 +65,7 @@ class RemoveUnusedValueFix(expression: KtBinaryExpression) : KotlinQuickFixActio
     override fun getText() = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val lhs = element.left as? KtSimpleNameExpression ?: return
         val rhs = element.right ?: return
         val variable = lhs.mainReference.resolve() as? KtProperty ?: return

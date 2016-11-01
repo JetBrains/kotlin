@@ -31,6 +31,7 @@ class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixActio
     override fun getText() = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val parameterList = element.parent as? KtParameterList ?: return
         val ownerFunction = parameterList.ownerFunction ?: return
         val arrow = ownerFunction.node.findChildByType(KtTokens.ARROW) ?: return

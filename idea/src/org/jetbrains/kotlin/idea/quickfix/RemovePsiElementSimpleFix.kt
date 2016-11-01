@@ -33,7 +33,7 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
     override fun getText() = text
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element.delete()
+        element?.delete()
     }
 
     object RemoveImportFactory : KotlinSingleIntentionActionFactory() {

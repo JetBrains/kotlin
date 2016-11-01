@@ -46,6 +46,7 @@ class CreateTypeAliasFromUsageFix<E : KtElement>(
     override fun getText() = "Create type alias '${aliasInfo.name}'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         if (editor == null) return
 
         val typeAliasProto = KtPsiFactory(project).createTypeAlias(aliasInfo.name, aliasInfo.typeParameterNames, "Dummy")

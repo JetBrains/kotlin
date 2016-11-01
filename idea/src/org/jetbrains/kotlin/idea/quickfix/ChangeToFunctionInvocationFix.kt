@@ -30,6 +30,7 @@ class ChangeToFunctionInvocationFix(element: KtExpression) : KotlinQuickFixActio
     override fun getText() = familyName
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         element.replace(KtPsiFactory(file).createExpressionByPattern("$0()", element))
     }
 

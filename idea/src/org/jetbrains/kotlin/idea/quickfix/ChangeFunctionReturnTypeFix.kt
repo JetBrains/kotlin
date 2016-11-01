@@ -68,6 +68,7 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
     }
 
     open fun functionPresentation(): String? {
+        val element = element!!
         val name = element.name
         if (name != null) {
             val container = element.resolveToDescriptor().containingDeclaration as? ClassDescriptor
@@ -105,6 +106,8 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
     }
 
     override fun getText(): String {
+        val element = element ?: return ""
+
         if (changeFunctionLiteralReturnTypeFix != null) {
             return changeFunctionLiteralReturnTypeFix.text
         }
@@ -133,6 +136,8 @@ abstract class ChangeFunctionReturnTypeFix(element: KtFunction, type: KotlinType
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
+
         if (changeFunctionLiteralReturnTypeFix != null) {
             changeFunctionLiteralReturnTypeFix.invoke(project, editor!!, file)
         }

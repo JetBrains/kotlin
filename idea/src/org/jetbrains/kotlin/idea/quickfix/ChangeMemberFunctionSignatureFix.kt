@@ -235,6 +235,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
     override fun getFamilyName() = "Change function signature"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         CommandProcessor.getInstance().runUndoTransparentAction {
             MyAction(project, editor, element, signatures).execute()
         }

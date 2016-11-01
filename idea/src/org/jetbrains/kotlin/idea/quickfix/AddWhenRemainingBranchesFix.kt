@@ -35,13 +35,14 @@ class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFix
 
     override fun getText() = "Add remaining branches"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean =
-            super.isAvailable(project, editor, file) && element.closeBrace != null &&
-            with(WhenChecker.getMissingCases(element, element.analyze())) {
-                isNotEmpty() && !hasUnknown
-            }
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
+        return super.isAvailable(project, editor, file) && element.closeBrace != null &&
+               with(WhenChecker.getMissingCases(element, element.analyze())) { isNotEmpty() && !hasUnknown }
+    }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val missingCases = WhenChecker.getMissingCases(element, element.analyze())
 
         val whenCloseBrace = element.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")

@@ -26,14 +26,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class WrongLongSuffixFix(element: KtConstantExpression) : KotlinQuickFixAction<KtConstantExpression>(element) {
-
     private val corrected = element.text.trimEnd('l') + 'L'
 
     override fun getText() = "Change to '$corrected'"
     override fun getFamilyName() = "Change to correct long suffix 'L'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element.replace(KtPsiFactory(project).createExpression(corrected))
+        element?.replace(KtPsiFactory(project).createExpression(corrected))
     }
 
     companion object Factory: KotlinSingleIntentionActionFactory() {

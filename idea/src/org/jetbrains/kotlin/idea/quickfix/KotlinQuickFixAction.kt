@@ -24,10 +24,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 
-abstract class KotlinQuickFixAction<out T : PsiElement>(protected val element: T) : IntentionAction {
+abstract class KotlinQuickFixAction<out T : PsiElement>(element: T) : IntentionAction {
+    private val elementPointer = element.createSmartPointer()
+
+    protected val element: T?
+        get() = elementPointer.element
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return element.isValid &&
                !element.project.isDisposed &&
                (file.manager.isInProject(file) || file is KtCodeFragment) &&
@@ -35,6 +41,7 @@ abstract class KotlinQuickFixAction<out T : PsiElement>(protected val element: T
     }
 
     override final fun invoke(project: Project, editor: Editor?, file: PsiFile) {
+        val element = element ?: return
         if (file is KtFile && FileModificationService.getInstance().prepareFileForWrite(element.containingFile)) {
             invoke(project, editor, file)
         }

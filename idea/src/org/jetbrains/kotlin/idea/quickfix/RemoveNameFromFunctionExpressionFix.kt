@@ -29,7 +29,9 @@ class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : KotlinQuic
     override fun getText(): String = "Remove identifier from anonymous function"
     override fun getFamilyName(): String = text
 
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) = removeNameFromFunction(element)
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        removeNameFromFunction(element ?: return)
+    }
 
     companion object : KotlinSingleIntentionActionFactory() {
 

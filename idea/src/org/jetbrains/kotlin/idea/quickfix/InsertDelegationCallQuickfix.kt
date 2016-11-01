@@ -44,6 +44,7 @@ class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryCons
     private val keywordToUse = if (isThis) "this" else "super"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val newDelegationCall = element.replaceImplicitDelegationCallWithExplicit(isThis)
 
         val resolvedCall = newDelegationCall.getResolvedCall(newDelegationCall.analyze())
@@ -58,6 +59,7 @@ class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryCons
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file) && element.hasImplicitDelegationCall()
     }
 

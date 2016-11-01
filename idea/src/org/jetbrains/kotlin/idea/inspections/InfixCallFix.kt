@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 
 class InfixCallFix(expression: KtBinaryExpression) : KotlinQuickFixAction<KtBinaryExpression>(expression), CleanupFix {
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        InfixCallToOrdinaryIntention.convert(element)
+        InfixCallToOrdinaryIntention.convert(element ?: return)
     }
 
     override fun getFamilyName(): String = text

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class RenameParameterToMatchOverriddenMethodFix(
-        private val parameter: KtParameter,
+        parameter: KtParameter,
         private val newName: String
 ) : KotlinQuickFixAction<KtParameter>(parameter) {
     override fun getFamilyName() = "Rename"
@@ -38,7 +38,7 @@ class RenameParameterToMatchOverriddenMethodFix(
     override fun startInWriteAction(): Boolean = false
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        RenameProcessor(project, parameter, newName, false, false).run()
+        RenameProcessor(project, element ?: return, newName, false, false).run()
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

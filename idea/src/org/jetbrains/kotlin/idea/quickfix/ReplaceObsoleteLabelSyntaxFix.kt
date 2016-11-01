@@ -31,9 +31,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
     override fun getFamilyName(): String = "Update obsolete label syntax"
-    override fun getText(): String = "Replace with label ${element.calleeExpression?.text ?: ""}@"
+    override fun getText(): String = element?.let { "Replace with label ${it.calleeExpression?.text ?: ""}@" } ?: ""
 
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) = replaceWithLabel(element)
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        replaceWithLabel(element ?: return)
+    }
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {

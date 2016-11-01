@@ -41,6 +41,7 @@ open class AddModifierFix(
 ) : KotlinQuickFixAction<KtModifierListOwner>(element) {
 
     override fun getText(): String {
+        val element = element ?: return ""
         if (modifier in modalityModifiers) {
             return "Make ${getElementName(element)} ${modifier.value}"
         }
@@ -50,10 +51,11 @@ open class AddModifierFix(
     override fun getFamilyName() = "Add modifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element.addModifier(modifier)
+        element?.addModifier(modifier)
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
         return super.isAvailable(project, editor, file) && element.canRefactor()
     }
 

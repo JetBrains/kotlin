@@ -28,7 +28,7 @@ class RenameToUnderscoreFix(element: KtCallableDeclaration) : KotlinQuickFixActi
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element.nameIdentifier?.replace(KtPsiFactory(project).createIdentifier("_"))
+        element?.nameIdentifier?.replace(KtPsiFactory(project).createIdentifier("_"))
     }
 
     companion object Factory : KotlinSingleIntentionActionFactory() {

@@ -29,6 +29,7 @@ class LiftAssignmentOutOfTryFix(element: KtTryExpression): KotlinQuickFixAction<
     override fun getText() = "Lift assignment out of 'try' expression"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val tryAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.tryBlock) ?: return
 
         val op = tryAssignment.operationReference.text

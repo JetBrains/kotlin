@@ -31,6 +31,7 @@ open class AddStarProjectionsFix private constructor(element: KtUserType,
     override fun getText() = "Add '${TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount)}'"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         assert(element.typeArguments.isEmpty())
 
         val typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(element.text, argumentCount)

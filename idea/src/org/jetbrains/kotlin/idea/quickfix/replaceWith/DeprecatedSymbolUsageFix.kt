@@ -39,6 +39,7 @@ class DeprecatedSymbolUsageFix(
     override fun getText() = "Replace with '${replaceWith.pattern}'" //TODO: substitute?
 
     override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
+        val element = element ?: return
         val result = replacementStrategy.createReplacer(element)!!.invoke()
         val offset = (result.getCalleeExpressionIfAny() ?: result).textOffset
         editor?.moveCaret(offset)

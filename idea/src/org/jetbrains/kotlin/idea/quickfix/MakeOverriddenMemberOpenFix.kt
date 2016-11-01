@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.kotlin.descriptors.isOverridable
@@ -30,15 +31,18 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import java.util.*
 
 class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
-    private val overriddenNonOverridableMembers = ArrayList<KtCallableDeclaration>()
+    private val overriddenNonOverridableMembers = ArrayList<SmartPsiElementPointer<KtCallableDeclaration>>()
     private val containingDeclarationsNames = ArrayList<String>()
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val element = element ?: return false
+
         if (!super.isAvailable(project, editor, file) || file !is KtFile) {
             return false
         }
@@ -58,13 +62,15 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
                 return false
             }
             val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()
-            overriddenNonOverridableMembers.add(overriddenMember)
+            overriddenNonOverridableMembers.add(overriddenMember.createSmartPointer())
             containingDeclarationsNames.add(containingDeclarationName)
         }
         return overriddenNonOverridableMembers.size > 0
     }
 
     override fun getText(): String {
+        val element = element ?: return ""
+
         if (overriddenNonOverridableMembers.size == 1) {
             val name = containingDeclarationsNames[0] + "." + element.name
             return "Make $name $OPEN_KEYWORD"
@@ -80,7 +86,7 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         for (overriddenMember in overriddenNonOverridableMembers) {
-            overriddenMember.addModifier(OPEN_KEYWORD)
+            overriddenMember.element?.addModifier(OPEN_KEYWORD)
         }
     }
 

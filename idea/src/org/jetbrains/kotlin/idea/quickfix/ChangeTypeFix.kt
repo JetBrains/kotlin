@@ -33,11 +33,12 @@ class ChangeTypeFix(element: KtTypeReference, private val type: KotlinType) : Ko
     override fun getFamilyName() = "Change type"
 
     override fun getText(): String {
-        val currentTypeText = element.text
+        val currentTypeText = element?.text ?: return ""
         return "Change type from '$currentTypeText' to '${QuickFixUtil.renderTypeWithFqNameOnClash(type, currentTypeText)}'"
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element ?: return
         val newTypeRef = element.replaced(KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)))
         ShortenReferences.DEFAULT.process(newTypeRef)
     }
