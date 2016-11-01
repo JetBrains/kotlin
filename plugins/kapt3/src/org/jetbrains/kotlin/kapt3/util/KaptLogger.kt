@@ -22,7 +22,9 @@ class KaptLogger(val isVerbose: Boolean) {
     }
 
     fun info(message: String) {
-        if (isVerbose) println(PREFIX + message)
+        if (isVerbose) {
+            println(PREFIX + message)
+        }
     }
 
     inline fun info(message: () -> String) {

@@ -24,15 +24,15 @@ import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor
 import java.util.*
 import org.jetbrains.kotlin.kapt3.stubs.ElementKind.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
-import org.jetbrains.kotlin.kapt3.mapValues
-import org.jetbrains.kotlin.kapt3.mapValuesIndexed
+import org.jetbrains.kotlin.kapt3.mapJList
+import org.jetbrains.kotlin.kapt3.mapJListIndexed
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import com.sun.tools.javac.util.List as JavacList
 
 /*
     Root (Class)
-        * FormalTypeParameter
+        * TypeParameter
         + SuperClass
         * Interface
 
@@ -67,10 +67,10 @@ import com.sun.tools.javac.util.List as JavacList
     TypeVariable < InterfaceBound
 
     SuperClass < TopLevel
-        + ClassType
+        ! ClassType
 
     Interface < TopLevel
-        + ClassType
+        ! ClassType
 
     ClassType < *
         * TypeArgument
@@ -90,24 +90,25 @@ private class SignatureNode(val kind: ElementKind, val name: String? = null) {
 
 class SignatureParser(val treeMaker: KaptTreeMaker) {
     class ClassGenericSignature(
-            val typeParameters: com.sun.tools.javac.util.List<JCTypeParameter>,
+            val typeParameters: JavacList<JCTypeParameter>,
             val superClass: JCExpression,
-            val interfaces: com.sun.tools.javac.util.List<JCExpression>)
+            val interfaces: JavacList<JCExpression>
+    )
 
     class MethodGenericSignature(
-            val typeParameters: com.sun.tools.javac.util.List<JCTypeParameter>,
-            val parameterTypes: com.sun.tools.javac.util.List<JCVariableDecl>,
-            val exceptionTypes: com.sun.tools.javac.util.List<JCExpression>,
+            val typeParameters: JavacList<JCTypeParameter>,
+            val parameterTypes: JavacList<JCVariableDecl>,
+            val exceptionTypes: JavacList<JCExpression>,
             val returnType: JCExpression?
     )
     
     fun parseClassSignature(
             signature: String?,
             rawSuperClass: JCExpression,
-            rawInterfaces: com.sun.tools.javac.util.List<JCExpression>
+            rawInterfaces: JavacList<JCExpression>
     ): ClassGenericSignature {
         if (signature == null) {
-            return ClassGenericSignature(com.sun.tools.javac.util.List.nil(), rawSuperClass, rawInterfaces)
+            return ClassGenericSignature(JavacList.nil(), rawSuperClass, rawInterfaces)
         }
 
         val root = parse(signature)
@@ -116,20 +117,20 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
         val interfaces = smartList()
         root.split(typeParameters, TypeParameter, superClasses, SuperClass, interfaces, Interface)
 
-        val jcTypeParameters = mapValues(typeParameters) { parseTypeParameter(it) }
+        val jcTypeParameters = mapJList(typeParameters) { parseTypeParameter(it) }
         val jcSuperClass = parseType(superClasses.single().children.single())
-        val jcInterfaces = mapValues(interfaces) { parseType(it.children.single()) }
+        val jcInterfaces = mapJList(interfaces) { parseType(it.children.single()) }
         return ClassGenericSignature(jcTypeParameters, jcSuperClass, jcInterfaces)
     }
 
     fun parseMethodSignature(
             signature: String?,
-            rawParameters: com.sun.tools.javac.util.List<JCVariableDecl>,
-            rawExceptionTypes: com.sun.tools.javac.util.List<JCExpression>,
+            rawParameters: JavacList<JCVariableDecl>,
+            rawExceptionTypes: JavacList<JCExpression>,
             rawReturnType: JCExpression?
     ): MethodGenericSignature {
         if (signature == null) {
-            return MethodGenericSignature(com.sun.tools.javac.util.List.nil(), rawParameters, rawExceptionTypes, rawReturnType)
+            return MethodGenericSignature(JavacList.nil(), rawParameters, rawExceptionTypes, rawReturnType)
         }
 
         val root = parse(signature)
@@ -139,14 +140,14 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
         val returnTypes = smartList()
         root.split(typeParameters, TypeParameter, parameterTypes, ParameterType, exceptionTypes, ExceptionType, returnTypes, ReturnType)
 
-        val jcTypeParameters = mapValues(typeParameters) { parseTypeParameter(it) }
+        val jcTypeParameters = mapJList(typeParameters) { parseTypeParameter(it) }
         assert(rawParameters.size >= parameterTypes.size)
         val offset = rawParameters.size - parameterTypes.size
-        val jcParameters = mapValuesIndexed(parameterTypes) { index, it ->
+        val jcParameters = mapJListIndexed(parameterTypes) { index, it ->
             val rawParameter = rawParameters[index + offset]
             treeMaker.VarDef(rawParameter.modifiers, rawParameter.getName(), parseType(it.children.single()), rawParameter.initializer)
         }
-        val jcExceptionTypes = mapValues(exceptionTypes) { parseType(it) }
+        val jcExceptionTypes = mapJList(exceptionTypes) { parseType(it) }
         val jcReturnType = if (rawReturnType == null) null else parseType(returnTypes.single().children.single())
         return MethodGenericSignature(jcTypeParameters, jcParameters, jcExceptionTypes, jcReturnType)
     }
@@ -173,7 +174,7 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
         assert(classBounds.size <= 1)
 
         val jcClassBound = classBounds.firstOrNull()?.let { parseBound(it) }
-        val jcInterfaceBounds = mapValues(interfaceBounds) { parseBound(it) }
+        val jcInterfaceBounds = mapJList(interfaceBounds) { parseBound(it) }
         val allBounds = if (jcClassBound != null) jcInterfaceBounds.prepend(jcClassBound) else jcInterfaceBounds
         return treeMaker.TypeParameter(treeMaker.name(node.name!!), allBounds)
     }
@@ -192,9 +193,9 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
                 val fqNameExpression = treeMaker.FqName(classFqName)
                 if (args.isEmpty()) return fqNameExpression
 
-                treeMaker.TypeApply(fqNameExpression, mapValues(args) { arg ->
+                treeMaker.TypeApply(fqNameExpression, mapJList(args) { arg ->
                     assert(arg.kind == TypeArgument) { "Unexpected kind ${arg.kind}, $TypeArgument expected" }
-                    val variance = arg.name ?: return@mapValues treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
+                    val variance = arg.name ?: return@mapJList treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
 
                     val argType = parseType(arg.children.single())
                     when (variance.single()) {
@@ -331,17 +332,9 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
         push(TypeArgument, parent = ClassType)
     }
 
-    override fun visitTypeArgument(wildcard: Char): SignatureVisitor {
-        push(TypeArgument, parent = ClassType, name = wildcard.toString())
-        return super.visitTypeArgument(wildcard)
-    }
-
-    override fun visitClassType(name: String) {
-        push(ClassType, name = name)
-    }
-
-    override fun visitTypeVariable(name: String) {
-        push(TypeVariable, name = name)
+    override fun visitTypeArgument(variance: Char): SignatureVisitor {
+        push(TypeArgument, parent = ClassType, name = variance.toString())
+        return super.visitTypeArgument(variance)
     }
 
     override fun visitParameterType(): SignatureVisitor {
@@ -357,6 +350,14 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
     override fun visitExceptionType(): SignatureVisitor {
         push(ExceptionType, parent = Root)
         return super.visitExceptionType()
+    }
+
+    override fun visitClassType(name: String) {
+        push(ClassType, name = name)
+    }
+
+    override fun visitTypeVariable(name: String) {
+        push(TypeVariable, name = name)
     }
 
     override fun visitBaseType(descriptor: Char) {
