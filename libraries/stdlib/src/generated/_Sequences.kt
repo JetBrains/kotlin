@@ -11,8 +11,6 @@ package kotlin.sequences
 import kotlin.comparisons.*
 import java.util.*
 
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
-
 /**
  * Returns `true` if [element] is found in the sequence.
  */

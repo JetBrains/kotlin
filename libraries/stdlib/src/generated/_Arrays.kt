@@ -11,8 +11,6 @@ package kotlin.collections
 import kotlin.comparisons.*
 import java.util.*
 
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
-
 /**
  * Returns 1st *element* from the collection.
  */
@@ -4430,7 +4428,7 @@ public fun CharArray.reverse(): Unit {
 public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4440,7 +4438,7 @@ public fun <T> Array<out T>.reversed(): List<T> {
 public fun ByteArray.reversed(): List<Byte> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4450,7 +4448,7 @@ public fun ByteArray.reversed(): List<Byte> {
 public fun ShortArray.reversed(): List<Short> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4460,7 +4458,7 @@ public fun ShortArray.reversed(): List<Short> {
 public fun IntArray.reversed(): List<Int> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4470,7 +4468,7 @@ public fun IntArray.reversed(): List<Int> {
 public fun LongArray.reversed(): List<Long> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4480,7 +4478,7 @@ public fun LongArray.reversed(): List<Long> {
 public fun FloatArray.reversed(): List<Float> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4490,7 +4488,7 @@ public fun FloatArray.reversed(): List<Float> {
 public fun DoubleArray.reversed(): List<Double> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4500,7 +4498,7 @@ public fun DoubleArray.reversed(): List<Double> {
 public fun BooleanArray.reversed(): List<Boolean> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 
@@ -4510,7 +4508,7 @@ public fun BooleanArray.reversed(): List<Boolean> {
 public fun CharArray.reversed(): List<Char> {
     if (isEmpty()) return emptyList()
     val list = toMutableList()
-    Collections.reverse(list)
+    list.reverse()
     return list
 }
 

@@ -33,7 +33,7 @@ fun ordering(): List<GenericFunction> {
             """
             if (this is Collection && size <= 1) return toList()
             val list = toMutableList()
-            Collections.reverse(list)
+            list.reverse()
             return list
             """
         }
@@ -42,7 +42,7 @@ fun ordering(): List<GenericFunction> {
             """
             if (isEmpty()) return emptyList()
             val list = toMutableList()
-            Collections.reverse(list)
+            list.reverse()
             return list
             """
         }

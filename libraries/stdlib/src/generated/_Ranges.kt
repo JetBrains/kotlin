@@ -11,8 +11,6 @@ package kotlin.ranges
 import kotlin.comparisons.*
 import java.util.*
 
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
-
 /**
  * Checks if the specified [value] belongs to this range.
  */

@@ -7,8 +7,6 @@ package kotlin.collections
 
 import java.util.*
 
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
-
 /**
  * Returns a [List] that wraps the original array.
  */
