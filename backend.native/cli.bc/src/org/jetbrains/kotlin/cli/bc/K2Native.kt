@@ -50,6 +50,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     configuration.put(CommonConfigurationKeys.MODULE_NAME,
                       JvmAbi.DEFAULT_MODULE_NAME)
     configuration.addKotlinSourceRoots(arguments.freeArgs)
+    // TODO: add to source set, once we know how to not compile them.
+    configuration.addKotlinSourceRoots(arguments.headers.asList())
     val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
         configuration, Arrays.asList<String>("extensions/common.xml"))
 

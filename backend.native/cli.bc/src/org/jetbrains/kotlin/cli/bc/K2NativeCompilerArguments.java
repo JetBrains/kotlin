@@ -14,4 +14,8 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String runtimeFile;
 
+    @Argument(value = "headers", description = "Header files used for compilation")
+    @ValueDescription("<path>")
+    public String[] headers;
+
 }

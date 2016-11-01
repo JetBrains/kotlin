@@ -20,21 +20,27 @@ ArenaContainer::ArenaContainer(uint32_t size) {
 
 void ObjectContainer::Init(const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "Must be an object");
-  header_ = reinterpret_cast<ContainerHeader*>(
-      calloc(sizeof(ContainerHeader) + sizeof(ObjHeader) +
-             type_info->instanceSize_, 1));
-  header_->ref_count_ = CONTAINER_TAG_INCREMENT;
-  SetMeta(GetPlace(), type_info);
+   uint32_t alloc_size =
+      sizeof(ContainerHeader) + sizeof(ObjHeader) + type_info->instanceSize_;
+  header_ = reinterpret_cast<ContainerHeader*>(calloc(alloc_size, 1));
+  if (header_) {
+    header_->ref_count_ = CONTAINER_TAG_INCREMENT;
+    SetMeta(GetPlace(), type_info);
+  }
 }
 
 void ArrayContainer::Init(const TypeInfo* type_info, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "Must be an array");
-  header_ = reinterpret_cast<ContainerHeader*>(
-      calloc(sizeof(ContainerHeader) + sizeof(ArrayHeader) -
-             type_info->instanceSize_ * elements, 1));
-  header_->ref_count_ = CONTAINER_TAG_INCREMENT;
-  GetPlace()->count_ = elements;
-  SetMeta(GetPlace(), type_info);
+  uint32_t alloc_size =
+      sizeof(ContainerHeader) + sizeof(ArrayHeader) -
+      type_info->instanceSize_ * elements;
+  header_ = reinterpret_cast<ContainerHeader*>(calloc(alloc_size, 1));
+  RuntimeAssert(header_ != nullptr, "Cannot alloc memory");
+  if (header_) {
+    header_->ref_count_ = CONTAINER_TAG_INCREMENT;
+    GetPlace()->count_ = elements;
+    SetMeta(GetPlace(), type_info);
+  }
 }
 
 ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {

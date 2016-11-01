@@ -29,6 +29,7 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
         // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
         if (LLVMVerifyModule(
                 llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef) == 1) {
+            LLVMDumpModule(llvmModule)
             throw Error("Invalid module");
         }
     }

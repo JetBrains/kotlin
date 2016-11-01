@@ -30,8 +30,8 @@ public class KonanTest extends DefaultTask {
             classpath = project.configurations.cli_bc
             args "-output", "${sourceBc.absolutePath}",
                     "-runtime", "${runtimeBc.absolutePath}",
-                    "${sourceKt.absolutePath}",
-                    project.project(':runtime').file('src/main/kotlin')
+                    "-headers", project.project(':runtime').file('src/main/kotlin'),
+                    "${sourceKt.absolutePath}"
 
             jvmArgs "-Djava.library.path=${backendNative.buildDir.canonicalPath}/nativelibs"
         }
@@ -75,11 +75,9 @@ task sum (type:KonanTest) {
     source = "codegen/function/sum.kt"
 }
 
-/* Investigate
 task objectInitialization(type: KonanTest) {
     source = "codegen/object/initialization.kt"
 }
-*/
 
 /* task objectBasic(type: KonanTest) {
     source = "$codegen/klass/basic.kt"
@@ -100,6 +98,15 @@ task sum2(type: KonanTest) {
 task sum_3const(type: KonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
+
+/* TODO: enable, once kotlin.String -> kotlin_native.String is mapped.
+task hello0(type: KonanTest) {
+    source = "runtime/basic/hello0.kt"
+}
+
+task hello1(type: KonanTest) {
+    source = "runtime/basic/hello1.kt"
+    } */
 
 // TODO: waiting for boolean to be implemented
 //task bool_yes(type: KonanTest) {

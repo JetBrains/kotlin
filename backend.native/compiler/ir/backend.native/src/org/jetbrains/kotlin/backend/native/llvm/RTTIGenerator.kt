@@ -127,6 +127,19 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         }
     }
 
+    private val arrayClasses = mapOf(
+            Pair("kotlin_native.ByteArray", -1),
+            Pair("kotlin_native.CharArray", -2),
+            Pair("kotlin_native.IntArray", -4),
+            Pair("kotlin_native.String", -1)
+    );
+
+    private fun getInstanceSize(classType: LLVMOpaqueType?, className: FqName) : Int {
+        val arraySize = arrayClasses.get(className.asString());
+        if (arraySize != null) return arraySize;
+        return LLVMStoreSizeOfType(runtime.targetData, classType).toInt()
+    }
+
     fun generate(classDesc: ClassDescriptor) {
 
         val className = classDesc.fqNameSafe
@@ -135,7 +148,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val name = className.globalHash
 
-        val size = LLVMStoreSizeOfType(runtime.targetData, classType).toInt()
+        val size = getInstanceSize(classType, className)
 
         val superType = classDesc.getSuperClassOrAny().llvmTypeInfoPtr
 
