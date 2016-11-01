@@ -125,7 +125,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun load(value:LLVMOpaqueValue, varName: String):LLVMOpaqueValue = LLVMBuildLoad(context.llvmBuilder, value, varName)!!
     fun store(value:LLVMOpaqueValue, ptr:LLVMOpaqueValue):LLVMOpaqueValue = LLVMBuildStore(context.llvmBuilder, value, ptr)!!
 
-    fun call(descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>, result: String): LLVMOpaqueValue? {
+    fun call(descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
         if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), null, 0, result)
         memScoped {
             val rargs = alloc(array[args.size](Ref to LLVMOpaqueValue))

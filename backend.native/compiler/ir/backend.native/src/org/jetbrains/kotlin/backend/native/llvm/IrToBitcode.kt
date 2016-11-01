@@ -84,8 +84,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         evaluateCall(generator.tmpVariable(), expression)
     }
 
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?) {
-        super.visitConstructor(declaration, data)
+    override fun visitCall(expression: IrCall) {
+        evaluateExpression(generator.tmpVariable(), expression)
     }
 
     override fun visitFunction(declaration: IrFunction) {
@@ -183,6 +183,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     private fun evaluateSimpleFunctionCall(tmpVariableName: String, value: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+        if (KotlinBuiltIns.isUnit(value.descriptor.returnType!!))
+            return generator.call(value.descriptor as FunctionDescriptor, args, null)
         return generator.call(value.descriptor as FunctionDescriptor, args, tmpVariableName)
     }
 
