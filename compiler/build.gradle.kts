@@ -1,4 +1,6 @@
 
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -34,6 +36,17 @@ fun commonDep(coord: String): String {
 }
 
 fun commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
+
+fun Project.fixKotlinTaskDependencies() {
+    the<JavaPluginConvention>().sourceSets.all { sourceset ->
+        val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
+        tasks.withType<Task> {
+            if (name == taskName) {
+                dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
+            }
+        }
+    }
+}
 
 // TODO: common ^ 8< ----
 
@@ -106,6 +119,8 @@ tasks.withType<KotlinCompile> {
     dependsOn(":prepare:reflect:prepare")
     kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
 }
+
+fixKotlinTaskDependencies()
 
 //tasks.withType<Jar> {
 //    enabled = false

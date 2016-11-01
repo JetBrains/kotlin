@@ -19,13 +19,11 @@ buildscript {
 apply { plugin("kotlin") }
 
 fun Project.fixKotlinTaskDependencies() {
-    val project = this
     the<JavaPluginConvention>().sourceSets.all { sourceset ->
         val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
-        project.tasks.withType<Task> {
+        tasks.withType<Task> {
             if (name == taskName) {
                 dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
-                println("!!! add $this dependsOn copy${sourceset.name.capitalize()}KotlinClasses")
             }
         }
     }

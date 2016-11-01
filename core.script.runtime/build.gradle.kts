@@ -1,4 +1,6 @@
 
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.jvm.tasks.Jar
@@ -36,7 +38,18 @@ fun DependencyHandler.buildVersion(): Dependency {
     return add(cfg.name, project(":prepare:build.version", configuration = "default"))
 }
 
-// TODO: move most of the code above to the root or utility script
+fun Project.fixKotlinTaskDependencies() {
+    the<JavaPluginConvention>().sourceSets.all { sourceset ->
+        val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
+        tasks.withType<Task> {
+            if (name == taskName) {
+                dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
+            }
+        }
+    }
+}
+
+// TODO: common ^ 8< ----
 
 dependencies {
     compile(project(":core.builtins"))
@@ -61,3 +74,4 @@ tasks.withType<Jar> {
     archiveName = "kotlin-script-runtime.jar"
 }
 
+fixKotlinTaskDependencies()
