@@ -56,7 +56,6 @@ abstract class KonanTest extends DefaultTask {
             }
         }
         else {
-            println "testData:$testData"
             def out = new ByteArrayOutputStream()
             project.exec {
                 commandLine "${exe.absolutePath}"
