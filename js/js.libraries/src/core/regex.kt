@@ -121,7 +121,8 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
             sb.append(transform(foundMatch))
             lastStart = foundMatch.range.endInclusive + 1
             match = foundMatch.next()
-        } while (lastStart < length && match != null)
+        }
+        while (lastStart < length && match != null)
 
         if (lastStart < length) {
             sb.append(input, lastStart, length)

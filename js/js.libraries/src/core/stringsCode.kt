@@ -2,8 +2,8 @@ package kotlin.text
 
 import kotlin.text.js.RegExp
 
-internal inline fun String.nativeIndexOf(ch : Char, fromIndex : Int) : Int = nativeIndexOf(ch.toString(), fromIndex)
-internal inline fun String.nativeLastIndexOf(ch : Char, fromIndex : Int) : Int = nativeLastIndexOf(ch.toString(), fromIndex)
+internal inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = nativeIndexOf(ch.toString(), fromIndex)
+internal inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = nativeLastIndexOf(ch.toString(), fromIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
@@ -37,7 +37,7 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
 
 
 
-public inline fun String.matches(regex : String) : Boolean {
+public inline fun String.matches(regex: String): Boolean {
     val result = this.match(regex)
     return result != null && result.size > 0
 }
@@ -80,7 +80,7 @@ public inline fun String.decapitalize(): String {
  * @throws [IllegalArgumentException] when n < 0.
  */
 public fun CharSequence.repeat(n: Int): String {
-    require (n >= 0) { "Count 'n' must be non-negative, but was $n." }
+    require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
     return when (n) {
         0 -> ""
         1 -> this.toString()
