@@ -25,10 +25,10 @@ fun box(): String {
     var result = ""
 
     builder {
-        if ("56".suspendHere() != "56") throw java.lang.RuntimeException("fail 1")
-        if ("28".inlineSuspendHere() != "28") throw java.lang.RuntimeException("fail 2")
+        if ("56".suspendHere() != "56") throw RuntimeException("fail 1")
+        if ("28".inlineSuspendHere() != "28") throw RuntimeException("fail 2")
 
-        if (suspendExtension("123") != "123") throw java.lang.RuntimeException("fail 3")
+        if (suspendExtension("123") != "123") throw RuntimeException("fail 3")
         result = inlineSuspendExtension("OK")
     }
 

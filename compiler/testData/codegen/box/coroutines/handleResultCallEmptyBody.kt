@@ -9,7 +9,7 @@ class Controller {
 fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
     val controller = Controller()
     c(controller).resume(Unit)
-    if (!controller.ok) throw java.lang.RuntimeException("Was not called")
+    if (!controller.ok) throw RuntimeException("Was not called")
     return "OK"
 }
 

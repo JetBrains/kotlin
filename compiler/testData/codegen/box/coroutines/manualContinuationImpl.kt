@@ -20,7 +20,7 @@ fun box(): String {
                 }
 
                 if (data != "OK") {
-                    throw java.lang.RuntimeException("fail: $data")
+                    throw RuntimeException("fail: $data")
                 }
 
                 result = "OK"

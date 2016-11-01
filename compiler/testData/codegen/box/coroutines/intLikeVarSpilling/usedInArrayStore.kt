@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// TARGET_BACKEND: JVM
 class Controller {
     suspend fun suspendHere(x: Continuation<Unit>) {
         x.resume(Unit)

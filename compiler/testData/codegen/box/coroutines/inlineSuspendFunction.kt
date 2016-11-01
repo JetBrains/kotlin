@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// WITH_REFLECT
 class Controller {
     fun withValue(v: String, x: Continuation<String>) {
         x.resume(v)
@@ -13,7 +14,7 @@ class Controller {
     }
 
     suspend inline fun <reified T : Any> suspendInline(x: Continuation<String>) {
-        suspendInline({ T::class.java.simpleName }, x)
+        suspendInline({ T::class.simpleName!! }, x)
     }
 }
 

@@ -13,7 +13,7 @@ fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
     val controller = Controller()
     c(controller).resume(Unit)
 
-    if (!controller.wasHandleResultCalled) throw java.lang.RuntimeException("fail 1")
+    if (!controller.wasHandleResultCalled) throw RuntimeException("fail 1")
 }
 
 fun box(): String {
@@ -22,7 +22,7 @@ fun box(): String {
     builder {
         result++
 
-        if (suspendHere() != "OK") throw java.lang.RuntimeException("fail 2")
+        if (suspendHere() != "OK") throw RuntimeException("fail 2")
 
         result--
     }
@@ -32,7 +32,7 @@ fun box(): String {
     builder {
         --result
 
-        if (suspendHere() != "OK") throw java.lang.RuntimeException("fail 4")
+        if (suspendHere() != "OK") throw RuntimeException("fail 4")
 
         ++result
     }
