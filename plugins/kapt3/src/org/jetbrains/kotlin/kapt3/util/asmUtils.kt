@@ -20,14 +20,14 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-internal fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) > 0
-internal fun isPublic(access: Int) = (access and Opcodes.ACC_PUBLIC) > 0
-internal fun isSynthetic(access: Int) = (access and Opcodes.ACC_SYNTHETIC) > 0
-internal fun isFinal(access: Int) = (access and Opcodes.ACC_FINAL) > 0
-internal fun isStatic(access: Int) = (access and Opcodes.ACC_STATIC) > 0
-internal fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) > 0
-internal fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) > 0
-internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) > 0
-internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) > 0
+internal fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) != 0
+internal fun isPublic(access: Int) = (access and Opcodes.ACC_PUBLIC) != 0
+internal fun isSynthetic(access: Int) = (access and Opcodes.ACC_SYNTHETIC) != 0
+internal fun isFinal(access: Int) = (access and Opcodes.ACC_FINAL) != 0
+internal fun isStatic(access: Int) = (access and Opcodes.ACC_STATIC) != 0
+internal fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) != 0
+internal fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) != 0
+internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) != 0
+internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) != 0
 
 internal fun <T> List<T>?.isNullOrEmpty() = this == null || this.isEmpty()
