@@ -6,27 +6,33 @@ dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
-public class KonanTest extends DefaultTask {
+abstract class KonanTest extends DefaultTask {
     protected String source
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")
     def llvmLlc = llvmTool("llc")
     def llvmC = llvmTool("clang")
+    def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
+    def mainC = 'main.c'
+    String goldValue = null
+    String testData = null
 
     public KonanTest(){
         dependsOn([project.project(":runtime").tasks['build'],
                    project.parent.tasks['build']])
     }
 
-    @TaskAction
-    public void compileBc() {
-        def sourceKt = project.file(source)
+
+
+    abstract void compileTest(File sourceS, File runtimeS, File out)
+    
+    private  File kt2bc(String ktSource) {
+        def sourceKt = project.file(ktSource)
         def sourceBc = new File("${sourceKt.absolutePath}.bc")
-        def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
         println "${runtimeBc}"
 
         project.javaexec {
-            main='org.jetbrains.kotlin.cli.bc.K2NativeKt'
+            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
             args "-output", "${sourceBc.absolutePath}",
                     "-runtime", "${runtimeBc.absolutePath}",
@@ -35,20 +41,30 @@ public class KonanTest extends DefaultTask {
 
             jvmArgs "-Djava.library.path=${backendNative.buildDir.canonicalPath}/nativelibs"
         }
+        return sourceBc
+    }
 
-        def runtimeS = bc2s(runtimeBc)
-        def sourceS = bc2s(sourceBc)
-        def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
-        def mainC = "main.c"
-        def exe = sourceS.absolutePath.replace(".kt.S", "")
-
-        project.exec {
-            commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe}"
+    @TaskAction
+    void executeTest() {
+        def sourceS = bc2s(kt2bc(source))
+        def exe = new File(sourceS.absolutePath.replace(".kt.S", ""))
+        compileTest(sourceS, bc2s(runtimeBc), exe)
+        println "execution :${exe.absolutePath}"
+        if (testData == null) {
+            project.exec {
+                commandLine "${exe.absolutePath}"
+            }
         }
-
-        project.exec {
-            commandLine "${exe}"
+        else {
+            println "testData:$testData"
+            def out = new ByteArrayOutputStream()
+            project.exec {
+                commandLine "${exe.absolutePath}"
+                standardInput = new ByteArrayInputStream(testData.bytes)
+                standardOutput = out
+            }
+            if (goldValue != out.toString())
+                throw new RuntimeException("test failed")
         }
     }
 
@@ -67,15 +83,34 @@ public class KonanTest extends DefaultTask {
     }
 }
 
+class UnitKonanTest extends KonanTest {
+    void compileTest(File sourceS, File runtimeS, File exe) {
+        def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
+        project.exec {
+            commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
+                    "-o", "${exe.absolutePath}"
+        }
+    }
+}
+
+class RunKonanTest extends KonanTest {
+    void compileTest(File sourceS, File runtimeS, File exe) {
+        project.exec {
+            commandLine "${llvmC}", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
+                    "-o", "${exe.absolutePath}"
+        }
+    }
+}
+
 task run() {
     dependsOn(tasks.withType(KonanTest))
 }
 
-task sum (type:KonanTest) {
+task sum (type:UnitKonanTest) {
     source = "codegen/function/sum.kt"
 }
 
-task objectInitialization(type: KonanTest) {
+task objectInitialization(type: UnitKonanTest) {
     source = "codegen/object/initialization.kt"
 }
 
@@ -83,27 +118,29 @@ task objectInitialization(type: KonanTest) {
     source = "$codegen/klass/basic.kt"
 } */
 
-task aritmetic(type: KonanTest) {
+task aritmetic(type: UnitKonanTest) {
     source = "codegen/function/arithmetic.kt"
 }
 
-task sum1(type: KonanTest) {
+task sum1(type: UnitKonanTest) {
     source = "codegen/function/sum_foo_bar.kt"
 }
 
-task sum2(type: KonanTest) {
+task sum2(type: UnitKonanTest) {
     source = "codegen/function/sum_imm.kt"
 }
 
-task sum_3const(type: KonanTest) {
+task sum_3const(type: UnitKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
 
-task hello0(type: KonanTest) {
-    source = "runtime/basic/hello0.kt"
-}
+//task hello0(type: RunKonanTest) {
+//    source = "runtime/basic/hello0.kt"
+//}
 
-task hello1(type: KonanTest) {
+task hello1(type: RunKonanTest) {
+    goldValue = "Hello World"
+    testData = "Hello World"
     source = "runtime/basic/hello1.kt"
 }
 

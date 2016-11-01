@@ -16,7 +16,13 @@ void * resolve_symbol(char *name) {
 
 int
 kotlinNativeMain() {
+#ifdef RUN_TEST
+  void (*main)(void *) = resolve_symbol("kfun:main");
+  main((void *)0);
+  return 0;
+#else
   return run_test();
+#endif
 }
 
 int ktype_kotlin_any asm("_ktype:kotlin.Any");
