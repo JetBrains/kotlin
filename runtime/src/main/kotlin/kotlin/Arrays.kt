@@ -1,4 +1,4 @@
-package kotlin_native
+package kotlin
 
 @ExportTypeInfo("theByteArrayTypeInfo")
 class ByteArray : Cloneable {

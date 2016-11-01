@@ -99,14 +99,13 @@ task sum_3const(type: KonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
 
-/* TODO: enable, once kotlin.String -> kotlin_native.String is mapped.
 task hello0(type: KonanTest) {
     source = "runtime/basic/hello0.kt"
 }
 
 task hello1(type: KonanTest) {
     source = "runtime/basic/hello1.kt"
-    } */
+}
 
 // TODO: waiting for boolean to be implemented
 //task bool_yes(type: KonanTest) {

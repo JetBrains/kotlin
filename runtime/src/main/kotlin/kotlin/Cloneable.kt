@@ -1,4 +1,4 @@
-package kotlin_native
+package kotlin
 
 @ExportTypeInfo("theCloneableTypeInfo")
 public interface Cloneable {

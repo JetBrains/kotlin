@@ -118,7 +118,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMOpaqueValue?) {
-        val annot = classDesc.annotations.findAnnotation(FqName("kotlin_native.ExportTypeInfo"))
+        val annot = classDesc.annotations.findAnnotation(FqName("kotlin.ExportTypeInfo"))
         if (annot != null) {
             val nameValue = annot.allValueArguments.values.single() as StringValue
             // TODO: use LLVMAddAlias?
@@ -128,10 +128,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private val arrayClasses = mapOf(
-            Pair("kotlin_native.ByteArray", -1),
-            Pair("kotlin_native.CharArray", -2),
-            Pair("kotlin_native.IntArray", -4),
-            Pair("kotlin_native.String", -1)
+            Pair("kotlin.ByteArray", -1),
+            Pair("kotlin.CharArray", -2),
+            Pair("kotlin.IntArray", -4),
+            Pair("kotlin.String", -1)
     );
 
     private fun getInstanceSize(classType: LLVMOpaqueType?, className: FqName) : Int {

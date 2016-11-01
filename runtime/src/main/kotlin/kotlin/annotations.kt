@@ -1,4 +1,4 @@
-package kotlin_native
+package kotlin
 
 // TODO: shouldn't these annotation be located in 'kotlin_native.internal' package?
 
