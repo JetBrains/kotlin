@@ -1,6 +1,8 @@
 package jquery
 
+import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Window
 
 @native
 public class JQuery() {
@@ -67,5 +69,9 @@ public fun jq(callback: () -> Unit): JQuery = JQuery();
 public fun jq(obj: JQuery): JQuery = JQuery();
 @native("$")
 public fun jq(el: Element): JQuery = JQuery();
+@native("$")
+public fun jq(document: Document): JQuery = JQuery();
+@native("$")
+public fun jq(window: Window): Jquery = JQuery();
 @native("$")
 public fun jq(): JQuery = JQuery();
