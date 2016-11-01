@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation.patternTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToBlock
 import org.jetbrains.kotlin.psi.KtCatchClause
@@ -68,34 +70,49 @@ class CatchTranslator(
 
         val firstCatch = catches.first()
         val catchParameter = firstCatch.catchParameter
-        val parameterName = context().getNameForElement(catchParameter!!)
-        val parameterRef = parameterName.makeRef()
+        val parameterDescriptor = BindingUtils.getDescriptorForElement(bindingContext(), catchParameter!!)
+        val parameterName = context().getNameForDescriptor(parameterDescriptor).ident
 
-        return JsCatch(context().scope(),
-                       parameterRef.ident,
-                       translateCatches(parameterRef, catches.iterator()))
+        val jsCatch = JsCatch(context().scope(), parameterName)
+        val parameterRef = jsCatch.parameter.name.makeRef()
+        val catchContext = context().innerContextWithAliased(parameterDescriptor, parameterRef)
+
+        jsCatch.body = JsBlock(translateCatches(catchContext, parameterDescriptor, parameterRef, catches.iterator()))
+
+        return jsCatch
     }
 
-    private fun translateCatches(parameterRef: JsNameRef, catches: Iterator<KtCatchClause>): JsStatement {
+    private fun translateCatches(
+            context: TranslationContext,
+            parameterDescriptor: DeclarationDescriptor,
+            parameterRef: JsNameRef,
+            catches: Iterator<KtCatchClause>
+    ): JsStatement {
         if (!catches.hasNext()) return JsThrow(parameterRef)
+
+        var nextContext = context
 
         val catch = catches.next()
         val param = catch.catchParameter!!
-        val paramName = context().getNameForElement(param)
+        val paramName = context.getNameForElement(param)
         val paramType = param.typeReference!!
 
-        val thenBlock = translateCatchBody(context(), catch)
-        if (paramName.ident != parameterRef.ident)
-            thenBlock.statements.add(0, JsAstUtils.newVar(paramName, parameterRef))
+        val additionalStatements = mutableListOf<JsStatement>()
+        if (paramName.ident != parameterRef.ident) {
+            additionalStatements += JsAstUtils.newVar(paramName, parameterRef)
+            nextContext = nextContext.innerContextWithAliased(parameterDescriptor, paramName.makeRef())
+        }
+        val thenBlock = translateCatchBody(context, catch)
+        thenBlock.statements.addAll(0, additionalStatements)
 
         if (paramType.isThrowable) return thenBlock
 
         // translateIsCheck won't ever return `null` if its second argument is `null`
-        val typeCheck = with (patternTranslator(context())) {
+        val typeCheck = with (patternTranslator(nextContext)) {
             translateIsCheck(parameterRef, null, paramType)
         }!!
 
-        val elseBlock = translateCatches(parameterRef, catches)
+        val elseBlock = translateCatches(nextContext, parameterDescriptor, parameterRef, catches)
         return JsIf(typeCheck, thenBlock, elseBlock)
     }
 
