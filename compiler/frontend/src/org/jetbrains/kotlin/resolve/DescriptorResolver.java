@@ -808,7 +808,10 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION,
                 KotlinSourceElementKt.toSourceElement(property),
                 modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
-                modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD)
+                modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
+                modifierList != null && modifierList.hasModifier(KtTokens.PLATFORM_KEYWORD) ||
+                containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isPlatform(),
+                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD)
         );
         wrapper.setDescriptor(propertyDescriptor);
 
@@ -1123,7 +1126,9 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION,
                 KotlinSourceElementKt.toSourceElement(parameter),
                 /* lateInit = */ false,
-                /* isConst = */ false
+                /* isConst = */ false,
+                /* isPlatform = */ false,
+                /* isImpl = */ false
         );
         propertyWrapper.setDescriptor(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),

@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.org.objectweb.asm.commons.Method
 
 interface JvmDescriptorWithExtraFlags {
     val extraFlags: Int
@@ -41,10 +39,12 @@ class JvmPropertyDescriptorImpl(
         kind: CallableMemberDescriptor.Kind,
         source: SourceElement,
         isLateInit: Boolean,
-        isConst: Boolean
+        isConst: Boolean,
+        isPlatform: Boolean,
+        isImpl: Boolean
 ) : JvmDescriptorWithExtraFlags, PropertyDescriptorImpl(
         containingDeclaration, original, annotations, modality, visibility, isVar,
-        name, kind, source, isLateInit, isConst
+        name, kind, source, isLateInit, isConst, isPlatform, isImpl
 ) {
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
@@ -55,7 +55,7 @@ class JvmPropertyDescriptorImpl(
     ): PropertyDescriptorImpl =
             JvmPropertyDescriptorImpl(
                     newOwner, original, annotations, newModality, newVisibility, extraFlags, isVar, name, kind,
-                    SourceElement.NO_SOURCE, isLateInit, isConst
+                    SourceElement.NO_SOURCE, isLateInit, isConst, isPlatform, isImpl
             )
 
     companion object {
@@ -71,7 +71,7 @@ class JvmPropertyDescriptorImpl(
         ): PropertyDescriptorImpl =
                 JvmPropertyDescriptorImpl(
                         containingDeclaration, null, annotations, modality, visibility, extraFlags, false, name,
-                        CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false
+                        CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false, false, false
                 ).initialize(type)
 
         fun createFinalField(
@@ -85,7 +85,7 @@ class JvmPropertyDescriptorImpl(
         ): PropertyDescriptorImpl =
                 JvmPropertyDescriptorImpl(
                         classDescriptor, null, annotations, Modality.FINAL, visibility, extraFlags, false, name,
-                        CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false
+                        CallableMemberDescriptor.Kind.SYNTHESIZED, source, false, false, false, false
                 ).initialize(type, dispatchReceiverParameter = classDescriptor.thisAsReceiverParameter)
     }
 }

@@ -1,0 +1,16 @@
+// -- Module: <m1-common> --
+package
+
+public var foo: kotlin.String
+
+
+// -- Module: <m2-jvm> --
+package
+
+public var foo: kotlin.String
+
+
+// -- Module: <m3-js> --
+package
+
+public var foo: kotlin.String

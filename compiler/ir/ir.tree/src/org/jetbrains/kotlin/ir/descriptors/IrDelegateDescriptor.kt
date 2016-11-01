@@ -50,16 +50,18 @@ abstract class IrDelegateDescriptorBase(
         delegateType: KotlinType
 ) : PropertyDescriptorImpl(
         containingDeclaration,
-        null, // original
+        /* original = */ null,
         Annotations.EMPTY,
         Modality.FINAL,
         Visibilities.PRIVATE,
-        false, // isVar
+        /* isVar = */ false,
         name,
         CallableMemberDescriptor.Kind.SYNTHESIZED,
         SourceElement.NO_SOURCE,
-        false, // lateInit
-        false // isConst
+        /* lateInit = */ false,
+        /* isConst = */ false,
+        /* isPlatform = */ false,
+        /* isImpl = */ false
 ) {
     init {
         setOutType(delegateType)

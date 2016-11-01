@@ -44,6 +44,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final Kind kind;
     private final boolean lateInit;
     private final boolean isConst;
+    private final boolean isPlatform;
+    private final boolean isImpl;
 
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private ReceiverParameterDescriptor extensionReceiverParameter;
@@ -63,7 +65,9 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull Kind kind,
             @NotNull SourceElement source,
             boolean lateInit,
-            boolean isConst
+            boolean isConst,
+            boolean isPlatform,
+            boolean isImpl
     ) {
         super(containingDeclaration, annotations, name, null, isVar, source);
         this.modality = modality;
@@ -72,6 +76,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.kind = kind;
         this.lateInit = lateInit;
         this.isConst = isConst;
+        this.isPlatform = isPlatform;
+        this.isImpl = isImpl;
     }
 
     @NotNull
@@ -85,10 +91,12 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull Kind kind,
             @NotNull SourceElement source,
             boolean lateInit,
-            boolean isConst
+            boolean isConst,
+            boolean isPlatform,
+            boolean isImpl
     ) {
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
-                                          modality, visibility, isVar, name, kind, source, lateInit, isConst);
+                                          modality, visibility, isVar, name, kind, source, lateInit, isConst, isPlatform, isImpl);
     }
 
     public void setType(
@@ -334,7 +342,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     ) {
         return new PropertyDescriptorImpl(
                 newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, SourceElement.NO_SOURCE,
-                isLateInit(), isConst()
+                isLateInit(), isConst(), isPlatform(), isImpl()
         );
     }
 
@@ -357,14 +365,12 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
     @Override
     public boolean isPlatform() {
-        // TODO
-        return false;
+        return isPlatform;
     }
 
     @Override
     public boolean isImpl() {
-        // TODO
-        return false;
+        return isImpl;
     }
 
     @Override

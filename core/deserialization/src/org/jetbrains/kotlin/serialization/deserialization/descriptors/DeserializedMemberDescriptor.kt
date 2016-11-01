@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.asSimpleType
 
 interface DeserializedMemberDescriptor : MemberDescriptor {
     val proto: MessageLite
@@ -87,7 +90,7 @@ class DeserializedPropertyDescriptor(
         override val containerSource: SourceElement?
 ) : DeserializedCallableMemberDescriptor,
         PropertyDescriptorImpl(containingDeclaration, original, annotations,
-                               modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, isLateInit, isConst) {
+                               modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, isLateInit, isConst, false, false) {
 
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,

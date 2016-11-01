@@ -278,9 +278,10 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             name: Name,
             kind: CallableMemberDescriptor.Kind,
             source: SourceElement
-    ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(containingDeclaration, original, annotations,
-                                                                modality, visibility, isVar, name, kind, source,
-                                                                /* lateInit = */ false, /* isConst = */ false) {
+    ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(
+            containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
+            /* lateInit = */ false, /* isConst = */ false, /* isPlatform = */ false, /* isImpl = */ false
+    ) {
 
         override var getMethod: FunctionDescriptor by Delegates.notNull()
             private set

@@ -365,7 +365,9 @@ public class ErrorUtils {
                 CallableMemberDescriptor.Kind.DECLARATION,
                 SourceElement.NO_SOURCE,
                 /* lateInit = */ false,
-                /* isConst = */ false
+                /* isConst = */ false,
+                /* isPlatform = */ false,
+                /* isImpl = */ false
         );
         descriptor.setType(ERROR_PROPERTY_TYPE,
                            Collections.<TypeParameterDescriptor>emptyList(),

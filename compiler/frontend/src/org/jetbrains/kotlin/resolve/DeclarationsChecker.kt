@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.ImmutableSet
-import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -650,17 +649,19 @@ class DeclarationsChecker(
 
         val initializer = property.initializer
         val delegate = property.delegate
+        val isPlatform = propertyDescriptor.isPlatform
         if (initializer != null) {
             if (inTrait) {
                 trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
             }
-            else {
-                if (!backingFieldRequired) {
-                    trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
-                }
-                else if (property.receiverTypeReference != null) {
-                    trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
-                }
+            else if (isPlatform) {
+                trace.report(PLATFORM_PROPERTY_INITIALIZER.on(initializer))
+            }
+            else if (!backingFieldRequired) {
+                trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
+            }
+            else if (property.receiverTypeReference != null) {
+                trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
             }
         }
         else if (delegate != null) {
@@ -670,7 +671,7 @@ class DeclarationsChecker(
         }
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
-            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && isUninitialized) {
+            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && !isPlatform && isUninitialized) {
                 if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
                     trace.report(MUST_BE_INITIALIZED.on(property))
                 }
@@ -681,11 +682,9 @@ class DeclarationsChecker(
             else if (noExplicitTypeOrGetterType(property)) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
-            if (backingFieldRequired && !inTrait && propertyDescriptor.isLateInit && !isUninitialized) {
-                if (trace[MUST_BE_LATEINIT, propertyDescriptor] ?: false) {}
-                else {
-                    trace.report(UNNECESSARY_LATEINIT.on(property))
-                }
+            if (backingFieldRequired && !inTrait && propertyDescriptor.isLateInit && !isUninitialized &&
+                trace[MUST_BE_LATEINIT, propertyDescriptor] != true) {
+                trace.report(UNNECESSARY_LATEINIT.on(property))
             }
         }
     }
@@ -800,11 +799,18 @@ class DeclarationsChecker(
     private fun checkAccessor(
             propertyDescriptor: PropertyDescriptor,
             accessor: KtPropertyAccessor?,
-            accessorDescriptor: PropertyAccessorDescriptor?) {
+            accessorDescriptor: PropertyAccessorDescriptor?
+    ) {
         if (accessor == null || accessorDescriptor == null) return
+        if (propertyDescriptor.isPlatform && accessor.hasBody()) {
+            trace.report(PLATFORM_DECLARATION_WITH_BODY.on(accessor))
+        }
+
         val accessorModifierList = accessor.modifierList ?: return
-        val tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList,
-                                                                        Sets.newHashSet(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD))
+        val tokens = modifiersChecker.getTokensCorrespondingToModifiers(
+                accessorModifierList,
+                setOf(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD)
+        )
         if (accessor.isGetter) {
             if (accessorDescriptor.visibility != propertyDescriptor.visibility) {
                 reportVisibilityModifierDiagnostics(tokens.values, Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY)

@@ -12630,6 +12630,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TopLevelProperty extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInTopLevelProperty() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("differentKindsOfProperties.kt")
+                public void testDifferentKindsOfProperties() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/differentKindsOfProperties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simplePlatformVar.kt")
+                public void testSimplePlatformVar() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/simplePlatformVar.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/namedArguments")

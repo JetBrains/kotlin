@@ -59,7 +59,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                 PropertyDescriptorImpl.create(
                         refClass, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, true,
                         Name.identifier("element"), CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE,
-                        false, false
+                        false, false, false, false
                 ).initialize(type, dispatchReceiverParameter = refClass.thisAsReceiverParameter)
     }
 
@@ -99,7 +99,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                 PropertyDescriptorImpl.create(
                         genericRefClass, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, true,
                         Name.identifier("element"), CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE,
-                        false, false
+                        false, false, false, false
                 ).initialize(
                         type = builtIns.anyType,
                         dispatchReceiverParameter = genericRefClass.thisAsReceiverParameter

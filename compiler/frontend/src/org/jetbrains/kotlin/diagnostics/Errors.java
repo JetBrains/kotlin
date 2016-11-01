@@ -494,6 +494,8 @@ public interface Errors {
     DiagnosticFactory0<KtDeclaration> PLATFORM_DECLARATION_WITH_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtParameter> PLATFORM_DECLARATION_WITH_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<KtExpression> PLATFORM_PROPERTY_INITIALIZER = DiagnosticFactory0.create(ERROR);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Errors/warnings inside code blocks

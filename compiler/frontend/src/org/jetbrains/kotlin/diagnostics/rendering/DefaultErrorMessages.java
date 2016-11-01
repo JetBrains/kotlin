@@ -260,6 +260,8 @@ public class DefaultErrorMessages {
         MAP.put(PLATFORM_DECLARATION_WITH_BODY, "Platform declaration must not have a body");
         MAP.put(PLATFORM_DECLARATION_WITH_DEFAULT_PARAMETER, "Platform declaration cannot have parameters with default values");
 
+        MAP.put(PLATFORM_PROPERTY_INITIALIZER, "Platform property cannot have an initializer");
+
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
         MAP.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", NAME);

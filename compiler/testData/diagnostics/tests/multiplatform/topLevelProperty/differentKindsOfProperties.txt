@@ -1,0 +1,25 @@
+package
+
+public val backingFieldVal: kotlin.String = "no"
+public var backingFieldVar: kotlin.String
+public const val constVal: kotlin.Int
+public val customAccessorVal: kotlin.String
+public var customAccessorVar: kotlin.String
+public val delegated: kotlin.String
+public val justVal: kotlin.String
+public var justVar: kotlin.String
+public lateinit var lateinitVar: kotlin.String
+public val valWithGet: kotlin.String
+public var varWithGetSet: kotlin.String
+public var varWithPlatformGetSet: kotlin.String
+public val kotlin.String.extensionVal: kotlin.Unit
+public var </*0*/ T> T.genericExtensionVar: T
+public fun test(): kotlin.String
+
+public object Delegate {
+    private constructor Delegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun getValue(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

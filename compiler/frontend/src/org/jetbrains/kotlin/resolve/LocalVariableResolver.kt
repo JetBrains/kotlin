@@ -85,14 +85,14 @@ class LocalVariableResolver(
                                                                   propertyDescriptor,
                                                                   delegateExpression,
                                                                   typingContext.scope,
-                                                                  typingContext.trace);
+                                                                  typingContext.trace)
             }
         }
 
         val initializer = property.initializer
         var typeInfo: KotlinTypeInfo
         if (initializer != null) {
-            val outType = propertyDescriptor.getType()
+            val outType = propertyDescriptor.type
             typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType))
             val dataFlowInfo = typeInfo.dataFlowInfo
             val type = typeInfo.type
@@ -146,7 +146,9 @@ class LocalVariableResolver(
                     CallableMemberDescriptor.Kind.DECLARATION,
                     variable.toSourceElement(),
                     /* lateInit = */ false,
-                    /* isConst = */ false
+                    /* isConst = */ false,
+                    /* isPlatform = */ false,
+                    /* isImpl = */ false
             )
             // For a local variable the type must not be deferred
             type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, trace, local = true)
