@@ -1,0 +1,23 @@
+public final class Test {
+    private static final java.lang.String test = "";
+    public static final Test.A A = null;
+
+    public Test() {
+        super();
+    }
+
+    public static final java.lang.String getTest() {
+        return null;
+    }
+
+    public static final class A {
+
+        public final java.lang.String getTest() {
+            return null;
+        }
+
+        private A() {
+            super();
+        }
+    }
+}

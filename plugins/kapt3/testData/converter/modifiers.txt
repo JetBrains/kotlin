@@ -1,0 +1,157 @@
+package modifiers;
+
+public final class PublicClass {
+
+    public PublicClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public class PublicClassProtectedConstructor {
+
+    protected PublicClassProtectedConstructor() {
+        super();
+    }
+
+    protected static abstract interface ProtectedInterface {
+    }
+
+    private static abstract interface PrivateInterface {
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public abstract class PublicClassPrivateConstructor {
+
+    private PublicClassPrivateConstructor() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public final class InternalClass {
+
+    public InternalClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+final class PrivateClass {
+
+    public PrivateClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public abstract interface PublicInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+public abstract interface InternalInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+abstract interface PrivateInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+public abstract class SealedClass {
+
+    private SealedClass() {
+        super();
+    }
+
+    public static final class One extends modifiers.SealedClass {
+
+        public One() {
+            super();
+        }
+    }
+
+    public static class Two extends modifiers.SealedClass {
+
+        public Two() {
+            super();
+        }
+    }
+
+    public static abstract class Three extends modifiers.SealedClass.Two {
+
+        public Three() {
+            super();
+        }
+    }
+
+    public static final class Four extends modifiers.SealedClass.Three {
+
+        public Four() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public final class Modifiers {
+    private final transient java.lang.String transientField = "";
+    private volatile java.lang.String volatileField;
+
+    public final java.lang.String getTransientField() {
+        return null;
+    }
+
+    public final java.lang.String getVolatileField() {
+        return null;
+    }
+
+    public final void setVolatileField(java.lang.String p0) {
+    }
+
+    public final strictfp void strictFp() {
+    }
+
+    public final java.lang.String overloads(java.lang.String a, int n) {
+        return null;
+    }
+
+    public final java.lang.String overloads(java.lang.String p0) {
+        return null;
+    }
+
+    public final java.lang.String overloads() {
+        return null;
+    }
+
+    public Modifiers() {
+        super();
+    }
+}

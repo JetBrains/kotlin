@@ -23,15 +23,21 @@ public enum Enum2 {
     private final java.lang.String col = null;
     private final int col2 = 0;
 
-    final java.lang.String color() {
+    public final java.lang.String color() {
         return null;
     }
 
-    final java.lang.String getCol() {
+    private final void privateEnumFun() {
+    }
+
+    public final void publicEnumFun() {
+    }
+
+    public final java.lang.String getCol() {
         return null;
     }
 
-    final int getCol2() {
+    public final int getCol2() {
         return 0;
     }
 

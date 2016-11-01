@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
@@ -48,7 +49,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
                 (Opcodes.ACC_DEPRECATED or Opcodes.ACC_INTERFACE or Opcodes.ACC_ANNOTATION or Opcodes.ACC_ENUM or Opcodes.ACC_STATIC).toLong()
 
         private val METHOD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
-                (Opcodes.ACC_DEPRECATED or Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_NATIVE or Opcodes.ACC_STATIC).toLong()
+                (Opcodes.ACC_DEPRECATED or Opcodes.ACC_SYNCHRONIZED or Opcodes.ACC_NATIVE or Opcodes.ACC_STATIC or Opcodes.ACC_STRICT).toLong()
 
         private val FIELD_MODIFIERS = VISIBILITY_MODIFIERS or MODALITY_MODIFIERS or
                 (Opcodes.ACC_VOLATILE or Opcodes.ACC_TRANSIENT or Opcodes.ACC_ENUM or Opcodes.ACC_STATIC).toLong()
@@ -78,12 +79,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
 
     private fun convertTopLevelClass(clazz: ClassNode): JCCompilationUnit? {
         val origin = kaptContext.origins[clazz] ?: return null
-        // ?
         val ktFile = origin.element?.containingFile as? KtFile ?: return null
-        val descriptor = origin.descriptor as? ClassDescriptor ?: return null
+        val descriptor = origin.descriptor as? DeclarationDescriptor ?: return null
 
         // Nested classes will be processed during the outer classes conversion
-        if (descriptor.isNested) return null
+        if ((descriptor as? ClassDescriptor)?.isNested ?: false) return null
 
         val classDeclaration = convertClass(clazz) ?: return null
 
@@ -106,9 +106,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
     private fun convertClass(clazz: ClassNode): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
 
-        val descriptor = kaptContext.origins[clazz]?.descriptor as? ClassDescriptor ?: return null
+        val descriptor = kaptContext.origins[clazz]?.descriptor as? DeclarationDescriptor ?: return null
+        val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
+        val isInner = isNested && (descriptor as? ClassDescriptor)?.isInner ?: false
+
         val modifiers = convertModifiers(
-                if (!descriptor.isInner && descriptor.isNested) (clazz.access or Opcodes.ACC_STATIC) else clazz.access,
+                if (!isInner && isNested) (clazz.access or Opcodes.ACC_STATIC) else clazz.access,
                 ElementKind.CLASS, clazz.visibleAnnotations, clazz.invisibleAnnotations)
 
         val isEnum = clazz.isEnum()
@@ -116,6 +119,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
 
         val isDefaultImpls = clazz.name.endsWith("${descriptor.name.asString()}/DefaultImpls")
                              && isPublic(clazz.access) && isFinal(clazz.access)
+                             && descriptor is ClassDescriptor
                              && descriptor.kind == ClassKind.INTERFACE
 
         // DefaultImpls without any contents don't have INNERCLASS'es inside it (and inside the parent interface)
@@ -195,12 +199,15 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
             method.visibleAnnotations
         }
 
-        val modifiers = convertModifiers(
-                if (containingClass.isEnum()) (method.access.toLong() and VISIBILITY_MODIFIERS.inv()) else method.access.toLong(),
-                ElementKind.METHOD, visibleAnnotations, method.invisibleAnnotations)
-
         val isConstructor = method.name == "<init>"
         val name = treeMaker.name(method.name)
+
+        val modifiers = convertModifiers(
+                if (containingClass.isEnum() && isConstructor)
+                    (method.access.toLong() and VISIBILITY_MODIFIERS.inv())
+                else
+                    method.access.toLong(),
+                ElementKind.METHOD, visibleAnnotations, method.invisibleAnnotations)
 
         val returnType = Type.getReturnType(method.desc)
         val jcReturnType = if (isConstructor) null else treeMaker.Type(returnType)
