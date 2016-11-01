@@ -30,23 +30,32 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
     private val currentStatements: MutableList<JsStatement>
         get() = currentBlock.statements
     val resultFieldName by lazy { scope.declareFreshName("\$result") }
+    val exceptionFieldName by lazy { scope.declareFreshName("\$exception") }
     val stateFieldName by lazy { scope.declareFreshName("\$state") }
     val controllerFieldName by lazy { scope.declareFreshName("\$controller") }
     val exceptionStateName by lazy { scope.declareFreshName("\$exceptionState") }
-    private val breakTargets = mutableMapOf<JsName, JsStatement>()
-    private val continueTargets = mutableMapOf<JsName, JsStatement>()
-    private var defaultBreakTarget: JsStatement = JsEmpty
-    private var defaultContinueTarget: JsStatement = JsEmpty
+    val finallyPathFieldName by lazy { scope.declareFreshName("\$finallyPath") }
+    private val breakTargets = mutableMapOf<JsName, JumpTarget>()
+    private val continueTargets = mutableMapOf<JsName, JumpTarget>()
+    private var defaultBreakTarget: JumpTarget = JumpTarget(JsEmpty, 0)
+    private var defaultContinueTarget: JumpTarget = JumpTarget(JsEmpty, 0)
     private val referencedBlocks = mutableSetOf<CoroutineBlock>()
     private val breakBlocks = mutableMapOf<JsStatement, CoroutineBlock>()
     private val continueBlocks = mutableMapOf<JsStatement, CoroutineBlock>()
     private lateinit var nodesToSplit: Set<JsNode>
     private var currentCatchBlock = globalCatchBlock
+    private val tryStack = mutableListOf(TryBlock(globalCatchBlock, null))
+
+    var hasFinallyBlocks = false
+        get
+        private set
+
+    private val currentTryDepth = tryStack.lastIndex
 
     fun preProcess(node: JsNode) {
         val nodes = mutableSetOf<JsNode>()
 
-        node.accept(object : RecursiveJsVisitor() {
+        val visitor = object : RecursiveJsVisitor() {
             var childrenInSet = false
 
             override fun visitInvocation(invocation: JsInvocation) {
@@ -57,10 +66,33 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
                 }
             }
 
+            override fun visitReturn(x: JsReturn) {
+                super.visitReturn(x)
+                nodes += x
+                childrenInSet = true
+            }
+
+            override fun visitBreak(x: JsBreak) {
+                super.visitBreak(x)
+
+                // It's a simplification
+                // TODO: don't split break and continue statements when possible
+                nodes += x
+                childrenInSet = true
+            }
+
+            override fun visitContinue(x: JsContinue) {
+                super.visitContinue(x)
+                nodes += x
+                childrenInSet = true
+            }
+
             override fun visitElement(node: JsNode) {
                 val oldChildrenInSet = childrenInSet
                 childrenInSet = false
+
                 node.acceptChildren(this)
+
                 if (childrenInSet) {
                     nodes += node
                 }
@@ -68,16 +100,20 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
                     childrenInSet = oldChildrenInSet
                 }
             }
-        })
+        }
+
+        visitor.accept(node)
+        visitor.accept(node)
 
         nodesToSplit = nodes
+
+        currentStatements += exceptionState(currentCatchBlock)
     }
 
     fun postProcess(): List<CoroutineBlock> {
-        if (entryBlock == currentBlock) return listOf(entryBlock)
-
         currentBlock.statements += JsReturn()
-        val orderedBlocks = DFS.topologicalOrder(listOf(entryBlock)) { it.collectTargetBlocks() }
+        val graph = buildBlockGraph()
+        val orderedBlocks = DFS.topologicalOrder(listOf(entryBlock)) { graph[it].orEmpty() }
         val blockIndexes = orderedBlocks.withIndex().associate { (index, block) -> Pair(block, index) }
 
         val blockReplacementVisitor = object : JsVisitorWithContextImpl() {
@@ -95,6 +131,18 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
                     val rhs = program.getNumberLiteral(blockIndexes[exceptionTarget]!!)
                     ctx.replaceMe(JsAstUtils.assignment(lhs, rhs).makeStmt())
                 }
+
+                val finallyPath = x.finallyPath
+                if (finallyPath != null) {
+                    if (finallyPath.isNotEmpty()) {
+                        val lhs = JsNameRef(finallyPathFieldName, JsLiteral.THIS)
+                        val rhs = JsArrayLiteral(finallyPath.map { program.getNumberLiteral(blockIndexes[it]!!) })
+                        ctx.replaceMe(JsAstUtils.assignment(lhs, rhs).makeStmt())
+                    }
+                    else {
+                        ctx.removeMe()
+                    }
+                }
             }
         }
         for (block in orderedBlocks) {
@@ -102,6 +150,35 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
         }
 
         return orderedBlocks
+    }
+
+    private fun buildBlockGraph(): Map<CoroutineBlock, Set<CoroutineBlock>> {
+        // That's a little more than DFS due to need of tracking finally paths
+
+        val visitedBlocks = mutableSetOf<CoroutineBlock>()
+        val graph = mutableMapOf<CoroutineBlock, MutableSet<CoroutineBlock>>()
+
+        fun visitBlock(block: CoroutineBlock) {
+            if (block in visitedBlocks) return
+
+            for (finallyPath in block.collectFinallyPaths()) {
+                for ((finallySource, finallyTarget) in (listOf(block) + finallyPath).zip(finallyPath)) {
+                    if (graph.getOrPut(finallySource) { mutableSetOf() }.add(finallyTarget)) {
+                        visitedBlocks -= finallySource
+                    }
+                }
+            }
+
+            visitedBlocks += block
+
+            val successors = graph.getOrPut(block) { mutableSetOf() }
+            successors += block.collectTargetBlocks()
+            successors.forEach(::visitBlock)
+        }
+
+        visitBlock(entryBlock)
+
+        return graph
     }
 
     override fun visitBlock(x: JsBlock) = splitIfNecessary(x) {
@@ -146,7 +223,9 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
 
             else -> splitIfNecessary(x) {
                 val successor = CoroutineBlock()
-                accept(inner)
+                withBreakAndContinue(x.name, x.statement, successor, null) {
+                    accept(inner)
+                }
                 if (successor in referencedBlocks) {
                     currentBlock.statements += stateAndJump(successor)
                     currentBlock = successor
@@ -237,66 +316,119 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
 
     override fun visitBreak(x: JsBreak) {
         val targetLabel = x.label?.name
-        val targetStatement = if (targetLabel == null) {
+        val (targetStatement, targetTryDepth) = if (targetLabel == null) {
             defaultBreakTarget
         }
         else {
             breakTargets[targetLabel]!!
         }
 
-        if (targetStatement in nodesToSplit) {
-            val targetBlock = breakBlocks[targetStatement]!!
-            referencedBlocks += targetBlock
-            currentStatements += stateAndJump(targetBlock)
-        }
-        else {
-            currentStatements += x
-        }
+        val targetBlock = breakBlocks[targetStatement]!!
+        referencedBlocks += targetBlock
+        jumpWithFinally(targetTryDepth, targetBlock)
+        currentStatements += jump()
     }
 
     override fun visitContinue(x: JsContinue) {
         val targetLabel = x.label?.name
-        val targetStatement = if (targetLabel == null) {
+        val (targetStatement, targetTryDepth) = if (targetLabel == null) {
             defaultContinueTarget
         }
         else {
             continueTargets[targetLabel]!!
         }
 
-        if (targetStatement in nodesToSplit) {
-            val targetBlock = continueBlocks[targetStatement]!!
-            referencedBlocks += targetBlock
-            currentStatements += stateAndJump(targetBlock)
+        val targetBlock = continueBlocks[targetStatement]!!
+        referencedBlocks += targetBlock
+
+        jumpWithFinally(targetTryDepth, targetBlock)
+        currentStatements += jump()
+    }
+
+    private fun jumpWithFinally(targetTryDepth: Int, successor: CoroutineBlock) {
+        if (targetTryDepth == tryStack.size) return
+
+        val tryBlock = tryStack[targetTryDepth]
+        currentStatements += exceptionState(tryBlock.catchBlock)
+
+        val relativeFinallyPath = relativeFinallyPath(targetTryDepth)
+        val fullPath = relativeFinallyPath + successor
+        if (fullPath.size > 1) {
+            currentStatements += updateFinallyPath(fullPath.drop(1))
         }
-        else {
-            currentStatements += x
-        }
+        currentStatements += state(fullPath[0])
     }
 
     override fun visitTry(x: JsTry) = splitIfNecessary(x) {
-        val catch = x.catches.firstOrNull()
+        val catchNode = x.catches.firstOrNull()
+        val finallyNode = x.finallyBlock
         val successor = CoroutineBlock()
 
         val catchBlock = CoroutineBlock()
+        val finallyBlock = CoroutineBlock()
+
+        val tryBlock = TryBlock(catchBlock, if (finallyNode != null) finallyBlock else null)
+        tryStack += tryBlock
+
         val oldCatchBlock = currentCatchBlock
-        if (catch != null) {
-            currentCatchBlock = catchBlock
-        }
+        currentCatchBlock = catchBlock
+        currentStatements += exceptionState(catchBlock)
 
         x.tryBlock.statements.forEach { it.accept(this) }
-        currentBlock.statements += stateAndJump(successor)
+        currentStatements += exceptionState(oldCatchBlock)
+        if (finallyNode != null) {
+            currentStatements += updateFinallyPath(listOf(successor))
+            currentStatements += stateAndJump(finallyBlock)
+        }
+        else {
+            currentStatements += stateAndJump(successor)
+        }
 
         currentCatchBlock = oldCatchBlock
 
-        if (catch != null) {
-            currentBlock = catchBlock
-            currentBlock.statements += JsAstUtils.newVar(catch.parameter.name, JsNameRef(resultFieldName, JsLiteral.THIS))
+        // Handle catch node
+        currentBlock = catchBlock
 
-            catch.body.statements.forEach { it.accept(this) }
-            currentBlock.statements += stateAndJump(successor)
+        if (finallyNode != null) {
+            currentStatements += updateFinallyPath(listOf(oldCatchBlock))
+            currentStatements += exceptionState(finallyBlock)
+        }
+        else {
+            currentStatements += exceptionState(oldCatchBlock)
         }
 
+        if (catchNode != null) {
+            currentStatements += JsAstUtils.newVar(catchNode.parameter.name, JsNameRef(exceptionFieldName, JsLiteral.THIS))
+            catchNode.body.statements.forEach { it.accept(this) }
+
+            if (finallyNode == null) {
+                currentStatements += stateAndJump(successor)
+            }
+            else {
+                currentStatements += updateFinallyPath(listOf(successor))
+                currentStatements += stateAndJump(finallyBlock)
+            }
+        }
+
+        // Handle finally node
+        if (finallyNode != null) {
+            currentBlock = finallyBlock
+            finallyNode.statements.forEach { it.accept(this) }
+            generateFinallyExit()
+            hasFinallyBlocks = true
+        }
+
+        tryStack.removeAt(tryStack.lastIndex)
+
         currentBlock = successor
+    }
+
+    private fun generateFinallyExit() {
+        val finallyPathRef = JsNameRef(finallyPathFieldName, JsLiteral.THIS)
+        val stateRef = JsNameRef(stateFieldName, JsLiteral.THIS)
+        val nextState = JsInvocation(JsNameRef("shift", finallyPathRef))
+        currentStatements += JsAstUtils.assignment(stateRef, nextState).makeStmt()
+        currentStatements += jump()
     }
 
     override fun visitExpressionStatement(x: JsExpressionStatement) {
@@ -323,11 +455,26 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
     }
 
     override fun visitReturn(x: JsReturn) {
+        val returnBlock = CoroutineBlock()
+        val isInFinally = hasEnclosingFinallyBlock()
+        if (isInFinally) {
+            jumpWithFinally(0, returnBlock)
+        }
+
         val returnExpression = x.expression
         if (returnExpression != null) {
             x.expression = handleExpression(returnExpression)
         }
-        currentStatements += x
+
+        if (isInFinally) {
+            currentStatements += x.expression?.makeStmt().singletonOrEmptyList()
+            currentStatements += jump()
+            currentBlock = returnBlock
+            currentStatements += JsReturn()
+        }
+        else {
+            currentStatements += x
+        }
     }
 
     override fun visitThrow(x: JsThrow) {
@@ -373,19 +520,29 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
     }
 
     private fun state(target: CoroutineBlock): List<JsStatement> {
-        val nextPlaceholder = JsDebugger()
-        nextPlaceholder.targetBlock = target
+        val placeholder = JsDebugger()
+        placeholder.targetBlock = target
 
-        val exceptionPlaceholder = JsDebugger()
-        exceptionPlaceholder.targetExceptionBlock = currentCatchBlock
-
-        return listOf(nextPlaceholder, exceptionPlaceholder)
+        return listOf(placeholder)
     }
 
     private fun jump() = JsContinue()
 
     private fun stateAndJump(target: CoroutineBlock): List<JsStatement> {
         return state(target) + jump()
+    }
+
+    private fun exceptionState(target: CoroutineBlock): List<JsStatement> {
+        val placeholder = JsDebugger()
+        placeholder.targetExceptionBlock = target
+
+        return listOf(placeholder)
+    }
+
+    private fun updateFinallyPath(path: List<CoroutineBlock>): List<JsStatement> {
+        val placeholder = JsDebugger()
+        placeholder.finallyPath = path
+        return listOf(placeholder)
     }
 
     private inline fun splitIfNecessary(statement: JsStatement, action: () -> Unit) {
@@ -418,15 +575,15 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
             Pair(null, null)
         }
 
-        defaultBreakTarget = statement
+        defaultBreakTarget = JumpTarget(statement, currentTryDepth)
         if (label != null) {
-            breakTargets[label] = statement
+            breakTargets[label] = JumpTarget(statement, currentTryDepth)
             if (continueBlock != null) {
-                continueTargets[label] = statement
+                continueTargets[label] = JumpTarget(statement, currentTryDepth)
             }
         }
         if (continueBlock != null) {
-            defaultContinueTarget = statement
+            defaultContinueTarget = JumpTarget(statement, currentTryDepth)
         }
 
         action()
@@ -448,7 +605,15 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
             }
         }
     }
+
+    private fun relativeFinallyPath(targetTryDepth: Int) = tryStack.subList(targetTryDepth, tryStack.size).mapNotNull { it.finallyBlock }
+
+    private fun hasEnclosingFinallyBlock() = tryStack.any { it.finallyBlock != null }
 }
+
+private data class JumpTarget(val statement: JsStatement, val tryDepth: Int)
+
+private class TryBlock(val catchBlock: CoroutineBlock, val finallyBlock: CoroutineBlock?)
 
 private fun CoroutineBlock.collectTargetBlocks(): Set<CoroutineBlock> {
     val targetBlocks = mutableSetOf<CoroutineBlock>()
@@ -460,5 +625,16 @@ private fun CoroutineBlock.collectTargetBlocks(): Set<CoroutineBlock> {
     return targetBlocks
 }
 
+private fun CoroutineBlock.collectFinallyPaths(): List<List<CoroutineBlock>> {
+    val finallyPaths = mutableListOf<List<CoroutineBlock>>()
+    jsBlock.accept(object : RecursiveJsVisitor() {
+        override fun visitDebugger(x: JsDebugger) {
+            x.finallyPath?.let { finallyPaths += it }
+        }
+    })
+    return finallyPaths
+}
+
 private var JsDebugger.targetBlock: CoroutineBlock? by MetadataProperty(default = null)
 private var JsDebugger.targetExceptionBlock: CoroutineBlock? by MetadataProperty(default = null)
+private var JsDebugger.finallyPath: List<CoroutineBlock>? by MetadataProperty(default = null)

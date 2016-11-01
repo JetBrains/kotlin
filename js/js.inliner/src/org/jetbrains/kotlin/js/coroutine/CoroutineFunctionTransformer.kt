@@ -98,6 +98,10 @@ class CoroutineFunctionTransformer(
 
         constructor.body.statements.run {
             assign(bodyTransformer.stateFieldName, program.getNumberLiteral(0))
+            assign(bodyTransformer.exceptionStateName, program.getNumberLiteral(0))
+            if (bodyTransformer.hasFinallyBlocks) {
+                assign(bodyTransformer.finallyPathFieldName, JsLiteral.NULL)
+            }
             assign(bodyTransformer.controllerFieldName, controllerName.makeRef())
             for (localVariable in localVariables) {
                 val value = if (localVariable !in parameterNames) JsLiteral.NULL else localVariable.makeRef()
@@ -185,13 +189,24 @@ class CoroutineFunctionTransformer(
             throwName: JsName?,
             exceptionName: JsName
     ): List<JsStatement> {
+        val indexOfGlobalCatch = blocks.indexOf(transformer.globalCatchBlock)
+        val stateRef = JsNameRef(transformer.stateFieldName, JsLiteral.THIS)
+
+        val isFromGlobalCatch = JsAstUtils.equality(stateRef, program.getNumberLiteral(indexOfGlobalCatch))
         val catch = JsCatch(functionWithBody.scope, "e")
+        val continueWithException = JsBlock(
+                JsAstUtils.assignment(stateRef.deepCopy(), JsNameRef(transformer.exceptionStateName, JsLiteral.THIS)).makeStmt(),
+                JsAstUtils.assignment(JsNameRef(transformer.exceptionFieldName, JsLiteral.THIS), catch.parameter.name.makeRef()).makeStmt()
+        )
+        catch.body = JsBlock(JsIf(isFromGlobalCatch, JsThrow(catch.parameter.name.makeRef()), continueWithException))
+
+        val throwResultRef = JsNameRef(transformer.exceptionFieldName, JsLiteral.THIS)
         if (throwName != null) {
             val throwMethodRef = JsNameRef(throwName, JsNameRef(transformer.controllerFieldName, JsLiteral.THIS))
-            catch.body = JsBlock(JsReturn(JsInvocation(throwMethodRef, catch.parameter.name.makeRef())))
-
-            val resultRef = JsNameRef(transformer.resultFieldName, JsLiteral.THIS)
-            transformer.globalCatchBlock.statements += JsReturn(JsInvocation(throwMethodRef.deepCopy(), resultRef))
+            transformer.globalCatchBlock.statements += JsReturn(JsInvocation(throwMethodRef.deepCopy(), throwResultRef))
+        }
+        else {
+            transformer.globalCatchBlock.statements += JsThrow(throwResultRef)
         }
 
         val cases = blocks.withIndex().map { (index, block) ->
@@ -200,20 +215,18 @@ class CoroutineFunctionTransformer(
                 statements += block.statements
             }
         }
-        val stateRef = JsNameRef(transformer.stateFieldName, JsLiteral.THIS)
-        val switchStatement = JsSwitch(stateRef, cases)
-        val loop = JsDoWhile(JsLiteral.TRUE, switchStatement)
+        val switchStatement = JsSwitch(stateRef.deepCopy(), cases)
+        val loop = JsDoWhile(JsLiteral.TRUE, JsTry(JsBlock(switchStatement), catch, null))
 
         val testExceptionPassed = JsAstUtils.notOptimized(
                 JsAstUtils.typeOfIs(exceptionName.makeRef(), program.getStringLiteral("undefined")))
         val stateToException = JsAstUtils.assignment(
                 JsNameRef(transformer.stateFieldName, JsLiteral.THIS),
                 JsNameRef(transformer.exceptionStateName, JsLiteral.THIS))
-        val exceptionToResult = JsAstUtils.assignment(JsNameRef(transformer.resultFieldName, JsLiteral.THIS), exceptionName.makeRef())
+        val exceptionToResult = JsAstUtils.assignment(JsNameRef(transformer.exceptionFieldName, JsLiteral.THIS), exceptionName.makeRef())
         val throwExceptionIfNeeded = JsIf(testExceptionPassed, JsBlock(stateToException.makeStmt(), exceptionToResult.makeStmt()))
 
-        val resultBlock = JsBlock(throwExceptionIfNeeded, loop)
-        return if (throwName != null) listOf(JsTry(resultBlock, catch, null)) else resultBlock.statements
+        return listOf(throwExceptionIfNeeded, loop)
     }
 
     private fun JsBlock.replaceHandleResult(transformer: CoroutineBodyTransformer) {
