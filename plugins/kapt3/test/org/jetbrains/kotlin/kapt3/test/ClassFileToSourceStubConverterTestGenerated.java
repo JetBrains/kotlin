@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFileToSourceStubConverterTest {
+    @TestMetadata("abstractMethods.kt")
+    public void testAbstractMethods() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/abstractMethods.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInConverter() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/testData/converter"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -38,6 +44,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/annotations.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("annotations2.kt")
+    public void testAnnotations2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/annotations2.kt");
         doTest(fileName);
     }
 
@@ -65,6 +77,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("genericRawSignatures.kt")
+    public void testGenericRawSignatures() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/genericRawSignatures.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("genericSimple.kt")
     public void testGenericSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/genericSimple.kt");
@@ -83,9 +101,33 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("jvmStaticFieldInParent.kt")
+    public void testJvmStaticFieldInParent() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/jvmStaticFieldInParent.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("modifiers.kt")
+    public void testModifiers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/modifiers.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/nestedClasses.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("strangeNames.kt")
+    public void testStrangeNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/strangeNames.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("topLevel.kt")
+    public void testTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/topLevel.kt");
         doTest(fileName);
     }
 }
