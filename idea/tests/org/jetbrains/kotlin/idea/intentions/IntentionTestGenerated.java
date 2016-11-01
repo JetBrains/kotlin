@@ -4831,6 +4831,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/topLevelFun.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("validOverload.kt")
+        public void testValidOverload() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReceiverToParameter/validOverload.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary")

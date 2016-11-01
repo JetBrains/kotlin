@@ -40,6 +40,10 @@
 - [`KT-14745`](https://youtrack.jetbrains.com/issue/KT-14745) KotlinNullPointerException in ConvertPrimaryConstructorToSecondary
 - [`KT-14791`](https://youtrack.jetbrains.com/issue/KT-14791) Incorrect "remove redundant .let" inspection for value with smart cast
 
+#### Refactorings
+
+##### Issues fixed
+- [`KT-14583`](https://youtrack.jetbrains.com/issue/KT-14583) Change Signature: Use new signature when looking for redeclaration conflicts
 
 #### Debugger
 - [`KT-13485`](https://youtrack.jetbrains.com/issue/KT-13485) Fix: Smart Step Into can't enter function in object
