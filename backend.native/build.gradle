@@ -152,7 +152,7 @@ task run(type: JavaExec) {
 
    args 'tests/codegen/function/sum.kt'
 
-   args project(':runtime').file('src/main/kotlin')
+   args '-headers', project(':runtime').file('src/main/kotlin')
 
    args '-output', "$buildDir/out.bc"
 
