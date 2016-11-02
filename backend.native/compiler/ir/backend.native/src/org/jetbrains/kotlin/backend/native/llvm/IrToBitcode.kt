@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescripto
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -126,7 +129,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         generator.store(value!!, generator.variable(expression.descriptor.name.asString())!!)
     }
 
-    private fun evaluateExpression(tmpVariableName: String, value: IrExpression?): LLVMOpaqueValue? {
+    private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMOpaqueValue? {
         when (value) {
             is IrCall -> return evaluateCall(tmpVariableName, value)
             is IrGetValue -> {
@@ -146,6 +149,17 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                     }
                 }
 
+            }
+            is IrSetVariable -> {
+                val ret = evaluateExpression(generator.tmpVariable(), value.value)
+                return generator.store(ret!!, generator.variable(value.descriptor.name.asString())!!)
+            }
+            is IrVariable -> {
+                val ret = evaluateExpression(generator.tmpVariable(), value.initializer)
+                val variableName = value.descriptor.name.asString()
+                val variable = generator.alloca(LLVMTypeOf(ret), variableName)
+                generator.registerVariable(variableName, ret!!)
+                return generator.store(ret, variable)
             }
             is IrGetField -> {
                 if (value.descriptor.dispatchReceiverParameter != null) {
@@ -168,6 +182,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 IrConstKind.String  -> TODO()
                 IrConstKind.Float   -> TODO()
                 IrConstKind.Double  -> TODO()
+            }
+
+            is IrBlock -> {
+
+                value.statements.dropLast(1).forEach {
+                    evaluateExpression(generator.tmpVariable(), it)
+                }
+                return evaluateExpression(generator.tmpVariable(), value.statements.lastOrNull())
             }
 
             null -> return null
@@ -193,7 +215,56 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 TODO()
             }
         }
+    }
 
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateGetValue(tmpVariableName: String, value: IrGetValue): LLVMOpaqueValue {
+        when (value.descriptor) {
+            is LocalVariableDescriptor,
+            is ValueParameterDescriptor,
+            is IrTemporaryVariableDescriptor -> {
+                val variable = generator.variable(value.descriptor.name.asString())
+                return generator.load(variable!!, tmpVariableName)
+            }
+            is LazyClassReceiverParameterDescriptor -> {
+                if (value.descriptor.name.asString() == "<this>") {
+                    return generator.load(generator.thisVariable(), tmpVariableName)
+                }
+                TODO()
+            }
+            else -> {
+                TODO()
+            }
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateSetVariable(value: IrSetVariable): LLVMOpaqueValue {
+        val ret = evaluateExpression(generator.tmpVariable(), value.value)
+        return generator.store(ret!!, generator.variable(value.descriptor.name.asString())!!)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateVariable(value: IrVariable): LLVMOpaqueValue {
+        val ret = evaluateExpression(generator.tmpVariable(), value.initializer)
+        val variableName = value.descriptor.name.asString()
+        val variable = generator.alloca(LLVMTypeOf(ret), variableName)
+        generator.registerVariable(variableName, variable)
+        return generator.store(ret!!, variable)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateGetField(value: IrGetField): LLVMOpaqueValue {
+        if (value.descriptor.dispatchReceiverParameter != null) {
+            val thisPtr = generator.load(generator.thisVariable(), generator.tmpVariable())
+            val typedPtr = generator.bitcast(pointerType(generator.classType(generator.currentClass!!)), thisPtr, generator.tmpVariable())
+            val fieldPtr = LLVMBuildStructGEP(generator.context.llvmBuilder, typedPtr, generator.indexInClass(value.descriptor), generator.tmpVariable())
+            return generator.load(fieldPtr!!, generator.tmpVariable())
+        }
         TODO()
     }
 
