@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUsageFactory<KtExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtExpression? {
@@ -62,7 +63,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
 
         if (isApplicableForAccessor(propertyDescriptor.getter)) {
             val getterInfo = FunctionInfo(
-                    name = "getValue",
+                    name = OperatorNameConventions.GET_VALUE.asString(),
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(propertyType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam),
@@ -74,7 +75,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         if (propertyDescriptor.isVar && isApplicableForAccessor(propertyDescriptor.setter)) {
             val newValueParam = ParameterInfo(TypeInfo(propertyType, Variance.IN_VARIANCE))
             val setterInfo = FunctionInfo(
-                    name = "setValue",
+                    name = OperatorNameConventions.SET_VALUE.asString(),
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam, newValueParam),

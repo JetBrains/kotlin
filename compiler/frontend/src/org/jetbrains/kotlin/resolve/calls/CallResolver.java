@@ -257,7 +257,7 @@ public class CallResolver {
 
         Call.CallType callType = context.call.getCallType();
         if (callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD) {
-            Name name = Name.identifier(callType == Call.CallType.ARRAY_GET_METHOD ? "get" : "set");
+            Name name = callType == Call.CallType.ARRAY_GET_METHOD ? OperatorNameConventions.GET : OperatorNameConventions.SET;
             KtArrayAccessExpression arrayAccessExpression = (KtArrayAccessExpression) context.call.getCallElement();
             return computeTasksAndResolveCall(
                     context, name, arrayAccessExpression,

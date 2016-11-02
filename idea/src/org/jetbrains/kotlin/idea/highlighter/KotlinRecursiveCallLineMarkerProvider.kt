@@ -33,13 +33,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.util.HashSet
+import java.util.*
 
 class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement) = null
@@ -159,7 +158,7 @@ private fun getCallNameFromPsi(element: KtElement): Name? {
             }
         }
         is KtArrayAccessExpression ->
-            return Name.identifier("get")
+            return OperatorNameConventions.GET
         is KtThisExpression ->
             if (element.getParent() is KtCallExpression) {
                 return OperatorNameConventions.INVOKE

@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 class ControlFlowInformationProvider private constructor(
@@ -647,13 +648,13 @@ class ControlFlowInformationProvider private constructor(
                 val functionDescriptor =
                         trace.get(DECLARATION_TO_DESCRIPTOR, owner) as? FunctionDescriptor
                         ?: throw AssertionError(owner.text)
-                val functionName = functionDescriptor.name.asString()
+                val functionName = functionDescriptor.name
                 if (isMain
                     || functionDescriptor.isOverridableOrOverrides
                     || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                    || "getValue" == functionName
-                    || "setValue" == functionName
-                    || "propertyDelegated" == functionName) {
+                    || OperatorNameConventions.GET_VALUE == functionName
+                    || OperatorNameConventions.SET_VALUE == functionName
+                    || OperatorNameConventions.PROPERTY_DELEGATED == functionName) {
                     return
                 }
                 report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Parame
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 object CreateGetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet = true) {
@@ -32,6 +33,8 @@ object CreateGetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet 
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
         val parameters = element.indexExpressions.map { ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE)) }
         val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters, isOperator = true)
+        return FunctionInfo(
+                OperatorNameConventions.GET.asString(), arrayType, returnType, Collections.emptyList(), parameters, isOperator = true
+        )
     }
 }
