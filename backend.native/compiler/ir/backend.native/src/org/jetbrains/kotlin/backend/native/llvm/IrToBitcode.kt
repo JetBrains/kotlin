@@ -361,12 +361,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
         logger.log("evaluateCall $tmpVariableName = ${ir2string(callee)}")
         when (callee.origin) {
-            IrStatementOrigin.PLUS  -> return generator.plus  (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.MINUS -> return generator.minus (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.MUL   -> return generator.mul   (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.DIV   -> return generator.div   (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.PERC  -> return generator.srem  (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.EQEQ  -> return generator.icmpEq(args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.PLUS     -> return generator.plus  (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.MINUS    -> return generator.minus (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.PLUSEQ   -> return generator.plus  (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.MINUSEQ  -> return generator.minus (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.MUL      -> return generator.mul   (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.DIV      -> return generator.div   (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.PERC     -> return generator.srem  (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.EQEQ     -> return generator.icmpEq(args[0]!!, args[1]!!, tmpVariableName)
             else -> {
                 TODO()
             }
