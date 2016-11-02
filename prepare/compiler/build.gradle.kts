@@ -69,11 +69,19 @@ val protobufLiteProject = ":custom-dependencies:protobuf-lite"
 fun KotlinDependencyHandler.protobufLite(): ProjectDependency =
         project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
 val protobufLiteTask = "$protobufLiteProject:prepare"
+fun KotlinDependencyHandler.protobufFull(): ProjectDependency =
+        project(protobufLiteProject, configuration = "relocated").apply { isTransitive = false }
+val protobufFullTask = "$protobufLiteProject:prepare-relocated-protobuf"
 
 // TODO: common ^ 8< ----
 
 // Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build
 val shrink = true
+val bootstrapBuild = false
+
+val compilerManifestClassPath =
+    if (bootstrapBuild) "kotlin-runtime-internal-bootstrap.jar kotlin-reflect-internal-bootstrap.jar kotlin-script-runtime-internal-bootstrap.jar"
+    else "kotlin-runtime.jar kotlin-reflect.jar kotlin-script-runtime.jar"
 
 val compilerClassesCfg = configurations.create("compiler-classes")
 val ideaSdkCoreCfg = configurations.create("ideaSdk-core")
@@ -98,7 +106,7 @@ dependencies {
     ideaSdkCoreCfg(files("$rootDir/ideaSDK/jps/jps-model.jar"))
     otherDepsCfg(commonDep("javax.inject"))
     otherDepsCfg(commonDep("jline"))
-    otherDepsCfg(protobufLite())
+    otherDepsCfg(protobufFull())
     otherDepsCfg(commonDep("com.github.spullara.cli-parser", "cli-parser"))
     otherDepsCfg(commonDep("com.google.code.findbugs", "jsr305"))
     buildVersion()
@@ -112,7 +120,7 @@ val packCompilerTask = task<ShadowJar>("internal.pack-compiler") {
     configurations = listOf(mainCfg)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveName = if (shrink) outputBeforeSrinkJar else outputJar
-    dependsOn(compilerProject.path + ":classes", protobufLiteTask)
+    dependsOn(compilerProject.path + ":classes", protobufFullTask)
     setupRuntimeJar("Kotlin Compiler")
     from(compilerProject.getCompiledClasses())
     from(ideaSdkCoreCfg.files)
@@ -129,9 +137,8 @@ val packCompilerTask = task<ShadowJar>("internal.pack-compiler") {
     }
     from(fileTree("$rootDir/resources")) { include("kotlinManifest.properties") }
 
-    doFirst {
-        source.forEach { if (!it.name.endsWith(".class")) println("!!! $it") }
-    }
+    manifest.attributes.put("Class-Path", compilerManifestClassPath)
+    manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 }
 
 val proguardTask = task<ProGuardTask>("internal.proguard-compiler") {

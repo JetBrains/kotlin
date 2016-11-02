@@ -1,7 +1,5 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.tasks.SourceTask
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -26,27 +24,24 @@ repositories {
 }
 
 val mainCfg = configurations.create("default")
+val relocatedCfg = configurations.create("relocated")
 
 val protobufVersion = rootProject.extra["versions.protobuf-java"]
 val protobufJarPrefix = "protobuf-$protobufVersion"
-val renamedOutputJarPathWithoutExt = "$buildDir/jars/$protobufJarPrefix-relocated"
-val renamedOutputJarPath = "$renamedOutputJarPathWithoutExt.jar"
+val renamedOutputJarPath = "$buildDir/jars/$protobufJarPrefix-relocated.jar"
 val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
 
 artifacts.add(mainCfg.name, File(outputJarPath))
+artifacts.add(relocatedCfg.name, File(renamedOutputJarPath))
 
 dependencies {
-    mainCfg.name("com.google.protobuf:protobuf-java:$protobufVersion")
+    mainCfg("com.google.protobuf:protobuf-java:$protobufVersion")
 }
 
-val relocateTask = task<ShadowJar>("internal.relocate-protobuf") {
-    classifier = renamedOutputJarPathWithoutExt // TODO: something fishy about the usage here, according to docs only suffix is enough here, but it doesn't work
-    this.configurations = listOf(mainCfg)
+val relocateTask = task<ShadowJar>("prepare-relocated-protobuf") {
+    archiveName = renamedOutputJarPath
+    this.configurations = listOf(relocatedCfg)
     from(mainCfg.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath)
-//    into(jarsDir)
-//    doFirst {
-//        File(jarsDir).mkdirs()
-//    }
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
         exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
     }
