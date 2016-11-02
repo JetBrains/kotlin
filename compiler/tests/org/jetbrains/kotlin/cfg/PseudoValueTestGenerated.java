@@ -165,6 +165,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/bugs/setWithTypeMismatch.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("unresolvedInvokeOnResolvedVar.kt")
+            public void testUnresolvedInvokeOnResolvedVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/bugs/unresolvedInvokeOnResolvedVar.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/cfg/controlStructures")
