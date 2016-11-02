@@ -455,9 +455,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val rhsArgument = valueArguments.lastOrNull()
             var argumentValues = SmartFMap.emptyMap<PseudoValue, ValueParameterDescriptor>()
             for (valueArgument in valueArguments) {
-                val argumentMapping = setResolvedCall.getArgumentMapping(valueArgument)
-                if (argumentMapping.isError() || argumentMapping !is ArgumentMatch) continue
-
+                val argumentMapping = setResolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: continue
                 val parameterDescriptor = argumentMapping.valueParameter
                 if (valueArgument !== rhsArgument) {
                     argumentValues = generateValueArgument(valueArgument, parameterDescriptor, argumentValues)

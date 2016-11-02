@@ -1,0 +1,56 @@
+== A ==
+class A
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== set ==
+fun A.set(n: Int, m: Int) {
+
+}
+---------------------
+L0:
+  1 <START>
+    v(n: Int)
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>
+    w(n|<v0>)
+    v(m: Int)
+    magic[FAKE_INITIALIZER](m: Int) -> <v1>
+    w(m|<v1>)
+  2 mark({ })
+    read (Unit)
+L1:
+  1 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== test ==
+fun test() {
+    A()["1"] = 2
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ A()["1"] = 2 })
+    mark(A()["1"])
+    mark(A())
+    call(A(), <init>) -> <v0>
+    mark("1")
+    r("1") -> <v1>
+    r(2) -> <v2>
+    call(A()["1"] = 2, set|<v0>, <v1>, <v2>) -> <v3>
+L1:
+  1 <END>                                               NEXT:[<SINK>]
+error:
+    <ERROR>                                             PREV:[]
+sink:
+    <SINK>                                              PREV:[<ERROR>, <END>]
+=====================

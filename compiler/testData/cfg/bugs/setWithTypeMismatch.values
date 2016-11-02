@@ -1,0 +1,23 @@
+== A ==
+class A
+---------------------
+=====================
+== set ==
+fun A.set(n: Int, m: Int) {
+
+}
+---------------------
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](n: Int) -> <v0>
+    <v1>: Int   NEW: magic[FAKE_INITIALIZER](m: Int) -> <v1>
+=====================
+== test ==
+fun test() {
+    A()["1"] = 2
+}
+---------------------
+A()                <v0>: A     NEW: call(A(), <init>) -> <v0>
+"1"                <v1>: Int   NEW: r("1") -> <v1>
+2                  <v2>: Int   NEW: r(2) -> <v2>
+A()["1"] = 2       <v3>: *     NEW: call(A()["1"] = 2, set|<v0>, <v1>, <v2>) -> <v3>
+{ A()["1"] = 2 }   <v3>: *     COPY
+=====================
