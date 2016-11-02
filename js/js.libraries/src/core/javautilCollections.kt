@@ -1,13 +1,6 @@
 package java.util
 
-import java.lang.*
-import java.util.*
-import kotlin.comparisons.*
-
 public object Collections {
-    @Deprecated("Use collection.maxWith(comparator) instead.", ReplaceWith("col.maxWith(comp)"))
-    public fun <T> max(col: Collection<T>, comp: Comparator<in T>): T = java.util.max(col, comp)
-
     @Deprecated("Use list.reverse() instead.", ReplaceWith("list.reverse()"))
     public fun <T> reverse(list: MutableList<T>): Unit {
         val size = list.size
@@ -19,6 +12,3 @@ public object Collections {
         }
     }
 }
-
-@library("collectionsMax")
-private fun <T> max(col: Collection<T>, comp: Comparator<in T>): T = noImpl

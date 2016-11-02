@@ -759,22 +759,6 @@
         compare: throwAbstractFunctionInvocationError("Comparator#compare")
     });
 
-    Kotlin.collectionsMax = function (c, comp) {
-        if (c.isEmpty()) {
-            //TODO: which exception?
-            throw new Error();
-        }
-        var it = c.iterator();
-        var max = it.next();
-        while (it.hasNext()) {
-            var el = it.next();
-            if (comp.compare(max, el) < 0) {
-                max = el;
-            }
-        }
-        return max;
-    };
-
     Kotlin.collectionsSort = function (mutableList, comparator) {
         var boundComparator = void 0;
         if (comparator !== void 0) {

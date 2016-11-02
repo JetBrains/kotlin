@@ -1,19 +1,11 @@
 package test.collections.js
 
-import java.util.*
-
 import kotlin.test.*
-import org.junit.Test as test
 import kotlin.comparisons.*
+import org.junit.Test as test
 
 class JsCollectionsTest {
     val TEST_LIST = arrayOf(2, 0, 9, 7, 1).toList()
-    val MAX_ELEMENT = 9
-    val COMPARATOR = Comparator { x: Int, y: Int ->  if (x > y) 1 else if (x < y) -1 else 0 }
-
-    @test fun maxWithComparator() {
-        assertEquals(MAX_ELEMENT, Collections.max(TEST_LIST, COMPARATOR))
-    }
 
     @test fun collectionToArray() {
         val array = TEST_LIST.toTypedArray()
