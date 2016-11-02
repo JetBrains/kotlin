@@ -2875,6 +2875,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/invoke/invokeWithExplicitParamNamesOnUserType.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("lambdaArgument.kt")
+                public void testLambdaArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/invoke/lambdaArgument.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/iterator")
