@@ -1,0 +1,21 @@
+public final class A {
+    public final static field INSTANCE: A
+    private method <init>(): void
+    public final static @kotlin.jvm.JvmStatic method plusAssign(@org.jetbrains.annotations.NotNull p0: B, @org.jetbrains.annotations.NotNull p1: B): void
+    public final method test1(@org.jetbrains.annotations.NotNull p0: B): void
+}
+
+
+public final class B {
+    private field s: int
+    public method <init>(): void
+    public method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getS(): int
+    public final method setS(p0: int): void
+}
+
+
+public final class ConventionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

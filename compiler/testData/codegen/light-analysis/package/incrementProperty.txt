@@ -1,0 +1,12 @@
+public final class IncrementPropertyKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Slot {
+    private field vitality: int
+    public method <init>(): void
+    public final method getVitality(): int
+    public final method increaseVitality(p0: int): void
+    public final method setVitality(p0: int): void
+}

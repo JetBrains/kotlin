@@ -1,0 +1,11 @@
+public final class A {
+    public method <init>(): void
+    public final method f1(p0: int): void
+    public final method f2(p0: int): void
+    public final method f3(@org.jetbrains.annotations.NotNull p0: A): void
+}
+
+
+public final class ThisReferencesKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,4 @@
+public final class IntDoubleKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method checkLess(p0: int, p1: double): java.lang.String
+}

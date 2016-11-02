@@ -1,0 +1,21 @@
+public final class BasicmethodSuperTraitKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class N {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method extra(): java.lang.String
+}
+
+
+public interface Tr {
+    inner class Tr/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method extra(): java.lang.String
+}
+
+
+public final class Tr/DefaultImpls {
+    inner class Tr/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method extra(p0: Tr): java.lang.String
+}

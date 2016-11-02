@@ -1,0 +1,20 @@
+public final class A {
+    public final static field INSTANCE: A
+    private final static field p: java.lang.String
+    inner class A/B
+    private method <init>(): void
+}
+
+
+public final class A/B {
+    public final static field INSTANCE: A.B
+    private final static @org.jetbrains.annotations.NotNull field z: java.lang.String
+    inner class A/B
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
+}
+
+
+public final class SyntheticAccessorKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

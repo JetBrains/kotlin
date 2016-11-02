@@ -1,0 +1,21 @@
+public interface A {
+    public abstract method foo(): int
+}
+
+
+public interface B {
+    public abstract method foo(): int
+}
+
+
+public final class Kt3414Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Z {
+    private final @org.jetbrains.annotations.NotNull field a: A
+    public method <init>(@org.jetbrains.annotations.NotNull p0: A): void
+    public method foo(): int
+    public final @org.jetbrains.annotations.NotNull method getA(): A
+}

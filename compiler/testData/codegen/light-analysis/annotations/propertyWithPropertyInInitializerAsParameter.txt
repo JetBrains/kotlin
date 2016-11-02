@@ -1,0 +1,17 @@
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class Ann {
+    public abstract method i(): int
+}
+
+@Ann
+public final class MyClass {
+    public method <init>(): void
+}
+
+
+public final class PropertyWithPropertyInInitializerAsParameterKt {
+    public final static field i2: int
+    public final static field i: int
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

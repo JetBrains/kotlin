@@ -1,0 +1,18 @@
+public final class A {
+    inner class A/Inner
+    public method <init>(): void
+}
+
+
+public final class A/Inner {
+    private final field result: int
+    synthetic final field this$0: A
+    inner class A/Inner
+    public method <init>(p0: A, p1: int): void
+    public final method getResult(): int
+}
+
+
+public final class InnerConstructorFromTopLevelOneStringArgKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

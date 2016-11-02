@@ -1,0 +1,12 @@
+public final class Kt4733Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Test {
+    public method <init>(): void
+    public final method getFoo(p0: int): int
+    public final method getFoo(p0: long): long
+    public final @org.jetbrains.annotations.Nullable method testInt(): java.lang.Integer
+    public final @org.jetbrains.annotations.Nullable method testLong(): java.lang.Long
+}

@@ -1,0 +1,8 @@
+public class C {
+    public method <init>(): void
+}
+
+
+public final class LambdaInLocalClassConstructorKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

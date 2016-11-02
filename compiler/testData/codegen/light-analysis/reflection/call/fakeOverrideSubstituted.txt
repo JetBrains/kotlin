@@ -1,0 +1,16 @@
+public class A {
+    private final field t: java.lang.Object
+    public method <init>(p0: java.lang.Object): void
+    public final method foo(): java.lang.Object
+    public final method getT(): java.lang.Object
+}
+
+
+public final class B {
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+
+public final class FakeOverrideSubstitutedKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,19 @@
+public final class B {
+    private final field x: int
+    public method <init>(p0: int): void
+    public final method foo(): void
+    public final method getX(): int
+}
+
+
+public final class Kt4176Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public class Z {
+    private final field s: int
+    public method <init>(p0: int): void
+    public method a(): void
+    public final method getS(): int
+}

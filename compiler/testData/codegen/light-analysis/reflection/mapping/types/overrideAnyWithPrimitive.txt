@@ -1,0 +1,16 @@
+public final class A {
+    public method <init>(): void
+    public final method bar(p0: long): int
+    public @org.jetbrains.annotations.NotNull method foo(): java.lang.Integer
+    public synthetic method foo(): java.lang.Object
+}
+
+
+public interface I {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
+}
+
+
+public final class OverrideAnyWithPrimitiveKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,26 @@
+public final class C {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method iterator(): It
+}
+
+
+public final class ForLoopMemberExtensionNextKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method foo(p0: int): void
+}
+
+
+public final class It {
+    private field hasNext: boolean
+    public method <init>(): void
+    public final method getHasNext(): boolean
+    public final method hasNext(): boolean
+    public final method setHasNext(p0: boolean): void
+}
+
+
+public final class X {
+    public method <init>(): void
+    public final method next(@org.jetbrains.annotations.NotNull p0: It): int
+    public final method test(): void
+}

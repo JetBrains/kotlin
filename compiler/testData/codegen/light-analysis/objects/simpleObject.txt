@@ -1,0 +1,11 @@
+public final class A {
+    public final static field INSTANCE: A
+    private final static field x: int
+    private method <init>(): void
+    public final method getX(): int
+}
+
+
+public final class SimpleObjectKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

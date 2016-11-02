@@ -1,0 +1,14 @@
+public abstract class C {
+    public method <init>(): void
+    public final method test(p0: int): void
+}
+
+
+public final class D {
+    public method <init>(): void
+}
+
+
+public final class Kt4281Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

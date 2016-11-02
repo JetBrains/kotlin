@@ -1,0 +1,19 @@
+public final class Kt1018Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class StockMarketTableModel {
+    private final static field COLUMN_TITLES: java.lang.Integer[]
+    public final static field Companion: StockMarketTableModel.Companion
+    inner class StockMarketTableModel/Companion
+    public method <init>(): void
+    public final method getColumnCount(): int
+}
+
+
+public final static class StockMarketTableModel/Companion {
+    inner class StockMarketTableModel/Companion
+    private method <init>(): void
+    private final method getCOLUMN_TITLES(): java.lang.Integer[]
+}

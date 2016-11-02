@@ -1,0 +1,4 @@
+public final class CopyToArrayKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method copy(p0: java.util.Collection): java.lang.Object[]
+}

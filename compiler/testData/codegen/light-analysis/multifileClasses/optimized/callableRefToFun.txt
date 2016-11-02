@@ -1,0 +1,13 @@
+public final class BoxKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class a/MultifileClass {
+    public final static @org.jetbrains.annotations.NotNull method ok(): java.lang.String
+}
+
+
+synthetic final class a/MultifileClass__Part1Kt {
+    public final static @org.jetbrains.annotations.NotNull method ok(): java.lang.String
+}

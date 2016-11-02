@@ -1,0 +1,3 @@
+public final class WaitKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

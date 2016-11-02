@@ -1,0 +1,4 @@
+@StringHolder
+public final class FileFacadeKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

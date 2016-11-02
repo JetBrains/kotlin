@@ -1,0 +1,30 @@
+public final class A {
+    private final field result: int
+    inner class A/B
+    inner class A/C
+    public method <init>(): void
+    public method <init>(p0: int): void
+    public final method getResult(): int
+}
+
+
+public final class A/B {
+    public final static field INSTANCE: A.B
+    private final static field prop: int
+    inner class A/B
+    private method <init>(): void
+    public final method bar(): int
+    public final method getProp(): int
+}
+
+
+public final class A/C {
+    public final static field INSTANCE: A.C
+    inner class A/C
+    private method <init>(): void
+}
+
+
+public final class AccessToNestedObjectKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

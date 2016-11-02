@@ -1,0 +1,4 @@
+public final class FunctionWithoutAnnotationKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method withoutAnnotation(p0: int): int
+}

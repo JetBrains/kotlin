@@ -1,0 +1,4 @@
+public final class KKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method test(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KFunction): void
+}

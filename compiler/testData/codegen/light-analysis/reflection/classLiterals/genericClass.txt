@@ -1,0 +1,8 @@
+public final class Generic {
+    public method <init>(): void
+}
+
+
+public final class GenericClassKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

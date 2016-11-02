@@ -1,0 +1,14 @@
+public interface A {
+    public abstract @org.jetbrains.annotations.Nullable method foo(): java.lang.Object
+}
+
+
+public interface B {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class IntersectionTypeSmartcastKt {
+    public final static @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

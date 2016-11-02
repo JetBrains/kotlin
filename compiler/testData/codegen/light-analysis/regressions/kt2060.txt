@@ -1,0 +1,22 @@
+public final class HelloServer {
+    public method <init>(): void
+    public method start(): void
+}
+
+
+public final class _1Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public abstract class testing/ClassWithInternals {
+    private field some: int
+    private field someGetter: int
+    public method <init>(): void
+    protected final method foo(): int
+    protected final method getSome(): int
+    protected final method getSomeGetter(): int
+    protected final method setSome(p0: int): void
+    protected final method setSomeGetter(p0: int): void
+    public abstract method start(): void
+}

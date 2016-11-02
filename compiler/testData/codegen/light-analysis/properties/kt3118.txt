@@ -1,0 +1,10 @@
+public final class testing/Kt3118Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class testing/Test {
+    public method <init>(): void
+    private final method getHello(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method sayHello(): java.lang.String
+}

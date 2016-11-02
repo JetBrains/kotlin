@@ -1,0 +1,27 @@
+public final class Example {
+    private field obj: JClass
+    private @org.jetbrains.annotations.Nullable field result: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method getResult(): java.lang.String
+    public final method setResult(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+}
+
+
+public final class Example2 {
+    private field obj: JClass
+    private @org.jetbrains.annotations.Nullable field result: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method getResult(): java.lang.String
+    public final method setResult(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+}
+
+
+public class JClass {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+
+public final class Kt10044Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,24 @@
+public final class foo/A {
+    private final @org.jetbrains.annotations.NotNull field b: foo.B
+    private final field c: int
+    public method <init>(@org.jetbrains.annotations.NotNull p0: foo.B): void
+    public final @org.jetbrains.annotations.NotNull method getB(): foo.B
+    public method getC(): int
+}
+
+
+public interface foo/B {
+    inner class foo/B/DefaultImpls
+    public abstract method getC(): int
+}
+
+
+public final class foo/B/DefaultImpls {
+    inner class foo/B/DefaultImpls
+    public static method getC(p0: foo.B): int
+}
+
+
+public final class foo/Kt2532Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

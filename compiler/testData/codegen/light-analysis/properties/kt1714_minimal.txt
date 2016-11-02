@@ -1,0 +1,15 @@
+public interface A {
+    public abstract method getV(): int
+}
+
+
+public final class AImpl {
+    private final field v: int
+    public method <init>(): void
+    public method getV(): int
+}
+
+
+public final class Kt1714_minimalKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

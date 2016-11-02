@@ -1,0 +1,9 @@
+public final class A {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method f(): kotlin.jvm.functions.Function0
+}
+
+
+public final class NoRefToOuterKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,27 @@
+public class A {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field K$delegate: kotlin.properties.ReadWriteProperty
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getK(): java.lang.String
+    protected final method setK(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+
+public final class B {
+    public method <init>(): void
+}
+
+
+public final class Kt9712Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class X {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    public final static field INSTANCE: X
+    private final static @org.jetbrains.annotations.NotNull field O$delegate: kotlin.properties.ReadWriteProperty
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getO(): java.lang.String
+    private final method setO(p0: java.lang.String): void
+}

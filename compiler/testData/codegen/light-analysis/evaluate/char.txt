@@ -1,0 +1,15 @@
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class test/Ann {
+    public abstract method c1(): int
+}
+
+
+public final class test/CharKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@test.Ann
+public final class test/MyClass {
+    public method <init>(): void
+}

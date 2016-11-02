@@ -1,0 +1,9 @@
+public final class A {
+    public method <init>(): void
+}
+
+
+public final class GenericIntersectionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method test(p0: java.lang.Object): java.lang.Object
+}

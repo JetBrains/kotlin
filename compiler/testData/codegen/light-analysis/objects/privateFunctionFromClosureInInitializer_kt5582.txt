@@ -1,0 +1,24 @@
+public final class Foo {
+    public final static field INSTANCE: Foo
+    private final static field result: int
+    private final static field v: int
+    inner class Foo/O
+    private method <init>(): void
+    private final method foo(p0: T): T
+    public final method getResult(): int
+}
+
+
+private final class Foo/O {
+    public final static field INSTANCE: Foo.O
+    inner class Foo/O
+    private method <init>(): void
+}
+
+
+public final class PrivateFunctionFromClosureInInitializer_kt5582Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public interface T

@@ -1,0 +1,11 @@
+public final class A {
+    private final field a: int
+    public method <init>(): void
+    public final method calc(): int
+    public final method getA(): int
+}
+
+
+public final class InnerClassInLocalClassKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

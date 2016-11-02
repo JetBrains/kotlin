@@ -1,0 +1,8 @@
+public final class JavaClassKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Klass {
+    public method <init>(): void
+}

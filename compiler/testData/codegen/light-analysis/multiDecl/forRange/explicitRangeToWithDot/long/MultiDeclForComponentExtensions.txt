@@ -1,0 +1,4 @@
+public final class MultiDeclForComponentExtensionsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method f(p0: long): void
+}

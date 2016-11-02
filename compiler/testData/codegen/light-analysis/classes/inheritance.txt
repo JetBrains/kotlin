@@ -1,0 +1,60 @@
+public interface Abstract
+
+
+public final class InheritanceKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class P1 {
+    private synthetic final field $$delegate_0: Y
+    public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: Y): void
+    public method getY(): int
+}
+
+
+public final class P2 {
+    private synthetic final field $$delegate_0: Y
+    public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: Y): void
+    public method getY(): int
+}
+
+
+public final class P3 {
+    private synthetic final field $$delegate_0: Y
+    public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: Y): void
+    public method getY(): int
+}
+
+
+public final class P4 {
+    private synthetic final field $$delegate_0: Y
+    public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: Y): void
+    public method getY(): int
+}
+
+
+public final class Point {
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method getY(): int
+}
+
+
+public class X {
+    private final field x: int
+    public method <init>(p0: int): void
+    public final method getX(): int
+}
+
+
+public interface Y {
+    public abstract method getY(): int
+}
+
+
+public final class YImpl {
+    private final field y: int
+    public method <init>(p0: int): void
+    public method getY(): int
+}

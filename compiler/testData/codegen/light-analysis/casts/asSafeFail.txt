@@ -1,0 +1,13 @@
+public final class A {
+    public method <init>(): void
+}
+
+
+public final class AsSafeFailKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class B {
+    public method <init>(): void
+}

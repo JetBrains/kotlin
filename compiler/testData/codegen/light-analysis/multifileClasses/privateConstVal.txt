@@ -1,0 +1,21 @@
+public final class test/TestKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class test/Util {
+    public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+synthetic final class test/Util__BarKt {
+    private final static field x: java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+}
+
+
+synthetic final class test/Util__FooKt {
+    private final static field x: java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}

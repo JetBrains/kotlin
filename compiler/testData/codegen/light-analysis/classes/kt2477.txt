@@ -1,0 +1,40 @@
+public interface test/A {
+    inner class test/A/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method getC(): java.lang.String
+}
+
+
+public final class test/A/DefaultImpls {
+    inner class test/A/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method getC(p0: test.A): java.lang.String
+}
+
+
+public interface test/B {
+    inner class test/B/DefaultImpls
+}
+
+
+public final class test/B/DefaultImpls {
+    inner class test/B/DefaultImpls
+    private static method getC(p0: test.B): java.lang.String
+}
+
+
+public class test/C {
+    private final field c: java.lang.String
+    public method <init>(): void
+}
+
+
+public class test/D {
+    private final @org.jetbrains.annotations.NotNull field b: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getC(): java.lang.String
+}
+
+
+public final class test/Kt2477Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

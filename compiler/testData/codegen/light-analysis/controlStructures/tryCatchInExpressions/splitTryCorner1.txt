@@ -1,0 +1,4 @@
+public final class SplitTryCorner1Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method shouldReturnFalse(): boolean
+}

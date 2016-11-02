@@ -1,0 +1,10 @@
+public final class A {
+    public method <init>(): void
+    public final method component1(): int
+    public final method component2(): int
+}
+
+
+public final class SimpleVarsExtensionsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

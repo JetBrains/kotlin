@@ -1,0 +1,20 @@
+public final class A {
+    public final static field INSTANCE: A
+    inner class A/Z
+    private method <init>(): void
+    private final static @kotlin.jvm.JvmStatic method a(): java.lang.String
+}
+
+
+public final class A/Z {
+    public final static field INSTANCE: A.Z
+    private final static @org.jetbrains.annotations.NotNull field p: java.lang.String
+    inner class A/Z
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+}
+
+
+public final class PrivateMethodKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

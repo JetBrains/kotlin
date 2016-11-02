@@ -1,0 +1,16 @@
+public final class FalseSmartCastKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Foo {
+    public method <init>(): void
+    public final method superFoo(): void
+}
+
+
+public class SuperFoo {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method baz(): java.lang.String
+}

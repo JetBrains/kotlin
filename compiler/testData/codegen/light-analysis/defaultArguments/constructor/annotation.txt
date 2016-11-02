@@ -1,0 +1,11 @@
+@java.lang.annotation.Retention
+public annotation class A {
+    public abstract method a(): int
+}
+
+
+public final class AnnotationKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @A method test1(): int
+    public final static @A method test2(): int
+}
