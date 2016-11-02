@@ -56,7 +56,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val typeMapper = factory.generationState.typeMapper
 
         val logger = KaptLogger(isVerbose = true)
-        val kaptContext = KaptContext(logger, classBuilderFactory.compiledClasses, classBuilderFactory.origins)
+        val kaptContext = KaptContext(logger, classBuilderFactory.compiledClasses,
+                                      classBuilderFactory.origins, processorOptions = emptyMap())
         try {
             check(kaptContext, typeMapper, txtFile)
         } finally {
@@ -91,12 +92,12 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
     }
 }
 
-abstract class AbstractKotlinKaptRunnerTest : AbstractKotlinKapt3Test() {
+abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
     override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File) {
         val compilationUnits = convert(kaptRunner, typeMapper)
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
-            kaptRunner.doAnnotationProcessing(emptyList(), listOf(KaptRunnerTest.simpleProcessor()),
+            kaptRunner.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),
                                               classpath = listOf(), sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
                                               additionalSources = compilationUnits)
 

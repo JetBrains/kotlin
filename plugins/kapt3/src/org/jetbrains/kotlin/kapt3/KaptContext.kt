@@ -30,7 +30,8 @@ import javax.tools.JavaFileManager
 class KaptContext(
         val logger: KaptLogger,
         val compiledClasses: List<ClassNode>,
-        val origins: Map<Any, JvmDeclarationOrigin>
+        val origins: Map<Any, JvmDeclarationOrigin>,
+        processorOptions: Map<String, String>
 ) {
     val context = Context()
     val compiler: KaptJavaCompiler
@@ -46,6 +47,10 @@ class KaptContext(
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
 
         options = Options.instance(context)
+        for ((key, value) in processorOptions) {
+            val option = if (value.isEmpty()) "-A$key" else "-A$key=$value"
+            options.put(option, option) // key == value: it's intentional
+        }
     }
 
     fun close() {

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/testData/kotlinRunner")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class KotlinKaptRunnerTestGenerated extends AbstractKotlinKaptRunnerTest {
+public class KotlinKaptContextTestGenerated extends AbstractKotlinKaptContextTest {
     public void testAllFilesPresentInKotlinRunner() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), true);
     }
