@@ -1,6 +1,6 @@
 interface I {
-    <error>init {
+    <error>init</error> {
         val c = 1
-        val g = c
-    }</error>
+        val <warning>g</warning> = c
+    }
 }

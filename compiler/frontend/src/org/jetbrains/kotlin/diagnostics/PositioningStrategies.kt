@@ -160,6 +160,9 @@ object PositioningStrategies {
                 is KtObjectDeclaration -> {
                     return DECLARATION_NAME.mark(element)
                 }
+                is KtClassInitializer -> {
+                    return markRange(element.initKeyword.textRange)
+                }
             }
             return super.mark(element)
         }

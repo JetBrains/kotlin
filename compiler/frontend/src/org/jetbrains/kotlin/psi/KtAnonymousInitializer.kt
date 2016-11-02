@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -40,6 +41,9 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
 
     val openBraceNode: PsiElement?
         get() = (body as? KtBlockExpression)?.lBrace
+
+    val initKeyword: PsiElement
+        get() = findChildByType(KtTokens.INIT_KEYWORD)!!
 
     override val containingDeclaration: KtDeclaration
         get() = getParentOfType<KtClassOrObject>(true).sure { "Should only be present in class or object" }
