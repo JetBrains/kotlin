@@ -72,11 +72,26 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     val generator = CodeGenerator(context)
     val logger = Logger(generator, context)
 
-
     //-------------------------------------------------------------------------//
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    override fun visitWhen(expression: IrWhen) {
+        logger.log("visitWhen                  : ${ir2string(expression)}")
+        var bbExit:LLVMOpaqueBasicBlock? = null             // By default "when" does not have "exit"
+        if (!KotlinBuiltIns.isNothing(expression.type))     // If "when" has "exit".
+            bbExit = generator.basicBlock()                 // Create basic block to process "exit".
+
+        expression.branches.forEach {                       // Iterate through "when" branches (clauses).
+            var bbNext = bbExit                             // For last clause bbNext coincides with bbExit.
+            if (it != expression.branches.last())           // If it is not last clause.
+                bbNext = generator.basicBlock()             // Create new basic block for next clause.
+            generateWhenCase(it, bbNext, bbExit)            // Generate code for current clause.
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -149,8 +164,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("visitVariable              : ${ir2string(declaration)}")
         val variableName = declaration.descriptor.name.asString()
         val variableType = declaration.descriptor.type
-        generator.registerVariable(variableName, generator.alloca(variableType, variableName))
-        evaluateExpression(variableName, declaration.initializer)
+        val newVariable  = generator.alloca(variableType, variableName)     // Create LLVM variable.
+        generator.registerVariable(variableName, newVariable)               // Map variableName -> LLVM variable.
+        evaluateExpression(variableName, declaration.initializer)           // Generate initialization code.
     }
 
     //-------------------------------------------------------------------------//
@@ -317,7 +333,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
         when {
-            descriptor.isOperator -> return evaluateOperatorCall(tmpVariableName, callee, args)
+            descriptor.isOperator || descriptor is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall(tmpVariableName, callee, args)
             descriptor is ClassConstructorDescriptor -> return evaluateConstructorCall(tmpVariableName, callee, args)
             else -> {
                 return evaluateSimpleFunctionCall(tmpVariableName, callee, args)
@@ -342,7 +358,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-
     private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
         logger.log("evaluateCall $tmpVariableName = ${ir2string(callee)}")
         when (callee.origin) {
@@ -351,6 +366,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrStatementOrigin.MUL   -> return generator.mul   (args[0]!!, args[1]!!, tmpVariableName)
             IrStatementOrigin.DIV   -> return generator.div   (args[0]!!, args[1]!!, tmpVariableName)
             IrStatementOrigin.PERC  -> return generator.srem  (args[0]!!, args[1]!!, tmpVariableName)
+            IrStatementOrigin.EQEQ  -> return generator.icmpEq(args[0]!!, args[1]!!, tmpVariableName)
             else -> {
                 TODO()
             }
@@ -359,14 +375,22 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun generateWhenCase(branch: IrBranch, bbTrue: LLVMOpaqueBasicBlock?, bbFalse: LLVMOpaqueBasicBlock?, bbExit: LLVMOpaqueBasicBlock?) {
-        val condition = evaluateExpression(generator.tmpVariable(), branch.condition)   // Get boolean cmp result.
-        LLVMBuildCondBr(context.llvmBuilder, condition, bbTrue, bbFalse)                // Conditional branch depending on cmp result.
-        LLVMPositionBuilderAtEnd(context.llvmBuilder, bbTrue)                           // Switch generation to bbTrue.
-        evaluateExpression(generator.tmpVariable(), branch.result)                      // Generate clause expression.
-        if (bbExit != null)                                                             // If clause code contains "return".
-            LLVMBuildBr(context.llvmBuilder, bbExit)                                    // Do not generate branch to bbExit.
-        LLVMPositionBuilderAtEnd(context.llvmBuilder, bbFalse)                          // Switch generation to bbFalse.
+    private fun generateWhenCase(branch: IrBranch, bbNext: LLVMOpaqueBasicBlock?, bbExit: LLVMOpaqueBasicBlock?) {
+        if (isUnconditional(branch)) {                                                      // It is the "else" clause.
+            evaluateExpression(generator.tmpVariable(), branch.result)                      // Generate clause body.
+            if (bbExit == null) return                                                      // If "when" does not have exit - return.
+            LLVMBuildBr(context.llvmBuilder, bbExit)                                        // Generate branch to bbExit.
+            LLVMPositionBuilderAtEnd(context.llvmBuilder, bbExit)                           // Switch generation to bbExit.
+        } else {                                                                            // It is conditional clause.
+            val bbCurr = generator.basicBlock()                                             // Create block for clause body.
+            val condition = evaluateExpression(generator.tmpVariable(), branch.condition)   // Generate cmp instruction.
+            LLVMBuildCondBr(context.llvmBuilder, condition, bbCurr, bbNext)                 // Conditional branch depending on cmp result.
+            LLVMPositionBuilderAtEnd(context.llvmBuilder, bbCurr)                           // Switch generation to block for clause body.
+            evaluateExpression(generator.tmpVariable(), branch.result)                      // Generate clause body.
+            if (!KotlinBuiltIns.isNothing(branch.result.type))                              // If clause code does not contain "return".
+                LLVMBuildBr(context.llvmBuilder, bbExit)                                    // Generate branch to bbExit.
+            LLVMPositionBuilderAtEnd(context.llvmBuilder, bbNext)                           // Switch generation to bbNextClause.
+        }
     }
 
     //-------------------------------------------------------------------------//

@@ -76,7 +76,8 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
 
     private fun prolog(declaration: IrFunction): LLVMOpaqueValue? {
-        index = 0
+        variableIndex = 0
+        labelIndex = 0
         currentFunction = declaration.descriptor
         val fn = declaration.descriptor.llvmFunction.getLlvmValue()
         val block = LLVMAppendBasicBlock(fn, "entry")
@@ -90,12 +91,18 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     val variablesGlobal = mapOf<String, LLVMOpaqueValue?>()
     fun variable(varName:String):LLVMOpaqueValue? = currentFunction!!.variable(varName)
 
-    var index:Int = 0
+    private var variableIndex:Int = 0
     private var FunctionDescriptor.tmpVariableIndex: Int
-        get() = index
-        set(i:Int){ index = i}
+        get() = variableIndex
+        set(i:Int) { variableIndex = i}
 
-    fun FunctionDescriptor.tmpVariable():String = "tmp${tmpVariableIndex++}"
+    private var labelIndex:Int = 0
+    private var FunctionDescriptor.bbLabelIndex: Int
+        get() = labelIndex
+        set(i:Int) { labelIndex = i}
+
+    fun FunctionDescriptor.tmpVariable():String = "tmp_${tmpVariableIndex++}"
+    fun FunctionDescriptor.bbLabel():String = "label_${bbLabelIndex++}"
 
     fun registerVariable(varName: String, value:LLVMOpaqueValue) = currentFunction!!.registerVariable(varName, value)
 
@@ -117,6 +124,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun minus(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSub (context.llvmBuilder, arg0, arg1, result)!!
     fun div  (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSDiv(context.llvmBuilder, arg0, arg1, result)!!
     fun srem (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSRem(context.llvmBuilder, arg0, arg1, result)!!
+    fun icmpEq(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntEQ, arg0!!, arg1!!, result)!!
 
     fun bitcast(type: LLVMOpaqueType?, value: LLVMOpaqueValue, result: String) = LLVMBuildBitCast(context.llvmBuilder, value, type, result)
 
@@ -166,6 +174,9 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun param(fn: FunctionDescriptor?, i: Int): LLVMOpaqueValue? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
 
     fun indexInClass(p:PropertyDescriptor):Int = currentClass!!.fields.indexOf(p)
+
+    fun basicBlock(): LLVMOpaqueBasicBlock? = LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), currentFunction!!.bbLabel())
+    fun lastBasicBlock(): LLVMOpaqueBasicBlock? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction.getLlvmValue())
 }
 
 
