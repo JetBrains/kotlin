@@ -5,6 +5,10 @@ internal class Simple {
     fun myMethod() {
         // do nothing
     }
+
+    fun heavyMethod(): Int {
+        return if (true) 5 else 6
+    }
 }
 
 internal annotation class MyAnnotation
