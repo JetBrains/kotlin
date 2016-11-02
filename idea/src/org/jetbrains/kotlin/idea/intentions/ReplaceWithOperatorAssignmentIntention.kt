@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<KtBinaryExpression>(ReplaceWithOperatorAssignmentIntention::class)
@@ -53,7 +53,7 @@ class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndependentInt
         val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
         val newBindingContext = opAssign.analyzeInContext(resolutionScope,
                                                           contextExpression = element,
-                                                          dataFlowInfo = bindingContext.getDataFlowInfo(element),
+                                                          dataFlowInfo = bindingContext.getDataFlowInfoBefore(element),
                                                           isStatement = true)
         return newBindingContext.diagnostics.forElement(opAssign.operationReference).isEmpty()
     }

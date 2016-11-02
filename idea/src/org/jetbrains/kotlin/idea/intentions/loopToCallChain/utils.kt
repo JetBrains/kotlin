@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil.isOrdinaryAssignment
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -278,7 +278,7 @@ fun <TExpression : KtExpression> tryChangeAndCheckErrors(
     val resolutionScope = block.getResolutionScope(bindingContext, block.getResolutionFacade())
     val newBindingContext = blockCopy.analyzeInContext(scope = resolutionScope,
                                                        contextExpression = block,
-                                                       dataFlowInfo = bindingContext.getDataFlowInfo(block),
+                                                       dataFlowInfo = bindingContext.getDataFlowInfoBefore(block),
                                                        trace = DelegatingBindingTrace(bindingContext, "Temporary trace"))
     return newBindingContext.diagnostics.none {
         it.severity == Severity.ERROR

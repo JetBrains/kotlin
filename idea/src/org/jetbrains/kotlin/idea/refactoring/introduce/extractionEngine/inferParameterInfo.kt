@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasBothReceivers
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -319,7 +319,7 @@ private fun suggestParameterType(
 
                receiverToExtract is ImplicitReceiver -> {
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
-                       val dataFlowInfo = bindingContext.getDataFlowInfo(resolvedCall!!.call.callElement)
+                       val dataFlowInfo = bindingContext.getDataFlowInfoAfter(resolvedCall!!.call.callElement)
                        val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
                        if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                    } else null

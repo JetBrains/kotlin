@@ -64,7 +64,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -489,7 +490,7 @@ internal class ImportForMismatchingArgumentsFix(
 
             // check that this function matches all arguments
             val resolutionScopeWithAddedImport = resolutionScope.addImportingScope(ExplicitImportsScope(listOf(descriptor)))
-            val dataFlowInfo = bindingContext.getDataFlowInfo(elementToAnalyze)
+            val dataFlowInfo = bindingContext.getDataFlowInfoBefore(elementToAnalyze)
             val newBindingContext = elementToAnalyze.analyzeInContext(
                     resolutionScopeWithAddedImport,
                     dataFlowInfo = dataFlowInfo,

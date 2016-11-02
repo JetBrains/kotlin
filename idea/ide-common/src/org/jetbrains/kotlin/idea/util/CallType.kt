@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.psi.psiUtil.isPackageDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -293,7 +294,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
         resolutionScope.getImplicitReceiversWithInstance().map { it.value }
     }
 
-    val dataFlowInfo = bindingContext.getDataFlowInfo(contextElement)
+    val dataFlowInfo = bindingContext.getDataFlowInfoBefore(contextElement)
 
     val result = ArrayList<ReceiverType>()
     for ((receiverIndex, receiverValue) in receiverValues.withIndex()) {

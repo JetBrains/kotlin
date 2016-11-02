@@ -62,7 +62,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ObservableBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -486,7 +486,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
 
         val expressionType = substringInfo?.type ?: bindingContext.getType(physicalExpression) //can be null or error type
         val scope = physicalExpression.getResolutionScope(bindingContext, resolutionFacade)
-        val dataFlowInfo = bindingContext.getDataFlowInfo(physicalExpression)
+        val dataFlowInfo = bindingContext.getDataFlowInfoAfter(physicalExpression)
 
         val bindingTrace = ObservableBindingTrace(BindingTraceContext())
         val typeNoExpectedType = substringInfo?.type

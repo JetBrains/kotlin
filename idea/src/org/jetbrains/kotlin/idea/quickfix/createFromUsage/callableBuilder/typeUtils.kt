@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -127,7 +127,7 @@ fun KtExpression.guessTypes(
     // if we know the actual type of the expression
     val theType1 = context.getType(this)
     if (theType1 != null) {
-        val dataFlowInfo = context.getDataFlowInfo(this)
+        val dataFlowInfo = context.getDataFlowInfoAfter(this)
         val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
         return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
     }

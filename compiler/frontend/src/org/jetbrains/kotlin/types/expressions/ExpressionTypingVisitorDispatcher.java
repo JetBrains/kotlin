@@ -177,6 +177,9 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                     if (recordedTypeInfo != null) {
                         return recordedTypeInfo;
                     }
+
+                    context.trace.record(BindingContext.DATA_FLOW_INFO_BEFORE, expression, context.dataFlowInfo);
+
                     KotlinTypeInfo result;
                     try {
                         result = expression.accept(visitor, context);

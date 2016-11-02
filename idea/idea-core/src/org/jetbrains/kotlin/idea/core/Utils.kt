@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -116,7 +117,7 @@ fun Call.resolveCandidates(
     val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
     val inDescriptor = resolutionScope.ownerDescriptor
 
-    val dataFlowInfo = bindingContext.getDataFlowInfo(callElement)
+    val dataFlowInfo = bindingContext.getDataFlowInfoBefore(callElement)
     val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
     val callResolutionContext = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,

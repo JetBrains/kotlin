@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -122,7 +122,7 @@ class CodeFragmentAnalyzer(
                 val contextForElement = resolveToElement(correctedContext)
 
                 scopeForContextElement = contextForElement[BindingContext.LEXICAL_SCOPE, correctedContext]
-                dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
+                dataFlowInfo = contextForElement.getDataFlowInfoAfter(correctedContext)
             }
             else -> return null
         }

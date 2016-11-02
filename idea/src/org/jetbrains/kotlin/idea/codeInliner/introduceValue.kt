@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
@@ -146,7 +146,7 @@ private fun variableNeedsExplicitType(
     val valueTypeWithoutExpectedType = initializer.computeTypeInContext(
             resolutionScope,
             context,
-            dataFlowInfo = bindingContext.getDataFlowInfo(context)
+            dataFlowInfo = bindingContext.getDataFlowInfoBefore(context)
     )
     return valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)
 }

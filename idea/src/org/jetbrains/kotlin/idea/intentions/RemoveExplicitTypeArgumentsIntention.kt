@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
@@ -69,7 +69,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
             else {
                 TypeUtils.NO_EXPECTED_TYPE
             }
-            val dataFlow = context.getDataFlowInfo(callExpression)
+            val dataFlow = context.getDataFlowInfoBefore(callExpression)
             val callResolver = resolutionFacade.frontendService<CallResolver>()
             val resolutionResults = callResolver.resolveFunctionCall(
                     BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)

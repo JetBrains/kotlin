@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -54,7 +55,7 @@ class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSupe
         val bindingContext = selector.analyze(BodyResolveMode.PARTIAL)
         if (selector.getResolvedCall(bindingContext) == null) return null
         val resolutionScope = qualifiedExpression.getResolutionScope(bindingContext, selector.getResolutionFacade())
-        val dataFlowInfo = bindingContext.getDataFlowInfo(element)
+        val dataFlowInfo = bindingContext.getDataFlowInfoBefore(element)
         val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 
         val newQualifiedExpression = KtPsiFactory(element).createExpressionByPattern("$0.$1", toNonQualified(element), selector) as KtQualifiedExpression

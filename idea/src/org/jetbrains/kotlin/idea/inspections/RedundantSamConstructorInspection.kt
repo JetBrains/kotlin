@@ -36,7 +36,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
@@ -120,7 +121,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             val originalCall = parentCall.getResolvedCall(context) ?: return false
 
-            val dataFlow = context.getDataFlowInfo(parentCall)
+            val dataFlow = context.getDataFlowInfoBefore(parentCall)
             val callResolver = parentCall.getResolutionFacade().frontendService<CallResolver>()
             val newCall = CallWithConvertedArguments(originalCall.call, samConstructorArguments)
 

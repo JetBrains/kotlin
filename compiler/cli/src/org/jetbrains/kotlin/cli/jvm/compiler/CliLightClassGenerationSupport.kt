@@ -28,8 +28,8 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -172,9 +172,10 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         return NoScopeRecordCliBindingTrace()
     }
 
+    // TODO: needs better name + list of keys to skip somewhere
     class NoScopeRecordCliBindingTrace : CliBindingTrace() {
         override fun <K, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
-            if (slice === BindingContext.LEXICAL_SCOPE) {
+            if (slice === BindingContext.LEXICAL_SCOPE || slice == BindingContext.DATA_FLOW_INFO_BEFORE) {
                 // In the compiler there's no need to keep scopes
                 return
             }

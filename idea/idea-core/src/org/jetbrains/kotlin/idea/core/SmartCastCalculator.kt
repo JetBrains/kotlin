@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -44,7 +45,7 @@ class SmartCastCalculator(
 ) {
     // keys are VariableDescriptor's and ThisReceiver's
     private val entityToSmartCastInfo: Map<Any, SmartCastInfo> = processDataFlowInfo(
-            bindingContext.getDataFlowInfo(contextElement),
+            bindingContext.getDataFlowInfoBefore(contextElement),
             contextElement.getResolutionScope(bindingContext, resolutionFacade),
             receiver)
 
