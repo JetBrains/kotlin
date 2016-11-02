@@ -1,4 +1,5 @@
 // modules
+include "build-common"
 include "compiler"
 include "core"
 include "core.builtins"
@@ -6,12 +7,12 @@ include "core.builtins"
 include "core.reflection"
 include "core.script.runtime"
 include "custom-dependencies:protobuf-lite"
-include "libraries:stdlib"
 include "libraries:kotlin.test"
+include "libraries:stdlib"
 include "prepare:build.version"
-include "prepare:runtime"
-include "prepare:reflect"
 include "prepare:compiler"
+include "prepare:reflect"
+include "prepare:runtime"
 
 rootProject.name = "kotlin"
 
