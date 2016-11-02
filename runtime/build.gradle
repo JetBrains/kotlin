@@ -12,23 +12,6 @@ task build(type: CompileCppToBitcode) {
     linkerArgs project.file('../common/build/hash.bc').path
 }
 
-task test {
-    dependsOn build
-
-    doLast {
-        exec {
-            commandLine "$llvmDir/bin/clang", 'src/test/c/main.c', '-c', '-emit-llvm', '-o', "$buildDir/main.bc"
-        }
-        exec {
-            commandLine "$llvmDir/bin/clang++", build.outFile, "$buildDir/main.bc", '-o', "$buildDir/main"
-        }
-        exec {
-            workingDir buildDir
-            commandLine './main'
-        }
-    }
-}
-
 task clean << {
     delete buildDir
 }
