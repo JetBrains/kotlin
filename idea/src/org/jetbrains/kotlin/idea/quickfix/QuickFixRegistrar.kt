@@ -291,6 +291,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NONE_APPLICABLE.registerFactory(CreateBinaryOperationActionFactory)
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateBinaryOperationActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateBinaryOperationActionFactory)
+        TYPE_MISMATCH_ERRORS.forEach { it.registerFactory(CreateBinaryOperationActionFactory) }
 
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
         UNRESOLVED_REFERENCE.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
@@ -335,7 +336,9 @@ class QuickFixRegistrar : QuickFixContributor {
         MANY_CLASSES_IN_SUPERTYPE_LIST.registerFactory(RemoveSupertypeFix)
 
         NO_GET_METHOD.registerFactory(CreateGetFunctionActionFactory)
+        TYPE_MISMATCH_ERRORS.forEach { it.registerFactory(CreateGetFunctionActionFactory) }
         NO_SET_METHOD.registerFactory(CreateSetFunctionActionFactory)
+        TYPE_MISMATCH_ERRORS.forEach { it.registerFactory(CreateSetFunctionActionFactory) }
         HAS_NEXT_MISSING.registerFactory(CreateHasNextFunctionActionFactory)
         HAS_NEXT_FUNCTION_NONE_APPLICABLE.registerFactory(CreateHasNextFunctionActionFactory)
         NEXT_MISSING.registerFactory(CreateNextFunctionActionFactory)

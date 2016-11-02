@@ -29,6 +29,7 @@
 - [`KT-14521`](https://youtrack.jetbrains.com/issue/KT-14521) Add Inspection to remove empty primary constructor
 - [`KT-14593`](https://youtrack.jetbrains.com/issue/KT-14593) Add a quickfix which removes a single lambda parameter if it's unused
 - [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) Convert Property to Function Intention: Search occurrences using progress dialog
+- [`KT-14501`](https://youtrack.jetbrains.com/issue/KT-14501) Create from Usage: Support array access expressions/binary expressions with type mismatch errors
 
 ##### Issues fixed
 - [`KT-14396`](https://youtrack.jetbrains.com/issue/KT-14396) "Remove redundant `.let` call" isn't proposed for binary operations
