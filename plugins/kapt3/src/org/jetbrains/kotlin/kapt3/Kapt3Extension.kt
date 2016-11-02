@@ -44,13 +44,13 @@ class ClasspathBasedKapt3Extension(
         javaSourceRoots: List<File>,
         sourcesOutputDir: File,
         classFilesOutputDir: File,
-        stubsOutputDir: File?,
+        val stubsOutputDir: File?,
         options: Map<String, String>,
         aptOnly: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger
 ) : AbstractKapt3Extension(annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, stubsOutputDir, options, aptOnly, pluginInitializedTime, logger) {
+                           classFilesOutputDir, options, aptOnly, pluginInitializedTime, logger) {
     override fun loadProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
         val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
@@ -63,6 +63,18 @@ class ClasspathBasedKapt3Extension(
 
         return processors
     }
+
+    override fun saveStubs(stubs: JavacList<JCCompilationUnit>) {
+        val outputDir = stubsOutputDir ?: return
+        for (stub in stubs) {
+            val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
+
+            val packageName = stub.packageName?.toString() ?: ""
+            val packageDir = if (packageName.isEmpty()) outputDir else File(outputDir, packageName.replace('.', '/'))
+            packageDir.mkdirs()
+            File(packageDir, className + ".java").writeText(stub.toString())
+        }
+    }
 }
 
 abstract class AbstractKapt3Extension(
@@ -70,8 +82,7 @@ abstract class AbstractKapt3Extension(
         val javaSourceRoots: List<File>,
         val sourcesOutputDir: File,
         val classFilesOutputDir: File,
-        val stubsOutputDir: File?,
-        val options: Map<String, String>, //TODO
+        val options: Map<String, String>,
         val aptOnly: Boolean,
         val pluginInitializedTime: Long,
         val logger: KaptLogger
@@ -167,7 +178,7 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return Pair(KaptContext(logger, compiledClasses, origins), generationState)
+        return Pair(KaptContext(logger, compiledClasses, origins, options), generationState)
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext, typeMapper: KotlinTypeMapper): JavacList<JCCompilationUnit> {
@@ -178,22 +189,8 @@ abstract class AbstractKapt3Extension(
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info { "Stubs for Kotlin classes: " + kotlinSourceStubs.joinToString { it.sourcefile.name } }
 
-        if (stubsOutputDir != null) {
-            saveStubs(stubsOutputDir, kotlinSourceStubs)
-        }
-
+        saveStubs(kotlinSourceStubs)
         return kotlinSourceStubs
-    }
-
-    private fun saveStubs(outputDir: File, stubs: JavacList<JCTree.JCCompilationUnit>) {
-        for (stub in stubs) {
-            val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
-
-            val packageName = stub.packageName?.toString() ?: ""
-            val packageDir = if (packageName.isEmpty()) outputDir else File(outputDir, packageName.replace('.', '/'))
-            packageDir.mkdirs()
-            File(packageDir, className + ".java").writeText(stub.toString())
-        }
     }
 
     private fun collectJavaSourceFiles(): List<File> {
@@ -204,6 +201,8 @@ abstract class AbstractKapt3Extension(
 
         return javaFilesFromJavaSourceRoots
     }
+
+    protected abstract fun saveStubs(stubs: JavacList<JCTree.JCCompilationUnit>)
 
     protected abstract fun loadProcessors(): List<Processor>
 }
