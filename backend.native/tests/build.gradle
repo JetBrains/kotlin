@@ -202,3 +202,11 @@ task bool_yes(type: UnitKonanTest) {
     source = "codegen/function/boolean.kt"
 }
 
+task plus_eq(type: UnitKonanTest) {
+    source = "codegen/function/plus_eq.kt"
+}
+
+task minus_eq(type: UnitKonanTest) {
+    source = "codegen/function/minus_eq.kt"
+}
+
