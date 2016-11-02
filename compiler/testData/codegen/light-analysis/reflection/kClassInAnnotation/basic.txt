@@ -1,0 +1,20 @@
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class Ann {
+    public abstract method arg(): java.lang.Class
+}
+
+
+public final class BasicKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@Ann
+public final class MyClass {
+    public method <init>(): void
+}
+
+
+public final class OK {
+    public method <init>(): void
+}

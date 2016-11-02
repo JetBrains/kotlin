@@ -1,0 +1,20 @@
+public interface A {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
+}
+
+
+public class B {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public class C {
+    public method <init>(): void
+    public synthetic method foo(): java.lang.Object
+}
+
+
+public final class FakeCovariantOverrideKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

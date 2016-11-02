@@ -1,0 +1,4 @@
+public final class UseAnonymousObjectAsIteratorKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method iterator(@org.jetbrains.annotations.NotNull p0: java.util.Iterator): java.util.Iterator
+}

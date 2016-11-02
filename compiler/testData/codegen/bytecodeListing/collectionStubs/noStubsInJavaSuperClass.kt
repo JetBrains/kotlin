@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 // FILE: test/B.java
 package test;
 

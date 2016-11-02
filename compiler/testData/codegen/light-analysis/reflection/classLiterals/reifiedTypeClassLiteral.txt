@@ -1,0 +1,16 @@
+public final class Klass {
+    public method <init>(): void
+}
+
+
+public final class Other {
+    public method <init>(): void
+}
+
+
+public final class ReifiedTypeClassLiteralKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method myJavaClass(): java.lang.Class
+    private final static method simpleName(): java.lang.String
+    private final static method twoReifiedParams(): java.lang.String
+}

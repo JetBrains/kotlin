@@ -1,0 +1,24 @@
+public final class x/Kt249Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class x/Outer {
+    public final static field Companion: x.Outer.Companion
+    inner class x/Outer/Companion
+    public method <init>(): void
+}
+
+
+public final static class x/Outer/Companion {
+    inner class x/Outer/Companion
+    inner class x/Outer/Companion/Inner
+    private method <init>(): void
+}
+
+
+public final static class x/Outer/Companion/Inner {
+    inner class x/Outer/Companion
+    inner class x/Outer/Companion/Inner
+    public method <init>(): void
+}

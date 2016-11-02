@@ -1,0 +1,4 @@
+public final class Kt4119Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method foo(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): int
+}

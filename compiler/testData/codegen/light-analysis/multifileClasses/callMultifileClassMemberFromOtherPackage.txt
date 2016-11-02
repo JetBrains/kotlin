@@ -1,0 +1,18 @@
+public final class a/MultifileClass {
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+synthetic final class a/MultifileClass__MultifileClassKt {
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class b/CallerKt {
+    public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+}
+
+
+public final class test/BoxKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

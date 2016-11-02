@@ -1,0 +1,9 @@
+public final class t/Kt3389Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class t/Reproduce {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}

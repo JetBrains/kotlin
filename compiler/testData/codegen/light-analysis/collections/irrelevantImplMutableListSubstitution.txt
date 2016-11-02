@@ -1,0 +1,12 @@
+public final class TestKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class X {
+    public method <init>(): void
+    public method getSize(): int
+    public final method remove(p0: int): java.lang.Object
+    public method removeAt(p0: int): java.lang.Object
+    public final method size(): int
+}

@@ -1,0 +1,11 @@
+public final class C {
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+}
+
+
+public final class CheckCastKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

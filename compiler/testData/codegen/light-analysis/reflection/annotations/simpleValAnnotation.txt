@@ -1,0 +1,13 @@
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class Simple {
+    public abstract method value(): java.lang.String
+}
+
+
+public final class SimpleValAnnotationKt {
+    private final static field foo: int
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic deprecated final static @Simple method foo$annotations(): void
+    public final static method getFoo(): int
+}

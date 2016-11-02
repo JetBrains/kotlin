@@ -1,0 +1,6 @@
+public final class UnitWithSideEffectKt {
+    private static field state: int
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method getState(): int
+    public final static method setState(p0: int): void
+}

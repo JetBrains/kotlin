@@ -231,6 +231,10 @@ fun main(args: Array<String>) {
             model("codegen/box", targetBackend = TargetBackend.JVM)
         }
 
+        testClass<AbstractLightAnalysisModeCodegenTest> {
+            model("codegen/box", targetBackend = TargetBackend.JVM)
+        }
+
         testClass<AbstractIrBlackBoxCodegenTest>("IrOnlyBoxCodegenTestGenerated") {
             model("ir/box", targetBackend = TargetBackend.JVM)
         }

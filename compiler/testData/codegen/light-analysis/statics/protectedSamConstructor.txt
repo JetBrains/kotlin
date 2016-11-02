@@ -1,0 +1,9 @@
+public final class zzz/A {
+    public method <init>(): void
+    public final method test(): java.lang.String
+}
+
+
+public final class zzz/KotlinKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

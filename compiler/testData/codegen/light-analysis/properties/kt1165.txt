@@ -1,0 +1,15 @@
+public final class Kt1165Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class PhysicalVirtualFile {
+    public method <init>(): void
+    public method getSize(): long
+}
+
+
+public abstract class VirtualFile {
+    public method <init>(): void
+    public abstract method getSize(): long
+}

@@ -1,0 +1,11 @@
+public final class M {
+    public method <init>(): void
+    public final method component1(p0: int): int
+    public final method component2(p0: int): int
+    public final @org.jetbrains.annotations.NotNull method doTest(): java.lang.String
+}
+
+
+public final class MultiDeclForComponentMemberExtensionsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

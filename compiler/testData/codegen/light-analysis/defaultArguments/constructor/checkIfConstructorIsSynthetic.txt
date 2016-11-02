@@ -1,0 +1,10 @@
+public final class A {
+    public method <init>(): void
+    public method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+
+public final class CheckIfConstructorIsSyntheticKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

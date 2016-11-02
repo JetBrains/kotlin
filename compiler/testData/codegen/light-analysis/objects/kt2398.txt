@@ -1,0 +1,38 @@
+public final class C {
+    inner class C/Obj
+    public method <init>(): void
+}
+
+
+public final class C/Obj {
+    public final static field INSTANCE: C.Obj
+    private final static @org.jetbrains.annotations.NotNull field o: java.lang.String
+    inner class C/Obj
+    inner class C/Obj/D
+    inner class C/Obj/InnerObj
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getO(): java.lang.String
+}
+
+
+public final static class C/Obj/D {
+    private final @org.jetbrains.annotations.NotNull field ko: java.lang.String
+    inner class C/Obj
+    inner class C/Obj/D
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getKo(): java.lang.String
+}
+
+
+public final class C/Obj/InnerObj {
+    public final static field INSTANCE: C.Obj.InnerObj
+    inner class C/Obj
+    inner class C/Obj/InnerObj
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method k(): java.lang.String
+}
+
+
+public final class Kt2398Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

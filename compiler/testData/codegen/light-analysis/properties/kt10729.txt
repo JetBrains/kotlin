@@ -1,0 +1,19 @@
+public final class IntentionsBundle {
+    private final static field BUNDLE: java.lang.String
+    public final static field Companion: IntentionsBundle.Companion
+    inner class IntentionsBundle/Companion
+    public method <init>(): void
+}
+
+
+public final static class IntentionsBundle/Companion {
+    inner class IntentionsBundle/Companion
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method message(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method message2(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+}
+
+
+public final class Kt10729Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

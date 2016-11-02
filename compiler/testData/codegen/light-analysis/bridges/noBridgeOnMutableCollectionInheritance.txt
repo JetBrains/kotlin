@@ -1,0 +1,20 @@
+public interface A {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.util.Collection
+}
+
+
+public interface B {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.util.Collection
+}
+
+
+public final class C {
+    public method <init>(): void
+    public synthetic method foo(): java.util.Collection
+    public @org.jetbrains.annotations.NotNull method foo(): java.util.List
+}
+
+
+public final class NoBridgeOnMutableCollectionInheritanceKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

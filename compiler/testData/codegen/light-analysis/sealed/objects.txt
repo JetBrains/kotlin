@@ -1,0 +1,25 @@
+public final class ObjectsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method foo(): Season
+}
+
+
+public abstract class Season {
+    inner class Season/Cold
+    inner class Season/Warm
+    private method <init>(): void
+}
+
+
+public final class Season/Cold {
+    public final static field INSTANCE: Season.Cold
+    inner class Season/Cold
+    private method <init>(): void
+}
+
+
+public final class Season/Warm {
+    public final static field INSTANCE: Season.Warm
+    inner class Season/Warm
+    private method <init>(): void
+}

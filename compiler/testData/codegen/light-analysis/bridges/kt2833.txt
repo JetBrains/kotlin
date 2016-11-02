@@ -1,0 +1,24 @@
+public interface test/FunDependencyEdge {
+    public abstract @org.jetbrains.annotations.NotNull method getFrom(): test.FunctionNode
+}
+
+
+public final class test/FunDependencyEdgeImpl {
+    private final @org.jetbrains.annotations.NotNull field from: test.FunctionNodeImpl
+    public method <init>(@org.jetbrains.annotations.NotNull p0: test.FunctionNodeImpl): void
+    public synthetic method getFrom(): test.FunctionNode
+    public @org.jetbrains.annotations.NotNull method getFrom(): test.FunctionNodeImpl
+}
+
+
+public interface test/FunctionNode
+
+
+public final class test/FunctionNodeImpl {
+    public method <init>(): void
+}
+
+
+public final class test/Kt2833Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

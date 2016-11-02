@@ -1,0 +1,18 @@
+public abstract class A {
+    public method <init>(): void
+    public abstract @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+
+public abstract class G {
+    public method <init>(): void
+    public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Object
+}
+
+
+public final class RecursiveInnerAnonymousObjectKt {
+    private final static method baz(): G
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method foo(): kotlin.Pair
+}

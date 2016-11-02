@@ -1,0 +1,11 @@
+public interface A
+
+
+public final class GenericOverriddenPropertyKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public interface H {
+    public abstract @org.jetbrains.annotations.Nullable method getParent(): java.lang.Object
+}

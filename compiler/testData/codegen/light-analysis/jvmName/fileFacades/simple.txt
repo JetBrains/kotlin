@@ -1,0 +1,9 @@
+@kotlin.jvm.JvmName
+public final class Foo {
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class SimpleKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

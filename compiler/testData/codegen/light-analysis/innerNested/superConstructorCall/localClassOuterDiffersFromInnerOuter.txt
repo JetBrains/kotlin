@@ -1,0 +1,18 @@
+public final class A {
+    inner class A/Inner
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method bar(): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public class A/Inner {
+    synthetic final field this$0: A
+    inner class A/Inner
+    public method <init>(p0: A): void
+}
+
+
+public final class LocalClassOuterDiffersFromInnerOuterKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

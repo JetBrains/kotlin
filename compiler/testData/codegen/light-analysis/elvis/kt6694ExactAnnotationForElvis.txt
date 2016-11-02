@@ -1,0 +1,42 @@
+public final class JetLabelReferenceExpression {
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method findChildByType(p0: int): PsiElement
+    public @org.jetbrains.annotations.NotNull method getReferencedNameElement(): PsiElement
+}
+
+
+public final class JetOperationReferenceExpression {
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method findChildByType(p0: int): PsiElement
+    public @org.jetbrains.annotations.NotNull method getReferencedNameElement(): JetOperationReferenceExpression
+    public synthetic method getReferencedNameElement(): PsiElement
+}
+
+
+public interface JetSimpleNameExpression {
+    inner class JetSimpleNameExpression/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method getReferencedNameElement(): PsiElement
+}
+
+
+public final class JetSimpleNameExpression/DefaultImpls {
+    inner class JetSimpleNameExpression/DefaultImpls
+    public static @org.jetbrains.annotations.Nullable method findChildByType(p0: JetSimpleNameExpression, p1: int): PsiElement
+}
+
+
+public final class Kt6694ExactAnnotationForElvisKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public interface PsiElement {
+    inner class PsiElement/DefaultImpls
+    public abstract @org.jetbrains.annotations.Nullable method findChildByType(p0: int): PsiElement
+}
+
+
+public final class PsiElement/DefaultImpls {
+    inner class PsiElement/DefaultImpls
+    public static @org.jetbrains.annotations.Nullable method findChildByType(p0: PsiElement, p1: int): PsiElement
+}

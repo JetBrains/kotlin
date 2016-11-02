@@ -1,0 +1,9 @@
+public final class LongInRangeKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class LongR {
+    public method <init>(): void
+    public final method contains(p0: long): boolean
+}

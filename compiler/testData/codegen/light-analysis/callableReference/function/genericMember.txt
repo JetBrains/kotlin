@@ -1,0 +1,11 @@
+public final class A {
+    private final field t: java.lang.Object
+    public method <init>(p0: java.lang.Object): void
+    public final method foo(): java.lang.Object
+    public final method getT(): java.lang.Object
+}
+
+
+public final class GenericMemberKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

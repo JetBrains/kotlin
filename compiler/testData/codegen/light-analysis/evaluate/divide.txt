@@ -1,0 +1,18 @@
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class Ann {
+    public abstract method b(): byte
+    public abstract method i(): int
+    public abstract method l(): long
+    public abstract method s(): short
+}
+
+
+public final class DivideKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@Ann
+public final class MyClass {
+    public method <init>(): void
+}

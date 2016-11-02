@@ -1,0 +1,17 @@
+public final class KotlinKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class MyWallpaperService {
+    inner class MyWallpaperService/MyEngine
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method onCreateInner(): JavaClass.InnerClass
+}
+
+
+private final class MyWallpaperService/MyEngine {
+    synthetic final field this$0: MyWallpaperService
+    inner class MyWallpaperService/MyEngine
+    public method <init>(p0: MyWallpaperService): void
+}

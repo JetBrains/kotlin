@@ -1,0 +1,6 @@
+public final class CoerceVoidToObjectKt {
+    public final static @org.jetbrains.annotations.Nullable method a(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method b(): java.lang.Void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}

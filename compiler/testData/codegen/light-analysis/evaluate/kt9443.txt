@@ -1,0 +1,18 @@
+public abstract class BaseClass {
+    private final field menuId: int
+    public method <init>(): void
+    protected method getMenuId(): int
+    public final @org.jetbrains.annotations.NotNull method run(): kotlin.Pair
+}
+
+
+public final class ImplClass {
+    private final field menuId: int
+    public method <init>(): void
+    protected method getMenuId(): int
+}
+
+
+public final class Kt9443Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,11 @@
+public final class C {
+    private field f: int
+    public method <init>(): void
+    public final method getF(): int
+    public final method setF(p0: int): void
+}
+
+
+public final class InitializerBlockKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

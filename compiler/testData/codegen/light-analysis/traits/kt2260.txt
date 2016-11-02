@@ -1,0 +1,17 @@
+public interface Flusher {
+    inner class Flusher/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method flush(): java.lang.String
+}
+
+
+public final class Flusher/DefaultImpls {
+    inner class Flusher/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method flush(p0: Flusher): java.lang.String
+}
+
+
+public final class Kt2260Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method flushIt(@org.jetbrains.annotations.NotNull p0: Flusher): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method myFlusher(): Flusher
+}

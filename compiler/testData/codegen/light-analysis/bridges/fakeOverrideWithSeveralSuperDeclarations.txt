@@ -1,0 +1,29 @@
+public interface D1 {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
+}
+
+
+public interface D2 {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Number
+}
+
+
+public class D4 {
+    public method <init>(): void
+    public final method foo(): int
+}
+
+
+public interface F3
+
+
+public final class F5 {
+    public method <init>(): void
+    public synthetic method foo(): java.lang.Number
+    public synthetic method foo(): java.lang.Object
+}
+
+
+public final class FakeOverrideWithSeveralSuperDeclarationsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

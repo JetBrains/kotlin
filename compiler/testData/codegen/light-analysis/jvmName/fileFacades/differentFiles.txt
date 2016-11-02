@@ -1,0 +1,14 @@
+@kotlin.jvm.JvmName
+public final class Bar {
+    public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+}
+
+@kotlin.jvm.JvmName
+public final class Foo {
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class TestKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
