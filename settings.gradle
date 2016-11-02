@@ -11,6 +11,7 @@ include "libraries:kotlin.test"
 include "prepare:build.version"
 include "prepare:runtime"
 include "prepare:reflect"
+include "prepare:compiler"
 
 rootProject.name = "kotlin"
 

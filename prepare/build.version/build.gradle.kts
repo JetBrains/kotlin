@@ -8,9 +8,15 @@ val mainCfg = configurations.create("default")
 artifacts.add(mainCfg.name, file(buildVersionFilePath))
 
 val mainTask = task("prepare") {
-    File(buildVersionFilePath).apply {
-        parentFile.mkdirs()
-        writeText(rootProject.extra["build.number"].toString())
+    val versionString = rootProject.extra["build.number"].toString()
+    val versionFile = File(buildVersionFilePath)
+    outputs.file(buildVersionFilePath)
+    outputs.upToDateWhen {
+        versionFile.exists() && versionFile.readText().trim() == versionString
+    }
+    doLast {
+        versionFile.parentFile.mkdirs()
+        versionFile.writeText(versionString)
     }
 }
 

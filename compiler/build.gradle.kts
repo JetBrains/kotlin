@@ -117,7 +117,7 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
     dependsOn(":prepare:runtime:prepare")
     dependsOn(":prepare:reflect:prepare")
-    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package")
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-compiler")
 }
 
 fixKotlinTaskDependencies()

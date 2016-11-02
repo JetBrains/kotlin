@@ -1,5 +1,6 @@
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.Project
 import org.jetbrains.org.objectweb.asm.*
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
@@ -67,6 +68,8 @@ fun KotlinDependencyHandler.protobufLite(): ProjectDependency =
         project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
 val protobufLiteTask = "$protobufLiteProject:prepare"
 
+fun Project.getCompiledClasses() = the<JavaPluginConvention>().sourceSets.getByName("main").output
+
 // TODO: common ^ 8< ----
 
 // Set to false to prevent relocation and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection
@@ -102,8 +105,8 @@ val prePackReflectTask = task<ShadowJar>("pre-pack-reflect") {
     configurations = listOf(mainCfg)
     setupRuntimeJar("Kotlin Reflect")
     dependsOn("$coreProjectName:assemble", "$reflectionProjectName:assemble", protobufLiteTask)
-    from(project(reflectionProjectName).the<JavaPluginConvention>().sourceSets.getByName("main").output)
-    from(project(coreProjectName).the<JavaPluginConvention>().sourceSets.getByName("main").output)
+    from(project(reflectionProjectName).getCompiledClasses())
+    from(project(coreProjectName).getCompiledClasses())
     from(project(coreProjectName).file("descriptor.loader.java/src")) {
         include("META-INF/services/**")
     }
