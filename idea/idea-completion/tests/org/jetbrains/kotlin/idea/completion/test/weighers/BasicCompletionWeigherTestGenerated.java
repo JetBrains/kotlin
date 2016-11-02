@@ -167,6 +167,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("Prefix.kt")
+    public void testPrefix() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/Prefix.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PropertiesBeforeKeywords.kt")
     public void testPropertiesBeforeKeywords() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/PropertiesBeforeKeywords.kt");

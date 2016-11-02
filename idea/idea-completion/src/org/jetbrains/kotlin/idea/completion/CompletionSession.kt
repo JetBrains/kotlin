@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
+import com.intellij.codeInsight.completion.impl.RealPrefixMatchingWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
@@ -243,6 +244,9 @@ abstract class CompletionSession(
         }
 
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
+
+        // we insert one more RealPrefixMatchingWeigher because one inserted in default sorter is placed in a bad position (after "stats")
+        sorter = sorter.weighAfter("lift.shorter", RealPrefixMatchingWeigher())
 
         sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
 

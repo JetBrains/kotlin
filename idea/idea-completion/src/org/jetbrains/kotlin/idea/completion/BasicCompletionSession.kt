@@ -497,7 +497,7 @@ class BasicCompletionSession(
 
         override fun addWeighers(sorter: CompletionSorter): CompletionSorter {
             if (shouldCompleteParameterNameAndType()) {
-                return sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
+                return sorter.weighBefore("prefix", ParameterNameAndTypeCompletion.Weigher)
             }
             return sorter
         }
