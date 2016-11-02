@@ -258,8 +258,8 @@ class SmartCompletion(
             object : LookupElementDecorator<LookupElement>(item) {
                 override fun handleInsert(context: InsertionContext) {
                     if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
-                        val offset = context.offsetMap.getOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
-                        if (offset != -1) {
+                        val offset = context.offsetMap.tryGetOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
+                        if (offset != null) {
                             context.document.deleteString(context.tailOffset, offset)
                         }
                     }
