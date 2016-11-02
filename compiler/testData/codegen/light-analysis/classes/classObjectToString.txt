@@ -1,0 +1,16 @@
+public final class ClassObjectToStringKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class SomeClass {
+    public final static field Companion: SomeClass.Companion
+    inner class SomeClass/Companion
+    public method <init>(): void
+}
+
+
+public final static class SomeClass/Companion {
+    inner class SomeClass/Companion
+    private method <init>(): void
+}

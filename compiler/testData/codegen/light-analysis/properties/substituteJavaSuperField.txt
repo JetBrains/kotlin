@@ -1,0 +1,10 @@
+public final class A {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method bar(): java.lang.String
+    public final @org.jetbrains.annotations.Nullable method foo(): java.lang.String
+}
+
+
+public final class TestKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

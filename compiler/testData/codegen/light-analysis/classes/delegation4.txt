@@ -1,0 +1,28 @@
+public final class Delegation4Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public interface First {
+    public abstract method foo(): int
+}
+
+
+public final class Impl {
+    public method <init>(): void
+    public method bar(): int
+    public method foo(): int
+}
+
+
+public interface Second {
+    public abstract method bar(): int
+}
+
+
+public final class Test {
+    private synthetic final field $$delegate_0: Second
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Second): void
+    public method bar(): int
+    public method foo(): int
+}

@@ -1,0 +1,5 @@
+public final class NonLocalReturnArrayConstructorKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method testArray(): void
+    public final static method testIntArray(): void
+}

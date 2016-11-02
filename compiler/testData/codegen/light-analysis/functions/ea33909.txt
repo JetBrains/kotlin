@@ -1,0 +1,4 @@
+public final class Ea33909Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method justPrint(p0: int): java.lang.String
+}

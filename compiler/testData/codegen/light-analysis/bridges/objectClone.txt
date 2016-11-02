@@ -1,0 +1,19 @@
+public interface A
+
+
+public final class B {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method clone(): B
+    public synthetic method clone(): java.lang.Object
+    public final method contains(p0: java.lang.Object): boolean
+    public method contains(p0: java.lang.String): boolean
+    public method getSize(): int
+    public final method remove(p0: java.lang.Object): boolean
+    public method remove(p0: java.lang.String): boolean
+    public final method size(): int
+}
+
+
+public final class ObjectCloneKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

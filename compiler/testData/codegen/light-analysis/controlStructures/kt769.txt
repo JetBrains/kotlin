@@ -1,0 +1,3 @@
+public final class w_range/Kt769Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

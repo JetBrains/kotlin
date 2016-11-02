@@ -1,0 +1,11 @@
+public interface A
+
+
+public final class GenericOverriddenFunctionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public interface H {
+    public abstract @org.jetbrains.annotations.Nullable method foo(): java.lang.Object
+}

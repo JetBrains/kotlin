@@ -1,0 +1,6 @@
+public final class Kt6722Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public interface T

@@ -1,0 +1,9 @@
+public final class ImpulsMigration {
+    public method <init>(): void
+    public final method migrate(p0: long): void
+}
+
+
+public final class Kt14447Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

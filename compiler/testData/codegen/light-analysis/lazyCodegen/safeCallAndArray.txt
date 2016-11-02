@@ -1,0 +1,9 @@
+public final class C {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method calc(): java.lang.String
+}
+
+
+public final class SafeCallAndArrayKt {
+    public final static @org.jetbrains.annotations.Nullable method box(): java.lang.String
+}

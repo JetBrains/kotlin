@@ -1,0 +1,9 @@
+public final class K {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
+}
+
+
+public final class KKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

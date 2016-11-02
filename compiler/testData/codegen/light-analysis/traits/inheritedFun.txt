@@ -1,0 +1,21 @@
+public interface A {
+    inner class A/DefaultImpls
+    public abstract method f(): int
+}
+
+
+public final class A/DefaultImpls {
+    inner class A/DefaultImpls
+    public static method f(p0: A): int
+}
+
+
+public final class B {
+    public method <init>(): void
+    public method f(): int
+}
+
+
+public final class InheritedFunKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

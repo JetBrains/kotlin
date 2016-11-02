@@ -1,0 +1,33 @@
+public final class A {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public interface BK {
+    inner class BK/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class BK/DefaultImpls {
+    inner class BK/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method foo(p0: BK): java.lang.String
+}
+
+
+public interface KTrait {
+    inner class KTrait/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class KTrait/DefaultImpls {
+    inner class KTrait/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method foo(p0: KTrait): java.lang.String
+}
+
+
+public final class Kt3500Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

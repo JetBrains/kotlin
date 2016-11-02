@@ -1,0 +1,15 @@
+public class h/A {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+}
+
+
+public final class h/B {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class h/SmartCastThisKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

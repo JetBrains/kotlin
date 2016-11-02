@@ -1,0 +1,4 @@
+public final class ContinueInForConditionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method foo(): java.util.List
+}

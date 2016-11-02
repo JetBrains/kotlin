@@ -1,0 +1,12 @@
+public final class Kt1157Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class SomeClass {
+    public final static field INSTANCE: SomeClass
+    private final static field work: SomeClass$work$1
+    private method <init>(): void
+    private final method foo(): void
+    public final method run(): void
+}

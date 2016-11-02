@@ -1,0 +1,27 @@
+public final class Kt9642Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Outer {
+    public final static field Companion: Outer.Companion
+    private static @org.jetbrains.annotations.NotNull field s: java.lang.String
+    inner class Outer/Companion
+    inner class Outer/Nested
+    public method <init>(): void
+}
+
+
+public final static class Outer/Companion {
+    inner class Outer/Companion
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    private final method setS(p0: java.lang.String): void
+}
+
+
+public final static class Outer/Nested {
+    inner class Outer/Nested
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method fn(): java.lang.String
+}

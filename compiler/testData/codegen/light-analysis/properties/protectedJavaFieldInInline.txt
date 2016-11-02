@@ -1,0 +1,9 @@
+public final class test/B {
+    public method <init>(): void
+    public final method bar(): java.lang.String
+}
+
+
+public final class test/KotlinKt {
+    public final static method box(): java.lang.String
+}

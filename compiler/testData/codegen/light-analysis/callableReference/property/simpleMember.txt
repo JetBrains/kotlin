@@ -1,0 +1,10 @@
+public final class A {
+    private final field x: int
+    public method <init>(p0: int): void
+    public final method getX(): int
+}
+
+
+public final class SimpleMemberKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

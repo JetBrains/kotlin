@@ -1,0 +1,4 @@
+public final class WhenWithConditionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method withWhen(p0: int): int
+}

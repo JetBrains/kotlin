@@ -1,0 +1,29 @@
+public interface A {
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public class AFabric {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method createA(@org.jetbrains.annotations.NotNull p0: java.lang.String): A
+}
+
+
+public final class AImpl {
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
+}
+
+
+public final class AWrapperFabric {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method createA(@org.jetbrains.annotations.NotNull p0: java.lang.String): A
+    public final @org.jetbrains.annotations.NotNull method createMyA(): A
+}
+
+
+public final class Kt11634_2Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

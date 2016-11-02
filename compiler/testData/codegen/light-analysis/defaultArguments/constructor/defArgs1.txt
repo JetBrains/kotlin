@@ -1,0 +1,12 @@
+public final class A {
+    private final field a: int
+    public method <init>(): void
+    public method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getA(): int
+}
+
+
+public final class DefArgs1Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

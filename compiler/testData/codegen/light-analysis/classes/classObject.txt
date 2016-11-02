@@ -1,0 +1,17 @@
+public final class C {
+    public final static field Companion: C.Companion
+    inner class C/Companion
+    public method <init>(): void
+}
+
+
+public final static class C/Companion {
+    inner class C/Companion
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method create(): C
+}
+
+
+public final class ClassObjectKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

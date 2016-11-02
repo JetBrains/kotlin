@@ -1,0 +1,13 @@
+public final class Kt3576Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class TestObject {
+    public final static field INSTANCE: TestObject
+    private final static field otherFloat: float
+    private final static field testFloat: float
+    private method <init>(): void
+    public final method getOtherFloat(): float
+    public final method getTestFloat(): float
+}

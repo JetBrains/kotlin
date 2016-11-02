@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
@@ -26,13 +30,49 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     protected open val classBuilderFactory: ClassBuilderFactory
         get() = ClassBuilderFactories.TEST
 
+    open fun getTextFile(ktFile: File): File = File(ktFile.parentFile, ktFile.nameWithoutExtension + ".txt")
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
         val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
 
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
+        var addRuntime = false
+        var addReflect = false
+
+        for (file in files) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
+                addRuntime = true
+            }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
+                addReflect = true
+            }
+        }
+
+        val configurationKind = if (addReflect)
+            ConfigurationKind.ALL
+        else if (addRuntime)
+            ConfigurationKind.NO_KOTLIN_REFLECT
+        else
+            ConfigurationKind.JDK_ONLY
+
+        val jdkKind = getJdkKind(files)
+        if (myEnvironment != null) {
+            throw IllegalStateException("must not set up myEnvironment twice")
+        }
+
+        val configuration = createConfiguration(
+                configurationKind,
+                jdkKind,
+                listOf<File>(getAnnotationsJar()),
+                javaSources.filterNotNull(),
+                emptyList())
+
+        myEnvironment = KotlinCoreEnvironment.createForTests(
+                testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
+
         loadMultiFiles(files)
 
-        val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
+        val txtFile = getTextFile(wholeFile)
         val generatedFiles = CodegenTestUtil.generateFiles(myEnvironment, myFiles, classBuilderFactory)
                 .getClassFiles()
                 .sortedBy { it.relativePath }

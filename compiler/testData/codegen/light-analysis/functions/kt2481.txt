@@ -1,0 +1,15 @@
+public class A {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method method(): java.lang.String
+}
+
+
+public final class B {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method method(): java.lang.String
+}
+
+
+public final class Kt2481Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

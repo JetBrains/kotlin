@@ -1,0 +1,20 @@
+public final class EmptyForKt {
+    private static field index: int
+    private final static @org.jetbrains.annotations.NotNull field iterator: IterableIterator
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method getIndex(): int
+    public final static @org.jetbrains.annotations.NotNull method getIterator(): IterableIterator
+    public final static method setIndex(p0: int): void
+}
+
+
+public interface IterableIterator {
+    inner class IterableIterator/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
+}
+
+
+public final class IterableIterator/DefaultImpls {
+    inner class IterableIterator/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method iterator(p0: IterableIterator): java.util.Iterator
+}

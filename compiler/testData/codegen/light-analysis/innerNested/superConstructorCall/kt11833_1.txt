@@ -1,0 +1,24 @@
+public final class Child {
+    private final @org.jetbrains.annotations.NotNull field ChildInClass: Father.InClass
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getChildInClass(): Father.InClass
+}
+
+
+public abstract class Father {
+    inner class Father/InClass
+    public method <init>(): void
+}
+
+
+public abstract class Father/InClass {
+    synthetic final field this$0: Father
+    inner class Father/InClass
+    public method <init>(p0: Father): void
+    public abstract @org.jetbrains.annotations.NotNull method work(): java.lang.String
+}
+
+
+public final class Kt11833_1Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

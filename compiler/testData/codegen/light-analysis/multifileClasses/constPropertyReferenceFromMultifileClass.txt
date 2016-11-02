@@ -1,0 +1,15 @@
+public final class _1Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@java.lang.annotation.Retention
+public annotation class a/A
+
+
+public final class a/MultifileClass {
+    public final static @org.jetbrains.annotations.NotNull field OK: java.lang.String
+    private synthetic deprecated final static @a.A method OK$annotations(): void
+}
+
+
+synthetic final class a/MultifileClass___2Kt

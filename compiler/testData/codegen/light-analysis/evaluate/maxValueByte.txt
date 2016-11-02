@@ -1,0 +1,18 @@
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class Ann {
+    public abstract method p1(): int
+    public abstract method p2(): byte
+    public abstract method p4(): int
+    public abstract method p5(): int
+}
+
+
+public final class MaxValueByteKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@Ann
+public final class MyClass {
+    public method <init>(): void
+}

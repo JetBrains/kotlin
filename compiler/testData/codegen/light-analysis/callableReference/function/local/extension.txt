@@ -1,0 +1,8 @@
+public final class A {
+    public method <init>(): void
+}
+
+
+public final class ExtensionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

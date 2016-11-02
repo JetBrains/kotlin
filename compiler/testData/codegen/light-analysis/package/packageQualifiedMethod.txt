@@ -1,0 +1,4 @@
+public final class Foo/PackageQualifiedMethodKt {
+    public final static method bar(): int
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

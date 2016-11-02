@@ -1,0 +1,4 @@
+public final class regressions/Kt2495TestKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method f(@org.jetbrains.annotations.NotNull p0: java.util.Iterator): int
+}

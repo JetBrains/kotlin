@@ -1,0 +1,9 @@
+public final class Kt4982Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public abstract class WaitFor {
+    public method <init>(): void
+    public abstract method condition(): boolean
+}

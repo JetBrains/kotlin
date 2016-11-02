@@ -1,0 +1,10 @@
+public final class Kt6485Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method typeLiteral(): TypeLiteral
+}
+
+
+public class TypeLiteral {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getType(): java.lang.reflect.Type
+}

@@ -1,0 +1,18 @@
+public interface A {
+    public abstract method foo(): java.lang.Object
+}
+
+
+public interface B
+
+
+public final class BImpl {
+    private synthetic final field $$delegate_0: A
+    public method <init>(@org.jetbrains.annotations.NotNull p0: A): void
+    public method foo(): java.lang.Object
+}
+
+
+public final class Kt8154Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

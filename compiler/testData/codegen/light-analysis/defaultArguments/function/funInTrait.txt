@@ -1,0 +1,21 @@
+public interface Foo {
+    inner class Foo/DefaultImpls
+    public abstract method foo(p0: double): double
+}
+
+
+public final class Foo/DefaultImpls {
+    inner class Foo/DefaultImpls
+    public synthetic static method foo$default(p0: Foo, p1: double, p2: int, p3: java.lang.Object): double
+}
+
+
+public final class FooImpl {
+    public method <init>(): void
+    public method foo(p0: double): double
+}
+
+
+public final class FunInTraitKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

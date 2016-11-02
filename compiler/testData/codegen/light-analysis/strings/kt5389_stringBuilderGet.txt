@@ -1,0 +1,3 @@
+public final class Kt5389_stringBuilderGetKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

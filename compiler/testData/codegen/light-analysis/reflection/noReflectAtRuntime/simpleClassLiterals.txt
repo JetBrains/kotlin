@@ -1,0 +1,8 @@
+public final class Klass {
+    public method <init>(): void
+}
+
+
+public final class SimpleClassLiteralsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

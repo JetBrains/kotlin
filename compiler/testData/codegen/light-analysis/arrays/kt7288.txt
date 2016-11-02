@@ -1,0 +1,4 @@
+public final class Kt7288Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test(p0: boolean): java.lang.String
+}

@@ -1,0 +1,9 @@
+public final class GenericArraysKt {
+    private final static method arrayClass(): kotlin.reflect.KClass
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Klass {
+    public method <init>(): void
+}

@@ -1,0 +1,27 @@
+public class Outer {
+    private final @org.jetbrains.annotations.Nullable field p: Outer
+    inner class Outer/First
+    inner class Outer/Other
+    private method <init>(p0: Outer): void
+    public final @org.jetbrains.annotations.Nullable method getP(): Outer
+}
+
+
+public final class Outer/First {
+    public final static field INSTANCE: Outer.First
+    inner class Outer/First
+    private method <init>(): void
+}
+
+
+public final static class Outer/Other {
+    inner class Outer/Other
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Outer): void
+    public synthetic method <init>(p0: Outer, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+
+public final class WithLinkedClassesKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

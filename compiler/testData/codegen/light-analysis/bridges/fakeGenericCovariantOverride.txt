@@ -1,0 +1,20 @@
+public class Class {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method f(): java.lang.String
+}
+
+
+public final class FakeGenericCovariantOverrideKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Foo {
+    public method <init>(): void
+    public synthetic method f(): java.lang.Object
+}
+
+
+public interface Trait {
+    public abstract method f(): java.lang.Object
+}

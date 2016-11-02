@@ -1,0 +1,40 @@
+public enum class E {
+    public final static field ENTRY: E
+    public final static field SUBCLASS: E
+    inner class E/O
+    inner class E/SUBCLASS
+    protected method <init>(p0: java.lang.String, p1: int): void
+    public method bar(): int
+    public static method valueOf(p0: java.lang.String): E
+    public static method values(): E[]
+}
+
+
+public final class E/O {
+    public final static field INSTANCE: E.O
+    inner class E/O
+    private method <init>(): void
+    public final method foo(): int
+}
+
+
+final static class E/SUBCLASS {
+    inner class E/SUBCLASS
+    inner class E/SUBCLASS/O
+    method <init>(p0: java.lang.String, p1: int): void
+    public method bar(): int
+}
+
+
+public final class E/SUBCLASS/O {
+    public final static field INSTANCE: E.SUBCLASS.O
+    inner class E/SUBCLASS
+    inner class E/SUBCLASS/O
+    private method <init>(): void
+    public final method foo(): int
+}
+
+
+public final class ObjectInEnumKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

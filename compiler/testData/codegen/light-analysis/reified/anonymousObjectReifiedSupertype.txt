@@ -1,0 +1,10 @@
+public abstract class A {
+    public method <init>(): void
+    public abstract @org.jetbrains.annotations.NotNull method f(): java.lang.String
+}
+
+
+public final class AnonymousObjectReifiedSupertypeKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method foo(): A
+}

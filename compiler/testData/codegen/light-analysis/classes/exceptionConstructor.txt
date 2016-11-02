@@ -1,0 +1,8 @@
+public final class ExceptionConstructorKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class GameError {
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}

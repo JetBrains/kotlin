@@ -1,0 +1,18 @@
+public final class A {
+    public method <init>(): void
+    public final method bar(): void
+}
+
+
+public final class O {
+    public final static field INSTANCE: O
+    private method <init>(): void
+    public final static @kotlin.jvm.JvmStatic method baz(): void
+}
+
+
+public final class ReturnUnitKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method foo(): void
+    public final static @org.jetbrains.annotations.Nullable method nullableUnit(p0: boolean): kotlin.Unit
+}

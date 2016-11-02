@@ -1,0 +1,16 @@
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class BinaryAnno
+
+
+public final class RetentionsKt {
+    public final static @RuntimeAnno @SourceAnno @BinaryAnno @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class RuntimeAnno
+
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+public annotation class SourceAnno

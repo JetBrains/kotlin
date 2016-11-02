@@ -1,0 +1,10 @@
+public final class A {
+    private field str: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getMyStr(): java.lang.String
+}
+
+
+public final class ExceptionFieldKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

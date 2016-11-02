@@ -1,0 +1,14 @@
+public class A {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+
+public final class B {
+    public method <init>(): void
+}
+
+
+public final class FakeOverrideKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
