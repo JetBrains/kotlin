@@ -88,11 +88,16 @@ val ideaSdkCoreCfg = configurations.create("ideaSdk-core")
 val otherDepsCfg = configurations.create("other-deps")
 val proguardLibraryJarsCfg = configurations.create("library-jars")
 val mainCfg = configurations.create("default")
+val embeddableCfg = configurations.create("embeddable")
 
 val outputBeforeSrinkJar = "$buildDir/libs/kotlin-compiler-before-shrink.jar"
 val outputJar = "$buildDir/libs/kotlin-compiler.jar"
+val outputEmbeddableJar = "$buildDir/libs/kotlin-compiler-embeddable.jar"
+
+val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
 artifacts.add(mainCfg.name, file(outputJar))
+artifacts.add(embeddableCfg.name, file(outputEmbeddableJar))
 
 val javaHome = System.getProperty("java.home")
 
@@ -160,5 +165,26 @@ val mainTask = task("prepare") {
     dependsOn(if (shrink) proguardTask else packCompilerTask)
 }
 
-defaultTasks(mainTask.name)
+val embeddableTask = task<ShadowJar>("prepare-embeddable-compiler") {
+    archiveName = outputEmbeddableJar
+    configurations = listOf(embeddableCfg)
+    dependsOn(mainTask)
+    from(files(outputJar))
+    // TODO: more from here
+    relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" )
+    relocate("com.intellij", "$kotlinEmbeddableRootPackage.com.intellij")
+    relocate("com.google", "$kotlinEmbeddableRootPackage.com.google")
+    relocate("com.sampullara", "$kotlinEmbeddableRootPackage.com.sampullara")
+    relocate("org.apache", "$kotlinEmbeddableRootPackage.org.apache")
+    relocate("org.jdom", "$kotlinEmbeddableRootPackage.org.jdom")
+    relocate("org.fusesource", "$kotlinEmbeddableRootPackage.org.fusesource") {
+        exclude("org.fusesource.jansi.internal.CLibrary")
+    }
+    relocate("org.picocontainer", "$kotlinEmbeddableRootPackage.org.picocontainer")
+    relocate("jline", "$kotlinEmbeddableRootPackage.jline")
+    relocate("gnu", "$kotlinEmbeddableRootPackage.gnu")
+    relocate("javax.inject", "$kotlinEmbeddableRootPackage.javax.inject")
+}
+
+defaultTasks(mainTask.name, embeddableTask.name)
 
