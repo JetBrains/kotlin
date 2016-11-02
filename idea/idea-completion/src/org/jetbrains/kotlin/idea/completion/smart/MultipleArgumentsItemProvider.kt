@@ -23,6 +23,7 @@ import com.intellij.ui.LayeredIcon
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
+import org.jetbrains.kotlin.idea.completion.tryGetOffset
 import org.jetbrains.kotlin.idea.core.ArgumentPositionData
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
@@ -90,8 +91,8 @@ class MultipleArgumentsItemProvider(
                 .create(variables.map { it.name.render() }.joinToString(", ")) //TODO: use code formatting settings
                 .withInsertHandler { context, lookupElement ->
                     if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
-                        val offset = context.offsetMap.getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
-                        if (offset != -1) {
+                        val offset = context.offsetMap.tryGetOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
+                        if (offset != null) {
                             context.document.deleteString(context.tailOffset, offset)
                         }
                     }

@@ -207,8 +207,8 @@ class ParameterNameAndTypeCompletion(
 
         override fun handleInsert(context: InsertionContext) {
             if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
-                val replacementOffset = context.offsetMap.getOffset(REPLACEMENT_OFFSET)
-                if (replacementOffset != -1) {
+                val replacementOffset = context.offsetMap.tryGetOffset(REPLACEMENT_OFFSET)
+                if (replacementOffset != null) {
                     val tailOffset = context.tailOffset
                     context.document.deleteString(tailOffset, replacementOffset)
 
