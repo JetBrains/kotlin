@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM
-
 class Controller {
     var lastSuspension: Continuation<String>? = null
     var result = "fail"
