@@ -97,6 +97,52 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
+    override fun visitLoop(loop: IrLoop) {
+        TODO()
+    }
+
+    //-------------------------------------------------------------------------//
+
+    override fun visitWhileLoop(loop: IrWhileLoop) {
+        val loopEnter = generator.basicBlock()
+        val loopBody  = generator.basicBlock()
+        val loopExit  = generator.basicBlock()
+
+        LLVMBuildBr(context.llvmBuilder, loopEnter)
+
+        LLVMPositionBuilderAtEnd(context.llvmBuilder, loopEnter)
+        val condition = evaluateExpression(generator.tmpVariable(), loop.condition)
+        LLVMBuildCondBr(context.llvmBuilder, condition, loopBody, loopExit)
+
+        LLVMPositionBuilderAtEnd(context.llvmBuilder, loopBody)
+        evaluateExpression(generator.tmpVariable(), loop.body)
+
+        LLVMBuildBr(context.llvmBuilder, loopEnter)
+        LLVMPositionBuilderAtEnd(context.llvmBuilder, loopExit)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
+        val loopBody  = generator.basicBlock()
+        val loopCheck = generator.basicBlock()
+        val loopExit  = generator.basicBlock()
+
+        LLVMBuildBr(context.llvmBuilder, loopBody)
+
+        LLVMPositionBuilderAtEnd(context.llvmBuilder, loopBody)
+        evaluateExpression(generator.tmpVariable(), loop.body)
+        LLVMBuildBr(context.llvmBuilder, loopCheck)
+
+        LLVMPositionBuilderAtEnd(context.llvmBuilder, loopCheck)
+        val condition = evaluateExpression(generator.tmpVariable(), loop.condition)
+        LLVMBuildCondBr(context.llvmBuilder, condition, loopBody, loopExit)
+
+        LLVMPositionBuilderAtEnd(context.llvmBuilder, loopExit)
+    }
+
+    //-------------------------------------------------------------------------//
+
     override fun visitConstructor(declaration: IrConstructor) {
         generator.initFunction(declaration)
         val thisValue = generator.variable("this")
@@ -166,9 +212,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("visitVariable              : ${ir2string(declaration)}")
         val variableName = declaration.descriptor.name.asString()
         val variableType = declaration.descriptor.type
-        val newVariable  = generator.alloca(variableType, variableName)     // Create LLVM variable.
-        generator.registerVariable(variableName, newVariable)               // Map variableName -> LLVM variable.
-        evaluateExpression(variableName, declaration.initializer)           // Generate initialization code.
+        val newVariable  = generator.alloca(variableType, variableName)        // Create LLVM variable.
+        generator.registerVariable(variableName, newVariable)                  // Map variableName -> LLVM variable.
+        val value = evaluateExpression(variableName, declaration.initializer)  // Generate initialization code.
+        generator.store(value!!, generator.variable(variableName)!!)           // Store init result in the variable
     }
 
     //-------------------------------------------------------------------------//
@@ -192,16 +239,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMOpaqueValue? {
         when (value) {
-            is IrCall        -> return evaluateCall       (tmpVariableName, value)
-            is IrGetValue    -> return evaluateGetValue   (tmpVariableName, value)
-            is IrSetVariable -> return evaluateSetVariable(                 value)
-            is IrVariable    -> return evaluateVariable   (                 value)
-            is IrGetField    -> return evaluateGetField   (                 value)
-            is IrConst<*>    -> return evaluateConst      (                 value)
-            is IrReturn      -> return evaluateReturn     (                 value)
-            is IrBlock       -> return evaluateBlock      (                 value)
-            null             -> return null
-            else             -> {
+            is IrCall            -> return evaluateCall           (tmpVariableName, value)
+            is IrGetValue        -> return evaluateGetValue       (tmpVariableName, value)
+            is IrSetVariable     -> return evaluateSetVariable    (                 value)
+            is IrVariable        -> return evaluateVariable       (                 value)
+            is IrGetField        -> return evaluateGetField       (                 value)
+            is IrConst<*>        -> return evaluateConst          (                 value)
+            is IrReturn          -> return evaluateReturn         (                 value)
+            is IrBlock           -> return evaluateBlock          (                 value)
+            null                 -> return null
+            else                 -> {
                 TODO()
             }
         }
@@ -211,16 +258,17 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression?): LLVMOpaqueValue? {
         logger.log("evaluateCall               : $tmpVariableName = ${ir2string(value)}")
-        val args = mutableListOf<LLVMOpaqueValue?>()
-        value!!.acceptChildrenVoid(object:IrElementVisitorVoid{
-            override fun visitElement(element: IrElement) {
-                val tmp = generator.tmpVariable()
-                args.add(evaluateExpression(tmp, element as IrExpression))
+        val args = mutableListOf<LLVMOpaqueValue?>()                            // Create list of function args.
+        value!!.acceptChildrenVoid(object: IrElementVisitorVoid {               // Iterate args of the function.
+            override fun visitElement(element: IrElement) {                     // Visit arg.
+                val tmp = generator.tmpVariable()                               // Create variable representing the arg in generator
+                args.add(evaluateExpression(tmp, element as IrExpression))      // Evaluate expression and get LLVM arg
             }
         })
+
         when {
-            value is IrDelegatingConstructorCall -> return generator.superCall(tmpVariableName, value.descriptor, args)
             value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
+            value is IrDelegatingConstructorCall -> return generator.superCall(tmpVariableName, value.descriptor, args)
             else -> {
                 TODO()
             }
@@ -335,11 +383,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
         when {
-            descriptor.isOperator || descriptor is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall(tmpVariableName, callee, args)
-            descriptor is ClassConstructorDescriptor -> return evaluateConstructorCall(tmpVariableName, callee, args)
-            else -> {
-                return evaluateSimpleFunctionCall(tmpVariableName, callee, args)
-            }
+            descriptor.isOperator                         -> return evaluateOperatorCall(tmpVariableName, callee.origin!!, args)
+            descriptor is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall(tmpVariableName, callee.origin!!, args)
+            descriptor is ClassConstructorDescriptor      -> return evaluateConstructorCall(tmpVariableName, callee, args)
+            else                                          -> return evaluateSimpleFunctionCall(tmpVariableName, callee, args)
         }
     }
 
@@ -360,9 +407,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
-        logger.log("evaluateCall $tmpVariableName = ${ir2string(callee)}")
-        when (callee.origin) {
+    private fun evaluateOperatorCall(tmpVariableName: String, origin: IrStatementOrigin, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
+        logger.log("evaluateCall $tmpVariableName origin:$origin")
+        when (origin) {
             IrStatementOrigin.PLUS     -> return generator.plus  (args[0]!!, args[1]!!, tmpVariableName)
             IrStatementOrigin.MINUS    -> return generator.minus (args[0]!!, args[1]!!, tmpVariableName)
             IrStatementOrigin.PLUSEQ   -> return generator.plus  (args[0]!!, args[1]!!, tmpVariableName)
