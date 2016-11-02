@@ -142,6 +142,7 @@ task aritmetic(type: UnitKonanTest) {
 
 task sum1(type: UnitKonanTest) {
     source = "codegen/function/sum_foo_bar.kt"
+
 }
 
 task sum2(type: UnitKonanTest) {
@@ -210,3 +211,10 @@ task minus_eq(type: UnitKonanTest) {
     source = "codegen/function/minus_eq.kt"
 }
 
+task cycle(type: UnitKonanTest) {
+    source = "codegen/cycles/cycle.kt"
+}
+
+task cycle_do(type: UnitKonanTest) {
+    source = "codegen/cycles/cycle_do.kt"
+}
