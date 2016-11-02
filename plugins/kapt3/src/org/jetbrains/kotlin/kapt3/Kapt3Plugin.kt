@@ -152,7 +152,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Options: $apOptions")
         }
 
-        val kapt3AnalysisCompletedHandlerExtension = Kapt3Extension(
+        val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
                 classpath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
                 isAptOnly, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
