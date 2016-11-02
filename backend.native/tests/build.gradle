@@ -12,6 +12,7 @@ abstract class KonanTest extends DefaultTask {
     def runtimeProject = project.project(":runtime")
     def llvmLlc = llvmTool("llc")
     def llvmC = llvmTool("clang")
+    def llvmCAdditionalArgs = ["--sysroot=$project.sysrootDir"]
     def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
     def mainC = 'main.c'
     String goldValue = null
@@ -88,6 +89,8 @@ class UnitKonanTest extends KonanTest {
         project.exec {
             commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
                     "-o", "${exe.absolutePath}"
+
+            args llvmCAdditionalArgs
         }
     }
 }
@@ -97,6 +100,8 @@ class RunKonanTest extends KonanTest {
         project.exec {
             commandLine "${llvmC}", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
                     "-o", "${exe.absolutePath}"
+
+            args llvmCAdditionalArgs
         }
     }
 }

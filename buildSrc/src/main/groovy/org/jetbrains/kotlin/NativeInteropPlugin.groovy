@@ -174,6 +174,10 @@ class NamedNativeInteropConfig implements Named {
                     args "-linker:" + linker
                 }
 
+                String sysrootArg = "--sysroot=$project.sysrootDir"
+                compilerOpts += sysrootArg
+                linkerOpts   += sysrootArg
+
                 args compilerOpts.collect { "-copt:$it" }
                 args linkerOpts.collect { "-lopt:$it" }
 

@@ -85,6 +85,10 @@ task llvm(type: TgzNativeDep) {
     baseName = "clang+llvm-3.8.0-$target"
 }
 
+task sysroot(type: TgzNativeDep) {
+    baseName = "target-sysroot-1-$target"
+}
+
 
 task update {
     dependsOn tasks.withType(NativeDep)

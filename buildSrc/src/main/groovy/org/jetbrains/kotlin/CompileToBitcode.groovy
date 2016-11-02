@@ -73,6 +73,8 @@ class CompileCppToBitcode extends DefaultTask {
             executable "$project.llvmDir/bin/clang++"
             args '-std=c++11'
 
+            args "--sysroot=$project.sysrootDir"
+
             args compilerArgs
 
             args "-I$headersDir"

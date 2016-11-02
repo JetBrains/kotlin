@@ -11,16 +11,16 @@ allprojects {
         evaluationDependsOn(":dependencies")
     }
 
-    afterEvaluate {
-        if (plugins.hasPlugin('c')) {
-            model {
-                toolChains {
-                    clang(Clang) {
-                        path "$llvmDir/bin"
+    plugins.withType(NativeComponentPlugin) {
+        model {
+            toolChains {
+                clang(Clang) {
+                    path "$llvmDir/bin"
 
-                        // The system PATH should be appended automatically according to Gradle docs,
-                        // but this doesn't seem to happen
-                        path System.env.PATH.split(File.pathSeparator)
+                    eachPlatform { // TODO: will not work when cross-compiling
+                        [cCompiler, cppCompiler, linker].each {
+                            it.withArguments { it << "--sysroot=$sysrootDir" }
+                        }
                     }
                 }
             }

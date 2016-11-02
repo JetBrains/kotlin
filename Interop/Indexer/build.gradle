@@ -16,13 +16,6 @@ def javaHome = System.getProperty('java.home')
 def compilerArgsForJniIncludes = ["", "linux", "darwin"].collect { "-I$javaHome/../include/$it" } as String[]
 
 model {
-    //TODO: it's better to find some way share this configuration
-    toolChains {
-        clang(Clang) {
-            path "${llvmDir}/bin/clang"
-        }
-    }
-
     components {
         clangbridge(NativeLibrarySpec) {
             sources {
