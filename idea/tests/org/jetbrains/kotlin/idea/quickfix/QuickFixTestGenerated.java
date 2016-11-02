@@ -7496,6 +7496,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noActionForCommonFunction.kt")
+        public void testNoActionForCommonFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/noActionForCommonFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noActionForCommonVal.kt")
         public void testNoActionForCommonVal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToUnderscore/noActionForCommonVal.kt");

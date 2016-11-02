@@ -34,7 +34,15 @@ class RenameToUnderscoreFix(element: KtCallableDeclaration) : KotlinQuickFixActi
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val declaration: KtCallableDeclaration? = when (diagnostic.factory) {
-                Errors.UNUSED_PARAMETER -> diagnostic.psiElement as? KtParameter
+                Errors.UNUSED_PARAMETER -> {
+                    val parameter = diagnostic.psiElement as? KtParameter
+                    val owner = parameter?.parent?.parent
+
+                    if (owner is KtFunctionLiteral || (owner is KtNamedFunction && owner.name == null))
+                        parameter
+                    else
+                        null
+                }
                 Errors.UNUSED_VARIABLE, Errors.UNUSED_DESTRUCTURED_PARAMETER_ENTRY ->
                     diagnostic.psiElement as? KtDestructuringDeclarationEntry
                 else -> null
