@@ -132,7 +132,7 @@ import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
-import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptRunnerTest
+import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
@@ -1085,7 +1085,7 @@ fun main(args: Array<String>) {
             model("converter")
         }
 
-        testClass<AbstractKotlinKaptRunnerTest> {
+        testClass<AbstractKotlinKaptContextTest> {
             model("kotlinRunner")
         }
     }

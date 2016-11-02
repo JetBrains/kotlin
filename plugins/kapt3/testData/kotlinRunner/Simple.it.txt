@@ -1,0 +1,48 @@
+package test;
+
+public enum EnumClass2 {
+    /*public static final*/ WHITE /* = null */,
+    /*public static final*/ RED /* = null */;
+    private final java.lang.String blah = null;
+
+    EnumClass2(java.lang.String blah) {
+    }
+}
+
+////////////////////
+
+package test;
+
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
+package test;
+
+public enum EnumClass {
+    /*public static final*/ BLACK /* = null */,
+    /*public static final*/ WHITE /* = null */;
+
+    EnumClass() {
+    }
+}
+
+////////////////////
+
+package test;
+
+public final class Simple {
+
+    @MyAnnotation()
+    public final void myMethod() {
+    }
+
+    public final int heavyMethod() {
+        return 0;
+    }
+
+    public Simple() {
+        super();
+    }
+}

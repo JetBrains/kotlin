@@ -45,7 +45,7 @@ import javax.lang.model.element.TypeElement
  * limitations under the License.
  */
 
-class KaptRunnerTest {
+class JavaKaptContextTest {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/testData/runner")
 
@@ -75,7 +75,11 @@ class KaptRunnerTest {
     }
 
     private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
-        KaptContext(KaptLogger(isVerbose = true), emptyList(), emptyMap()).doAnnotationProcessing(
+        KaptContext(KaptLogger(isVerbose = true),
+                    compiledClasses = emptyList(),
+                    origins = emptyMap(),
+                    processorOptions = emptyMap()
+        ).doAnnotationProcessing(
                 listOf(javaSourceFile),
                 listOf(processor),
                 emptyList(), // classpath
