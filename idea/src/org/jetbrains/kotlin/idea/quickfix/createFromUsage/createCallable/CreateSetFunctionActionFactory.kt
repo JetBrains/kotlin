@@ -34,11 +34,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
-object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtArrayAccessExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): KtArrayAccessExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, KtArrayAccessExpression::class.java)
-    }
-
+object CreateSetFunctionActionFactory : CreateGetSetFunctionActionFactory(isGet = false) {
     override fun createCallableInfo(element: KtArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
         val arrayExpr = element.arrayExpression ?: return null
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)

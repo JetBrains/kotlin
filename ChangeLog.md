@@ -223,6 +223,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 #### Intention actions, inspections and quickfixes
 
 - [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) Convert Property to Function Intention: Search occurrences using progress dialog
+- [`KT-14501`](https://youtrack.jetbrains.com/issue/KT-14501) Create from Usage: Support array access expressions/binary expressions with type mismatch errors
 
 #### Refactorings
 

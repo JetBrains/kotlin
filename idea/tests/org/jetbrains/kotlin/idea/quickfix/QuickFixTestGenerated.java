@@ -2074,6 +2074,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("typeMismatch.kt")
+                public void testTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/binaryOperations/typeMismatch.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("whenInOnUserType.kt")
                 public void testWhenInOnUserType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/binaryOperations/whenInOnUserType.kt");
@@ -2769,6 +2775,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/get/createGetFromUsage9.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("typeMismatch.kt")
+                public void testTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/get/typeMismatch.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/hasNext")
@@ -2896,6 +2908,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("setterForIncrement.kt")
                 public void testSetterForIncrement() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/set/setterForIncrement.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeMismatch.kt")
+                public void testTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/set/typeMismatch.kt");
                     doTest(fileName);
                 }
             }
