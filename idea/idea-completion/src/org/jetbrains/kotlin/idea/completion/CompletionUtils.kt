@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.completion.OffsetKey
+import com.intellij.codeInsight.completion.OffsetMap
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.util.Key
@@ -37,7 +39,6 @@ import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 tailrec fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
@@ -409,3 +411,11 @@ fun ImportableFqNameClassifier.isImportableDescriptorImported(descriptor: Declar
            && classification != ImportableFqNameClassifier.Classification.siblingImported
 }
 
+fun OffsetMap.tryGetOffset(key: OffsetKey): Int? {
+    try {
+        return getOffset(key).check { it != -1 } // prior to IDEA 2016.3 getOffset() returned -1 if not found, now it throws exception
+    }
+    catch(e: Exception) {
+        return null
+    }
+}
