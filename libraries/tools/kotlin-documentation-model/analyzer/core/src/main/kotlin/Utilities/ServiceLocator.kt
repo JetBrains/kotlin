@@ -1,6 +1,8 @@
 package org.jetbrains.dokka.Utilities
 
 import java.io.File
+import java.net.URISyntaxException
+import java.net.URL
 import java.util.*
 import java.util.jar.JarFile
 import java.util.zip.ZipEntry
@@ -40,14 +42,24 @@ object ServiceLocator {
         return ServiceDescriptor(implementationName, category, properties["description"]?.toString(), className)
     }
 
+    fun URL.toFile(): File {
+        assert(protocol == "file")
+
+        return try {
+            File(toURI())
+        } catch (e: URISyntaxException) { //Try to handle broken URLs, with unescaped spaces
+            File(path)
+        }
+    }
+
     fun allServices(category: String): List<ServiceDescriptor> {
         val entries = this.javaClass.classLoader.getResources("dokka/$category")?.toList() ?: emptyList()
 
         return entries.flatMap {
             when (it.protocol) {
-                "file" -> File(it.file).listFiles()?.filter { it.extension == "properties" }?.map { lookupDescriptor(category, it.nameWithoutExtension) } ?: emptyList()
+                "file" -> it.toFile().listFiles()?.filter { it.extension == "properties" }?.map { lookupDescriptor(category, it.nameWithoutExtension) } ?: emptyList()
                 "jar" -> {
-                    val file = JarFile(it.file.removePrefix("file:").substringBefore("!"))
+                    val file = JarFile(URL(it.file.substringBefore("!")).toFile())
                     try {
                         val jarPath = it.file.substringAfterLast("!").removePrefix("/")
                         file.entries()
