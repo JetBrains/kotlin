@@ -23,5 +23,11 @@ class MainActivity : Activity() {
         //OK
         fragmentManager.beginTransaction().commit()
         fragmentManager.beginTransaction().add(null, "A").commit()
+
+        //OK KT-14470
+        Runnable {
+            val a = fragmentManager.beginTransaction()
+            a.commit()
+        }
     }
 }
