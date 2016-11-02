@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package kotlin.collections
 
+import java.util.Comparator
+import kotlin.comparisons.naturalOrder
 
 @library("copyToArray")
 public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
@@ -41,3 +44,20 @@ public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
  * specified value.
  */
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
+
+/**
+ * Sorts elements in the list in-place according to their natural sort order.
+ */
+public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
+    if (size > 1) collectionsSort(this, naturalOrder())
+}
+
+/**
+ * Sorts elements in the list in-place according to the order specified with [comparator].
+ */
+public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1) collectionsSort(this, comparator)
+}
+
+@library("collectionsSort")
+private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in T>): Unit = noImpl
