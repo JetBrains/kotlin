@@ -55,7 +55,15 @@ public class ClassBuilderFactories {
             throw new IllegalStateException();
         }
     };
-    
+
+    public static ClassBuilderFactory TEST_KAPT3 = new TestClassBuilderFactory(false) {
+        @NotNull
+        @Override
+        public ClassBuilderMode getClassBuilderMode() {
+            return ClassBuilderMode.KAPT3;
+        }
+    };
+
     public static ClassBuilderFactory TEST = new TestClassBuilderFactory(false);
 
     public static ClassBuilderFactory TEST_WITH_SOURCE_RETENTION_ANNOTATIONS = new TestClassBuilderFactory(true);

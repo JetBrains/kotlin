@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.AnnotationMirror
@@ -243,7 +243,7 @@ class ProcessorTests : AbstractProcessorTest() {
             "KotlinAnnotations",
             "i AnnoAnnotated")
     
-    private fun getKapt2Extension() = AnalysisCompletedHandlerExtension.getInstances(myEnvironment.project)
+    private fun getKapt2Extension() = AnalysisHandlerExtension.getInstances(myEnvironment.project)
             .firstIsInstance<AnnotationProcessingExtensionForTests>()
     
     private fun incrementalDataTest(fileName: String, @Language("TEXT") expectedText: String) {

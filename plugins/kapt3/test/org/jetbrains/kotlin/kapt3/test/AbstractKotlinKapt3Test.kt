@@ -19,12 +19,15 @@ package org.jetbrains.kotlin.kapt3.test
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
+import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -41,6 +44,10 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
+
+        // Use light analysis mode in tests
+        AnalysisHandlerExtension.registerExtension(myEnvironment.project, PartialAnalysisHandlerExtension())
+
         loadMultiFiles(files)
 
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
@@ -77,6 +84,7 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
 
         if (kaptRunner.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
+            Log.instance(kaptRunner.context).flush()
             error("There were errors during analysis. See errors above. Stubs:\n\n$actual")
         }
         KotlinTestUtils.assertEqualsToFile(txtFile, actual)

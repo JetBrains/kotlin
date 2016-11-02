@@ -34,9 +34,10 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -113,12 +114,28 @@ object TopDownAnalyzerFacadeForJVM {
             extension.getPackageFragmentProvider(project, module, storageManager, trace, null)
         }
 
+        val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
+
+        fun invokeExtensionsOnAnalysisComplete(): AnalysisResult? {
+            for (extension in analysisHandlerExtensions) {
+                val result = extension.analysisCompleted(project, module, trace, files)
+                if (result != null) return result
+            }
+
+            return null
+        }
+
+        for (extension in analysisHandlerExtensions) {
+            val result = extension.doAnalysis(project, module, moduleContext, files, trace, container.container, additionalProviders)
+            if (result != null) {
+                invokeExtensionsOnAnalysisComplete()?.let { return it }
+                return result
+            }
+        }
+
         container.lazyTopDownAnalyzerForTopLevel.analyzeFiles(topDownAnalysisMode, files, additionalProviders)
 
-        for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
-            val result = extension.analysisCompleted(project, module, trace, files)
-            if (result != null) return result
-        }
+        invokeExtensionsOnAnalysisComplete()?.let { return it }
 
         return AnalysisResult.success(trace.bindingContext, module)
     }
