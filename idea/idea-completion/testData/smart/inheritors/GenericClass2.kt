@@ -14,4 +14,5 @@ fun bar() {
 // EXIST: { itemText: "object: C1<...>(){...}" }
 // EXIST: { itemText: "object: C2(){...}" }
 // EXIST: { itemText: "object: C3(){...}" }
+// EXIST: { itemText: "enumValueOf" }
 // NOTHING_ELSE

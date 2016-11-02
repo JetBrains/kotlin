@@ -59,7 +59,7 @@ class ReificationArgument(
 
 class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) {
     enum class OperationKind {
-        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
+        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED;
 
         val id: Int get() = ordinal
     }
@@ -139,6 +139,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
                 OperationKind.SAFE_AS -> processAs(insn, instructions, kotlinType, asmType, safe = true)
                 OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
                 OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
+                OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, asmType)
             }) {
                 instructions.remove(insn.previous.previous!!) // PUSH operation ID
                 instructions.remove(insn.previous!!) // PUSH type parameter
@@ -217,6 +218,14 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         val next = insn.next
         if (next !is LdcInsnNode) return false
         next.cst = parameter
+        return true
+    }
+
+    private fun processSpecialEnumFunction(insn: MethodInsnNode, parameter: Type): Boolean {
+        val next = insn.next
+        if (next !is MethodInsnNode) return false
+        next.owner = parameter.internalName
+        next.desc = InlineCodegenUtil.getSpecialEnumFunDescriptor(parameter, "values" == next.name)
         return true
     }
 }

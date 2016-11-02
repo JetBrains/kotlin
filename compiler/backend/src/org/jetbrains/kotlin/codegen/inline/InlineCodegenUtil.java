@@ -22,6 +22,8 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -54,6 +57,7 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.ListIterator;
 
 public class InlineCodegenUtil {
@@ -509,4 +513,47 @@ public class InlineCodegenUtil {
     public static boolean isThis0(@NotNull String name) {
         return THIS$0.equals(name);
     }
+
+    public static boolean isSpecialEnumMethod(@NotNull FunctionDescriptor functionDescriptor) {
+        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+        if (!(containingDeclaration instanceof PackageFragmentDescriptor)) {
+            return false;
+        }
+        if (!containingDeclaration.getName().equals(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) {
+            return false;
+        }
+        if (functionDescriptor.getTypeParameters().size() != 1) {
+            return false;
+        }
+        String name = functionDescriptor.getName().asString();
+        List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+        return "enumValues".equals(name) && parameters.size() == 0 ||
+               "enumValueOf".equals(name) && parameters.size() == 1 && KotlinBuiltIns.isString(parameters.get(0).getType());
+    }
+
+    public static MethodNode createSpecialEnumMethodBody(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull String name,
+            @NotNull KotlinType type,
+            @NotNull KotlinTypeMapper typeMapper
+    ) {
+        boolean isEnumValues = "enumValues".equals(name);
+        Type invokeType = typeMapper.mapType(type);
+        String desc = getSpecialEnumFunDescriptor(invokeType, isEnumValues);
+
+        MethodNode node = new MethodNode(API, Opcodes.ACC_STATIC, "fake", desc, null, null);
+        if (!isEnumValues) {
+            node.visitVarInsn(Opcodes.ALOAD, 0);
+        }
+        codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, new InstructionAdapter(node));
+        node.visitMethodInsn(Opcodes.INVOKESTATIC, invokeType.getInternalName(), isEnumValues ? "values" : "valueOf", desc, false);
+        node.visitInsn(Opcodes.ARETURN);
+        node.visitMaxs(isEnumValues ? 2 : 3, isEnumValues ? 0 : 1);
+        return node;
+    }
+
+    public static String getSpecialEnumFunDescriptor(@NotNull Type type, boolean isEnumValues) {
+        return (isEnumValues ? "()[" : "(Ljava/lang/String;)") + "L" + type.getInternalName() + ";";
+    }
 }
+

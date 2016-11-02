@@ -941,6 +941,87 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/enum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Enum extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInEnum() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("kt10569.kt")
+        public void testKt10569() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/kt10569.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOf.kt")
+        public void testValueOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfCapturedType.kt")
+        public void testValueOfCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfChain.kt")
+        public void testValueOfChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfChainCapturedType.kt")
+        public void testValueOfChainCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfChainCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueOfNonReified.kt")
+        public void testValueOfNonReified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfNonReified.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("values.kt")
+        public void testValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/values.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesAsArray.kt")
+        public void testValuesAsArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesAsArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesCapturedType.kt")
+        public void testValuesCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesChain.kt")
+        public void testValuesChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesChainCapturedType.kt")
+        public void testValuesChainCapturedType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesChainCapturedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesNonReified.kt")
+        public void testValuesNonReified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesNonReified.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

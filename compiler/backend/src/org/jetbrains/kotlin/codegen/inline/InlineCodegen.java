@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.expressions.LabelResolver;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -171,7 +172,7 @@ public class InlineCodegen extends CallGenerator {
 
         SMAPAndMethodNode nodeAndSmap = null;
         try {
-            nodeAndSmap = createMethodNode(functionDescriptor, jvmSignature, codegen, context, callDefault);
+            nodeAndSmap = createMethodNode(functionDescriptor, jvmSignature, codegen, context, callDefault, resolvedCall);
             endCall(inlineCall(nodeAndSmap));
         }
         catch (CompilationException e) {
@@ -227,8 +228,24 @@ public class InlineCodegen extends CallGenerator {
             @NotNull JvmMethodSignature jvmSignature,
             @NotNull ExpressionCodegen codegen,
             @NotNull CodegenContext context,
-            boolean callDefault
+            boolean callDefault,
+            @Nullable ResolvedCall<?> resolvedCall
     ) {
+        if (InlineCodegenUtil.isSpecialEnumMethod(functionDescriptor)) {
+            assert resolvedCall != null : "Resolved call for " + functionDescriptor + " should be not null";
+            Map<TypeParameterDescriptor, KotlinType> arguments = resolvedCall.getTypeArguments();
+            assert arguments.size() == 1 : "Resolved call for " + functionDescriptor + " should have 1 type argument";
+            KotlinType type = arguments.values().iterator().next();
+            MethodNode node =
+                    InlineCodegenUtil.createSpecialEnumMethodBody(
+                            codegen,
+                            functionDescriptor.getName().asString(),
+                            type,
+                            codegen.getState().getTypeMapper()
+                    );
+            return new SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1));
+        }
+
         final GenerationState state = codegen.getState();
         final Method asmMethod =
                 callDefault
