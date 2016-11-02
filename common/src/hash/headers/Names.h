@@ -1,5 +1,5 @@
-#ifndef RUNTIME_NAMES_H
-#define RUNTIME_NAMES_H
+#ifndef COMMON_NAMES_H
+#define COMMON_NAMES_H
 
 #include <stdint.h>
 
@@ -40,4 +40,4 @@ void PrintableGlobalHash(const GlobalHash* hash, char* buffer, uint32_t size);
 } // extern "C"
 #endif
 
-#endif // RUNTIME_NAMES_H
+#endif // COMMON_NAMES_H

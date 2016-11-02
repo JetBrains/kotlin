@@ -1,5 +1,5 @@
-#ifndef RUNTIME_CITY_H
-#define RUNTIME_CITY_H
+#ifndef COMMON_CITY_H
+#define COMMON_CITY_H
 
 // CityHash, by Geoff Pike and Jyrki Alakuijala.
 
@@ -17,4 +17,4 @@ uint64_t CityHash64(const void* buf, size_t len);
 }
 #endif
 
-#endif // RUNTIME_CITY_H
+#endif // COMMON_CITY_H

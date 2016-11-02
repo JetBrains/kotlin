@@ -1,5 +1,5 @@
-#ifndef RUNTIME_SHA1_H
-#define RUNTIME_SHA1_H
+#ifndef COMMON_SHA1_H
+#define COMMON_SHA1_H
 
 #include <stdint.h>
 
@@ -27,4 +27,4 @@ void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
 }
 #endif
 
-#endif // RUNTIME_UTIL_SHA1_H
+#endif // COMMON_SHA1_H
