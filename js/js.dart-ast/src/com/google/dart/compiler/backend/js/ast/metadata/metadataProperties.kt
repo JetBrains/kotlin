@@ -66,6 +66,8 @@ var JsInvocation.isSuspend: Boolean by MetadataProperty(default = false)
 
 var JsInvocation.isHandleResult: Boolean by MetadataProperty(default = false)
 
+var JsNameRef.coroutineController by MetadataProperty(default = false)
+
 enum class TypeCheck {
     TYPEOF,
     INSTANCEOF,

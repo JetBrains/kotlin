@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
@@ -325,7 +327,15 @@ public final class TranslationUtils {
         aliases.put(continuationArgument.getArgumentExpression(), JsLiteral.THIS);
 
         TranslationContext returnContext = context.innerContextWithAliasesForExpressions(aliases);
-        JsInvocation handleResultInvocation = (JsInvocation) CallTranslator.translate(returnContext, returnCall, JsLiteral.THIS);
+
+        ImplicitReceiver receiver = (ImplicitReceiver) returnCall.getDispatchReceiver();
+        assert receiver != null;
+        AnonymousFunctionDescriptor lambdaDescriptor = (AnonymousFunctionDescriptor) receiver.getDeclarationDescriptor();
+        ReceiverParameterDescriptor receiverParameter = lambdaDescriptor.getExtensionReceiverParameter();
+        assert receiverParameter != null;
+        JsExpression jsReceiver = returnContext.getDispatchReceiver(receiverParameter);
+
+        JsInvocation handleResultInvocation = (JsInvocation) CallTranslator.translate(returnContext, returnCall, jsReceiver);
         MetadataProperties.setHandleResult(handleResultInvocation, true);
 
         return handleResultInvocation;

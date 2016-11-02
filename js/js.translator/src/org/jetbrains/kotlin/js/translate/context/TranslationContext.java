@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
@@ -356,6 +358,16 @@ public class TranslationContext {
         if (alias != null) {
             return alias;
         }
+        if (descriptor.getContainingDeclaration() instanceof AnonymousFunctionDescriptor) {
+            AnonymousFunctionDescriptor function = (AnonymousFunctionDescriptor) descriptor.getContainingDeclaration();
+            if (function.isCoroutine()) {
+                assert function.getExtensionReceiverParameter() != null;
+                JsNameRef result = new JsNameRef("$$controller$$", JsLiteral.THIS);
+                MetadataProperties.setCoroutineController(result, true);
+                return result;
+            }
+        }
+
         if (DescriptorUtils.isObject(descriptor.getContainingDeclaration())) {
             if (isConstructorOrDirectScope(descriptor.getContainingDeclaration())) {
                 return JsLiteral.THIS;

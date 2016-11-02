@@ -507,9 +507,6 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
     }
 
     private fun handleSuspend(invocation: JsInvocation): JsExpression {
-        val methodRef = invocation.qualifier as JsNameRef
-        methodRef.qualifier = JsNameRef(controllerFieldName, methodRef.qualifier)
-
         invocation.arguments += JsLiteral.THIS
         val nextBlock = CoroutineBlock()
         currentStatements += state(nextBlock)
