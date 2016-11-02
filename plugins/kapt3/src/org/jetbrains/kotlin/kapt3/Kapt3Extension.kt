@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import java.io.File
 import java.net.URLClassLoader
@@ -40,8 +39,34 @@ import java.util.*
 import javax.annotation.processing.Processor
 import com.sun.tools.javac.util.List as JavacList
 
-class Kapt3Extension(
+class ClasspathBasedKapt3Extension(
         val annotationProcessingClasspath: List<File>,
+        javaSourceRoots: List<File>,
+        sourcesOutputDir: File,
+        classFilesOutputDir: File,
+        stubsOutputDir: File?,
+        options: Map<String, String>,
+        aptOnly: Boolean,
+        pluginInitializedTime: Long,
+        logger: KaptLogger
+) : AbstractKapt3Extension(annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
+                           classFilesOutputDir, stubsOutputDir, options, aptOnly, pluginInitializedTime, logger) {
+    override fun loadProcessors(): List<Processor> {
+        val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
+        val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
+
+        if (processors.isEmpty()) {
+            logger.info("No annotation processors available, aborting")
+        } else {
+            logger.info { "Annotation processors: " + processors.joinToString { it.javaClass.canonicalName } }
+        }
+
+        return processors
+    }
+}
+
+abstract class AbstractKapt3Extension(
+        val classpath: List<File>,
         val javaSourceRoots: List<File>,
         val sourcesOutputDir: File,
         val classFilesOutputDir: File,
@@ -78,7 +103,7 @@ class Kapt3Extension(
         logger.info { "Initial analysis took ${System.currentTimeMillis() - pluginInitializedTime} ms" }
         logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
 
-        val processors = loadProcessors(annotationProcessingClasspath)
+        val processors = loadProcessors()
         if (processors.isEmpty()) return if (aptOnly) doNotGenerateCode() else null
 
         val (kaptContext, generationState) = compileStubs(project, module, bindingTrace.bindingContext, files.toList())
@@ -90,7 +115,7 @@ class Kapt3Extension(
             val (annotationProcessingTime) = measureTimeMillis {
                 kaptContext.doAnnotationProcessing(
                         javaSourceFiles, processors,
-                        annotationProcessingClasspath, sourcesOutputDir, classFilesOutputDir, kotlinSourceStubs)
+                        classpath, sourcesOutputDir, classFilesOutputDir, kotlinSourceStubs)
             }
 
             logger.info { "Annotation processing took $annotationProcessingTime ms" }
@@ -180,18 +205,7 @@ class Kapt3Extension(
         return javaFilesFromJavaSourceRoots
     }
 
-    private fun loadProcessors(classpath: List<File>): List<Processor> {
-        val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
-        val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
-
-        if (processors.isEmpty()) {
-            logger.info("No annotation processors available, aborting")
-        } else {
-            logger.info { "Annotation processors: " + processors.joinToString { it.javaClass.canonicalName } }
-        }
-
-        return processors
-    }
+    protected abstract fun loadProcessors(): List<Processor>
 }
 
 private inline fun <T> measureTimeMillis(block: () -> T) : Pair<Long, T> {

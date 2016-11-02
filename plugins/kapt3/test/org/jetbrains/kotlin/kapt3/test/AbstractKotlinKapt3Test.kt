@@ -36,7 +36,7 @@ import java.io.File
 import java.nio.file.Files
 
 abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
-    protected companion object {
+    companion object {
         val FILE_SEPARATOR = "\n\n////////////////////\n\n"
     }
 
