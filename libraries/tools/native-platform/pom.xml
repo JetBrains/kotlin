@@ -16,45 +16,34 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-build-common</artifactId>
+    <artifactId>native-platform</artifactId>
     <packaging>jar</packaging>
 
-    <description>the Kotlin builders</description>
+    <description>A dependency for daemon client</description>
 
     <build>
-        <sourceDirectory>../../../compiler/compiler-runner/src</sourceDirectory>
+        <sourceDirectory>${project-root}/compiler/compiler-runner/src</sourceDirectory>
 
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <id>empty-sources-jar</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>skip-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
                         <configuration>
-                            <skipMain>true</skipMain>
+                            <skipIfEmpty>false</skipIfEmpty>
+                            <classifier>sources</classifier>
+                            <classesDirectory>${basedir}/sources</classesDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -64,7 +53,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-build-common.jar"
+                                <copy file="${project-root}/dependencies/native-platform-uberjar.jar"
                                       tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
                                       overwrite="true" verbose="true"/>
                             </tasks>
@@ -74,6 +63,13 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
