@@ -784,6 +784,7 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 /**
  * Reverses elements in the list in-place.
  */
+@kotlin.jvm.JvmVersion
 public fun <T> MutableList<T>.reverse(): Unit {
     java.util.Collections.reverse(this)
 }

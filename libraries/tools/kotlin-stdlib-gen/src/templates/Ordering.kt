@@ -8,6 +8,7 @@ fun ordering(): List<GenericFunction> {
     templates add f("reverse()") {
         doc { f -> "Reverses ${f.element.pluralize()} in the ${f.collection} in-place." }
         only(Lists, InvariantArraysOfObjects, ArraysOfPrimitives)
+        jvmOnly(Lists) { true }
         customReceiver(Lists) { "MutableList<T>" }
         returns { "Unit" }
         body { f ->
