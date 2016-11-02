@@ -135,7 +135,7 @@ private fun StorageComponentContainer.javaAnalysisInit() {
     get<JavaClassFinderPostConstruct>().postCreate()
 }
 
-class ContainerForTopDownAnalyzerForJvm(container: StorageComponentContainer) {
+class ContainerForTopDownAnalyzerForJvm(val container: StorageComponentContainer) {
     val lazyTopDownAnalyzerForTopLevel: LazyTopDownAnalyzerForTopLevel by container
     val javaDescriptorResolver: JavaDescriptorResolver by container
     val deserializationComponentsForJava: DeserializationComponentsForJava by container

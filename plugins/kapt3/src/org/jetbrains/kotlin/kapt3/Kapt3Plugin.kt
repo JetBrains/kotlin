@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.File
 
 object Kapt3ConfigurationKeys {
@@ -155,6 +155,6 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val kapt3AnalysisCompletedHandlerExtension = Kapt3Extension(
                 classpath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
                 isAptOnly, System.currentTimeMillis(), logger)
-        AnalysisCompletedHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
+        AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 }

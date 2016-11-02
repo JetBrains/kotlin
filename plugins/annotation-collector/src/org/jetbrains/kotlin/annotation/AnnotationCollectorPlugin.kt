@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.File
 
 object AnnotationCollectorConfigurationKeys {
@@ -91,7 +91,7 @@ class AnnotationCollectorComponentRegistrar : ComponentRegistrar {
         val stubs = configuration.get(AnnotationCollectorConfigurationKeys.STUBS_PATH)
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (stubs != null) {
-            AnalysisCompletedHandlerExtension.registerExtension(project, StubProducerExtension(File(stubs), messageCollector))
+            AnalysisHandlerExtension.registerExtension(project, StubProducerExtension(File(stubs), messageCollector))
         }
     }
 }
