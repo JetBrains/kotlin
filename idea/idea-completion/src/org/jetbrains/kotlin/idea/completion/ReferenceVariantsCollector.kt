@@ -74,6 +74,8 @@ class ReferenceVariantsCollector(
         return variants
     }
 
+    private val GET_SET_PREFIXES = listOf("get", "set", "ge", "se", "g", "s")
+
     private fun doCollectReferenceVariants(descriptorKindFilter: DescriptorKindFilter): ReferenceVariants {
         val completeExtensionsFromIndices = descriptorKindFilter.kindMask.and(DescriptorKindFilter.CALLABLES_MASK) != 0
                                             && DescriptorKindExclude.Extensions !in descriptorKindFilter.excludes
@@ -97,10 +99,9 @@ class ReferenceVariantsCollector(
 
         var variants = getReferenceVariants(descriptorKindFilter, descriptorNameFilter.toNameFilter())
 
-        val getOrSetPrefix = listOf("get", "set", "ge", "se", "g", "s").firstOrNull { prefix.startsWith(it) }
-        val additionalPropertyNameFilter: ((String) -> Boolean)? = run {
-            getOrSetPrefix?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
-        }
+        val getOrSetPrefix = GET_SET_PREFIXES.firstOrNull { prefix.startsWith(it) }
+        val additionalPropertyNameFilter: ((String) -> Boolean)? = getOrSetPrefix
+                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
         if (additionalPropertyNameFilter != null) {
             variants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES),
                                              additionalPropertyNameFilter.toNameFilter())

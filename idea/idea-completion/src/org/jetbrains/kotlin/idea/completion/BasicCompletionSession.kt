@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.BetterPrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
@@ -202,18 +203,24 @@ class BasicCompletionSession(
             val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)
 
             val contextVariableTypesForReferenceVariants = withCollectRequiredContextVariableTypes { lookupElementFactory ->
-                if (prefix.isEmpty() || callTypeAndReceiver.receiver != null) {
-                    addReferenceVariantElements(lookupElementFactory, descriptorKindFilter)
-                }
-                else if (prefix[0].isLowerCase()) {
-                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_LOWER_CASE.intersect(descriptorKindFilter))
-                    flushToResultSet()
-                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_UPPER_CASE.intersect(descriptorKindFilter))
-                }
-                else {
-                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_UPPER_CASE.intersect(descriptorKindFilter))
-                    flushToResultSet()
-                    addReferenceVariantElements(lookupElementFactory, USUALLY_START_LOWER_CASE.intersect(descriptorKindFilter))
+                when {
+                    prefix.isEmpty()
+                    || callTypeAndReceiver.receiver != null
+                    || CodeInsightSettings.getInstance().COMPLETION_CASE_SENSITIVE == CodeInsightSettings.NONE -> {
+                        addReferenceVariantElements(lookupElementFactory, descriptorKindFilter)
+                    }
+
+                    prefix[0].isLowerCase() -> {
+                        addReferenceVariantElements(lookupElementFactory, USUALLY_START_LOWER_CASE.intersect(descriptorKindFilter))
+                        flushToResultSet()
+                        addReferenceVariantElements(lookupElementFactory, USUALLY_START_UPPER_CASE.intersect(descriptorKindFilter))
+                    }
+
+                    else -> {
+                        addReferenceVariantElements(lookupElementFactory, USUALLY_START_UPPER_CASE.intersect(descriptorKindFilter))
+                        flushToResultSet()
+                        addReferenceVariantElements(lookupElementFactory, USUALLY_START_LOWER_CASE.intersect(descriptorKindFilter))
+                    }
                 }
                 referenceVariantsCollector!!.collectingFinished()
             }

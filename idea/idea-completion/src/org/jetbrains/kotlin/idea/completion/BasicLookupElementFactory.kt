@@ -119,6 +119,7 @@ class BasicLookupElementFactory(
     ): LookupElement {
         val declarationLazy by lazy { DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) }
 
+        //TODO: try JavaClassDescriptor?
         if (descriptor is ClassifierDescriptor &&
             declarationLazy is PsiClass &&
             declarationLazy !is KtLightClass) {
