@@ -22,6 +22,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli.iml" filepath="$PROJECT_DIR$/compiler/cli/cli.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-runner/cli-runner.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-runner/cli-runner.iml" group="compiler/cli" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/compiler-runner/compiler-runner.iml" filepath="$PROJECT_DIR$/compiler/compiler-runner/compiler-runner.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/compiler/tests/compiler-tests.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests-java8/compiler-tests-java8.iml" filepath="$PROJECT_DIR$/compiler/tests-java8/compiler-tests-java8.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/conditional-preprocessor/conditional-preprocessor.iml" filepath="$PROJECT_DIR$/compiler/conditional-preprocessor/conditional-preprocessor.iml" group="compiler" />
