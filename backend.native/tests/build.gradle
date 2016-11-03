@@ -40,14 +40,9 @@ abstract class KonanTest extends DefaultTask {
                     "-headers", project.project(':runtime').file('src/main/kotlin'),
                     "${sourceKt.absolutePath}"
 
-<<<<<<< Updated upstream
             String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
             environment 'LD_LIBRARY_PATH'   : libraryPath
             environment 'DYLD_LIBRARY_PATH' : libraryPath
-=======
-            jvmArgs "-Djava.library.path=${backendNative.buildDir.canonicalPath}/nativelibs"
-	    environment LD_LIBRARY_PATH : "${project.parent.llvmDir}/lib"
->>>>>>> Stashed changes
         }
         return sourceBc
     }
