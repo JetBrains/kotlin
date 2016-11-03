@@ -37,6 +37,13 @@ class JsCollectionsTest {
         snapshotDoesNotCreateView(arrayOf<Any>("first", "last"), { arrayListOf(*it) })
     }
 
+    @test fun arrayListCapacity() {
+        val list = ArrayList<Any>(20)
+        list.ensureCapacity(100)
+        list.trimToSize()
+        assertTrue(list.isEmpty())
+    }
+
     @test fun listEqualsOperatesOnAny() {
         assertFalse(listOf(1, 2, 3).equals(object {}))
     }

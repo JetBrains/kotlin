@@ -21,6 +21,10 @@ public open class ArrayList<E> internal constructor(private var array: Array<Any
     public constructor(capacity: Int = 0) : this(emptyArray()) {}
     public constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
 
+    /** Does nothing in this ArrayList implementation. */
+    public fun trimToSize() {}
+    /** Does nothing in this ArrayList implementation. */
+    public fun ensureCapacity(minCapacity: Int) {}
 
     override val size: Int get() = array.size
     override fun get(index: Int): E = array[rangeCheck(index)] as E
