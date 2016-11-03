@@ -16,8 +16,22 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.utils.KotlinPaths
+import com.intellij.openapi.diagnostic.Logger
 
-open class CompilerEnvironment(val services: Services)
+internal class JpsKotlinLogger(private val log: Logger) : KotlinLogger {
+    override fun error(msg: String) {
+        log.error(msg)
+    }
 
+    override fun warn(msg: String) {
+        log.warn(msg)
+    }
+
+    override fun info(msg: String) {
+        log.info(msg)
+    }
+
+    override fun debug(msg: String) {
+        log.debug(msg)
+    }
+}

@@ -39,7 +39,7 @@ public class CompilerRunnerUtil {
 
     @NotNull
     private static synchronized ClassLoader getOrCreateClassLoader(
-            @NotNull CompilerEnvironment environment,
+            @NotNull JpsCompilerEnvironment environment,
             @NotNull File libPath
     ) throws IOException {
         ClassLoader classLoader = ourClassLoaderRef.get();
@@ -73,7 +73,7 @@ public class CompilerRunnerUtil {
     public static Object invokeExecMethod(
             @NotNull String compilerClassName,
             @NotNull String[] arguments,
-            @NotNull CompilerEnvironment environment,
+            @NotNull JpsCompilerEnvironment environment,
             @NotNull MessageCollector messageCollector,
             @NotNull PrintStream out
     ) throws Exception {
