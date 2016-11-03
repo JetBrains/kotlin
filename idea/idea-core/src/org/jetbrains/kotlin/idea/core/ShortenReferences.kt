@@ -292,7 +292,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
 
         /**
-         * This method is invoked for all qualified elements added by [addQualifiedElementToAnalyze]
+         * This method is invoked for all qualified elements added by [CollectElementsVisitor.addQualifiedElementToAnalyze]
          */
         protected abstract fun analyzeQualifiedElement(element: TElement, bindingContext: BindingContext): AnalyzeQualifiedElementResult
 
@@ -531,8 +531,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                     element,
                     KtImportDirective::class.java, KtPackageDirective::class.java) != null) return Skip
 
-            val receiverTarget = receiver.singleTarget(bindingContext) ?: return Skip
-            if (receiverTarget !is ClassDescriptor) return Skip
+            val receiverTarget = receiver.singleTarget(bindingContext) as? ClassDescriptor ?: return Skip
 
             val selectorExpression = element.selectorExpression ?: return Skip
             val selectorTarget = selectorExpression.singleTarget(bindingContext) ?: return Skip
