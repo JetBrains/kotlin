@@ -7,18 +7,13 @@
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="idea-jps-common" />
-    <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="module" module-name="build-common" />
-    <orderEntry type="module" module-name="compiler-runner" />
-    <orderEntry type="library" name="jps" level="project" />
-    <orderEntry type="module" module-name="descriptors" />
-    <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="library" name="asm" level="project" />
-    <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="preloader" />
+    <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="module" module-name="daemon-client" />
     <orderEntry type="module" module-name="daemon-common" />
-    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="module" module-name="frontend.java" />
+    <orderEntry type="module" module-name="preloader" />
+    <orderEntry type="module" module-name="util" />
+    <orderEntry type="library" name="kotlin-runtime" level="project" />
   </component>
 </module>
