@@ -47,14 +47,10 @@ val EAP_REPOSITORY = RepositoryDescription(
         "http://dl.bintray.com/kotlin/kotlin-eap",
         isSnapshot = false)
 
-fun isProjectConfigured(project: Project): Boolean {
-    val modules = getModulesWithKotlinFiles(project)
-    return modules.all { isModuleConfigured(it) }
-}
-
 fun isModuleConfigured(module: Module): Boolean {
-    val configurators = getApplicableConfigurators(module)
-    return configurators.any { it.isConfigured(module) }
+    return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).any {
+        it.getStatus(module) == ConfigureKotlinStatus.CONFIGURED
+    }
 }
 
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
@@ -95,12 +91,12 @@ fun getAbleToRunConfigurators(project: Project): Collection<KotlinProjectConfigu
     val modules = getModulesWithKotlinFiles(project).ifEmpty { project.allModules() }
 
     return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).filter { configurator ->
-        modules.any { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
+        modules.any { module -> configurator.getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
     }
 }
 
-fun getApplicableConfigurators(module: Module): Collection<KotlinProjectConfigurator> {
-    return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).filter { it.isApplicable(module) }
+fun getAbleToRunConfigurators(module: Module): Collection<KotlinProjectConfigurator> {
+    return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).filter { it.getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
 }
 
 fun getConfiguratorByName(name: String): KotlinProjectConfigurator? {
@@ -108,19 +104,19 @@ fun getConfiguratorByName(name: String): KotlinProjectConfigurator? {
 }
 
 fun getNonConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
-    return project.allModules().filter { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
+    return project.allModules().filter { module -> configurator.getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
 }
 
 fun getNonConfiguredModulesWithKotlinFiles(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     val modules = getModulesWithKotlinFiles(project)
-    return modules.filter { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
+    return modules.filter { module -> configurator.getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
 }
 
 fun getNonConfiguredModules(project: Project, excludeModules: Collection<Module> = emptyList()): Collection<Module> {
     val modulesWithKotlinFiles = getModulesWithKotlinFiles(project) - excludeModules
     val ableToRunConfigurators = getAbleToRunConfigurators(project)
     return modulesWithKotlinFiles.filter { module ->
-        ableToRunConfigurators.any { !it.isConfigured(module) }
+        ableToRunConfigurators.any { it.getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
     }
 }
 

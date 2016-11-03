@@ -107,7 +107,7 @@ class KotlinSetupEnvironmentNotificationProvider(
         private fun createKotlinNotConfiguredPanel(module: Module): EditorNotificationPanel {
             return EditorNotificationPanel().apply {
                 setText("Kotlin not configured")
-                val configurators = getApplicableConfigurators(module).toList()
+                val configurators = getAbleToRunConfigurators(module).toList()
                 if (!configurators.isEmpty()) {
                     createComponentActionLabel("Configure") { label ->
                         val configuratorsPopup = createConfiguratorsPopup(module.project, configurators)
@@ -125,9 +125,7 @@ class KotlinSetupEnvironmentNotificationProvider(
 
                 override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
                     return doFinalStep {
-                        selectedValue?.let {
-                            it.configure(project, emptyList())
-                        }
+                        selectedValue?.configure(project, emptyList())
                     }
                 }
             }

@@ -38,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -66,12 +65,25 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     @Nullable
     protected abstract String getOldSourceRootUrl(@NotNull Library library);
 
+    @NotNull
     @Override
-    public boolean isApplicable(@NotNull Module module) {
+    public ConfigureKotlinStatus getStatus(@NotNull Module module) {
+        if (!isApplicable(module)) {
+            return ConfigureKotlinStatus.NON_APPLICABLE;
+        }
+        if (isConfigured(module)) {
+            return ConfigureKotlinStatus.CONFIGURED;
+        }
+        return ConfigureKotlinStatus.CAN_BE_CONFIGURED;
+    }
+
+    protected static boolean isApplicable(@NotNull Module module) {
         return !KotlinPluginUtil.isAndroidGradleModule(module) &&
                !KotlinPluginUtil.isMavenModule(module) &&
                !KotlinPluginUtil.isGradleModule(module);
     }
+
+    protected abstract boolean isConfigured(@NotNull Module module);
 
     @Override
     public void configure(@NotNull Project project, Collection<Module> excludeModules) {
