@@ -14,65 +14,41 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.compilerRunner;
+package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.config.Services;
-import org.jetbrains.kotlin.preloading.ClassCondition;
-import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.preloading.ClassCondition
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.Companion.NO_LOCATION
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 
-public class CompilerEnvironment {
-    @NotNull
-    public static CompilerEnvironment getEnvironmentFor(
-            @NotNull KotlinPaths kotlinPaths,
-            @NotNull ClassCondition classesToLoadByParent,
-            @NotNull Services compilerServices
-    ) {
-        return new CompilerEnvironment(kotlinPaths, classesToLoadByParent, compilerServices);
+class CompilerEnvironment private constructor(
+        val kotlinPaths: KotlinPaths,
+        val classesToLoadByParent: ClassCondition,
+        val services: Services
+) {
+
+    fun success(): Boolean {
+        return kotlinPaths.homePath.exists()
     }
 
-    private final KotlinPaths kotlinPaths;
-    private final ClassCondition classesToLoadByParent;
-    private final Services services;
-
-    private CompilerEnvironment(
-            @NotNull KotlinPaths kotlinPaths,
-            @NotNull ClassCondition classesToLoadByParent,
-            @NotNull Services services
-    ) {
-        this.kotlinPaths = kotlinPaths;
-        this.classesToLoadByParent = classesToLoadByParent;
-        this.services = services;
-    }
-
-    public boolean success() {
-        return kotlinPaths.getHomePath().exists();
-    }
-
-    @NotNull
-    public KotlinPaths getKotlinPaths() {
-        return kotlinPaths;
-    }
-
-    @NotNull
-    public ClassCondition getClassesToLoadByParent() {
-        return classesToLoadByParent;
-    }
-
-    public void reportErrorsTo(@NotNull MessageCollector messageCollector) {
-        if (!kotlinPaths.getHomePath().exists()) {
-            messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.getHomePath() + ". Make sure plugin is properly installed, " +
-                                           "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", NO_LOCATION);
+    fun reportErrorsTo(messageCollector: MessageCollector) {
+        if (!kotlinPaths.homePath.exists()) {
+            messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.homePath + ". Make sure plugin is properly installed, " +
+                                           "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", NO_LOCATION)
         }
     }
 
-    @NotNull
-    public Services getServices() {
-        return services;
+    companion object {
+        fun getEnvironmentFor(
+                kotlinPaths: KotlinPaths,
+                classesToLoadByParent: ClassCondition,
+                compilerServices: Services
+        ): CompilerEnvironment {
+            return CompilerEnvironment(kotlinPaths, classesToLoadByParent, compilerServices)
+        }
     }
 }
