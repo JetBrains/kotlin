@@ -70,6 +70,8 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                 testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
+        setupEnvironment(myEnvironment)
+
         loadMultiFiles(files)
 
         val txtFile = getTextFile(wholeFile)
@@ -85,6 +87,8 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
         KotlinTestUtils.assertEqualsToFile(txtFile, generatedFiles)
     }
+
+    protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {}
 
     private class TextCollectingVisitor : ClassVisitor(ASM5) {
         private class Declaration(val text: String, val annotations: MutableList<String> = arrayListOf())
