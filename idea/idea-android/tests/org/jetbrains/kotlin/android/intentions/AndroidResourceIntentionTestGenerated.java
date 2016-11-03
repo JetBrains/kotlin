@@ -35,6 +35,42 @@ public class AndroidResourceIntentionTestGenerated extends AbstractAndroidResour
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/android/resourceIntentions"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("createColorValueResource/alreadyExists/alreadyExists.test")
+    public void testCreateColorValueResource_alreadyExists_AlreadyExists() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/createColorValueResource/alreadyExists/alreadyExists.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("createColorValueResource/simpleFunction/simpleFunction.test")
+    public void testCreateColorValueResource_simpleFunction_SimpleFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/createColorValueResource/simpleFunction/simpleFunction.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("createLayoutResourceFile/alreadyExists/alreadyExists.test")
+    public void testCreateLayoutResourceFile_alreadyExists_AlreadyExists() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/createLayoutResourceFile/alreadyExists/alreadyExists.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("createLayoutResourceFile/simpleFunction/simpleFunction.test")
+    public void testCreateLayoutResourceFile_simpleFunction_SimpleFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/createLayoutResourceFile/simpleFunction/simpleFunction.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("createStringValueResource/alreadyExists/alreadyExists.test")
+    public void testCreateStringValueResource_alreadyExists_AlreadyExists() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/createStringValueResource/alreadyExists/alreadyExists.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("createStringValueResource/simpleFunction/simpleFunction.test")
+    public void testCreateStringValueResource_simpleFunction_SimpleFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/createStringValueResource/simpleFunction/simpleFunction.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlinAndroidAddStringResource/activityExtension/activityExtension.test")
     public void testKotlinAndroidAddStringResource_activityExtension_ActivityExtension() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/resourceIntentions/kotlinAndroidAddStringResource/activityExtension/activityExtension.test");

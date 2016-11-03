@@ -28,12 +28,14 @@ import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getString
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 
 abstract class AbstractAndroidResourceIntentionTest : KotlinAndroidTestCase() {
+
+    companion object {
+        val COM_MYAPP_PACKAGE_PATH = "com/myapp/"
+    }
 
     fun doTest(path: String) {
         val configFile = File(path)
@@ -43,17 +45,18 @@ abstract class AbstractAndroidResourceIntentionTest : KotlinAndroidTestCase() {
 
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
 
-        val intentionClass = config.getString("intentionClass")
+        val intentionClass = if (config.has("intentionClass")) config.getString("intentionClass") else null
+        val intentionText = if (config.has("intentionText")) config.getString("intentionText") else null
         val isApplicableExpected = if (config.has("isApplicable")) config.get("isApplicable").asBoolean else true
         val rFile = if (config.has("rFile")) config.get("rFile").asString else null
         val resDirectory = if (config.has("resDirectory")) config.get("resDirectory").asString else null
 
         if (rFile != null) {
-            myFixture.copyFileToProject(rFile, "gen/" + PathUtil.getFileName(rFile))
+            myFixture.copyFileToProject(rFile, "gen/$COM_MYAPP_PACKAGE_PATH" + PathUtil.getFileName(rFile))
         }
         else {
             if (File(testDataPath + "/R.java").isFile) {
-                myFixture.copyFileToProject("R.java", "gen/R.java")
+                myFixture.copyFileToProject("R.java", "gen/${COM_MYAPP_PACKAGE_PATH}R.java")
             }
         }
 
@@ -69,9 +72,26 @@ abstract class AbstractAndroidResourceIntentionTest : KotlinAndroidTestCase() {
         val sourceFile = myFixture.copyFileToProject("main.kt", "src/main.kt")
         myFixture.configureFromExistingVirtualFile(sourceFile)
 
-        DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
+        val intentionAction: IntentionAction?
+        if (intentionClass != null) {
+            intentionAction = Class.forName(intentionClass).newInstance() as IntentionAction
+        }
+        else if (intentionText != null) {
+            intentionAction = myFixture.getAvailableIntention(intentionText)
+            if (intentionAction != null && !isApplicableExpected) {
+                TestCase.fail("Intention action should not be available")
+            }
+        }
+        else {
+            intentionAction = null
+        }
 
-        val intentionAction = Class.forName(intentionClass).newInstance() as IntentionAction
+        if (intentionAction == null) {
+            if (isApplicableExpected) {
+                TestCase.fail("Couldn't find intention action")
+            }
+            return
+        }
 
         TestCase.assertEquals(isApplicableExpected, intentionAction.isAvailable(myFixture.project, myFixture.editor, myFixture.file))
         if (!isApplicableExpected) {
@@ -84,7 +104,6 @@ abstract class AbstractAndroidResourceIntentionTest : KotlinAndroidTestCase() {
         myFixture.launchAction(intentionAction)
 
         FileDocumentManager.getInstance().saveAllDocuments()
-        DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
 
         myFixture.checkResultByFile("/expected/main.kt")
         assertResourcesEqual(testDataPath + "/expected/res")

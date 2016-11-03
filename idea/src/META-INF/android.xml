@@ -23,6 +23,10 @@
             <category>Kotlin Android</category>
         </intentionAction>
 
+
+        <codeInsight.unresolvedReferenceQuickFixProvider
+            implementation="org.jetbrains.kotlin.android.inspection.KotlinAndroidResourceQuickFixProvider"/>
+
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
