@@ -188,7 +188,6 @@ val embeddableTask = task<ShadowJar>("prepare-embeddable-compiler") {
     relocate("org.apache", "$kotlinEmbeddableRootPackage.org.apache")
     relocate("org.jdom", "$kotlinEmbeddableRootPackage.org.jdom")
     relocate("org.fusesource", "$kotlinEmbeddableRootPackage.org.fusesource") {
-        println("!!! $it")
         // TODO: remove "it." after #KT-12848 get addressed
         it.exclude("org.fusesource.jansi.internal.CLibrary")
     }
