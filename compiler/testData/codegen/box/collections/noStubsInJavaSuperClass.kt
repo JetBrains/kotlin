@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // FILE: B.java
 public abstract class B<E> extends A<E> implements L<E> {
     public String callIndexAdd(int x) {

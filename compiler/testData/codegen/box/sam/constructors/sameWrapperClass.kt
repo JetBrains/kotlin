@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun box(): String {
     val f = { }
     val class1 = (Runnable(f) as Object).getClass()

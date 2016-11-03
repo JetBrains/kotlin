@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 import Class.C.f
 import Class.C.p
 import Class.C.ext

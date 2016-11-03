@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // WITH_RUNTIME
 
 inline fun<reified T> createArray(n: Int, crossinline block: () -> T): Array<T> {

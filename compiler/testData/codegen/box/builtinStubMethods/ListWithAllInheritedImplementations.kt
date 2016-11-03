@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 open class Super<T>(val v: T) {
     public fun add(e: T): Boolean = true
     public fun remove(o: T): Boolean = true

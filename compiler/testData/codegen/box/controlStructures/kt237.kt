@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun main(args: Array<String>?) {
     val y: Unit = Unit //do not compile
     A<Unit>()        //do not compile

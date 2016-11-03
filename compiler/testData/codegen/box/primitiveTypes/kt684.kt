@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun escapeChar(c : Char) : String? = when (c) {
   '\\' -> "\\\\"
   '\n' -> "\\n"

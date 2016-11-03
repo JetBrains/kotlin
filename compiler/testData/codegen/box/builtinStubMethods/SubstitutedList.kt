@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 class MyList: List<String> {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true

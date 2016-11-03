@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // FULL_JDK
 
 import sun.nio.cs.ext.Big5

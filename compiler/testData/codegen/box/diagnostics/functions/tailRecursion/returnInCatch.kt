@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 <!NO_TAIL_CALLS_FOUND!>tailrec fun test(counter : Int) : Int<!> {
     if (counter == 0) return 0
 

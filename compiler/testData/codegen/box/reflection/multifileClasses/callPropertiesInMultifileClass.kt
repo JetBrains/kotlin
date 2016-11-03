@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // KT-11447 Multifile declaration causes IAE: Method can not access a member of class
 // WITH_REFLECT
 // FILE: Test1.kt

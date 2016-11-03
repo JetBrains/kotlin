@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 private fun <T> upcast(value: T): T = value
 
 fun box(): String {

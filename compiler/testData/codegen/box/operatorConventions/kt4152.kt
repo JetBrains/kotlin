@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 public var inc: Int = 0;
 
 public var propInc: Int = 0
