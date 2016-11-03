@@ -105,6 +105,7 @@ val compilerProject = project(":compiler")
 
 dependencies {
     compilerClassesCfg(projectDepIntransitive(":compiler"))
+    compilerClassesCfg(projectDepIntransitive(":core:util.runtime"))
     ideaSdkCoreCfg(files(File("$rootDir/ideaSDK/core").listFiles { f -> f.extension == "jar" && f.name != "util.jar" }))
     ideaSdkCoreCfg(files("$rootDir/ideaSDK/lib/jna-platform.jar"))
     ideaSdkCoreCfg(files("$rootDir/ideaSDK/lib//oromatcher.jar"))
@@ -134,6 +135,7 @@ val packCompilerTask = task<ShadowJar>("internal.pack-compiler") {
     dependsOn(compilerProject.path + ":classes", protobufFullTask)
     setupRuntimeJar("Kotlin Compiler")
     from(compilerProject.getCompiledClasses())
+    from(project(":core:util.runtime").getCompiledClasses())
     from(ideaSdkCoreCfg.files)
     from(otherDepsCfg.files)
     from(project(":core.builtins").getResourceFiles()) { include("kotlin/**") }

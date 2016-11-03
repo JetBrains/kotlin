@@ -55,6 +55,7 @@ dependencies {
     compile(project(":libraries:kotlin.test"))
     compile(project(":prepare:reflect", configuration = "default"))
     compile(project(":core.script.runtime"))
+    compile(project(":core:util.runtime"))
     compile(fileTree(mapOf("dir" to "$rootDir/ideaSDK/core", "include" to "*.jar")))
     compile(commonDep("com.google.protobuf:protobuf-java"))
 //    compile(fileTree(mapOf("dir" to "$rootDir/lib", "include" to "*.jar"))) // direct references below
@@ -71,7 +72,6 @@ configure<JavaPluginConvention> {
         listOf( "core/descriptor.loader.java/src",
                 "core/descriptors/src",
                 "core/deserialization/src",
-                "core/util.runtime/src",
                 "compiler/backend/src",
                 "compiler/backend-common/src",
                 "compiler/ir/backend.common/src",

@@ -59,6 +59,7 @@ repositories {
 dependencies {
     compile(project(":core.builtins"))
     compile(project(":libraries:stdlib"))
+    compile(project("util.runtime"))
     compile(protobufLite())
     compile(commonDep("javax.inject"))
 }
@@ -69,8 +70,7 @@ configure<JavaPluginConvention> {
                 listOf("core/descriptor.loader.java/src",
                        "core/descriptors/src",
                        "core/descriptors.runtime/src",
-                       "core/deserialization/src",
-                       "core/util.runtime/src")
+                       "core/deserialization/src")
                 .map { File(rootDir, it) })
     }
     sourceSets.getByName("test").apply {
@@ -89,10 +89,3 @@ tasks.withType<KotlinCompile> {
 
 fixKotlinTaskDependencies()
 
-task("sourcesets") {
-    doLast {
-        the<JavaPluginConvention>().sourceSets.all {
-            println("--> ${it.name}: ${it.java.srcDirs.joinToString()}")
-        }
-    }
-}

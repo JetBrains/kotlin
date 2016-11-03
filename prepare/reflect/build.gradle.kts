@@ -94,6 +94,7 @@ repositories {
 
 dependencies {
     classesFromProjectsCfg.name(projectDepIntransitive(coreProjectName))
+    classesFromProjectsCfg.name(projectDepIntransitive(":core:util.runtime"))
     classesFromProjectsCfg.name(projectDepIntransitive(reflectionProjectName))
     otherDepsCfg.name(protobufLite())
     otherDepsCfg.name(commonDep("javax.inject"))
@@ -107,6 +108,7 @@ val prePackReflectTask = task<ShadowJar>("pre-pack-reflect") {
     dependsOn("$coreProjectName:assemble", "$reflectionProjectName:assemble", protobufLiteTask)
     from(project(reflectionProjectName).getCompiledClasses())
     from(project(coreProjectName).getCompiledClasses())
+    from(project(":core:util.runtime").getCompiledClasses())
     from(project(coreProjectName).file("descriptor.loader.java/src")) {
         include("META-INF/services/**")
     }
