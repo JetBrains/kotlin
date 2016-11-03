@@ -1180,56 +1180,12 @@ fun main(args: Array<String>) {
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
-        testClass<AbstractBridgeTest>() {
-            model("codegen/box/bridges", targetBackend = TargetBackend.JS)
+        testClass<AbstractJsCodegenBoxTest> {
+            model("codegen/box", targetBackend = TargetBackend.JS)
         }
 
-        testClass<AbstractCompanionObjectTest>() {
-            model("codegen/box/objectIntrinsics", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractFunctionExpressionTest>() {
-            model("codegen/box/functions/functionExpression", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractSecondaryConstructorTest>() {
-            model("codegen/box/secondaryConstructors", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractClassesTest>() {
-            model("codegen/box/classes/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractInnerNestedTest>() {
-            model("codegen/box/innerNested/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractSuperTest>() {
-            model("codegen/box/super/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractLocalClassesTest>() {
-            model("codegen/box/localClasses/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractNonLocalReturnsTest>() {
+        testClass<AbstractNonLocalReturnsTest> {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractTypeAliasesTests>() {
-            model("codegen/box/typealias/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractBinaryOpTests>() {
-            model("codegen/box/binaryOp", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractLambdaDestructuringTests>() {
-            model("codegen/box/destructuringDeclInLambdaParam/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractMultiDeclarationTests>() {
-            model("codegen/box/multiDecl/", targetBackend = TargetBackend.JS)
         }
     }
 }

@@ -18,51 +18,23 @@ package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 
-abstract class BorrowedTest(relativePath: String) : BasicBoxTest(
-        "compiler/testData/codegen/box/$relativePath",
-        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/jvm/box/$relativePath/"
+abstract class BorrowedInlineTest(relativePath: String) : BasicBoxTest(
+        "compiler/testData/codegen/boxInline/$relativePath",
+        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/codegen/boxInline/$relativePath/"
 ) {
     init {
         additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
     }
 }
 
-abstract class BorrowedInlineTest(relativePath: String) : BasicBoxTest(
-        "compiler/testData/codegen/boxInline/$relativePath",
-        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/jvm/boxInline/$relativePath/"
-) {
-    init {
-        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
-    }
-}
+abstract class AbstractNonLocalReturnsTest : BorrowedInlineTest("nonLocalReturns/")
 
 abstract class AbstractBoxJsTest() : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
 )
 
-abstract class AbstractBridgeTest : BorrowedTest("bridges/")
-
-abstract class AbstractCompanionObjectTest : BorrowedTest("objectIntrinsics/")
-
-abstract class AbstractFunctionExpressionTest : BorrowedTest("functions/functionExpression/")
-
-abstract class AbstractSecondaryConstructorTest : BorrowedTest("secondaryConstructors/")
-
-abstract class AbstractInnerNestedTest : BorrowedTest("innerNested/")
-
-abstract class AbstractClassesTest : BorrowedTest("classes/")
-
-abstract class AbstractSuperTest : BorrowedTest("super/")
-
-abstract class AbstractLocalClassesTest : BorrowedTest("localClasses/")
-
-abstract class AbstractNonLocalReturnsTest : BorrowedInlineTest("nonLocalReturns/")
-
-abstract class AbstractTypeAliasesTests : BorrowedTest("typealias/")
-
-abstract class AbstractBinaryOpTests : BorrowedTest("binaryOp/")
-
-abstract class AbstractLambdaDestructuringTests : BorrowedTest("destructuringDeclInLambdaParam/")
-
-abstract class AbstractMultiDeclarationTests : BorrowedTest("multiDecl/")
+abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
+        "compiler/testData/codegen/box/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/"
+)
