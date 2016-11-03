@@ -1,3 +1,6 @@
+#ifdef __linux__
+# define _GNU_SOURCE
+#endif
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,7 +13,7 @@ extern int run_test();
 
 void * resolve_symbol(char *name) {
   /* here we can add here some magic to resolve symbols in kotlin native*/
-  return dlsym(RTLD_SELF, name);
+  return dlsym(RTLD_DEFAULT, name);
 }
     
 

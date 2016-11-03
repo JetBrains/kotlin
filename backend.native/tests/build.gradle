@@ -40,9 +40,14 @@ abstract class KonanTest extends DefaultTask {
                     "-headers", project.project(':runtime').file('src/main/kotlin'),
                     "${sourceKt.absolutePath}"
 
+<<<<<<< Updated upstream
             String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
             environment 'LD_LIBRARY_PATH'   : libraryPath
             environment 'DYLD_LIBRARY_PATH' : libraryPath
+=======
+            jvmArgs "-Djava.library.path=${backendNative.buildDir.canonicalPath}/nativelibs"
+	    environment LD_LIBRARY_PATH : "${project.parent.llvmDir}/lib"
+>>>>>>> Stashed changes
         }
         return sourceBc
     }
@@ -83,13 +88,26 @@ abstract class KonanTest extends DefaultTask {
     private String llvmTool(String tool) {
         return "${project.llvmDir}/bin/${tool}"
     }
+
+    private linux() {
+        return System.properties['os.name'].startsWith('Linux')
+    }
+
+    protected String linkDl() {
+       if (linux()) {
+         return "-ldl"
+       }
+       else {
+         return ""
+       }
+    }
 }
 
 class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.exec {
-            commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
+            commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
                     "-o", "${exe.absolutePath}"
 
             args llvmCAdditionalArgs
@@ -100,7 +118,7 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         project.exec {
-            commandLine "${llvmC}", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
+            commandLine "${llvmC}", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
                     "-o", "${exe.absolutePath}"
 
             args llvmCAdditionalArgs
