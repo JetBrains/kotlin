@@ -3,6 +3,13 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1-M03 (EAP-3)
+
+### Compiler
+
+#### Coroutines related issues
+- Make fields for storing lambda parameters non-final (as they get assigned within `invoke` call)
+
 ## 1.1-M02 (EAP-2)
 
 ### Language features

@@ -59,7 +59,7 @@ class CoroutineCodegen(
         for (parameter in funDescriptor.valueParameters) {
             v.newField(
                     OtherOrigin(parameter),
-                    Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL,
+                    Opcodes.ACC_PRIVATE,
                     COROUTINE_LAMBDA_PARAMETER_PREFIX + parameter.index,
                     typeMapper.mapType(parameter.type).descriptor, null, null)
         }
