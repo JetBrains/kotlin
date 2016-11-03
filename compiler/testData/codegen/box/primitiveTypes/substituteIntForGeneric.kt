@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 class L<T>(var a: T) {}
 
 fun foo() = L<Int>(5).a

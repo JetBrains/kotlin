@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // FULL_JDK
 // WITH_RUNTIME
 interface ImmutableCollection<out E> : Collection<E> {

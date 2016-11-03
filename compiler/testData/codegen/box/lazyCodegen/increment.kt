@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 var holder = ""
 var globalA: A = A(-1)
     get(): A {

@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // WITH_RUNTIME
 
 fun def(i: Int = 0): Int {

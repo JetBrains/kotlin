@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 operator fun Int.plus(s: String) : String {
   System.out?.println("Int.plus(s: String) called")
   return s

@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 import java.util.Collections
 
 class A<U : Number, V : U, W : V> : Set<W> {

@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun box(): String {
     val f = fun (s: String): String = s
     val g = f as String.() -> String

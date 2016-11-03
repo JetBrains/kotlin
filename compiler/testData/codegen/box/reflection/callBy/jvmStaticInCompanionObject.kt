@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 // WITH_REFLECT
 
 // KT-12915 IAE on callBy of JvmStatic function with default arguments

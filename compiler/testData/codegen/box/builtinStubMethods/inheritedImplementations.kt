@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 open class SetStringImpl {
     fun add(s: String): Boolean = false
     fun remove(o: String): Boolean = false

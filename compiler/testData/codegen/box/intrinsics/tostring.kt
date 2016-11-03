@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 fun box(): String {
     if (239.toByte().toString() != (239.toByte() as Byte?).toString()) return "byte failed"
     if (239.toShort().toString() != (239.toShort() as Short?).toString()) return "short failed"

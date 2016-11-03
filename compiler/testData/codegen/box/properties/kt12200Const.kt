@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 //WITH_RUNTIME
 //FULL_JDK
 //NOTE this test should be removed if Kotlin const properties will became inlined

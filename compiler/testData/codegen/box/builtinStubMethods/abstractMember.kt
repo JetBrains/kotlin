@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 abstract class A : Iterator<String> {
     abstract fun remove(): Unit
 }

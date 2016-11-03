@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 class Identifier<T>(t : T?, myHasDollar : Boolean) {
     private val myT : T?
 
