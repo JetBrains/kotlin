@@ -20,11 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<KtBinaryExpression>(ReplaceWithOperatorAssignmentIntention::class)
@@ -50,11 +47,7 @@ class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndependentInt
         // now check that the resulting operator assignment will be resolved
         val opAssign = buildOperatorAssignment(element)
         opAssign.getContainingKtFile().doNotAnalyze = null //TODO: strange hack
-        val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
-        val newBindingContext = opAssign.analyzeInContext(resolutionScope,
-                                                          contextExpression = element,
-                                                          dataFlowInfo = bindingContext.getDataFlowInfoBefore(element),
-                                                          isStatement = true)
+        val newBindingContext = opAssign.analyzeAsReplacement(element, bindingContext)
         return newBindingContext.diagnostics.forElement(opAssign.operationReference).isEmpty()
     }
 

@@ -21,11 +21,9 @@ import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -46,10 +44,9 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
         val resolvedCall = loopRange.getResolvedCall(bindingContext)
         if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() in WITH_INDEX_FQ_NAMES) return null // already withIndex() call
 
-        val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
         val potentialExpression = createWithIndexExpression(loopRange)
 
-        val newBindingContext = potentialExpression.analyzeInContext(resolutionScope, loopRange)
+        val newBindingContext = potentialExpression.analyzeAsReplacement(loopRange, bindingContext)
         val newResolvedCall = potentialExpression.getResolvedCall(newBindingContext) ?: return null
         if (newResolvedCall.resultingDescriptor.fqNameUnsafe.asString() !in WITH_INDEX_FQ_NAMES) return null
 

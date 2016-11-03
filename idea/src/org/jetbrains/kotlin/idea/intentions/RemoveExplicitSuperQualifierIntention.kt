@@ -20,11 +20,9 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
@@ -32,13 +30,9 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.TypeUtils
 
 class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperExpression>(RemoveExplicitSuperQualifierIntention::class), CleanupLocalInspectionTool {
     override val problemHighlightType: ProblemHighlightType
@@ -54,12 +48,9 @@ class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSupe
 
         val bindingContext = selector.analyze(BodyResolveMode.PARTIAL)
         if (selector.getResolvedCall(bindingContext) == null) return null
-        val resolutionScope = qualifiedExpression.getResolutionScope(bindingContext, selector.getResolutionFacade())
-        val dataFlowInfo = bindingContext.getDataFlowInfoBefore(element)
-        val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 
         val newQualifiedExpression = KtPsiFactory(element).createExpressionByPattern("$0.$1", toNonQualified(element), selector) as KtQualifiedExpression
-        val newBindingContext = newQualifiedExpression.analyzeInContext(resolutionScope, qualifiedExpression, dataFlowInfo = dataFlowInfo, expectedType = expectedType, isStatement = true)
+        val newBindingContext = newQualifiedExpression.analyzeAsReplacement(qualifiedExpression, bindingContext)
         val newResolvedCall = newQualifiedExpression.selectorExpression.getResolvedCall(newBindingContext) ?: return null
         if (ErrorUtils.isError(newResolvedCall.resultingDescriptor)) return null
 

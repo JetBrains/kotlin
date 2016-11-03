@@ -21,21 +21,17 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
-import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.result.*
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.*
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubtypeOfClass
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ImplicitSmartCasts
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -270,9 +266,7 @@ private fun checkSmartCastsPreserved(loop: KtForExpression, matchResult: MatchRe
 
         val callChain = matchResult.generateCallChain(loop)
 
-        val resolutionScope = loop.getResolutionScope(bindingContext, loop.getResolutionFacade())
-        val dataFlowInfo = bindingContext.getDataFlowInfoBefore(loop)
-        val newBindingContext = callChain.analyzeInContext(resolutionScope, loop, dataFlowInfo = dataFlowInfo)
+        val newBindingContext = callChain.analyzeAsReplacement(loop, bindingContext)
 
         var preservedSmartCastCount = 0
         callChain.forEachDescendantOfType<KtExpression> { expression ->
