@@ -32,8 +32,13 @@ interface KotlinGradleSubplugin<KotlinCompile : AbstractCompile> {
             variantData: Any?,
             javaSourceSet: SourceSet?
     ): List<SubpluginOption>
-    
-    fun getPluginName(): String
+
+    fun getSubpluginKotlinTasks(
+            project: Project,
+            kotlinCompile: KotlinCompile
+    ): List<AbstractCompile> = emptyList()
+
+    fun getCompilerPluginId(): String
     fun getGroupName(): String
     fun getArtifactName(): String
 }

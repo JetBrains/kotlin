@@ -98,7 +98,6 @@ internal class IncrementalJvmCompilerRunner(
         private val reporter: IncReporter,
         private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
         private val sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null,
-        private val kapt2GeneratedSourcesDir: File? = null,
         private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
         private val artifactFile: File? = null
 ) {
@@ -356,9 +355,6 @@ internal class IncrementalJvmCompilerRunner(
 
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
 
-            val generatedJavaFiles = (kapt2GeneratedSourcesDir?.walk() ?: emptySequence<File>()).filter(File::isJavaFile).toList()
-            val generatedJavaFilesDiff = caches.incrementalCache.generatedSourceSnapshotMap.compareAndUpdate(generatedJavaFiles)
-
             if (compilationMode is CompilationMode.Rebuild) {
                 artifactFile?.let { artifactFile ->
                     artifactDifferenceRegistryProvider?.withRegistry(reporter) { registry ->
@@ -369,23 +365,10 @@ internal class IncrementalJvmCompilerRunner(
             }
 
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(listOf(caches.incrementalCache), reporter)
-            val generatedJavaFilesChanges = javaFilesProcessor.process(generatedJavaFilesDiff)
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
-            val dirtyKotlinFilesFromJava = when (generatedJavaFilesChanges) {
-                is ChangesEither.Unknown -> {
-                    reporter.report { "Could not get changes for generated java files, recompiling all kotlin" }
-                    compilationMode = CompilationMode.Rebuild
-                    allKotlinSources.toSet()
-                }
-                is ChangesEither.Known -> {
-                    mapLookupSymbolsToFiles(caches.lookupCache, generatedJavaFilesChanges.lookupSymbols, reporter, excludes = compiledInThisIterationSet)
-                }
-                else -> throw IllegalStateException("Unknown ChangesEither implementation: $generatedJavaFiles")
-            }
 
             with (dirtySources) {
                 clear()
-                addAll(dirtyKotlinFilesFromJava)
                 addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
                 addAll(mapClassesFqNamesToFiles(listOf(caches.incrementalCache), dirtyClassFqNames, reporter, excludes = compiledInThisIterationSet))
             }
