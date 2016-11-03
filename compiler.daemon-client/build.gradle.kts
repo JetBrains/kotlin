@@ -57,18 +57,18 @@ repositories {
     mavenCentral()
 }
 
+val nativePlatformUberjar = "$rootDir/dependencies/native-platform-uberjar.jar"
+
 dependencies {
-    compile(project(":prepare:runtime", configuration = "default"))
-    compile(project(":prepare:reflect", configuration = "default"))
-    compile(project(":core.script.runtime"))
     compile(project(":compiler"))
-    compile(files("$rootDir/ideaSDK/lib/util.jar"))
+    // TODO check whether splitting by platform could be more effective on the runtime
+    compile(files(nativePlatformUberjar))
     buildVersion()
 }
 
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
-        java.setSrcDirs(listOf(File(projectDir, "src")))
+        java.setSrcDirs(listOf(File(rootDir, "compiler/daemon/daemon-client/src")))
     }
     sourceSets.getByName("test").apply {
         java.setSrcDirs(emptyList<File>())
@@ -76,12 +76,13 @@ configure<JavaPluginConvention> {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-build-common")
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-daemon-client")
 }
 
 tasks.withType<Jar> {
-    setupRuntimeJar("Kotlin Build Common")
-    archiveName = "kotlin-build-common.jar"
+    setupRuntimeJar("Kotlin Daemon Client")
+    from(zipTree(nativePlatformUberjar))
+    archiveName = "kotlin-daemon-client.jar"
 }
 
 fixKotlinTaskDependencies()

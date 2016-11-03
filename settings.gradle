@@ -1,6 +1,7 @@
 // modules
 include "build-common"
 include "compiler"
+include "compiler.daemon-client"
 include "core"
 include "core.builtins"
 //include "core.builtins.serialized"

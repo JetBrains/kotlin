@@ -119,6 +119,12 @@ dependencies {
     proguardLibraryJarsCfg(project(":prepare:runtime", configuration = "default").apply { isTransitive = false })
     proguardLibraryJarsCfg(project(":prepare:reflect", configuration = "default").apply { isTransitive = false })
     proguardLibraryJarsCfg(project(":core.script.runtime").apply { isTransitive = false })
+    embeddableCfg(project(":prepare:runtime", configuration = "default"))
+    embeddableCfg(project(":prepare:reflect", configuration = "default"))
+    embeddableCfg(projectDepIntransitive(":core.script.runtime"))
+    embeddableCfg(projectDepIntransitive(":build-common"))
+    embeddableCfg(projectDepIntransitive(":libraries:kotlin.test"))
+    embeddableCfg(projectDepIntransitive(":libraries:stdlib"))
 }
 
 val packCompilerTask = task<ShadowJar>("internal.pack-compiler") {
@@ -150,6 +156,9 @@ val proguardTask = task<ProGuardTask>("internal.proguard-compiler") {
     dependsOn(packCompilerTask)
     configuration("$rootDir/compiler/compiler.pro")
 
+    inputs.files(outputBeforeSrinkJar)
+    outputs.file(outputJar)
+
     doFirst {
         System.setProperty("kotlin-compiler-jar-before-shrink", outputBeforeSrinkJar.toString())
         System.setProperty("kotlin-compiler-jar", outputJar.toString())
@@ -168,9 +177,10 @@ val mainTask = task("prepare") {
 val embeddableTask = task<ShadowJar>("prepare-embeddable-compiler") {
     archiveName = outputEmbeddableJar
     configurations = listOf(embeddableCfg)
-    dependsOn(mainTask)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn(mainTask, ":build-common:assemble", ":core.script.runtime:assemble", ":libraries:kotlin.test:assemble", ":libraries:stdlib:assemble")
     from(files(outputJar))
-    // TODO: more from here
+    from(embeddableCfg.files)
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" )
     relocate("com.intellij", "$kotlinEmbeddableRootPackage.com.intellij")
     relocate("com.google", "$kotlinEmbeddableRootPackage.com.google")
@@ -178,7 +188,9 @@ val embeddableTask = task<ShadowJar>("prepare-embeddable-compiler") {
     relocate("org.apache", "$kotlinEmbeddableRootPackage.org.apache")
     relocate("org.jdom", "$kotlinEmbeddableRootPackage.org.jdom")
     relocate("org.fusesource", "$kotlinEmbeddableRootPackage.org.fusesource") {
-        exclude("org.fusesource.jansi.internal.CLibrary")
+        println("!!! $it")
+        // TODO: remove "it." after #KT-12848 get addressed
+        it.exclude("org.fusesource.jansi.internal.CLibrary")
     }
     relocate("org.picocontainer", "$kotlinEmbeddableRootPackage.org.picocontainer")
     relocate("jline", "$kotlinEmbeddableRootPackage.jline")

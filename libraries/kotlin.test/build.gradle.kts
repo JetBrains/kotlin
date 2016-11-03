@@ -38,6 +38,7 @@ configure<JavaPluginConvention> {
                        "shared/src/main/kotlin.jvm",
                        "junit/src/main/kotlin")
                 .map { File(projectDir, it) })
+        resources.setSrcDirs(listOf(File("junit/src/main/resources")))
     }
     sourceSets.getByName("test").apply {
         java.setSrcDirs(emptyList<File>())

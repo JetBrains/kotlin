@@ -123,8 +123,8 @@ val mainTask = task("prepare") {
     dependsOn(prePackReflectTask)
     val inFile = File(outputReflectJarFileBase + "_beforeStrip.jar")
     val outFile = File(outputReflectJarFileBase + ".jar")
-    this.inputs.file(inFile)
-    this.outputs.file(outFile)
+    inputs.file(inFile)
+    outputs.file(outFile)
     val annotationRegex = "kotlin/Metadata".toRegex()
     val classRegex = "kotlin/reflect/jvm/internal/impl/.*".toRegex()
     doLast {
