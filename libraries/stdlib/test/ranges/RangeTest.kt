@@ -196,6 +196,14 @@ public class RangeTest {
         assertTrue(1.toInt() in range)
         assertTrue(1.toLong() in range)
         assertTrue(1.toFloat() in range)
+
+        val specialRange = 0.0..-0.0
+        assertFalse(specialRange.isEmpty())
+        assertTrue(-0.0 in specialRange)
+        // should it be or not: assertEquals(-0.0..0.0, specialRange)
+        val nanRange = 0.0..Double.NaN
+        assertFalse(Double.NaN in nanRange)
+
     }
 
     @Test fun floatRange() {
@@ -224,6 +232,13 @@ public class RangeTest {
         assertTrue(1.toDouble() in range)
 
         assertFalse(Double.MAX_VALUE in range)
+
+        val specialRange = 0.0F..-0.0F
+        assertFalse(specialRange.isEmpty())
+        assertTrue(-0.0F in specialRange)
+        // should it be or not: assertEquals(-0.0F..0.0F, specialRange)
+        val nanRange = 0.0F..Float.NaN
+        assertFalse(Float.NaN in nanRange)
     }
 
     @Test fun isEmpty() {
