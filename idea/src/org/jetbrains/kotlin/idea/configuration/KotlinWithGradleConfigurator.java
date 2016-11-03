@@ -71,19 +71,31 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     protected static final String SOURCE_SET = "main.java.srcDirs += 'src/main/kotlin'\n";
     private static final String VERSION = String.format("ext.kotlin_version = '%s'", VERSION_TEMPLATE);
 
+    @NotNull
     @Override
-    public boolean isConfigured(@NotNull Module module) {
+    public ConfigureKotlinStatus getStatus(@NotNull Module module) {
+        if (!isApplicable(module)) {
+            return ConfigureKotlinStatus.NON_APPLICABLE;
+        }
+
         if (ConfigureKotlinInProjectUtilsKt.hasKotlinJvmRuntimeInScope(module)) {
-            return true;
+            return ConfigureKotlinStatus.CONFIGURED;
         }
 
         GroovyFile moduleGradleFile = getBuildGradleFile(module.getProject(), getModuleFilePath(module));
-        if (moduleGradleFile != null && isFileConfigured(moduleGradleFile)) {
-            return true;
+        if (moduleGradleFile != null && !isFileConfigured(moduleGradleFile)) {
+            return ConfigureKotlinStatus.CAN_BE_CONFIGURED;
         }
+
         GroovyFile projectGradleFile = getBuildGradleFile(module.getProject(), getTopLevelProjectFilePath(module.getProject()));
-        return projectGradleFile != null && isFileConfigured(projectGradleFile);
+        if (projectGradleFile != null && !isFileConfigured(projectGradleFile)) {
+            return ConfigureKotlinStatus.CAN_BE_CONFIGURED;
+        }
+
+        return ConfigureKotlinStatus.BROKEN;
     }
+
+    protected abstract boolean isApplicable(@NotNull Module module);
 
     private boolean isFileConfigured(GroovyFile projectGradleFile) {
         String fileText = projectGradleFile.getText();

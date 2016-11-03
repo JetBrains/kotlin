@@ -21,11 +21,23 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
+enum class ConfigureKotlinStatus {
+    /** Kotlin is correctly configured using this configurator. */
+    CONFIGURED,
+    /** The configurator is not applicable to the current project type. */
+    NON_APPLICABLE,
+    /** The configurator is applicable to the current project type and can configure Kotlin automatically. */
+    CAN_BE_CONFIGURED,
+    /**
+     * The configurator is applicable to the current project type and Kotlin is not configured,
+     * but the state of the project doesn't allow to configure Kotlin automatically.
+     */
+    BROKEN
+}
+
 interface KotlinProjectConfigurator {
 
-    fun isConfigured(module: Module): Boolean
-
-    fun isApplicable(module: Module): Boolean
+    fun getStatus(module: Module): ConfigureKotlinStatus
 
     @JvmSuppressWildcards fun configure(project: Project, excludeModules: Collection<Module>)
 

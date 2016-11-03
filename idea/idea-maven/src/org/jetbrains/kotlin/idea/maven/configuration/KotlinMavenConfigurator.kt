@@ -33,6 +33,7 @@ import com.intellij.psi.xml.XmlFile
 import org.jetbrains.idea.maven.dom.MavenDomUtil
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.model.MavenId
+import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -48,14 +49,9 @@ abstract class KotlinMavenConfigurator
                               override val name: String,
                               override val presentableText: String) : KotlinProjectConfigurator {
 
-    override fun isApplicable(module: Module): Boolean {
-        return KotlinPluginUtil.isMavenModule(module)
-    }
-
-    override fun isConfigured(module: Module): Boolean {
-        if (!isKotlinModule(module)) {
-            return false
-        }
+    override fun getStatus(module: Module): ConfigureKotlinStatus {
+        if (!KotlinPluginUtil.isMavenModule(module))
+            return ConfigureKotlinStatus.NON_APPLICABLE
 
         val psi = findModulePomFile(module)
         if (psi == null
@@ -63,11 +59,18 @@ abstract class KotlinMavenConfigurator
             || psi !is XmlFile
             || psi.virtualFile == null
             || MavenDomUtil.getMavenDomProjectModel(module.project, psi.virtualFile) == null) {
-            return false
+            return ConfigureKotlinStatus.BROKEN
         }
 
-        val mavenProject = MavenProjectsManager.getInstance(module.project).findProject(module) ?: return false
+        val mavenProject = MavenProjectsManager.getInstance(module.project).findProject(module) ?: return ConfigureKotlinStatus.BROKEN
 
+        if (isKotlinModule(module) && hasKotlinPlugin(mavenProject)) {
+            return ConfigureKotlinStatus.CONFIGURED
+        }
+        return ConfigureKotlinStatus.CAN_BE_CONFIGURED
+    }
+
+    private fun hasKotlinPlugin(mavenProject: MavenProject): Boolean {
         val plugin = mavenProject.findPlugin(GROUP_ID, MAVEN_PLUGIN_ID) ?: return false
 
         return plugin.executions?.any { it.goals?.any { it != null && isRelevantGoal(it) } ?: false } ?: false
