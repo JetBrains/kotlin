@@ -25,9 +25,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
+import org.jetbrains.kotlin.idea.quickfix.detectPriority
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import java.util.*
@@ -42,7 +42,7 @@ object PlatformUnresolvedProvider : KotlinIntentionActionFactoryWithDelegate<KtN
         originalElementPointer.element?.references?.filterIsInstance<KtSimpleNameReference>()?.firstOrNull()?.let { reference ->
             UnresolvedReferenceQuickFixProvider.registerReferenceFixes(reference, object: QuickFixActionRegistrar {
                 override fun register(action: IntentionAction) {
-                    result.add(QuickFixWithDelegateFactory(IntentionActionPriority.LOW) { action })
+                    result.add(QuickFixWithDelegateFactory(action.detectPriority()) { action })
                 }
 
                 override fun register(fixRange: TextRange, action: IntentionAction, key: HighlightDisplayKey?) {
