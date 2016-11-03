@@ -12,6 +12,9 @@ public final class kotlin/DeprecationLevel : java/lang/Enum {
 	public static fun values ()[Lkotlin/DeprecationLevel;
 }
 
+public abstract interface annotation class kotlin/DslMarker : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExtensionFunctionType : java/lang/annotation/Annotation {
 }
 
