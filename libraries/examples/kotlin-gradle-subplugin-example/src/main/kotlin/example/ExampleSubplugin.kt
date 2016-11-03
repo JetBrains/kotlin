@@ -39,7 +39,7 @@ class ExampleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         return listOf(SubpluginOption("exampleKey", "exampleValue"))
     }
 
-    override fun getPluginName(): String {
+    override fun getCompilerPluginId(): String {
         return "example.plugin"
     }
 

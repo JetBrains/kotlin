@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.Task
+import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.SourceTask
@@ -28,6 +29,7 @@ import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
+import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -38,7 +40,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
@@ -79,7 +79,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal var friendTaskName: String? = null
     internal var javaOutputDir: File? = null
     internal var sourceSetName: String by Delegates.notNull()
-    protected val moduleName: String
+    internal val moduleName: String
             get() = "${project.name}_$sourceSetName"
 
     override fun compile() {
@@ -88,7 +88,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs): Unit {
-        val allKotlinSources = getKotlinSources()
+        val sourceRoots = getSourceRoots()
+        val allKotlinSources = sourceRoots.kotlinSourceFiles
+
         logger.kotlinDebug { "all kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
 
         if (allKotlinSources.isEmpty()) {
@@ -96,14 +98,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             return
         }
 
+        sourceRoots.log(this.name, logger)
         val args = populateCompilerArguments()
         compilerCalled = true
-        callCompiler(args, allKotlinSources, ChangedFiles(inputs))
+        callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 
-    private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter(File::isKotlinFile)
-
-    internal abstract fun callCompiler(args: T, allKotlinSources: List<File>, changedFiles: ChangedFiles)
+    internal abstract fun getSourceRoots(): SourceRoots
+    internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 }
 
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
@@ -113,8 +115,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private val kotlinOptionsImpl = KotlinJvmOptionsImpl()
     override val kotlinOptions: KotlinJvmOptions
             get() = kotlinOptionsImpl
-
-    private val sourceRoots = HashSet<File>()
+    internal val sourceRootsContainer = FilteringSourceRootsContainer()
 
     internal val taskBuildDirectory: File
         get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
@@ -136,9 +137,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private val compileClasspath: Iterable<File>
             get() = (classpath + additionalClasspath)
                     .filterTo(LinkedHashSet(), File::exists)
-    private val kapt2GeneratedSourcesDir: File
-            get() = File(project.buildDir, "generated/source/kapt2")
-
 
     internal val kaptOptions = KaptOptions()
     internal val pluginOptions = CompilerPluginOptions()
@@ -171,21 +169,30 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         parentKotlinOptionsImpl?.updateArguments(args)
         kotlinOptionsImpl.updateArguments(args)
 
-        fun dumpPaths(files: Iterable<File>): String =
-            "[${files.map { it.canonicalPath }.sorted().joinToString(prefix = "\n\t", separator = ",\n\t")}]"
-
         logger.kotlinDebug { "$name destinationDir = $destinationDir" }
-        logger.kotlinDebug { "$name source roots: ${dumpPaths(sourceRoots)}" }
-        logger.kotlinDebug { "$name java source roots: ${dumpPaths(getJavaSourceRoots())}" }
         return args
     }
 
-    override fun callCompiler(args: K2JVMCompilerArguments, allKotlinSources: List<File>, changedFiles: ChangedFiles) {
+    internal fun addFriendPathForTestTask(friendKotlinTaskName: String, args: K2JVMCompilerArguments) {
+        val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return
+        args.friendPaths = arrayOf(friendTask.javaOutputDir!!.absolutePath)
+        args.moduleName = friendTask.moduleName
+        logger.kotlinDebug("java destination directory for production = ${friendTask.javaOutputDir}")
+    }
+
+    override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer)
+
+    override fun callCompiler(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+        sourceRoots as SourceRoots.ForJvm
+
         val outputDir = destinationDir
 
         if (!incremental) {
             anyClassesCompiled = true
-            processCompilerExitCode(compileNotIncremental(allKotlinSources, outputDir, args))
+            processCompilerExitCode(compileJvmNotIncrementally(
+                    compiler, logger,
+                    sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots,
+                    compileClasspath, outputDir, args))
             return
         }
 
@@ -194,19 +201,18 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val messageCollector = GradleMessageCollector(logger)
         val compiler = IncrementalJvmCompilerRunner(
                 taskBuildDirectory,
-                getJavaSourceRoots(),
+                sourceRoots.javaSourceRoots,
                 cacheVersions,
                 reporter,
                 kaptAnnotationsFileUpdater,
                 sourceAnnotationsRegistry,
-                kapt2GeneratedSourcesDir,
                 artifactDifferenceRegistryProvider,
                 artifactFile
         )
         args.classpathAsList = classpath.toList()
         args.destinationAsFile = destinationDir
         try {
-            val exitCode = compiler.compile(allKotlinSources, args, messageCollector, { changedFiles })
+            val exitCode = compiler.compile(sourceRoots.kotlinSourceFiles, args, messageCollector, { changedFiles })
             processCompilerExitCode(exitCode)
         }
         catch (e: Throwable) {
@@ -236,45 +242,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
     }
 
-    private fun compileNotIncremental(
-            sourcesToCompile: List<File>,
-            outputDir: File,
-            args: K2JVMCompilerArguments
-    ): ExitCode {
-        logger.kotlinDebug("Removing all kotlin classes in $outputDir")
-        // we're free to delete all classes since only we know about that directory
-        // todo: can be optimized -- compile and remove only files that were not generated
-        listClassFiles(outputDir.canonicalPath).forEach { it.delete() }
-
-        val moduleFile = makeModuleFile(
-                args.moduleName,
-                isTest = false,
-                outputDir = outputDir,
-                sourcesToCompile = sourcesToCompile,
-                javaSourceRoots = getJavaSourceRoots(),
-                classpath = compileClasspath,
-                friendDirs = listOf())
-        args.module = moduleFile.absolutePath
-        val messageCollector = GradleMessageCollector(logger)
-
-        sourceAnnotationsRegistry?.clear()
-        val services = with (Services.Builder()) {
-            sourceAnnotationsRegistry?.let { handler ->
-                register(SourceRetentionAnnotationHandler::class.java, handler)
-            }
-            build()
-        }
-
-        try {
-            logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
-            logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
-            return compiler.exec(messageCollector, services, args)
-        }
-        finally {
-            moduleFile.delete()
-        }
-    }
-
     private fun handleKaptProperties() {
         kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
             if (incremental) {
@@ -293,61 +260,51 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
     }
 
-    private fun getJavaSourceRoots(): Set<File> =
-            findRootsForSources(getSource().filter { it.isJavaFile() })
-
-    private fun File.isKapt2GeneratedDirectory(): Boolean {
-        if (!kapt2GeneratedSourcesDir.isDirectory) return false
-        return FileUtil.isAncestor(kapt2GeneratedSourcesDir, this, /* strict = */ false)
-    }
-
-    private fun filterOutKapt2Directories(vararg sources: Any?): Array<Any> {
-        return sources.flatMap { source ->
-            when (source) {
-                is File -> if (source.isKapt2GeneratedDirectory()) emptyList<File>() else listOf(source)
-                is SourceDirectorySet -> source.srcDirs.filter { !it.isKapt2GeneratedDirectory() }
-                else -> emptyList<File>()
-            }
-        }.toTypedArray()
-    }
-
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(sources: Any?) {
-        sourceRoots.clear()
-        val sourcesToAdd = filterOutKapt2Directories(sources)
-        addSourceRoots(*sourcesToAdd)
-        super.setSource(sourcesToAdd.firstOrNull())
+        sourceRootsContainer.set(sources)
+        super.setSource(sources)
     }
 
     // override source to track source directory sets and files (for generated android folders)
     override fun source(vararg sources: Any?): SourceTask? {
-        val sourcesToAdd = filterOutKapt2Directories(*sources)
-        addSourceRoots(*sourcesToAdd)
-        return super.source(*sourcesToAdd)
+        sourceRootsContainer.add(*sources)
+        return super.source(*sources)
     }
+}
 
-    internal fun findRootsForSources(sources: Iterable<File>): Set<File> {
-        val resultRoots = HashSet<File>()
-        val sourceDirs = sources.mapTo(HashSet()) { it.parentFile }
+internal fun compileJvmNotIncrementally(
+        compiler: K2JVMCompiler,
+        logger: Logger,
+        sourcesToCompile: List<File>,
+        javaSourceRoots: Iterable<File>,
+        compileClasspath: Iterable<File>,
+        outputDir: File,
+        args: K2JVMCompilerArguments
+): ExitCode {
+    logger.kotlinDebug("Removing all kotlin classes in $outputDir")
+    // we're free to delete all classes since only we know about that directory
+    // todo: can be optimized -- compile and remove only files that were not generated
+    listClassFiles(outputDir.canonicalPath).forEach { it.delete() }
 
-        for (sourceDir in sourceDirs) {
-            for (sourceRoot in sourceRoots) {
-                if (FileUtil.isAncestor(sourceRoot, sourceDir, /* strict = */false)) {
-                    resultRoots.add(sourceRoot)
-                }
-            }
-        }
+    val moduleFile = makeModuleFile(
+            args.moduleName,
+            isTest = false,
+            outputDir = outputDir,
+            sourcesToCompile = sourcesToCompile,
+            javaSourceRoots = javaSourceRoots,
+            classpath = compileClasspath,
+            friendDirs = listOf())
+    args.module = moduleFile.absolutePath
+    val messageCollector = GradleMessageCollector(logger)
 
-        return resultRoots
+    try {
+        logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
+        logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
+        return compiler.exec(messageCollector, Services.EMPTY, args)
     }
-
-    private fun addSourceRoots(vararg sources: Any?) {
-        for (source in sources) {
-            when (source) {
-                is SourceDirectorySet -> sourceRoots.addAll(source.srcDirs)
-                is File -> sourceRoots.add(source)
-            }
-        }
+    finally {
+        moduleFile.delete()
     }
 }
 
@@ -378,10 +335,15 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         return args
     }
 
-    override fun callCompiler(args: K2JSCompilerArguments, allKotlinSources: List<File>, changedFiles: ChangedFiles) {
+    override fun getSourceRoots() = SourceRoots.ForJs.create(getSource())
+
+    override fun callCompiler(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+        sourceRoots as SourceRoots.ForJs
+
+        val messageCollector = GradleMessageCollector(logger)
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
-        args.freeArgs = args.freeArgs + allKotlinSources.map { it.absolutePath }
+        args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
 
         if (args.outputFile == null) {
             throw GradleException("$name.kotlinOptions.outputFile should be specified.")

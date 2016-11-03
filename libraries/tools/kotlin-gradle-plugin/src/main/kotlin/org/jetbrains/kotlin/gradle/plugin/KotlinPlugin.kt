@@ -118,8 +118,8 @@ internal class Kotlin2JvmSourceSetProcessor(
                 val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
 
                 val subpluginEnvironment = loadSubplugins(project)
-                subpluginEnvironment.addSubpluginArguments(project, kotlinTask,
-                        javaTask as JavaCompile, null, sourceSet)
+                val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
+                        project, kotlinTask, javaTask as JavaCompile, null, sourceSet)
 
                 var kotlinAfterJavaTask: KotlinCompile? = null
 
@@ -135,10 +135,15 @@ internal class Kotlin2JvmSourceSetProcessor(
                 }
 
                 sourceSet.java.srcDirs.forEach { kotlinSourceSet.kotlin.srcDir(it) }
+
                 // KotlinCompile.source(kotlinDirSet) should be called only after all java roots are added to kotlinDirSet
                 // otherwise some java roots can be ignored
                 kotlinTask.source(kotlinSourceSet.kotlin)
-                kotlinAfterJavaTask?.let { it.source(kotlinSourceSet.kotlin) }
+                kotlinAfterJavaTask?.source(kotlinSourceSet.kotlin)
+                appliedPlugins
+                        .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
+                        .forEach { it.source(kotlinSourceSet.kotlin) }
+
                 configureJavaTask(kotlinTask, javaTask, logger)
                 createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
                 val artifactFile = project.tryGetSingleArtifact()
@@ -355,7 +360,8 @@ internal open class KotlinAndroidPlugin(
                 }
             }
 
-            subpluginEnvironment.addSubpluginArguments(project, kotlinTask, javaTask, variantData, null)
+            val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
+                    project, kotlinTask, javaTask, variantData, null)
 
             kotlinTask.mapClasspath {
                 javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
@@ -379,6 +385,9 @@ internal open class KotlinAndroidPlugin(
             if (kotlinAfterJavaTask != null) {
                 configureSources(kotlinAfterJavaTask, variantData)
             }
+            appliedPlugins
+                    .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
+                    .forEach { configureSources(it, variantData) }
 
             configureJavaTask(kotlinTask, javaTask, logger)
             createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, variantDataName)
@@ -393,17 +402,17 @@ internal open class KotlinAndroidPlugin(
         }
     }
 
-    private fun configureSources(kotlinTask: KotlinCompile, variantData: BaseVariantData<out BaseVariantOutputData>) {
-        val logger = kotlinTask.project.logger
+    private fun configureSources(compileTask: AbstractCompile, variantData: BaseVariantData<out BaseVariantOutputData>) {
+        val logger = compileTask.project.logger
 
         for (provider in variantData.sourceProviders) {
             val kotlinSourceSet = provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
-            kotlinTask.source(kotlinSourceSet.kotlin)
+            compileTask.source(kotlinSourceSet.kotlin)
         }
 
         for (javaSrcDir in AndroidGradleWrapper.getJavaSources(variantData)) {
-            kotlinTask.source(javaSrcDir)
-            logger.kotlinDebug("Source directory $javaSrcDir was added to kotlin source for ${kotlinTask.name}")
+            compileTask.source(javaSrcDir)
+            logger.kotlinDebug("Source directory $javaSrcDir was added to kotlin source for ${compileTask.name}")
         }
     }
 
@@ -482,29 +491,7 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
         val subplugins = ServiceLoader.load(KotlinGradleSubplugin::class.java, project.buildscript.classLoader)
                 .map { @Suppress("UNCHECKED_CAST") (it as KotlinGradleSubplugin<KotlinCompile>) }
 
-        fun Project.getResolvedArtifacts() = buildscript.configurations.getByName("classpath")
-                .resolvedConfiguration.resolvedArtifacts
-
-        val resolvedClasspathArtifacts = project.getResolvedArtifacts().toMutableList()
-        val rootProject = project.rootProject
-        if (rootProject != project) {
-            resolvedClasspathArtifacts += rootProject.getResolvedArtifacts()
-        }
-
-        val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin<KotlinCompile>, List<File>>()
-
-        for (subplugin in subplugins) {
-            val file = resolvedClasspathArtifacts
-                    .firstOrNull {
-                        val id = it.moduleVersion.id
-                        subplugin.getGroupName() == id.group && subplugin.getArtifactName() == id.name
-                    }?.file
-            if (file != null) {
-                subpluginClasspaths.put(subplugin, listOf(file))
-            }
-        }
-
-        return SubpluginEnvironment(subpluginClasspaths, subplugins)
+        return SubpluginEnvironment(project.resolveSubpluginArtifacts(subplugins), subplugins)
     } catch (e: NoClassDefFoundError) {
         // Skip plugin loading if KotlinGradleSubplugin is not defined.
         // It is true now for tests in kotlin-gradle-plugin-core.
@@ -512,33 +499,65 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
     }
 }
 
+internal fun Project.resolveSubpluginArtifacts(
+        subplugins: List<KotlinGradleSubplugin<KotlinCompile>>
+): Map<KotlinGradleSubplugin<KotlinCompile>, List<File>> {
+    fun Project.getResolvedArtifacts() = buildscript.configurations.getByName("classpath")
+            .resolvedConfiguration.resolvedArtifacts
+
+    val resolvedClasspathArtifacts = getResolvedArtifacts().toMutableList()
+    val rootProject = rootProject
+    if (rootProject != this) {
+        resolvedClasspathArtifacts += rootProject.getResolvedArtifacts()
+    }
+
+    val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin<KotlinCompile>, List<File>>()
+
+    for (subplugin in subplugins) {
+        val file = resolvedClasspathArtifacts
+                .firstOrNull {
+                    val id = it.moduleVersion.id
+                    subplugin.getGroupName() == id.group && subplugin.getArtifactName() == id.name
+                }?.file
+        if (file != null) {
+            subpluginClasspaths.put(subplugin, listOf(file))
+        }
+    }
+
+    return subpluginClasspaths
+}
+
 internal class SubpluginEnvironment(
         val subpluginClasspaths: Map<KotlinGradleSubplugin<KotlinCompile>, List<File>>,
         val subplugins: List<KotlinGradleSubplugin<KotlinCompile>>
 ) {
 
-    fun addSubpluginArguments(
+    fun addSubpluginOptions(
             project: Project,
             kotlinTask: KotlinCompile,
             javaTask: AbstractCompile,
             variantData: Any?,
-            javaSourceSet: SourceSet?) {
+            javaSourceSet: SourceSet?
+    ): List<KotlinGradleSubplugin<KotlinCompile>> {
         val pluginOptions = kotlinTask.pluginOptions
 
-        for (subplugin in subplugins) {
+        val appliedSubplugins = subplugins.filter { it.isApplicable(project, kotlinTask) }
+        for (subplugin in appliedSubplugins) {
             if (!subplugin.isApplicable(project, kotlinTask)) continue
 
             with(subplugin) {
-                project.logger.kotlinDebug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
+                project.logger.kotlinDebug("Subplugin ${getCompilerPluginId()} (${getGroupName()}:${getArtifactName()}) loaded.")
             }
 
             val subpluginClasspath = subpluginClasspaths[subplugin] ?: continue
             subpluginClasspath.forEach { pluginOptions.addClasspathEntry(it) }
 
-            for (arg in subplugin.apply(project, kotlinTask, javaTask, variantData, javaSourceSet)) {
-                pluginOptions.addPluginArgument(subplugin.getPluginName(), arg.key, arg.value)
+            for (option in subplugin.apply(project, kotlinTask, javaTask, variantData, javaSourceSet)) {
+                pluginOptions.addPluginArgument(subplugin.getCompilerPluginId(), option.key, option.value)
             }
         }
+
+        return appliedSubplugins
     }
 }
 

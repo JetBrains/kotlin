@@ -105,7 +105,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
     }
 
-    override fun getPluginName() = "org.jetbrains.kotlin.android"
+    override fun getCompilerPluginId() = "org.jetbrains.kotlin.android"
 
     override fun getGroupName() = "org.jetbrains.kotlin"
 
