@@ -35,6 +35,7 @@ internal val FunctionDescriptor.implementation: FunctionDescriptor
 private val intrinsicTypes = setOf(
         "kotlin.Unit",
         "kotlin.Boolean", "kotlin.Char",
+        "kotlin.Number",
         "kotlin.Byte", "kotlin.Short",
         "kotlin.Int", "kotlin.Long",
         "kotlin.Float", "kotlin.Double"
