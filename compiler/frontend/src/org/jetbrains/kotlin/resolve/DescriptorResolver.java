@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyTypeAliasDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.*;
@@ -82,6 +84,7 @@ public class DescriptorResolver {
     private final FunctionsTypingVisitor functionsTypingVisitor;
     private final DestructuringDeclarationResolver destructuringDeclarationResolver;
     private final ModifiersChecker modifiersChecker;
+    private final SyntheticResolveExtension syntheticResolveExtension;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -95,7 +98,8 @@ public class DescriptorResolver {
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull FunctionsTypingVisitor functionsTypingVisitor,
             @NotNull DestructuringDeclarationResolver destructuringDeclarationResolver,
-            @NotNull ModifiersChecker modifiersChecker
+            @NotNull ModifiersChecker modifiersChecker,
+            @NotNull Project project
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -109,16 +113,18 @@ public class DescriptorResolver {
         this.functionsTypingVisitor = functionsTypingVisitor;
         this.destructuringDeclarationResolver = destructuringDeclarationResolver;
         this.modifiersChecker = modifiersChecker;
+        this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
     }
 
     public List<KotlinType> resolveSupertypes(
             @NotNull LexicalScope scope,
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull KtClassOrObject jetClass,
+            @Nullable KtPureClassOrObject correspondingClassOrObject,
             BindingTrace trace
     ) {
         List<KotlinType> supertypes = Lists.newArrayList();
-        List<KtSuperTypeListEntry> delegationSpecifiers = jetClass.getSuperTypeListEntries();
+        List<KtSuperTypeListEntry> delegationSpecifiers = correspondingClassOrObject == null ? Collections.<KtSuperTypeListEntry>emptyList() :
+                                                          correspondingClassOrObject.getSuperTypeListEntries();
         Collection<KotlinType> declaredSupertypes = resolveSuperTypeListEntries(
                 scope,
                 delegationSpecifiers,
@@ -132,8 +138,11 @@ public class DescriptorResolver {
             supertypes.add(0, builtIns.getEnumType(classDescriptor.getDefaultType()));
         }
 
+        syntheticResolveExtension.addSyntheticSupertypes(classDescriptor, supertypes);
+
         if (supertypes.isEmpty()) {
-            KotlinType defaultSupertype = getDefaultSupertype(jetClass, trace, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
+            KotlinType defaultSupertype = correspondingClassOrObject == null ? builtIns.getAnyType() :
+                    getDefaultSupertype(correspondingClassOrObject, trace, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
             addValidSupertype(supertypes, defaultSupertype);
         }
 
@@ -146,7 +155,7 @@ public class DescriptorResolver {
         }
     }
 
-    private boolean containsClass(Collection<KotlinType> result) {
+    private static boolean containsClass(Collection<KotlinType> result) {
         for (KotlinType type : result) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.INTERFACE) {
@@ -156,16 +165,17 @@ public class DescriptorResolver {
         return false;
     }
 
-    private KotlinType getDefaultSupertype(KtClassOrObject jetClass, BindingTrace trace, boolean isAnnotation) {
+    private KotlinType getDefaultSupertype(KtPureClassOrObject ktClass, BindingTrace trace, boolean isAnnotation) {
         // TODO : beautify
-        if (jetClass instanceof KtEnumEntry) {
-            KtClassOrObject parent = KtStubbedPsiUtil.getContainingDeclaration(jetClass, KtClassOrObject.class);
+        if (ktClass instanceof KtEnumEntry) {
+            KtEnumEntry enumEntry = (KtEnumEntry) ktClass;
+            KtClassOrObject parent = KtStubbedPsiUtil.getContainingDeclaration(enumEntry, KtClassOrObject.class);
             ClassDescriptor parentDescriptor = trace.getBindingContext().get(BindingContext.CLASS, parent);
             if (parentDescriptor.getTypeConstructor().getParameters().isEmpty()) {
                 return parentDescriptor.getDefaultType();
             }
             else {
-                trace.report(NO_GENERICS_IN_SUPERTYPE_SPECIFIER.on(jetClass.getNameIdentifier()));
+                trace.report(NO_GENERICS_IN_SUPERTYPE_SPECIFIER.on(enumEntry.getNameIdentifier()));
                 return ErrorUtils.createErrorType("Supertype not specified");
             }
         }
@@ -449,15 +459,15 @@ public class DescriptorResolver {
 
     @NotNull
     public static ClassConstructorDescriptorImpl createAndRecordPrimaryConstructorForObject(
-            @Nullable KtClassOrObject object,
+            @Nullable KtPureClassOrObject object,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull BindingTrace trace
     ) {
         ClassConstructorDescriptorImpl constructorDescriptor =
                 DescriptorFactory.createPrimaryConstructorForObject(classDescriptor, KotlinSourceElementKt.toSourceElement(object));
-        if (object != null) {
+        if (object instanceof PsiElement) {
             KtPrimaryConstructor primaryConstructor = object.getPrimaryConstructor();
-            trace.record(CONSTRUCTOR, primaryConstructor != null ? primaryConstructor : object, constructorDescriptor);
+            trace.record(CONSTRUCTOR, primaryConstructor != null ? primaryConstructor : (PsiElement)object, constructorDescriptor);
         }
         return constructorDescriptor;
     }

@@ -223,7 +223,7 @@ fun ClassBuilder.generateMethod(
 
 
 fun reportTarget6InheritanceErrorIfNeeded(
-        classDescriptor: ClassDescriptor, classElement: KtClassOrObject, restrictedInheritance: List<FunctionDescriptor>, state:GenerationState
+        classDescriptor: ClassDescriptor, classElement: PsiElement, restrictedInheritance: List<FunctionDescriptor>, state:GenerationState
 ) {
     if (!restrictedInheritance.isEmpty()) {
         val groupBy = restrictedInheritance.groupBy { descriptor -> descriptor.containingDeclaration as ClassDescriptor }

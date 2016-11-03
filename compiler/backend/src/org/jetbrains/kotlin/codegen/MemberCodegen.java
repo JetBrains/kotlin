@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -73,15 +74,18 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclarationContainer*/> implements InnerClassConsumer {
-    protected final GenerationState state;
+public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarationContainer*/> implements InnerClassConsumer {
+    public final GenerationState state;
+
     protected final T element;
     protected final FieldOwnerContext context;
-    protected final ClassBuilder v;
-    protected final FunctionCodegen functionCodegen;
-    protected final PropertyCodegen propertyCodegen;
-    protected final KotlinTypeMapper typeMapper;
-    protected final BindingContext bindingContext;
+
+    public final ClassBuilder v;
+    public final FunctionCodegen functionCodegen;
+    public final PropertyCodegen propertyCodegen;
+    public final KotlinTypeMapper typeMapper;
+    public final BindingContext bindingContext;
+
     protected final JvmFileClassesProvider fileClassesProvider;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
@@ -260,9 +264,21 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         if (descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED)) {
             badDescriptor(descriptor, state.getClassBuilderMode());
         }
+        genClassOrObject(parentContext, aClass, state, parentCodegen, descriptor);
+    }
+
+    private static void genClassOrObject(
+            @NotNull CodegenContext parentContext,
+            @NotNull KtPureClassOrObject aClass,
+            @NotNull GenerationState state,
+            @Nullable MemberCodegen<?> parentCodegen,
+            @NotNull ClassDescriptor descriptor
+    ) {
 
         Type classType = state.getTypeMapper().mapClass(descriptor);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(aClass, descriptor), classType, aClass.getContainingFile());
+        ClassBuilder classBuilder = state.getFactory().newVisitor(
+                JvmDeclarationOriginKt.OtherOrigin(aClass, descriptor),
+                classType, aClass.getContainingKtFile());
         ClassContext classContext = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
         new ImplementationBodyCodegen(aClass, classContext, classBuilder, state, parentCodegen, false).generate();
     }
@@ -275,6 +291,10 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
     public void genClassOrObject(KtClassOrObject aClass) {
         genClassOrObject(context, aClass, state, this);
+    }
+
+    public void genSyntheticClassOrObject(SyntheticClassOrObjectDescriptor descriptor) {
+        genClassOrObject(context, descriptor.getSyntheticDeclaration(), state, this, descriptor);
     }
 
     private void writeInnerClasses() {
@@ -389,7 +409,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     }
 
     @NotNull
-    protected final ExpressionCodegen createOrGetClInitCodegen() {
+    public final ExpressionCodegen createOrGetClInitCodegen() {
         if (clInit == null) {
             DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
             SimpleFunctionDescriptorImpl clInitDescriptor = createClInitFunctionDescriptor(contextDescriptor);
@@ -400,7 +420,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     }
 
     @NotNull
-    protected MethodVisitor createClInitMethodVisitor(@NotNull DeclarationDescriptor contextDescriptor) {
+    public MethodVisitor createClInitMethodVisitor(@NotNull DeclarationDescriptor contextDescriptor) {
         return v.newMethod(JvmDeclarationOriginKt.OtherOrigin(contextDescriptor), ACC_STATIC, "<clinit>", "()V", null, null);
     }
 
@@ -599,7 +619,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     @NotNull
     public DefaultSourceMapper getOrCreateSourceMapper() {
         if (sourceMapper == null) {
-            sourceMapper = new DefaultSourceMapper(SourceInfo.Companion.createInfo(element, getClassName()));
+            // note: this is used for in InlineCodegen and the element is always physical (KtElement) there
+            sourceMapper = new DefaultSourceMapper(SourceInfo.Companion.createInfo((KtElement)element, getClassName()));
         }
         return sourceMapper;
     }
@@ -634,7 +655,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     new FunctionGenerationStrategy.CodegenBased(state) {
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                            markLineNumberForElement(element, codegen.v);
+                            markLineNumberForElement(element.getPsiOrParent(), codegen.v);
 
                             generateMethodCallTo(original, accessor, codegen.v).coerceTo(signature.getReturnType(), codegen.v);
 
@@ -669,7 +690,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
                     InstructionAdapter iv = codegen.v;
 
-                    markLineNumberForElement(element, iv);
+                    markLineNumberForElement(element.getPsiOrParent(), iv);
 
                     Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                     for (int i = 0, reg = 0; i < argTypes.length; i++) {

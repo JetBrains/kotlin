@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo;
@@ -80,6 +81,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LocalDescriptorResolver localDescriptorResolver;
     private SupertypeLoopChecker supertypeLoopsResolver;
     private LanguageVersionSettings languageVersionSettings;
+
+    private final SyntheticResolveExtension syntheticResolveExtension;
 
     @Inject
     public void setJetImportFactory(KtImportsFactory jetImportFactory) {
@@ -192,6 +195,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                 return createAnnotations(file, file.getDanglingAnnotations());
             }
         });
+
+        syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
     }
 
     private LazyAnnotations createAnnotations(KtFile file, List<KtAnnotationEntry> annotationEntries) {
@@ -438,5 +443,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public LanguageVersionSettings getLanguageVersionSettings() {
         return languageVersionSettings;
+    }
+
+    @NotNull
+    @Override
+    public SyntheticResolveExtension getSyntheticResolveExtension() {
+        return syntheticResolveExtension;
     }
 }

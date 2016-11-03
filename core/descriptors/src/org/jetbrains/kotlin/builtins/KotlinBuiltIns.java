@@ -868,12 +868,12 @@ public abstract class KotlinBuiltIns {
         return getPrimitiveTypeByFqName(getFqName(descriptor)) != null;
     }
 
-    private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
+    public static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
     }
 
-    private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqName fqName) {
+    public static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqName fqName) {
         return isConstructedFromGivenClass(type, fqName.toUnsafe());
     }
 

@@ -37,9 +37,6 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -105,7 +102,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
 
     public ImplementationBodyCodegen(
-            @NotNull KtClassOrObject aClass,
+            @NotNull KtPureClassOrObject aClass,
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
@@ -212,7 +209,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         v.defineClass(
-                myClass,
+                myClass.getPsiOrParent(),
                 state.getClassFileVersion(),
                 access,
                 signature.getName(),
@@ -221,7 +218,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ArrayUtil.toStringArray(signature.getInterfaces())
         );
 
-        v.visitSource(myClass.getContainingFile().getName(), null);
+        v.visitSource(myClass.getContainingKtFile().getName(), null);
 
         InlineCodegenUtil.initDefaultSourceMappingIfNeeded(context, this, state);
 
@@ -237,7 +234,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isInterface(descriptor) && !isLocal && (!isJvm8Interface(descriptor, state) || state.getGenerateDefaultImplsForJvm8())) {
             Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder defaultImplsBuilder =
-                    state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(myClass, descriptor), defaultImplsType, myClass.getContainingFile());
+                    state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(myClass.getPsiOrParent(), descriptor), defaultImplsType, myClass.getContainingKtFile());
 
             CodegenContext parentContext = context.getParentContext();
             assert parentContext != null : "Parent context of interface declaration should not be null";
@@ -371,10 +368,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateToArray();
 
-        genClosureFields(context.closure, v, typeMapper);
+        if (context.closure != null)
+            genClosureFields(context.closure, v, typeMapper);
 
         for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Companion.getInstances(state.getProject())) {
-            extension.generateClassSyntheticParts(v, state, myClass, descriptor);
+            extension.generateClassSyntheticParts(this);
         }
     }
 
@@ -481,10 +479,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
+    public Type genPropertyOnStack(
+            InstructionAdapter iv,
+            MethodContext context,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            Type classAsmType,
+            int index
+    ) {
+        iv.load(index, classAsmType);
+        if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true,
+                                               /* isDelegated = */ false, context, state.getShouldInlineConstVals())) {
+            Type type = typeMapper.mapType(propertyDescriptor.getType());
+            String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);
+            iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());
+            return type;
+        }
+        else {
+            //noinspection ConstantConditions
+            Method method = typeMapper.mapAsmMethod(propertyDescriptor.getGetter());
+            iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor(), false);
+            return method.getReturnType();
+        }
+    }
+
     private void generateFunctionsForDataClasses() {
         if (!descriptor.isData()) return;
-
-        new DataClassMethodGeneratorImpl(myClass, bindingContext).generate();
+        if (!(myClass instanceof KtClassOrObject)) return;
+        new DataClassMethodGeneratorImpl((KtClassOrObject)myClass, bindingContext).generate();
     }
 
     private class DataClassMethodGeneratorImpl extends DataClassMethodGenerator {
@@ -520,10 +541,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             for (PropertyDescriptor propertyDescriptor : properties) {
                 Type asmType = typeMapper.mapType(propertyDescriptor);
 
-                Type thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, 0);
+                Type thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
                 StackValue.coerce(thisPropertyType, asmType, iv);
 
-                Type otherPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, 2);
+                Type otherPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 2);
                 StackValue.coerce(otherPropertyType, asmType, iv);
 
                 if (asmType.getSort() == Type.FLOAT) {
@@ -566,7 +587,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.mul(Type.INT_TYPE);
                 }
 
-                Type propertyType = genPropertyOnStack(iv, context, propertyDescriptor, 0);
+                Type propertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
                 Type asmType = typeMapper.mapType(propertyDescriptor);
                 StackValue.coerce(propertyType, asmType, iv);
 
@@ -621,7 +642,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
                 genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
-                Type type = genPropertyOnStack(iv, context, propertyDescriptor, 0);
+                Type type = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
 
                 if (type.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(type);
@@ -648,23 +669,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionCodegen.endVisit(mv, "toString", myClass);
         }
 
-        private Type genPropertyOnStack(InstructionAdapter iv, MethodContext context, @NotNull PropertyDescriptor propertyDescriptor, int index) {
-            iv.load(index, classAsmType);
-            if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true,
-                                               /* isDelegated = */ false, context, state.getShouldInlineConstVals())) {
-                Type type = typeMapper.mapType(propertyDescriptor.getType());
-                String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);
-                iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());
-                return type;
-            }
-            else {
-                //noinspection ConstantConditions
-                Method method = typeMapper.mapAsmMethod(propertyDescriptor.getGetter());
-                iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor(), false);
-                return method.getReturnType();
-            }
-        }
-
         @Override
         public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {
             PsiElement originalElement = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
@@ -684,7 +688,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                 bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
                         assert property != null : "Property descriptor is not found for primary constructor parameter: " + parameter;
 
-                        Type propertyType = genPropertyOnStack(iv, context, property, 0);
+                        Type propertyType = genPropertyOnStack(iv, context, property, ImplementationBodyCodegen.this.classAsmType, 0);
                         StackValue.coerce(propertyType, componentType, iv);
                     }
                     iv.areturn(componentType);
@@ -848,7 +852,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (!state.getClassBuilderMode().generateBodies) return;
             // Invoke the object constructor but ignore the result because INSTANCE will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
-            markLineNumberForElement(element, v);
+            markLineNumberForElement(element.getPsiOrParent(), v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
 
@@ -860,11 +864,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        KtObjectDeclaration companionObject = CollectionsKt.firstOrNull(((KtClass) myClass).getCompanionObjects());
-        assert companionObject != null : "Companion object not found: " + myClass.getText();
+        @Nullable KtObjectDeclaration companionObject = CollectionsKt.firstOrNull(myClass.getCompanionObjects());
 
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
-        v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+        v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
+                   ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
     }
 
     private void generateCompanionObjectBackingFieldCopies() {
@@ -935,7 +939,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
         JvmDeclarationOrigin origin = JvmDeclarationOriginKt
-                .OtherOrigin(primaryConstructor != null ? primaryConstructor : myClass, constructorDescriptor);
+                .OtherOrigin(primaryConstructor != null ? primaryConstructor : myClass.getPsiOrParent(), constructorDescriptor);
         functionCodegen.generateMethod(origin, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased(state) {
                        @Override
@@ -1332,7 +1336,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        CodegenUtilKt.reportTarget6InheritanceErrorIfNeeded(descriptor, myClass, restrictedInheritance, state);
+        CodegenUtilKt.reportTarget6InheritanceErrorIfNeeded(descriptor, myClass.getPsiOrParent(), restrictedInheritance, state);
     }
 
     private void generateDelegationToDefaultImpl(@NotNull final FunctionDescriptor traitFun, @NotNull final FunctionDescriptor inheritedFun) {

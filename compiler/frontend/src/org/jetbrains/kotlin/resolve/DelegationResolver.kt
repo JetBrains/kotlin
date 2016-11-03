@@ -21,13 +21,14 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 class DelegationResolver<T : CallableMemberDescriptor> private constructor(
-        private val classOrObject: KtClassOrObject,
+        private val classOrObject: KtPureClassOrObject,
         private val ownerDescriptor: ClassDescriptor,
         private val existingMembers: Collection<CallableDescriptor>,
         private val trace: BindingTrace,
@@ -68,7 +69,8 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
     private fun checkClashWithOtherDelegatedMember(candidate: T, delegatedMembers: Collection<T>): Boolean {
         val alreadyDelegated = delegatedMembers.firstOrNull { isOverridableBy(it, candidate) }
         if (alreadyDelegated != null) {
-            trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(classOrObject, classOrObject, alreadyDelegated))
+            if (classOrObject is KtClassOrObject) // report errors only for physical (non-synthetic) classes or objects
+                trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(classOrObject, classOrObject, alreadyDelegated))
             return true
         }
         return false
@@ -98,7 +100,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
 
     companion object {
         fun <T : CallableMemberDescriptor> generateDelegatedMembers(
-                classOrObject: KtClassOrObject,
+                classOrObject: KtPureClassOrObject,
                 ownerDescriptor: ClassDescriptor,
                 existingMembers: Collection<CallableDescriptor>,
                 trace: BindingTrace,

@@ -45,20 +45,23 @@ protected constructor(
 ) : MemberScopeImpl() {
 
     protected val storageManager: StorageManager = c.storageManager
-    private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
+    private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { doGetClasses(it) }
     private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> = storageManager.createMemoizedFunction { doGetFunctions(it) }
     private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> = storageManager.createMemoizedFunction { doGetProperties(it) }
     private val typeAliasDescriptors: MemoizedFunctionToNotNull<Name, Collection<TypeAliasDescriptor>> = storageManager.createMemoizedFunction { doGetTypeAliases(it) }
 
-    private fun resolveClassDescriptor(name: Name): List<ClassDescriptor> {
-        return declarationProvider.getClassOrObjectDeclarations(name).map {
+    private fun doGetClasses(name: Name): List<ClassDescriptor> {
+        val result = Sets.newLinkedHashSet<ClassDescriptor>()
+        declarationProvider.getClassOrObjectDeclarations(name).mapTo(result) {
             if (it is KtScriptInfo)
                 LazyScriptDescriptor(c as ResolveSession, thisDescriptor, name, it)
             else {
                 val isExternal = it.modifierList?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: false
                 LazyClassDescriptor(c, thisDescriptor, name, it, isExternal)
             }
-        }.toReadOnlyList()
+        }
+        getNonDeclaredClasses(name, result)
+        return result.toReadOnlyList()
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
@@ -94,6 +97,8 @@ protected constructor(
     }
 
     protected abstract fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope
+
+    protected abstract fun getNonDeclaredClasses(name: Name, result: MutableSet<ClassDescriptor>)
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>)
 

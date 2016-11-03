@@ -153,12 +153,13 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
 
 }
 
-private object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType> {
+internal object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType> {
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
         throw AssertionError("There should be no intersection type in existing descriptors, but found: " + types.joinToString())
     }
 
     override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor) = null
+    override fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String? = null
 
     override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
         // DO nothing

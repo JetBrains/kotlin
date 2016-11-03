@@ -127,7 +127,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     public final InstructionAdapter v;
     public final FrameMap myFrameMap;
-    private final MethodContext context;
+    public final MethodContext context;
     private final Type returnType;
 
     private final CodegenStatementVisitor statementVisitor = new CodegenStatementVisitor(this);

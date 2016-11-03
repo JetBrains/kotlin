@@ -26,20 +26,19 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToDefaultImpls
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.util.*
 
 class InterfaceImplBodyCodegen(
-        aClass: KtClassOrObject,
+        aClass: KtPureClassOrObject,
         context: ClassContext,
         v: ClassBuilder,
         state: GenerationState,
@@ -50,11 +49,11 @@ class InterfaceImplBodyCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(
-                myClass, state.classFileVersion, ACC_PUBLIC or ACC_FINAL or ACC_SUPER,
+                myClass.psiOrParent, state.classFileVersion, ACC_PUBLIC or ACC_FINAL or ACC_SUPER,
                 typeMapper.mapDefaultImpls(descriptor).internalName,
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
-        v.visitSource(myClass.containingFile.name, null)
+        v.visitSource(myClass.containingKtFile.name, null)
     }
 
     override fun classForInnerClassRecord(): ClassDescriptor? {

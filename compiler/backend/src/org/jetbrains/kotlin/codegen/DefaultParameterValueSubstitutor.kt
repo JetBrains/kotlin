@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
@@ -52,7 +52,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             classBuilder: ClassBuilder,
             memberCodegen: MemberCodegen<*>,
             contextKind: OwnerKind,
-            classOrObject: KtClassOrObject
+            classOrObject: KtPureClassOrObject
     ) {
         val methodElement = classOrObject.getPrimaryConstructor() ?: classOrObject
 
@@ -83,7 +83,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
      * @return true if the overloads annotation was found on the element, false otherwise
      */
     fun generateOverloadsIfNeeded(
-            methodElement: KtElement?,
+            methodElement: KtPureElement?,
             functionDescriptor: FunctionDescriptor,
             delegateFunctionDescriptor: FunctionDescriptor,
             contextKind: OwnerKind,
@@ -122,7 +122,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             delegateFunctionDescriptor: FunctionDescriptor,
             classBuilder: ClassBuilder,
             memberCodegen: MemberCodegen<*>,
-            methodElement: KtElement?,
+            methodElement: KtPureElement?,
             contextKind: OwnerKind,
             substituteCount: Int
     ) {
@@ -248,7 +248,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         return functionDescriptor.valueParameters.filter { !it.declaresDefaultValue() || --remainingCount >= 0 }
     }
 
-    private fun isEmptyConstructorNeeded(constructorDescriptor: ConstructorDescriptor, classOrObject: KtClassOrObject): Boolean {
+    private fun isEmptyConstructorNeeded(constructorDescriptor: ConstructorDescriptor, classOrObject: KtPureClassOrObject): Boolean {
         val classDescriptor = constructorDescriptor.constructedClass
         if (classDescriptor.kind != ClassKind.CLASS) return false
 

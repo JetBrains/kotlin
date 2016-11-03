@@ -145,7 +145,7 @@ public class SamWrapperCodegen {
             iv.putfield(ownerType.getInternalName(), FUNCTION_FIELD_NAME, functionType.getDescriptor());
 
             iv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(iv, "constructor of SAM wrapper", null);
+            FunctionCodegen.endVisit(iv, "constructor of SAM wrapper");
         }
     }
 

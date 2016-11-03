@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtFunction;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -484,7 +481,7 @@ public class FunctionCodegen {
             if (indexOfLambdaOrdinal > 0) {
                 int lambdaOrdinal = Integer.parseInt(name.substring(indexOfLambdaOrdinal + 1));
 
-                KtElement functionArgument = parentCodegen.element;
+                KtPureElement functionArgument = parentCodegen.element;
                 String functionName = "unknown";
                 if (functionArgument instanceof KtFunction) {
                     ValueParameterDescriptor inlineArgumentDescriptor =
@@ -672,6 +669,18 @@ public class FunctionCodegen {
         return kind == JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE ||
                kind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL ||
                kind == JvmMethodParameterKind.SUPER_CALL_PARAM;
+    }
+
+    public static void endVisit(MethodVisitor mv, @Nullable String description) {
+        endVisit(mv, description, (PsiElement)null);
+    }
+
+    public static void endVisit(MethodVisitor mv, @Nullable String description, @Nullable KtPureElement method) {
+        endVisit(mv, description, (PsiElement)(method == null ? null : method.getPsiOrParent()));
+    }
+
+    public static void endVisit(MethodVisitor mv, @Nullable String description, @NotNull KtElement method) {
+        endVisit(mv, description, (PsiElement)method);
     }
 
     public static void endVisit(MethodVisitor mv, @Nullable String description, @Nullable PsiElement method) {

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
@@ -68,7 +69,8 @@ class LocalClassifierAnalyzer(
             classOrObject: KtClassOrObject
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
-        val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module)
+        val project = classOrObject.getProject()
+        val moduleContext = globalContext.withProject(project).withModule(module)
         val container = createContainerForLazyLocalClassifierAnalyzer(
                 moduleContext,
                 context.trace,
@@ -88,7 +90,8 @@ class LocalClassifierAnalyzer(
                         typeResolver,
                         annotationResolver,
                         supertypeLoopChecker,
-                        languageVersionSettings
+                        languageVersionSettings,
+                        SyntheticResolveExtension.getInstance(project)
                 )
         )
 
@@ -112,7 +115,8 @@ class LocalClassDescriptorHolder(
         val typeResolver: TypeResolver,
         val annotationResolver: AnnotationResolver,
         val supertypeLoopChecker: SupertypeLoopChecker,
-        val languageVersionSettings: LanguageVersionSettings
+        val languageVersionSettings: LanguageVersionSettings,
+        val syntheticResolveExtension: SyntheticResolveExtension
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -149,6 +153,7 @@ class LocalClassDescriptorHolder(
                         override val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
                         override val supertypeLoopChecker = this@LocalClassDescriptorHolder.supertypeLoopChecker
                         override val languageVersionSettings = this@LocalClassDescriptorHolder.languageVersionSettings
+                        override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
                     }
                     ,
                     containingDeclaration,

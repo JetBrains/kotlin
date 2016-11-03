@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
-import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
@@ -82,7 +81,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
@@ -134,6 +132,13 @@ public class KotlinTypeMapper {
         @Override
         public Type getPredefinedTypeForClass(@NotNull ClassDescriptor classDescriptor) {
             return bindingContext.get(ASM_TYPE, classDescriptor);
+        }
+
+        @Nullable
+        @Override
+        public String getPredefinedInternalNameForClass(@NotNull ClassDescriptor classDescriptor) {
+            Type type = getPredefinedTypeForClass(classDescriptor);
+            return type == null ? null : type.getInternalName();
         }
 
         @Override

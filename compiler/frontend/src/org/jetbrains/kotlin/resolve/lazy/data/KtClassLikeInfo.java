@@ -41,7 +41,7 @@ public interface KtClassLikeInfo extends KtDeclarationContainer {
     @NotNull
     PsiElement getScopeAnchor();
 
-    @Nullable
+    @Nullable // can be null in KtScript
     KtClassOrObject getCorrespondingClassOrObject();
 
     @Nullable

@@ -90,4 +90,10 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     public PsiReference[] getReferences() {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
     }
+
+    @NotNull
+    @Override
+    public KtElement getPsiOrParent() {
+        return this;
+    }
 }

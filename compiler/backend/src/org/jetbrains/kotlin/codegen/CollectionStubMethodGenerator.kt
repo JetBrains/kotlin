@@ -342,7 +342,7 @@ class CollectionStubMethodGenerator(
                 InstructionAdapter(mv),
                 "java/lang/UnsupportedOperationException",
                 "Operation is not supported for read-only collection")
-        FunctionCodegen.endVisit(mv, "built-in stub for $signature", null)
+        FunctionCodegen.endVisit(mv, "built-in stub for $signature")
     }
 }
 

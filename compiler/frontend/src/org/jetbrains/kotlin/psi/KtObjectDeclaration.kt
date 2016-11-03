@@ -67,4 +67,6 @@ class KtObjectDeclaration : KtClassOrObject {
     fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral() ?: (parent is KtObjectLiteralExpression)
 
     fun getObjectKeyword(): PsiElement? = findChildByType(KtTokens.OBJECT_KEYWORD)
+
+    override fun getCompanionObjects(): List<KtObjectDeclaration> = emptyList()
 }

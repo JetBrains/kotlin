@@ -111,4 +111,10 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     ) {
         return Arrays.asList(getStubOrPsiChildren(elementType, elementType.getArrayFactory()));
     }
+
+    @NotNull
+    @Override
+    public KtElement getPsiOrParent() {
+        return this;
+    }
 }

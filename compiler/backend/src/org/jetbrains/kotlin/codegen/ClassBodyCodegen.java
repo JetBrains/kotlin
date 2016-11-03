@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
+import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptorKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
@@ -32,13 +34,13 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
-public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
-    protected final KtClassOrObject myClass;
-    protected final OwnerKind kind;
-    protected final ClassDescriptor descriptor;
+public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject> {
+    public final KtPureClassOrObject myClass;
+    public final OwnerKind kind;
+    public final ClassDescriptor descriptor;
 
     protected ClassBodyCodegen(
-            @NotNull KtClassOrObject myClass,
+            @NotNull KtPureClassOrObject myClass,
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
@@ -47,7 +49,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
         super(state, parentCodegen, context, myClass, v);
         this.myClass = myClass;
         this.kind = context.getContextKind();
-        this.descriptor = bindingContext.get(BindingContext.CLASS, myClass);
+        this.descriptor = SyntheticClassOrObjectDescriptorKt.findClassDescriptor(myClass, bindingContext);
     }
 
     @Override
@@ -79,8 +81,15 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
         generateConstructors();
         generateDefaultImplsIfNeeded();
 
+        // Generate _declared_ companions
         for (KtObjectDeclaration companion : companions) {
-            generateDeclaration(companion);
+            genClassOrObject(companion);
+        }
+
+        // Generate synthetic (non-declared) companion if needed
+        ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
+        if (companionObjectDescriptor instanceof SyntheticClassOrObjectDescriptor) {
+            genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) companionObjectDescriptor);
         }
 
         if (!DescriptorUtils.isInterface(descriptor)) {
@@ -152,7 +161,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
     @NotNull
     protected List<KtParameter> getPrimaryConstructorParameters() {
         if (myClass instanceof KtClass) {
-            return ((KtClass) myClass).getPrimaryConstructorParameters();
+            return myClass.getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
     }

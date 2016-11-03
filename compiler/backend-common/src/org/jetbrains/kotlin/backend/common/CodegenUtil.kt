@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -162,4 +163,23 @@ object CodegenUtil {
         val document = file.viewProvider.document
         return document?.getLineNumber(if (markEndOffset) statement.textRange.endOffset else statement.textOffset)?.plus(1)
     }
+
+    // Returns the descriptor for a function (whose parameters match the given predicate) which should be generated in the class.
+    // Note that we always generate equals/hashCode/toString in data classes, unless that would lead to a JVM signature clash with
+    // another method, which can only happen if the method is declared in the data class (manually or via delegation).
+    // Also there are no hard asserts or assumptions because such methods are generated for erroneous code as well (in light classes mode).
+    fun getMemberToGenerate(
+            classDescriptor: ClassDescriptor,
+            name: String,
+            isReturnTypeOk: (KotlinType) -> Boolean,
+            areParametersOk: (List<ValueParameterDescriptor>) -> Boolean
+    ): FunctionDescriptor? =
+            classDescriptor.unsubstitutedMemberScope.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+                    .singleOrNull { function ->
+                        function.kind.let { kind -> kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE } &&
+                        function.modality != Modality.FINAL &&
+                        areParametersOk(function.valueParameters) &&
+                        function.returnType != null &&
+                        isReturnTypeOk(function.returnType!!)
+                    }
 }

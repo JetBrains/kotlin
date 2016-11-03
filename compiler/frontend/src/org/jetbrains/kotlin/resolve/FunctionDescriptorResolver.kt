@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
@@ -251,7 +252,7 @@ class FunctionDescriptorResolver(
     fun resolvePrimaryConstructorDescriptor(
             scope: LexicalScope,
             classDescriptor: ClassDescriptor,
-            classElement: KtClassOrObject,
+            classElement: KtPureClassOrObject,
             trace: BindingTrace
     ): ClassConstructorDescriptorImpl? {
         if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null
@@ -288,7 +289,7 @@ class FunctionDescriptorResolver(
             classDescriptor: ClassDescriptor,
             isPrimary: Boolean,
             modifierList: KtModifierList?,
-            declarationToTrace: KtDeclaration,
+            declarationToTrace: KtPureElement,
             valueParameters: List<KtParameter>,
             trace: BindingTrace
     ): ClassConstructorDescriptorImpl {
@@ -304,7 +305,8 @@ class FunctionDescriptorResolver(
         if (classDescriptor.isImpl) {
             constructorDescriptor.isImpl = true
         }
-        trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
+        if (declarationToTrace is PsiElement)
+            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
                 scope,
                 constructorDescriptor,
