@@ -129,9 +129,9 @@ task sum (type:UnitKonanTest) {
     source = "codegen/function/sum.kt"
 }
 
-task objectInitialization(type: UnitKonanTest) {
+/*task objectInitialization(type: UnitKonanTest) {
     source = "codegen/object/initialization.kt"
-}
+}*/
 
 /* task objectBasic(type: KonanTest) {
     source = "$codegen/klass/basic.kt"
