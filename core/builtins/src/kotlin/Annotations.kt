@@ -125,4 +125,5 @@ public annotation class SinceKotlin(val version: String)
 @Target(ANNOTATION_CLASS)
 @Retention(BINARY)
 @MustBeDocumented
+@SinceKotlin("1.1")
 public annotation class DslMarker
