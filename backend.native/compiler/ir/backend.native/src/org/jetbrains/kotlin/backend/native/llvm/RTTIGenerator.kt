@@ -149,6 +149,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val name = className.globalHash
 
+        val isInterface = classDesc.kind == ClassKind.INTERFACE
+
         val size = getInstanceSize(classType, className)
 
         val superType = classDesc.getSuperClassOrAny().llvmTypeInfoPtr
@@ -175,11 +177,13 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             FieldTableRecord(nameSignature, fieldOffset.toInt())
         }.sortedBy { it.nameSignature.value }
 
-        val fieldsPtr = addGlobalConstArray("kfields:$className", runtime.fieldTableRecordType, fields)
+        val fieldsPtr = if (isInterface) Zero(pointerType(runtime.fieldTableRecordType))
+            else addGlobalConstArray("kfields:$className", runtime.fieldTableRecordType, fields)
 
         // TODO: compile-time resolution limits binary compatibility
         val vtable = getVtableEntries(classDesc).map { it.implementation.entryPointAddress }
-        val vtablePtr = addGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
+        val vtablePtr = if (isInterface) Zero(pointerType(pointerType(int8Type))) else
+            addGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
 
         val methods = getMethodTableEntries(classDesc).map {
             val nameSignature = it.name.localHash // FIXME: add signature
@@ -188,7 +192,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             MethodTableRecord(nameSignature, methodEntryPoint)
         }.sortedBy { it.nameSignature.value }
 
-        val methodsPtr = addGlobalConstArray("kmethods:$className", runtime.methodTableRecordType, methods)
+        val methodsPtr = if (isInterface) Zero(pointerType(runtime.methodTableRecordType)) else
+            addGlobalConstArray("kmethods:$className", runtime.methodTableRecordType, methods)
 
         val typeInfo = TypeInfo(name, size,
                 superType,
@@ -196,7 +201,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 interfacesPtr, interfaces.size,
                 vtablePtr,
                 methodsPtr, methods.size,
-                fieldsPtr, fields.size)
+                fieldsPtr, if (isInterface) -1 else fields.size)
 
         val typeInfoGlobal = classDesc.llvmTypeInfoPtr.getLlvmValue() // TODO: it is a hack
         LLVMSetInitializer(typeInfoGlobal, typeInfo.getLlvmValue())
