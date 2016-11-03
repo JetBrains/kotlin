@@ -153,6 +153,10 @@ task sum_3const(type: UnitKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
 
+task local_variable(type: UnitKonanTest) {
+    source = "codegen/basics/local_variable.kt"
+}
+
 //task hello0(type: RunKonanTest) {
 //    source = "runtime/basic/hello0.kt"
 //}
