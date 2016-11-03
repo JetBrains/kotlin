@@ -59,11 +59,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
      * @return `Continuation<Any?>` type
      */
     private fun createNullableAnyContinuation(module: ModuleDescriptor): KotlinType {
-        // TODO: create a synthesized class descriptor here instead of looking at the classpath, or report a proper diagnostic
-        // This code will throw when compiling with "-no-stdlib" because no built-ins would be found in the classpath either
-        val classDescriptor = module.resolveTopLevelClass(
-                DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME, NoLookupLocation.FROM_BACKEND
-        ) ?: throw AssertionError("${DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME} was not found in built-ins")
+        val classDescriptor = module.builtIns.getBuiltInClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)
 
         return TypeConstructorSubstitution.createByParametersMap(
                 mapOf(classDescriptor.declaredTypeParameters.single() to TypeProjectionImpl(module.builtIns.nullableAnyType))
