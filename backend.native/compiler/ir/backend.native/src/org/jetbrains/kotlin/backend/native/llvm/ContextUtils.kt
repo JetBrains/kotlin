@@ -165,4 +165,7 @@ internal interface ContextUtils {
 
     val FqName.localHash: LocalHash
         get() = this.toString().localHash
+
+    val pointerSize: Int
+        get() = LLVMPointerSize(llvmTargetData)
 }

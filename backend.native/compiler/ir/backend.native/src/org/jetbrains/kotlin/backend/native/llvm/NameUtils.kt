@@ -26,7 +26,8 @@ internal val ClassDescriptor.symbolName: String
     get() = when (this.kind) {
         CLASS -> "kclass:"
         INTERFACE -> "kinf:"
-        else -> TODO("fixme")
+        OBJECT -> "kclass:"
+        else -> TODO("fixme: " + this.kind)
     } + fqNameSafe
 
 internal val ClassDescriptor.typeInfoSymbolName: String

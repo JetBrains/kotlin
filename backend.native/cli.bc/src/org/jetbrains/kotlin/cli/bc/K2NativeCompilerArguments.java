@@ -18,4 +18,17 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String[] headers;
 
+    public K2NativeCompilerArguments() {
+    }
+
+    public K2NativeCompilerArguments(K2NativeCompilerArguments arguments) {
+        super(arguments);
+        this.outputFile = arguments.outputFile;
+        this.runtimeFile = arguments.runtimeFile;
+        this.headers = arguments.headers;
+    }
+
+    public CommonCompilerArguments copy() {
+        return new K2NativeCompilerArguments(this);
+    }
 }

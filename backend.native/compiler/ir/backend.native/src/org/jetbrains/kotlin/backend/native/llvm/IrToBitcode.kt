@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.native.llvm
 
 import kotlin_native.interop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.native.isIntrinsic
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
@@ -48,6 +50,11 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
 
         if (declaration.descriptor.kind == ClassKind.ANNOTATION_CLASS) {
             // do not generate any RTTI for annotation classes as a workaround for link errors
+            return
+        }
+
+        if (declaration.descriptor.isIntrinsic) {
+            // do not generate any code for intrinsic classes as they require special handling
             return
         }
 
@@ -103,6 +110,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     override fun visitClass(declaration: IrClass) {
         if (declaration.descriptor.kind == ClassKind.ANNOTATION_CLASS) {
             // do not generate any code for annotation classes as a workaround for NotImplementedError
+            return
+        }
+
+        if (declaration.descriptor.isIntrinsic) {
+            // do not generate any code for intrinsic classes as they require special handling
             return
         }
 

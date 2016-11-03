@@ -10,6 +10,8 @@ typedef uint16_t KChar;
 // Note that it is signed.
 typedef int32_t KInt;
 
+typedef ObjHeader* KRef;
+
 // Optimized versions not accessing type info.
 inline KByte* ByteArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
   return reinterpret_cast<KByte*>(obj + 1) + index;
@@ -37,6 +39,14 @@ inline const KInt* IntArrayAddressOfElementAt(const ArrayHeader* obj, KInt index
   return reinterpret_cast<const KInt*>(obj + 1) + index;
 }
 
+inline KRef* ArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
+  return reinterpret_cast<KRef*>(obj + 1) + index;
+}
+
+inline const KRef* ArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
+  return reinterpret_cast<const KRef*>(obj + 1) + index;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -48,6 +58,11 @@ ArrayHeader* Kotlin_Any_toString(const ObjHeader* thiz);
 
 // Arrays.kt
 // TODO: those must be compiler intrinsics afterwards.
+ArrayHeader* Kotlin_Array_clone(const ArrayHeader* thiz);
+KRef Kotlin_Array_get(const ArrayHeader* thiz, KInt index);
+void Kotlin_Array_set(ArrayHeader* thiz, KInt index, KRef value);
+KInt Kotlin_Array_getArrayLength(const ArrayHeader* thiz);
+
 ArrayHeader* Kotlin_ByteArray_clone(const ArrayHeader* thiz);
 KByte Kotlin_ByteArray_get(const ArrayHeader* thiz, KInt index);
 void Kotlin_ByteArray_set(ArrayHeader* thiz, KInt index, KByte value);

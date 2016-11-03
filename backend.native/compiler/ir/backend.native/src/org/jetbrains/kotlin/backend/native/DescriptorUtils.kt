@@ -4,10 +4,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -34,3 +31,14 @@ internal val FunctionDescriptor.implementation: FunctionDescriptor
             return filtered.first { it.modality != Modality.ABSTRACT } as FunctionDescriptor
         }
     }
+
+private val intrinsicTypes = setOf(
+        "kotlin.Unit",
+        "kotlin.Boolean", "kotlin.Char",
+        "kotlin.Byte", "kotlin.Short",
+        "kotlin.Int", "kotlin.Long",
+        "kotlin.Float", "kotlin.Double"
+)
+
+internal val ClassDescriptor.isIntrinsic: Boolean
+    get() = this.fqNameSafe.asString() in intrinsicTypes

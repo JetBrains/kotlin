@@ -12,7 +12,9 @@ internal fun getLLVMType(type: KotlinType): LLVMOpaqueType {
         KotlinBuiltIns.isInt(type) -> LLVMInt32Type()
         KotlinBuiltIns.isLong(type) -> LLVMInt64Type()
         KotlinBuiltIns.isUnit(type) -> LLVMVoidType() // TODO: handle Unit parameter case
+        KotlinBuiltIns.isFloat(type) -> LLVMFloatType()
+        KotlinBuiltIns.isDouble(type) -> LLVMDoubleType()
         !KotlinBuiltIns.isPrimitiveType(type) -> LLVMPointerType(LLVMInt8Type(), 0)
-        else -> throw NotImplementedError()
+        else -> throw NotImplementedError(type.toString() + " is not supported")
     }!!
 }

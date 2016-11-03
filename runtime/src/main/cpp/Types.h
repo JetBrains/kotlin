@@ -9,6 +9,7 @@ extern "C" {
 
 extern const TypeInfo* theAnyTypeInfo;
 extern const TypeInfo* theCloneableTypeInfo;
+extern const TypeInfo* theArrayTypeInfo;
 extern const TypeInfo* theByteArrayTypeInfo;
 extern const TypeInfo* theCharArrayTypeInfo;
 extern const TypeInfo* theIntArrayTypeInfo;

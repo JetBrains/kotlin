@@ -28,6 +28,34 @@ ArrayHeader* Kotlin_Any_toString(const ObjHeader* thiz) {
 
 // Arrays.kt
 // TODO: those must be compiler intrinsics afterwards.
+KRef Kotlin_Array_get(const ArrayHeader* obj, KInt index) {
+  if (static_cast<uint32_t>(index) >= obj->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+  return *ArrayAddressOfElementAt(obj, index);
+}
+
+void Kotlin_Array_set(ArrayHeader* obj, KInt index, KRef value) {
+  if (static_cast<uint32_t>(index) >= obj->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+  *ArrayAddressOfElementAt(obj, index) = value;
+}
+
+ArrayHeader* Kotlin_Array_clone(const ArrayHeader* array) {
+  uint32_t length = ArraySizeBytes(array);
+  ArrayHeader* result = ArrayContainer(theArrayTypeInfo, length).GetPlace();
+  memcpy(
+      ArrayAddressOfElementAt(result, 0),
+      ArrayAddressOfElementAt(array, 0),
+      length);
+  return result;
+}
+
+KInt Kotlin_Array_getArrayLength(const ArrayHeader* array) {
+  return array->count_;
+}
+
 KByte Kotlin_ByteArray_get(const ArrayHeader* obj, KInt index) {
   if (static_cast<uint32_t>(index) >= obj->count_) {
     ThrowArrayIndexOutOfBoundsException();

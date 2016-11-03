@@ -13,7 +13,8 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
-String kotlinCompilerModule = 'org.jetbrains.kotlin:kotlin-compiler:1.1-20161025.164748-245'
+String kotlinCompilerModule = 'org.jetbrains.kotlin:kotlin-compiler:1.1-20161102.121224-247'
+
 
 // (gets applied to this project and all its subprojects)
 allprojects {
@@ -84,13 +85,13 @@ String[] linkerOpts1() {
     List<String> ldflags = new ArrayList<>()
     if (System.properties['os.name'].startsWith("Linux"))
         ldflags.addAll(["-L$llvmDir/lib",
-	        "-Wl,-Bstatic", "-Wl,--whole-archive"]
+                "-Wl,-Bstatic", "-Wl,--whole-archive"]
                 + libs
                 + ["-Wl,--no-whole-archive", "-Wl,-Bdynamic",
-		"-L$libffiDir/lib -lffi",
-		"-lrt", "-ldl","-lpthread", "-lz", "-lm"])
+                "-L$libffiDir/lib -lffi",
+                "-lrt", "-ldl","-lpthread", "-lz", "-lm"])
     else
-     ldflags.addAll(["-L$llvmDir/lib", "-lc++"] 
+     ldflags.addAll(["-L$llvmDir/lib", "-lc++"]
              + libs
              + ["-L$libffiDir/lib", "-lffi"])
     ArrayList<String> strldflags = new ArrayList<>()
