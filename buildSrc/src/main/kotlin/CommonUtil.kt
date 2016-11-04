@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.jvm.tasks.Jar
+import java.io.File
 
 
 fun Project.fixKotlinTaskDependencies() {
@@ -63,3 +64,19 @@ val protobufFullTask = "$protobufLiteProject:prepare-relocated-protobuf"
 fun Project.getCompiledClasses() = the<JavaPluginConvention>().sourceSets.getByName("main").output
 fun Project.getSources() = the<JavaPluginConvention>().sourceSets.getByName("main").allSource
 fun Project.getResourceFiles() = the<JavaPluginConvention>().sourceSets.getByName("main").resources
+
+
+private fun Project.configureKotlinProjectSourceSet(vararg srcs: String, sourceSetName: String, sourcesBaseDir: File? = null) =
+        configure<JavaPluginConvention> {
+            sourceSets.getByName(sourceSetName).apply {
+                java.setSrcDirs(
+                        srcs.map { File(sourcesBaseDir ?: projectDir, it) })
+            }
+        }
+
+fun Project.configureKotlinProjectSources(vararg srcs: String, sourcesBaseDir: File? = null) = configureKotlinProjectSourceSet(*srcs, sourceSetName = "main", sourcesBaseDir = sourcesBaseDir)
+
+fun Project.configureKotlinProjectSourcesDefault(sourcesBaseDir: File? = null) = configureKotlinProjectSources("src", sourcesBaseDir = sourcesBaseDir)
+
+fun Project.configureKotlinProjectNoTests() = configureKotlinProjectSourceSet(sourceSetName = "test")
+

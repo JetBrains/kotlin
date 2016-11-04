@@ -29,7 +29,7 @@ dependencies {
     compile(project(":prepare:runtime", configuration = "default"))
     compile(project(":libraries:kotlin.test"))
     compile(project(":prepare:reflect", configuration = "default"))
-    compile(project(":core.script.runtime"))
+    compile(project(":core:script.runtime"))
     compile(project(":core:util.runtime"))
     compile(fileTree(mapOf("dir" to "$rootDir/ideaSDK/core", "include" to "*.jar")))
     compile(commonDep("com.google.protobuf:protobuf-java"))

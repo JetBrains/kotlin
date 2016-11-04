@@ -71,10 +71,10 @@ dependencies {
     proguardLibraryJarsCfg(files("$javaHome/lib/rt.jar", "$javaHome/lib/jsse.jar"))
     proguardLibraryJarsCfg(project(":prepare:runtime", configuration = "default").apply { isTransitive = false })
     proguardLibraryJarsCfg(project(":prepare:reflect", configuration = "default").apply { isTransitive = false })
-    proguardLibraryJarsCfg(project(":core.script.runtime").apply { isTransitive = false })
+    proguardLibraryJarsCfg(project(":core:script.runtime").apply { isTransitive = false })
     embeddableCfg(project(":prepare:runtime", configuration = "default"))
     embeddableCfg(project(":prepare:reflect", configuration = "default"))
-    embeddableCfg(projectDepIntransitive(":core.script.runtime"))
+    embeddableCfg(projectDepIntransitive(":core:script.runtime"))
     embeddableCfg(projectDepIntransitive(":build-common"))
     embeddableCfg(projectDepIntransitive(":libraries:kotlin.test"))
     embeddableCfg(projectDepIntransitive(":libraries:stdlib"))
@@ -132,7 +132,7 @@ val embeddableTask = task<ShadowJar>("prepare-embeddable-compiler") {
     archiveName = outputEmbeddableJar
     configurations = listOf(embeddableCfg)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    dependsOn(mainTask, ":build-common:assemble", ":core.script.runtime:assemble", ":libraries:kotlin.test:assemble", ":libraries:stdlib:assemble")
+    dependsOn(mainTask, ":build-common:assemble", ":core:script.runtime:assemble", ":libraries:kotlin.test:assemble", ":libraries:stdlib:assemble")
     from(files(outputJar))
     from(embeddableCfg.files)
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" )

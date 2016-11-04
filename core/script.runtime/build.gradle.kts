@@ -25,14 +25,17 @@ dependencies {
     buildVersion()
 }
 
-configure<JavaPluginConvention> {
-    sourceSets.getByName("main").apply {
-        java.setSrcDirs(listOf(File(rootDir, "core/script.runtime/src")))
-    }
-    sourceSets.getByName("test").apply {
-        java.setSrcDirs(emptyList<File>())
-    }
-}
+configureKotlinProjectSourcesDefault()
+configureKotlinProjectNoTests()
+
+//configure<JavaPluginConvention> {
+//    sourceSets.getByName("main").apply {
+//        java.setSrcDirs(listOf(File(projectDir, "src")))
+//    }
+//    sourceSets.getByName("test").apply {
+//        java.setSrcDirs(emptyList<File>())
+//    }
+//}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-script-runtime")
