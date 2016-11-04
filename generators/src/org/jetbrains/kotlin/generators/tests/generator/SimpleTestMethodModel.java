@@ -117,7 +117,8 @@ public class SimpleTestMethodModel implements TestMethodModel {
         }
     }
 
-    private boolean shouldBeGenerated() {
+    @Override
+    public boolean shouldBeGenerated() {
         if (targetBackend == TargetBackend.ANY) return true;
 
         List<String> backends = InTextDirectivesUtils.findLinesWithPrefixesRemoved(textWithDirectives(), "// TARGET_BACKEND: ");
@@ -149,7 +150,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
             String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
             unescapedName = relativePath + "-" + StringUtil.capitalize(extractedName);
         }
-        return (!shouldBeGenerated() ? "ignored" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
+        return "test" + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 
     @Override
