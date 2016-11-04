@@ -936,18 +936,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Bridges extends AbstractBlackBoxCodegenTest {
-        @TestMetadata("jsName.kt")
-        public void ignoredJsName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/jsName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jsNative.kt")
-        public void ignoredJsNative() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/jsNative.kt");
-            doTest(fileName);
-        }
-
         public void testAllFilesPresentInBridges() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -8841,18 +8829,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LocalClasses extends AbstractBlackBoxCodegenTest {
-        @TestMetadata("closureOfInnerLocalClass.kt")
-        public void ignoredClosureOfInnerLocalClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/closureOfInnerLocalClass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("closureWithSelfInstantiation.kt")
-        public void ignoredClosureWithSelfInstantiation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/closureWithSelfInstantiation.kt");
-            doTest(fileName);
-        }
-
         public void testAllFilesPresentInLocalClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), true);
         }

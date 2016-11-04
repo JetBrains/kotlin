@@ -234,5 +234,10 @@ public class SimpleTestClassModel implements TestClassModel {
         public void generateSignature(@NotNull Printer p) {
             TestMethodModel.DefaultImpls.generateSignature(this, p);
         }
+
+        @Override
+        public boolean shouldBeGenerated() {
+            return true;
+        }
     }
 }

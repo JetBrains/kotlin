@@ -168,6 +168,9 @@ public class TestGenerator {
 
         for (Iterator<MethodModel> iterator = testMethods.iterator(); iterator.hasNext(); ) {
             MethodModel methodModel = iterator.next();
+
+            if (!methodModel.shouldBeGenerated()) continue;
+
             generateTestMethod(p, methodModel);
             if (iterator.hasNext() || !innerTestClasses.isEmpty()) {
                 p.println();

@@ -31,6 +31,7 @@ interface TestClassModel : TestEntityModel {
 }
 
 interface MethodModel : TestEntityModel {
+    fun shouldBeGenerated(): Boolean = true
     fun generateSignature(p: Printer)
     fun generateBody(p: Printer)
 }

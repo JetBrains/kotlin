@@ -31,12 +31,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCommonDecompiledTextFromJsMetadataTest {
-    @TestMetadata("FlexibleTypes")
-    public void ignoredFlexibleTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/FlexibleTypes/");
-        doTest(fileName);
-    }
-
     public void testAllFilesPresentInDecompiledText() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText"), Pattern.compile("^([^\\.]+)$"), true);
     }
