@@ -5,7 +5,10 @@
 
 fun check(x: Int, left: Int, right: Int): Boolean {
     val result = x in left..right
-    assert(result == checkUnoptimized(x, left..right))
+    val manual = x >= left && x <= right
+    val range = left..right
+    assert(result == manual) { "Failed: optimized === manual for $range" }
+    assert(result == checkUnoptimized(x, range)) { "Failed: optimized === unoptimized for $range" }
     return result
 }
 

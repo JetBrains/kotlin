@@ -5,7 +5,10 @@
 
 fun check(x: Double, left: Double, right: Double): Boolean {
     val result = x in left..right
-    assert(result == checkUnoptimized(x, left..right))
+    val manual = x >= left && x <= right
+    val range = left..right
+    assert(result == manual) { "Failed: optimized === manual for $range" }
+    assert(result == checkUnoptimized(x, range)) { "Failed: optimized === unoptimized for $range" }
     return result
 }
 
@@ -19,13 +22,13 @@ fun box(): String {
 
     assert(check(Double.MIN_VALUE, 0.0, 1.0))
     assert(check(Double.MAX_VALUE, Double.MAX_VALUE - Double.MIN_VALUE, Double.MAX_VALUE))
-    assert(check(Double.NaN, Double.NaN, Double.NaN))
+    assert(!check(Double.NaN, Double.NaN, Double.NaN))
     assert(!check(0.0, Double.NaN, Double.NaN))
 
     assert(check(-0.0, -0.0, +0.0))
     assert(check(-0.0, -0.0, -0.0))
-    assert(!check(-0.0, +0.0, +0.0))
-    assert(!check(+0.0, -0.0, -0.0))
+    assert(check(-0.0, +0.0, +0.0))
+    assert(check(+0.0, -0.0, -0.0))
     assert(check(+0.0, +0.0, +0.0))
     assert(check(+0.0, -0.0, +0.0))
 
