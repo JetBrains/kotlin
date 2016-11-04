@@ -475,12 +475,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("JavaPackage.kt")
-        public void testJavaPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/JavaPackage.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("KT10664.kt")
         public void testKT10664() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/KT10664.kt");
@@ -2740,6 +2734,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("JavaClassNames.kt")
         public void testJavaClassNames() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/JavaClassNames.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("JavaPackage.kt")
+        public void testJavaPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/JavaPackage.kt");
             doTest(fileName);
         }
 

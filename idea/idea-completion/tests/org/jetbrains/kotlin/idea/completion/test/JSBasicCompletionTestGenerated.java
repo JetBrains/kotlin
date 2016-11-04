@@ -475,12 +475,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
-        @TestMetadata("JavaPackage.kt")
-        public void testJavaPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/JavaPackage.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("KT10664.kt")
         public void testKT10664() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/KT10664.kt");
