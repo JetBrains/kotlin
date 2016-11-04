@@ -3607,12 +3607,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.ifgt(label);
         }
         // '>' != 'compareTo' for NaN and +/- 0.0
-        else if (type == Type.FLOAT_TYPE) {
-            v.invokestatic("java/lang/Float", "compare", "(FF)I", false);
-            v.ifgt(label);
-        }
-        else if (type == Type.DOUBLE_TYPE) {
-            v.invokestatic("java/lang/Double", "compare", "(DD)I", false);
+        else if (type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE) {
+            v.cmpg(type);
             v.ifgt(label);
         }
         else {
