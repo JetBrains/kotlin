@@ -21,24 +21,6 @@ buildscript {
 
 apply { plugin("kotlin") }
 
-val protobufLiteProject = ":custom-dependencies:protobuf-lite"
-fun KotlinDependencyHandler.protobufLite(): ProjectDependency =
-        project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
-val protobufLiteTask = "$protobufLiteProject:prepare"
-
-fun Project.fixKotlinTaskDependencies() {
-    the<JavaPluginConvention>().sourceSets.all { sourceset ->
-        val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
-        tasks.withType<Task> {
-            if (name == taskName) {
-                dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
-            }
-        }
-    }
-}
-
-// TODO: common ^ 8< ----
-
 val builtinsSrc = File(rootDir, "core/builtins/src")
 val builtinsNative = File(rootDir, "core/builtins/native")
 val builtinsSerialized = File(buildDir, "builtins")

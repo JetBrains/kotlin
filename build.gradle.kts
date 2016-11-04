@@ -23,7 +23,8 @@ extra["versions.jline"] = "2.12.1"
 
 val importedAntTasksPrefix = "imported-ant-update-"
 
-ant.importBuild("$rootDir/update_dependencies.xml") { antTaskName -> importedAntTasksPrefix + antTaskName }
+// TODO: checke the reasons of import conflict with xerces
+//ant.importBuild("$rootDir/update_dependencies.xml") { antTaskName -> importedAntTasksPrefix + antTaskName }
 
 tasks.matching { task ->
     task.name.startsWith(importedAntTasksPrefix)
@@ -31,9 +32,9 @@ tasks.matching { task ->
     it.group = "Imported ant"
 }
 
-task("update-dependencies") {
-    dependsOn(tasks.getByName(importedAntTasksPrefix + "update"))
-}
+//task("update-dependencies") {
+//    dependsOn(tasks.getByName(importedAntTasksPrefix + "update"))
+//}
 
 allprojects {
     setBuildDir("$rootDir/build/${project.name}")

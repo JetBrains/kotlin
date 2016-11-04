@@ -20,37 +20,6 @@ buildscript {
 
 apply { plugin("kotlin") }
 
-fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
-    dependsOn(":prepare:build.version:prepare")
-    manifest.attributes.apply {
-        put("Built-By", rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Title", implementationTitle)
-        put("Implementation-Version", rootProject.extra["build.number"])
-    }
-    from(configurations.getByName("build-version").files) {
-        into("META-INF/")
-    }
-}
-
-fun DependencyHandler.buildVersion(): Dependency {
-    val cfg = configurations.create("build-version")
-    return add(cfg.name, project(":prepare:build.version", configuration = "default"))
-}
-
-fun Project.fixKotlinTaskDependencies() {
-    the<JavaPluginConvention>().sourceSets.all { sourceset ->
-        val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
-        tasks.withType<Task> {
-            if (name == taskName) {
-                dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
-            }
-        }
-    }
-}
-
-// TODO: common ^ 8< ----
-
 repositories {
     mavenLocal()
     maven { setUrl(rootProject.extra["repo"]) }

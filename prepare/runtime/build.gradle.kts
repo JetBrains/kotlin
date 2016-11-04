@@ -30,30 +30,6 @@ repositories {
 
 apply { plugin("com.github.johnrengelman.shadow") }
 
-fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
-    dependsOn(":prepare:build.version:prepare")
-    manifest.attributes.apply {
-        put("Built-By", rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Title", implementationTitle)
-        put("Implementation-Version", rootProject.extra["build.number"])
-    }
-    from(configurations.getByName("build-version").files) {
-        into("META-INF/")
-    }
-}
-
-fun DependencyHandler.buildVersion(): Dependency {
-    val cfg = configurations.create("build-version")
-    return add(cfg.name, project(":prepare:build.version", configuration = "default"))
-}
-
-fun DependencyHandler.projectDep(name: String): Dependency = project(name, configuration = "default")
-fun DependencyHandler.projectDepIntransitive(name: String): Dependency =
-        project(name, configuration = "default").apply { isTransitive = false }
-
-// TODO: common ^ 8< ----
-
 val mainCfg = configurations.create("default")
 
 val outputRuntimeJarFileBase = "$buildDir/libs/kotlin-runtime"

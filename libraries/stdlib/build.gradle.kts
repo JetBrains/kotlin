@@ -18,19 +18,6 @@ buildscript {
 
 apply { plugin("kotlin") }
 
-fun Project.fixKotlinTaskDependencies() {
-    the<JavaPluginConvention>().sourceSets.all { sourceset ->
-        val taskName = if (sourceset.name == "main") "classes" else (sourceset.name + "Classes")
-        tasks.withType<Task> {
-            if (name == taskName) {
-                dependsOn("copy${sourceset.name.capitalize()}KotlinClasses")
-            }
-        }
-    }
-}
-
-// TODO: common ^ 8< ----
-
 configure<JavaPluginConvention> {
     sourceSets.getByName("main").apply {
         java.setSrcDirs(listOf(File(projectDir, "src")))

@@ -27,54 +27,6 @@ repositories {
     mavenCentral()
 }
 
-fun Jar.setupRuntimeJar(implementationTitle: String): Unit {
-    dependsOn(":prepare:build.version:prepare")
-    manifest.attributes.apply {
-        put("Built-By", rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Vendor", rootProject.extra["manifest.impl.vendor"])
-        put("Implementation-Title", implementationTitle)
-        put("Implementation-Version", rootProject.extra["build.number"])
-    }
-    from(configurations.getByName("build-version").files) {
-        into("META-INF/")
-    }
-}
-
-fun DependencyHandler.buildVersion(): Dependency {
-    val cfg = configurations.create("build-version")
-    return add(cfg.name, project(":prepare:build.version", configuration = "default"))
-}
-
-fun commonDep(coord: String): String {
-    val parts = coord.split(':')
-    return when (parts.size) {
-        1 -> "$coord:$coord:${rootProject.extra["versions.$coord"]}"
-        2 -> "${parts[0]}:${parts[1]}:${rootProject.extra["versions.${parts[1]}"]}"
-        3 -> coord
-        else -> throw IllegalArgumentException("Illegal maven coordinates: $coord")
-    }
-}
-
-fun commonDep(group: String, artifact: String): String = "$group:$artifact:${rootProject.extra["versions.$artifact"]}"
-
-fun DependencyHandler.projectDep(name: String): Dependency = project(name, configuration = "default")
-fun DependencyHandler.projectDepIntransitive(name: String): Dependency =
-        project(name, configuration = "default").apply { isTransitive = false }
-
-fun Project.getCompiledClasses() = the<JavaPluginConvention>().sourceSets.getByName("main").output
-fun Project.getSources() = the<JavaPluginConvention>().sourceSets.getByName("main").allSource
-fun Project.getResourceFiles() = the<JavaPluginConvention>().sourceSets.getByName("main").resources
-
-val protobufLiteProject = ":custom-dependencies:protobuf-lite"
-fun KotlinDependencyHandler.protobufLite(): ProjectDependency =
-        project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
-val protobufLiteTask = "$protobufLiteProject:prepare"
-fun KotlinDependencyHandler.protobufFull(): ProjectDependency =
-        project(protobufLiteProject, configuration = "relocated").apply { isTransitive = false }
-val protobufFullTask = "$protobufLiteProject:prepare-relocated-protobuf"
-
-// TODO: common ^ 8< ----
-
 // Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build
 val shrink = true
 val bootstrapBuild = false
