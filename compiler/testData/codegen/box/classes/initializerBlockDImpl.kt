@@ -1,5 +1,4 @@
-import java.util.*
-
+// WITH_RUNTIME
 class World() {
   public val items: ArrayList<Item> = ArrayList<Item>()
 

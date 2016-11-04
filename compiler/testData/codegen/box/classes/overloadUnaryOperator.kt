@@ -1,7 +1,4 @@
 // WITH_RUNTIME
-
-import java.util.*
-
 class ArrayWrapper<T>() {
     val contents = ArrayList<T>()
 
