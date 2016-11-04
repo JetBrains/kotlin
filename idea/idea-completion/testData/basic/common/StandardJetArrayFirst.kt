@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 // EXIST_JAVA_ONLY: { lookupString:"Array", tailText:" (java.sql)" }
 
 // todo: unify following two after introducing collection type aliases
-// EXIST_JS_ONLY: { lookupString:"ArrayList", tailText:"<E> (kotlin.collections)" }
+// EXIST: { lookupString:"ArrayList", tailText:"<E> (kotlin.collections)" }
 // EXIST: { lookupString:"ArrayList", tailText:"<E> (java.util)"}
 
 
