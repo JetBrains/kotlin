@@ -84,6 +84,7 @@
         <module>stdlib</module>
         <module>stdlib/jre7</module>
         <module>stdlib/jre8</module>
+        <module>stdlib/samples</module>
         <module>tools/kotlin-reflect</module>
         <module>tools/kotlin-osgi-bundle</module>
 
