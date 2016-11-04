@@ -83,9 +83,11 @@ public fun booleanArrayOf(vararg elements: Boolean): BooleanArray
 /**
  * Returns an array containing enum T entries.
  */
+@SinceKotlin("1.1")
 public inline fun <reified T : Enum<T>> enumValues(): Array<T>
 
 /**
  * Returns an enum entry with specified name.
  */
+@SinceKotlin("1.1")
 public inline fun <reified T : Enum<T>> enumValueOf(name: String): T
