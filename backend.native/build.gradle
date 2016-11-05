@@ -5,10 +5,12 @@ buildscript {
 
    dependencies {
        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+       classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
    }
 
 }
 
+apply plugin: "com.google.protobuf"
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
@@ -40,7 +42,8 @@ allprojects {
 
 sourceSets {
     compiler {
-      java.srcDir 'compiler/ir/backend.native/src/'
+      proto.srcDir 'compiler/ir/backend.native/src/'
+      java.srcDirs 'compiler/ir/backend.native/src/', 'build/generated/source/proto/compiler/java/'
       kotlin.srcDir 'compiler/ir/backend.native/src/'
     }
     cli_bc {
@@ -51,6 +54,12 @@ sourceSets {
      java.srcDir 'bc.frontend/src'
      kotlin.srcDir 'bc.frontend/src'
    }
+}
+
+// The protobuf plugin specifies this dependency for java by itself,
+// but not for Kotlin.
+compileCompilerKotlin {
+    dependsOn('generateCompilerProto')
 }
 
 String[] linkerOpts1() {
@@ -132,6 +141,9 @@ configurations {
 }
 
 dependencies {
+
+   compilerCompile "com.google.protobuf:protobuf-java:3.0.0"
+
    compilerCompile kotlinCompilerModule
    compilerCompile kotlinNativeInterop['llvm'].configuration
    compilerCompile kotlinNativeInterop['hash'].configuration
@@ -178,3 +190,12 @@ task jars {
     }
   }
 }
+
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+}
+
+
