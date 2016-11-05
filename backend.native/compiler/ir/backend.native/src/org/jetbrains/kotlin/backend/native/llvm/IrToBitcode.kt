@@ -71,6 +71,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     val generator = CodeGenerator(context)
     val logger = Logger(generator, context)
+    val metadator = MetadataGenerator(context)
 
     //-------------------------------------------------------------------------//
 
@@ -140,6 +141,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitFunction(declaration: IrFunction) {
         generator.function(declaration)
+        metadator.function(declaration)
         declaration.acceptChildrenVoid(this)
     }
 

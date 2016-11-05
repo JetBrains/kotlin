@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.native.llvm
 import kotlin_native.interop.asCString
 import llvm.LLVMPrintModuleToString
 import llvm.LLVMPrintValueToString
+import llvm.LLVMOpaqueValue
 import org.jetbrains.kotlin.backend.native.llvm.Context
 import org.jetbrains.kotlin.backend.native.llvm.ContextUtils
 import org.jetbrains.kotlin.ir.IrElement
@@ -36,3 +37,8 @@ fun ir2string(ir: IrElement?): String {
   ir?.accept(DumpIrTreeVisitor(strWriter), "")
   return strWriter.toString().takeWhile { it != '\n' }
 }
+
+fun llvm2string(value: LLVMOpaqueValue?): String {
+  return LLVMPrintValueToString(value)!!.asCString().toString()
+}
+
