@@ -16,5 +16,7 @@
     <orderEntry type="library" name="android-plugin" level="project" />
     <orderEntry type="module" module-name="android-annotations" />
     <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="idea-analysis" />
+    <orderEntry type="module" module-name="idea-core" />
   </component>
 </module>
