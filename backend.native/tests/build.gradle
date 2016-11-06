@@ -53,21 +53,20 @@ abstract class KonanTest extends DefaultTask {
         def exe = new File(sourceS.absolutePath.replace(".kt.S", ""))
         compileTest(sourceS, bc2s(runtimeBc), exe)
         println "execution :${exe.absolutePath}"
-        if (testData == null) {
-            project.exec {
-                commandLine "${exe.absolutePath}"
-            }
-        }
-        else {
-            def out = new ByteArrayOutputStream()
-            project.exec {
-                commandLine "${exe.absolutePath}"
+
+        def out = null
+        project.exec {
+            commandLine "${exe.absolutePath}"
+            if (testData != null) {
                 standardInput = new ByteArrayInputStream(testData.bytes)
+            }
+            if (goldValue != null) {
+                out = new ByteArrayOutputStream()
                 standardOutput = out
             }
-            if (goldValue != out.toString())
-                throw new RuntimeException("test failed")
         }
+        if (goldValue != null && goldValue != out.toString())
+            throw new RuntimeException("test failed")
     }
 
     private File bc2s(File bcFile) {
@@ -157,9 +156,10 @@ task local_variable(type: UnitKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
 
-//task hello0(type: RunKonanTest) {
-//    source = "runtime/basic/hello0.kt"
-//}
+task hello0(type: RunKonanTest) {
+    goldValue = "Hello, world!"
+    source = "runtime/basic/hello0.kt"
+}
 
 task hello1(type: RunKonanTest) {
     goldValue = "Hello World"
