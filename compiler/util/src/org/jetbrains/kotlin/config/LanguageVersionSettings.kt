@@ -32,7 +32,8 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
     InlineProperties(KOTLIN_1_1),
     DestructuringLambdaParameters(KOTLIN_1_1),
     SingleUnderscoreForParameterName(KOTLIN_1_1),
-    DslMarkersSupport(KOTLIN_1_1)
+    DslMarkersSupport(KOTLIN_1_1),
+    UnderscoresInNumericLiterals(KOTLIN_1_1)
     ;
 
     val presentableText: String

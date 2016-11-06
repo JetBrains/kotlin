@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.text.LiteralFormatUtil
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -283,8 +286,7 @@ private class ConstantExpressionEvaluatorVisitor(
         if (nodeElementType == KtNodeTypes.NULL) return factory.createNullValue().wrap()
 
         val result: Any? = when (nodeElementType) {
-                               KtNodeTypes.INTEGER_CONSTANT -> parseLong(text)
-                               KtNodeTypes.FLOAT_CONSTANT -> parseFloatingLiteral(text)
+                               KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, nodeElementType)
                                KtNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
                                KtNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
                                else -> throw IllegalArgumentException("Unsupported constant: " + expression)
@@ -765,7 +767,16 @@ private class ConstantExpressionEvaluatorVisitor(
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 
-fun parseLong(text: String): Long? {
+private fun parseNumericLiteral(text: String, type: IElementType): Any? {
+    val canonicalText = LiteralFormatUtil.removeUnderscores(text)
+    return when (type) {
+        KtNodeTypes.INTEGER_CONSTANT -> parseLong(canonicalText)
+        KtNodeTypes.FLOAT_CONSTANT -> parseFloatingLiteral(canonicalText)
+        else -> null
+    }
+}
+
+private fun parseLong(text: String): Long? {
     try {
         fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length - 1) else s
         fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringLongSuffix(text), radix)

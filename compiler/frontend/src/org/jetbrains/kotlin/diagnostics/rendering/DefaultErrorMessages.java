@@ -454,6 +454,7 @@ public class DefaultErrorMessages {
         MAP.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range");
         MAP.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal");
         MAP.put(EMPTY_CHARACTER_LITERAL, "Empty character literal");
+        MAP.put(ILLEGAL_UNDERSCORE, "Illegal underscore");
         MAP.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal ''{0}''", ELEMENT_TEXT);
         MAP.put(ILLEGAL_ESCAPE, "Illegal escape: ''{0}''", ELEMENT_TEXT);
         MAP.put(NULL_FOR_NONNULL_TYPE, "Null can not be a value of a non-null type {0}", RENDER_TYPE);

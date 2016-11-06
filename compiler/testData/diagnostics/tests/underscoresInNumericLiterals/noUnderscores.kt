@@ -1,0 +1,10 @@
+// !LANGUAGE: -UnderscoresInNumericLiterals
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
+
+fun foo() {
+    <!UNSUPPORTED_FEATURE!>100_1<!>
+    <!UNSUPPORTED_FEATURE!>3_.1<!>
+    <!UNSUPPORTED_FEATURE!>3_._1<!>
+    <!UNSUPPORTED_FEATURE!>2___4<!>
+    <!UNSUPPORTED_FEATURE!>123_<!>
+}

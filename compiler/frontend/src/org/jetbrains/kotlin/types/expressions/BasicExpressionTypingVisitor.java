@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -71,9 +73,12 @@ import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperK
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isExtensionFunctionType;
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionType;
@@ -185,6 +190,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checkLiteralPrefixAndSuffix(expression, context);
         }
 
+        if (elementType == KtNodeTypes.INTEGER_CONSTANT || elementType == KtNodeTypes.FLOAT_CONSTANT) {
+            checkUnderscores(expression, elementType, context);
+        }
+
         CompileTimeConstant<?> compileTimeConstant = components.constantExpressionEvaluator.evaluateExpression(
                 expression, context.trace, context.expectedType
         );
@@ -204,6 +213,49 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " +
                 expression.getText();
         return components.dataFlowAnalyzer.createCompileTimeConstantTypeInfo(compileTimeConstant, expression, context);
+    }
+
+    private static final Pattern FP_LITERAL_PARTS = Pattern.compile("(?:([_\\d]*)\\.?([_\\d]*)e?[+-]?([_\\d]*))[f]?");
+
+    private void checkUnderscores(
+            @NotNull KtConstantExpression expression,
+            @NotNull IElementType elementType,
+            @NotNull ExpressionTypingContext context
+    ) {
+        String text = expression.getText().toLowerCase();
+
+        if (!text.contains("_")) return;
+
+        if (!components.languageVersionSettings.supportsFeature(LanguageFeature.UnderscoresInNumericLiterals)) {
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(expression, LanguageFeature.UnderscoresInNumericLiterals));
+            return;
+        }
+
+        List<String> parts;
+
+        if (elementType == KtNodeTypes.INTEGER_CONSTANT) {
+            int start = 0;
+            int end = expression.getText().length();
+            if (text.startsWith("0x") || text.startsWith("0b")) start += 2;
+            if (StringUtil.endsWithChar(text, 'l')) --end;
+            parts = Collections.singletonList(text.substring(start, end));
+        }
+        else {
+            Matcher matcher = FP_LITERAL_PARTS.matcher(text);
+            parts = new ArrayList<String>();
+            if (matcher.matches()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    parts.add(matcher.group(i + 1));
+                }
+            }
+        }
+
+        for (String part : parts) {
+            if (part != null && (part.startsWith("_") || part.endsWith("_"))) {
+                context.trace.report(Errors.ILLEGAL_UNDERSCORE.on(expression));
+                return;
+            }
+        }
     }
 
     @NotNull
