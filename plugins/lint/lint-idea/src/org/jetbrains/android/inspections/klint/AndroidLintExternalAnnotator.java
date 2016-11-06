@@ -1,13 +1,10 @@
 package org.jetbrains.android.inspections.klint;
 
-import com.android.SdkConstants;
-import com.android.tools.idea.gradle.util.Projects;
 import com.android.tools.klint.client.api.IssueRegistry;
 import com.android.tools.klint.client.api.LintDriver;
 import com.android.tools.klint.client.api.LintRequest;
 import com.android.tools.klint.detector.api.Issue;
 import com.android.tools.klint.detector.api.Scope;
-import com.android.utils.SdkUtils;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.DaemonBundle;
@@ -248,6 +245,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
               }
             }
 
+            annotation.registerFix(new SuppressLintIntentionAction(id, startElement));
             annotation.registerFix(new MyDisableInspectionFix(key));
             annotation.registerFix(new MyEditInspectionToolsSettingsAction(key, inspection));
 
