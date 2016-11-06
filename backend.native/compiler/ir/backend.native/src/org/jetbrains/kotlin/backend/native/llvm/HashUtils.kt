@@ -21,4 +21,4 @@ internal fun globalHash(data: ByteArray, retValPlacement: Placement): GlobalHash
     return res
 }
 
-internal class LocalHash(val value: Long) : CompileTimeValue by Int64(value)
+internal class LocalHash(val value: Long) : ConstValue by Int64(value)

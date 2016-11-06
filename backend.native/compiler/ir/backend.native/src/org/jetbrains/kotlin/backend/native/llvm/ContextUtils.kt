@@ -22,8 +22,11 @@ internal interface ContextUtils {
     val runtime: Runtime
         get() = context.runtime
 
-    val llvmTargetData: LLVMOpaqueTargetData?
+    val llvmTargetData: LLVMOpaqueTargetData
         get() = runtime.targetData
+
+    val staticData: StaticData
+        get() = context.staticData
 
     /**
      * All fields of the class instance.
@@ -53,7 +56,7 @@ internal interface ContextUtils {
      * LLVM function generated from the Kotlin function.
      * It may be declared as external function prototype.
      */
-    val FunctionDescriptor.llvmFunction: CompileTimeValue
+    val FunctionDescriptor.llvmFunction: ConstValue
         get() {
             assert (this.kind.isReal)
             val globalName = this.symbolName
@@ -61,85 +64,67 @@ internal interface ContextUtils {
 
             val functionType = getLlvmFunctionType(this)
             val function = LLVMGetNamedFunction(module, globalName) ?: LLVMAddFunction(module, globalName, functionType)
-            return compileTimeValue(function)
+            return constValue(function)
         }
 
     /**
      * Address of entry point of [llvmFunction].
      */
-    val FunctionDescriptor.entryPointAddress: CompileTimeValue
+    val FunctionDescriptor.entryPointAddress: ConstValue
         get() {
             val result = LLVMConstBitCast(this.llvmFunction.getLlvmValue(), pointerType(LLVMInt8Type()))
-            return compileTimeValue(result)
+            return constValue(result)
         }
 
     /**
      * Pointer to type info for given class.
      * It may be declared as pointer to external variable.
      */
-    val ClassDescriptor.llvmTypeInfoPtr: CompileTimeValue
+    val ClassDescriptor.llvmTypeInfoPtr: ConstPointer
         get() {
             val module = context.llvmModule
             val globalName = this.typeInfoSymbolName
             val globalPtr = LLVMGetNamedGlobal(module, globalName) ?:
                             LLVMAddGlobal(module, runtime.typeInfoType, globalName)
 
-            return compileTimeValue(globalPtr)
+            return constPointer(globalPtr)
         }
 
     /**
-     * Adds global variable with given name and value to [Context.llvmModule] of [context].
-     * Returns pointer to this variable.
-     */
-    fun addGlobalConst(name: String, value: CompileTimeValue): CompileTimeValue {
-        val global = LLVMAddGlobal(context.llvmModule, value.getLlvmType(), name)
-        LLVMSetInitializer(global, value.getLlvmValue())
-        LLVMSetGlobalConstant(global, 1)
-        return compileTimeValue(global)
-    }
-
-    /**
-     * Returns pointer to first element of given array.
+     * Returns contents of this [GlobalHash].
      *
-     * Note: this function doesn't depend on the context
-     *
-     * @param arrayPtr pointer to array
+     * It must be declared identically with [Runtime.globalHashType].
      */
-    private fun getPtrToFirstElem(arrayPtr: CompileTimeValue): CompileTimeValue {
-        val indices = longArrayOf(0, 0).map { LLVMConstInt(LLVMInt32Type(), it, 0) }.toTypedArray()
-
-        memScoped {
-            val indicesNativeArrayPtr = allocNativeArrayOf(LLVMOpaqueValue, *indices)[0]
-
-            return compileTimeValue(LLVMConstGEP(arrayPtr.getLlvmValue(), indicesNativeArrayPtr, indices.size))
-        }
-    }
-
-    /**
-     * Adds global array-typed variable with given name and value to [Context.llvmModule] of [context].
-     * Returns pointer to the first element of the global array.
-     */
-    fun addGlobalConstArray(name: String, elemType: LLVMOpaqueType?, elements: List<CompileTimeValue>): CompileTimeValue {
-        return if (elements.size > 0) {
-            getPtrToFirstElem(addGlobalConst(name, ConstArray(elemType, elements)))
-        } else {
-            Zero(pointerType(elemType))
-        }
-    }
-
-    /**
-     * Converts this [GlobalHash] to compile-time value of [runtime]-defined `GlobalHash` type.
-     *
-     * These types must be defined identically.
-     */
-    private fun GlobalHash.asCompileTimeValue(): Struct {
+    fun GlobalHash.getBytes(): ByteArray {
         val size = GlobalHash.size
-        assert(size.toLong() == LLVMStoreSizeOfType(llvmTargetData, runtime.globalhHashType))
+        assert(size.toLong() == LLVMStoreSizeOfType(llvmTargetData, runtime.globalHashType))
 
-        return Struct(runtime.globalhHashType, bits.asCompileTimeValue(size))
-        // TODO: implement such transformation more generally using LLVM bitcast
-        // (seems to require some investigation)
+        return this.bits.getBytes(size)
     }
+
+    /**
+     * Returns global hash of this string contents.
+     */
+    val String.globalHashBytes: ByteArray
+        get() = memScoped {
+            val hash = globalHash(stringAsBytes(this@globalHashBytes), memScope)
+            hash.getBytes()
+        }
+
+    /**
+     * Return base64 representation for global hash of this string contents.
+     */
+    val String.globalHashBase64: String
+        get() {
+            val bytes = this.toByteArray(Charsets.UTF_8)
+            val hashBytes = this.globalHashBytes
+
+            val base64Bytes = java.util.Base64.getEncoder().encode(globalHashBytes)
+            // TODO: do not use JRE for base64
+            // (it is impossible right now due to native interop limitations)
+
+            return String(base64Bytes, Charsets.US_ASCII)
+        }
 
     /**
      * Converts this string to the sequence of bytes to be used for hashing/storing to binary/etc.
@@ -151,13 +136,13 @@ internal interface ContextUtils {
     val String.localHash: LocalHash
         get() = LocalHash(localHash(stringAsBytes(this)))
 
-    val String.globalHash: CompileTimeValue
+    val String.globalHash: ConstValue
         get() = memScoped {
-            val hash = globalHash(stringAsBytes(this@globalHash), memScope)
-            hash.asCompileTimeValue()
+            val hashBytes = this@globalHash.globalHashBytes
+            return Struct(runtime.globalHashType, ConstArray(int8Type, hashBytes.map { Int8(it) }))
         }
 
-    val FqName.globalHash: CompileTimeValue
+    val FqName.globalHash: ConstValue
         get() = this.toString().globalHash
 
     val Name.localHash: LocalHash

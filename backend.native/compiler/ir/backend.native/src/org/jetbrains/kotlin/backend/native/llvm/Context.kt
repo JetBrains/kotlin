@@ -20,6 +20,8 @@ internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val
         return LLVMAddFunction(llvmModule, name, functionType)!!
     }
 
+    val staticData = StaticData(this)
+
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
 
     val allocInstanceFunction = importRtFunction("AllocInstance")

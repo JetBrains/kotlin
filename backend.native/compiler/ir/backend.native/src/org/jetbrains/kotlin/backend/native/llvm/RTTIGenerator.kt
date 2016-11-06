@@ -6,6 +6,7 @@ import kotlin_native.interop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.native.implementation
 import org.jetbrains.kotlin.backend.native.implementedInterfaces
+import org.jetbrains.kotlin.backend.native.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
@@ -20,19 +21,19 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private inner class FieldTableRecord(val nameSignature: LocalHash, val fieldOffset: Int) :
             Struct(runtime.fieldTableRecordType, nameSignature, Int32(fieldOffset))
 
-    private inner class MethodTableRecord(val nameSignature: LocalHash, val methodEntryPoint: CompileTimeValue) :
+    private inner class MethodTableRecord(val nameSignature: LocalHash, val methodEntryPoint: ConstValue) :
             Struct(runtime.methodTableRecordType, nameSignature, methodEntryPoint)
 
-    private inner class TypeInfo(val name: CompileTimeValue, val size: Int,
-                                 val superType: CompileTimeValue,
-                                 val objOffsets: CompileTimeValue,
+    private inner class TypeInfo(val name: ConstValue, val size: Int,
+                                 val superType: ConstValue,
+                                 val objOffsets: ConstValue,
                                  val objOffsetsCount: Int,
-                                 val interfaces: CompileTimeValue,
+                                 val interfaces: ConstValue,
                                  val interfacesCount: Int,
-                                 val vtable: CompileTimeValue,
-                                 val methods: CompileTimeValue,
+                                 val vtable: ConstValue,
+                                 val methods: ConstValue,
                                  val methodsCount: Int,
-                                 val fields: CompileTimeValue,
+                                 val fields: ConstValue,
                                  val fieldsCount: Int) :
             Struct(
                     runtime.typeInfoType,
@@ -76,6 +77,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     // TODO: optimize
     private fun getVtableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
+        if (classDesc.isInterface) {
+            return emptyList()
+        }
+
         val superVtableEntries = if (KotlinBuiltIns.isAny(classDesc)) {
             emptyList()
         } else {
@@ -102,6 +107,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private fun getMethodTableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
+        if (classDesc.isInterface) {
+            return emptyList()
+        }
+
         val contributedDescriptors = classDesc.unsubstitutedMemberScope.getContributedDescriptors()
         // (includes declarations from supers)
 
@@ -149,14 +158,13 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val name = className.globalHash
 
-        val isInterface = classDesc.kind == ClassKind.INTERFACE
-
         val size = getInstanceSize(classType, className)
 
         val superType = classDesc.getSuperClassOrAny().llvmTypeInfoPtr
 
         val interfaces = classDesc.implementedInterfaces.map { it.llvmTypeInfoPtr }
-        val interfacesPtr = addGlobalConstArray("kintf:$className", pointerType(runtime.typeInfoType), interfaces)
+        val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
+                pointerType(runtime.typeInfoType), interfaces)
 
         val refFieldIndices = classDesc.fields.mapIndexedNotNull { index, field ->
             val type = field.returnType!!
@@ -168,7 +176,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         }
         // TODO: reuse offsets obtained for 'fields' below
         val objOffsets = refFieldIndices.map { LLVMOffsetOfElement(runtime.targetData, classType, it) }
-        val objOffsetsPtr = addGlobalConstArray("krefs:$className", int32Type, objOffsets.map { Int32(it.toInt()) })
+        val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", int32Type,
+                objOffsets.map { Int32(it.toInt()) })
 
         val fields = classDesc.fields.mapIndexed { index, field ->
             // Note: using FQ name because a class may have multiple fields with the same name due to property overriding
@@ -177,13 +186,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             FieldTableRecord(nameSignature, fieldOffset.toInt())
         }.sortedBy { it.nameSignature.value }
 
-        val fieldsPtr = if (isInterface) Zero(pointerType(runtime.fieldTableRecordType))
-            else addGlobalConstArray("kfields:$className", runtime.fieldTableRecordType, fields)
+        val fieldsPtr = staticData.placeGlobalConstArray("kfields:$className",
+                runtime.fieldTableRecordType, fields)
 
         // TODO: compile-time resolution limits binary compatibility
         val vtable = getVtableEntries(classDesc).map { it.implementation.entryPointAddress }
-        val vtablePtr = if (isInterface) Zero(pointerType(pointerType(int8Type))) else
-            addGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
+        val vtablePtr = staticData.placeGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
 
         val methods = getMethodTableEntries(classDesc).map {
             val nameSignature = it.name.localHash // FIXME: add signature
@@ -192,8 +200,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             MethodTableRecord(nameSignature, methodEntryPoint)
         }.sortedBy { it.nameSignature.value }
 
-        val methodsPtr = if (isInterface) Zero(pointerType(runtime.methodTableRecordType)) else
-            addGlobalConstArray("kmethods:$className", runtime.methodTableRecordType, methods)
+        val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
+                runtime.methodTableRecordType, methods)
 
         val typeInfo = TypeInfo(name, size,
                 superType,
@@ -201,7 +209,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 interfacesPtr, interfaces.size,
                 vtablePtr,
                 methodsPtr, methods.size,
-                fieldsPtr, if (isInterface) -1 else fields.size)
+                fieldsPtr, if (classDesc.isInterface) -1 else fields.size)
 
         val typeInfoGlobal = classDesc.llvmTypeInfoPtr.getLlvmValue() // TODO: it is a hack
         LLVMSetInitializer(typeInfoGlobal, typeInfo.getLlvmValue())

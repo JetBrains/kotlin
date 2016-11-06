@@ -30,15 +30,21 @@ class Runtime(private val bitcodeFile: String) {
         }
     }
 
-    val typeInfoType = LLVMGetTypeByName(llvmModule, "struct.TypeInfo")
-    val fieldTableRecordType = LLVMGetTypeByName(llvmModule, "struct.FieldTableRecord")
-    val methodTableRecordType = LLVMGetTypeByName(llvmModule, "struct.MethodTableRecord")
-    val globalhHashType = LLVMGetTypeByName(llvmModule, "struct.GlobalHash")
+    private fun getStructType(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")!!
+
+    val typeInfoType = getStructType("TypeInfo")
+    val fieldTableRecordType = getStructType("FieldTableRecord")
+    val methodTableRecordType = getStructType("MethodTableRecord")
+    val globalHashType = getStructType("GlobalHash")
+
+    val containerHeaderType = getStructType("ContainerHeader")
+    val objHeaderType = getStructType("ObjHeader")
+    val arrayHeaderType = getStructType("ArrayHeader")
 
     val target = LLVMGetTarget(llvmModule)!!.asCString().toString()
 
     val dataLayout = LLVMGetDataLayout(llvmModule)!!.asCString().toString()
 
-    val targetData = LLVMCreateTargetData(dataLayout)
+    val targetData = LLVMCreateTargetData(dataLayout)!!
 
 }

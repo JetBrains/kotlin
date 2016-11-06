@@ -279,7 +279,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrConstKind.Short  -> return LLVMConstInt(LLVMInt32Type(), (value.value as Short).toLong(), 1)
             IrConstKind.Int    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(), 1)
             IrConstKind.Long   -> return LLVMConstInt(LLVMInt64Type(), value.value as Long, 1)
-            IrConstKind.String -> TODO()
+            IrConstKind.String ->
+                return context.staticData.createStringLiteral(value as IrConst<String>).getLlvmValue()
             IrConstKind.Float  -> TODO()
             IrConstKind.Double -> TODO()
         }

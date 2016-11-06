@@ -10,13 +10,16 @@ fun free(ptr: NativePtr?) {
 
 fun free(ref: NativeRef?) = free(ref.getNativePtr())
 
-fun <T : NativeRef> Placement.allocNativeArrayOf(elemType: NativeRef.Type<T>, vararg elements: T?): NativeArray<RefBox<T>> {
+fun <T : NativeRef> Placement.allocNativeArrayOf(elemType: NativeRef.Type<T>, elements: List<T?>): NativeArray<RefBox<T>> {
     val res = this.alloc(array[elements.size](elemType.ref))
     elements.forEachIndexed { i, element ->
         res[i].value = element
     }
     return res
 }
+
+fun <T : NativeRef> Placement.allocNativeArrayOf(elemType: NativeRef.Type<T>, vararg elements: T?) =
+        allocNativeArrayOf(elemType, elements.toList())
 
 fun <T : NativeRef> mallocNativeArrayOf(elemType: NativeRef.Type<T>, vararg elements: T?) = heap.allocNativeArrayOf(elemType, *elements)
 

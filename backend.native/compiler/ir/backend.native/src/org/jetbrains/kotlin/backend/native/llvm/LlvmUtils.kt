@@ -9,17 +9,39 @@ import org.jetbrains.kotlin.utils.singletonOrEmptyList
 /**
  * Represents the value which can be emitted as bitcode const value
  */
-internal interface CompileTimeValue {
+internal interface ConstValue {
 
     fun getLlvmValue(): LLVMOpaqueValue?
 
-    fun getLlvmType(): LLVMOpaqueType? {
-        return LLVMTypeOf(getLlvmValue())
+    fun getLlvmType(): LLVMOpaqueType {
+        return LLVMTypeOf(getLlvmValue())!!
     }
 
 }
 
-internal class ConstArray(val elemType: LLVMOpaqueType?, val elements: List<CompileTimeValue>) : CompileTimeValue {
+internal interface ConstPointer : ConstValue {
+    fun getElementPtr(index: Int): ConstPointer = ConstGetElementPtr(this, index)
+}
+
+internal fun constPointer(value: LLVMOpaqueValue?) = object : ConstPointer {
+    override fun getLlvmValue() = value
+}
+
+private class ConstGetElementPtr(val pointer: ConstPointer, val index: Int) : ConstPointer {
+    override fun getLlvmValue(): LLVMOpaqueValue? {
+        // TODO: probably it should be computed once when initialized?
+        // TODO: squash multiple GEPs
+        val indices = intArrayOf(0, index).map { Int32(it).getLlvmValue() }
+        memScoped {
+            val indicesArray = allocNativeArrayOf(LLVMOpaqueValue, indices)
+            return LLVMConstInBoundsGEP(pointer.getLlvmValue(), indicesArray[0], indices.size)
+        }
+    }
+}
+
+internal fun ConstPointer.bitcast(toType: LLVMOpaqueType) = constPointer(LLVMConstBitCast(this.getLlvmValue(), toType))
+
+internal class ConstArray(val elemType: LLVMOpaqueType?, val elements: List<ConstValue>) : ConstValue {
 
     override fun getLlvmValue(): LLVMOpaqueValue? {
         val values = elements.map { it.getLlvmValue() }.toTypedArray()
@@ -32,9 +54,9 @@ internal class ConstArray(val elemType: LLVMOpaqueType?, val elements: List<Comp
     }
 }
 
-internal open class Struct(val type: LLVMOpaqueType?, val elements: List<CompileTimeValue>) : CompileTimeValue {
+internal open class Struct(val type: LLVMOpaqueType?, val elements: List<ConstValue>) : ConstValue {
 
-    constructor(type: LLVMOpaqueType?, vararg elements: CompileTimeValue) : this(type, elements.toList())
+    constructor(type: LLVMOpaqueType?, vararg elements: ConstValue) : this(type, elements.toList())
 
     override fun getLlvmValue(): LLVMOpaqueValue? {
         val values = elements.map { it.getLlvmValue() }.toTypedArray()
@@ -45,23 +67,27 @@ internal open class Struct(val type: LLVMOpaqueType?, val elements: List<Compile
     }
 }
 
-internal class Int8(val value: Byte) : CompileTimeValue {
+internal class Int8(val value: Byte) : ConstValue {
     override fun getLlvmValue() = LLVMConstInt(LLVMInt8Type(), value.toLong(), 1)
 }
 
-internal class Int32(val value: Int) : CompileTimeValue {
+internal class Int32(val value: Int) : ConstValue {
     override fun getLlvmValue() = LLVMConstInt(LLVMInt32Type(), value.toLong(), 1)
 }
 
-internal class Int64(val value: Long) : CompileTimeValue {
+internal class Int64(val value: Long) : ConstValue {
     override fun getLlvmValue() = LLVMConstInt(LLVMInt64Type(), value, 1)
 }
 
-internal class Zero(val type: LLVMOpaqueType?) : CompileTimeValue {
+internal class Zero(val type: LLVMOpaqueType?) : ConstValue {
     override fun getLlvmValue() = LLVMConstNull(type)
 }
 
-internal fun compileTimeValue(value: LLVMOpaqueValue?) = object : CompileTimeValue {
+internal class NullPointer(val pointeeType: LLVMOpaqueType?): ConstPointer {
+    override fun getLlvmValue() = LLVMConstNull(pointerType(pointeeType))
+}
+
+internal fun constValue(value: LLVMOpaqueValue?) = object : ConstValue {
     override fun getLlvmValue() = value
 }
 
@@ -69,6 +95,10 @@ internal val int8Type = LLVMInt8Type()
 internal val int32Type = LLVMInt32Type()
 
 internal fun pointerType(pointeeType: LLVMOpaqueType?) = LLVMPointerType(pointeeType, 0)
+
+internal fun structType(vararg types: LLVMOpaqueType?): LLVMOpaqueType = memScoped {
+    LLVMStructType(allocNativeArrayOf(LLVMOpaqueType, *types)[0], types.size, 0)!!
+}
 
 internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? {
     val returnType = getLLVMType(function.returnType!!)
@@ -91,13 +121,10 @@ internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMOpaqueType? 
 }
 
 /**
- * Represents [size] bytes contained in this array as [ConstArray].
+ * Reads [size] bytes contained in this array.
  */
-internal fun NativeArray<Int8Box>.asCompileTimeValue(size: Int): ConstArray {
-    return ConstArray(int8Type, (0 .. size-1).map {
-        Int8(this[it].value)
-    })
-}
+internal fun NativeArray<Int8Box>.getBytes(size: Int) =
+        (0 .. size-1).map { this[it].value }.toByteArray()
 
 internal fun getFunctionType(ptrToFunction: LLVMOpaqueValue?): LLVMOpaqueType {
     val typeOfPtrToFunction = LLVMTypeOf(ptrToFunction)

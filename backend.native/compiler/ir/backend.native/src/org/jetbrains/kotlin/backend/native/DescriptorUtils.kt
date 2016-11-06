@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.native
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -43,3 +44,6 @@ private val intrinsicTypes = setOf(
 
 internal val ClassDescriptor.isIntrinsic: Boolean
     get() = this.fqNameSafe.asString() in intrinsicTypes
+
+internal val ClassDescriptor.isInterface: Boolean
+    get() = (this.kind == ClassKind.INTERFACE)
