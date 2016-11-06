@@ -83,7 +83,7 @@ abstract class KotlinCompilerBaseTask : Task() {
     final override fun execute() {
         fillArguments()
 
-        val compilerClass = KotlinAntTaskUtil.getOrCreateClassLoader().loadClass(compilerFqName)
+        val compilerClass = KotlinAntTaskUtil.getOrCreateClassLoader(compilerFqName).loadClass(compilerFqName)
         val compiler = compilerClass.newInstance()
         val exec = compilerClass.getMethod("execFullPathsInMessages", PrintStream::class.java, Array<String>::class.java)
 
