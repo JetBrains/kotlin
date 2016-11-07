@@ -9,32 +9,29 @@ import org.jetbrains.kotlin.backend.BinaryMetadata.FunMetadata
 
 internal class MetadataGenerator(override val context: Context): ContextUtils {
 
-    private fun metadata_string(str: String): LLVMOpaqueValue? {
-        return LLVMMDString(str, str.length)
+    private fun metadataString(str: String): LLVMOpaqueValue {
+        return LLVMMDString(str, str.length)!!
     }
 
-    private fun metadata_node(args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+    private fun metadataNode(args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
         memScoped {
             val rargs = alloc(array[args.size](Ref to LLVMOpaqueValue))
-                args.forEachIndexed { i, llvmOpaqueValue ->  rargs[i].value = args[i]}
-            return LLVMMDNode(rargs[0], args.size);
+            args.forEachIndexed { i, llvmOpaqueValue ->  rargs[i].value = args[i]}
+            return LLVMMDNode(rargs[0], args.size)!!
         }
     }
 
-    private fun metadata_fun(fn: LLVMOpaqueValue?, info: String): LLVMOpaqueValue? {
-        val args: MutableList<LLVMOpaqueValue?> = mutableListOf()
-            args += fn
-            args += metadata_string(info);
-
-        val md = metadata_node(args)
+    private fun metadataFun(fn: LLVMOpaqueValue?, info: String): LLVMOpaqueValue {
+        val args: MutableList<LLVMOpaqueValue?> = mutableListOf(fn, metadataString(info));
+        val md = metadataNode(args)
         return md
     }
 
-    private fun emit_module_metadata(name: String, md: LLVMOpaqueValue?) {
+    private fun emitModuleMetadata(name: String, md: LLVMOpaqueValue?) {
         LLVMAddNamedMetadataOperand(context.llvmModule, name, md)
     }
 
-    private fun serialize_fun_signature(declaration:IrFunction): String {
+    private fun serializeFunSignature(declaration:IrFunction): String {
         val builder = FunMetadata.newBuilder()
 
         val hash = "0x123456 some hash"
@@ -53,13 +50,12 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
     }
 
     internal fun function(declaration: IrFunction) {
-
         val fn = declaration.descriptor.llvmFunction.getLlvmValue()
 
-        val proto = serialize_fun_signature(declaration)
+        val proto = serializeFunSignature(declaration)
 
-        val md = metadata_fun(fn, proto)
-        emit_module_metadata("kfun", md);
+        val md = metadataFun(fn, proto)
+        emitModuleMetadata("kfun", md);
     }
 }
 
