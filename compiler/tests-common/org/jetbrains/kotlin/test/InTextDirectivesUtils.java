@@ -233,10 +233,18 @@ public final class InTextDirectivesUtils {
         return backends.isEmpty() || backends.contains(targetBackend.name());
     }
 
-    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+    private static boolean isIgnoredTargetByPrefix(TargetBackend targetBackend, File file, String prefix) {
         if (targetBackend == TargetBackend.ANY) return false;
 
-        List<String> ignoredBackends = findLinesWithPrefixesRemoved(textWithDirectives(file), "// IGNORE_BACKEND: ");
+        List<String> ignoredBackends = findLinesWithPrefixesRemoved(textWithDirectives(file), prefix);
         return ignoredBackends.contains(targetBackend.name());
+    }
+
+    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+        return isIgnoredTargetByPrefix(targetBackend, file, "// IGNORE_BACKEND: ");
+    }
+
+    public static boolean isIgnoredTargetWithoutCheck(TargetBackend targetBackend, File file) {
+        return isIgnoredTargetByPrefix(targetBackend, file, "// IGNORE_BACKEND_WITHOUT_CHECK: ");
     }
 }
