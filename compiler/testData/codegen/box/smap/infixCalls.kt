@@ -1,6 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
+// TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
 package test
@@ -13,7 +11,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = (e as java.lang.Throwable).getStackTrace()!!.get(1)
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:7" != actual) {
+        if ("infixCalls.kt:8" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++
@@ -26,7 +24,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:20" != actual) {
+        if ("infixCalls.kt:21" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++
@@ -38,7 +36,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:33" != actual) {
+        if ("infixCalls.kt:34" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++

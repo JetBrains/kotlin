@@ -17414,38 +17414,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/smap"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("chainCalls.kt")
-        public void testChainCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smap/chainCalls.kt");
-            try {
-                doTest(fileName);
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
-            }
-            catch (Throwable ignore) {
-            }
-        }
-
-        @TestMetadata("infixCalls.kt")
-        public void testInfixCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smap/infixCalls.kt");
-            try {
-                doTest(fileName);
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
-            }
-            catch (Throwable ignore) {
-            }
-        }
-
-        @TestMetadata("simpleCallWithParams.kt")
-        public void testSimpleCallWithParams() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smap/simpleCallWithParams.kt");
-            try {
-                doTest(fileName);
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
-            }
-            catch (Throwable ignore) {
-            }
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/smartCasts")
