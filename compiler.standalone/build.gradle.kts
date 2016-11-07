@@ -1,7 +1,5 @@
 
-import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.File
 
 buildscript {
     repositories {
@@ -22,25 +20,24 @@ repositories {
     mavenCentral()
 }
 
-val nativePlatformUberjar = "$rootDir/dependencies/native-platform-uberjar.jar"
-
 dependencies {
     compile(project(":compiler"))
-    compile(files(nativePlatformUberjar))
-    buildVersion()
+    compile(fileTree(mapOf("dir" to "$rootDir/ideaSDK/core", "include" to "*.jar")))
+    compile(commonDep("org.fusesource.jansi", "jansi"))
+    compile(commonDep("jline"))
 }
 
-configureKotlinProjectSources("compiler/daemon/daemon-client/src", sourcesBaseDir = rootDir)
+configureKotlinProjectSources(
+        "compiler/cli/src",
+        "compiler/daemon/src",
+        "compiler/builtins-serializer/src",
+        "compiler/conditional-preprocessor/src",
+        "plugins/annotation-collector/src",
+        sourcesBaseDir = rootDir)
 configureKotlinProjectNoTests()
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-daemon-client")
-}
-
-tasks.withType<Jar> {
-    setupRuntimeJar("Kotlin Daemon Client")
-    from(zipTree(nativePlatformUberjar))
-    archiveName = "kotlin-daemon-client.jar"
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-compiler.standalone")
 }
 
 fixKotlinTaskDependencies()

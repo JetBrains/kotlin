@@ -54,17 +54,13 @@ configure<JavaPluginConvention> {
                 "compiler/ir/backend.jvm/src",
                 "compiler/ir/ir.psi2ir/src",
                 "compiler/ir/ir.tree/src",
-                "compiler/builtins-serializer/src",
-                "compiler/cli/src",
                 "compiler/cli/cli-common/src",
-                "compiler/conditional-preprocessor/src/",
                 "compiler/container/src",
                 "compiler/frontend/src",
                 "compiler/resolution/src",
                 "compiler/frontend.java/src",
                 "compiler/light-classes/src",
                 "compiler/plugin-api/src",
-                "compiler/daemon/src",
                 "compiler/daemon/daemon-common/src",
                 "compiler/serialization/src",
                 "js/js.dart-ast/src",
@@ -72,8 +68,7 @@ configure<JavaPluginConvention> {
                 "js/js.frontend/src",
                 "js/js.inliner/src",
                 "js/js.parser/src",
-                "js/js.serializer/src",
-                "plugins/annotation-collector/src")
+                "js/js.serializer/src")
         .map { File(rootDir, it) }
         .let { java.setSrcDirs(it) }
 //        println(compileClasspath.joinToString("\n    ", prefix = "classpath =\n    ") { it.canonicalFile.relativeTo(rootDir).path })

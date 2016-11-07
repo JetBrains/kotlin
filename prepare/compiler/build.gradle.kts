@@ -58,6 +58,7 @@ val compilerProject = project(":compiler")
 dependencies {
     compilerClassesCfg(projectDepIntransitive(":compiler:util"))
     compilerClassesCfg(projectDepIntransitive(":compiler"))
+    compilerClassesCfg(projectDepIntransitive(":compiler.standalone"))
     compilerClassesCfg(projectDepIntransitive(":core:util.runtime"))
     ideaSdkCoreCfg(files(File("$rootDir/ideaSDK/core").listFiles { f -> f.extension == "jar" && f.name != "util.jar" }))
     ideaSdkCoreCfg(files("$rootDir/ideaSDK/lib/jna-platform.jar"))
@@ -85,10 +86,11 @@ val packCompilerTask = task<ShadowJar>("internal.pack-compiler") {
     configurations = listOf(mainCfg)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveName = if (shrink) outputBeforeSrinkJar else outputJar
-    dependsOn(":compiler:util:classes", compilerProject.path + ":classes", protobufFullTask)
+    dependsOn(":compiler:util:classes", compilerProject.path + ":classes", ":compiler.standalone:classes", protobufFullTask)
     setupRuntimeJar("Kotlin Compiler")
     from(project(":compiler:util").getCompiledClasses())
     from(compilerProject.getCompiledClasses())
+    from(project(":compiler.standalone").getCompiledClasses())
     from(project(":core:util.runtime").getCompiledClasses())
     from(ideaSdkCoreCfg.files)
     from(otherDepsCfg.files)
