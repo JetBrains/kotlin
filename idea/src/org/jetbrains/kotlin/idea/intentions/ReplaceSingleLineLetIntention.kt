@@ -102,12 +102,10 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
 
     private fun KtBinaryExpression.isApplicable(parameterName: String): Boolean {
         val left = left ?: return false
-
-        if (when (left) {
-            is KtNameReferenceExpression -> left.text != parameterName
-            is KtDotQualifiedExpression -> !left.isApplicable(parameterName)
-            else -> return false
-        }) return false
+        when (left) {
+            is KtNameReferenceExpression -> if (left.text != parameterName) return false
+            is KtDotQualifiedExpression -> if (!left.isApplicable(parameterName)) return false
+        }
 
         val right = right ?: return false
         when (right) {
