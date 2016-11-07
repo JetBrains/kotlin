@@ -31,6 +31,7 @@ dependencies {
     compile(project(":prepare:reflect", configuration = "default"))
     compile(project(":core:script.runtime"))
     compile(project(":core:util.runtime"))
+    compile(project(":compiler:util"))
     compile(fileTree(mapOf("dir" to "$rootDir/ideaSDK/core", "include" to "*.jar")))
     compile(commonDep("com.google.protobuf:protobuf-java"))
 //    compile(fileTree(mapOf("dir" to "$rootDir/lib", "include" to "*.jar"))) // direct references below
@@ -66,7 +67,6 @@ configure<JavaPluginConvention> {
                 "compiler/daemon/src",
                 "compiler/daemon/daemon-common/src",
                 "compiler/serialization/src",
-                "compiler/util/src",
                 "js/js.dart-ast/src",
                 "js/js.translator/src",
                 "js/js.frontend/src",

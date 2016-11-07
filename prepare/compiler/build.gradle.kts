@@ -56,6 +56,7 @@ val javaHome = System.getProperty("java.home")
 val compilerProject = project(":compiler")
 
 dependencies {
+    compilerClassesCfg(projectDepIntransitive(":compiler:util"))
     compilerClassesCfg(projectDepIntransitive(":compiler"))
     compilerClassesCfg(projectDepIntransitive(":core:util.runtime"))
     ideaSdkCoreCfg(files(File("$rootDir/ideaSDK/core").listFiles { f -> f.extension == "jar" && f.name != "util.jar" }))
@@ -84,8 +85,9 @@ val packCompilerTask = task<ShadowJar>("internal.pack-compiler") {
     configurations = listOf(mainCfg)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveName = if (shrink) outputBeforeSrinkJar else outputJar
-    dependsOn(compilerProject.path + ":classes", protobufFullTask)
+    dependsOn(":compiler:util:classes", compilerProject.path + ":classes", protobufFullTask)
     setupRuntimeJar("Kotlin Compiler")
+    from(project(":compiler:util").getCompiledClasses())
     from(compilerProject.getCompiledClasses())
     from(project(":core:util.runtime").getCompiledClasses())
     from(ideaSdkCoreCfg.files)

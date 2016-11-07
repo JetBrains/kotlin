@@ -21,30 +21,16 @@ buildscript {
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":prepare:runtime", configuration = "default"))
-    compile(project(":prepare:reflect", configuration = "default"))
-    compile(project(":core:script.runtime"))
-    compile(project(":compiler"))
-    compile(files("$rootDir/ideaSDK/lib/util.jar"))
-    buildVersion()
+    compile(project(":core:util.runtime"))
+    compile(fileTree(mapOf("dir" to "$rootDir/ideaSDK/core", "include" to "*.jar")))
+    compile(files("$rootDir/ideaSDK/jps/jps-model.jar"))
 }
 
-configure<JavaPluginConvention> {
-    sourceSets.getByName("main").apply {
-        java.setSrcDirs(listOf(File(projectDir, "src")))
-    }
-    sourceSets.getByName("test").apply {
-        java.setSrcDirs(emptyList<File>())
-    }
-}
+configureKotlinProjectSourcesDefault()
+configureKotlinProjectNoTests()
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-build-common")
-}
-
-tasks.withType<Jar> {
-    setupRuntimeJar("Kotlin Build Common")
-    archiveName = "kotlin-build-common.jar"
+    kotlinOptions.freeCompilerArgs = listOf("-Xallow-kotlin-package", "-module-name", "kotlin-compiler.util")
 }
 
 fixKotlinTaskDependencies()
