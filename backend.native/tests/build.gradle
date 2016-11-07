@@ -101,7 +101,7 @@ class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.exec {
-            commandLine "${llvmC}", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
+            commandLine "${llvmC}", "-B${project.sysrootDir}/usr/bin", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
                     "-o", "${exe.absolutePath}"
 
             args llvmCAdditionalArgs
@@ -112,7 +112,7 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         project.exec {
-            commandLine "${llvmC}", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
+            commandLine "${llvmC}", "-DRUN_TEST", "-B${project.sysrootDir}/usr/bin", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
                     "-o", "${exe.absolutePath}"
 
             args llvmCAdditionalArgs

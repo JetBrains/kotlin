@@ -96,19 +96,20 @@ String[] linkerOpts1() {
              + ["-L$libffiDir/lib", "-lffi"])
     ArrayList<String> strldflags = new ArrayList<>()
     ldflags.forEach{strldflags.add(it.toString())}
+    strldflags.add("-B$sysrootDir/usr/bin".toString())
     return strldflags.toArray(new String[0])
 }
 
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
-     compilerOpts "-fPIC", "-I$llvmDir/include"
+     compilerOpts "-fPIC", "-I$llvmDir/include", "-B$sysrootDir/usr/bin"
      linkerOpts linkerOpts1()
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'
      compilerOpts '-fPIC'
-     linkerOpts '-fPIC'
+     linkerOpts '-fPIC', "-B$sysrootDir/usr/bin"
      linker 'clang++'
      linkOutputs ':common:compileHash'
 
