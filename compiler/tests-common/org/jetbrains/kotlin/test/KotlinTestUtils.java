@@ -830,6 +830,7 @@ public class KotlinTestUtils {
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
+            @NotNull TargetBackend targetBackend,
             boolean recursive,
             @NotNull String... excludeDirs
     ) {
@@ -846,7 +847,7 @@ public class KotlinTestUtils {
                         assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }
-                else if (filenamePattern.matcher(file.getName()).matches()) {
+                else if (filenamePattern.matcher(file.getName()).matches() && InTextDirectivesUtils.isCompatibleTarget(targetBackend, file)) {
                     assertFilePathPresent(file, rootFile, filePaths);
                 }
             }

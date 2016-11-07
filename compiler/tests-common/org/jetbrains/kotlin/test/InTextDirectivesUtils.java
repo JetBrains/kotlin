@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import kotlin.text.StringsKt;
@@ -26,11 +27,14 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
 public final class InTextDirectivesUtils {
+
+    private static final String DIRECTIVES_FILE_NAME = "directives.txt";
 
     private InTextDirectivesUtils() {
     }
@@ -202,5 +206,37 @@ public final class InTextDirectivesUtils {
         }
 
         return result;
+    }
+
+    private static String textWithDirectives(File file) {
+        try {
+            String fileText;
+            if (file.isDirectory()) {
+                File directivesFile = new File(file, DIRECTIVES_FILE_NAME);
+                if (!directivesFile.exists()) return "";
+
+                fileText = FileUtil.loadFile(directivesFile);
+            }
+            else {
+                fileText = FileUtil.loadFile(file);
+            }
+            return fileText;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean isCompatibleTarget(TargetBackend targetBackend, File file) {
+        if (targetBackend == TargetBackend.ANY) return true;
+
+        List<String> backends = findLinesWithPrefixesRemoved(textWithDirectives(file), "// TARGET_BACKEND: ");
+        return backends.isEmpty() || backends.contains(targetBackend.name());
+    }
+
+    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+        if (targetBackend == TargetBackend.ANY) return false;
+
+        List<String> ignoredBackends = findLinesWithPrefixesRemoved(textWithDirectives(file), "// IGNORE_BACKEND: ");
+        return ignoredBackends.contains(targetBackend.name());
     }
 }
