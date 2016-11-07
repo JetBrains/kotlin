@@ -103,6 +103,9 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
 
+    private static final DescriptorPredicate CHAR_RANGE_TO = pattern("Char.rangeTo(Char)");
+    private static final DescriptorPredicate NUMBER_RANGE_TO = pattern("Byte|Short|Int.rangeTo(Byte|Short|Int)");
+
     private static final ImmutableMap<String, JsBinaryOperator> BINARY_BITWISE_OPERATIONS = ImmutableMap.<String, JsBinaryOperator>builder()
             .put("or", JsBinaryOperator.BIT_OR)
             .put("and", JsBinaryOperator.BIT_AND)
@@ -119,7 +122,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        if (pattern("Char.rangeTo(Char)").apply(descriptor)) {
+        if (CHAR_RANGE_TO.apply(descriptor)) {
             return new RangeToIntrinsic(descriptor);
         }
 
@@ -140,7 +143,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         if (pattern("Int|Short|Byte.div(Int|Short|Byte)").apply(descriptor)) {
             return INTEGER_DIVISION_INTRINSIC;
         }
-        if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
+        if (NUMBER_RANGE_TO.apply(descriptor)) {
             return new RangeToIntrinsic(descriptor);
         }
         if (INT_WITH_BIT_OPERATIONS.apply(descriptor)) {

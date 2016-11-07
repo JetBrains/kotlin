@@ -32,11 +32,11 @@ object LongOperationFIF : FunctionIntrinsicFactory {
     val LONG_BINARY_OPERATION_LONG = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod|and|or|xor(Long)")
     val LONG_BIT_SHIFTS = pattern("Long.shl|shr|ushr(Int)")
     val LONG_BINARY_OPERATION_INTEGER = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Int|Short|Byte)")
-    val LONG_BINARY_OPERATION_FLOATING_POINT = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Double|Float)")
+    val LONG_BINARY_OPERATION_FLOATING_POINT = pattern("Long.compareTo|plus|minus|times|div|mod(Double|Float)")
     val INTEGER_BINARY_OPERATION_LONG = pattern("Int|Short|Byte.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
     val CHAR_BINARY_OPERATION_LONG = pattern("Char.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
     val LONG_BINARY_OPERATION_CHAR = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Char)")
-    val FLOATING_POINT_BINARY_OPERATION_LONG = pattern("Double|Float.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
+    val FLOATING_POINT_BINARY_OPERATION_LONG = pattern("Double|Float.compareTo|plus|minus|times|div|mod(Long)")
 
     private val longBinaryIntrinsics =
             (
