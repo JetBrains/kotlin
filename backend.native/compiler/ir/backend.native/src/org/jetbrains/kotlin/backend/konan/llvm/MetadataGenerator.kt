@@ -4,8 +4,8 @@ package org.jetbrains.kotlin.backend.native.llvm
 import kotlin_native.interop.*
 import llvm.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.backend.BinaryMetadata
-import org.jetbrains.kotlin.backend.BinaryMetadata.FunMetadata
+import org.jetbrains.kotlin.backend.konan.llvm.BinaryMetadata.*
+import org.jetbrains.kotlin.types.KotlinType
 
 internal class MetadataGenerator(override val context: Context): ContextUtils {
 
@@ -31,15 +31,33 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         LLVMAddNamedMetadataOperand(context.llvmModule, name, md)
     }
 
-    private fun serializeFunSignature(declaration:IrFunction): String {
-        val builder = FunMetadata.newBuilder()
+    private fun protobufType(type:KotlinType): TypeMetadata {
+        val builder = TypeMetadata.newBuilder()
+        val name = type.toString()
+        val proto = builder
+            .setName(name)
+            .build()
+
+        return proto
+    }
+
+    private fun serializeFunSignature(declaration: IrFunction): String {
+        val func = declaration.descriptor
 
         val hash = "0x123456 some hash"
-        val name = declaration.descriptor.name.asString()
+        val name = func.name.asString()
 
-        val proto = builder
+        val ktype = func.getReturnType()!!
+        val rettype = protobufType(ktype)
+
+        val params = func.getValueParameters()
+        val argtypes = params.map{ protobufType(it.getType()) }
+
+        val proto = FunMetadata.newBuilder()
             .setHash(hash)
             .setName(name)
+            .setRettype(rettype)
+            .addAllArg(argtypes)
             .build()
 
         // Convert it to ProtoBuf's TextFormat representation.
