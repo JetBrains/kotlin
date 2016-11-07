@@ -50,7 +50,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
                     is KtDotQualifiedExpression -> left.replaceFirstReceiver(factory, receiver, parent.operationSign == KtTokens.SAFE_ACCESS)
                     else -> receiver
                 }
-                val newExpression = factory.createExpression("${newLeft.text}${operationReference.text}${right?.text ?: ""}")
+                val newExpression = factory.createExpressionByPattern("$0$1$2", newLeft.text, operationReference.text, right?.text ?: "")
                 parent.replace(newExpression)
             }
             else -> {
@@ -58,7 +58,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
                     is KtDotQualifiedExpression -> left.deleteFirstReceiver().text
                     else -> ""
                 }
-                val newExpression = factory.createExpression("$newLeftExpressionTemplate${operationReference.text}${right?.text ?: ""}")
+                val newExpression = factory.createExpressionByPattern("$0$1$2", newLeftExpressionTemplate, operationReference.text, right?.text ?: "")
                 element.replace(newExpression)
             }
         }
