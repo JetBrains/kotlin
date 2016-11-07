@@ -23,13 +23,12 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
-
-import static org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend;
 
 public class SimpleTestClassModel implements TestClassModel {
     private static final Comparator<TestEntityModel> BY_NAME = new Comparator<TestEntityModel>() {

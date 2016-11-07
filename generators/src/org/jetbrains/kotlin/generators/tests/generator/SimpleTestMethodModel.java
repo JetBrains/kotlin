@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -29,8 +30,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend;
 
 public class SimpleTestMethodModel implements TestMethodModel {
     private static final String DIRECTIVES_FILE_NAME = "directives.txt";
