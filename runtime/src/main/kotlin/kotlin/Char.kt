@@ -48,32 +48,32 @@ public class Char : Comparable<Char> {
         /**
          * The minimum value of a Unicode high-surrogate code unit.
          */
-        // public const val MIN_HIGH_SURROGATE: Char = '\uD800'
+        public const val MIN_HIGH_SURROGATE: Char = '\uD800'
 
         /**
          * The maximum value of a Unicode high-surrogate code unit.
          */
-        // public const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
+        public const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
 
         /**
          * The minimum value of a Unicode low-surrogate code unit.
          */
-        // public const val MIN_LOW_SURROGATE: Char = '\uDC00'
+        public const val MIN_LOW_SURROGATE: Char = '\uDC00'
 
         /**
          * The maximum value of a Unicode low-surrogate code unit.
          */
-        // public const val MAX_LOW_SURROGATE: Char = '\uDFFF'
+        public const val MAX_LOW_SURROGATE: Char = '\uDFFF'
 
         /**
          * The minimum value of a Unicode surrogate code unit.
          */
-        // public const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
+        public const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
 
         /**
          * The maximum value of a Unicode surrogate code unit.
          */
-        // public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+        public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
     }
 
 }
