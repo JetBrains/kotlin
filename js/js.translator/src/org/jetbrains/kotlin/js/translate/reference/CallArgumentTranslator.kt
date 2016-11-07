@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -157,7 +158,11 @@ class CallArgumentTranslator private constructor(
             }
         }
 
-        removeLastUndefinedArguments(result)
+        val callableDescriptor = resolvedCall.resultingDescriptor
+        if (callableDescriptor !is FunctionDescriptor || !callableDescriptor.isSuspend) {
+            removeLastUndefinedArguments(result)
+        }
+
         return ArgumentsInfo(result, hasSpreadOperator, cachedReceiver)
     }
 
