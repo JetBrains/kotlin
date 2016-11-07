@@ -34,8 +34,6 @@ object LongOperationFIF : FunctionIntrinsicFactory {
     val LONG_BINARY_OPERATION_INTEGER = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Int|Short|Byte)")
     val LONG_BINARY_OPERATION_FLOATING_POINT = pattern("Long.compareTo|plus|minus|times|div|mod(Double|Float)")
     val INTEGER_BINARY_OPERATION_LONG = pattern("Int|Short|Byte.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
-    val CHAR_BINARY_OPERATION_LONG = pattern("Char.compareTo|rangeTo|plus|minus|times|div|mod(Long)")
-    val LONG_BINARY_OPERATION_CHAR = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod(Char)")
     val FLOATING_POINT_BINARY_OPERATION_LONG = pattern("Double|Float.compareTo|plus|minus|times|div|mod(Long)")
 
     private val longBinaryIntrinsics =
@@ -90,10 +88,6 @@ object LongOperationFIF : FunctionIntrinsicFactory {
                wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(it) }, ID())
            LONG_BINARY_OPERATION_INTEGER.apply(descriptor) ->
                wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), { longFromInt(it) })
-           CHAR_BINARY_OPERATION_LONG.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(charToInt(it)) }, ID())
-           LONG_BINARY_OPERATION_CHAR.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), { longFromInt(charToInt(it)) })
            FLOATING_POINT_BINARY_OPERATION_LONG.apply(descriptor) ->
                wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], ID(), { invokeMethod(it, Namer.LONG_TO_NUMBER) })
            LONG_BINARY_OPERATION_FLOATING_POINT.apply(descriptor) ->
