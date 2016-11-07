@@ -17,11 +17,7 @@
     <orderEntry type="module" module-name="idea-analysis" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
-    <orderEntry type="module" module-name="tests-common" scope="TEST" />
-    <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="module" module-name="util.runtime" />
-    <orderEntry type="module" module-name="lint-idea" scope="TEST" />
   </component>
 </module>
