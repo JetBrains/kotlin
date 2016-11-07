@@ -42,6 +42,7 @@ class CodeToInlineBuilder(
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
+    //TODO: document that code will be modified
     fun prepareCodeToInline(
             mainExpression: KtExpression?,
             statementsBefore: List<KtExpression>,
@@ -50,32 +51,42 @@ class CodeToInlineBuilder(
     ): CodeToInline {
         var bindingContext = analyze()
 
-        val result = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
+        val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), importFqNames.toMutableSet())
 
+        bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
+
+        insertExplicitReceivers(codeToInline, bindingContext)
+
+        return codeToInline.toNonMutable()
+    }
+
+    private fun insertExplicitTypeArguments(codeToInline: MutableCodeToInline, bindingContext: BindingContext, analyze: () -> BindingContext): BindingContext {
         val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
-        result.forEachDescendantOfType<KtCallExpression> {
+        codeToInline.forEachDescendantOfType<KtCallExpression> {
             if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
                 typeArgsToAdd.add(it to InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!)
             }
         }
 
-        if (typeArgsToAdd.isNotEmpty()) {
-            for ((callExpr, typeArgs) in typeArgsToAdd) {
-                callExpr.addAfter(typeArgs, callExpr.calleeExpression)
-            }
+        if (typeArgsToAdd.isEmpty()) return bindingContext
 
-            // reanalyze expression - new usages of type parameters may be added
-            bindingContext = analyze()
+        for ((callExpr, typeArgs) in typeArgsToAdd) {
+            callExpr.addAfter(typeArgs, callExpr.calleeExpression)
         }
 
+        // reanalyze expression - new usages of type parameters may be added
+        return analyze()
+    }
+
+    private fun insertExplicitReceivers(codeToInline: MutableCodeToInline, bindingContext: BindingContext) {
         val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
 
-        result.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
+        codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
             //TODO: other types of references ('[]' etc)
             if (expression.mainReference.canBeResolvedViaImport(target)) {
-                result.fqNamesToImport.add(target.importableFqName!!)
+                codeToInline.fqNamesToImport.add(target.importableFqName!!)
             }
 
             if (expression.getReceiverExpression() == null) {
@@ -106,10 +117,8 @@ class CodeToInlineBuilder(
         // add receivers in reverse order because arguments of a call were processed after the callee's name
         for ((expr, receiverExpression) in receiversToAdd.asReversed()) {
             val expressionToReplace = expr.parent as? KtCallExpression ?: expr
-            result.replaceExpression(expressionToReplace,
-                                              psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
+            codeToInline.replaceExpression(expressionToReplace,
+                                           psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
         }
-
-        return result.toNonMutable()
     }
 }
