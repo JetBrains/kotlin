@@ -1,5 +1,5 @@
 package kotlin
 
 public object Unit {
-    // override fun toString() = "kotlin.Unit"
+    override fun toString() = "kotlin.Unit"
 }

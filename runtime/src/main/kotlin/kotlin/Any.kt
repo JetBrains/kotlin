@@ -2,8 +2,8 @@ package kotlin
 
 @ExportTypeInfo("theAnyTypeInfo")
 public open class Any {
-    // @SymbolName("Kotlin_Any_equals")
-    // external public open operator fun equals0(other: Any0?): Boolean
+    @SymbolName("Kotlin_Any_equals")
+    external public open operator fun equals(other: Any?): Boolean
 
     // TODO: do we need that in Any?
     @SymbolName("Kotlin_Any_hashCode")

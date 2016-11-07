@@ -91,6 +91,8 @@ ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array);
 ArrayHeader* Kotlin_String_plusImpl(
     const ArrayHeader* thiz, const ArrayHeader* other);
 KInt Kotlin_String_getStringLength(const ArrayHeader* thiz);
+KRef Kotlin_String_subSequence(
+    const ArrayHeader* thiz, KInt startIndex, KInt endIndex);
 
 #ifdef __cplusplus
 }

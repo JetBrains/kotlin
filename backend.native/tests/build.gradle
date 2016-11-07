@@ -26,7 +26,7 @@ abstract class KonanTest extends DefaultTask {
 
 
     abstract void compileTest(File sourceS, File runtimeS, File out)
-    
+
     private  File kt2bc(String ktSource) {
         def sourceKt = project.file(ktSource)
         def sourceBc = new File("${sourceKt.absolutePath}.bc")
@@ -166,6 +166,13 @@ task hello1(type: RunKonanTest) {
     testData = "Hello World"
     source = "runtime/basic/hello1.kt"
 }
+
+/* TODO: enable, once calling plus operator is implemented.
+task hello2(type: RunKonanTest) {
+    goldValue = "Hello World"
+    testData = "Hello World"
+    source = "runtime/basic/hello2.kt"
+} */
 
 // TODO: waiting for boolean to be implemented
 //task bool_yes(type: KonanTest) {

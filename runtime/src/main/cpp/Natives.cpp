@@ -226,4 +226,10 @@ KInt Kotlin_String_hashCode(const ArrayHeader* thiz) {
   return CityHash64(ByteArrayAddressOfElementAt(thiz, 0), thiz->count_);
 }
 
+KRef Kotlin_String_subSequence(
+    const ArrayHeader* thiz, KInt startIndex, KInt endIndex) {
+  RuntimeAssert(false, "Unsupported operation");
+  return nullptr;
 }
+
+}  // extern "C"
