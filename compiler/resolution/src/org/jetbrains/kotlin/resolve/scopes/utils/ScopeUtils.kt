@@ -180,7 +180,7 @@ fun LexicalScope.addImportingScopes(importScopes: List<ImportingScope>): Lexical
     val lastLexicalScope = parentsWithSelf.last { it is LexicalScope }
     val firstImporting = lastLexicalScope.parent as ImportingScope
     val newFirstImporting = chainImportingScopes(importScopes, firstImporting)
-    return LexicalScopeWrapper(this, newFirstImporting!!)
+    return replaceImportingScopes(newFirstImporting)
 }
 
 fun LexicalScope.addImportingScope(importScope: ImportingScope): LexicalScope
