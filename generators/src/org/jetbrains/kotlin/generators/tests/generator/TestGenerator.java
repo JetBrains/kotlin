@@ -39,13 +39,6 @@ import java.util.Set;
 import static kotlin.collections.CollectionsKt.single;
 
 public class TestGenerator {
-
-    public enum TargetBackend {
-        ANY,
-        @SuppressWarnings("unused") JVM,
-        JS
-    }
-
     private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();
     private static final Class RUNNER = JUnit3RunnerWithInners.class;
 
