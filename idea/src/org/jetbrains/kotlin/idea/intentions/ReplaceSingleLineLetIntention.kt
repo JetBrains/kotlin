@@ -94,13 +94,13 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
 
         return when (bodyExpression) {
-            is KtBinaryExpression -> bodyExpression.isApplication(parameterName)
+            is KtBinaryExpression -> bodyExpression.isApplicable(parameterName)
             is KtDotQualifiedExpression -> bodyExpression.isApplicable(parameterName)
             else -> false
         }
     }
 
-    private fun KtBinaryExpression.isApplication(parameterName: String): Boolean {
+    private fun KtBinaryExpression.isApplicable(parameterName: String): Boolean {
         val left = left ?: return false
 
         if (when (left) {
