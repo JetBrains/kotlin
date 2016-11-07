@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
 
-class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManager) {
+class JvmBuiltIns @JvmOverloads constructor(
+        storageManager: StorageManager,
+        loadBuiltInsFromCurrentClassLoader: Boolean = true
+) : KotlinBuiltIns(storageManager) {
     // Module containing JDK classes or having them among dependencies
     private var ownerModuleDescriptor: ModuleDescriptor? = null
     private var isAdditionalBuiltInsFeatureSupported: Boolean = true
@@ -46,7 +49,9 @@ class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManage
     }
 
     init {
-        createBuiltInsModule()
+        if (loadBuiltInsFromCurrentClassLoader) {
+            createBuiltInsModule()
+        }
     }
 
     override fun getPlatformDependentDeclarationFilter(): PlatformDependentDeclarationFilter = settings

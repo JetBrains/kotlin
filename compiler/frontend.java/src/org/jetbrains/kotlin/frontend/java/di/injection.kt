@@ -128,5 +128,9 @@ fun createContainerForTopDownAnalyzerForJvm(
 
 
 fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings) {
-    get<JvmBuiltIns>().initialize(module, languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
+    get<JvmBuiltIns>().initialize(module, languageVersionSettings)
+}
+
+internal fun JvmBuiltIns.initialize(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings) {
+    initialize(module, languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
 }

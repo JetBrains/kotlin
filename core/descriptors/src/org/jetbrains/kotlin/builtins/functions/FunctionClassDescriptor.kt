@@ -131,7 +131,7 @@ class FunctionClassDescriptor(
             // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
             if (functionKind == Kind.KFunction) {
                 val packageView = containingDeclaration.containingDeclaration.getPackage(BUILT_INS_PACKAGE_FQ_NAME)
-                val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().single()
+                val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
 
                 add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
             }

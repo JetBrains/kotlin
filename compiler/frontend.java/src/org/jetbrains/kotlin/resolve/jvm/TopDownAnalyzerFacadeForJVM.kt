@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
+import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -60,7 +61,6 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 object TopDownAnalyzerFacadeForJVM {
@@ -99,7 +99,8 @@ object TopDownAnalyzerFacadeForJVM {
             declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
             sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files)
     ): ComponentProvider {
-        val moduleContext = createModuleContext(project, configuration)
+        val createBuiltInsFromModule = configuration.getBoolean(JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES)
+        val moduleContext = createModuleContext(project, configuration, createBuiltInsFromModule)
 
         val storageManager = moduleContext.storageManager
         val module = moduleContext.module
@@ -115,6 +116,14 @@ object TopDownAnalyzerFacadeForJVM {
 
         val languageVersionSettings =
                 configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
+
+        val optionalBuiltInsModule =
+                if (configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES)) {
+                    if (createBuiltInsFromModule)
+                        JvmBuiltIns(storageManager).apply { initialize(module, languageVersionSettings) }.builtInsModule
+                    else module.builtIns.builtInsModule
+                }
+                else null
 
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(
@@ -132,12 +141,7 @@ object TopDownAnalyzerFacadeForJVM {
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get<JavaDescriptorResolver>()
 
-            dependenciesContext.setDependencies(listOfNotNull(
-                    dependenciesContext.module,
-                    dependenciesContext.module.builtIns.builtInsModule.check {
-                        configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES)
-                    }
-            ))
+            dependenciesContext.setDependencies(listOfNotNull(dependenciesContext.module, optionalBuiltInsModule))
             dependenciesContext.initializeModuleContents(CompositePackageFragmentProvider(listOf(
                     moduleClassResolver.compiledCodeResolver.packageFragmentProvider,
                     dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>()
@@ -181,9 +185,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         // TODO: remove dependencyModule from friends
         module.setDependencies(ModuleDependenciesImpl(
-                listOfNotNull(module, dependencyModule, module.builtIns.builtInsModule.check {
-                    configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES)
-                }),
+                listOfNotNull(module, dependencyModule, optionalBuiltInsModule),
                 if (dependencyModule != null) setOf(dependencyModule) else emptySet()
         ))
         module.initialize(CompositePackageFragmentProvider(
@@ -225,15 +227,23 @@ object TopDownAnalyzerFacadeForJVM {
     }
 
     fun createContextWithSealedModule(project: Project, configuration: CompilerConfiguration): MutableModuleContext =
-            createModuleContext(project, configuration).apply {
+            createModuleContext(project, configuration, false).apply {
                 setDependencies(module, module.builtIns.builtInsModule)
             }
 
-    private fun createModuleContext(project: Project, configuration: CompilerConfiguration): MutableModuleContext {
+    private fun createModuleContext(
+            project: Project,
+            configuration: CompilerConfiguration,
+            createBuiltInsFromModule: Boolean
+    ): MutableModuleContext {
         val projectContext = ProjectContext(project)
+        val builtIns = JvmBuiltIns(projectContext.storageManager, !createBuiltInsFromModule)
         return ContextForNewModule(
-                projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
-                JvmBuiltIns(projectContext.storageManager)
-        )
+                projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns
+        ).apply {
+            if (createBuiltInsFromModule) {
+                builtIns.builtInsModule = module
+            }
+        }
     }
 }

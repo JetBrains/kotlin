@@ -31,7 +31,7 @@ class JvmBuiltInClassDescriptorFactory(
 ) : ClassDescriptorFactory {
     private val cloneable by storageManager.createLazyValue {
         ClassDescriptorImpl(
-                moduleDescriptor.getPackage(KOTLIN_FQ_NAME).fragments.filterIsInstance<BuiltInsPackageFragment>().single(),
+                moduleDescriptor.getPackage(KOTLIN_FQ_NAME).fragments.filterIsInstance<BuiltInsPackageFragment>().first(),
                 CLONEABLE_NAME, Modality.ABSTRACT, ClassKind.INTERFACE, listOf(moduleDescriptor.builtIns.anyType),
                 SourceElement.NO_SOURCE
         ).apply {

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config;
 
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
@@ -58,8 +59,22 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> USE_SINGLE_MODULE =
             CompilerConfigurationKey.create("combine modules for source files and binary dependencies into a single module");
+
+    /**
+     * Controls whether the module depends on an additional "built-ins" module, which contains binary metadata of built-in definitions.
+     * By default, that metadata is loaded from kotlin-compiler.jar.
+     * However, it can be also loaded directly from the module, see {@link CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES}
+     */
     public static final CompilerConfigurationKey<Boolean> ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES =
             CompilerConfigurationKey.create("add built-ins from the compiler jar to the dependencies of the module being resolved");
+
+    /**
+     * Controls whether an instance of KotlinBuiltIns which is passed to {@link ModuleDescriptorImpl}'s constructor and ends up being used
+     * everywhere in the compiler front-end is loaded directly from the module (from its sources and/or its binaries), as opposed to
+     * from kotlin-compiler.jar
+     */
+    public static final CompilerConfigurationKey<Boolean> CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES =
+            CompilerConfigurationKey.create("create built-ins from resources found in the module dependencies");
 
     public static final CompilerConfigurationKey<JvmTarget> JVM_TARGET =
             CompilerConfigurationKey.create("JVM bytecode target version");
