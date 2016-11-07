@@ -16,6 +16,7 @@
     <property name="compiler.version.java" value="core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java"/>
     <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinCompilerVersion.java.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned"/>
+    <property name="compiler.version.number" value="${build.number}"/>
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip"/>
 
@@ -79,7 +80,8 @@
             target.file="${compiler.version.java}"
             target.file.bk="${compiler.version.java.bk}"
             target.file.versioned="${compiler.version.java.versioned}"
-            test.string="public static final String VERSION = &quot;@snapshot@&quot;;"/>
+            test.string="public static final String VERSION = &quot;@snapshot@&quot;;"
+            version="${compiler.version.number}"/>
     </target>
 
     <target name="writePluginVersionToTemplateFile">
