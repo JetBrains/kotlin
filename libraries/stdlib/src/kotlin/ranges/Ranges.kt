@@ -25,30 +25,69 @@ private open class ComparableRange<T: Comparable<T>> (
 private class DoubleRange (
         start: Double,
         endInclusive: Double
-): ComparableRange<Double>(start, endInclusive) {
-    override fun contains(value: Double): Boolean = value >= start && value <= endInclusive
-    override fun isEmpty(): Boolean = start > endInclusive
+): ClosedRange<Double> {
+    private val _start = start
+    private val _endInclusive = endInclusive
+    override val start: Double get() = _start
+    override val endInclusive: Double get() = _endInclusive
+
+    override fun contains(value: Double): Boolean = value >= _start && value <= _endInclusive
+    override fun isEmpty(): Boolean = !(_start <= _endInclusive)
+
+    override fun equals(other: Any?): Boolean {
+        return other is DoubleRange && (isEmpty() && other.isEmpty() ||
+                _start == other._start && _endInclusive == other._endInclusive)
+    }
+
+    override fun hashCode(): Int {
+        return if (isEmpty()) -1 else 31 * _start.hashCode() + _endInclusive.hashCode()
+    }
+    override fun toString(): String = "$_start..$_endInclusive"
 }
 
+@JvmVersion
 private class FloatRange (
         start: Float,
         endInclusive: Float
-): ComparableRange<Float>(start, endInclusive) {
-    override fun contains(value: Float): Boolean = value >= start && value <= endInclusive
-    override fun isEmpty(): Boolean = start > endInclusive
+): ClosedRange<Float> {
+    private val _start = start
+    private val _endInclusive = endInclusive
+    override val start: Float get() = _start
+    override val endInclusive: Float get() = _endInclusive
+
+    override fun contains(value: Float): Boolean = value >= _start && value <= _endInclusive
+    override fun isEmpty(): Boolean = !(_start <= _endInclusive)
+
+    override fun equals(other: Any?): Boolean {
+        return other is FloatRange && (isEmpty() && other.isEmpty() ||
+                _start == other._start && _endInclusive == other._endInclusive)
+    }
+
+    override fun hashCode(): Int {
+        return if (isEmpty()) -1 else 31 * _start.hashCode() + _endInclusive.hashCode()
+    }
+    override fun toString(): String = "$_start..$_endInclusive"
 }
 
 /**
- * Creates a range from this [Comparable] value to the specified [that] value. This value
- * needs to be smaller than [that] value, otherwise the returned range will be empty.
+ * Creates a range from this [Comparable] value to the specified [that] value.
+ *
+ * This value needs to be smaller than [that] value, otherwise the returned range will be empty.
  */
-public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> =
-        @Suppress("UNCHECKED_CAST")
-        when {
-            this is Double && that is Double -> DoubleRange(this, that) as ClosedRange<T>
-            this is Float && that is Float -> FloatRange(this, that) as ClosedRange<T>
-            else -> ComparableRange(this, that)
-        }
+public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = ComparableRange(this, that)
+
+/**
+ * Creates a range from this [Double] value to the specified [other] value.
+ */
+@SinceKotlin("1.1")
+public operator fun Double.rangeTo(that: Double): ClosedRange<Double> = DoubleRange(this, that)
+
+/**
+ * Creates a range from this [Float] value to the specified [other] value.
+ */
+@JvmVersion
+@SinceKotlin("1.1")
+public operator fun Float.rangeTo(that: Float): ClosedRange<Float> = FloatRange(this, that)
 
 
 internal fun checkStepIsPositive(isPositive: Boolean, step: Number) {

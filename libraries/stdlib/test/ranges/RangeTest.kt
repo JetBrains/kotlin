@@ -200,10 +200,12 @@ public class RangeTest {
         val specialRange = 0.0..-0.0
         assertFalse(specialRange.isEmpty())
         assertTrue(-0.0 in specialRange)
-        // should it be or not: assertEquals(-0.0..0.0, specialRange)
+        val normalSpecialRange = -0.0..0.0
+        assertEquals(specialRange, normalSpecialRange)
+        assertEquals(specialRange.hashCode(), normalSpecialRange.hashCode())
         val nanRange = 0.0..Double.NaN
         assertFalse(Double.NaN in nanRange)
-
+        assertTrue(nanRange.isEmpty())
     }
 
     @Test fun floatRange() {
@@ -236,9 +238,12 @@ public class RangeTest {
         val specialRange = 0.0F..-0.0F
         assertFalse(specialRange.isEmpty())
         assertTrue(-0.0F in specialRange)
-        // should it be or not: assertEquals(-0.0F..0.0F, specialRange)
+        val normalSpecialRange = -0.0F..0.0F
+        assertEquals(specialRange, normalSpecialRange)
+        assertEquals(specialRange.hashCode(), normalSpecialRange.hashCode())
         val nanRange = 0.0F..Float.NaN
         assertFalse(Float.NaN in nanRange)
+        assertTrue(nanRange.isEmpty())
     }
 
     @Test fun isEmpty() {
