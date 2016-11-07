@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.uast
+package org.jetbrains.kotlin.android.lint
 
 import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
@@ -29,6 +29,8 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         super.setUp()
         ConfigLibraryUtil.configureKotlinRuntime(myModule)
         AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
+        // needs access to .class files in kotlin runtime jar
+        myFixture.allowTreeAccessForAllFiles()
     }
 
     override fun tearDown() {
@@ -69,5 +71,5 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         myFixture.checkHighlighting(true, false, false)
     }
 
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory() + "/plugins/uast-kotlin/testData/lint/"
+    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory() + "/idea/testData/android/lint/"
 }

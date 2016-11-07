@@ -156,7 +156,7 @@ import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.uast.AbstractKotlinLintTest
+import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -1109,12 +1109,6 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/uast-kotlin/test", "plugins/uast-kotlin/testData") {
-        testClass<AbstractKotlinLintTest>() {
-            model("lint", excludeParentDirs = true)
-        }
-    }
-
     testGroup("plugins/plugins-tests/tests", "plugins/annotation-collector/testData") {
         testClass<AbstractAnnotationProcessorBoxTest>() {
             model("collectToFile", recursive = false, extension = null)
@@ -1164,6 +1158,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidQuickFixMultiFileTest>() {
             model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+        }
+
+        testClass<AbstractKotlinLintTest>() {
+            model("android/lint", excludeParentDirs = true)
         }
     }
 

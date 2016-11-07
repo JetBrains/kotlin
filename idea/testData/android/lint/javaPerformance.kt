@@ -2,8 +2,8 @@
 // INSPECTION_CLASS2: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintUseSparseArraysInspection
 // INSPECTION_CLASS3: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintUseValueOfInspection
 
-import java.util.HashMap
 import android.annotation.SuppressLint
+import java.util.HashMap
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
