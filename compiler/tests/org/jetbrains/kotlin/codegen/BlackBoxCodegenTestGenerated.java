@@ -14989,6 +14989,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forInVarString.kt")
+        public void testForInVarString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/forInVarString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("interpolation.kt")
         public void testInterpolation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/interpolation.kt");
