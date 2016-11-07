@@ -10,11 +10,10 @@
       <sequential>
         <delete dir="${out.dir}"/>
         <mkdir dir="${out.dir}"/>
-        <java classname="JFlex.Main"
+        <java classname="jflex.Main"
               jvmargs="-Xmx512M"
               fork="true"
               failonerror="true">
-          <arg value="-sliceandcharat"/>
           <arg value="-skel"/>
           <arg value="@{skeleton}"/>
           <arg value="-d"/>

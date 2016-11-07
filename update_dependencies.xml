@@ -199,11 +199,9 @@
         <delete dir="${dependencies}/dx-src" failonerror="false"/>
         <untar src="${dependencies}/download/${android-sources.tgz}" dest="${dependencies}/dx-src" compression="gzip"/>
 
-        <!-- jflex 1.4 -->
         <mkdir dir="${dependencies}/jflex"/>
-        <get-maven-library prefix="de/jflex" lib="jflex" version="1.4.3" src="false"
-                           target.jar.name.base="JFlex"
-                           dependencies="${dependencies}/jflex"/>
+        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/jflex-1.7.0-SNAPSHOT.jar"
+             dest="${dependencies}/jflex/JFlex.jar" usetimestamp="true"/>
         <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
              dest="${dependencies}/jflex/idea-flex.skeleton" usetimestamp="true"/>
 
