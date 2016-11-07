@@ -4,7 +4,7 @@ package org.jetbrains.kotlin.backend.native.llvm
 import kotlin_native.interop.*
 import llvm.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.backend.konan.llvm.BinaryMetadata.*
+import org.jetbrains.kotlin.backend.konan.llvm.BinaryLinkdata.*
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class MetadataGenerator(override val context: Context): ContextUtils {
@@ -13,16 +13,16 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         return LLVMMDString(str, str.length)!!
     }
 
-    private fun metadataNode(args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
+    private fun metadataNode(args: List<LLVMOpaqueValue?>): LLVMOpaqueValue {
         memScoped {
-            val rargs = alloc(array[args.size](Ref to LLVMOpaqueValue))
-            args.forEachIndexed { i, llvmOpaqueValue ->  rargs[i].value = args[i]}
-            return LLVMMDNode(rargs[0], args.size)!!
+            val references = alloc(array[args.size](Ref to LLVMOpaqueValue))
+            args.forEachIndexed { i, llvmOpaqueValue ->  references[i].value = args[i]}
+            return LLVMMDNode(references[0], args.size)!!
         }
     }
 
     private fun metadataFun(fn: LLVMOpaqueValue?, info: String): LLVMOpaqueValue {
-        val args: MutableList<LLVMOpaqueValue?> = mutableListOf(fn, metadataString(info));
+        val args = listOf(fn, metadataString(info));
         val md = metadataNode(args)
         return md
     }
@@ -31,8 +31,8 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         LLVMAddNamedMetadataOperand(context.llvmModule, name, md)
     }
 
-    private fun protobufType(type:KotlinType): TypeMetadata {
-        val builder = TypeMetadata.newBuilder()
+    private fun protobufType(type:KotlinType): TypeLinkdata {
+        val builder = TypeLinkdata.newBuilder()
         val name = type.toString()
         val proto = builder
             .setName(name)
@@ -47,24 +47,23 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         val hash = "0x123456 some hash"
         val name = func.name.asString()
 
-        val ktype = func.getReturnType()!!
-        val rettype = protobufType(ktype)
+        val kotlinType = func.getReturnType()!!
+        val returnType = protobufType(kotlinType)
 
-        val params = func.getValueParameters()
-        val argtypes = params.map{ protobufType(it.getType()) }
+        val parameters = func.getValueParameters()
+        val argumentTypes = parameters.map{ protobufType(it.getType()) }
 
-        val proto = FunMetadata.newBuilder()
+        val proto = FunLinkdata.newBuilder()
             .setHash(hash)
             .setName(name)
-            .setRettype(rettype)
-            .addAllArg(argtypes)
+            .setReturnType(returnType)
+            .addAllArg(argumentTypes)
             .build()
 
         // Convert it to ProtoBuf's TextFormat representation.
         // Use TextFormat.merge(str, builder) to parse it back
         val str = proto.toString()
-
-        return  str
+        return str
     }
 
     internal fun function(declaration: IrFunction) {
