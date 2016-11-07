@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.builtins.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsSettings
+import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
 
 class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManager) {
@@ -35,21 +37,21 @@ class JvmBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManage
         this.isAdditionalBuiltInsFeatureSupported = isAdditionalBuiltInsFeatureSupported
     }
 
-    lateinit var settings: JvmBuiltInsSettings
-        private set
-
-    // Here we know order in which KotlinBuiltIns constructor calls these methods
-    override fun getPlatformDependentDeclarationFilter(): PlatformDependentDeclarationFilter {
-        settings = JvmBuiltInsSettings(
+    val settings: JvmBuiltInsSettings by storageManager.createLazyValue {
+        JvmBuiltInsSettings(
                 builtInsModule, storageManager,
                 { ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" } },
                 { isAdditionalBuiltInsFeatureSupported }
         )
-
-        return settings
     }
 
-    override fun getAdditionalClassPartsProvider() = settings
+    init {
+        createBuiltInsModule()
+    }
+
+    override fun getPlatformDependentDeclarationFilter(): PlatformDependentDeclarationFilter = settings
+
+    override fun getAdditionalClassPartsProvider(): AdditionalClassPartsProvider = settings
 
     override fun getClassDescriptorFactories() =
             super.getClassDescriptorFactories() + JvmBuiltInClassDescriptorFactory(storageManager, builtInsModule)

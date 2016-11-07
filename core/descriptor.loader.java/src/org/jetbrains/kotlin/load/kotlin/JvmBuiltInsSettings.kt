@@ -498,6 +498,10 @@ open class JvmBuiltInsSettings(
 private val ClassDescriptor.isAny: Boolean get() = fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.any
 
 private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager()) {
+    init {
+        createBuiltInsModule()
+    }
+
     companion object {
         private val initializer = BuiltInsInitializer {
             FallbackBuiltIns()

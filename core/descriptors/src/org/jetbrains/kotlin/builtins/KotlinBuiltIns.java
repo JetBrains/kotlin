@@ -66,7 +66,7 @@ public abstract class KotlinBuiltIns {
             BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 
-    private final ModuleDescriptorImpl builtInsModule;
+    private ModuleDescriptorImpl builtInsModule;
 
     private final NotNullLazyValue<Primitives> primitives;
     private final NotNullLazyValue<PackageFragments> packageFragments;
@@ -78,24 +78,6 @@ public abstract class KotlinBuiltIns {
 
     protected KotlinBuiltIns(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
-        builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this);
-
-        PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
-                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
-                getClassDescriptorFactories(),
-                getPlatformDependentDeclarationFilter(),
-                getAdditionalClassPartsProvider(),
-                new Function1<String, InputStream>() {
-                    @Override
-                    public InputStream invoke(String path) {
-                        ClassLoader classLoader = KotlinBuiltIns.class.getClassLoader();
-                        return classLoader != null ? classLoader.getResourceAsStream(path) : ClassLoader.getSystemResourceAsStream(path);
-                    }
-                }
-        );
-
-        builtInsModule.initialize(packageFragmentProvider);
-        builtInsModule.setDependencies(builtInsModule);
 
         this.packageFragments = storageManager.createLazyValue(new Function0<PackageFragments>() {
             @Override
@@ -136,6 +118,25 @@ public abstract class KotlinBuiltIns {
         });
     }
 
+    protected void createBuiltInsModule() {
+        builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this);
+        PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
+                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
+                getClassDescriptorFactories(),
+                getPlatformDependentDeclarationFilter(),
+                getAdditionalClassPartsProvider(),
+                new Function1<String, InputStream>() {
+                    @Override
+                    public InputStream invoke(String path) {
+                        ClassLoader classLoader = KotlinBuiltIns.class.getClassLoader();
+                        return classLoader != null ? classLoader.getResourceAsStream(path) : ClassLoader.getSystemResourceAsStream(path);
+                    }
+                }
+        );
+
+        builtInsModule.initialize(packageFragmentProvider);
+        builtInsModule.setDependencies(builtInsModule);
+    }
     @NotNull
     protected AdditionalClassPartsProvider getAdditionalClassPartsProvider() {
         return AdditionalClassPartsProvider.None.INSTANCE;
