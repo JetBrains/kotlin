@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.incremental;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassSignatureChange extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInClassSignatureChange() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classAnnotationListChanged")
@@ -86,7 +87,7 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassPrivateOnlyChange extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInClassPrivateOnlyChange() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classWithPrivateFunChanged")
@@ -126,7 +127,7 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassMembersOnlyChanged extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInClassMembersOnlyChanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classWithCompanionObjectChanged")
@@ -184,7 +185,7 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PackageMembers extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInPackageMembers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("defaultValues")
@@ -224,7 +225,7 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Unchanged extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInUnchanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("unchangedClass")
