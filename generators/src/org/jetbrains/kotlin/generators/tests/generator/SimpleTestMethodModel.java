@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTargetWithoutCheck;
 
 public class SimpleTestMethodModel implements TestMethodModel {
 
@@ -120,7 +121,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
             String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
             unescapedName = relativePath + "-" + StringUtil.capitalize(extractedName);
         }
-        return "test" + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
+        return (isIgnoredTargetWithoutCheck(targetBackend, file) ? "ignore" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 
     @Override

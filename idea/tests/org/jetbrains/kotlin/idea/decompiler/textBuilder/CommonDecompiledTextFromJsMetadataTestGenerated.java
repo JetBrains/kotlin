@@ -32,6 +32,18 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCommonDecompiledTextFromJsMetadataTest {
+    @TestMetadata("LocalClassAsTypeWithArgument")
+    public void ignoreLocalClassAsTypeWithArgument() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SecondaryConstructors")
+    public void ignoreSecondaryConstructors() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInDecompiledText() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
     }
@@ -108,17 +120,6 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
-    @TestMetadata("LocalClassAsTypeWithArgument")
-    public void testLocalClassAsTypeWithArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument/");
-        try {
-            doTest(fileName);
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
-        }
-        catch (Throwable ignore) {
-        }
-    }
-
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Modifiers/");
@@ -135,17 +136,6 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
     public void testObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Object/");
         doTest(fileName);
-    }
-
-    @TestMetadata("SecondaryConstructors")
-    public void testSecondaryConstructors() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
-        try {
-            doTest(fileName);
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
-        }
-        catch (Throwable ignore) {
-        }
     }
 
     @TestMetadata("SimpleClass")
