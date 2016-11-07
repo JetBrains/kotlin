@@ -1,6 +1,6 @@
 
 syntax="proto2";
-package org.jetbrains.kotlin.backend;
+package org.jetbrains.kotlin.backend.konan.llvm;
 
 option java_outer_classname = "BinaryMetadata";
 
@@ -8,3 +8,4 @@ message FunMetadata {
   required string hash = 1;
   required string name = 2;
 }
+
