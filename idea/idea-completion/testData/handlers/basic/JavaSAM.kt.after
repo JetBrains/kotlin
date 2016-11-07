@@ -1,0 +1,7 @@
+import java.util.concurrent.Callable
+
+fun f() {
+    Callable<caret>
+}
+
+// ELEMENT: "Callable"

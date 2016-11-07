@@ -113,6 +113,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("JavaSAM.kt")
+    public void testJavaSAM() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/JavaSAM.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("KT11633.kt")
     public void testKT11633() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/KT11633.kt");

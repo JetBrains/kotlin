@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -432,8 +433,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             val varAsFunResolvedCall = callee.getResolvedCall(bindingContext) as? VariableAsFunctionResolvedCall
             if (targets.isEmpty()) return Skip
 
-            val selectorCopy = selector.copy() as KtReferenceExpression
-            val newContext = selectorCopy.analyzeAsReplacement(element, bindingContext, resolutionFacade)
+            val (newContext, selectorCopy) = copyAndAnalyzeSelector(element, bindingContext)
             val newCallee = selectorCopy.getCalleeExpressionIfAny() as KtReferenceExpression
             val targetsWhenShort = newCallee.targets(newContext)
             val varAsFunResolvedCallWhenShort = newCallee.getResolvedCall(newContext) as? VariableAsFunctionResolvedCall
@@ -462,6 +462,22 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 targetsWhenShort.any { it !is ClassDescriptor && it !is PackageViewDescriptor } -> Skip
 
                 else -> ImportDescriptors(targets)
+            }
+        }
+
+        private fun copyAndAnalyzeSelector(element: KtDotQualifiedExpression, bindingContext: BindingContext): Pair<BindingContext, KtExpression> {
+            val selector = element.selectorExpression!!
+            val qualifiedAbove = element.getQualifiedExpressionForReceiver()
+            if (qualifiedAbove == null) {
+                val copied = selector.copied()
+                val newBindingContext = copied.analyzeAsReplacement(element, bindingContext, resolutionFacade)
+                return newBindingContext to copied
+            }
+            else {
+                val qualifiedAboveCopy = qualifiedAbove.copied()
+                qualifiedAboveCopy.receiverExpression.replace(selector)
+                val newBindingContext = qualifiedAboveCopy.analyzeAsReplacement(qualifiedAbove, bindingContext, resolutionFacade)
+                return newBindingContext to qualifiedAboveCopy.receiverExpression
             }
         }
 
