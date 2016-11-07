@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest {
     public void testAllFilesPresentInReferences() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AnnotationForClass.kt")
@@ -478,7 +479,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedPropertyAccessors extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInDelegatedPropertyAccessors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("unresolved.kt")
@@ -492,7 +493,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InSource extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInSource() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inSource"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inSource"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("getExtension.kt")
@@ -537,7 +538,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InStandardLibrary extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInStandardLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("lazy.kt")
@@ -559,7 +560,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ForLoopIn extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInForLoopIn() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("unresolvedIterator.kt")
@@ -573,7 +574,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InBuiltIns extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInBuiltIns() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inBuiltIns"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inBuiltIns"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("extension.kt")
@@ -594,7 +595,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InLibrary extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inLibrary"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inLibrary"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("extension.kt")
@@ -615,7 +616,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             }
 
             public void testAllFilesPresentInInSource() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inSource"), Pattern.compile("^([^.]+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/forLoopIn/inSource"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("allMembers.kt")
@@ -637,7 +638,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Invoke extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInInvoke() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/invoke"), Pattern.compile("^([^.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/references/invoke"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lambdaAndParens.kt")

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
     @RunWith(JUnit3RunnerWithInners.class)
     public static class BinaryAndSource extends AbstractReferenceResolveInJavaTest {
         public void testAllFilesPresentInBinaryAndSource() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava/binaryAndSource"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava/binaryAndSource"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Class.java")
@@ -115,7 +116,7 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SourceOnly extends AbstractReferenceResolveInJavaTest {
         public void testAllFilesPresentInSourceOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava/sourceOnly"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava/sourceOnly"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AnnotationParameterReference.java")

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.stubs;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     public void testAllFilesPresentInCompiledKotlin() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations")
@@ -40,7 +41,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractResolveByStubTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AnnotatedAnnotation.kt")
@@ -90,7 +91,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassMembers extends AbstractResolveByStubTest {
             public void testAllFilesPresentInClassMembers() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassObjectPropertyField.kt")
@@ -153,7 +154,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Classes extends AbstractResolveByStubTest {
             public void testAllFilesPresentInClasses() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("AnnotationInClassObject.kt")
@@ -252,7 +253,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PackageMembers extends AbstractResolveByStubTest {
             public void testAllFilesPresentInPackageMembers() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DelegatedProperty.kt")
@@ -309,7 +310,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractResolveByStubTest {
             public void testAllFilesPresentInParameters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("Constructor.kt")
@@ -390,7 +391,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PropertiesWithoutBackingFields extends AbstractResolveByStubTest {
             public void testAllFilesPresentInPropertiesWithoutBackingFields() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("Class.kt")
@@ -447,7 +448,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Types extends AbstractResolveByStubTest {
             public void testAllFilesPresentInTypes() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ReceiverParameter.kt")
@@ -498,7 +499,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WithUseSiteTarget extends AbstractResolveByStubTest {
             public void testAllFilesPresentInWithUseSiteTarget() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DelegateTarget.kt")
@@ -526,7 +527,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractResolveByStubTest {
         public void testAllFilesPresentInClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Class.kt")
@@ -744,7 +745,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaBean extends AbstractResolveByStubTest {
             public void testAllFilesPresentInJavaBean() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DifferentGetterAndSetter.kt")
@@ -790,7 +791,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassFun extends AbstractResolveByStubTest {
         public void testAllFilesPresentInClassFun() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassInParamUsedInFun.kt")
@@ -829,7 +830,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassObject extends AbstractResolveByStubTest {
         public void testAllFilesPresentInClassObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassObjectDeclaresVal.kt")
@@ -916,7 +917,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractResolveByStubTest {
         public void testAllFilesPresentInConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Constructor0.kt")
@@ -1020,7 +1021,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractResolveByStubTest {
             public void testAllFilesPresentInVararg() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ConstructorNonLastVararg.kt")
@@ -1042,7 +1043,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Coroutines extends AbstractResolveByStubTest {
         public void testAllFilesPresentInCoroutines() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Basic.kt")
@@ -1057,7 +1058,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DataClass extends AbstractResolveByStubTest {
         public void testAllFilesPresentInDataClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("MixedComponents.kt")
@@ -1090,7 +1091,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractResolveByStubTest {
         public void testAllFilesPresentInEnum() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("enumVisibility.kt")
@@ -1135,7 +1136,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FromLoadJava extends AbstractResolveByStubTest {
         public void testAllFilesPresentInFromLoadJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ArrayTypeVariance.kt")
@@ -1353,7 +1354,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
 
             public void testAllFilesPresentInKotlinSignature() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ArrayType.kt")
@@ -1457,7 +1458,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 }
 
                 public void testAllFilesPresentInError() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("ConflictingProjectionKind.kt")
@@ -1622,7 +1623,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Propagation extends AbstractResolveByStubTest {
                 public void testAllFilesPresentInPropagation() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("PropagateTypeArgumentNullable.kt")
@@ -1636,7 +1637,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Parameter extends AbstractResolveByStubTest {
                     public void testAllFilesPresentInParameter() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("ChangeProjectionKind1.kt")
@@ -1837,7 +1838,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                     }
 
                     public void testAllFilesPresentInReturn() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("CantMakeImmutableInSubclass.kt")
@@ -2014,7 +2015,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class TypeParameter extends AbstractResolveByStubTest {
                     public void testAllFilesPresentInTypeParameter() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("InheritMutability.kt")
@@ -2079,7 +2080,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Library extends AbstractResolveByStubTest {
             public void testAllFilesPresentInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("LoadIterable.kt")
@@ -2106,7 +2107,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Modality extends AbstractResolveByStubTest {
             public void testAllFilesPresentInModality() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ModalityOfFakeOverrides.kt")
@@ -2121,7 +2122,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NotNull extends AbstractResolveByStubTest {
             public void testAllFilesPresentInNotNull() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("NotNullField.kt")
@@ -2161,7 +2162,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Fun extends AbstractResolveByStubTest {
         public void testAllFilesPresentInFun() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Assert.kt")
@@ -2235,7 +2236,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericWithTypeVariables extends AbstractResolveByStubTest {
             public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("FunGenericParam.kt")
@@ -2304,7 +2305,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericWithoutTypeVariables extends AbstractResolveByStubTest {
             public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("FunClassParamNotNull.kt")
@@ -2343,7 +2344,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NonGeneric extends AbstractResolveByStubTest {
             public void testAllFilesPresentInNonGeneric() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassFun.kt")
@@ -2448,7 +2449,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractResolveByStubTest {
             public void testAllFilesPresentInVararg() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("nonLastVararg.kt")
@@ -2476,7 +2477,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inline extends AbstractResolveByStubTest {
         public void testAllFilesPresentInInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("inlineFunction.kt")
@@ -2491,7 +2492,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MemberOrder extends AbstractResolveByStubTest {
         public void testAllFilesPresentInMemberOrder() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("callablesNameClash.kt")
@@ -2536,7 +2537,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nested extends AbstractResolveByStubTest {
         public void testAllFilesPresentInNested() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nested"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nested"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("deepInnerGeneric.kt")
@@ -2563,7 +2564,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PlatformTypes extends AbstractResolveByStubTest {
         public void testAllFilesPresentInPlatformTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("notnullTypeArgument.kt")
@@ -2584,7 +2585,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Prop extends AbstractResolveByStubTest {
         public void testAllFilesPresentInProp() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassVal.kt")
@@ -2790,7 +2791,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultAccessors extends AbstractResolveByStubTest {
             public void testAllFilesPresentInDefaultAccessors() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassVal.kt")
@@ -2860,7 +2861,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Type extends AbstractResolveByStubTest {
         public void testAllFilesPresentInType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Any.kt")
@@ -3049,7 +3050,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Typealias extends AbstractResolveByStubTest {
         public void testAllFilesPresentInTypealias() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Annotations.kt")
@@ -3082,7 +3083,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Visibility extends AbstractResolveByStubTest {
         public void testAllFilesPresentInVisibility() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("InternalClass.kt")

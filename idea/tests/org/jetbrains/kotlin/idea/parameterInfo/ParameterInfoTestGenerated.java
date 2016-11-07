@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.parameterInfo;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     public void testAllFilesPresentInParameterInfo() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo"), Pattern.compile("^(.+)\\.kt$"), true, "withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib");
     }
 
     @TestMetadata("idea/testData/parameterInfo/arrayAccess")
@@ -40,7 +41,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ArrayAccess extends AbstractParameterInfoTest {
         public void testAllFilesPresentInArrayAccess() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/arrayAccess"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/arrayAccess"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Overloads.kt")
@@ -79,7 +80,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FunctionCall extends AbstractParameterInfoTest {
         public void testAllFilesPresentInFunctionCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/functionCall"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/functionCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("DefaultValuesFromLib.kt")
@@ -328,7 +329,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeArguments extends AbstractParameterInfoTest {
         public void testAllFilesPresentInTypeArguments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/typeArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/typeArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("BaseClass.kt")
@@ -385,7 +386,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithLib1 extends AbstractParameterInfoTest {
         public void testAllFilesPresentInWithLib1() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/withLib1"), Pattern.compile("^(.+)\\.kt$"), true, "sharedLib");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/withLib1"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "sharedLib");
         }
 
         @TestMetadata("useJavaFromLib.kt")
@@ -400,7 +401,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithLib2 extends AbstractParameterInfoTest {
         public void testAllFilesPresentInWithLib2() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/withLib2"), Pattern.compile("^(.+)\\.kt$"), true, "sharedLib");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/withLib2"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "sharedLib");
         }
 
         @TestMetadata("useJavaSAMFromLib.kt")
@@ -415,7 +416,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithLib3 extends AbstractParameterInfoTest {
         public void testAllFilesPresentInWithLib3() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/withLib3"), Pattern.compile("^(.+)\\.kt$"), true, "sharedLib");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/withLib3"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "sharedLib");
         }
 
         @TestMetadata("useJavaSAMFromLib.kt")

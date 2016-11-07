@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.checkers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -40,7 +41,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
 
         public void testAllFilesPresentInChecker() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("AnnotationOnFile.kt")
@@ -409,7 +410,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Regression extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInRegression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AmbiguityOnLazyTypeComputation.kt")
@@ -688,7 +689,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Recovery extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInRecovery() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("namelessMembers.kt")
@@ -715,7 +716,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Rendering extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInRendering() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("TypeInferenceError.kt")
@@ -730,7 +731,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Scripts extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInScripts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/scripts"), Pattern.compile("^(.+)\\.kts$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/scripts"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("if.kts")
@@ -763,7 +764,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DuplicateJvmSignature extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/fields")
@@ -771,7 +772,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Fields extends AbstractPsiCheckerTest {
             public void testAllFilesPresentInFields() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("classObjectCopiedFieldObject.kt")
@@ -786,7 +787,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FunctionAndProperty extends AbstractPsiCheckerTest {
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ambiguous.kt")
@@ -855,7 +856,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TraitImpl extends AbstractPsiCheckerTest {
             public void testAllFilesPresentInTraitImpl() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("twoTraits.kt")
@@ -871,7 +872,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Infos extends AbstractPsiCheckerTest {
         public void testAllFilesPresentInInfos() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("CapturedConstructorParameter.kt")

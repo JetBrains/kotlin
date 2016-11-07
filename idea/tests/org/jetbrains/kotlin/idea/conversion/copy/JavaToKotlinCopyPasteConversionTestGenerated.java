@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.conversion.copy;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -74,7 +75,7 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     }
 
     public void testAllFilesPresentInConversion() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/conversion"), Pattern.compile("^([^\\.]+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/conversion"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("Arithmetic.java")

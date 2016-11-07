@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi.patternMatching;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
     public void testAllFilesPresentInUnifier() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("idea/testData/unifier/equivalence")
@@ -40,7 +41,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Equivalence extends AbstractPsiUnifierTest {
         public void testAllFilesPresentInEquivalence() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("idea/testData/unifier/equivalence/controlStructures")
@@ -48,7 +49,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ControlStructures extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInControlStructures() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("break.kt")
@@ -134,7 +135,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Blocks extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInBlocks() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures/blocks"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures/blocks"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("anonymousObjectsRuntime.kt")
@@ -162,7 +163,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Declarations extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInDeclarations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects")
@@ -170,7 +171,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ClassesAndObjects extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInClassesAndObjects() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/classesAndObjects"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/classesAndObjects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("anonymousObjectBody.kt")
@@ -215,7 +216,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class LocalCallables extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInLocalCallables() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("localExtensionFunctions.kt")
@@ -247,7 +248,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Lambdas extends AbstractPsiUnifierTest {
                     public void testAllFilesPresentInLambdas() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables/lambdas"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("multipleParamsRuntime.kt")
@@ -287,7 +288,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class TypeParameters extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInTypeParameters() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/typeParameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("boundsAndConstraints.kt")
@@ -303,7 +304,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Expressions extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInExpressions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("arrayAccess.kt")
@@ -341,7 +342,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CallableReferences extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInCallableReferences() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("classRefRuntime.kt")
@@ -362,7 +363,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Calls extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInCalls() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/calls"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/calls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("callAndCalleeRuntime.kt")
@@ -431,7 +432,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Casts extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInCasts() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/casts"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/casts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("as.kt")
@@ -458,7 +459,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Conventions extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInConventions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("containsRuntime.kt")
@@ -526,7 +527,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Assignments extends AbstractPsiUnifierTest {
                     public void testAllFilesPresentInAssignments() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/assignments"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/assignments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("indexedPlusAssignRuntime.kt")
@@ -565,7 +566,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Invoke extends AbstractPsiUnifierTest {
                     public void testAllFilesPresentInInvoke() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/invoke"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("invokeOnCall.kt")
@@ -599,7 +600,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Misc extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInMisc() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/misc"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/misc"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("misc1.kt")
@@ -626,7 +627,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Super extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInSuper() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/super"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/super"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("multipleSuperTypes.kt")
@@ -659,7 +660,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class This extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInThis() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/this"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/this"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("anonymousObjects.kt")
@@ -729,7 +730,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Types extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInTypes() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/types"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("function0.kt")

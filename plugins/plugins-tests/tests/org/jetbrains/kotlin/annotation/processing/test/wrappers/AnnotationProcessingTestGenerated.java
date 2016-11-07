@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.annotation.processing.test.wrappers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class AnnotationProcessingTestGenerated extends AbstractAnnotationProcessingTest {
     public void testAllFilesPresentInWrappers() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-processing/testData/wrappers"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-processing/testData/wrappers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("plugins/annotation-processing/testData/wrappers/javaWrappers")
@@ -40,7 +41,7 @@ public class AnnotationProcessingTestGenerated extends AbstractAnnotationProcess
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaWrappers extends AbstractAnnotationProcessingTest {
         public void testAllFilesPresentInJavaWrappers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-processing/testData/wrappers/javaWrappers"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-processing/testData/wrappers/javaWrappers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("EnumClass.kt")
@@ -73,7 +74,7 @@ public class AnnotationProcessingTestGenerated extends AbstractAnnotationProcess
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinWrappers extends AbstractAnnotationProcessingTest {
         public void testAllFilesPresentInKotlinWrappers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-processing/testData/wrappers/kotlinWrappers"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-processing/testData/wrappers/kotlinWrappers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotations.kt")

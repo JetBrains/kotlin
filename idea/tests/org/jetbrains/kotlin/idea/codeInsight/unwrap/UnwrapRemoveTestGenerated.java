@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight.unwrap;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveExpression extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ifInBlock.kt")
@@ -73,7 +74,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnwrapThen extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapThen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapThen"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapThen"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("thenCompoundInBlock.kt")
@@ -100,7 +101,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnwrapElse extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapElse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapElse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapElse"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("elseCompoundInBlock.kt")
@@ -127,7 +128,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveElse extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveElse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeElse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeElse"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("else.kt")
@@ -142,7 +143,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnwrapLoop extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapLoop() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("doWhile.kt")
@@ -169,7 +170,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnwrapTry extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapTry() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapTry"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapTry"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("tryCompoundInBlock.kt")
@@ -196,7 +197,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnwrapCatch extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapCatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("catchCompoundInBlock.kt")
@@ -223,7 +224,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveCatch extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveCatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeCatch"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeCatch"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("catch.kt")
@@ -238,7 +239,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnwrapFinally extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("finallyCompoundInBlock.kt")
@@ -265,7 +266,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveFinally extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInRemoveFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/removeFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("finallyInBlock.kt")
@@ -286,7 +287,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnwrapLambda extends AbstractUnwrapRemoveTest {
         public void testAllFilesPresentInUnwrapLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lambdaCallCompoundInBlock.kt")

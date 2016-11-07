@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.formatter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -64,7 +65,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         }
 
         public void testAllFilesPresentInDirectSettings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AssignmentAfterEq.after.kt")
@@ -300,7 +301,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Script extends AbstractTypingIndentationTestBase {
             public void testAllFilesPresentInScript() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline/script"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline/script"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ScriptAfterClosingBrace.after.kts")
@@ -346,7 +347,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InvertedSettings extends AbstractTypingIndentationTestBase {
         public void testAllFilesPresentInInvertedSettings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AssignmentAfterEq.after.inv.kt")
