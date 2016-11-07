@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.DefaultImportProvider
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import java.util.*
 
 data class ReplaceWith(val pattern: String, val imports: List<String>)
@@ -77,13 +79,7 @@ object ReplaceWithAnnotationAnalyzer {
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
                                        listOf(explicitImportsScope) + defaultImportsScopes) ?: return null
 
-        val expressionTypingServices = if (module.builtIns.builtInsModule == module) {
-            // TODO: doubtful place, do we require this module or not? Built-ins module doesn't have some necessary components...
-            resolutionFacade.getFrontendService(ExpressionTypingServices::class.java)
-        }
-        else {
-            resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
-        }
+        val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
 
         fun analyzeExpression(): BindingContext {
             return expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
