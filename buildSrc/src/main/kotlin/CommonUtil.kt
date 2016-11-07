@@ -5,6 +5,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 
@@ -66,17 +67,32 @@ fun Project.getSources() = the<JavaPluginConvention>().sourceSets.getByName("mai
 fun Project.getResourceFiles() = the<JavaPluginConvention>().sourceSets.getByName("main").resources
 
 
-private fun Project.configureKotlinProjectSourceSet(vararg srcs: String, sourceSetName: String, sourcesBaseDir: File? = null) =
+private fun Project.configureKotlinProjectSourceSet(srcs: Iterable<File>, sourceSetName: String, getSources: SourceSet.() -> SourceDirectorySet) =
         configure<JavaPluginConvention> {
             sourceSets.getByName(sourceSetName).apply {
-                java.setSrcDirs(
-                        srcs.map { File(sourcesBaseDir ?: projectDir, it) })
+                getSources().setSrcDirs(srcs)
             }
         }
 
-fun Project.configureKotlinProjectSources(vararg srcs: String, sourcesBaseDir: File? = null) = configureKotlinProjectSourceSet(*srcs, sourceSetName = "main", sourcesBaseDir = sourcesBaseDir)
+private fun Project.configureKotlinProjectSourceSet(vararg srcs: String, sourceSetName: String, getSources: SourceSet.() -> SourceDirectorySet, sourcesBaseDir: File? = null) =
+        configureKotlinProjectSourceSet(srcs.map { File(sourcesBaseDir ?: projectDir, it) }, sourceSetName, getSources)
+
+fun Project.configureKotlinProjectSources(vararg srcs: String, sourcesBaseDir: File? = null) =
+        configureKotlinProjectSourceSet(*srcs, sourceSetName = "main", getSources = { this.getJava() }, sourcesBaseDir = sourcesBaseDir)
+
+fun Project.configureKotlinProjectSources(srcs: Iterable<File>) =
+        configureKotlinProjectSourceSet(srcs, sourceSetName = "main", getSources = { this.getJava() })
 
 fun Project.configureKotlinProjectSourcesDefault(sourcesBaseDir: File? = null) = configureKotlinProjectSources("src", sourcesBaseDir = sourcesBaseDir)
 
-fun Project.configureKotlinProjectNoTests() = configureKotlinProjectSourceSet(sourceSetName = "test")
+fun Project.configureKotlinProjectResources(vararg srcs: String, sourcesBaseDir: File? = null) =
+        configureKotlinProjectSourceSet(*srcs, sourceSetName = "main", getSources = { this.getResources() }, sourcesBaseDir = sourcesBaseDir)
+
+fun Project.configureKotlinProjectResources(srcs: Iterable<File>) =
+        configureKotlinProjectSourceSet(srcs, sourceSetName = "main", getSources = { this.getResources() })
+
+fun Project.configureKotlinProjectNoTests() {
+    configureKotlinProjectSourceSet(sourceSetName = "test", getSources = { this.getJava() })
+    configureKotlinProjectSourceSet(sourceSetName = "test", getSources = { this.getResources() })
+}
 

@@ -1,10 +1,6 @@
 
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.File
 
 buildscript {
     repositories {
@@ -34,19 +30,12 @@ dependencies {
     compile(commonDep("javax.inject"))
 }
 
-configure<JavaPluginConvention> {
-    sourceSets.getByName("main").apply {
-        java.setSrcDirs(
-                listOf("core/descriptor.loader.java/src",
-                       "core/descriptors/src",
-                       "core/descriptors.runtime/src",
-                       "core/deserialization/src")
-                .map { File(rootDir, it) })
-    }
-    sourceSets.getByName("test").apply {
-        java.setSrcDirs(emptyList<File>())
-    }
-}
+configureKotlinProjectSources(
+        "descriptor.loader.java/src",
+        "descriptors/src",
+        "descriptors.runtime/src",
+        "deserialization/src")
+configureKotlinProjectNoTests()
 
 tasks.withType<JavaCompile> {
     dependsOn(protobufLiteTask)

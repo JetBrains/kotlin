@@ -1,9 +1,5 @@
 
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer
 import java.io.File
@@ -31,15 +27,9 @@ dependencies {
     compile(files(builtinsSerialized))
 }
 
-configure<JavaPluginConvention> {
-    sourceSets.getByName("main").apply {
-        java.setSrcDirs(listOf(File(rootDir, "core/builtins/src"), File(rootDir, "core/runtime.jvm/src")))
-        resources.setSrcDirs(listOf(builtinsSerialized))
-    }
-    sourceSets.getByName("test").apply {
-        java.setSrcDirs(emptyList<File>())
-    }
-}
+configureKotlinProjectSources("core/builtins/src", "core/runtime.jvm/src", sourcesBaseDir = rootDir)
+configureKotlinProjectResources(listOf(builtinsSerialized))
+configureKotlinProjectNoTests()
 
 val serialize = task("internal.serialize") {
     val outDir = builtinsSerialized
@@ -56,8 +46,12 @@ val serialize = task("internal.serialize") {
 
 //task("sourcesets") {
 //    doLast {
-//        the<JavaPluginConvention>().sourceSets.all {
-//            println("--> ${it.name}: ${it.java.srcDirs.joinToString()}")
+//        the<JavaPluginConvention>().sourceSets.all { ss ->
+//            println("--> ${ss.name}.java: ${ss.java.srcDirs.joinToString()}")
+//            ss.resources.srcDirs.let {
+//                if (it.isNotEmpty())
+//                    println("--> ${ss.name}.resources: ${it.joinToString()}")
+//            }
 //        }
 //    }
 //}
