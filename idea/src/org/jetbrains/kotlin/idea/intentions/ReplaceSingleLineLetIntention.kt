@@ -56,7 +56,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
             else -> {
                 val newLeftExpressionTemplate = when (left) {
                     is KtDotQualifiedExpression -> left.deleteFirstReceiver().text
-                    else -> ""
+                    else -> KtTokens.THIS_KEYWORD.value
                 }
                 val newExpression = factory.createExpressionByPattern("$0$1$2", newLeftExpressionTemplate, operationReference.text, right?.text ?: "")
                 element.replace(newExpression)

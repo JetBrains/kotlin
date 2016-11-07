@@ -2,5 +2,5 @@
 // IS_APPLICABLE: true
 
 fun Int.foo() {
-    +1
+    this + 1
 }
