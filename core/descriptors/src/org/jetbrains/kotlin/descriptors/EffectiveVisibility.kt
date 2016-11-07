@@ -233,12 +233,13 @@ private fun lowerBound(args: List<EffectiveVisibility>) =
         if (args.isEmpty()) Public else lowerBound(args.first(), args.subList(1, args.size))
 
 private fun Visibility.forVisibility(descriptor: ClassDescriptor? = null): EffectiveVisibility = when (this) {
-    Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> Private
+    Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INVISIBLE_FAKE -> Private
     Visibilities.PROTECTED -> Protected(descriptor)
     Visibilities.INTERNAL -> Internal
     Visibilities.PUBLIC -> Public
     Visibilities.LOCAL -> Local
-    else -> this.effectiveVisibility(descriptor)
+    // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
+    else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
 }
 
 fun effectiveVisibility(visibility: Visibility, descriptor: ClassDescriptor?) = visibility.forVisibility(descriptor)

@@ -7198,6 +7198,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("exceptionOnFakeInvisible.kt")
+            public void testExceptionOnFakeInvisible() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/exceptionOnFakeInvisible.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functional.kt")
             public void testFunctional() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/functional.kt");
