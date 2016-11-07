@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -75,9 +76,6 @@ class CallArgumentTranslator private constructor(
 
     private fun translate(): ArgumentsInfo {
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
-        if (valueParameters.isEmpty()) {
-            return ArgumentsInfo(listOf<JsExpression>(), false, null)
-        }
         var hasSpreadOperator = false
         var cachedReceiver: TemporaryConstVariable? = null
 
@@ -159,9 +157,14 @@ class CallArgumentTranslator private constructor(
         }
 
         val callableDescriptor = resolvedCall.resultingDescriptor
-        if (callableDescriptor !is FunctionDescriptor || !callableDescriptor.isSuspend) {
-            removeLastUndefinedArguments(result)
+        if (callableDescriptor is FunctionDescriptor && callableDescriptor.isSuspend &&
+            callableDescriptor.initialSignatureDescriptor != null
+        ) {
+            val coroutineDescriptor = resolvedCall.getImplicitReceiverValue()!!.declarationDescriptor
+            result.add(context().getAliasForDescriptor(coroutineDescriptor) ?: JsLiteral.THIS)
         }
+
+        removeLastUndefinedArguments(result)
 
         return ArgumentsInfo(result, hasSpreadOperator, cachedReceiver)
     }

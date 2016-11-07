@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.js.translate.expression
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.context.getNameForCapturedDescriptor
@@ -75,11 +77,12 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             lambdaCreator.isLocal = true
             lambdaCreator.coroutineType = continuationType
             lambdaCreator.controllerType = controllerType
-            if (!isRecursive) {
+            if (!isRecursive || descriptor.isCoroutineLambda) {
                 lambda.name = null
             }
             lambdaCreator.name.staticRef = lambdaCreator
-            return lambdaCreator.withCapturedParameters(descriptor, functionContext, invokingContext)
+            return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
+                                                        invokingContext)
         }
 
         lambda.isLocal = true
@@ -101,6 +104,10 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     }
 }
 
+private fun CallableMemberDescriptor.wrapContextForCoroutineIfNecessary(context: TranslationContext): TranslationContext {
+    return if (isCoroutineLambda) context.innerContextWithDescriptorsAliased(mapOf(this to JsLiteral.THIS)) else context
+}
+
 fun JsFunction.withCapturedParameters(
         descriptor: CallableMemberDescriptor,
         context: TranslationContext,
@@ -116,7 +123,7 @@ fun JsFunction.withCapturedParameters(
     val tracker = context.usageTracker()!!
 
     for ((capturedDescriptor, name) in tracker.capturedDescriptorToJsName) {
-        if (capturedDescriptor == tracker.containingDescriptor) continue
+        if (capturedDescriptor == tracker.containingDescriptor && !capturedDescriptor.isCoroutineLambda) continue
 
         val capturedRef = invokingContext.getArgumentForClosureConstructor(capturedDescriptor)
         var additionalArgs = listOf(capturedRef)

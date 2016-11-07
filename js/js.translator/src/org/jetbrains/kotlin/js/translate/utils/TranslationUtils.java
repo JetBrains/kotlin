@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
@@ -330,7 +329,7 @@ public final class TranslationUtils {
 
         ImplicitReceiver receiver = (ImplicitReceiver) returnCall.getDispatchReceiver();
         assert receiver != null;
-        AnonymousFunctionDescriptor lambdaDescriptor = (AnonymousFunctionDescriptor) receiver.getDeclarationDescriptor();
+        FunctionDescriptor lambdaDescriptor = (FunctionDescriptor) receiver.getDeclarationDescriptor();
         ReceiverParameterDescriptor receiverParameter = lambdaDescriptor.getExtensionReceiverParameter();
         assert receiverParameter != null;
         JsExpression jsReceiver = returnContext.getDispatchReceiver(receiverParameter);

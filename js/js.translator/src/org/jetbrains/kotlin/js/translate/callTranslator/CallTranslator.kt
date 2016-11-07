@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsFunction
 import com.google.dart.compiler.backend.js.ast.JsInvocation
 import com.google.dart.compiler.backend.js.ast.metadata.isSuspend
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
