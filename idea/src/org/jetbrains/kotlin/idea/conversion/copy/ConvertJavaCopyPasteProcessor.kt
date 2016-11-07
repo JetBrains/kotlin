@@ -135,15 +135,19 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             val (text, referenceData, explicitImports) = conversionResult!!
             text!! // otherwise we should get true from doConversionAndInsertImportsIfUnchanged and return above
 
+            val boundsAfterReplace =
+                    runWriteAction {
+                        val startOffset = bounds.startOffset
+                        document.replaceString(startOffset, bounds.endOffset, text)
+
+                        val endOffsetAfterCopy = startOffset + text.length
+                        editor.caretModel.moveToOffset(endOffsetAfterCopy)
+                        TextRange(startOffset, endOffsetAfterCopy)
+                    }
+
+            val newBounds = insertImports(boundsAfterReplace, referenceData, explicitImports)
+
             runWriteAction {
-                val startOffset = bounds.startOffset
-                document.replaceString(startOffset, bounds.endOffset, text)
-
-                val endOffsetAfterCopy = startOffset + text.length
-                editor.caretModel.moveToOffset(endOffsetAfterCopy)
-
-                val newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData, explicitImports)
-
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
                 AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
 
