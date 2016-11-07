@@ -23,12 +23,18 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import kotlin.TuplesKt;
 import kotlin.collections.CollectionsKt;
+import kotlin.collections.MapsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.analyzer.ModuleContent;
+import org.jetbrains.kotlin.analyzer.ModuleInfo;
+import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
@@ -94,6 +100,8 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         }
     };
 
+    private static final ModuleDescriptor.Capability<List<KtFile>> MODULE_FILES = new ModuleDescriptor.Capability<List<KtFile>>("");
+
     @Override
     protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {
         Map<TestModule, List<TestFile>> groupedByModule = CollectionsKt.groupByTo(
@@ -141,21 +149,36 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
             List<KtFile> jetFiles = getJetFiles(testFilesInModule, true);
 
-            ModuleDescriptorImpl module = modules.get(testModule);
-            BindingTrace moduleTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-
-            moduleBindings.put(testModule, moduleTrace.getBindingContext());
+            ModuleDescriptorImpl oldModule = modules.get(testModule);
 
             LanguageVersionSettings languageVersionSettings = loadLanguageVersionSettings(testFilesInModule);
-            ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), module);
+            ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), oldModule);
 
             boolean separateModules = groupedByModule.size() == 1 && groupedByModule.keySet().iterator().next() == null;
-            AnalysisResult result = analyzeModuleContents(moduleContext, jetFiles, moduleTrace, languageVersionSettings, separateModules);
-            if (separateModules) {
-                modules.put(testModule, (ModuleDescriptorImpl) result.getModuleDescriptor());
+            AnalysisResult result = analyzeModuleContents(
+                    moduleContext, jetFiles, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                    languageVersionSettings, separateModules
+            );
+            ModuleDescriptorImpl newModule = (ModuleDescriptorImpl) result.getModuleDescriptor();
+            if (oldModule != newModule) {
+                // For common modules, we use DefaultAnalyzerFacade who creates ModuleDescriptor instances by itself
+                // (its API does not support working with a module created beforehand).
+                // So, we should replace the old (effectively discarded) module with the new one everywhere in dependencies.
+                // TODO: dirty hack, refactor this test so that it doesn't create ModuleDescriptor instances
+                modules.put(testModule, newModule);
+                for (ModuleDescriptorImpl module : modules.values()) {
+                    @SuppressWarnings("deprecation")
+                    ListIterator<ModuleDescriptorImpl> it = module.getTestOnly_AllDependentModules().listIterator();
+                    while (it.hasNext()) {
+                        if (it.next() == oldModule) {
+                            it.set(newModule);
+                        }
+                    }
+                }
             }
 
-            checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
+            moduleBindings.put(testModule, result.getBindingContext());
+            checkAllResolvedCallsAreCompleted(jetFiles, result.getBindingContext());
         }
 
         // We want to always create a test data file (txt) if it was missing,
@@ -183,8 +206,12 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
         StringBuilder actualText = new StringBuilder();
         for (TestFile testFile : testFiles) {
-            ok &= testFile.getActualText(moduleBindings.get(testFile.getModule()), actualText,
-                                         shouldSkipJvmSignatureDiagnostics(groupedByModule));
+            TestModule module = testFile.getModule();
+            boolean isCommonModule = MultiTargetPlatformKt.getMultiTargetPlatform(modules.get(module)) == MultiTargetPlatform.Common.INSTANCE;
+            ok &= testFile.getActualText(
+                    moduleBindings.get(module), actualText,
+                    shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule
+            );
         }
 
         Throwable exceptionFromDynamicCallDescriptorsValidation = null;
@@ -329,6 +356,31 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             );
         }
 
+        ModuleDescriptorImpl moduleDescriptor = (ModuleDescriptorImpl) moduleContext.getModule();
+
+        MultiTargetPlatform platform = MultiTargetPlatformKt.getMultiTargetPlatform(moduleDescriptor);
+        if (platform == MultiTargetPlatform.Common.INSTANCE) {
+            //noinspection unchecked
+            return DefaultAnalyzerFacade.INSTANCE.analyzeFiles(
+                    files, moduleDescriptor.getName(), true,
+                    MapsKt.mapOf(
+                            TuplesKt.to(MultiTargetPlatform.CAPABILITY, MultiTargetPlatform.Common.INSTANCE),
+                            TuplesKt.to(MODULE_FILES, files)
+                    ),
+                    new Function2<ModuleInfo, ModuleContent, PackagePartProvider>() {
+                        @Override
+                        public PackagePartProvider invoke(ModuleInfo info, ModuleContent content) {
+                            // TODO
+                            return PackagePartProvider.Empty.INSTANCE;
+                        }
+                    }
+            );
+        }
+        else if (platform != null) {
+            // TODO: analyze with the correct platform, not always JVM
+            files = CollectionsKt.plus(files, getCommonCodeFilesForPlatformSpecificModule(moduleDescriptor));
+        }
+
         GlobalSearchScope moduleContentScope = GlobalSearchScope.allScope(moduleContext.getProject());
         SingleModuleClassResolver moduleClassResolver = new SingleModuleClassResolver();
         ComponentProvider container = InjectionKt.createContainerForTopDownAnalyzerForJvm(
@@ -341,10 +393,9 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
                 languageVersionSettings,
                 moduleClassResolver
         );
-        InjectionKt.initJvmBuiltInsForTopDownAnalysis(container, moduleContext.getModule(), languageVersionSettings);
+        InjectionKt.initJvmBuiltInsForTopDownAnalysis(container, moduleDescriptor, languageVersionSettings);
         moduleClassResolver.setResolver(DslKt.getService(container, JavaDescriptorResolver.class));
 
-        ModuleDescriptorImpl moduleDescriptor = (ModuleDescriptorImpl) moduleContext.getModule();
         moduleDescriptor.initialize(new CompositePackageFragmentProvider(Arrays.asList(
                 DslKt.getService(container, KotlinCodeAnalyzer.class).getPackageFragmentProvider(),
                 DslKt.getService(container, JavaDescriptorResolver.class).getPackageFragmentProvider()
@@ -355,6 +406,27 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         );
 
         return AnalysisResult.success(moduleTrace.getBindingContext(), moduleDescriptor);
+    }
+
+    @NotNull
+    private static List<KtFile> getCommonCodeFilesForPlatformSpecificModule(@NotNull ModuleDescriptorImpl moduleDescriptor) {
+        // We assume that a platform-specific module _implements_ all declarations from common modules which are immediate dependencies.
+        // So we collect all sources from such modules to analyze in the platform-specific module as well
+        @SuppressWarnings("deprecation")
+        List<ModuleDescriptorImpl> dependencies = moduleDescriptor.getTestOnly_AllDependentModules();
+
+        // TODO: diagnostics on common code reported during the platform module analysis should be distinguished somehow
+        // E.g. "<!JVM:PLATFORM_DEFINITION_WITHOUT_DECLARATION!>...<!>
+        List<KtFile> result = new ArrayList<KtFile>(0);
+        for (ModuleDescriptorImpl dependency : dependencies) {
+            if (dependency.getCapability(MultiTargetPlatform.CAPABILITY) == MultiTargetPlatform.Common.INSTANCE) {
+                List<KtFile> files = dependency.getCapability(MODULE_FILES);
+                assert files != null : "MODULE_FILES should have been set for the common module: " + dependency;
+                result.addAll(files);
+            }
+        }
+
+        return result;
     }
 
     private void validateAndCompareDescriptorWithFile(

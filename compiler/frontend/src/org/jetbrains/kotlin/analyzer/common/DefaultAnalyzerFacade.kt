@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -54,21 +55,30 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
             LanguageVersion.LATEST, ApiVersion.LATEST, setOf(LanguageFeature.MultiPlatformProjects)
     )
 
-    private class SourceModuleInfo(override val name: Name, private val dependOnOldBuiltIns: Boolean) : ModuleInfo {
+    private class SourceModuleInfo(
+            override val name: Name,
+            override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
+            private val dependOnOldBuiltIns: Boolean
+    ) : ModuleInfo {
         override fun dependencies() = listOf(this)
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
                 if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltIns.LAST else ModuleInfo.DependenciesOnBuiltIns.NONE
     }
 
-    fun analyzeFiles(files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean): AnalysisResult {
-        val moduleInfo = SourceModuleInfo(moduleName, dependOnBuiltIns)
+    fun analyzeFiles(
+            files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean,
+            capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = mapOf(MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common),
+            packagePartProviderFactory: (ModuleInfo, ModuleContent) -> PackagePartProvider
+    ): AnalysisResult {
+        val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
         val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
         val resolver = setupResolverForProject(
                 "sources for metadata serializer",
                 ProjectContext(project), listOf(moduleInfo),
-                { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
-                object : PlatformAnalysisParameters {}
+                { ModuleContent(files, GlobalSearchScope.allScope(project)) },
+                object : PlatformAnalysisParameters {},
+                packagePartProviderFactory = packagePartProviderFactory
         )
 
         val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
