@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.native
+package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass

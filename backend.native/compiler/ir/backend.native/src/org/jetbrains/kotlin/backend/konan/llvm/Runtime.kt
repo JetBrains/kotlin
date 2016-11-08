@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.native.llvm
+package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.*
 import llvm.*

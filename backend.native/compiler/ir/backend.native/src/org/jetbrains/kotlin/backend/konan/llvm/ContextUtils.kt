@@ -1,8 +1,8 @@
-package org.jetbrains.kotlin.backend.native.llvm
+package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.native.hash.GlobalHash
+import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor

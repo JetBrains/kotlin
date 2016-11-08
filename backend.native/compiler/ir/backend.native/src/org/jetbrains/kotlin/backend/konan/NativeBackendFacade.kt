@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.native
+package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
