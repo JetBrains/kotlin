@@ -20,7 +20,7 @@ kotlinNativeInterop {
     llvm {
         defFile '../backend.native/llvm.def'
         compilerOpts "-I$llvmDir/include"
-        linkerOpts "-L$llvmDir/lib", "-B$sysrootDir/usr/bin"
+        linkerOpts "-L$llvmDir/lib"
     }
 
 }

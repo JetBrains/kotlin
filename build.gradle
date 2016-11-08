@@ -11,15 +11,22 @@ allprojects {
         evaluationDependsOn(":dependencies")
     }
 
+    ext.clangArgs = ["--sysroot=$sysrootDir", "-B$sysrootDir/usr/bin"]
+    ext.clangPath = ["$llvmDir/bin"]
+
+    convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
+
     plugins.withType(NativeComponentPlugin) {
         model {
             toolChains {
                 clang(Clang) {
-                    path "$llvmDir/bin"
+                    clangPath.each {
+                        path it
+                    }
+
                     eachPlatform { // TODO: will not work when cross-compiling
                         [cCompiler, cppCompiler, linker].each {
-                            it.withArguments { it << "--sysroot=$sysrootDir"}
-                            it.withArguments { it << "-B$sysrootDir/usr/bin"}
+                            it.withArguments { it.addAll(clangArgs) }
                         }
 
                     }

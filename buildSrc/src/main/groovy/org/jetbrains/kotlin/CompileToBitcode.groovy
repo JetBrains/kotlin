@@ -68,12 +68,10 @@ class CompileCppToBitcode extends DefaultTask {
         File objDir = this.getObjDir()
         objDir.mkdirs()
 
-        project.exec {
+        project.execClang {
             workingDir objDir
-            executable "$project.llvmDir/bin/clang++"
+            executable "clang++"
             args '-std=c++11'
-
-            args "--sysroot=$project.sysrootDir"
 
             args compilerArgs
 

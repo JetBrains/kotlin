@@ -174,9 +174,12 @@ class NamedNativeInteropConfig implements Named {
                     args "-linker:" + linker
                 }
 
-                String sysrootArg = "--sysroot=$project.sysrootDir"
-                compilerOpts += sysrootArg
-                linkerOpts   += sysrootArg
+                // TODO: the interop plugin should probably be reworked to execute clang from build scripts directly
+                environment['PATH'] = project.files(project.clangPath).asPath +
+                        File.pathSeparator + environment['PATH']
+
+                compilerOpts += project.clangArgs
+                linkerOpts   += project.clangArgs
 
                 args compilerOpts.collect { "-copt:$it" }
                 args linkerOpts.collect { "-lopt:$it" }

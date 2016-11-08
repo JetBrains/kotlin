@@ -11,8 +11,6 @@ abstract class KonanTest extends DefaultTask {
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")
     def llvmLlc = llvmTool("llc")
-    def llvmC = llvmTool("clang")
-    def llvmCAdditionalArgs = ["--sysroot=$project.sysrootDir"]
     def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
     def mainC = 'main.c'
     String goldValue = null
@@ -100,22 +98,18 @@ abstract class KonanTest extends DefaultTask {
 class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
-        project.exec {
-            commandLine "${llvmC}", "-B${project.sysrootDir}/usr/bin", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
+        project.execClang {
+            commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
                     "-o", "${exe.absolutePath}"
-
-            args llvmCAdditionalArgs
         }
     }
 }
 
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
-        project.exec {
-            commandLine "${llvmC}", "-DRUN_TEST", "-B${project.sysrootDir}/usr/bin", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
+        project.execClang {
+            commandLine "clang", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
                     "-o", "${exe.absolutePath}"
-
-            args llvmCAdditionalArgs
         }
     }
 }
