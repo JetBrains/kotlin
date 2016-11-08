@@ -446,6 +446,16 @@ public class kotlin/jvm/internal/CollectionToArray {
 	public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
+public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
+	protected field _controller Ljava/lang/Object;
+	protected field label I
+	public fun <init> (I)V
+	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)V
+	public final fun getController ()Ljava/lang/Object;
+	public fun resume (Ljava/lang/Object;)V
+	public fun resumeWithException (Ljava/lang/Throwable;)V
+}
+
 public final class kotlin/jvm/internal/DoubleCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/DoubleCompanionObject;
 	public final fun getMAX_VALUE ()D
