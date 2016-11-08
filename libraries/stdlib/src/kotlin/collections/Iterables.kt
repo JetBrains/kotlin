@@ -17,8 +17,6 @@
 @file:kotlin.jvm.JvmName("CollectionsKt")
 package kotlin.collections
 
-import java.util.*
-
 /**
  * Given an [iterator] function constructs an [Iterable] instance that returns values through the [Iterator]
  * provided by that function.

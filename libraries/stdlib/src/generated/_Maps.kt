@@ -9,7 +9,6 @@ package kotlin.collections
 //
 
 import kotlin.comparisons.*
-import java.util.*
 
 /**
  * Returns a [List] containing all key-value pairs.

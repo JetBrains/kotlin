@@ -16,7 +16,6 @@
 
 package kotlin.collections
 
-import java.util.Comparator
 import kotlin.comparisons.naturalOrder
 
 @library("copyToArray")

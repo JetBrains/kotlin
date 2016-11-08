@@ -17,8 +17,6 @@
 
 package kotlin.comparisons
 
-import java.util.Comparator
-
 /**
  * Compares two values using the specified functions [selectors] to calculate the result of the comparison.
  * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]

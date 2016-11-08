@@ -9,7 +9,6 @@ package kotlin.collections
 //
 
 import kotlin.comparisons.*
-import java.util.*
 
 /**
  * Returns 1st *element* from the collection.

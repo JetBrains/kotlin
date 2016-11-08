@@ -38,7 +38,7 @@ class JsCollectionsTest {
     }
 
     @test fun arrayListCapacity() {
-        val list = java.util.ArrayList<Any>(20)
+        val list = ArrayList<Any>(20)
         list.ensureCapacity(100)
         list.trimToSize()
         assertTrue(list.isEmpty())

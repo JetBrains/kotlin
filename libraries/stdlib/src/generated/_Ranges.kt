@@ -9,7 +9,6 @@ package kotlin.ranges
 //
 
 import kotlin.comparisons.*
-import java.util.*
 
 /**
  * Checks if the specified [value] belongs to this range.

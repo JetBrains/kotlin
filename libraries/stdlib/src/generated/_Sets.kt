@@ -9,7 +9,6 @@ package kotlin.collections
 //
 
 import kotlin.comparisons.*
-import java.util.*
 
 /**
  * Returns a set containing all elements of the original set except the given [element].
