@@ -125,7 +125,11 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun div   (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSDiv(context.llvmBuilder, arg0, arg1, result)!!
     fun srem  (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSRem(context.llvmBuilder, arg0, arg1, result)!!
 
+    /* integers comparisons */
     fun icmpEq(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, result)!!
+
+    /* floating-point comparisons */
+    fun fcmpEq(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildFCmp(context.llvmBuilder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
 
     fun bitcast(type: LLVMOpaqueType?, value: LLVMOpaqueValue, result: String) = LLVMBuildBitCast(context.llvmBuilder, value, type, result)
 

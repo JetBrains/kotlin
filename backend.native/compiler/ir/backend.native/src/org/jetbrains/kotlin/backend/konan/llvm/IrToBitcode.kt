@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-
+import org.jetbrains.kotlin.name.Name
 
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
@@ -395,11 +395,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
-        when {
-            descriptor.isOperator                         -> return evaluateOperatorCall(tmpVariableName, callee.origin!!, args)
-            descriptor is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall(tmpVariableName, callee.origin!!, args)
-            descriptor is ClassConstructorDescriptor      -> return evaluateConstructorCall(tmpVariableName, callee, args)
-            else                                          -> return evaluateSimpleFunctionCall(tmpVariableName, descriptor, args)
+        when (descriptor) {
+            is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (tmpVariableName, callee, args)
+            is ClassConstructorDescriptor      -> return evaluateConstructorCall   (tmpVariableName, callee,     args)
+            else                               -> return evaluateSimpleFunctionCall(tmpVariableName, descriptor, args)
         }
     }
 
@@ -419,21 +418,30 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
+    private val EQEQ = Name.identifier("EQEQ")
 
-    private fun evaluateOperatorCall(tmpVariableName: String, origin: IrStatementOrigin, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
-        logger.log("evaluateCall $tmpVariableName origin:$origin")
-        when (origin) {
-            IrStatementOrigin.PLUS     -> return generator.plus  (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.MINUS    -> return generator.minus (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.PLUSEQ   -> return generator.plus  (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.MINUSEQ  -> return generator.minus (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.MUL      -> return generator.mul   (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.DIV      -> return generator.div   (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.PERC     -> return generator.srem  (args[0]!!, args[1]!!, tmpVariableName)
-            IrStatementOrigin.EQEQ     -> return generator.icmpEq(args[0]!!, args[1]!!, tmpVariableName)
+    private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
+        logger.log("evaluateCall $tmpVariableName origin:$callee")
+        val descriptor = callee.descriptor
+        when (descriptor.name) {
+            EQEQ -> return evaluateOperatorEqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
             else -> {
                 TODO()
             }
+        }
+    }
+
+    private fun evaluateOperatorEqeq(callee: IrBinaryPrimitiveImpl, arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, tmpVariableName: String):LLVMOpaqueValue {
+        val operandType = callee.argument0.type
+        assert(operandType == callee.argument1.type)
+        when {
+            KotlinBuiltIns.isByte  (operandType) -> return generator.icmpEq(arg0, arg1, tmpVariableName)
+            KotlinBuiltIns.isShort (operandType) -> return generator.icmpEq(arg0, arg1, tmpVariableName)
+            KotlinBuiltIns.isInt   (operandType) -> return generator.icmpEq(arg0, arg1, tmpVariableName)
+            KotlinBuiltIns.isLong  (operandType) -> return generator.icmpEq(arg0, arg1, tmpVariableName)
+            KotlinBuiltIns.isFloat (operandType) -> return generator.fcmpEq(arg0, arg1, tmpVariableName)
+            KotlinBuiltIns.isDouble(operandType) -> return generator.fcmpEq(arg0, arg1, tmpVariableName)
+            else                                 -> TODO("ComplexType")
         }
     }
 
