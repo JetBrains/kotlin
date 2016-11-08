@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.spring.tests.generate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class GenerateSpringDependencyActionTestGenerated extends AbstractGenerateSpringDependencyActionTest {
     public void testAllFilesPresentInGenerate() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/spring/core/generate"), Pattern.compile("^([\\w]+)\\.kt$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/spring/core/generate"), Pattern.compile("^([\\w]+)\\.kt$"), TargetBackend.ANY);
     }
 
     @TestMetadata("autowiredDependencies/duplicatingPropertyAnnotationConfig.kt")

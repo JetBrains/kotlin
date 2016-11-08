@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.spring.tests.rename;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SpringRenameTestGenerated extends AbstractSpringRenameTest {
     public void testAllFilesPresentInRename() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/spring/core/rename"), Pattern.compile("^(.+)\\.test$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("ultimate/testData/spring/core/rename"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
     @TestMetadata("annotationArgBySpELRefInXMLConf/annotationArgBySpELRefInXMLConf.test")
