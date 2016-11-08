@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspectionTest {
     public void testAllFilesPresentInMaven_inspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/idea-maven/testData/maven-inspections"), Pattern.compile("^([\\w\\-]+).xml$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/idea-maven/testData/maven-inspections"), Pattern.compile("^([\\w\\-]+).xml$"), TargetBackend.ANY);
     }
 
     @TestMetadata("bothCompileAndTestCompileInTheSameExecution.xml")
