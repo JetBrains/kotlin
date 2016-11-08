@@ -153,7 +153,7 @@ task local_variable(type: UnitKonanTest) {
 }
 
 task hello0(type: RunKonanTest) {
-    goldValue = "Hello, world!"
+    goldValue = "Hello, world!\n"
     source = "runtime/basic/hello0.kt"
 }
 
@@ -168,6 +168,12 @@ task hello2(type: RunKonanTest) {
     goldValue = "Hello World"
     testData = "Hello World"
     source = "runtime/basic/hello2.kt"
+} */
+
+/* TODO: enable, once can call toString() on Int.
+task hello3(type: RunKonanTest) {
+    goldValue = "239"
+    source = "runtime/basic/hello3.kt"
 } */
 
 task if_else(type: UnitKonanTest) {

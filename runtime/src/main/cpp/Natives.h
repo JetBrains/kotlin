@@ -11,6 +11,8 @@ typedef uint16_t KChar;
 typedef int32_t KInt;
 
 typedef ObjHeader* KRef;
+typedef const ObjHeader* KConstRef;
+typedef const ArrayHeader* KString;
 
 // Optimized versions not accessing type info.
 inline KByte* ByteArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
@@ -52,9 +54,9 @@ extern "C" {
 #endif
 
 // Any.kt
-KBool Kotlin_Any_equals(const ObjHeader* thiz, const ObjHeader* other);
-KInt Kotlin_Any_hashCode(const ObjHeader* thiz);
-ArrayHeader* Kotlin_Any_toString(const ObjHeader* thiz);
+KBool Kotlin_Any_equals(KConstRef thiz, KConstRef other);
+KInt Kotlin_Any_hashCode(KConstRef thiz);
+KString Kotlin_Any_toString(KConstRef thiz);
 
 // Arrays.kt
 // TODO: those must be compiler intrinsics afterwards.
@@ -79,20 +81,23 @@ void Kotlin_IntArray_set(ArrayHeader* thiz, KInt index, KInt value);
 KInt Kotlin_IntArray_getArrayLength(const ArrayHeader* thiz);
 
 // io/Console.kt
-void Kotlin_io_Console_print(const ArrayHeader* thiz);
-ArrayHeader* Kotlin_io_Console_readLine();
+void Kotlin_io_Console_print(KString message);
+void Kotlin_io_Console_println(KString message);
+void Kotlin_io_Console_println0();
+KString Kotlin_io_Console_readLine();
+
+// Primitives.kt.
+KString Kotlin_Int_toString(KInt value);
 
 // String.kt
-KInt Kotlin_String_hashCode(const ArrayHeader* thiz);
-KBool Kotlin_String_equals(const ArrayHeader* thiz, const ObjHeader* other);
-KInt Kotlin_String_compareTo(const ArrayHeader* thiz, const ArrayHeader* other);
-KChar Kotlin_String_get(const ArrayHeader* thiz, KInt index);
-ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array);
-ArrayHeader* Kotlin_String_plusImpl(
-    const ArrayHeader* thiz, const ArrayHeader* other);
-KInt Kotlin_String_getStringLength(const ArrayHeader* thiz);
-KRef Kotlin_String_subSequence(
-    const ArrayHeader* thiz, KInt startIndex, KInt endIndex);
+KInt Kotlin_String_hashCode(KString thiz);
+KBool Kotlin_String_equals(KString thiz, KConstRef other);
+KInt Kotlin_String_compareTo(KString thiz, KString other);
+KChar Kotlin_String_get(KString thiz, KInt index);
+KString Kotlin_String_fromUtf8Array(const ArrayHeader* array);
+KString Kotlin_String_plusImpl(KString thiz, KString other);
+KInt Kotlin_String_getStringLength(KString thiz);
+KRef Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex);
 
 #ifdef __cplusplus
 }

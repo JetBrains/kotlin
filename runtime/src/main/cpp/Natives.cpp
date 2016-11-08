@@ -12,17 +12,17 @@
 extern "C" {
 
 // Any.kt
-KBool Kotlin_Any_equals(const ObjHeader* thiz, const ObjHeader* other) {
+KBool Kotlin_Any_equals(KConstRef thiz, KConstRef other) {
   return thiz == other;
 }
 
-KInt Kotlin_Any_hashCode(const ObjHeader* thiz) {
+KInt Kotlin_Any_hashCode(KConstRef thiz) {
   // Here we will use different mechanism for stable hashcode, using meta-objects
   // if moving collector will be used.
   return reinterpret_cast<uintptr_t>(thiz);
 }
 
-ArrayHeader* Kotlin_Any_toString(const ObjHeader* thiz) {
+KString Kotlin_Any_toString(KConstRef thiz) {
   return nullptr;
 }
 
@@ -141,13 +141,24 @@ KInt Kotlin_IntArray_getArrayLength(const ArrayHeader* array) {
 }
 
 // io/Console.kt
-void Kotlin_io_Console_print(const ArrayHeader* array) {
-  RuntimeAssert(array->type_info() == theStringTypeInfo, "Must use a string");
+void Kotlin_io_Console_print(KString message) {
+  RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
   // TODO: system stdout must be aware about UTF-8.
-  write(STDOUT_FILENO, ByteArrayAddressOfElementAt(array, 0), array->count_);
+  write(STDOUT_FILENO, ByteArrayAddressOfElementAt(message, 0), message->count_);
 }
 
-ArrayHeader* Kotlin_io_Console_readLine() {
+void Kotlin_io_Console_println(KString message) {
+  RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
+  // TODO: system stdout must be aware about UTF-8.
+  write(STDOUT_FILENO, ByteArrayAddressOfElementAt(message, 0), message->count_);
+  Kotlin_io_Console_println0();
+}
+
+void Kotlin_io_Console_println0() {
+  write(STDOUT_FILENO, "\n", 1);
+}
+
+KString Kotlin_io_Console_readLine() {
   char data[2048];
   if (!fgets(data, sizeof(data) - 1, stdin)) {
     return nullptr;
@@ -161,13 +172,13 @@ ArrayHeader* Kotlin_io_Console_readLine() {
 }
 
 // String.kt
-KInt Kotlin_String_compareTo(const ArrayHeader* thiz, const ArrayHeader* other) {
+KInt Kotlin_String_compareTo(KString thiz, KString other) {
   return memcmp(ByteArrayAddressOfElementAt(thiz, 0),
                 ByteArrayAddressOfElementAt(other, 0),
                 thiz->count_ < other->count_ ? thiz->count_ : other->count_);
 }
 
-KChar Kotlin_String_get(const ArrayHeader* thiz, KInt index) {
+KChar Kotlin_String_get(KString thiz, KInt index) {
   // TODO: support full UTF-8.
   if (static_cast<uint32_t>(index) >= thiz->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -175,11 +186,11 @@ KChar Kotlin_String_get(const ArrayHeader* thiz, KInt index) {
   return *ByteArrayAddressOfElementAt(thiz, index);
 }
 
-KInt Kotlin_String_getStringLength(const ArrayHeader* thiz) {
+KInt Kotlin_String_getStringLength(KString thiz) {
   return thiz->count_;
 }
 
-ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
+KString Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
   RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
   uint32_t length = ArraySizeBytes(array);
   // TODO: support full UTF-8.
@@ -191,8 +202,7 @@ ArrayHeader* Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
   return result;
 }
 
-ArrayHeader* Kotlin_String_plusImpl(
-    const ArrayHeader* thiz, const ArrayHeader* other) {
+KString Kotlin_String_plusImpl(KString thiz, KString other) {
   // TODO: support UTF-8
   RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
   RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
@@ -210,8 +220,7 @@ ArrayHeader* Kotlin_String_plusImpl(
   return result;
 }
 
-KBool Kotlin_String_equals(
-    const ArrayHeader* thiz, const ObjHeader* other) {
+KBool Kotlin_String_equals(KString thiz, KConstRef other) {
   if (other == nullptr || other->type_info() != theStringTypeInfo) return 0;
   const ArrayHeader* otherString = reinterpret_cast<const ArrayHeader*>(other);
   return thiz->count_ == otherString->count_ &&
@@ -220,14 +229,13 @@ KBool Kotlin_String_equals(
              thiz->count_) == 0;
 }
 
-KInt Kotlin_String_hashCode(const ArrayHeader* thiz) {
+KInt Kotlin_String_hashCode(KString thiz) {
   // TODO: consider caching strings hashes.
   // TODO: maybe use some simpler hashing algorithm?
   return CityHash64(ByteArrayAddressOfElementAt(thiz, 0), thiz->count_);
 }
 
-KRef Kotlin_String_subSequence(
-    const ArrayHeader* thiz, KInt startIndex, KInt endIndex) {
+KRef Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex) {
   RuntimeAssert(false, "Unsupported operation");
   return nullptr;
 }

@@ -144,6 +144,10 @@ public class Byte : Number(), Comparable<Byte> {
     external public override fun toLong(): Long
     external public override fun toFloat(): Float
     external public override fun toDouble(): Double
+
+    // Konan-specific.
+    @SymbolName("Kotlin_Int_toString")
+    external public override fun toString(): String
 }
 
 /**
