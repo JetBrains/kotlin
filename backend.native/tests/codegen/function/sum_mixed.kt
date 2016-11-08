@@ -1,0 +1,1 @@
+fun sum(a:Float, b:Int) = a + b
