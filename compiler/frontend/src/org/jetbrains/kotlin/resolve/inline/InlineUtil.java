@@ -87,12 +87,19 @@ public class InlineUtil {
             return false;
         }
 
-        DeclarationDescriptor containingFunctionDescriptor = context.trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, containingFunction);
-        if (containingFunctionDescriptor == null) {
-            return false;
-        }
+        return checkNonLocalReturnUsage(
+                fromFunction, context.trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, containingFunction), containingFunction,
+                context.trace.getBindingContext()
+        );
+    }
 
-        BindingContext bindingContext = context.trace.getBindingContext();
+    public static boolean checkNonLocalReturnUsage(
+            @NotNull DeclarationDescriptor fromFunction,
+            @Nullable DeclarationDescriptor containingFunctionDescriptor,
+            @Nullable PsiElement containingFunction,
+            @NotNull BindingContext bindingContext
+    ) {
+        if (containingFunctionDescriptor == null) return false;
 
         while (canBeInlineArgument(containingFunction) && fromFunction != containingFunctionDescriptor) {
             if (!isInlinedArgument((KtFunction) containingFunction, bindingContext, true)) {

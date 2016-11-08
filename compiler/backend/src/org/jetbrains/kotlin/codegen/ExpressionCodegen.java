@@ -3044,18 +3044,41 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             ClassDescriptor classDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, descriptor);
             assert classDescriptor != null : "class descriptor for coroutine " + descriptor + " should not be null";
 
-            StackValue coroutineReceiver = StackValue.thisOrOuter(this, classDescriptor, /* isSuper =*/ false, /* castReceiver */ false);
-            return StackValue.coercion(
-                    StackValue.field(
+            final StackValue coroutineReceiver = StackValue.thisOrOuter(this, classDescriptor, /* isSuper =*/ false, /* castReceiver */ false);
+
+            StackValue controllerValue;
+            if (InlineUtil.checkNonLocalReturnUsage(
+                    context.getFunctionDescriptor(),
+                    descriptor, DescriptorToSourceUtils.descriptorToDeclaration(descriptor), bindingContext
+            )) {
+                // This branch should work for major part of cases and it's needed mostly for optimizations purpose
+                // else branch must have just the same semantics
+                controllerValue = StackValue.field(
                         FieldInfo.createForHiddenField(
                                 AsmTypes.COROUTINE_IMPL,
                                 AsmTypes.OBJECT_TYPE,
                                 CoroutineCodegenUtilKt.COROUTINE_CONTROLLER_FIELD_NAME
                         ),
                         coroutineReceiver
-                    ),
-                    typeMapper.mapType(coroutineControllerType)
-            );
+                );
+            }
+            else {
+                controllerValue = StackValue.functionCall(AsmTypes.OBJECT_TYPE, new Function1<InstructionAdapter, Unit>() {
+                    @Override
+                    public Unit invoke(InstructionAdapter adapter) {
+                        coroutineReceiver.put(AsmTypes.COROUTINE_IMPL, adapter);
+                        adapter.invokevirtual(
+                                AsmTypes.COROUTINE_IMPL.getInternalName(),
+                                CoroutineCodegenUtilKt.COROUTINE_CONTROLLER_GETTER_NAME,
+                                "()" + AsmTypes.OBJECT_TYPE,
+                                false
+                        );
+                        return Unit.INSTANCE;
+                    }
+                });
+            }
+
+            return StackValue.coercion(controllerValue, typeMapper.mapType(coroutineControllerType));
         }
 
         return context.generateReceiver(descriptor, state, false);

@@ -47,7 +47,8 @@ const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
 const val HANDLE_EXCEPTION_MARKER_NAME = "handleException"
 const val HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME = "handleExceptionArgument"
 
-const val COROUTINE_CONTROLLER_FIELD_NAME = "controller"
+const val COROUTINE_CONTROLLER_FIELD_NAME = "_controller"
+const val COROUTINE_CONTROLLER_GETTER_NAME = "getController"
 const val COROUTINE_LABEL_FIELD_NAME = "label"
 
 data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeThisExpression: KtExpression)

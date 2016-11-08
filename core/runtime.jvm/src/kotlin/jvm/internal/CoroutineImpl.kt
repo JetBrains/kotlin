@@ -17,10 +17,12 @@
 package kotlin.jvm.internal
 
 abstract class CoroutineImpl(arity: Int) : Lambda(arity), Continuation<Any?> {
+    @JvmField
+    protected var _controller: Any? = null
+
     // It's not protected because can be used from noinline lambdas inside coroutine (when calling non-suspend functions)
     // Also there might be needed a way to access a controller by Continuation instance when it's inherited from CoroutineImpl
-    @JvmField
-    var controller: Any? = null
+    val controller: Any? get() = _controller
 
     // Any label state less then zero indicates that coroutine is not run and can't be resumed in any way.
     // Specific values do not matter by now, but currently -2 used for uninitialized coroutine (no controller is assigned),
