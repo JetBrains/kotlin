@@ -72,6 +72,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("EscapeHtmlInsideCodeBlocks.kt")
+    public void testEscapeHtmlInsideCodeBlocks() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/EscapeHtmlInsideCodeBlocks.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaClassUsedInKotlin.kt")
     public void testJavaClassUsedInKotlin() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaClassUsedInKotlin.kt");

@@ -203,9 +203,11 @@ object KDocRenderer {
                 MarkdownTokenTypes.RPAREN,
                 MarkdownTokenTypes.LBRACKET,
                 MarkdownTokenTypes.RBRACKET,
-                MarkdownTokenTypes.EXCLAMATION_MARK,
-                MarkdownTokenTypes.CODE_FENCE_CONTENT-> {
+                MarkdownTokenTypes.EXCLAMATION_MARK -> {
                     sb.append(nodeText)
+                }
+                MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
+                    sb.append(nodeText.htmlEscape())
                 }
                 MarkdownTokenTypes.EOL -> {
                     val parentType = node.parent?.type
