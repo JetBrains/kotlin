@@ -950,16 +950,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             indexVar = createLoopTempVariable(Type.INT_TYPE);
 
             KtExpression loopRange = forExpression.getLoopRange();
-            StackValue value = gen(loopRange);
-            Type asmLoopRangeType = asmType(loopRangeType);
-            if (value instanceof StackValue.Local && value.type.equals(asmLoopRangeType)) {
-                arrayVar = ((StackValue.Local) value).index; // no need to copy local variable into another variable
-            }
-            else {
-                arrayVar = createLoopTempVariable(OBJECT_TYPE);
-                value.put(asmLoopRangeType, v);
-                v.store(arrayVar, OBJECT_TYPE);
-            }
+            arrayVar = createLoopTempVariable(OBJECT_TYPE);
+            gen(loopRange).put(asmType(loopRangeType), v);
+            v.store(arrayVar, OBJECT_TYPE);
 
             v.iconst(0);
             v.store(indexVar, Type.INT_TYPE);
