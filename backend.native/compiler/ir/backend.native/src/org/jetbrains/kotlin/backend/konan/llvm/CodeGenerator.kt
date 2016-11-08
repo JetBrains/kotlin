@@ -54,7 +54,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     /* constructor */
     fun initFunction(declaration: IrConstructor) {
         function(declaration)
-        val thisPtr = bitcast(pointerType(classType(declaration.descriptor.containingDeclaration)), load(thisVariable(), tmpVariable()), tmpVariable())
+        val thisPtr = bitcast(pointerType(classType(declaration.descriptor.containingDeclaration)), load(thisVariable(), newVar()), newVar())
 
         /**
          * TODO: check shadowing.
@@ -65,10 +65,10 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
             if (!declaration.descriptor.valueParameters.any { it -> it.name.asString() == name })
                 return@forEachIndexed
 
-            val ptr = LLVMBuildStructGEP(context.llvmBuilder, thisPtr, i, tmpVariable())
-            val value = load(variable(name)!!, tmpVariable())
+            val ptr = LLVMBuildStructGEP(context.llvmBuilder, thisPtr, i, newVar())
+            val value = load(variable(name)!!, newVar())
 
-            val typePtr = bitcast(pointerType(LLVMTypeOf(value)), ptr!!, tmpVariable())
+            val typePtr = bitcast(pointerType(LLVMTypeOf(value)), ptr!!, newVar())
             store(value, typePtr!!)
         }
         currentClass = declaration.descriptor.constructedClass
@@ -86,7 +86,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
         return fn
     }
 
-    fun tmpVariable():String = currentFunction!!.tmpVariable()
+    fun newVar():String = currentFunction!!.tmpVariable()
 
     val variablesGlobal = mapOf<String, LLVMOpaqueValue?>()
     fun variable(varName:String):LLVMOpaqueValue? = currentFunction!!.variable(varName)
@@ -140,7 +140,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
     //-------------------------------------------------------------------------//
 
-    fun call(llvmFunction: LLVMOpaqueValue?, args: MutableList<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+    fun call(llvmFunction: LLVMOpaqueValue?, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
         if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, llvmFunction, null, 0, result)
         memScoped {
             val rargs = alloc(array[args.size](Ref to LLVMOpaqueValue))
@@ -174,12 +174,21 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
     fun indexInClass(p:PropertyDescriptor):Int = currentClass!!.fields.indexOf(p)
 
+
     fun basicBlock(): LLVMOpaqueBasicBlock? = LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), currentFunction!!.bbLabel())
     fun lastBasicBlock(): LLVMOpaqueBasicBlock? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction.getLlvmValue())
 
     fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction.getLlvmValue()
     fun functionHash(descriptor: FunctionDescriptor): LLVMOpaqueValue? = descriptor.functionName.localHash.getLlvmValue()
 
+    fun  br(bbLabel: LLVMOpaqueBasicBlock) = LLVMBuildBr(context.llvmBuilder, bbLabel)
+    fun condBr(condition: LLVMOpaqueValue?, bbTrue: LLVMOpaqueBasicBlock?, bbFalse: LLVMOpaqueBasicBlock?)
+        = LLVMBuildCondBr(context.llvmBuilder, condition, bbTrue, bbFalse)
+
+    fun positionAtEnd(bbLabel: LLVMOpaqueBasicBlock)
+        = LLVMPositionBuilderAtEnd(context.llvmBuilder, bbLabel)
+
+    fun ret(value: LLVMOpaqueValue?) = LLVMBuildRet(context.llvmBuilder, value)
 }
 
 

@@ -16,9 +16,11 @@ internal class Logger(val generator: CodeGenerator, override val context: Contex
   //---------------------------------------------------------------------------//
 
   fun log(msg: String) {
-    logIr()
+    // logIr()
     println(msg)
   }
+
+  //---------------------------------------------------------------------------//
 
   fun logIr() {
     val function = generator.currentFunction ?: return
@@ -29,7 +31,7 @@ internal class Logger(val generator: CodeGenerator, override val context: Contex
 
 }
 
-//-------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
 
 fun ir2string(ir: IrElement?): String {
   val strWriter = StringWriter()
@@ -37,6 +39,8 @@ fun ir2string(ir: IrElement?): String {
   ir?.accept(DumpIrTreeVisitor(strWriter), "")
   return strWriter.toString().takeWhile { it != '\n' }
 }
+
+//-----------------------------------------------------------------------------//
 
 fun llvm2string(value: LLVMOpaqueValue?): String {
   if (value == null) return "<null>"
