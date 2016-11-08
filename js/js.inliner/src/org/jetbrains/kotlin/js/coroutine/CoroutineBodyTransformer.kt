@@ -50,7 +50,8 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
         get
         private set
 
-    private val currentTryDepth = tryStack.lastIndex
+    private val currentTryDepth: Int
+        get() = tryStack.lastIndex
 
     fun preProcess(node: JsNode) {
         val nodes = mutableSetOf<JsNode>()
@@ -323,7 +324,7 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
 
         val targetBlock = breakBlocks[targetStatement]!!
         referencedBlocks += targetBlock
-        jumpWithFinally(targetTryDepth, targetBlock)
+        jumpWithFinally(targetTryDepth + 1, targetBlock)
         currentStatements += jump()
     }
 
@@ -339,15 +340,15 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
         val targetBlock = continueBlocks[targetStatement]!!
         referencedBlocks += targetBlock
 
-        jumpWithFinally(targetTryDepth, targetBlock)
+        jumpWithFinally(targetTryDepth + 1, targetBlock)
         currentStatements += jump()
     }
 
     private fun jumpWithFinally(targetTryDepth: Int, successor: CoroutineBlock) {
-        if (targetTryDepth == tryStack.size) return
-
-        val tryBlock = tryStack[targetTryDepth]
-        currentStatements += exceptionState(tryBlock.catchBlock)
+        if (targetTryDepth < tryStack.size) {
+            val tryBlock = tryStack[targetTryDepth]
+            currentStatements += exceptionState(tryBlock.catchBlock)
+        }
 
         val relativeFinallyPath = relativeFinallyPath(targetTryDepth)
         val fullPath = relativeFinallyPath + successor
@@ -593,7 +594,10 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
         }
     }
 
-    private fun relativeFinallyPath(targetTryDepth: Int) = tryStack.subList(targetTryDepth, tryStack.size).mapNotNull { it.finallyBlock }
+    private fun relativeFinallyPath(targetTryDepth: Int) = tryStack
+            .subList(targetTryDepth, tryStack.size)
+            .mapNotNull { it.finallyBlock }
+            .reversed()
 
     private fun hasEnclosingFinallyBlock() = tryStack.any { it.finallyBlock != null }
 }
