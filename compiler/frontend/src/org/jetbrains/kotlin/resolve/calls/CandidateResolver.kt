@@ -115,7 +115,7 @@ class CandidateResolver(
         if (candidateCall.knownTypeParametersSubstitutor != null) {
             candidateCall.setResultingSubstitutor(candidateCall.knownTypeParametersSubstitutor!!)
         }
-        else if (ktTypeArguments.isNotEmpty() || candidateDescriptor is TypeAliasConstructorDescriptor) {
+        else if (ktTypeArguments.isNotEmpty()) {
             // Explicit type arguments passed
 
             val typeArguments = ArrayList<KotlinType>()

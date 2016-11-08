@@ -38,10 +38,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ValidityConstraintForConstituentType
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.getValidityConstraintForConstituentType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeIntersector
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.lang.AssertionError
+import java.util.*
 
 object Renderers {
 
@@ -273,12 +275,20 @@ object Renderers {
         val typeParameterDescriptor = inferenceErrorData.descriptor.typeParameters.firstOrNull {
             !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, inferenceErrorData.call, true)
         }
-        if (typeParameterDescriptor == null && status.hasConflictingConstraints()) {
-            return renderConflictingSubstitutionsInferenceError(inferenceErrorData, result)
-        }
+
         if (typeParameterDescriptor == null) {
-            LOG.error(debugMessage("There is no type parameter with violated upper bound for 'upper bound violated' error", inferenceErrorData))
-            return result
+            if (inferenceErrorData.descriptor is TypeAliasConstructorDescriptor) {
+                renderUpperBoundViolatedInferenceErrorForTypeAliasConstructor(inferenceErrorData, result, systemWithoutWeakConstraints)?.let {
+                    return it
+                }
+            }
+
+            return if (status.hasConflictingConstraints())
+                renderConflictingSubstitutionsInferenceError(inferenceErrorData, result)
+            else {
+                LOG.error(debugMessage("There is no type parameter with violated upper bound for 'upper bound violated' error", inferenceErrorData))
+                result
+            }
         }
 
         val typeVariable = systemWithoutWeakConstraints.descriptorToVariable(inferenceErrorData.call.toHandle(), typeParameterDescriptor)
@@ -320,6 +330,42 @@ object Renderers {
                             .normal(" is not a subtype of ")
                             .strong(typeRenderer.render(violatedUpperBound, context)))
         return result
+    }
+
+    private fun renderUpperBoundViolatedInferenceErrorForTypeAliasConstructor(
+            inferenceErrorData: InferenceErrorData,
+            result: TabledDescriptorRenderer,
+            systemWithoutWeakConstraints: ConstraintSystem
+    ): TabledDescriptorRenderer? {
+        val descriptor = inferenceErrorData.descriptor
+        if (descriptor !is TypeAliasConstructorDescriptor) {
+            LOG.error("Type alias constructor descriptor expected: $descriptor")
+            return result
+        }
+
+        val inferredTypeSubstitutor = systemWithoutWeakConstraints.resultingSubstitutor
+
+        for (constraintError in inferenceErrorData.constraintSystem.status.constraintErrors) {
+            val constraintInfo = constraintError.constraintPosition.getValidityConstraintForConstituentType() ?: continue
+            if (constraintInfo.typeParameter.variance == Variance.IN_VARIANCE) continue
+
+            val violatedUpperBound = inferredTypeSubstitutor.safeSubstitute(constraintInfo.bound, Variance.INVARIANT)
+            val violatingInferredType = inferredTypeSubstitutor.safeSubstitute(constraintInfo.typeArgument, Variance.INVARIANT)
+
+            val context = RenderingContext.of(violatingInferredType, violatedUpperBound)
+            val typeRenderer = result.typeRenderer
+
+            result.text(newText().normal("Type parameter bound for ").strong(constraintInfo.typeParameter.name)
+                                .normal(" in type inferred from type alias expansion for "))
+                    .table(newTable().descriptor(inferenceErrorData.descriptor))
+
+            result.text(newText().normal(" is not satisfied: inferred type ").error(typeRenderer.render(violatingInferredType, context))
+                                .normal(" is not a subtype of ").strong(typeRenderer.render(violatedUpperBound, context)))
+
+            return result
+        }
+
+        return null
     }
 
     @JvmStatic fun renderCannotCaptureTypeParameterError(

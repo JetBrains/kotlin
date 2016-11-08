@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.constraintPosition
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.types.KotlinType
 
 enum class ConstraintPositionKind {
     RECEIVER_POSITION,
@@ -72,3 +74,21 @@ class CompoundConstraintPosition(vararg positions: ConstraintPosition) : Constra
 fun ConstraintPosition.derivedFrom(kind: ConstraintPositionKind): Boolean {
     return if (this !is CompoundConstraintPosition) this.kind == kind else positions.any { it.kind == kind }
 }
+
+class ValidityConstraintForConstituentType(
+        val typeArgument: KotlinType,
+        val typeParameter: TypeParameterDescriptor,
+        val bound: KotlinType
+) : ConstraintPosition {
+    override val kind: ConstraintPositionKind get() = TYPE_BOUND_POSITION
+}
+
+fun ConstraintPosition.getValidityConstraintForConstituentType(): ValidityConstraintForConstituentType? =
+        when (this) {
+            is ValidityConstraintForConstituentType ->
+                this
+            is CompoundConstraintPosition ->
+                positions.asSequence().map { it.getValidityConstraintForConstituentType() }.firstOrNull { it != null }
+            else ->
+                null
+        }

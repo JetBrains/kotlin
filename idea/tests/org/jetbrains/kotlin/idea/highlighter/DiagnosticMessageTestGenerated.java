@@ -310,4 +310,10 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/upperBoundViolated.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("upperBoundViolatedInTypeAliasConstructorCall.kt")
+    public void testUpperBoundViolatedInTypeAliasConstructorCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/upperBoundViolatedInTypeAliasConstructorCall.kt");
+        doTest(fileName);
+    }
 }

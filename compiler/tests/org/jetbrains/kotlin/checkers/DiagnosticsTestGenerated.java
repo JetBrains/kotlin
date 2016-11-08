@@ -21027,9 +21027,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasConstructorCrazyProjections.kt")
+            public void testTypeAliasConstructorCrazyProjections() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorCrazyProjections.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasConstructorInSuperCall.kt")
             public void testTypeAliasConstructorInSuperCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorInSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasConstructorTypeArgumentsInference.kt")
+            public void testTypeAliasConstructorTypeArgumentsInference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorTypeArgumentsInference.kt");
                 doTest(fileName);
             }
 

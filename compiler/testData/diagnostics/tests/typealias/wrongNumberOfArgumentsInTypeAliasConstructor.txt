@@ -14,7 +14,7 @@ public val test2pra: Pair<kotlin.Int, kotlin.String>
 public val test3: Pair<kotlin.Int, kotlin.Int>
 public val test3p2: Pair<kotlin.Int, kotlin.Int>
 public val test3pr: Pair<kotlin.String, kotlin.String>
-public val testN0: Num<kotlin.String>
+public val testN0: [ERROR : Type for N("")]
 public val testN1: Num<kotlin.Int>
 public val testN1a: Num<kotlin.String>
 public val testN2: Num<kotlin.Int>
