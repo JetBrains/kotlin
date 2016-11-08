@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.js.coroutine
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperty
-import com.google.dart.compiler.backend.js.ast.metadata.isSuspend
+import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -45,6 +44,7 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
     private lateinit var nodesToSplit: Set<JsNode>
     private var currentCatchBlock = globalCatchBlock
     private val tryStack = mutableListOf(TryBlock(globalCatchBlock, null))
+    private var suspendTarget: CoroutineBlock? = null
 
     var hasFinallyBlocks = false
         get
@@ -188,8 +188,6 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
     }
 
     override fun visitIf(x: JsIf) = splitIfNecessary(x) {
-        x.ifExpression = handleExpression(x.ifExpression)
-
         val ifBlock = currentBlock
 
         val thenEntryBlock = CoroutineBlock()
@@ -433,25 +431,17 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
 
     override fun visitExpressionStatement(x: JsExpressionStatement) {
         val expression = x.expression
-        if (expression is JsInvocation && expression.isSuspend) {
-             handleSuspend(expression)
+        val splitExpression = handleExpression(expression)
+        if (splitExpression == expression) {
+            currentStatements += x
         }
-        else {
-            val splitExpression = handleExpression(x.expression)
-            currentStatements += if (splitExpression == expression) x else JsExpressionStatement(expression)
+        else if (splitExpression != null) {
+            currentStatements += JsExpressionStatement(splitExpression).apply { synthetic = true }
         }
     }
 
     override fun visitVars(x: JsVars) {
-        super.visitVars(x)
         currentStatements += x
-    }
-
-    override fun visit(x: JsVars.JsVar) {
-        val initExpression = x.initExpression
-        if (initExpression != null) {
-            x.initExpression = handleExpression(initExpression)
-        }
     }
 
     override fun visitReturn(x: JsReturn) {
@@ -459,11 +449,6 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
         val isInFinally = hasEnclosingFinallyBlock()
         if (isInFinally) {
             jumpWithFinally(0, returnBlock)
-        }
-
-        val returnExpression = x.expression
-        if (returnExpression != null) {
-            x.expression = handleExpression(returnExpression)
         }
 
         if (isInFinally) {
@@ -479,9 +464,8 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
 
     override fun visitThrow(x: JsThrow) {
         if (throwFunctionName != null) {
-            val exception = handleExpression(x.expression)
             val methodRef = JsNameRef(throwFunctionName, JsNameRef(controllerFieldName, JsLiteral.THIS))
-            val invocation = JsInvocation(methodRef, exception).apply {
+            val invocation = JsInvocation(methodRef, x.expression).apply {
                 source = x.source
             }
             currentStatements += JsReturn(invocation)
@@ -491,28 +475,35 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
         }
     }
 
-    private fun handleExpression(expression: JsExpression): JsExpression {
-        if (expression !in nodesToSplit) return expression
-
-        val visitor = object : JsVisitorWithContextImpl() {
-            override fun endVisit(x: JsInvocation, ctx: JsContext<in JsExpression>) {
-                if (x.isSuspend) {
-                    ctx.replaceMe(handleSuspend(x))
-                }
-                super.endVisit(x, ctx)
+    private fun handleExpression(expression: JsExpression): JsExpression? {
+        return if (expression is JsInvocation) {
+            var result: JsExpression? = expression
+            if (expression.isPreSuspend) {
+                result = handlePreSuspend(expression)
             }
+            if (expression.isSuspend) {
+                handleSuspend(expression)
+                result = null
+            }
+            result
         }
-
-        return visitor.accept(expression)
+        else {
+            expression
+        }
     }
 
-    private fun handleSuspend(invocation: JsInvocation): JsExpression {
+    private fun handlePreSuspend(invocation: JsInvocation): JsExpression? {
         val nextBlock = CoroutineBlock()
         currentStatements += state(nextBlock)
-        currentStatements += JsReturn(invocation)
-        currentBlock = nextBlock
+        suspendTarget = nextBlock
 
-        return JsNameRef(resultFieldName, JsLiteral.THIS)
+        return if (invocation.isFakeSuspend) null else invocation
+    }
+
+    private fun handleSuspend(invocation: JsInvocation) {
+        val invokeExpression = if (invocation.isFakeSuspend) invocation.arguments.getOrNull(0) else invocation
+        currentStatements += JsReturn(invokeExpression)
+        currentBlock = suspendTarget!!
     }
 
     private fun state(target: CoroutineBlock): List<JsStatement> {

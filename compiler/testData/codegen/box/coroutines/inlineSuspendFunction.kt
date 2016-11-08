@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_REFLECT
-// TARGET_BACKEND: JVM
 class Controller {
     fun withValue(v: String, x: Continuation<String>) {
         x.resume(v)

@@ -423,6 +423,12 @@ public final class StaticContext {
                 @Nullable
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (descriptor instanceof FunctionDescriptor) {
+                        FunctionDescriptor initialDescriptor = ((FunctionDescriptor) descriptor).getInitialSignatureDescriptor();
+                        if (initialDescriptor != null) {
+                            return getInnerNameForDescriptor(initialDescriptor);
+                        }
+                    }
                     if (descriptor instanceof ModuleDescriptor) {
                         return getModuleInnerName(descriptor);
                     }

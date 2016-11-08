@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.metadata.isSuspend
+import com.google.dart.compiler.backend.js.ast.JsLiteral
+import com.google.dart.compiler.backend.js.ast.JsNameRef
+import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -26,10 +28,12 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -118,8 +122,17 @@ private fun translateFunctionCall(context: TranslationContext,
                                   explicitReceivers: ExplicitReceivers
 ): JsExpression {
     val callExpression = context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
-    if (resolvedCall.resultingDescriptor.isSuspend) {
-        (callExpression as JsInvocation).isSuspend = true
+    if (resolvedCall.resultingDescriptor.isSuspend && resolvedCall.resultingDescriptor.initialSignatureDescriptor != null) {
+        context.currentBlock.statements += JsAstUtils.asSyntheticStatement((callExpression as JsInvocation).apply {
+            isSuspend = true
+            isPreSuspend = true
+        })
+        val coroutineDescriptor = resolvedCall.getImplicitReceiverValue()!!.declarationDescriptor
+        val coroutineRef = context.getAliasForDescriptor(coroutineDescriptor) ?: JsLiteral.THIS
+        return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
+            sideEffects = SideEffectKind.DEPENDS_ON_STATE
+            coroutineResult = true
+        })
     }
     return callExpression
 }

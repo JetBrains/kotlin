@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,10 +62,39 @@ var JsFunction.coroutineType: ClassDescriptor? by MetadataProperty(default = nul
 
 var JsFunction.controllerType: ClassDescriptor? by MetadataProperty(default = null)
 
+/**
+ * Denotes a suspension call-site that is to be processed by coroutine transformer.
+ * More clearly, denotes invocation that should immediately return from coroutine state machine
+ */
 var JsInvocation.isSuspend: Boolean by MetadataProperty(default = false)
 
+/**
+ * Denotes a pre-suspend call-site that is to be processed by coroutine transformer.
+ * For normal suspend call-sites both [isSuspend] and [isPreSuspend] present.
+ * For inlined suspend calls fake calls are generated before and after inlined function body.
+ */
+var JsInvocation.isPreSuspend: Boolean by MetadataProperty(default = false)
+
+/**
+ * Denotes a fake suspend call for inlining purposes.
+ */
+var JsInvocation.isFakeSuspend: Boolean by MetadataProperty(default = false)
+
+/**
+ * Denotes a call to coroutine's controller `handleResult` function.
+ * See coroutine spec for explanation.
+ */
 var JsInvocation.isHandleResult: Boolean by MetadataProperty(default = false)
 
+/**
+ * Denotes a reference to coroutine's `result` field that contains result of
+ * last suspended invocation.
+ */
+var JsNameRef.coroutineResult by MetadataProperty(default = false)
+
+/**
+ * Denotes a reference to coroutine's `controller` field that contains coroutines's controller
+ */
 var JsNameRef.coroutineController by MetadataProperty(default = false)
 
 enum class TypeCheck {

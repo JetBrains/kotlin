@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.functionDescriptor
-import com.google.dart.compiler.backend.js.ast.metadata.returnTarget
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class ReturnReplacingVisitor(
         private val resultRef: JsNameRef?,
         private val breakLabel: JsNameRef?,
-        private val function: JsFunction
+        private val function: JsFunction,
+        private val isSuspend: Boolean
 ) : JsVisitorWithContextImpl() {
 
     /**
@@ -55,13 +54,26 @@ class ReturnReplacingVisitor(
 
     private fun getReturnReplacement(returnExpression: JsExpression?): JsExpression? {
         return if (returnExpression != null) {
-            val assignment = resultRef?.let {
-                JsAstUtils.assignment(resultRef, returnExpression).apply { synthetic = true }
+            val assignment = resultRef?.let { lhs ->
+                val rhs = makeFakeSuspendCall(returnExpression)!!
+                JsAstUtils.assignment(lhs, rhs).apply { synthetic = true }
             }
-            assignment ?: returnExpression
+            assignment ?: makeFakeSuspendCall(returnExpression)
         }
         else {
-            null
+            makeFakeSuspendCall(null)
         }
+    }
+
+    fun makeFakeSuspendCall(expression: JsExpression?): JsExpression? {
+        if (!isSuspend) return expression
+
+        val fakeSuspendCall = JsInvocation(JsAstUtils.pureFqn("fakeSuspend", JsAstUtils.pureFqn("Kotlin", null)))
+        fakeSuspendCall.isSuspend = true
+        fakeSuspendCall.isFakeSuspend = true
+        if (expression != null) {
+            fakeSuspendCall.arguments += expression
+        }
+        return fakeSuspendCall
     }
 }

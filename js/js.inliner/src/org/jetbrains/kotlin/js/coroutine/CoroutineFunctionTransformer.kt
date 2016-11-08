@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.js.coroutine
 
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.coroutineController
-import com.google.dart.compiler.backend.js.ast.metadata.isSuspend
+import com.google.dart.compiler.backend.js.ast.metadata.coroutineResult
+import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.js.inline.ExpressionDecomposer
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
@@ -44,19 +45,6 @@ class CoroutineFunctionTransformer(
     private val className = function.scope.parent.declareFreshName("Coroutine\$${function.name}")
 
     fun transform(): List<JsStatement> {
-        val visitor = object : JsVisitorWithContextImpl() {
-            override fun <T : JsNode?> doTraverse(node: T, ctx: JsContext<in JsStatement>) {
-                super.doTraverse(node, ctx)
-                if (node is JsStatement) {
-                    val statements = ExpressionDecomposer.preserveEvaluationOrder(function.scope, node) {
-                        it is JsInvocation && it.isSuspend
-                    }
-                    ctx.addPrevious(statements)
-                }
-            }
-        }
-        visitor.accept(body)
-
         val throwFunction = controllerType.findFunction("handleException")
         val throwName = throwFunction?.let {
             val throwId = nameSuggestion.suggest(it)!!.names.last()
@@ -238,12 +226,23 @@ class CoroutineFunctionTransformer(
 
         val visitor = object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
-                if (x.coroutineController) {
-                    ctx.replaceMe(JsNameRef(transformer.controllerFieldName, x.qualifier))
-                }
-                if (x.qualifier == null && x.name in localVariables) {
-                    val fieldName = scope.getFieldName(x.name!!)
-                    ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS))
+                when {
+                    x.coroutineController -> {
+                        ctx.replaceMe(JsNameRef(transformer.controllerFieldName, x.qualifier).apply {
+                            sideEffects = SideEffectKind.PURE
+                        })
+                    }
+
+                    x.coroutineResult -> {
+                        ctx.replaceMe(JsNameRef(transformer.resultFieldName, x.qualifier).apply {
+                            sideEffects = SideEffectKind.DEPENDS_ON_STATE
+                        })
+                    }
+
+                    x.qualifier == null && x.name in localVariables -> {
+                        val fieldName = scope.getFieldName(x.name!!)
+                        ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS))
+                    }
                 }
             }
 
