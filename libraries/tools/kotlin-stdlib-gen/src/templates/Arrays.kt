@@ -47,6 +47,7 @@ fun arrays(): List<GenericFunction> {
     templates add f("contentEquals(other: SELF)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         jvmOnly(true)
+        since("1.1")
         inline(Inline.Only)
         infix(true)
         doc {
@@ -62,6 +63,7 @@ fun arrays(): List<GenericFunction> {
     templates add f("contentDeepEquals(other: SELF)") {
         only(ArraysOfObjects)
         jvmOnly(true)
+        since("1.1")
         inline(Inline.Only)
         infix(true)
         doc {
@@ -80,6 +82,7 @@ fun arrays(): List<GenericFunction> {
     templates add f("contentToString()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         jvmOnly(true)
+        since("1.1")
         inline(Inline.Only)
         doc { "Returns a string representation of the contents of the specified array as if it is [List]." }
         returns("String")
@@ -89,6 +92,7 @@ fun arrays(): List<GenericFunction> {
     templates add f("contentDeepToString()") {
         only(ArraysOfObjects)
         jvmOnly(true)
+        since("1.1")
         inline(Inline.Only)
         doc {
             """
@@ -106,6 +110,7 @@ fun arrays(): List<GenericFunction> {
     templates add f("contentHashCode()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         jvmOnly(true)
+        since("1.1")
         inline(Inline.Only)
         doc {
             "Returns a hash code based on the contents of this array as if it is [List]."
@@ -117,6 +122,7 @@ fun arrays(): List<GenericFunction> {
     templates add f("contentDeepHashCode()") {
         only(ArraysOfObjects)
         jvmOnly(true)
+        since("1.1")
         inline(Inline.Only)
         doc {
             """

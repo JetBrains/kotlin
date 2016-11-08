@@ -142,6 +142,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val platformName = PrimitiveProperty<String>()
     val inline = InlineProperty()
     val jvmOnly = FamilyProperty<Boolean>()
+    val since = FamilyProperty<String>()
     val typeParams = ArrayList<String>()
     val returns = FamilyProperty<String>()
     val operator = FamilyProperty<Boolean>()
@@ -394,6 +395,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         if (jvmOnly[f] ?: false) {
             builder.append("@kotlin.jvm.JvmVersion\n")
+        }
+        since[f]?.let { since ->
+            builder.append("@SinceKotlin(\"$since\")\n")
         }
 
         annotations[f]?.let { builder.append(it).append('\n') }

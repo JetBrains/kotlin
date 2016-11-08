@@ -167,6 +167,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("contentEquals(other: SELF)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
+        since("1.1")
         infix(true)
         doc {
             """
@@ -181,6 +182,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("contentDeepEquals(other: SELF)") {
         only(ArraysOfObjects)
+        since("1.1")
         infix(true)
         doc {
             """
@@ -198,6 +200,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("contentToString()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
+        since("1.1")
         doc { "Returns a string representation of the contents of the specified array as if it is a [List]." }
         annotations("""@library("arrayToString")""")
         returns("String")
@@ -206,6 +209,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("contentDeepToString()") {
         only(ArraysOfObjects)
+        since("1.1")
         doc {
             """
             Returns a string representation of the contents of this array as if it is a [List].
@@ -222,6 +226,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("contentHashCode()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
+        since("1.1")
         doc {
             "Returns a hash code based on the contents of this array as if it is [List]."
         }
@@ -232,6 +237,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("contentDeepHashCode()") {
         only(ArraysOfObjects)
+        since("1.1")
         doc {
             """
             Returns a hash code based on the contents of this array as if it is [List].
