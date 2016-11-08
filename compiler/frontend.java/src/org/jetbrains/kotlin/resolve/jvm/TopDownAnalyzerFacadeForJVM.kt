@@ -135,7 +135,7 @@ object TopDownAnalyzerFacadeForJVM {
             dependenciesContext.setDependencies(listOfNotNull(
                     dependenciesContext.module,
                     dependenciesContext.module.builtIns.builtInsModule.check {
-                        configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_TO_DEPENDENCIES)
+                        configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES)
                     }
             ))
             dependenciesContext.initializeModuleContents(CompositePackageFragmentProvider(listOf(
@@ -182,7 +182,7 @@ object TopDownAnalyzerFacadeForJVM {
         // TODO: remove dependencyModule from friends
         module.setDependencies(ModuleDependenciesImpl(
                 listOfNotNull(module, dependencyModule, module.builtIns.builtInsModule.check {
-                    configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_TO_DEPENDENCIES)
+                    configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES)
                 }),
                 if (dependencyModule != null) setOf(dependencyModule) else emptySet()
         ))
