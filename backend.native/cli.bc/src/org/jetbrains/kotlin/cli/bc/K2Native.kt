@@ -12,15 +12,17 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES
+import org.jetbrains.kotlin.config.JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import java.lang.System.out
 import java.util.*
-import kotlin.reflect.jvm.internal.impl.load.java.JvmAbi
 
 class NativeAnalyzer(val environment: KotlinCoreEnvironment) :
     AnalyzerWithCompilerReport.Analyzer {
@@ -28,13 +30,14 @@ class NativeAnalyzer(val environment: KotlinCoreEnvironment) :
     val sharedTrace =
         CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 
-    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(
-        environment.project, environment.configuration)
     return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
         environment.project,
         environment.getSourceFiles(),
         sharedTrace,
-        environment.configuration,
+        environment.configuration.apply {
+          put(ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, true)
+          put(CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES, true)
+        },
         { scope -> JvmPackagePartProvider(environment, scope) }
     )
   }

@@ -33,6 +33,7 @@ abstract class KonanTest extends DefaultTask {
         project.javaexec {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
+            jvmArgs "-ea"
             args "-output", "${sourceBc.absolutePath}",
                     "-runtime", "${runtimeBc.absolutePath}",
                     "-headers", project.project(':runtime').file('src/main/kotlin'),
