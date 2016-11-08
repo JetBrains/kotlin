@@ -3045,12 +3045,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assert classDescriptor != null : "class descriptor for coroutine " + descriptor + " should not be null";
 
             StackValue coroutineReceiver = StackValue.thisOrOuter(this, classDescriptor, /* isSuper =*/ false, /* castReceiver */ false);
-            return StackValue.field(
-                    FieldInfo.createForHiddenField(
-                                typeMapper.mapClass(classDescriptor),
-                                typeMapper.mapType(coroutineControllerType),
-                                CoroutineCodegenUtilKt.COROUTINE_CONTROLLER_FIELD_NAME),
-                    coroutineReceiver);
+            return StackValue.coercion(
+                    StackValue.field(
+                        FieldInfo.createForHiddenField(
+                                AsmTypes.COROUTINE_IMPL,
+                                AsmTypes.OBJECT_TYPE,
+                                CoroutineCodegenUtilKt.COROUTINE_CONTROLLER_FIELD_NAME
+                        ),
+                        coroutineReceiver
+                    ),
+                    typeMapper.mapType(coroutineControllerType)
+            );
         }
 
         return context.generateReceiver(descriptor, state, false);

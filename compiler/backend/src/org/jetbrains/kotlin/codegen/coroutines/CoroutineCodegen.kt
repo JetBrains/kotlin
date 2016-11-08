@@ -17,25 +17,25 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -51,22 +51,11 @@ class CoroutineCodegen(
         strategy: FunctionGenerationStrategy,
         parentCodegen: MemberCodegen<*>,
         classBuilder: ClassBuilder,
-        private val continuationSuperType: KotlinType,
-        private val coroutineLambdaDescriptor: FunctionDescriptor
+        private val coroutineLambdaDescriptor: FunctionDescriptor,
+        private val controllerType: KotlinType
 ) : ClosureCodegen(state, element, null, closureContext, null, strategy, parentCodegen, classBuilder) {
-    private val controllerType = coroutineLambdaDescriptor.controllerTypeIfCoroutine!!
 
     override fun generateClosureBody() {
-        v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_VOLATILE,
-                COROUTINE_CONTROLLER_FIELD_NAME,
-                typeMapper.mapType(controllerType).descriptor, null, null)
-
-        v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
-                COROUTINE_LABEL_FIELD_NAME,
-                Type.INT_TYPE.descriptor, null, null)
-
         for (parameter in funDescriptor.valueParameters) {
             v.newField(
                     OtherOrigin(parameter),
@@ -77,37 +66,37 @@ class CoroutineCodegen(
 
         val classDescriptor = closureContext.contextDescriptor
 
-        val resumeFunctionDescriptor =
-                createSynthesizedImplementationByName(
-                        "resume",
-                        interfaceSupertype = continuationSuperType,
-                        implementationClass = classDescriptor,
-                        sourceElement = funDescriptor.source)
-
-        val resumeWithExceptionFunctionDescriptor =
-                createSynthesizedImplementationByName(
-                        "resumeWithException",
-                        interfaceSupertype = continuationSuperType,
-                        implementationClass = classDescriptor,
-                        sourceElement = funDescriptor.source)
-
-        // private fun doResume(result, throwable)
+        // protected fun doResume(result, throwable)
         val combinedResumeFunctionDescriptor =
-                resumeFunctionDescriptor.newCopyBuilder()
-                        .setVisibility(Visibilities.PRIVATE)
-                        .setName(Name.identifier("doResume"))
-                        .setCopyOverrides(false)
-                        .setPreserveSourceElement()
-                        .setValueParameters(
-                                listOf(
-                                        resumeFunctionDescriptor.valueParameters[0].copy(
-                                                resumeFunctionDescriptor, Name.identifier("value"), 0),
-                                        resumeWithExceptionFunctionDescriptor.valueParameters[0].copy(
-                                                resumeFunctionDescriptor, Name.identifier("exception"), 1))
-                        ).build()!!
-
-        generatedDelegationToCombinedResume(resumeFunctionDescriptor, combinedResumeFunctionDescriptor, isSuccess = true)
-        generatedDelegationToCombinedResume(resumeWithExceptionFunctionDescriptor, combinedResumeFunctionDescriptor, isSuccess = false)
+                SimpleFunctionDescriptorImpl.create(
+                        classDescriptor, Annotations.EMPTY, Name.identifier("doResume"), CallableMemberDescriptor.Kind.DECLARATION,
+                        funDescriptor.source
+                ).apply doResume@{
+                    initialize(
+                            /* receiverParameterType = */ null,
+                            classDescriptor.thisAsReceiverParameter,
+                            /* typeParameters = */ emptyList(),
+                            listOf(
+                                    ValueParameterDescriptorImpl(
+                                            this@doResume, null, 0, Annotations.EMPTY, Name.identifier("data"),
+                                            module.builtIns.nullableAnyType,
+                                            /* isDefault = */ false, /* isCrossinline = */ false,
+                                            /* isNoinline = */ false, /* isCoroutine = */ false,
+                                            /* varargElementType = */ null, SourceElement.NO_SOURCE
+                                    ),
+                                    ValueParameterDescriptorImpl(
+                                            this@doResume, null, 1, Annotations.EMPTY, Name.identifier("throwable"),
+                                            module.builtIns.throwable.defaultType.makeNullable(),
+                                            /* isDefault = */ false, /* isCrossinline = */ false,
+                                            /* isNoinline = */ false, /* isCoroutine = */ false,
+                                            /* varargElementType = */ null, SourceElement.NO_SOURCE
+                                    )
+                            ),
+                            module.builtIns.unitType,
+                            Modality.FINAL,
+                            Visibilities.PROTECTED
+                    )
+                }
 
         functionCodegen.generateMethod(OtherOrigin(element), combinedResumeFunctionDescriptor,
                                        object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
@@ -130,9 +119,11 @@ class CoroutineCodegen(
     private fun generateInvokeMethod(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
         val classDescriptor = closureContext.contextDescriptor
         val owner = typeMapper.mapClass(classDescriptor)
-        val controllerFieldInfo = FieldInfo.createForHiddenField(
-                owner,
-                typeMapper.mapType(controllerType), COROUTINE_CONTROLLER_FIELD_NAME)
+        val controllerFieldInfo =
+                FieldInfo.createForHiddenField(
+                        AsmTypes.COROUTINE_IMPL,
+                        AsmTypes.OBJECT_TYPE, COROUTINE_CONTROLLER_FIELD_NAME
+                )
 
         val thisInstance = StackValue.thisOrOuter(codegen, classDescriptor, false, false)
 
@@ -225,90 +216,43 @@ class CoroutineCodegen(
         codegen.v.areturn(Type.VOID_TYPE)
     }
 
-    private fun createSynthesizedImplementationByName(
-            name: String,
-            interfaceSupertype: KotlinType,
-            implementationClass: ClassDescriptor,
-            sourceElement: SourceElement
-    ): SimpleFunctionDescriptor {
-        val inSuperType = interfaceSupertype.memberScope.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single()
-        val result = inSuperType.newCopyBuilder().setSource(sourceElement).setOwner(implementationClass).setModality(Modality.FINAL).build()!!
-        result.setSingleOverridden(inSuperType)
-
-        return result
-    }
-
-    private fun generatedDelegationToCombinedResume(
-            from: SimpleFunctionDescriptor,
-            combinedResume: SimpleFunctionDescriptor,
-            isSuccess: Boolean
-    ) {
-        functionCodegen.generateMethod(OtherOrigin(element), from,
-                                       object : FunctionGenerationStrategy.CodegenBased(state) {
-                                           override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                                               with(codegen.v) {
-                                                   load(0, AsmTypes.OBJECT_TYPE)
-                                                   if (isSuccess) {
-                                                       load(1, AsmTypes.OBJECT_TYPE)
-                                                       aconst(null)
-                                                   }
-                                                   else {
-                                                       aconst(null)
-                                                       load(1, AsmTypes.OBJECT_TYPE)
-                                                   }
-
-                                                   val delegateTo = typeMapper.mapAsmMethod(combinedResume)
-                                                   invokevirtual(className, delegateTo.name, delegateTo.descriptor, false)
-                                                   areturn(Type.VOID_TYPE)
-                                               }
-                                           }
-                                       })
-    }
-
     private fun InstructionAdapter.setLabelValue(value: Int) {
         load(0, AsmTypes.OBJECT_TYPE)
         iconst(value)
-        putfield(v.thisName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor)
-    }
-
-    override fun generateAdditionalCodeInConstructor(iv: InstructionAdapter) {
-        super.generateAdditionalCodeInConstructor(iv)
-        // Change label value to illegal to make sure continuation will not be used until `invoke(Controler)`
-        // where correct value will be set up
-        iv.setLabelValue(LABEL_VALUE_BEFORE_INVOKE)
+        putfield(AsmTypes.COROUTINE_IMPL.internalName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor)
     }
 
     companion object {
-        private const val LABEL_VALUE_BEFORE_INVOKE = -2
         private const val LABEL_VALUE_BEFORE_FIRST_SUSPENSION = 0
 
-        @JvmStatic fun create(
+        @JvmStatic
+        fun create(
                 expressionCodegen: ExpressionCodegen,
                 originalCoroutineLambdaDescriptor: FunctionDescriptor,
                 declaration: KtElement,
                 classBuilder: ClassBuilder
         ): ClosureCodegen? {
-            val classDescriptor = expressionCodegen.bindingContext[CodegenBinding.CLASS_FOR_CALLABLE, originalCoroutineLambdaDescriptor] ?: return null
-            declaration as? KtFunction ?: return null
-
-            val continuationSupertype =
-                    classDescriptor.typeConstructor.supertypes.firstOrNull {
-                        it.constructor.declarationDescriptor?.fqNameUnsafe ==
-                                DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.toUnsafe()
-                    } ?: return null
+            if (declaration !is KtFunction) return null
+            val controllerType = originalCoroutineLambdaDescriptor.controllerTypeIfCoroutine ?: return null
 
             val descriptorWithContinuationReturnType =
-                    originalCoroutineLambdaDescriptor.newCopyBuilder().setPreserveSourceElement().setReturnType(continuationSupertype).build()!!
+                    originalCoroutineLambdaDescriptor.newCopyBuilder()
+                            .setPreserveSourceElement()
+                            .setReturnType(expressionCodegen.state.jvmRuntimeTypes.continuationOfAny)
+                            .build()!!
 
             val state = expressionCodegen.state
             return CoroutineCodegen(
                     state,
                     declaration,
                     expressionCodegen.context.intoCoroutineClosure(
-                            descriptorWithContinuationReturnType, originalCoroutineLambdaDescriptor, expressionCodegen, state.typeMapper),
-                    FunctionGenerationStrategy.FunctionDefault(state, declaration), expressionCodegen.parentCodegen, classBuilder,
-                    continuationSupertype,
-                    originalCoroutineLambdaDescriptor)
+                            descriptorWithContinuationReturnType, originalCoroutineLambdaDescriptor, expressionCodegen, state.typeMapper
+                    ),
+                    FunctionGenerationStrategy.FunctionDefault(state, declaration),
+                    expressionCodegen.parentCodegen, classBuilder,
+                    originalCoroutineLambdaDescriptor,
+                    controllerType
+            )
         }
     }
 }

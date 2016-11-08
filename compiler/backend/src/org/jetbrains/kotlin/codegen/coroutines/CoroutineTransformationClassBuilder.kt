@@ -102,12 +102,18 @@ class CoroutineTransformerMethodVisitor(
                          insnListOf(
                                  VarInsnNode(Opcodes.ALOAD, 0),
                                  FieldInsnNode(
-                                         Opcodes.GETFIELD, classBuilder.thisName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor),
+                                         Opcodes.GETFIELD,
+                                         AsmTypes.COROUTINE_IMPL.internalName,
+                                         COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
+                                 ),
                                  TableSwitchInsnNode(0,
                                                      suspensionPoints.size,
                                                      defaultLabel,
-                                                     *(arrayOf(startLabel) + suspensionPointLabels)),
-                                 startLabel))
+                                                     startLabel, *suspensionPointLabels.toTypedArray()
+                                 ),
+                                 startLabel
+                         )
+            )
 
 
             insert(last, withInstructionAdapter {
@@ -303,7 +309,11 @@ class CoroutineTransformerMethodVisitor(
                                  VarInsnNode(Opcodes.ALOAD, 0),
                                  *withInstructionAdapter { iconst(id) }.toArray(),
                                  FieldInsnNode(
-                                         Opcodes.PUTFIELD, classBuilder.thisName, COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor)))
+                                         Opcodes.PUTFIELD, AsmTypes.COROUTINE_IMPL.internalName, COROUTINE_LABEL_FIELD_NAME,
+                                         Type.INT_TYPE.descriptor
+                                 )
+                         )
+            )
 
             // Drop default value that purpose was to simulate returned value by suspension method
             suspension.fakeReturnValueInsns.forEach { methodNode.instructions.remove(it) }

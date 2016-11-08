@@ -11,7 +11,7 @@ fun builder1(coroutine c: Controller.() -> Continuation<Unit>) {
 
 fun builder2(coroutine c: Controller.() -> Continuation<Unit>) {
     val continuation = c(Controller())
-    val declaredField = continuation!!.javaClass.getDeclaredField("label")
+    val declaredField = continuation.javaClass.superclass.getDeclaredField("label")
     declaredField.setAccessible(true)
     declaredField.set(continuation, -3)
     continuation.resume(Unit)

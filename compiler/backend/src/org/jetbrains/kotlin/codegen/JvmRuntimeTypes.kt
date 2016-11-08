@@ -43,6 +43,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val functionReference: ClassDescriptor by klass("FunctionReference")
     private val localVariableReference: ClassDescriptor by klass("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by klass("MutableLocalVariableReference")
+    private val coroutineImplClass by klass("CoroutineImpl")
 
     private val propertyReferences: List<ClassDescriptor> by lazy {
         (0..2).map { i -> createClass(kotlinJvmInternalPackage, "PropertyReference$i") }
@@ -52,7 +53,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
         (0..2).map { i -> createClass(kotlinJvmInternalPackage, "MutablePropertyReference$i") }
     }
 
-    private val defaultContinuationSupertype: KotlinType by lazy { createNullableAnyContinuation(module) }
+    val continuationOfAny: KotlinType by lazy { createNullableAnyContinuation(module) }
 
     /**
      * @return `Continuation<Any?>` type
@@ -89,7 +90,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
 
         val coroutineControllerType = descriptor.controllerTypeIfCoroutine
         if (coroutineControllerType != null) {
-            return listOf(lambda.defaultType, functionType, /*coroutineType,*/ defaultContinuationSupertype)
+            return listOf(coroutineImplClass.defaultType, functionType)
         }
 
         return listOf(lambda.defaultType, functionType)

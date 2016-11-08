@@ -422,7 +422,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             iv.load(0, superClassAsmType);
 
-            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE)) {
+            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) || superClassAsmType.equals(COROUTINE_IMPL)) {
                 int arity = funDescriptor.getValueParameters().size();
                 if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
                 if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
@@ -433,17 +433,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V", false);
             }
 
-            generateAdditionalCodeInConstructor(iv);
-
             iv.visitInsn(RETURN);
 
             FunctionCodegen.endVisit(iv, "constructor", element);
         }
         return constructor;
-    }
-
-    protected void generateAdditionalCodeInConstructor(@NotNull InstructionAdapter iv) {
-
     }
 
     @NotNull
