@@ -97,6 +97,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.kotlin.config.JVMConfigurationKeys.MODULE_NAME;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget;
 
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
@@ -837,7 +838,7 @@ public class KotlinTestUtils {
                         assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }
-                else if (filenamePattern.matcher(file.getName()).matches() && InTextDirectivesUtils.isCompatibleTarget(targetBackend, file)) {
+                else if (filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
                     assertFilePathPresent(file, rootFile, filePaths);
                 }
             }
@@ -847,7 +848,8 @@ public class KotlinTestUtils {
     public static void assertAllTestsPresentInSingleGeneratedClass(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
-            @NotNull final Pattern filenamePattern
+            @NotNull final Pattern filenamePattern,
+            @NotNull final TargetBackend targetBackend
     ) {
         final File rootFile = new File(getTestsRoot(testCaseClass));
 
@@ -856,7 +858,7 @@ public class KotlinTestUtils {
         FileUtil.processFilesRecursively(testDataDir, new Processor<File>() {
             @Override
             public boolean process(File file) {
-                if (file.isFile() && filenamePattern.matcher(file.getName()).matches()) {
+                if (file.isFile() && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
                     assertFilePathPresent(file, rootFile, filePaths);
                 }
 
