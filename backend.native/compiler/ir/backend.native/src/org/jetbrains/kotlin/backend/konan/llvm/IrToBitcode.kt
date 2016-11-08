@@ -203,6 +203,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             // do not generate any code for intrinsic classes as they require special handling
             return
         }
+
+        super.visitClass(declaration)
     }
 
     //-------------------------------------------------------------------------//
@@ -322,10 +324,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateGetField(value: IrGetField): LLVMOpaqueValue {
         logger.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
-            val thisPtr = generator.load(generator.thisVariable(), generator.tmpVariable())
-            val typedPtr = generator.bitcast(pointerType(generator.classType(generator.currentClass!!)), thisPtr, generator.tmpVariable())
-            val fieldPtr = LLVMBuildStructGEP(generator.context.llvmBuilder, typedPtr, generator.indexInClass(value.descriptor), generator.tmpVariable())
-            return generator.load(fieldPtr!!, generator.tmpVariable())
+            if (value.descriptor.getter != null) {
+                val tmpThis = generator.load(generator.thisVariable(), generator.tmpVariable())
+                return evaluateSimpleFunctionCall(generator.tmpVariable(), value.descriptor.getter!!.original, mutableListOf(tmpThis))!!
+            } else {
+                val thisPtr = generator.load(generator.thisVariable(), generator.tmpVariable())
+                val typedPtr = generator.bitcast(pointerType(generator.classType(generator.currentClass!!)), thisPtr, generator.tmpVariable())
+                val fieldPtr = LLVMBuildStructGEP(generator.context.llvmBuilder, typedPtr, generator.indexInClass(value.descriptor), generator.tmpVariable())
+                return generator.load(fieldPtr!!, generator.tmpVariable())
+            }
         }
         TODO()
     }
@@ -373,9 +380,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSimpleFunctionCall(tmpVariableName: String, value: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
-        logger.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
-        return generator.call(value.descriptor as FunctionDescriptor, args, tmpVariableName)
+    private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+        //logger.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
+        return generator.call(descriptor, args, tmpVariableName)
     }
 
     //-------------------------------------------------------------------------//
@@ -386,7 +393,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             descriptor.isOperator                         -> return evaluateOperatorCall(tmpVariableName, callee.origin!!, args)
             descriptor is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall(tmpVariableName, callee.origin!!, args)
             descriptor is ClassConstructorDescriptor      -> return evaluateConstructorCall(tmpVariableName, callee, args)
-            else                                          -> return evaluateSimpleFunctionCall(tmpVariableName, callee, args)
+            else                                          -> return evaluateSimpleFunctionCall(tmpVariableName, descriptor, args)
         }
     }
 
@@ -401,7 +408,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val constructorParams: MutableList<LLVMOpaqueValue?> = mutableListOf()
             constructorParams += thisValue
             constructorParams += args
-            return generator.call(callee.descriptor as FunctionDescriptor, constructorParams, variableName)
+            return evaluateSimpleFunctionCall(variableName, callee.descriptor as FunctionDescriptor, constructorParams)
         }
     }
 
