@@ -22,7 +22,6 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     }
 
     public K2NativeCompilerArguments(K2NativeCompilerArguments arguments) {
-        super(arguments);
         this.outputFile = arguments.outputFile;
         this.runtimeFile = arguments.runtimeFile;
         this.headers = arguments.headers;
