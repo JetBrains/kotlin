@@ -94,14 +94,23 @@ abstract class KonanTest extends DefaultTask {
          return ""
        }
     }
+
+    protected String rdynamic() {
+       if (linux()) {
+         return "-rdynamic"
+       }
+       else {
+         return ""
+       }
+    }
 }
 
 class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
-            commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
-                    "-o", "${exe.absolutePath}"
+            commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
+                    "-o", "${exe.absolutePath}", linkDl(), rdynamic()
         }
     }
 }
@@ -109,8 +118,8 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         project.execClang {
-            commandLine "clang", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}", linkDl(),
-                    "-o", "${exe.absolutePath}"
+            commandLine "clang", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
+                    "-o", "${exe.absolutePath}", linkDl(), rdynamic()
         }
     }
 }
