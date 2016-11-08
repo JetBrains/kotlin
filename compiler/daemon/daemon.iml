@@ -9,7 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="daemon-common" />
-    <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="library" name="intellij-core" level="project" />
+    <orderEntry type="module" module-name="frontend" />
   </component>
 </module>
