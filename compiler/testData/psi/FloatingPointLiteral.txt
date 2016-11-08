@@ -112,5 +112,50 @@ JetFile: FloatingPointLiteral.kt
         VALUE_ARGUMENT
           FLOAT_CONSTANT
             PsiElement(FLOAT_CONSTANT)('1.0e-1f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('.1_1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('3.141_592')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e1__3_7')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1_0f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e1_2f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('2_2.0f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('.3_3f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('3.14_16f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('6.022___137e+2_3f')
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')
