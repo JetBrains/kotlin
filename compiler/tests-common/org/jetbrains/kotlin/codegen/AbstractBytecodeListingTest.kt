@@ -140,8 +140,10 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
         override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
             val type = Type.getType(desc).className
-            declarationsInsideClass.add(Declaration("field $name: $type"))
+            val fieldDeclaration = Declaration("field $name: $type")
+            declarationsInsideClass.add(fieldDeclaration)
             handleModifiers(access)
+            if (access and ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
 
             return object : FieldVisitor(ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {

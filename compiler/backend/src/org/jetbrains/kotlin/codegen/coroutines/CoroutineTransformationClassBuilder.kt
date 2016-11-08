@@ -281,7 +281,7 @@ class CoroutineTransformerMethodVisitor(
             val (type, maxIndex) = entry
             for (index in 0..maxIndex) {
                 classBuilder.newField(
-                        JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE or Opcodes.ACC_VOLATILE,
+                        JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PRIVATE,
                         type.fieldNameForVar(index), type.descriptor, null, null)
             }
         }

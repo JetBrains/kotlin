@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class Controller {
+    public method <init>(): void
+    public final method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): void
+}
+
+@kotlin.Metadata
+final class CoroutineFieldsKt$box$1 {
+    synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
+    private field J$0: long
+    private field L$0: java.lang.Object
+    private field L$1: java.lang.Object
+    private final field p$0: java.lang.String
+    private final field p$1: long
+    inner class CoroutineFieldsKt$box$1
+    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef): void
+    protected final method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): void
+    public final @org.jetbrains.annotations.NotNull method invoke(@org.jetbrains.annotations.NotNull p0: Controller, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: long): kotlin.coroutines.Continuation
+    public synthetic method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class CoroutineFieldsKt {
+    inner class CoroutineFieldsKt$box$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function3): void
+}

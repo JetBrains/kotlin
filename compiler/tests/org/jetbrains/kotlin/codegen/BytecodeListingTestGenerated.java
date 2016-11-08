@@ -41,6 +41,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("coroutineFields.kt")
+    public void testCoroutineFields() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/coroutineFields.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultImpls.kt")
     public void testDefaultImpls() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
