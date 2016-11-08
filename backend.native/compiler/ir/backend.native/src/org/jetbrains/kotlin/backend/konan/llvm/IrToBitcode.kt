@@ -1,8 +1,8 @@
-package org.jetbrains.kotlin.backend.native.llvm
+package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.native.isIntrinsic
+import org.jetbrains.kotlin.backend.konan.isIntrinsic
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor

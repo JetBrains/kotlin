@@ -1,12 +1,12 @@
-package org.jetbrains.kotlin.backend.native.llvm
+package org.jetbrains.kotlin.backend.konan.llvm
 
 
 import kotlin_native.interop.allocNativeArrayOf
 import kotlin_native.interop.memScoped
 import llvm.*
-import org.jetbrains.kotlin.backend.native.implementation
-import org.jetbrains.kotlin.backend.native.implementedInterfaces
-import org.jetbrains.kotlin.backend.native.isInterface
+import org.jetbrains.kotlin.backend.konan.implementation
+import org.jetbrains.kotlin.backend.konan.implementedInterfaces
+import org.jetbrains.kotlin.backend.konan.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName

@@ -1,7 +1,7 @@
-package org.jetbrains.kotlin.backend.native.llvm
+package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.native.ModuleIndex
+import org.jetbrains.kotlin.backend.konan.ModuleIndex
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val llvmModule: LLVMOpaqueModule) {

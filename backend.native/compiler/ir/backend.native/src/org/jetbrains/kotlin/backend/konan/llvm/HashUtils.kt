@@ -1,7 +1,7 @@
-package org.jetbrains.kotlin.backend.native.llvm
+package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.*
-import org.jetbrains.kotlin.backend.native.hash.*
+import org.jetbrains.kotlin.backend.konan.hash.*
 
 internal fun localHash(data: ByteArray): Long {
     memScoped {

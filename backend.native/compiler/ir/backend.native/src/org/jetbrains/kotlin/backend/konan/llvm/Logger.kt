@@ -1,11 +1,11 @@
-package org.jetbrains.kotlin.backend.native.llvm
+package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.asCString
 import llvm.LLVMPrintModuleToString
 import llvm.LLVMPrintValueToString
 import llvm.LLVMOpaqueValue
-import org.jetbrains.kotlin.backend.native.llvm.Context
-import org.jetbrains.kotlin.backend.native.llvm.ContextUtils
+import org.jetbrains.kotlin.backend.konan.llvm.Context
+import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import java.io.StringWriter

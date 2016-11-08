@@ -126,7 +126,7 @@ kotlinNativeInterop {
        include '**/*.hpp'
      }
 
-     pkg 'org.jetbrains.kotlin.backend.native.hash'
+     pkg 'org.jetbrains.kotlin.backend.konan.hash'
    }
 }
 
