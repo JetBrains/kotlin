@@ -39,7 +39,7 @@ fun specialJVM(): List<GenericFunction> {
         body() {
             """
             val index = size
-            val result = Arrays.copyOf(this, index + 1)
+            val result = java.util.Arrays.copyOf(this, index + 1)
             result[index] = element
             return result
             """
@@ -55,7 +55,7 @@ fun specialJVM(): List<GenericFunction> {
         body {
             """
             var index = size
-            val result = Arrays.copyOf(this, index + elements.size)
+            val result = java.util.Arrays.copyOf(this, index + elements.size)
             for (element in elements) result[index++] = element
             return result
             """
@@ -73,7 +73,7 @@ fun specialJVM(): List<GenericFunction> {
             """
             val thisSize = size
             val arraySize = elements.size
-            val result = Arrays.copyOf(this, thisSize + arraySize)
+            val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
             System.arraycopy(elements, 0, result, thisSize, arraySize)
             return result
             """
@@ -88,7 +88,7 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
         body {
-            "return Arrays.copyOfRange(this, fromIndex, toIndex)"
+            "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)"
         }
     }
 
@@ -99,7 +99,7 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
         body {
-            "return Arrays.copyOf(this, size)"
+            "return java.util.Arrays.copyOf(this, size)"
         }
     }
 
@@ -112,7 +112,7 @@ fun specialJVM(): List<GenericFunction> {
         returns("SELF")
         returns(InvariantArraysOfObjects) { "Array<T?>" }
         body {
-            "return Arrays.copyOf(this, newSize)"
+            "return java.util.Arrays.copyOf(this, newSize)"
         }
     }
 
@@ -122,7 +122,7 @@ fun specialJVM(): List<GenericFunction> {
         returns { "Unit" }
         body {
             """
-            Arrays.fill(this, fromIndex, toIndex, element)
+            java.util.Arrays.fill(this, fromIndex, toIndex, element)
             """
         }
     }
@@ -145,7 +145,7 @@ fun specialJVM(): List<GenericFunction> {
         }
         returns("Int")
         body {
-            "return Arrays.binarySearch(this, fromIndex, toIndex, element)"
+            "return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)"
         }
     }
 
@@ -166,7 +166,7 @@ fun specialJVM(): List<GenericFunction> {
         }
         returns("Int")
         body {
-            "return Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)"
+            "return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)"
         }
     }
 
@@ -177,7 +177,7 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Sorts the array in-place." }
         returns("Unit")
         body {
-            "if (size > 1) Arrays.sort(this)"
+            "if (size > 1) java.util.Arrays.sort(this)"
         }
     }
 
@@ -187,7 +187,7 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Sorts a range in the array in-place." }
         returns("Unit")
         body {
-            "Arrays.sort(this, fromIndex, toIndex)"
+            "java.util.Arrays.sort(this, fromIndex, toIndex)"
         }
     }
 
@@ -196,7 +196,7 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Sorts the array in-place with the given [comparator]." }
         returns("Unit")
         body {
-            "if (size > 1) Arrays.sort(this, comparator)"
+            "if (size > 1) java.util.Arrays.sort(this, comparator)"
         }
     }
 
@@ -205,7 +205,7 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Sorts a range in the array in-place with the given [comparator]." }
         returns("Unit")
         body {
-            "Arrays.sort(this, fromIndex, toIndex, comparator)"
+            "java.util.Arrays.sort(this, fromIndex, toIndex, comparator)"
         }
     }
 
