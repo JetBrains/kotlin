@@ -8,14 +8,9 @@ enumClassBody
   : "{" enumEntries (";" members)? "}"
   ;
 
-enumEntries
-  : enumEntry*
+enumEntries (used by enumClassBody)
+  : (enumEntry{","} ","?)?
   ;
-
-enumEntries
-  : (enumEntry ","? )?
-  ;
-
 
 enumEntry
   : modifiers SimpleName ((":" initializer) | ("(" arguments ")"))? classBody?
