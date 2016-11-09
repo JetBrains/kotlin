@@ -74,8 +74,6 @@ class CoroutineTransformerMethodVisitor(
         // Add global exception handler
         processHandleExceptionCall(methodNode)
 
-        if (suspensionPoints.isEmpty()) return
-
         // Spill stack to variables before suspension points, try/catch blocks
         FixStackWithLabelNormalizationMethodTransformer().transform(classBuilder.thisName, methodNode)
 

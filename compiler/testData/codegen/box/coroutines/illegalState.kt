@@ -35,7 +35,27 @@ fun box(): String {
         return "fail 3"
     } catch (e: java.lang.IllegalStateException) {
         if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 4: ${e.message!!}"
-        return "OK"
+    }
+
+    var result = "OK"
+
+    try {
+        builder1 {
+            result = "fail 5"
+        }
+        return "fail 6"
+    } catch (e: java.lang.IllegalStateException) {
+        if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 7: ${e.message!!}"
+    }
+
+    try {
+        builder2 {
+            result = "fail 8"
+        }
+        return "fail 9"
+    } catch (e: java.lang.IllegalStateException) {
+        if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 10: ${e.message!!}"
+        return result
     }
 
     return "fail"

@@ -4573,6 +4573,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noSuspensionPoints.kt")
+        public void testNoSuspensionPoints() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/noSuspensionPoints.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nonLocalReturnFromInlineLambda.kt")
         public void testNonLocalReturnFromInlineLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambda.kt");
