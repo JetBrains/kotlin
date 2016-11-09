@@ -21136,7 +21136,7 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class UnderscoresInNumericLiterals extends AbstractDiagnosticsTest {
             public void testAllFilesPresentInUnderscoresInNumericLiterals() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/underscoresInNumericLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/underscoresInNumericLiterals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("illegalUnderscores.kt")

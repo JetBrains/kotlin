@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 class Controller {
     var res = 0
     operator fun handleResult(x: Int, y: Continuation<Nothing>) {
