@@ -197,4 +197,10 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/TopLevelMethodFromJava.java");
         doTest(fileName);
     }
+
+    @TestMetadata("TypeNamesFromStdLibNavigation.kt")
+    public void testTypeNamesFromStdLibNavigation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/TypeNamesFromStdLibNavigation.kt");
+        doTest(fileName);
+    }
 }
