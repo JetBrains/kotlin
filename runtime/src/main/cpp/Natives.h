@@ -8,7 +8,11 @@ typedef uint8_t KBool;
 typedef uint8_t KByte;
 typedef uint16_t KChar;
 // Note that it is signed.
+typedef int16_t KShort;
 typedef int32_t KInt;
+typedef int64_t KLong;
+typedef float   KFloat;
+typedef double  KDouble;
 
 typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
