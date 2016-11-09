@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UReferenceExpression
@@ -37,7 +38,14 @@ abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
             val initializerExpression = when (psi) {
                 is UastKotlinPsiVariable -> psi.ktInitializer
                 is UastKotlinPsiParameter -> psi.ktDefaultValue
-                is KtLightElement<*, *> -> (psi.kotlinOrigin as? KtVariableDeclaration)?.initializer
+                is KtLightElement<*, *> -> {
+                    val origin = psi.kotlinOrigin
+                    when (origin) {
+                        is KtVariableDeclaration -> origin.initializer
+                        is KtParameter -> origin.defaultValue
+                        else -> null
+                    }
+                }
                 else -> null
             } ?: return null
             return getLanguagePlugin().convertElement(initializerExpression, this) as? UExpression ?: UastEmptyExpression
