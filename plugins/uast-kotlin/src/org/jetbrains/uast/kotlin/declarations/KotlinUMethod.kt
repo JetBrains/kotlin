@@ -16,6 +16,8 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
@@ -24,16 +26,29 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.uast.*
-import org.jetbrains.uast.java.JavaUMethod
+import org.jetbrains.uast.java.JavaUAnnotation
+import org.jetbrains.uast.java.annotations
+import org.jetbrains.uast.java.internal.JavaUElementWithComments
+import org.jetbrains.uast.kotlin.KotlinUParameter
 import org.jetbrains.uast.kotlin.lz
 import org.jetbrains.uast.kotlin.unwrap
 
 open class KotlinUMethod(
         psi: KtLightMethod,
-        containingElement: UElement?
-) : JavaUMethod(psi, containingElement) {
+        override val containingElement: UElement?
+) : UMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
     private val kotlinOrigin = (psi.originalElement as KtLightElement<*, *>).kotlinOrigin
+
+    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
+
+    override val uastParameters by lz {
+        psi.parameterList.parameters.map { KotlinUParameter(it, this) }
+    }
+
+    override val uastAnchor: UElement
+        get() = UIdentifier((psi.originalElement as? PsiNameIdentifierOwner)?.nameIdentifier ?: psi.nameIdentifier, this)
+
 
     override val uastBody by lz {
         val bodyExpression = (kotlinOrigin as? KtFunction)?.bodyExpression ?: return@lz null
