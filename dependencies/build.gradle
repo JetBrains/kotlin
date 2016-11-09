@@ -86,7 +86,8 @@ task llvm(type: TgzNativeDep) {
 }
 
 task sysroot(type: TgzNativeDep) {
-    baseName = "target-sysroot-1-$target"
+    String version = (target == 'linux-x86-64') ? '2' : '1'
+    baseName = "target-sysroot-$version-$target"
 }
 
 
