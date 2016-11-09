@@ -123,14 +123,18 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
                 if (target != null) {
                     val lhs = JsNameRef(stateFieldName, JsLiteral.THIS)
                     val rhs = program.getNumberLiteral(blockIndexes[target]!!)
-                    ctx.replaceMe(JsAstUtils.assignment(lhs, rhs).makeStmt())
+                    ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
+                        targetBlock = true
+                    })
                 }
 
                 val exceptionTarget = x.targetExceptionBlock
                 if (exceptionTarget != null) {
                     val lhs = JsNameRef(exceptionStateName, JsLiteral.THIS)
                     val rhs = program.getNumberLiteral(blockIndexes[exceptionTarget]!!)
-                    ctx.replaceMe(JsAstUtils.assignment(lhs, rhs).makeStmt())
+                    ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
+                        targetExceptionBlock = true
+                    })
                 }
 
                 val finallyPath = x.finallyPath
@@ -138,7 +142,9 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
                     if (finallyPath.isNotEmpty()) {
                         val lhs = JsNameRef(finallyPathFieldName, JsLiteral.THIS)
                         val rhs = JsArrayLiteral(finallyPath.map { program.getNumberLiteral(blockIndexes[it]!!) })
-                        ctx.replaceMe(JsAstUtils.assignment(lhs, rhs).makeStmt())
+                        ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
+                            this.finallyPath = true
+                        })
                     }
                     else {
                         ctx.removeMe()
@@ -623,7 +629,3 @@ private fun CoroutineBlock.collectFinallyPaths(): List<List<CoroutineBlock>> {
     })
     return finallyPaths
 }
-
-private var JsDebugger.targetBlock: CoroutineBlock? by MetadataProperty(default = null)
-private var JsDebugger.targetExceptionBlock: CoroutineBlock? by MetadataProperty(default = null)
-private var JsDebugger.finallyPath: List<CoroutineBlock>? by MetadataProperty(default = null)

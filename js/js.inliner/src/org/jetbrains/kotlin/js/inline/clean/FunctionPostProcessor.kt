@@ -29,7 +29,8 @@ class FunctionPostProcessor(root: JsFunction) {
         { IfStatementReduction(root.body).apply() },
         { DeadCodeElimination(root.body).apply() },
         { RedundantVariableDeclarationElimination(root.body).apply() },
-        { RedundantStatementElimination(root).apply() }
+        { RedundantStatementElimination(root).apply() },
+        { CoroutineStateElimination(root.body).apply() }
     )
     // TODO: reduce to A || B, A && B if possible
 
