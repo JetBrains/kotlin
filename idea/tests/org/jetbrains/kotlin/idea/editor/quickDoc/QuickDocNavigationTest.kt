@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.junit.Assert
 
@@ -58,9 +60,27 @@ class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
         Assert.assertEquals("ArrayList", (secondaryTarget as PsiClass).name)
     }
 
+    fun testQualifiedName() {
+        val target = resolveDocLink("a.b.c.D")
+        UsefulTestCase.assertInstanceOf(target, KtClass::class.java)
+        Assert.assertEquals("D", (target as KtClass).name)
+    }
+
+    fun testTopLevelFun() {
+        val target = resolveDocLink("doc.topLevelFun")
+        UsefulTestCase.assertInstanceOf(target, KtFunction::class.java)
+        Assert.assertEquals("topLevelFun", (target as KtFunction).name)
+    }
+
+    fun testTopLevelProperty() {
+        val target = resolveDocLink("doc.topLevelProperty")
+        UsefulTestCase.assertInstanceOf(target, KtProperty::class.java)
+        Assert.assertEquals("topLevelProperty", (target as KtProperty).name)
+    }
+
     private fun resolveDocLink(linkText: String): PsiElement? {
         myFixture.configureByFile(getTestName(true) + ".kt")
-        val source = myFixture.elementAtCaret.getParentOfType<KtFunction>(false)
+        val source = myFixture.elementAtCaret.getParentOfType<KtDeclaration>(false)
         return KotlinQuickDocumentationProvider().getDocumentationElementForLink(
                 myFixture.psiManager, linkText, source)
     }

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
@@ -57,7 +56,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         val bindingContext = navElement.analyze(BodyResolveMode.PARTIAL)
         val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, navElement] ?: return null
         val descriptors = resolveKDocLink(bindingContext, navElement.getResolutionFacade(),
-                                          contextDescriptor, null, StringUtil.split(link, ","))
+                                          contextDescriptor, null, link.split('.'))
         val target = descriptors.firstOrNull() ?: return null
         return DescriptorToSourceUtilsIde.getAnyDeclaration(psiManager.project, target)
     }
