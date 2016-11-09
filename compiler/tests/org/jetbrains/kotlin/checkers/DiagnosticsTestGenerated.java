@@ -21058,6 +21058,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasConstructorTypeArgumentsInferenceWithNestedCalls.kt")
+            public void testTypeAliasConstructorTypeArgumentsInferenceWithNestedCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorTypeArgumentsInferenceWithNestedCalls.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasConstructorTypeArgumentsInferenceWithPhantomTypes.kt")
+            public void testTypeAliasConstructorTypeArgumentsInferenceWithPhantomTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorTypeArgumentsInferenceWithPhantomTypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasConstructorWrongClass.kt")
             public void testTypeAliasConstructorWrongClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorWrongClass.kt");

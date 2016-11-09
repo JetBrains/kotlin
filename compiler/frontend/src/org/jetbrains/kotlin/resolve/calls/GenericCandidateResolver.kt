@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
@@ -33,11 +35,10 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.inference.*
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ValidityConstraintForConstituentType
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ValidityConstraintForConstituentType
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
@@ -122,20 +123,22 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
 
             val typeParameter = typeConstructor.parameters[i]
             addValidityConstraintsForTypeArgument(builder, typeProjection, typeParameter, boundsSubstitutor)
+
+            addValidityConstraintsForConstituentTypes(builder, typeProjection.type)
         }
     }
 
     private fun addValidityConstraintsForTypeArgument(
             builder: ConstraintSystem.Builder,
-            typeProjection: TypeProjection,
+            substitutedArgument: TypeProjection,
             typeParameter: TypeParameterDescriptor,
             boundsSubstitutor: TypeSubstitutor
     ) {
-        val typeArgument = typeProjection.type
+        val substitutedType = substitutedArgument.type
         for (upperBound in typeParameter.upperBounds) {
             val substitutedUpperBound = boundsSubstitutor.safeSubstitute(upperBound, Variance.INVARIANT)
-            val constraintPosition = ValidityConstraintForConstituentType(typeArgument, typeParameter, substitutedUpperBound)
-            builder.addSubtypeConstraint(typeArgument, substitutedUpperBound, constraintPosition)
+            val constraintPosition = ValidityConstraintForConstituentType(substitutedType, typeParameter, substitutedUpperBound)
+            builder.addSubtypeConstraint(substitutedType, substitutedUpperBound, constraintPosition)
         }
     }
 
