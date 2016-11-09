@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
+import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
@@ -80,6 +81,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
@@ -1303,7 +1305,16 @@ public class KotlinTypeMapper {
             if (variableDescriptor instanceof VariableDescriptor && !(variableDescriptor instanceof PropertyDescriptor)) {
                 Type sharedVarType = getSharedVarType(variableDescriptor);
                 if (sharedVarType == null) {
-                    sharedVarType = mapType(((VariableDescriptor) variableDescriptor).getType());
+                    if (isDelegatedLocalVariable(variableDescriptor)) {
+                        VariableDescriptor delegateVariableDescriptor = bindingContext.get(LOCAL_VARIABLE_DELEGATE,
+                                                                                           (VariableDescriptor) variableDescriptor);
+                        assert delegateVariableDescriptor != null :
+                                "Local delegated property " + variableDescriptor + " delegate descriptor should be not null";
+                        sharedVarType = mapType(delegateVariableDescriptor.getType());
+                    }
+                    else {
+                        sharedVarType = mapType(((VariableDescriptor) variableDescriptor).getType());
+                    }
                 }
                 type = sharedVarType;
             }

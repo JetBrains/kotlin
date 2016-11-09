@@ -1937,10 +1937,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return asmType(varType);
     }
 
-    private static boolean isDelegatedLocalVariable(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor instanceof LocalVariableDescriptor && ((LocalVariableDescriptor) descriptor).isDelegated();
-    }
-
     private static boolean isSharedVarType(@NotNull Type type) {
         return type.getSort() == Type.OBJECT && type.getInternalName().startsWith(REF_TYPE_PREFIX);
     }
