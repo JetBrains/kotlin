@@ -56,10 +56,14 @@ internal class DeadCodeElimination(private val root: JsStatement) {
 
         override fun visitBlock(x: JsBlock) {
             canContinue = true
-            for ((index, statement) in x.statements.withIndex()) {
+            visitStatements(x.statements)
+        }
+
+        private fun visitStatements(statements: MutableList<JsStatement>) {
+            for ((index, statement) in statements.withIndex()) {
                 accept(statement)
                 if (!canContinue) {
-                    val removedStatements = x.statements.subList(index + 1, x.statements.size)
+                    val removedStatements = statements.subList(index + 1, statements.size)
                     if (removedStatements.isNotEmpty()) {
                         hasChanges = true
                         removedStatements.clear()
@@ -174,7 +178,7 @@ internal class DeadCodeElimination(private val root: JsStatement) {
 
             for (caseBlock in x.cases) {
                 canContinue = true
-                caseBlock.statements.forEach { accept(it) }
+                visitStatements(caseBlock.statements)
 
                 if (!canContinue && localBreakExists) {
                     canContinue = true
