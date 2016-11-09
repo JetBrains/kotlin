@@ -4716,6 +4716,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ControlFlow extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("returnFromFinally.kt")
+            public void ignoredReturnFromFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInControlFlow() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -4747,12 +4753,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("ifStatement.kt")
             public void testIfStatement() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("returnFromFinally.kt")
-            public void testReturnFromFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt");
                 doTest(fileName);
             }
 

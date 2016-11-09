@@ -446,16 +446,14 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
     }
 
     override fun visitReturn(x: JsReturn) {
-        val returnBlock = CoroutineBlock()
         val isInFinally = hasEnclosingFinallyBlock()
         if (isInFinally) {
+            val returnBlock = CoroutineBlock()
             jumpWithFinally(0, returnBlock)
-        }
-
-        if (isInFinally) {
-            currentStatements += x.expression?.makeStmt().singletonOrEmptyList()
             currentStatements += jump()
+
             currentBlock = returnBlock
+            currentStatements += x.expression?.makeStmt().singletonOrEmptyList()
             currentStatements += JsReturn()
         }
         else {
