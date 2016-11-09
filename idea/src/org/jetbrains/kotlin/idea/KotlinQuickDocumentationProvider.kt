@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
+import org.jetbrains.kotlin.idea.kdoc.isBoringBuiltinClass
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
@@ -38,8 +41,21 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
+
+class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNamePolicy {
+    override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
+        val name = base.renderClassifier(classifier, renderer)
+        if (classifier.isBoringBuiltinClass())
+            return name
+        return buildString {
+            val ref = classifier.fqNameUnsafe.toString()
+            DocumentationManagerUtil.createHyperlink(this, ref, name, true)
+        }
+    }
+}
 
 class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
@@ -72,7 +88,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         private val LOG = Logger.getInstance(KotlinQuickDocumentationProvider::class.java)
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
-            classifierNamePolicy = ClassifierNamePolicy.SHORT
+            classifierNamePolicy = HtmlClassifierNamePolicy(ClassifierNamePolicy.SHORT)
             renderCompanionObjectName = true
         }
 
