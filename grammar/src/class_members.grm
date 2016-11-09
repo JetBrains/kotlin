@@ -42,7 +42,7 @@ anonymousInitializer
   ;
 
 companionObject
-  : modifiers "companion" "object"
+  : modifiers "companion" "object" SimpleName (":" delegationSpecifier{","})? classBody?
   ;
 
 valueParameters
