@@ -390,10 +390,10 @@ class CoroutineBodyTransformer(val program: JsProgram, val scope: JsScope, val t
 
         if (finallyNode != null) {
             currentStatements += updateFinallyPath(listOf(oldCatchBlock))
-            currentStatements += exceptionState(finallyBlock)
+            currentStatements += if (catchNode != null) exceptionState(finallyBlock) else stateAndJump(finallyBlock)
         }
         else {
-            currentStatements += exceptionState(oldCatchBlock)
+            currentStatements += if (catchNode != null) exceptionState(oldCatchBlock) else stateAndJump(oldCatchBlock)
         }
 
         if (catchNode != null) {
