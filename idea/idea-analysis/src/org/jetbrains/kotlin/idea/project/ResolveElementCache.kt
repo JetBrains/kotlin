@@ -530,6 +530,7 @@ class ResolveElementCache(
         val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor
                                     ?: error("Can't get primary constructor for descriptor '$classDescriptor' " +
                                              "in from class '${klass.getElementTextWithContext()}'")
+        ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
         val primaryConstructor = klass.getPrimaryConstructor()
         if (primaryConstructor != null) {

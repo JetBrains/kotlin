@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,9 +77,6 @@ class PseudocodeVariableDataCollector(
             if (instruction is VariableDeclarationInstruction) {
                 val variableDeclarationElement = instruction.variableDeclarationElement
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement) ?: return@traverse
-                // TODO: investigate why tests fail without this eager computation here
-                // TODO: https://youtrack.jetbrains.com/issue/KT-13354
-                descriptor.toString()
                 val variableDescriptor = BindingContextUtils.variableDescriptorForDeclaration(descriptor)
                                          ?: throw AssertionError("Variable or class descriptor should correspond to " +
                                                                  "the instruction for ${instruction.element.text}.\n" +
