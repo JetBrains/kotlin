@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.isInterface
 import org.jetbrains.kotlin.backend.konan.isIntrinsic
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -201,6 +202,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         if (declaration.descriptor.isIntrinsic) {
             // do not generate any code for intrinsic classes as they require special handling
+            return
+        }
+
+        if (declaration.descriptor.isInterface) {
+            // Do not generate any code for interfaces.
             return
         }
 

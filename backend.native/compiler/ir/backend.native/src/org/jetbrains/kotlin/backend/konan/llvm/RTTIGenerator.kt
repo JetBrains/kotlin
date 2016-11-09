@@ -81,7 +81,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             return emptyList()
         }
 
-        val superVtableEntries = if (KotlinBuiltIns.isAny(classDesc)) {
+        val superVtableEntries = if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDesc)) {
             emptyList()
         } else {
             getVtableEntries(classDesc.getSuperClassOrAny())
