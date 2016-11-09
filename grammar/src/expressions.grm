@@ -8,7 +8,7 @@
 | Precedence | Title | Symbols |
 |------------|-------|---------|
 | Highest    | Postfix | `++`, `--`, `.`, `?.`, `?` |
-| | Prefix | `-`, `+`, `++`, `--`, `!`, [`labelDefinition@`](#IDENTIFIER)`@` |
+| | Prefix | `-`, `+`, `++`, `--`, `!`, [`labelDefinition`](#IDENTIFIER)`@` |
 | | Type RHS | `:`, `as`, `as?` |
 | | Multiplicative | `*`, `/`, `%` |
 | | Additive | `+`, `-` |
