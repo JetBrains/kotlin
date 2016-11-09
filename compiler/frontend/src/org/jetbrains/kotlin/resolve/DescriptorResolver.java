@@ -263,9 +263,9 @@ public class DescriptorResolver {
 
     @NotNull
     public ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            @NotNull LexicalScope scope, @NotNull FunctionDescriptor owner,
+            @NotNull final LexicalScope scope, @NotNull final FunctionDescriptor owner,
             @NotNull KtParameter valueParameter, int index,
-            @NotNull KotlinType type, @NotNull BindingTrace trace
+            @NotNull final KotlinType type, @NotNull final BindingTrace trace
     ) {
         KotlinType varargElementType = null;
         KotlinType variableType = type;
@@ -291,20 +291,35 @@ public class DescriptorResolver {
             }
         }
 
-        KtDestructuringDeclaration destructuringDeclaration = valueParameter.getDestructuringDeclaration();
+        final KtDestructuringDeclaration destructuringDeclaration = valueParameter.getDestructuringDeclaration();
 
-        List<VariableDescriptor> destructuringVariables;
+        Function0<List<VariableDescriptor>> destructuringVariables;
         if (destructuringDeclaration != null) {
             if (!languageVersionSettings.supportsFeature(LanguageFeature.DestructuringLambdaParameters)) {
                 trace.report(Errors.UNSUPPORTED_FEATURE.on(valueParameter, LanguageFeature.DestructuringLambdaParameters));
             }
 
-            destructuringVariables = destructuringDeclarationResolver.resolveLocalVariablesFromDestructuringDeclaration(
-                    scope, destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
-                    ExpressionTypingContext.newContext(trace, scope, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
-            );
+            destructuringVariables = new Function0<List<VariableDescriptor>>() {
+                @Override
+                public List<VariableDescriptor> invoke() {
+                    assert owner.getDispatchReceiverParameter() == null
+                            : "Destructuring declarations are only be parsed for lambdas, and they must not have a dispatch receiver";
+                    LexicalScope scopeWithReceiver =
+                            ScopeUtilsKt.addImplicitReceiver(scope, owner.getExtensionReceiverParameter());
 
-            modifiersChecker.withTrace(trace).checkModifiersForDestructuringDeclaration(destructuringDeclaration);
+                    List<VariableDescriptor> result =
+                            destructuringDeclarationResolver.resolveLocalVariablesFromDestructuringDeclaration(
+                                    scope,
+                                    destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
+                                    ExpressionTypingContext.newContext(
+                                            trace, scopeWithReceiver, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE
+                                    )
+                            );
+
+                    modifiersChecker.withTrace(trace).checkModifiersForDestructuringDeclaration(destructuringDeclaration);
+                    return result;
+                }
+            };
         }
         else {
             destructuringVariables = null;

@@ -53,7 +53,7 @@ open class ValueParameterDescriptorImpl(
                                                 isCrossinline: Boolean,
                                                 isNoinline: Boolean, isCoroutine: Boolean, varargElementType: KotlinType?,
                                                 source: SourceElement,
-                                                destructuringVariables: List<VariableDescriptor>?
+                                                destructuringVariables: (() -> List<VariableDescriptor>)?
         ): ValueParameterDescriptorImpl =
                 if (destructuringVariables == null)
                     ValueParameterDescriptorImpl(containingDeclaration, original, index, annotations, name, outType,
@@ -74,11 +74,16 @@ open class ValueParameterDescriptorImpl(
             isCrossinline: Boolean,
             isNoinline: Boolean, isCoroutine: Boolean, varargElementType: KotlinType?,
             source: SourceElement,
-            val destructuringVariables: List<VariableDescriptor>
+            destructuringVariables: () -> List<VariableDescriptor>
     ) : ValueParameterDescriptorImpl(
             containingDeclaration, original, index, annotations, name, outType, declaresDefaultValue,
             isCrossinline, isNoinline, isCoroutine,
-            varargElementType, source)
+            varargElementType, source) {
+        // It's forced to be lazy because its resolution depends on receiver of relevant lambda, that is being created at the same moment
+        // as value parameters.
+        // Must be forced via ForceResolveUtil.forceResolveAllContents()
+        val destructuringVariables by lazy(destructuringVariables)
+    }
 
     private val original: ValueParameterDescriptor = original ?: this
 

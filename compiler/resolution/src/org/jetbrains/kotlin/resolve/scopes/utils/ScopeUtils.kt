@@ -201,6 +201,11 @@ fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): L
     return LexicalScopeWrapper(this, newImportingScopeChain)
 }
 
+fun LexicalScope.addImplicitReceiver(newReceiver: ReceiverParameterDescriptor?): LexicalScope {
+    if (newReceiver == null) return this
+    return LexicalScopeImpl(parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel, newReceiver, kind)
+}
+
 private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingScopeChain: ImportingScope): LexicalScope by delegate {
     init {
         assert(delegate !is LexicalScopeWrapper) {

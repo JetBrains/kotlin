@@ -30,15 +30,17 @@ fun bar() {
         b checkType { _<String>() }
     }
 
-    // From KEEP: Component-functions are resolved in the scope that contains the lambda
-    foobaz { (<!COMPONENT_FUNCTION_MISSING, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, <!COMPONENT_FUNCTION_MISSING, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>) ->
+    // From KEEP: Component-functions are resolved in the same scope as the first statement of the lambda
+    foobaz { (a, b) ->
+        a checkType { _<Double>() }
+        b checkType { _<Char>() }
     }
 
-    // From KEEP: Component-functions are resolved in the scope that contains the lambda
-    // So `component1`/`component2` for lambda parameters were resolved to the top-level extensions
+    // From KEEP: Component-functions are resolved in the same scope as the first statement of the lambda
+    // So `component1`/`component2` for lambda parameters were resolved to member extensions
     foobar { (a, b) ->
-        a checkType { _<Int>() }
-        b checkType { _<String>() }
+        a checkType { _<Double>() }
+        b checkType { _<Char>() }
     }
 
     // the following code fails with exception, see KT-13873
