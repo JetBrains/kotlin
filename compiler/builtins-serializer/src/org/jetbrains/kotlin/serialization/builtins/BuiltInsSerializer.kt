@@ -18,26 +18,23 @@ package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -65,13 +62,6 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
     }
 
-    private inner class BuiltInsSourcesModule : ModuleInfo {
-        override val name = Name.special("<module for resolving builtin source files>")
-        override fun dependencies() = listOf(this)
-        override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-                if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltIns.LAST else ModuleInfo.DependenciesOnBuiltIns.NONE
-    }
-
     private fun serialize(disposable: Disposable, destDir: File, srcDirs: List<File>, extraClassPath: List<File>) {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
@@ -83,15 +73,14 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val files = environment.getSourceFiles()
 
-        val builtInModule = BuiltInsSourcesModule()
-        val resolver = JvmAnalyzerFacade.setupResolverForProject(
-                "builtIns source",
-                ProjectContext(environment.project), listOf(builtInModule),
-                { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
-                JvmPlatformParameters { throw IllegalStateException() }
-        )
+        val analyzer = AnalyzerWithCompilerReport(MessageCollector.NONE)
+        analyzer.analyzeAndReport(files, object : AnalyzerWithCompilerReport.Analyzer {
+            override fun analyze(): AnalysisResult = DefaultAnalyzerFacade.analyzeFiles(
+                    files, Name.special("<module for resolving builtin source files>"), dependOnOldBuiltIns
+            )
+        })
 
-        val moduleDescriptor = resolver.descriptorForModule(builtInModule)
+        val moduleDescriptor = analyzer.analysisResult.moduleDescriptor
 
         destDir.deleteRecursively()
 
