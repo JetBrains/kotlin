@@ -41,7 +41,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         }
 
         public void testAllFilesPresentInK2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2k"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2k"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
         }
 
         @TestMetadata("clashWithSuper.kt")
@@ -344,7 +344,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2J extends AbstractPullUpTest {
         public void testAllFilesPresentInK2J() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2j"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2j"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
         }
 
         @TestMetadata("constructorParameterToClass.kt")
@@ -425,7 +425,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class J2K extends AbstractPullUpTest {
         public void testAllFilesPresentInJ2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/j2k"), Pattern.compile("^(.+)\\.java$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/j2k"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY);
         }
 
         @TestMetadata("fromClassToClass.java")

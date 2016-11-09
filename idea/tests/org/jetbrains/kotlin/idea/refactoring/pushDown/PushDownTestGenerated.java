@@ -41,7 +41,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
         }
 
         public void testAllFilesPresentInK2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/k2k"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/k2k"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
         }
 
         @TestMetadata("clashingMembers.kt")
@@ -164,7 +164,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2J extends AbstractPushDownTest {
         public void testAllFilesPresentInK2J() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/k2j"), Pattern.compile("^(.+)\\.kt$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/k2j"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
         }
 
         @TestMetadata("kotlinToJava.kt")
@@ -179,7 +179,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class J2K extends AbstractPushDownTest {
         public void testAllFilesPresentInJ2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/j2k"), Pattern.compile("^(.+)\\.java$"));
+            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/j2k"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY);
         }
 
         @TestMetadata("fromClass.java")
