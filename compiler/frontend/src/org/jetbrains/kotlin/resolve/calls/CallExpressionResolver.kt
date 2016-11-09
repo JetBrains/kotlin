@@ -501,10 +501,9 @@ class CallExpressionResolver(
             val receiverQualifier = context.trace.get(BindingContext.QUALIFIER, expression.receiverExpression)
 
             if (receiverQualifier == null && expressionQualifier != null) {
-                assert(expressionQualifier is ClassQualifier) { "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier }
-                context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(
-                        selectorExpression,
-                        (expressionQualifier as ClassQualifier).descriptor))
+                assert(expressionQualifier is ClassifierQualifier) { "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier }
+                val descriptor = (expressionQualifier as ClassifierQualifier).descriptor
+                context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(selectorExpression, descriptor))
             }
         }
     }

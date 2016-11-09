@@ -144,19 +144,25 @@ abstract class DescriptorRenderer {
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        fun getClassKindPrefix(klass: ClassDescriptor): String {
-            if (klass.isCompanionObject) {
-                return "companion object"
-            }
-            return when (klass.kind) {
-                ClassKind.CLASS -> "class"
-                ClassKind.INTERFACE -> "interface"
-                ClassKind.ENUM_CLASS -> "enum class"
-                ClassKind.OBJECT -> "object"
-                ClassKind.ANNOTATION_CLASS -> "annotation class"
-                ClassKind.ENUM_ENTRY -> "enum entry"
-            }
-        }
+        fun getClassifierKindPrefix(classifier: ClassifierDescriptorWithTypeParameters): String =
+                when (classifier) {
+                    is TypeAliasDescriptor ->
+                        "typealias"
+                    is ClassDescriptor ->
+                        if (classifier.isCompanionObject) {
+                            "companion object"
+                        }
+                        else when (classifier.kind) {
+                            ClassKind.CLASS -> "class"
+                            ClassKind.INTERFACE -> "interface"
+                            ClassKind.ENUM_CLASS -> "enum class"
+                            ClassKind.OBJECT -> "object"
+                            ClassKind.ANNOTATION_CLASS -> "annotation class"
+                            ClassKind.ENUM_ENTRY -> "enum entry"
+                        }
+                    else ->
+                        throw AssertionError("Unexpected classifier: $classifier")
+                }
     }
 }
 

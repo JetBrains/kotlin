@@ -931,7 +931,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderClassKindPrefix(klass: ClassDescriptor, builder: StringBuilder) {
-        builder.append(renderKeyword(DescriptorRenderer.getClassKindPrefix(klass)))
+        builder.append(renderKeyword(DescriptorRenderer.getClassifierKindPrefix(klass)))
     }
 
 

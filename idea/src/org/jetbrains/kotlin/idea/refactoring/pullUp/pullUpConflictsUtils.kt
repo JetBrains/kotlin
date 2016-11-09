@@ -78,7 +78,7 @@ private val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_I
 
 fun DeclarationDescriptor.renderForConflicts(): String {
     return when (this) {
-        is ClassDescriptor -> "${DescriptorRenderer.getClassKindPrefix(this)} ${IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(this)}"
+        is ClassDescriptor -> "${DescriptorRenderer.getClassifierKindPrefix(this)} ${IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(this)}"
         is FunctionDescriptor -> "function '${CALLABLE_RENDERER.render(this)}'"
         is PropertyDescriptor -> "property '${CALLABLE_RENDERER.render(this)}'"
         else -> ""
