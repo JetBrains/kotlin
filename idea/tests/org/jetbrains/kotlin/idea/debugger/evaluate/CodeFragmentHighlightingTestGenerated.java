@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CodeFragments extends AbstractCodeFragmentHighlightingTest {
         public void testAllFilesPresentInCodeFragments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments"), Pattern.compile("^(.+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("binaryExpression.kt")
@@ -175,7 +176,7 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Imports extends AbstractCodeFragmentHighlightingTest {
         public void testAllFilesPresentInImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments/imports"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments/imports"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("hashMap.kt")

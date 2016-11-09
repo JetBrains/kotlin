@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class TypeBindingTestGenerated extends AbstractTypeBindingTest {
     public void testAllFilesPresentInBinding() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("compiler/testData/type/binding/explicit")
@@ -40,7 +41,7 @@ public class TypeBindingTestGenerated extends AbstractTypeBindingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Explicit extends AbstractTypeBindingTest {
         public void testAllFilesPresentInExplicit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding/explicit"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding/explicit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("conflictingProjection.kt")
@@ -157,7 +158,7 @@ public class TypeBindingTestGenerated extends AbstractTypeBindingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Implicit extends AbstractTypeBindingTest {
         public void testAllFilesPresentInImplicit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding/implicit"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/type/binding/implicit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("conflictingProjection.kt")

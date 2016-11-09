@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCompletionTest {
     public void testAllFilesPresentInCodeFragments() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("blockCodeFragment.kt")
@@ -100,7 +101,7 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RuntimeType extends AbstractCodeFragmentCompletionTest {
         public void testAllFilesPresentInRuntimeType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments/runtimeType"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments/runtimeType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("castWithGenerics.kt")

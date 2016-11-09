@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.findUsages;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFindUsagesWithLibraryTest {
     public void testAllFilesPresentInLibraryUsages() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("idea/testData/findUsages/libraryUsages/javaLibrary")
@@ -40,7 +41,7 @@ public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFind
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaLibrary extends AbstractKotlinFindUsagesWithLibraryTest {
         public void testAllFilesPresentInJavaLibrary() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages/javaLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages/javaLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("LibraryClassUsages.0.kt")
@@ -85,7 +86,7 @@ public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFind
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinLibrary extends AbstractKotlinFindUsagesWithLibraryTest {
         public void testAllFilesPresentInKotlinLibrary() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages/kotlinLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages/kotlinLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("LibraryClassUsages.0.kt")
@@ -166,7 +167,7 @@ public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFind
     @RunWith(JUnit3RunnerWithInners.class)
     public static class _library extends AbstractKotlinFindUsagesWithLibraryTest {
         public void testAllFilesPresentIn_library() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages/_library"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/libraryUsages/_library"), Pattern.compile("^(.+)\\.0\\.kt$"), TargetBackend.ANY, true);
         }
 
     }

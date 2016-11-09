@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
     public void testAllFilesPresentInNonLocalReturns() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
     }
 
     @TestMetadata("explicitLocalReturn.kt")
@@ -118,7 +119,7 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Deparenthesize extends AbstractNonLocalReturnsTest {
         public void testAllFilesPresentInDeparenthesize() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
         @TestMetadata("bracket.kt")
@@ -139,7 +140,7 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryFinally extends AbstractNonLocalReturnsTest {
         public void testAllFilesPresentInTryFinally() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
         @TestMetadata("kt6956.kt")
@@ -165,7 +166,7 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CallSite extends AbstractNonLocalReturnsTest {
             public void testAllFilesPresentInCallSite() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("callSite.kt")
@@ -210,7 +211,7 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Chained extends AbstractNonLocalReturnsTest {
             public void testAllFilesPresentInChained() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("finallyInFinally.kt")
@@ -267,7 +268,7 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeclSite extends AbstractNonLocalReturnsTest {
             public void testAllFilesPresentInDeclSite() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("complex.kt")
@@ -348,7 +349,7 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExceptionTable extends AbstractNonLocalReturnsTest {
             public void testAllFilesPresentInExceptionTable() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("break.kt")
@@ -453,7 +454,7 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Variables extends AbstractNonLocalReturnsTest {
             public void testAllFilesPresentInVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("kt7792.kt")

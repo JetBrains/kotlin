@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAgainstKotlinTest {
     public void testAllFilesPresentInCompileJavaAgainstKotlin() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/class")
@@ -40,7 +41,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassObject.kt")
@@ -127,7 +128,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInEnum() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("DefaultArgumentInEnumConstructor.kt")
@@ -142,7 +143,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JvmStatic extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInJvmStatic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("simpleCompanionObject.kt")
@@ -181,7 +182,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         }
 
         public void testAllFilesPresentInMethod() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Any.kt")
@@ -321,7 +322,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PlatformName extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInPlatformName() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/platformName"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/platformName"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("PlatformName.kt")
@@ -336,7 +337,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PrimitiveOverride extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInPrimitiveOverride() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ByteOverridesObject.kt")
@@ -411,7 +412,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Throws extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInThrows() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassMembers.kt")
@@ -463,7 +464,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ConstVal.kt")
@@ -489,7 +490,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PlatformName extends AbstractCompileJavaAgainstKotlinTest {
             public void testAllFilesPresentInPlatformName() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property/platformName"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property/platformName"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("PlatformName.kt")
@@ -505,7 +506,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Sealed extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInSealed() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/sealed"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/sealed"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Derived.kt")
@@ -526,7 +527,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StaticFields extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInStaticFields() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AnnotationClass.kt")
@@ -565,7 +566,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Targets extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInTargets() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/targets"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/targets"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotation.kt")

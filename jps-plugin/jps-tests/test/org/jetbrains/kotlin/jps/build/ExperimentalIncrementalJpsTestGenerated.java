@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.build;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiModule extends AbstractExperimentalIncrementalJpsTest {
         public void testAllFilesPresentInMultiModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("circularDependencyClasses")
@@ -212,7 +213,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("annotations")
@@ -899,7 +900,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithJava extends AbstractExperimentalIncrementalJpsTest {
         public void testAllFilesPresentInWithJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin")
@@ -907,7 +908,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ConvertBetweenJavaAndKotlin extends AbstractExperimentalIncrementalJpsTest {
             public void testAllFilesPresentInConvertBetweenJavaAndKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin"), Pattern.compile("^([^\\.]+)$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("javaToKotlin")
@@ -941,7 +942,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaUsedInKotlin extends AbstractExperimentalIncrementalJpsTest {
             public void testAllFilesPresentInJavaUsedInKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("changeNotUsedSignature")
@@ -1009,7 +1010,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             @RunWith(JUnit3RunnerWithInners.class)
             public static class SamConversions extends AbstractExperimentalIncrementalJpsTest {
                 public void testAllFilesPresentInSamConversions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("methodAdded")
@@ -1038,7 +1039,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             }
 
             public void testAllFilesPresentInKotlinUsedInJava() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("changeNotUsedSignature")
@@ -1127,7 +1128,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InlineFunCallSite extends AbstractExperimentalIncrementalJpsTest {
         public void testAllFilesPresentInInlineFunCallSite() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/inlineFunCallSite"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/inlineFunCallSite"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classProperty")
@@ -1215,7 +1216,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassHierarchyAffected extends AbstractExperimentalIncrementalJpsTest {
         public void testAllFilesPresentInClassHierarchyAffected() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotationFlagRemoved")

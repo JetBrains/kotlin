@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,7 +35,7 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Copy extends AbstractInsertImportOnPasteTest {
         public void testAllFilesPresentInCopy() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("AlreadyImportedExtensions.kt")
@@ -397,7 +398,7 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Cut extends AbstractInsertImportOnPasteTest {
         public void testAllFilesPresentInCut() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/imports"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("AlreadyImportedExtensions.kt")

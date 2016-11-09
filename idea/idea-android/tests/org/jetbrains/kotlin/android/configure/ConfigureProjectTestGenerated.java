@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android.configure;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ConfigureProjectTestGenerated extends AbstractConfigureProjectTest {
     public void testAllFilesPresentInAndroid_gradle() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle"), Pattern.compile("(\\w+)_before\\.gradle$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle"), Pattern.compile("(\\w+)_before\\.gradle$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("androidStudioDefault_before.gradle")
@@ -106,7 +107,7 @@ public class ConfigureProjectTestGenerated extends AbstractConfigureProjectTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GradleExamples extends AbstractConfigureProjectTest {
         public void testAllFilesPresentInGradleExamples() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle/gradleExamples"), Pattern.compile("(\\w+)_before\\.gradle$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle/gradleExamples"), Pattern.compile("(\\w+)_before\\.gradle$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("gradleExample0_before.gradle")
