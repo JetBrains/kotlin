@@ -244,7 +244,8 @@ internal object KotlinConverter {
                     val tempAssignment = KotlinUVariable.create(UastKotlinPsiVariable.create(expression, parent!!), parent)
                     val destructuringAssignments = expression.entries.mapIndexed { i, entry ->
                         val psiFactory = KtPsiFactory(expression.project)
-                        val initializer = psiFactory.createExpression("${tempAssignment.name}.component${i + 1}()")
+                        val initializer = psiFactory.createAnalyzableExpression("${tempAssignment.name}.component${i + 1}()",
+                                                                                expression.containingFile)
                         KotlinUVariable.create(UastKotlinPsiVariable.create(
                                 entry, tempAssignment.psi, parent, initializer), parent)
                     }
@@ -295,5 +296,20 @@ internal object KotlinConverter {
 
     internal fun convertOrNull(expression: KtExpression?, parent: UElement?): UExpression? {
         return if (expression != null) convertExpression(expression, parent, null) else null
+    }
+
+    internal fun KtPsiFactory.createAnalyzableExpression(text: String, context: PsiElement): KtExpression =
+            createAnalyzableProperty("val x = $text", context).initializer ?: error("Failed to create expression from text: '$text'")
+
+    internal fun KtPsiFactory.createAnalyzableProperty(text: String, context: PsiElement): KtProperty =
+            createAnalyzableDeclaration(text, context)
+
+    internal fun <TDeclaration : KtDeclaration> KtPsiFactory.createAnalyzableDeclaration(text: String, context: PsiElement): TDeclaration {
+        val file = createAnalyzableFile("dummy.kt", text, context)
+        val declarations = file.declarations
+        assert(declarations.size == 1) { "${declarations.size} declarations in $text" }
+        @Suppress("UNCHECKED_CAST")
+        val result = declarations.first() as TDeclaration
+        return result
     }
 }
