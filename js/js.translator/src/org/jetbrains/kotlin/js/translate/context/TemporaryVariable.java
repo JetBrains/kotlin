@@ -45,7 +45,9 @@ public class TemporaryVariable {
 
     @NotNull
     public JsNameRef reference() {
-        return variableName.makeRef();
+        JsNameRef result = variableName.makeRef();
+        MetadataProperties.setSynthetic(result, true);
+        return result;
     }
 
     @NotNull
