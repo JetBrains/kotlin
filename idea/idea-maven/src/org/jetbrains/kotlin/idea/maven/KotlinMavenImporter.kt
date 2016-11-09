@@ -33,6 +33,12 @@ import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.*
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
+import org.jetbrains.kotlin.idea.facet.mavenLibraryId
+import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.io.File
 import java.util.*
 
@@ -77,6 +83,27 @@ class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtif
 
             if (toBeDownloaded.isNotEmpty()) {
                 MavenProjectsManager.getInstance(module.project).scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncResult())
+            }
+        }
+
+        configureFacet(mavenProject, modifiableModelsProvider, module)
+    }
+
+    private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
+        val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version ?: return
+        val artifacts = mavenProject.dependencyArtifactIndex.data[KotlinPluginGroupId]?.values?.flatMap { it.filter { it.isResolved } }
+        val expectedLibraryIds = TargetPlatformKind.ALL_PLATFORMS.map { it.mavenLibraryId }
+        val stdlibArtifact = artifacts?.firstOrNull { it.artifactId in expectedLibraryIds }
+
+        val facet = module.getOrCreateFacet(modifiableModelsProvider)
+        with(facet.configuration.settings.versionInfo) {
+            targetPlatformKind = null
+            apiLevel = null
+            facet.configuration.settings.initializeIfNeeded(module, modifiableModelsProvider.getModifiableRootModel(module))
+            languageLevel = LanguageVersion.fromFullVersionString(compilerVersion)
+            // Both apiLevel and languageLevel should be initialized in the lines above
+            if (apiLevel!! > languageLevel!!) {
+                apiLevel = languageLevel
             }
         }
     }

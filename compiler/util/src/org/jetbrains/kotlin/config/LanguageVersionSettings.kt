@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.config
 
 import com.intellij.openapi.module.Module
+import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 enum class LanguageFeature(val sinceVersion: LanguageVersion) {
@@ -38,6 +39,9 @@ enum class LanguageVersion(val versionString: String) : DescriptionAware {
     companion object {
         @JvmStatic
         fun fromVersionString(str: String) = values().find { it.versionString == str }
+
+        @JvmStatic
+        fun fromFullVersionString(str: String) = str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         @JvmField
         val LATEST = values().last()
