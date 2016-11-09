@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.runner.RunWith;
@@ -79,6 +80,7 @@ public class TestGenerator {
         p.println("import com.intellij.testFramework.TestDataPath;");
         p.println("import ", RUNNER.getCanonicalName(), ";");
         p.println("import " + KotlinTestUtils.class.getCanonicalName() + ";");
+        p.println("import " + TargetBackend.class.getCanonicalName() + ";");
         if (!suiteClassPackage.equals(baseTestClassPackage)) {
             p.println("import " + baseTestClassPackage + "." + baseTestClassName + ";");
         }
