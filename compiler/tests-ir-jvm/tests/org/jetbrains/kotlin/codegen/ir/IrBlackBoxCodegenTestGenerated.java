@@ -4417,6 +4417,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("beginWithException.kt")
+        public void testBeginWithException() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/beginWithException.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beginWithExceptionNoHandleException.kt")
+        public void testBeginWithExceptionNoHandleException() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/beginWithExceptionNoHandleException.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("coercionToUnit.kt")
         public void testCoercionToUnit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/coercionToUnit.kt");

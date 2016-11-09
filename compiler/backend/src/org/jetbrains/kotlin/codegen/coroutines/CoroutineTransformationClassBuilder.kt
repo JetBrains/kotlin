@@ -72,7 +72,7 @@ class CoroutineTransformerMethodVisitor(
         }
 
         // Add global exception handler
-        processHandleExceptionCall(methodNode)
+        val isThereGlobalExceptionHandler = processHandleExceptionCall(methodNode)
 
         // Spill stack to variables before suspension points, try/catch blocks
         FixStackWithLabelNormalizationMethodTransformer().transform(classBuilder.thisName, methodNode)
@@ -95,8 +95,19 @@ class CoroutineTransformerMethodVisitor(
         methodNode.instructions.apply {
             val startLabel = LabelNode()
             val defaultLabel = LabelNode()
+            val firstToInsertBefore =
+                    if (isThereGlobalExceptionHandler) {
+                        // Insert after relevant NOP insn (i.e. before next instruction of this NOP)
+                        val globalExceptionHandler = methodNode.tryCatchBlocks.last()
+                        assert(globalExceptionHandler.start is LabelNode && globalExceptionHandler.start.next.opcode == Opcodes.NOP) {
+                            "In a case of global exception handler first insn should be a label"
+                        }
+                        globalExceptionHandler.start.next.next
+                    }
+                    else
+                        first
             // tableswitch(this.label)
-            insertBefore(first,
+            insertBefore(firstToInsertBefore,
                          insnListOf(
                                  VarInsnNode(Opcodes.ALOAD, 0),
                                  FieldInsnNode(
@@ -113,6 +124,7 @@ class CoroutineTransformerMethodVisitor(
                          )
             )
 
+            insert(startLabel, withInstructionAdapter(InstructionAdapter::generateResumeWithExceptionCheck))
 
             insert(last, withInstructionAdapter {
                 visitLabel(defaultLabel.label)
@@ -335,15 +347,7 @@ class CoroutineTransformerMethodVisitor(
             remove(possibleTryCatchBlockStart.previous)
 
             insert(possibleTryCatchBlockStart, withInstructionAdapter {
-                // Check if resumeWithException has been called
-                load(2, AsmTypes.OBJECT_TYPE)
-                dup()
-                val noExceptionLabel = Label()
-                ifnull(noExceptionLabel)
-                athrow()
-
-                mark(noExceptionLabel)
-                pop()
+                generateResumeWithExceptionCheck()
 
                 // Load continuation argument just like suspending function returns it
                 load(1, AsmTypes.OBJECT_TYPE)
@@ -404,9 +408,9 @@ class CoroutineTransformerMethodVisitor(
         return
     }
 
-    private fun processHandleExceptionCall(methodNode: MethodNode) {
+    private fun processHandleExceptionCall(methodNode: MethodNode): Boolean {
         val instructions = methodNode.instructions
-        val marker = instructions.toArray().firstOrNull() { it.isHandleExceptionMarker() } ?: return
+        val marker = instructions.toArray().firstOrNull { it.isHandleExceptionMarker() } ?: return false
 
         assert(instructions.toArray().count { it.isHandleExceptionMarker() } == 1) {
             "Found more than one handleException markers"
@@ -427,6 +431,8 @@ class CoroutineTransformerMethodVisitor(
         instructions.set(exceptionArgument, VarInsnNode(Opcodes.ALOAD, maxVar))
 
         methodNode.tryCatchBlocks.add(TryCatchBlockNode(startLabel, endLabel, endLabel, AsmTypes.JAVA_THROWABLE_TYPE.internalName))
+
+        return true
     }
 
     private fun AbstractInsnNode.isHandleExceptionMarker() =
@@ -434,6 +440,18 @@ class CoroutineTransformerMethodVisitor(
 
     private fun AbstractInsnNode.isHandleExceptionMarkerArgument() =
             this is MethodInsnNode && this.owner == COROUTINE_MARKER_OWNER && this.name == HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME
+}
+
+private fun InstructionAdapter.generateResumeWithExceptionCheck() {
+    // Check if resumeWithException has been called
+    load(2, AsmTypes.OBJECT_TYPE)
+    dup()
+    val noExceptionLabel = Label()
+    ifnull(noExceptionLabel)
+    athrow()
+
+    mark(noExceptionLabel)
+    pop()
 }
 
 private fun Type.fieldNameForVar(index: Int) = descriptor.first() + "$" + index
