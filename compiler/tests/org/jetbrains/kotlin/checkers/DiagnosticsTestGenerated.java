@@ -20926,6 +20926,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("innerTypeAliasAsType.kt")
+            public void testInnerTypeAliasAsType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/innerTypeAliasAsType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerTypeAliasAsType2.kt")
+            public void testInnerTypeAliasAsType2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/innerTypeAliasAsType2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("isAsWithTypeAlias.kt")
             public void testIsAsWithTypeAlias() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/isAsWithTypeAlias.kt");
@@ -20947,6 +20959,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt14498a.kt")
             public void testKt14498a() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/kt14498a.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt14518.kt")
+            public void testKt14518() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/kt14518.kt");
                 doTest(fileName);
             }
 

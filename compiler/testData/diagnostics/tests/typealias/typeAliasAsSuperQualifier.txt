@@ -32,7 +32,7 @@ public final class TestSuperForGenericBase</*0*/ T> : GB<T> /* = GenericBase<T> 
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public typealias MyBase /*captured type parameters: /*0*/ T*/ = GB<T>
-    public typealias MyBaseInt /*captured type parameters: /*0*/ T*/ = GB<kotlin.Int>
+    public typealias MyBaseInt = GB<kotlin.Int>
 }
 
 public final class Unrelated {

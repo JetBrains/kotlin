@@ -47,13 +47,19 @@ abstract class AbstractTypeAliasDescriptor(
             visitor.visitTypeAliasDescriptor(this, data)
 
     override fun isInner(): Boolean =
-            containingDeclaration !is PackageFragmentDescriptor
+            // NB: it's ok to use underlyingType here, since referenced inner type aliases also capture type parameters.
+            // Using expandedType looks "proper", but in fact will cause a recursion in expandedType resolution,
+            // which will silently produce wrong result.
+            TypeUtils.contains(underlyingType) {
+                !it.isError && run {
+                    val constructorDescriptor = it.constructor.declarationDescriptor
+                    constructorDescriptor is TypeParameterDescriptor &&
+                    constructorDescriptor.containingDeclaration != this@AbstractTypeAliasDescriptor
+                }
+            }
 
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> =
             declaredTypeParametersImpl
-
-    override val classDescriptor: ClassDescriptor?
-        get() = if (expandedType.isError) null else expandedType.constructor.declarationDescriptor as? ClassDescriptor
 
     override fun getModality() = Modality.FINAL
 

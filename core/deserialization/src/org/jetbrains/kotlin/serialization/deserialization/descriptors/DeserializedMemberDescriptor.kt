@@ -169,6 +169,9 @@ class DeserializedTypeAliasDescriptor(
         defaultTypeImpl = computeDefaultType()
     }
 
+    override val classDescriptor: ClassDescriptor?
+        get() = if (expandedType.isError) null else expandedType.constructor.declarationDescriptor as? ClassDescriptor
+
     override fun getDefaultType(): SimpleType =
             defaultTypeImpl
 

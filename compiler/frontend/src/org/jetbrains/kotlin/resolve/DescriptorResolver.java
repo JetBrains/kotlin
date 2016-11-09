@@ -710,18 +710,25 @@ public class DescriptorResolver {
         else {
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
-                    storageManager.createLazyValue(new Function0<SimpleType>() {
-                        @Override
-                        public SimpleType invoke() {
-                            return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace);
-                        }
-                    }),
-                    storageManager.createLazyValue(new Function0<SimpleType>() {
-                        @Override
-                        public SimpleType invoke() {
-                            return typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor);
-                        }
-                    }));
+                    storageManager.createRecursionTolerantLazyValue(
+                            new Function0<SimpleType>() {
+                                @Override
+                                public SimpleType invoke() {
+                                    return typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace);
+                                }
+                            },
+                            ErrorUtils.createErrorType("Recursive type alias expansion for " + typeAliasDescriptor.getName().asString())
+                    ),
+                    storageManager.createRecursionTolerantLazyValue(
+                            new Function0<SimpleType>() {
+                                @Override
+                                public SimpleType invoke() {
+                                    return typeResolver.resolveExpandedTypeForTypeAlias(typeAliasDescriptor);
+                                }
+                            },
+                            ErrorUtils.createErrorType("Recursive type alias expansion for " + typeAliasDescriptor.getName().asString())
+                    )
+            );
         }
 
         trace.record(TYPE_ALIAS, typeAlias, typeAliasDescriptor);

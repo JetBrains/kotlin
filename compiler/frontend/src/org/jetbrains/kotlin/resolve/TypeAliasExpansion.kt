@@ -48,7 +48,7 @@ class TypeAliasExpansion private constructor(
                 typeAliasDescriptor: TypeAliasDescriptor,
                 arguments: List<TypeProjection>
         ): TypeAliasExpansion {
-            val typeParameters = typeAliasDescriptor.typeConstructor.parameters.map { it.original as TypeParameterDescriptor }
+            val typeParameters = typeAliasDescriptor.typeConstructor.parameters.map { it.original }
             val mappedArguments = typeParameters.zip(arguments).toMap()
             return TypeAliasExpansion(parent, typeAliasDescriptor, arguments, mappedArguments)
         }

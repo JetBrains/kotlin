@@ -133,6 +133,8 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             get() = builtIns.nullableAnyType
         override fun getDefaultType(): SimpleType =
                 builtIns.nullableAnyType
+        override val classDescriptor: ClassDescriptor?
+            get() = expandedType.constructor.declarationDescriptor as? ClassDescriptor
 
         override fun substitute(substitutor: TypeSubstitutor) = this
 
