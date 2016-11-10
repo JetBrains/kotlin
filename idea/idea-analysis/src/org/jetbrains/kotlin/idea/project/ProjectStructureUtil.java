@@ -30,37 +30,57 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.KotlinFacetSettings;
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider;
+import org.jetbrains.kotlin.config.TargetPlatformKind;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 public class ProjectStructureUtil {
-    private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
+    private static final Key<CachedValue<TargetPlatform>> PLATFORM_FOR_MODULE = Key.create("PLATFORM_FOR_MODULE");
 
     private ProjectStructureUtil() {
     }
 
-    public static boolean isJsKotlinModule(@NotNull final Module module) {
-        CachedValue<Boolean> result = module.getUserData(IS_KOTLIN_JS_MODULE);
+    /* package */ static TargetPlatform getCachedPlatformForModule(@NotNull final Module module) {
+        CachedValue<TargetPlatform> result = module.getUserData(PLATFORM_FOR_MODULE);
         if (result == null) {
-            result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
+            result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<TargetPlatform>() {
                 @Override
-                public Result<Boolean> compute() {
-                    return Result.create(
-                            getJSStandardLibrary(module) != null,
-                            ProjectRootModificationTracker.getInstance(module.getProject()));
+                public Result<TargetPlatform> compute() {
+                    TargetPlatform configuredInFacet = getPlatformConfiguredInFacet(module);
+                    TargetPlatform platform =
+                            configuredInFacet != null ? configuredInFacet :
+                            hasJsStandardLibraryInDependencies(module) ? JsPlatform.INSTANCE : JvmPlatform.INSTANCE;
+                    return Result.create(platform, ProjectRootModificationTracker.getInstance(module.getProject()));
                 }
             }, false);
 
-            module.putUserData(IS_KOTLIN_JS_MODULE, result);
+            module.putUserData(PLATFORM_FOR_MODULE, result);
         }
 
         return result.getValue();
     }
 
     @Nullable
-    private static Library getJSStandardLibrary(final Module module) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<Library>() {
+    private static TargetPlatform getPlatformConfiguredInFacet(@NotNull Module module) {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(module.getProject()).getSettings(module);
+        TargetPlatformKind<?> kind = settings.getVersionInfo().getTargetPlatformKind();
+        if (kind instanceof TargetPlatformKind.Jvm) {
+            return JvmPlatform.INSTANCE;
+        }
+        if (kind instanceof TargetPlatformKind.JavaScript) {
+            return JsPlatform.INSTANCE;
+        }
+        return null;
+    }
+
+    private static boolean hasJsStandardLibraryInDependencies(@NotNull final Module module) {
+        return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
             @Override
-            public Library compute() {
+            public Boolean compute() {
                 final Ref<Library> jsLibrary = Ref.create();
 
                 ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
@@ -75,7 +95,7 @@ public class ProjectStructureUtil {
                     }
                 });
 
-                return jsLibrary.get();
+                return jsLibrary.get() != null;
             }
         });
     }

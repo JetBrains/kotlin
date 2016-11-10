@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
@@ -66,10 +65,7 @@ public class TargetPlatformDetector {
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
-        if (ProjectStructureUtil.isJsKotlinModule(module)) {
-            return JsPlatform.INSTANCE;
-        }
-        return JvmPlatform.INSTANCE;
+        return ProjectStructureUtil.getCachedPlatformForModule(module);
     }
 
     @NotNull
