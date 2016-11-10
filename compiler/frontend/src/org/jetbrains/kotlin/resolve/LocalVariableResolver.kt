@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorWithInitializerImpl
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
@@ -43,7 +44,7 @@ class LocalVariableResolver(
         private val identifierChecker: IdentifierChecker,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val annotationResolver: AnnotationResolver,
-        private val variableTypeResolver: VariableTypeResolver,
+        private val variableTypeAndInitializerResolver: VariableTypeAndInitializerResolver,
         private val delegatedPropertyResolver: DelegatedPropertyResolver,
         private val languageVersionSettings: LanguageVersionSettings
 ) {
@@ -132,7 +133,7 @@ class LocalVariableResolver(
             trace: BindingTrace
     ): VariableDescriptor {
         val containingDeclaration = scope.ownerDescriptor
-        val result: VariableDescriptor
+        val result: VariableDescriptorWithInitializerImpl
         val type: KotlinType
         if (KtPsiUtil.isScriptDeclaration(variable)) {
             val propertyDescriptor = PropertyDescriptorImpl.create(
@@ -148,7 +149,7 @@ class LocalVariableResolver(
                     /* isConst = */ false
             )
             // For a local variable the type must not be deferred
-            type = variableTypeResolver.process(propertyDescriptor, scope, variable, dataFlowInfo, false, trace)
+            type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, false, trace)
 
             val receiverParameter = (containingDeclaration as ScriptDescriptor).thisAsReceiverParameter
             propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null as? KotlinType)
@@ -159,10 +160,11 @@ class LocalVariableResolver(
         else {
             val variableDescriptor = resolveLocalVariableDescriptorWithType(scope, variable, null, trace)
             // For a local variable the type must not be deferred
-            type = variableTypeResolver.process(variableDescriptor, scope, variable, dataFlowInfo, false, trace)
+            type = variableTypeAndInitializerResolver.resolveType(variableDescriptor, scope, variable, dataFlowInfo, false, trace)
             variableDescriptor.setOutType(type)
             result = variableDescriptor
         }
+        variableTypeAndInitializerResolver.setConstantForVariableIfNeeded(result, scope, variable, dataFlowInfo, type, trace)
         // Type annotations also should be resolved
         ForceResolveUtil.forceResolveAllContents(type.annotations)
         return result

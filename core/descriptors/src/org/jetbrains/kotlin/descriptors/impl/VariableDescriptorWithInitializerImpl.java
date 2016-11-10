@@ -52,11 +52,6 @@ public abstract class VariableDescriptorWithInitializerImpl extends VariableDesc
     @Nullable
     @Override
     public ConstantValue<?> getCompileTimeInitializer() {
-        // Force computation and setting of compileTimeInitializer, if needed
-        if (compileTimeInitializer == null) {
-            outType.getConstructor();
-        }
-
         if (compileTimeInitializer != null) {
             return compileTimeInitializer.invoke();
         }

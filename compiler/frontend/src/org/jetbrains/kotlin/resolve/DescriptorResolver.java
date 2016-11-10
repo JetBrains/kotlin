@@ -74,7 +74,7 @@ public class DescriptorResolver {
     private final StorageManager storageManager;
     private final KotlinBuiltIns builtIns;
     private final SupertypeLoopChecker supertypeLoopsResolver;
-    private final VariableTypeResolver variableTypeResolver;
+    private final VariableTypeAndInitializerResolver variableTypeAndInitializerResolver;
     private final ExpressionTypingServices expressionTypingServices;
     private final OverloadChecker overloadChecker;
     private final LanguageVersionSettings languageVersionSettings;
@@ -88,7 +88,7 @@ public class DescriptorResolver {
             @NotNull StorageManager storageManager,
             @NotNull TypeResolver typeResolver,
             @NotNull SupertypeLoopChecker supertypeLoopsResolver,
-            @NotNull VariableTypeResolver variableTypeResolver,
+            @NotNull VariableTypeAndInitializerResolver variableTypeAndInitializerResolver,
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull OverloadChecker overloadChecker,
             @NotNull LanguageVersionSettings languageVersionSettings,
@@ -101,7 +101,7 @@ public class DescriptorResolver {
         this.storageManager = storageManager;
         this.typeResolver = typeResolver;
         this.supertypeLoopsResolver = supertypeLoopsResolver;
-        this.variableTypeResolver = variableTypeResolver;
+        this.variableTypeAndInitializerResolver = variableTypeAndInitializerResolver;
         this.expressionTypingServices = expressionTypingServices;
         this.overloadChecker = overloadChecker;
         this.languageVersionSettings = languageVersionSettings;
@@ -813,9 +813,14 @@ public class DescriptorResolver {
         ReceiverParameterDescriptor receiverDescriptor =
                 DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
 
-        KotlinType type = variableTypeResolver.process(
-                propertyDescriptor, ScopeUtils.makeScopeForPropertyInitializer(scopeWithTypeParameters, propertyDescriptor),
+        LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeWithTypeParameters, propertyDescriptor);
+        KotlinType type = variableTypeAndInitializerResolver.resolveType(
+                propertyDescriptor, scopeForInitializer,
                 property, dataFlowInfo, true, trace
+        );
+
+        variableTypeAndInitializerResolver.setConstantForVariableIfNeeded(
+                propertyDescriptor, scopeForInitializer, property, dataFlowInfo, type, trace
         );
 
         propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(containingDeclaration),

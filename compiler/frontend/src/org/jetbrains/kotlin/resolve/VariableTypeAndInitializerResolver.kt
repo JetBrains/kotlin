@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
-class VariableTypeResolver(
+class VariableTypeAndInitializerResolver(
         private val storageManager: StorageManager,
         private val expressionTypingServices: ExpressionTypingServices,
         private val typeResolver: TypeResolver,
@@ -44,7 +44,7 @@ class VariableTypeResolver(
         private val delegatedPropertyResolver: DelegatedPropertyResolver
 ) {
 
-    fun process(
+    fun resolveType(
             variableDescriptor: VariableDescriptorWithInitializerImpl,
             scopeForInitializer: LexicalScope,
             variable: KtVariableDeclaration,
@@ -55,12 +55,8 @@ class VariableTypeResolver(
         val propertyTypeRef = variable.typeReference
 
         val hasDelegate = variable is KtProperty && variable.hasDelegateExpression()
-        when {
-            propertyTypeRef != null -> {
-                val type = typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true)
-                setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, type, trace)
-                return type
-            }
+        return when {
+            propertyTypeRef != null -> typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true)
             !variable.hasInitializer() -> {
                 if (hasDelegate && variableDescriptor is VariableDescriptorWithAccessors) {
                     val property = variable as KtProperty
@@ -80,25 +76,20 @@ class VariableTypeResolver(
                 return ErrorUtils.createErrorType("No type, no body")
             }
             notLocal -> {
-                return DeferredType.createRecursionIntolerant(
+                DeferredType.createRecursionIntolerant(
                         storageManager,
                         trace
                 ) {
                     PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
                     val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
-                    setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, initializerType, trace)
                     transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
                 }
             }
-            else -> {
-                val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
-                setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, initializerType, trace)
-                return initializerType
-            }
+            else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
         }
     }
 
-    private fun setConstantForVariableIfNeeded(
+    fun setConstantForVariableIfNeeded(
             variableDescriptor: VariableDescriptorWithInitializerImpl,
             scope: LexicalScope,
             variable: KtVariableDeclaration,
@@ -106,17 +97,16 @@ class VariableTypeResolver(
             variableType: KotlinType,
             trace: BindingTrace
     ) {
-        if (!DescriptorUtils.shouldRecordInitializerForProperty(variableDescriptor, variableType)) return
-
-        if (!variable.hasInitializer()) return
-
+        if (!variable.hasInitializer() || variable.isVar) return
         variableDescriptor.setCompileTimeInitializer(
                 storageManager.createRecursionTolerantNullableLazyValue(
-                        {
+                        computeInitializer@{
+                            if (!DescriptorUtils.shouldRecordInitializerForProperty(variableDescriptor, variableType)) return@computeInitializer null
+
                             val initializer = variable.initializer
                             val initializerType = expressionTypingServices.safeGetType(scope, initializer!!, variableType, dataFlowInfo, trace)
                             val constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType)
-                                           ?: return@createRecursionTolerantNullableLazyValue null
+                                           ?: return@computeInitializer null
 
                             if (constant.usesNonConstValAsConstant && variableDescriptor.isConst) {
                                 trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(initializer))
