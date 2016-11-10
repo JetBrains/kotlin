@@ -45,10 +45,10 @@ class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvide
         val additionalRepository: String? = when {
             kotlinVersion == "@snapshot@" -> {
                 kotlinVersion = "1.1-SNAPSHOT"
-                KotlinWithGradleConfigurator.SNAPSHOT_REPOSITORY
+                KotlinWithGradleConfigurator.SNAPSHOT_REPOSITORY_SNIPPET
             }
             isEap(kotlinVersion) -> {
-                KotlinWithGradleConfigurator.EAP_REPOSITORY
+                KotlinWithGradleConfigurator.EAP_REPOSITORY_SNIPPET
             }
             else -> {
                 null
