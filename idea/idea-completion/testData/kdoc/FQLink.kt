@@ -1,7 +1,7 @@
 package z
 
 /**
- * [<caret>]
+ * [z.<caret>]
  */
 fun f(xyzzy: String) {
 
@@ -13,7 +13,7 @@ fun bar() {
 
 class Z
 
-// EXIST: z
 // EXIST: Z
-// EXIST: xyzzy
+// EXIST: f
 // EXIST: bar
+// ABSENT: z

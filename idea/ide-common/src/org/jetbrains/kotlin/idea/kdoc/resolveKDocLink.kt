@@ -53,11 +53,16 @@ fun resolveKDocLink(context: BindingContext,
         val descriptorsByName = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == shortName })
         // Try to find a matching local descriptor (parameter or type parameter) first.
         val localDescriptors = descriptorsByName.filter { it.containingDeclaration == fromDescriptor }
+
         if (localDescriptors.isNotEmpty()) return localDescriptors
-        if (descriptorsByName.isNotEmpty()) return descriptorsByName
 
         val moduleDescriptor = fromDescriptor.module
-        return moduleDescriptor.getSubPackagesOf(FqName.ROOT, { it.asString() == shortName }).map { moduleDescriptor.getPackage(it) }
+
+        val packagesByName = moduleDescriptor.getSubPackagesOf(FqName.ROOT, { true })
+                .filter { it.asString() == shortName }
+                .map { moduleDescriptor.getPackage(it) }
+
+        return descriptorsByName + packagesByName
     }
 
     val moduleDescriptor = fromDescriptor.module
