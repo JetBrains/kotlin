@@ -28,10 +28,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FqnCallIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeToIntrinsic;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -61,12 +60,6 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return doApply(receiver, arguments.get(0), context);
         }
     }
-
-    @NotNull
-    private static final FunctionIntrinsic RANGE_TO_INTRINSIC = new FqnCallIntrinsic("IntRange", Namer.INT_RANGE, true, true);
-
-    @NotNull
-    private static final FunctionIntrinsic CHAR_RANGE_TO_INTRINSIC = new FqnCallIntrinsic("CharRange", Namer.CHAR_RANGE, true, true);
 
     @NotNull
     private static final BinaryOperationIntrinsicBase INTEGER_DIVISION_INTRINSIC = new BinaryOperationIntrinsicBase() {
@@ -127,7 +120,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
         if (pattern("Char.rangeTo(Char)").apply(descriptor)) {
-            return CHAR_RANGE_TO_INTRINSIC;
+            return new RangeToIntrinsic(descriptor);
         }
 
         if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.apply(descriptor)) {
@@ -148,7 +141,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return INTEGER_DIVISION_INTRINSIC;
         }
         if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
-            return RANGE_TO_INTRINSIC;
+            return new RangeToIntrinsic(descriptor);
         }
         if (INT_WITH_BIT_OPERATIONS.apply(descriptor)) {
             JsBinaryOperator op = BINARY_BITWISE_OPERATIONS.get(descriptor.getName().asString());

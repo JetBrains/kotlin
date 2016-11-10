@@ -18,26 +18,33 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsNew
-import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FqnCallIntrinsic
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 
-
-object ProgressionCompanionFIF : CompositeFIF() {
-    init {
-        val numberProgressionConstructor = FqnCallIntrinsic("IntProgression", "kotlin.ranges.IntProgression", isConstructor = true,
-                                                            receiverAsArgument = false)
-        for (type in arrayOf(PrimitiveType.INT)) {
-            add(methodPattern("${type.typeName}Progression"), numberProgressionConstructor)
-        }
-        add(methodPattern("LongProgression"), FqnCallIntrinsic("LongProgression", "kotlin.ranges.LongProgression", isConstructor = true,
-                                                               receiverAsArgument = false))
-        add(methodPattern("CharProgression"), FqnCallIntrinsic("CharProgression", "kotlin.ranges.CharProgression", isConstructor = true,
-                                                               receiverAsArgument = false))
-    }
+object ProgressionCompanionFIF : FunctionIntrinsicFactory {
+    val patterns = listOf(methodPattern("IntProgression"), methodPattern("LongProgression"), methodPattern("CharProgression"))
 
     private fun methodPattern(builtinProgressionName: String) =
             pattern("kotlin.ranges", builtinProgressionName, "Companion", "fromClosedRange")
+
+    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? =
+        if (patterns.any { it.apply(descriptor) }) {
+            FromClosedRangeIntrinsic(descriptor)
+        }
+        else {
+            null
+        }
+
+    private class FromClosedRangeIntrinsic(descriptor: FunctionDescriptor) : FunctionIntrinsic() {
+        val progressionType = descriptor.containingDeclaration.containingDeclaration as ClassDescriptor
+
+        override fun apply(receiver: JsExpression?, arguments: MutableList<JsExpression>, context: TranslationContext): JsExpression {
+            val constructor = ReferenceTranslator.translateAsTypeReference(progressionType, context)
+            return JsNew(constructor, arguments)
+        }
+    }
 }
