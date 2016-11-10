@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 
 class KotlinFacetSettingsProviderImpl : KotlinFacetSettingsProvider {
     override fun getSettings(module: Module): KotlinFacetSettings {
-        val settings = KotlinFacet.get(module)?.configuration?.state ?: KotlinFacetSettings()
+        val settings = KotlinFacet.get(module)?.configuration?.settings ?: KotlinFacetSettings()
         settings.initializeIfNeeded(module, null)
         return settings
     }
