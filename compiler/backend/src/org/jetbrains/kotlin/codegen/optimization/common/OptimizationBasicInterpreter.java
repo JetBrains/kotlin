@@ -31,9 +31,15 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue.*;
 
 public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implements Opcodes {
+    private final boolean tolerantToUninitializedValues;
+
+    public OptimizationBasicInterpreter(boolean tolerantToUninitializedValues) {
+        super(ASM5);
+        this.tolerantToUninitializedValues = tolerantToUninitializedValues;
+    }
 
     public OptimizationBasicInterpreter() {
-        super(ASM5);
+        this(false);
     }
 
     @Override
@@ -355,7 +361,11 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
     ) {
         if (v.equals(w)) return v;
 
-        if (v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE) {
+        if (tolerantToUninitializedValues) {
+            if (v == StrictBasicValue.UNINITIALIZED_VALUE) return w;
+            if (w == StrictBasicValue.UNINITIALIZED_VALUE) return v;
+        }
+        else if (v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE) {
             return StrictBasicValue.UNINITIALIZED_VALUE;
         }
 

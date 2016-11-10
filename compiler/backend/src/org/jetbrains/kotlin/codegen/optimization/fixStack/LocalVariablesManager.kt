@@ -44,6 +44,10 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
     }
 
     private fun allocateNewHandle(numRestoreStackMarkers: Int, saveStackMarker: AbstractInsnNode, savedStackValues: List<BasicValue>): SavedStackDescriptor {
+        if (savedStackValues.any { it.type == null }) {
+            throw AssertionError("Uninitialized value on stack at ${methodNode.instructions.indexOf(saveStackMarker)}")
+        }
+
         val firstUnusedLocalVarIndex = getFirstUnusedLocalVariableIndex()
         val savedStackDescriptor = SavedStackDescriptor(savedStackValues, firstUnusedLocalVarIndex)
         updateMaxLocals(savedStackDescriptor.firstUnusedLocalVarIndex)

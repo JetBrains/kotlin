@@ -5140,9 +5140,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
             }
 
+            @TestMetadata("breakInDoWhile.kt")
+            public void testBreakInDoWhile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/breakInDoWhile.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("breakInExpr.kt")
             public void testBreakInExpr() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/breakInExpr.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("continueInDoWhile.kt")
+            public void testContinueInDoWhile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/continueInDoWhile.kt");
                 doTest(fileName);
             }
 
@@ -5161,6 +5173,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("innerLoopWithStack.kt")
             public void testInnerLoopWithStack() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/innerLoopWithStack.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt14581.kt")
+            public void testKt14581() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/kt14581.kt");
                 doTest(fileName);
             }
 
@@ -7079,6 +7097,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt12891.kt")
             public void testKt12891() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/kt12891.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt13557.kt")
+            public void testKt13557() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/local/kt13557.kt");
                 doTest(fileName);
             }
 

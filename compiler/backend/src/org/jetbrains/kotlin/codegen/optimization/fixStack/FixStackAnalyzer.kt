@@ -33,7 +33,7 @@ internal class FixStackAnalyzer(
         owner: String,
         methodNode: MethodNode,
         val context: FixStackContext
-) : MethodAnalyzer<BasicValue>(owner, methodNode, OptimizationBasicInterpreter()) {
+) : MethodAnalyzer<BasicValue>(owner, methodNode, OptimizationBasicInterpreter(/* tolerantToUninitializedValues = */true)) {
     val savedStacks = hashMapOf<AbstractInsnNode, List<BasicValue>>()
     var maxExtraStackSize = 0; private set
 
