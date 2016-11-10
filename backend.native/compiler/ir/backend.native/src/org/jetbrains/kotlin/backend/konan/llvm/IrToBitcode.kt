@@ -276,7 +276,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         when {
             value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
-            value is IrDelegatingConstructorCall -> return generator.superCall(tmpVariableName, value.descriptor, args)
+            value is IrDelegatingConstructorCall -> return superCall(tmpVariableName, value.descriptor, args)
             else -> {
                 TODO()
             }
@@ -388,7 +388,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         //logger.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
-        return generator.call(descriptor, args, tmpVariableName)
+        if (descriptor.isOverridable)
+            return callVirtual(descriptor, args, tmpVariableName)
+        else
+            return callDirect(descriptor, args, tmpVariableName)
     }
 
     //-------------------------------------------------------------------------//
@@ -482,5 +485,50 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun isUnconditional(branch: IrBranch): Boolean =
         branch.condition is IrConst<*>                            // If branch condition is constant.
             && (branch.condition as IrConst<*>).value as Boolean  // If condition is "true"
+
+    //-------------------------------------------------------------------------//
+
+    fun callDirect(descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+        val llvmFunction = generator.functionLlvmValue(descriptor)
+        return generator.call(llvmFunction, args, result)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    /* Runtime constant */
+    private val kTypeInfo = LLVMGetTypeByName(context.llvmModule, "struct.TypeInfo")!!
+    private val kTypeInfoPtr = pointerType(kTypeInfo)
+    private val kInt8Ptr = pointerType(LLVMInt8Type())
+    private val kInt8PtrPtr = pointerType(kInt8Ptr)
+
+    //-------------------------------------------------------------------------//
+
+    fun callVirtual(descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+        val thisI8PtrPtr    = generator.bitcast(kInt8PtrPtr, args[0]!!, generator.tmpVariable())        // Cast "this (i8*)" to i8**.
+        val typeInfoI8Ptr   = generator.load(thisI8PtrPtr!!, generator.tmpVariable())                   // Load TypeInfo address.
+        val typeInfoPtr     = generator.bitcast(kTypeInfoPtr, typeInfoI8Ptr, generator.tmpVariable())   // Cast TypeInfo (i8*) to TypeInfo*.
+        val methodHash      = generator.functionHash(descriptor)                                        // Calculate hash of the method to be invoked
+        val lookupArgs      = mutableListOf(typeInfoPtr, methodHash)                                    // Prepare args for lookup
+        val llvmMethod      = generator.call(
+                              context.lookupOpenMethodFunction,
+                              lookupArgs,
+                              generator.tmpVariable())                                                  // Get method ptr to be invoked
+
+        val functionPtrType = pointerType(getLlvmFunctionType(descriptor))                              // Construct type of the method to be invoked
+        val function        = generator.bitcast(functionPtrType, llvmMethod!!, generator.tmpVariable()) // Cast method address to the type
+        return generator.call(function, args, result)                                                   // Invoke the method
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun  superCall(result:String, descriptor:ClassConstructorDescriptor, args:MutableList<LLVMOpaqueValue?> ):LLVMOpaqueValue? {
+        val tmp = generator.load(generator.thisVariable(), generator.tmpVariable())
+        var rargs:MutableList<LLVMOpaqueValue?>? = null
+        if (args.size != 0)
+            rargs = mutableListOf<LLVMOpaqueValue?>(tmp, *args.toTypedArray())
+        else
+            rargs = mutableListOf<LLVMOpaqueValue?>(tmp)
+        return callDirect(descriptor, rargs, result)
+    }
 
 }

@@ -26,6 +26,8 @@ internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val
 
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
+    val lookupFieldOffset = importRtFunction("LookupFieldOffset")
+    val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")
 
     fun dispose() {
         LLVMDisposeBuilder(llvmBuilder)

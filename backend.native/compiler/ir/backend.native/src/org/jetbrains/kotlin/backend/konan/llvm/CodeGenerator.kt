@@ -138,14 +138,18 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun load(value:LLVMOpaqueValue, varName: String):LLVMOpaqueValue = LLVMBuildLoad(context.llvmBuilder, value, varName)!!
     fun store(value:LLVMOpaqueValue, ptr:LLVMOpaqueValue):LLVMOpaqueValue = LLVMBuildStore(context.llvmBuilder, value, ptr)!!
 
-    fun call(descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
-        if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), null, 0, result)
+    //-------------------------------------------------------------------------//
+
+    fun call(llvmFunction: LLVMOpaqueValue?, args: MutableList<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+        if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, llvmFunction, null, 0, result)
         memScoped {
             val rargs = alloc(array[args.size](Ref to LLVMOpaqueValue))
-            args.forEachIndexed { i, llvmOpaqueValue ->  rargs[i].value = args[i]}
-            return LLVMBuildCall(context.llvmBuilder, descriptor.llvmFunction.getLlvmValue(), rargs[0], args.size, result)
-	    }
+            args.forEachIndexed { i, llvmOpaqueValue -> rargs[i].value = args[i] }
+            return LLVMBuildCall(context.llvmBuilder, llvmFunction, rargs[0], args.size, result)
+        }
     }
+
+    //-------------------------------------------------------------------------//
 
     fun trap() {
         // LLVM doesn't seem to provide API to get intrinsics;
@@ -165,16 +169,6 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun typeInfoType(descriptor: ClassDescriptor): LLVMOpaqueType? = descriptor.llvmTypeInfoPtr.getLlvmType()
     fun typeInfoValue(descriptor: ClassDescriptor): LLVMOpaqueValue? = descriptor.llvmTypeInfoPtr.getLlvmValue()
 
-    fun  superCall(result:String, descriptor:ClassConstructorDescriptor, args:MutableList<LLVMOpaqueValue?> ):LLVMOpaqueValue? {
-        val tmp = load(thisVariable(), tmpVariable())
-        var rargs:MutableList<LLVMOpaqueValue?>? = null
-        if (args.size != 0)
-            rargs = mutableListOf<LLVMOpaqueValue?>(tmp, *args.toTypedArray())
-        else
-            rargs = mutableListOf<LLVMOpaqueValue?>(tmp)
-        return call(descriptor, rargs, result)
-    }
-
     fun thisVariable() = variable("this")!!
     fun param(fn: FunctionDescriptor?, i: Int): LLVMOpaqueValue? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
 
@@ -182,6 +176,10 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
     fun basicBlock(): LLVMOpaqueBasicBlock? = LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), currentFunction!!.bbLabel())
     fun lastBasicBlock(): LLVMOpaqueBasicBlock? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction.getLlvmValue())
+
+    fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction.getLlvmValue()
+    fun functionHash(descriptor: FunctionDescriptor): LLVMOpaqueValue? = descriptor.functionName.localHash.getLlvmValue()
+
 }
 
 
