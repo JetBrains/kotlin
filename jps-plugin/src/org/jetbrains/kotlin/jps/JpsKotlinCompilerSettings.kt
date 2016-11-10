@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.config.JVMPlatform
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.jps.model.kotlinFacetExtension
 
 class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
@@ -78,7 +78,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         fun getK2JvmCompilerArguments(module: JpsModule): K2JVMCompilerArguments {
             val defaultArguments = getSettings(module.project).k2JvmCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
-            val targetPlatform = facetSettings.versionInfo.targetPlatformKind as? JVMPlatform ?: return defaultArguments
+            val targetPlatform = facetSettings.versionInfo.targetPlatformKind as? TargetPlatformKind.Jvm ?: return defaultArguments
             return copyBean(defaultArguments).apply {
                 jvmTarget = targetPlatform.version.description
             }

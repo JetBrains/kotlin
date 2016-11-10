@@ -25,8 +25,6 @@ import com.intellij.ide.IdeBundle
 import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDialog
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
-import org.jetbrains.kotlin.config.JSPlatform
-import org.jetbrains.kotlin.config.JVMPlatform
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
@@ -43,8 +41,8 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         get() {
             val project = context.module.project
             return when (this) {
-                is JVMPlatform -> JavaRuntimeLibraryDescription(project)
-                is JSPlatform -> JSLibraryStdDescription(project)
+                is TargetPlatformKind.Jvm -> JavaRuntimeLibraryDescription(project)
+                is TargetPlatformKind.JavaScript -> JSLibraryStdDescription(project)
             }
         }
 

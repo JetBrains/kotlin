@@ -31,24 +31,24 @@ sealed class TargetPlatformKind<out Version : DescriptionAware>(
 ) : DescriptionAware {
     override val description = "$name ${version.description}"
 
+    class Jvm(version: JvmTarget) : TargetPlatformKind<JvmTarget>(version, "JVM") {
+        companion object {
+            val JVM_PLATFORMS by lazy { JvmTarget.values().map(::Jvm) }
+
+            operator fun get(version: JvmTarget) = JVM_PLATFORMS[version.ordinal]
+        }
+    }
+
+    object JavaScript : TargetPlatformKind<NoVersion>(NoVersion, "JavaScript")
+
     companion object {
-        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { JVMPlatform.JVM_PLATFORMS + JSPlatform }
+        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { Jvm.JVM_PLATFORMS + JavaScript }
     }
 }
 
 object NoVersion : DescriptionAware {
     override val description = ""
 }
-
-class JVMPlatform(version: JvmTarget) : TargetPlatformKind<JvmTarget>(version, "JVM") {
-    companion object {
-        val JVM_PLATFORMS by lazy { JvmTarget.values().map(::JVMPlatform) }
-
-        operator fun get(version: JvmTarget) = JVM_PLATFORMS[version.ordinal]
-    }
-}
-
-object JSPlatform : TargetPlatformKind<NoVersion>(NoVersion, "JavaScript")
 
 data class KotlinVersionInfo(
         var languageLevel: LanguageVersion? = null,

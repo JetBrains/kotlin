@@ -24,7 +24,10 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
@@ -41,8 +44,8 @@ private fun getRuntimeLibraryVersions(
         targetPlatform: TargetPlatformKind<*>
 ): Collection<String> {
     val presentationProvider = when (targetPlatform) {
-        is JSPlatform -> JSLibraryStdPresentationProvider.getInstance()
-        is JVMPlatform -> JavaRuntimePresentationProvider.getInstance()
+        is TargetPlatformKind.JavaScript -> JSLibraryStdPresentationProvider.getInstance()
+        is TargetPlatformKind.Jvm -> JavaRuntimePresentationProvider.getInstance()
     }
 
     KotlinVersionInfoProvider.EP_NAME
@@ -60,15 +63,15 @@ private fun getRuntimeLibraryVersions(
 }
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
-    if (getRuntimeLibraryVersions(module, rootModel, JSPlatform).any()) {
-        return JSPlatform
+    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).any()) {
+        return TargetPlatformKind.JavaScript
     }
 
     val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
     val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
     return when {
-        sdkVersion != null && sdkVersion <= JavaSdkVersion.JDK_1_6 -> JVMPlatform[JvmTarget.JVM_1_6]
-        else -> JVMPlatform[JvmTarget.JVM_1_8]
+        sdkVersion != null && sdkVersion <= JavaSdkVersion.JDK_1_6 -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        else -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_8]
     }
 }
 
@@ -92,7 +95,7 @@ internal fun getLibraryLanguageLevel(
         rootModel: ModuleRootModel?,
         targetPlatform: TargetPlatformKind<*>?
 ): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: JVMPlatform[JvmTarget.JVM_1_8])
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
             .minWith(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion)
 }
@@ -130,9 +133,7 @@ internal fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: M
 }
 
 val TargetPlatformKind<*>.mavenLibraryId: String
-    get() {
-        return when (this) {
-            is JVMPlatform -> KotlinJavaMavenConfigurator.STD_LIB_ID
-            is JSPlatform -> KotlinJavascriptMavenConfigurator.STD_LIB_ID
-        }
+    get() = when (this) {
+        is TargetPlatformKind.Jvm -> KotlinJavaMavenConfigurator.STD_LIB_ID
+        is TargetPlatformKind.JavaScript -> KotlinJavascriptMavenConfigurator.STD_LIB_ID
     }

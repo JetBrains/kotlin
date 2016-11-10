@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.CompilerSettings;
-import org.jetbrains.kotlin.config.JSPlatform;
 import org.jetbrains.kotlin.config.TargetPlatformKind;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
@@ -122,7 +121,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     public void setTargetPlatform(@Nullable TargetPlatformKind<?> targetPlatform) {
-        k2jsPanel.setVisible(JSPlatform.INSTANCE.equals(targetPlatform));
+        k2jsPanel.setVisible(TargetPlatformKind.JavaScript.INSTANCE.equals(targetPlatform));
     }
 
     @SuppressWarnings("unused")
