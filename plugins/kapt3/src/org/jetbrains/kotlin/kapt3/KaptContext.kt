@@ -32,7 +32,7 @@ class KaptContext(
         val compiledClasses: List<ClassNode>,
         val origins: Map<Any, JvmDeclarationOrigin>,
         processorOptions: Map<String, String>
-) {
+) : AutoCloseable {
     val context = Context()
     val compiler: KaptJavaCompiler
     val fileManager: JavacFileManager
@@ -53,7 +53,7 @@ class KaptContext(
         }
     }
 
-    fun close() {
+    override fun close() {
         compiler.close()
         fileManager.close()
     }
