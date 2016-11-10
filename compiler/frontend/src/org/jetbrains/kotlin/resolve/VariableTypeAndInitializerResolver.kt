@@ -54,38 +54,32 @@ class VariableTypeAndInitializerResolver(
     ): KotlinType {
         val propertyTypeRef = variable.typeReference
 
-        val hasDelegate = variable is KtProperty && variable.hasDelegateExpression()
         return when {
             propertyTypeRef != null -> typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true)
-            !variable.hasInitializer() -> {
-                if (hasDelegate && variableDescriptor is VariableDescriptorWithAccessors) {
-                    val property = variable as KtProperty
-                    if (property.hasDelegateExpression()) {
-                        return DeferredType.createRecursionIntolerant(
-                                storageManager,
-                                trace
-                        ) {
-                            resolveDelegatedPropertyType(property, variableDescriptor, scopeForInitializer,
-                                                         property.delegateExpression!!, dataFlowInfo, trace)
-                        }
+
+            !variable.hasInitializer() && variable is KtProperty && variableDescriptor is VariableDescriptorWithAccessors &&
+                 variable.hasDelegateExpression() ->
+                    resolveDelegatedPropertyType(variable, variableDescriptor, scopeForInitializer, dataFlowInfo, trace)
+
+            variable.hasInitializer() -> when {
+                notLocal ->
+                    DeferredType.createRecursionIntolerant(
+                            storageManager,
+                            trace
+                    ) {
+                        PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
+                        val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
+                        transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
                     }
-                }
+
+                else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
+            }
+            else -> {
                 if (!notLocal) {
                     trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable))
                 }
-                return ErrorUtils.createErrorType("No type, no body")
+                ErrorUtils.createErrorType("No type, no body")
             }
-            notLocal -> {
-                DeferredType.createRecursionIntolerant(
-                        storageManager,
-                        trace
-                ) {
-                    PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
-                    val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
-                    transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
-                }
-            }
-            else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
         }
     }
 
@@ -123,10 +117,10 @@ class VariableTypeAndInitializerResolver(
             property: KtProperty,
             variableDescriptor: VariableDescriptorWithAccessors,
             scopeForInitializer: LexicalScope,
-            delegateExpression: KtExpression,
             dataFlowInfo: DataFlowInfo,
             trace: BindingTrace
-    ): KotlinType {
+    ) = DeferredType.createRecursionIntolerant(storageManager, trace) {
+        val delegateExpression = property.delegateExpression!!
         val type = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, variableDescriptor, scopeForInitializer, trace, dataFlowInfo)
 
@@ -134,10 +128,8 @@ class VariableTypeAndInitializerResolver(
         val getterReturnType = delegatedPropertyResolver.getDelegatedPropertyGetMethodReturnType(
                 variableDescriptor, delegateExpression, type, trace, delegateFunctionsScope, dataFlowInfo
         )
-        if (getterReturnType != null) {
-            return getterReturnType
-        }
-        return ErrorUtils.createErrorType("Type from delegate")
+
+        getterReturnType ?: ErrorUtils.createErrorType("Type from delegate")
     }
 
     private fun resolveInitializerType(
