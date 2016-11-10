@@ -101,8 +101,8 @@ internal fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: M
     val project = module.project
 
     with(versionInfo) {
-        if (targetPlatformKindKind == null) {
-            targetPlatformKindKind = getDefaultTargetPlatform(module, rootModel)
+        if (targetPlatformKind == null) {
+            targetPlatformKind = getDefaultTargetPlatform(module, rootModel)
         }
 
         if (languageLevel == null) {
@@ -110,7 +110,7 @@ internal fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: M
         }
 
         if (apiLevel == null) {
-            apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKindKind!!))
+            apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
         }
     }
 

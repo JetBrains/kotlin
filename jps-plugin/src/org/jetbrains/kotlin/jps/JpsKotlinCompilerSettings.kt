@@ -78,7 +78,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         fun getK2JvmCompilerArguments(module: JpsModule): K2JVMCompilerArguments {
             val defaultArguments = getSettings(module.project).k2JvmCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
-            val targetPlatform = facetSettings.versionInfo.targetPlatformKindKind as? JVMPlatform ?: return defaultArguments
+            val targetPlatform = facetSettings.versionInfo.targetPlatformKind as? JVMPlatform ?: return defaultArguments
             return copyBean(defaultArguments).apply {
                 jvmTarget = targetPlatform.version.description
             }
