@@ -41,6 +41,9 @@ import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import java.util.*
 
+fun kotlinPluginId(version: String?) = MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID, version)
+
+
 class PomFile(val xmlFile: XmlFile) {
     val domModel = MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile) ?: throw IllegalStateException("No DOM model found for pom ${xmlFile.name}")
     private val nodesByName = HashMap<String, XmlTag>()
@@ -117,13 +120,13 @@ class PomFile(val xmlFile: XmlFile) {
         return dependency
     }
 
-    fun addKotlinPlugin(version: String?) = addPlugin(MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID, version))
+    fun addKotlinPlugin(version: String?) = addPlugin(kotlinPluginId(version))
 
     fun addPlugin(artifact: MavenId): MavenDomPlugin {
         ensureBuild()
 
         val groupArtifact = artifact.withNoVersion()
-        val plugin = domModel.build.plugins.plugins.firstOrNull { it.matches(groupArtifact) } ?: domModel.build.plugins.addPlugin()
+        val plugin = findPlugin(groupArtifact) ?: domModel.build.plugins.addPlugin()
         plugin.groupId.stringValue = artifact.groupId
         plugin.artifactId.stringValue = artifact.artifactId
         if (artifact.version != null) {
@@ -133,6 +136,8 @@ class PomFile(val xmlFile: XmlFile) {
 
         return plugin
     }
+
+    fun findPlugin(groupArtifact: MavenId) = domModel.build.plugins.plugins.firstOrNull { it.matches(groupArtifact) }
 
     fun isPluginAfter(plugin: MavenDomPlugin, referencePlugin: MavenDomPlugin): Boolean {
         require(plugin.parent === referencePlugin.parent) { "Plugins should be siblings" }
