@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.kapt3
 
 import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.file.JavacFileManager
-import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacFiler
@@ -54,23 +53,28 @@ fun KaptContext.doAnnotationProcessing(
 
         val javaFileObjects = fileManager.getJavaFileObjectsFromFiles(javaSourceFiles)
         val parsedJavaFiles = compiler.parseFiles(javaFileObjects)
-        if (compiler.shouldStop(CompileStates.CompileState.PARSE)) {
+
+        val log = Log.instance(context)
+        if (compiler.shouldStop(CompileStates.CompileState.PARSE) || log.nerrors > 0) {
             throw KaptError(KaptError.Kind.JAVA_FILE_PARSING_ERROR)
         }
 
-        val log = Log.instance(context)
-        val errorCountBeforeAp = log.nerrors
-        val warningsBeforeAp = log.nwarnings
-
-        val compilerAfterAnnotationProcessing: JavaCompiler? = null
+        val warningsBeforeAp: Int
         try {
-            compiler.processAnnotations(compiler.enterTrees(parsedJavaFiles + additionalSources))
+            val analyzedFiles = compiler.enterTrees(parsedJavaFiles + additionalSources)
+            if (log.nerrors > 0) {
+                throw KaptError(KaptError.Kind.ERROR_WHILE_ANALYSIS)
+            }
+
+            warningsBeforeAp = log.nwarnings
+
+            compiler.processAnnotations(analyzedFiles)
         } catch (e: AnnotationProcessingError) {
             throw KaptError(KaptError.Kind.EXCEPTION, e.cause ?: e)
         }
 
         val filer = processingEnvironment.filer as JavacFiler
-        val errorCount = Math.max(log.nerrors, errorCountBeforeAp)
+        val errorCount = log.nerrors
         val warningCount = log.nwarnings - warningsBeforeAp
 
         logger.info { "Annotation processing complete, errors: $errorCount, warnings: $warningCount" }
@@ -81,8 +85,6 @@ fun KaptContext.doAnnotationProcessing(
         if (log.nerrors > 0) {
             throw KaptError(KaptError.Kind.ERROR_RAISED)
         }
-
-        compilerAfterAnnotationProcessing?.close()
     } finally {
         processingEnvironment.close()
         this@doAnnotationProcessing.close()

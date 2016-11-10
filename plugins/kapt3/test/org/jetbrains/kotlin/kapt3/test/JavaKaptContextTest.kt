@@ -99,7 +99,7 @@ class JavaKaptContextTest {
         }
     }
 
-    @Test
+    @Test(expected = KaptError::class)
     fun testException() {
         val exceptionMessage = "Here we are!"
 
@@ -116,19 +116,17 @@ class JavaKaptContextTest {
         } catch (e: KaptError) {
             assertEquals(KaptError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)
+            throw e
         }
     }
 
-    @Test
+    @Test(expected = KaptError::class)
     fun testParsingError() {
-        var catched = false
         try {
             doAnnotationProcessing(File(TEST_DATA_DIR, "ParseError.java"), simpleProcessor(), TEST_DATA_DIR)
         } catch (e: KaptError) {
             assertEquals(KaptError.Kind.JAVA_FILE_PARSING_ERROR, e.kind)
-            catched = true
+            throw e
         }
-
-        assertTrue("Exception was not catched", catched)
     }
 }
