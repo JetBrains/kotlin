@@ -26,8 +26,8 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.actions.createSingleImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.targetDescriptors
-import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -88,11 +88,11 @@ class KotlinReferenceImporter : ReferenceImporter {
             if (mainReference.resolveToDescriptors(bindingContext).isNotEmpty()) return false
 
             val suggestions = ImportFix(this).computeSuggestions()
-
-            if (suggestions.distinctBy { it.importableFqName!! }.size != 1) return false
+            if (suggestions.size != 1) return false
+            val descriptors = file.resolveImportReference(suggestions.single())
 
             // we do not auto-import nested classes because this will probably add qualification into the text and this will confuse the user
-            if (suggestions.any { it is ClassDescriptor && it.containingDeclaration is ClassDescriptor }) return false
+            if (descriptors.any { it is ClassDescriptor && it.containingDeclaration is ClassDescriptor }) return false
 
             var result = false
             CommandProcessor.getInstance().runUndoTransparentAction {

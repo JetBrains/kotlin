@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -52,15 +53,17 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-internal fun createSingleImportAction(project: Project,
-                             editor: Editor,
-                             element: KtElement,
-                             descriptors: Collection<DeclarationDescriptor>): KotlinAddImportAction {
+internal fun createSingleImportAction(
+        project: Project,
+        editor: Editor,
+        element: KtElement,
+        fqNames: Collection<FqName>
+): KotlinAddImportAction {
+    val file = element.getContainingKtFile()
     val prioritizer = Prioritizer(element.getContainingKtFile())
-    val variants = descriptors
-            .groupBy { it.importableFqName!! }
-            .map {
-                val (fqName, sameFqNameDescriptors) = it
+    val variants = fqNames
+            .map { fqName ->
+                val sameFqNameDescriptors = file.resolveImportReference(fqName)
                 val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min()!!
                 Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
             }
@@ -70,25 +73,29 @@ internal fun createSingleImportAction(project: Project,
     return KotlinAddImportAction(project, editor, element, variants)
 }
 
-internal fun createGroupedImportsAction(project: Project,
-                               editor: Editor,
-                               element: KtElement,
-                               autoImportDescription: String,
-                               descriptors: Collection<DeclarationDescriptor>): KotlinAddImportAction {
+internal fun createGroupedImportsAction(
+        project: Project,
+        editor: Editor,
+        element: KtElement,
+        autoImportDescription: String,
+        fqNames: Collection<FqName>
+): KotlinAddImportAction {
     val prioritizer = DescriptorGroupPrioritizer(element.getContainingKtFile())
 
-    val variants = descriptors
-            .groupBy { it.importableFqName!!.parentOrNull() ?: FqName.ROOT }
+    val file = element.getContainingKtFile()
+    val variants = fqNames
+            .groupBy { it.parentOrNull() ?: FqName.ROOT }
             .map {
-                val samePackageDescriptors = it.value
-                val variant = if (samePackageDescriptors.size > 1) {
-                    GroupedImportVariant(autoImportDescription, samePackageDescriptors)
+                val samePackageFqNames = it.value
+                val descriptors = samePackageFqNames.flatMap { file.resolveImportReference(it) }
+                val variant = if (samePackageFqNames.size > 1) {
+                    GroupedImportVariant(autoImportDescription, descriptors)
                 }
                 else {
-                    SingleImportVariant(samePackageDescriptors.first().importableFqName!!, samePackageDescriptors)
+                    SingleImportVariant(samePackageFqNames.first(), descriptors)
                 }
 
-                val priority = prioritizer.priority(samePackageDescriptors)
+                val priority = prioritizer.priority(descriptors)
                 DescriptorGroupPrioritizer.VariantWithPriority(variant, priority)
             }
             .sortedBy {

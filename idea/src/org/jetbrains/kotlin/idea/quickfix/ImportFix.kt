@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.isSelectorInQualified
@@ -64,7 +65,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
@@ -91,8 +91,8 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(project).modificationCount
 
-    private val suggestionCount: Int by CachedValueProperty(
-            calculator = { computeSuggestions().size },
+    protected val suggestions: Collection<FqName> by CachedValueProperty(
+            calculator = { computeSuggestions() },
             timestampCalculator = { PsiModificationTracker.SERVICE.getInstance(project).modificationCount }
     )
 
@@ -108,7 +108,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
         if (ApplicationManager.getApplication().isUnitTestMode && HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) return false
 
-        if (suggestionCount == 0) return false
+        if (suggestions.isEmpty()) return false
 
         return createAction(project, editor, element).showHint()
     }
@@ -118,7 +118,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
     override fun getFamilyName() = KotlinBundle.message("import.fix")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = element != null && super.isAvailable(project, editor, file) && suggestionCount > 0
+            = element != null && super.isAvailable(project, editor, file) && suggestions.isNotEmpty()
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -132,10 +132,10 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
     private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(project).modificationCount
 
     protected open fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
-        return createSingleImportAction(project, editor, element, computeSuggestions())
+        return createSingleImportAction(project, editor, element, suggestions)
     }
 
-    fun computeSuggestions(): Collection<DeclarationDescriptor> {
+    fun computeSuggestions(): Collection<FqName> {
         val element = element ?: return emptyList()
         if (!element.isValid) return emptyList()
         if (element.containingFile !is KtFile) return emptyList()
@@ -146,9 +146,11 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
         if (importNames.isEmpty()) return emptyList()
 
-        return importNames.flatMapTo(LinkedHashSet()) {
-            computeSuggestionsForName(it, callTypeAndReceiver)
-        }
+        return importNames
+                .flatMap { computeSuggestionsForName(it, callTypeAndReceiver) }
+                .distinct()
+                .map { it.fqNameSafe }
+                .distinct()
     }
 
     private fun computeSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<DeclarationDescriptor> {
@@ -323,7 +325,7 @@ internal class DelegateAccessorsImportFix(
 
     override fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
         if (solveSeveralProblems) {
-            return createGroupedImportsAction(project, editor, element, "Delegate accessors", computeSuggestions())
+            return createGroupedImportsAction(project, editor, element, "Delegate accessors", suggestions)
         }
 
         return super.createAction(project, editor, element)
@@ -364,7 +366,7 @@ internal class ComponentsImportFix(
 
     override fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
         if (solveSeveralProblems) {
-            return createGroupedImportsAction(project, editor, element, "Component functions", computeSuggestions())
+            return createGroupedImportsAction(project, editor, element, "Component functions", suggestions)
         }
 
         return super.createAction(project, editor, element)
