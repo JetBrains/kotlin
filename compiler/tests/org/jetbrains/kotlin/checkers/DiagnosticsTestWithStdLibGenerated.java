@@ -1304,6 +1304,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("hashMapTypeAlias.kt")
+        public void testHashMapTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/typealias/hashMapTypeAlias.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeAliasSamAdapterConstructors.kt")
         public void testTypeAliasSamAdapterConstructors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/typealias/typeAliasSamAdapterConstructors.kt");

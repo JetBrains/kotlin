@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -136,8 +137,13 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
     ) {
         val substitutedType = substitutedArgument.type
         for (upperBound in typeParameter.upperBounds) {
-            val substitutedUpperBound = boundsSubstitutor.safeSubstitute(upperBound, Variance.INVARIANT)
+            val substitutedUpperBound = boundsSubstitutor.safeSubstitute(upperBound, Variance.INVARIANT).upperIfFlexible()
             val constraintPosition = ValidityConstraintForConstituentType(substitutedType, typeParameter, substitutedUpperBound)
+
+            // Do not add extra constraints if upper bound is 'Any?';
+            // otherwise it will be treated incorrectly in nested calls processing.
+            if (KotlinBuiltIns.isNullableAny(substitutedUpperBound)) continue
+
             builder.addSubtypeConstraint(substitutedType, substitutedUpperBound, constraintPosition)
         }
     }
