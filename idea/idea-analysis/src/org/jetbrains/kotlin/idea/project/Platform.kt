@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.project
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
+import com.sampullara.cli.Argument
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.KtElement
@@ -30,12 +32,25 @@ val KtElement.platform: TargetPlatform
 val KtElement.builtIns: KotlinBuiltIns
     get() = getResolutionFacade().moduleDescriptor.builtIns
 
+private val multiPlatformProjectsArg: String by lazy {
+    "-" + CommonCompilerArguments::multiPlatform.annotations.filterIsInstance<Argument>().single().value
+}
+
 val Module.languageVersionSettings: LanguageVersionSettings
     get() {
-        val versionInfo = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).versionInfo
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
+        val versionInfo = facetSettings.versionInfo
         val languageVersion = versionInfo.languageLevel ?: LanguageVersion.LATEST
         val apiVersion = versionInfo.apiLevel ?: languageVersion
-        return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion))
+
+        val extraLanguageFeatures =
+                if (versionInfo.targetPlatformKind == TargetPlatformKind.Default ||
+                    // TODO: this is a dirty hack, parse arguments correctly here
+                    facetSettings.compilerInfo.compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true)
+                    listOf(LanguageFeature.MultiPlatformProjects)
+                else emptyList()
+
+        return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
     }
 
 val KtElement.languageVersionSettings: LanguageVersionSettings

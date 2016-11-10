@@ -289,3 +289,4 @@ fun getKotlinJsRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): V
 
 val MAVEN_STDLIB_ID = "kotlin-stdlib"
 val MAVEN_JS_STDLIB_ID = "kotlin-js-library"
+val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator

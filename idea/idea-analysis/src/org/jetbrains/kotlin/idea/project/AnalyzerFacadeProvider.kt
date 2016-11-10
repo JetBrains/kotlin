@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.project
 
 import org.jetbrains.kotlin.analyzer.AnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -29,8 +30,9 @@ object AnalyzerFacadeProvider {
     // otherwise we would be forced to add casts on the call site of setupResolverForProject
     fun getAnalyzerFacade(targetPlatform: TargetPlatform): AnalyzerFacade<JvmPlatformParameters> {
         return when (targetPlatform) {
-            is JvmPlatform -> JvmAnalyzerFacade
+            JvmPlatform -> JvmAnalyzerFacade
             JsPlatform -> JsAnalyzerFacade
+            TargetPlatform.Default -> DefaultAnalyzerFacade
             else -> throw IllegalArgumentException("Unsupported platform: $targetPlatform")
         }
     }

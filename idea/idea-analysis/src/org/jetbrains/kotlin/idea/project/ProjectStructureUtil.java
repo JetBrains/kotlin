@@ -44,6 +44,7 @@ public class ProjectStructureUtil {
     private ProjectStructureUtil() {
     }
 
+    @NotNull
     /* package */ static TargetPlatform getCachedPlatformForModule(@NotNull final Module module) {
         CachedValue<TargetPlatform> result = module.getUserData(PLATFORM_FOR_MODULE);
         if (result == null) {
@@ -73,6 +74,9 @@ public class ProjectStructureUtil {
         }
         if (kind instanceof TargetPlatformKind.JavaScript) {
             return JsPlatform.INSTANCE;
+        }
+        if (kind instanceof TargetPlatformKind.Default) {
+            return TargetPlatform.Default.INSTANCE;
         }
         return null;
     }

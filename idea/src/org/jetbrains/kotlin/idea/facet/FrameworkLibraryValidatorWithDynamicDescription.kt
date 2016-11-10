@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDia
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.framework.CommonStandardLibraryDescription
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import javax.swing.JComponent
@@ -43,6 +44,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
             return when (this) {
                 is TargetPlatformKind.Jvm -> JavaRuntimeLibraryDescription(project)
                 is TargetPlatformKind.JavaScript -> JSLibraryStdDescription(project)
+                is TargetPlatformKind.Default -> CommonStandardLibraryDescription(project)
             }
         }
 
@@ -69,6 +71,9 @@ class FrameworkLibraryValidatorWithDynamicDescription(
                     !found
                 }
         if (found) return ValidationResult.OK
+
+        // TODO: propose to configure kotlin-stdlib-common once it's available
+        if (targetPlatform == TargetPlatformKind.Default) return ValidationResult.OK
 
         return ValidationResult(
                 IdeBundle.message("label.missed.libraries.text", libraryCategoryName),

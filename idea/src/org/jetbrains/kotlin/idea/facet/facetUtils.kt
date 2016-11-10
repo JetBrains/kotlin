@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.idea.versions.MAVEN_COMMON_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 private fun getRuntimeLibraryVersions(
         module: Module,
@@ -45,6 +48,7 @@ private fun getRuntimeLibraryVersions(
     val presentationProvider = when (targetPlatform) {
         is TargetPlatformKind.JavaScript -> JSLibraryStdPresentationProvider.getInstance()
         is TargetPlatformKind.Jvm -> JavaRuntimePresentationProvider.getInstance()
+        is TargetPlatformKind.Default -> return emptyList()
     }
 
     KotlinVersionInfoProvider.EP_NAME
@@ -62,7 +66,7 @@ private fun getRuntimeLibraryVersions(
 }
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
-    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).any()) {
+    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).isNotEmpty()) {
         return TargetPlatformKind.JavaScript
     }
 
@@ -135,6 +139,7 @@ val TargetPlatformKind<*>.mavenLibraryId: String
     get() = when (this) {
         is TargetPlatformKind.Jvm -> MAVEN_STDLIB_ID
         is TargetPlatformKind.JavaScript -> MAVEN_JS_STDLIB_ID
+        is TargetPlatformKind.Default -> MAVEN_COMMON_STDLIB_ID
     }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): KotlinFacet {
