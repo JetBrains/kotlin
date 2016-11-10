@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 class Box(val s: String) {
     fun extract(): String {
         var result = ""

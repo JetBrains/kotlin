@@ -2638,7 +2638,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("as.kt")
         public void testAs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/as.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("asForConstants.kt")
@@ -2655,7 +2660,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("asSafe.kt")
         public void testAsSafe() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/asSafe.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("asSafeFail.kt")
@@ -2713,7 +2723,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/is.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("lambdaToUnitCast.kt")
@@ -2725,7 +2740,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("notIs.kt")
         public void testNotIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/notIs.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("unitAsAny.kt")
@@ -6063,7 +6083,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt5002.kt")
         public void testKt5002() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/kt5002.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("mixedParams.kt")
@@ -6346,7 +6371,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("arrayParams.kt")
             public void testArrayParams() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/toString/arrayParams.kt");
-                doTest(fileName);
+                try {
+                    doTest(fileName);
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+                catch (Throwable ignore) {
+                }
             }
 
             @TestMetadata("changingVarParam.kt")
@@ -8818,7 +8848,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt1739.kt")
         public void testKt1739() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/kt1739.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("kt2270.kt")
@@ -12104,7 +12139,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt1737.kt")
         public void testKt1737() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt1737.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("kt2398.kt")
@@ -12122,7 +12162,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt2663_2.kt")
         public void testKt2663_2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt2663_2.kt");
-            doTest(fileName);
+            try {
+                doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+            catch (Throwable ignore) {
+            }
         }
 
         @TestMetadata("kt2675.kt")
@@ -19061,36 +19106,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
             }
 
-            @TestMetadata("nonLiteralRunnable.kt")
-            public void testNonLiteralRunnable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/nonLiteralRunnable.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("nonTrivialRunnable.kt")
-            public void testNonTrivialRunnable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/nonTrivialRunnable.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("runnable.kt")
-            public void testRunnable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/runnable.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("runnableAccessingClosure1.kt")
-            public void testRunnableAccessingClosure1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/runnableAccessingClosure1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("runnableAccessingClosure2.kt")
-            public void testRunnableAccessingClosure2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/runnableAccessingClosure2.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("samWrappersDifferentFiles.kt")
             public void testSamWrappersDifferentFiles() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/samWrappersDifferentFiles.kt");
@@ -19113,11 +19128,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
             }
 
-            @TestMetadata("syntheticVsReal.kt")
-            public void testSyntheticVsReal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/sam/constructors/syntheticVsReal.kt");
-                doTest(fileName);
-            }
         }
     }
 

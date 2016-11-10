@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 var global = ""
 
 fun Runnable(f: () -> Unit) = object : Runnable {

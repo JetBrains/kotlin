@@ -12,6 +12,10 @@ class C : B<String, Runnable> {
     }
 }
 
+interface Runnable {
+    fun run(): Unit
+}
+
 fun box(): String {
     val x = C().foo("", 0)
     return if (x == null) "OK" else "Fail: $x"

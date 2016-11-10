@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 public class RunnableFunctionWrapper(val f : () -> Unit) : Runnable {
     public override fun run() {
         f()

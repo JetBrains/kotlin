@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 var result = "FAIL"
 
 fun getFun(): () -> Unit {

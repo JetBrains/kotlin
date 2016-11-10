@@ -1,3 +1,6 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
 data class A(val x: Array<Int>?, val y: IntArray?)
 
 fun box(): String {
