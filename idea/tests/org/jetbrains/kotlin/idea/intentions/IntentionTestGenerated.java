@@ -11799,6 +11799,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSingleLineLetIntention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("lambdaWithBinaryExpression.kt")
+        public void testLambdaWithBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/lambdaWithBinaryExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaWithBinaryExpression2.kt")
+        public void testLambdaWithBinaryExpression2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/lambdaWithBinaryExpression2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("let.kt")
         public void testLet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/let.kt");
@@ -11835,6 +11847,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("letUseItAsParamWithBinaryExpression.kt")
+        public void testLetUseItAsParamWithBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseItAsParamWithBinaryExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letUseItWithBinaryExpression.kt")
+        public void testLetUseItWithBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseItWithBinaryExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letUseItWithBinaryExpression2.kt")
+        public void testLetUseItWithBinaryExpression2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseItWithBinaryExpression2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("letUseItWithMultipleMethodCall1.kt")
         public void testLetUseItWithMultipleMethodCall1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letUseItWithMultipleMethodCall1.kt");
@@ -11859,6 +11889,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("letWithBinaryExpression.kt")
+        public void testLetWithBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithBinaryExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("letWithMethodCall.kt")
         public void testLetWithMethodCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithMethodCall.kt");
@@ -11874,6 +11910,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("letWithParameter.kt")
         public void testLetWithParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letWithSimpleBinaryExpression.kt")
+        public void testLetWithSimpleBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithSimpleBinaryExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letWithThisBinaryExpression.kt")
+        public void testLetWithThisBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithThisBinaryExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("letWithThisShortBinaryExpression.kt")
+        public void testLetWithThisShortBinaryExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/letWithThisShortBinaryExpression.kt");
             doTest(fileName);
         }
 
