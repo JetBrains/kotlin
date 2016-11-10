@@ -16049,6 +16049,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("typeAliasAsBareType.kt")
+        public void testTypeAliasAsBareType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasAsBareType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeAliasCompanion.kt")
         public void testTypeAliasCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasCompanion.kt");

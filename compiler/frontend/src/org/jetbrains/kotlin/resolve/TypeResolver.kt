@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.resolve.PossiblyBareType.bare
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
@@ -467,6 +468,13 @@ class TypeResolver(
 
         val parameters = typeConstructor.parameters
 
+        if (c.allowBareTypes && projectionFromAllQualifierParts.isEmpty() && isPossibleToSpecifyTypeArgumentsFor(descriptor)) {
+            val classDescriptor = descriptor.classDescriptor
+            if (classDescriptor != null && canBeUsedAsBareType(descriptor)) {
+                return bare(descriptor.classDescriptor!!.typeConstructor, TypeUtils.isNullableType(descriptor.expandedType))
+            }
+        }
+
         val typeAliasQualifierPart =
                 qualifierResolutionResult.qualifierParts.lastOrNull()
                 ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
@@ -500,6 +508,44 @@ class TypeResolver(
             val expandedType = TypeAliasExpander(reportStrategy).expand(typeAliasExpansion, annotations)
             type(expandedType)
         }
+    }
+
+    /**
+     * Type alias can be used as bare type (after is/as, e.g., 'x is List')
+     * iff all type arguments of the corresponding expanded type are either star projections
+     * or type parameters of the given type alias in invariant projection,
+     * and each of the type parameters is mentioned no more than once.
+     *
+     * E.g.:
+     * ```
+     * typealias HashMap<K, V> = java.util.HashMap<K, V>    // can be used as bare type
+     * typealias MyList<T, X> = List<X>                     // can be used as bare type
+     * typealias StarMap<T> = Map<T, *>                     // can be used as bare type
+     * typealias MyMap<T> = Map<T, T>                       // CAN NOT be used as bare type: type parameter 'T' is used twice
+     * typealias StringMap<T> = Map<String, T>              // CAN NOT be used as bare type: type argument 'String' is not a type parameter
+     * ```
+     */
+    private fun canBeUsedAsBareType(descriptor: TypeAliasDescriptor): Boolean {
+        val expandedType = descriptor.expandedType
+        if (expandedType.isError) return false
+
+        val classDescriptor = descriptor.classDescriptor ?: return false
+        if (!isPossibleToSpecifyTypeArgumentsFor(classDescriptor)) return false
+
+        val usedTypeParameters = linkedSetOf<TypeParameterDescriptor>()
+        for (argument in expandedType.arguments) {
+            if (argument.isStarProjection) continue
+
+            if (argument.projectionKind != INVARIANT) return false
+
+            val argumentTypeDescriptor = argument.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+            if (argumentTypeDescriptor.containingDeclaration != descriptor) return false
+            if (usedTypeParameters.contains(argumentTypeDescriptor)) return false
+
+            usedTypeParameters.add(argumentTypeDescriptor)
+        }
+
+        return true
     }
 
     private class TracingTypeAliasExpansionReportStrategy(
@@ -578,7 +624,7 @@ class TypeResolver(
         // First parameter relates to the innermost declaration
         // If it's declared in function there
         val firstTypeParameter = classifierDescriptor.typeConstructor.parameters.firstOrNull() ?: return false
-        return firstTypeParameter.original.containingDeclaration is ClassDescriptor
+        return firstTypeParameter.original.containingDeclaration is ClassifierDescriptorWithTypeParameters
     }
 
     /**
