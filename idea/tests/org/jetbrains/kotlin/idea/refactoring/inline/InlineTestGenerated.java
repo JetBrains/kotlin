@@ -466,6 +466,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("UnusedComplicatedReturnValue.kt")
+            public void testUnusedComplicatedReturnValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/UnusedComplicatedReturnValue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("UnusedReturnValue.kt")
+            public void testUnusedReturnValue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/UnusedReturnValue.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ValIntializer.kt")
             public void testValIntializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/ValIntializer.kt");

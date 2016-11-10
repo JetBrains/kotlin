@@ -70,6 +70,15 @@ class CodeInliner<TCallElement : KtElement>(
 
         val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
+        // if the value to be inlined is not used and has no side effects we may drop it
+        if (codeToInline.mainExpression != null
+            && elementToBeReplaced is KtExpression
+            && !elementToBeReplaced.isUsedAsExpression(bindingContext)
+            && !codeToInline.mainExpression.shouldKeepValue(usageCount = 0)
+        ) {
+            codeToInline.mainExpression = null
+        }
+
         var receiver = nameExpression.getReceiverExpression()?.marked(USER_CODE_KEY)
         var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
 
@@ -111,7 +120,7 @@ class CodeInliner<TCallElement : KtElement>(
         if (elementToBeReplaced is KtExpression) {
             if (receiver != null) {
                 val thisReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
-                if (receiver.shouldKeepValue(thisReplaced.size)) {
+                if (receiver.shouldKeepValue(usageCount = thisReplaced.size)) {
                     codeToInline.introduceValue(receiver, receiverType, thisReplaced, elementToBeReplaced)
                 }
             }
@@ -182,7 +191,7 @@ class CodeInliner<TCallElement : KtElement>(
 
             //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
 
-            if (argument.expression.shouldKeepValue(usages.size)) {
+            if (argument.expression.shouldKeepValue(usageCount = usages.size)) {
                 introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
             }
         }
