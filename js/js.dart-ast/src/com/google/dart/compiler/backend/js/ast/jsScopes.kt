@@ -96,15 +96,15 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsScope(paren
                 // disallowed as variable names in strict mode
                 "eval", "arguments",
 
-                // non-reserved words that act like reserved words
+                // global identifiers usually declared in a typical JS interpreter
                 "NaN", "Infinity", "undefined",
-
-                // the special Kotlin object
-                "Kotlin",
-
                 "Error", "Object", "Math", "String", "Number", "Boolean", "Date", "Array", "RegExp", "JSON",
 
-                "require", "define", "module", "window", "self"
+                // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)
+                "require", "define", "module", "window", "self",
+
+                // the special Kotlin object
+                "Kotlin"
         )
     }
 }

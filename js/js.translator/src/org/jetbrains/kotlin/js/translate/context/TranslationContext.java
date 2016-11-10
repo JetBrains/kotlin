@@ -576,12 +576,12 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsFunction createTopLevelFunction(@NotNull DeclarationDescriptor descriptor) {
-        return createTopLevelFunction(descriptor.toString());
+    public JsFunction createRootScopedFunction(@NotNull DeclarationDescriptor descriptor) {
+        return createRootScopedFunction(descriptor.toString());
     }
 
     @NotNull
-    public JsFunction createTopLevelFunction(@NotNull String description) {
+    public JsFunction createRootScopedFunction(@NotNull String description) {
         return new JsFunction(staticContext.getRootFunction().getScope(), new JsBlock(), description);
     }
 

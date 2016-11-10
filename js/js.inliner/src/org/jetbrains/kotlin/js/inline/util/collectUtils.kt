@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
-
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
-import org.jetbrains.kotlin.js.inline.util.collectors.PropertyCollector
-import org.jetbrains.kotlin.js.translate.expression.*
+import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import java.util.*
 
@@ -127,12 +125,6 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
 fun JsFunction.collectFreeVariables() = collectUsedNames(body) - collectDefinedNames(body) - parameters.map { it.name }
 
 fun JsFunction.collectLocalVariables() = collectDefinedNames(body) + parameters.map { it.name }
-
-fun collectJsProperties(scope: JsNode): IdentityHashMap<JsName, JsExpression> {
-    val collector = PropertyCollector()
-    collector.accept(scope)
-    return collector.properties
-}
 
 fun collectNamedFunctions(scope: JsNode) = collectNamedFunctionsAndMetadata(scope).mapValues { it.value.first }
 

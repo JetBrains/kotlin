@@ -33,6 +33,6 @@ class Enum<T : Enum<T>> : Comparable<Enum<T>> {
     override fun hashCode(): Int = js("Kotlin.identityHashCode(this)")
 
     override fun toString() = name
-}
 
-interface Annotation
+    companion object
+}

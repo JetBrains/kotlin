@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.objects
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.StaticContext
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 class DefaultClassObjectIntrinsic(val staticContext: StaticContext, val fqName: FqName): ObjectIntrinsic {
     private val innerName: JsName by lazy {
@@ -42,7 +44,11 @@ class ObjectIntrinsics(private val staticContext: StaticContext) {
     fun getIntrinsic(classDescriptor: ClassDescriptor) = cache.getOrPut(classDescriptor) { createIntrinsic(classDescriptor) }
 
     private fun createIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
-        if (!CompanionObjectMapping.isMappedIntrinsicCompanionObject(classDescriptor)) return NO_OBJECT_INTRINSIC
+        if (classDescriptor.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES._enum ||
+            !CompanionObjectMapping.isMappedIntrinsicCompanionObject(classDescriptor)
+        ) {
+            return NO_OBJECT_INTRINSIC
+        }
 
         val containingDeclaration = classDescriptor.containingDeclaration
         val name = Name.identifier(containingDeclaration.name.asString() + "CompanionObject")

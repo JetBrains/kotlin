@@ -3,8 +3,6 @@ package foo
 // HACKS
 
 @native
-const val ROOT = "Kotlin.modules.JS_TESTS"
-@native
 const val PATH_TO_F_CREATOR = "B\$far\$lambda"
 @native
 const val PATH_TO_G_CREATOR = "B\$gar\$lambda"

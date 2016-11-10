@@ -109,7 +109,7 @@ object CallableReferenceTranslator {
             ReferenceTranslator.translateAsValueReference(descriptor, context)
         }
 
-        val function = context.createTopLevelFunction(getter)
+        val function = context.createRootScopedFunction(getter)
         function.body.statements += JsReturn(expression)
 
         return function
@@ -121,7 +121,7 @@ object CallableReferenceTranslator {
             return context.getInnerReference(setter)
         }
 
-        val function = context.createTopLevelFunction(setter)
+        val function = context.createRootScopedFunction(setter)
         val valueParam = function.scope.declareFreshName("value")
         function.parameters += JsParameter(valueParam)
 

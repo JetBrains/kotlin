@@ -1,12 +1,13 @@
 package foo
 
-internal val PACKAGE = "kotlin.modules.JS_TESTS.foo"
+// TODO: this feature is deprecated, remove this test when either @native annotation or its parameter get eliminated.
 
-internal @native @JsName("\"O\"") val foo: String = noImpl
-internal @native @JsName("boo") val bar: String = noImpl
+internal @native("\"O\"") val foo: String = noImpl
+internal @native("boo") val bar: String = noImpl
 
 internal class A
-internal fun proto(o: Any?): String = js("o.__proto__")
+internal @native("__proto__") val Any.proto: String get() = noImpl
+internal @native("__proto__") val A.proto: String get() = noImpl
 
 internal fun actual(foo: String, @native("boo") bar: String) = foo + bar
 internal fun expected(foo: String, boo: String) = foo + boo
@@ -23,9 +24,9 @@ fun box(): String {
 
     val a = A()
     val any: Any = a
-    val protoA = js("A.prototype")
-    if (proto(a) != proto(any) || proto(a) != protoA)
-        return "a.proto != any.proto /*${proto(a) != proto(any)}*/ || a.proto != A.prototype /*${proto(a) != protoA}*/"
+    val protoA = A::class.js.asDynamic().prototype
+    if (a.proto != any.proto || a.proto != protoA)
+        return "a.proto != any.proto /*${a.proto != any.proto}*/ || a.proto != A.prototype /*${a.proto != protoA}*/"
 
     return OK
 }

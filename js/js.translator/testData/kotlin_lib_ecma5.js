@@ -363,7 +363,8 @@
                 propertyDescriptor.set.call(thisObject, value);
             }
             else if ("value" in propertyDescriptor) {
-                propertyDescriptor.value = value;
+                throw new Error("Assertion failed: Kotlin compiler should not generate simple JavaScript properties for overridable " +
+                                "Kotlin properties.");
             }
         }
         else {

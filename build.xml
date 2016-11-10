@@ -376,6 +376,14 @@
             </externs>
         </closure-compiler>
 
+        <!--
+         Few hacks to compose one kotlin.js from several smaller files:
+           1. Wrapper function takes Kotlin and _, whereas they are already defined above (see closure-wrapper.txt), so delete these
+              parameters.
+           2. Since we deleted parameters, we can get rid or arguments passed to wrapper function.
+              They are module.exports and require("Kotlin"), accordingly to CommonJS spec.
+           3. We can omit return _, since it's already exported by the code in UMD wrapper.
+        -->
         <replaceregexp file="${js.stdlib.output.dir}/kotlin.js"
                        match="module.exports,\s*require\([^)]+\)"
                        replace=""
@@ -394,6 +402,7 @@
         <property environment="env"/>
         <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
 
+        <!-- We don't want descriptors for built-ins to be serialized, so we compile these files separately. -->
         <new-kotlin2js output="${js.stdlib.output.dir}/tmp-builtins/kotlin.js">
             <src>
                 <union>
@@ -401,6 +410,7 @@
                 </union>
             </src>
         </new-kotlin2js>
+
         <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js">
             <src>
                 <union>

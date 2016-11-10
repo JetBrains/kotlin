@@ -74,7 +74,7 @@ class ClassTranslator private constructor(
         val scope = context().getScopeForDescriptor(descriptor)
         val context = context().newDeclaration(descriptor)
 
-        val constructorFunction = context.createTopLevelFunction(descriptor)
+        val constructorFunction = context.createRootScopedFunction(descriptor)
         constructorFunction.name = context.getInnerNameForDescriptor(descriptor)
         context.addDeclarationStatement(constructorFunction.makeStmt())
         val enumInitFunction = if (descriptor.kind == ClassKind.ENUM_CLASS) createEnumInitFunction() else null
@@ -141,9 +141,9 @@ class ClassTranslator private constructor(
     }
 
     private fun createEnumInitFunction(): JsFunction {
-        val function = context().createTopLevelFunction(descriptor)
+        val function = context().createRootScopedFunction(descriptor)
         function.name = context().createGlobalName(StaticContext.getSuggestedName(descriptor) + "_initFields")
-        val emptyFunction = context().createTopLevelFunction(descriptor)
+        val emptyFunction = context().createRootScopedFunction(descriptor)
         function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction).makeStmt()
         context().addDeclarationStatement(function.makeStmt())
         return function
@@ -419,7 +419,7 @@ class ClassTranslator private constructor(
     private fun addObjectMethods() {
         context().addDeclarationStatement(JsAstUtils.newVar(cachedInstanceName, JsLiteral.NULL))
 
-        val instanceFun = context().createTopLevelFunction("Instance function: " + descriptor)
+        val instanceFun = context().createRootScopedFunction("Instance function: " + descriptor)
         instanceFun.name = context().getNameForObjectInstance(descriptor)
 
         if (enumInitializerName == null) {

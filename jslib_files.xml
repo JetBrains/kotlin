@@ -3,6 +3,7 @@
         <include name="native/kotlin/Iterator.kt"/>
         <include name="native/kotlin/Collections.kt"/>
         <include name="native/kotlin/CharSequence.kt"/>
+        <include name="native/kotlin/Annotation.kt"/>
         <include name="src/kotlin/annotation/Annotations.kt"/>
         <include name="src/kotlin/Function.kt"/>
         <include name="src/kotlin/Iterators.kt"/>

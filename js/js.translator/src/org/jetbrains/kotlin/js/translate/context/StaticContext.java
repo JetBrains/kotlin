@@ -142,7 +142,7 @@ public final class StaticContext {
     private final DeclarationExporter exporter = new DeclarationExporter(this);
 
     @NotNull
-    private final Set<ClassDescriptor> classes = new HashSet<ClassDescriptor>();
+    private final Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
 
     //TODO: too many parameters in constructor
     private StaticContext(

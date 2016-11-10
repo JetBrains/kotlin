@@ -68,10 +68,7 @@ public final class ReferenceTranslator {
         }
 
         if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
-            if (AnnotationsUtils.isNativeObject(descriptor)) {
-                return context.getQualifiedReference(descriptor);
-            }
-            else if (!context.isFromCurrentModule(descriptor)) {
+            if (!context.isFromCurrentModule(descriptor)) {
                 return getLazyReferenceToObject((ClassDescriptor) descriptor, context);
             }
             else {
