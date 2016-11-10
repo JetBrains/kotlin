@@ -119,13 +119,14 @@ public final class AnnotationsUtils {
     @Nullable
     public static String getJsName(@NotNull DeclarationDescriptor descriptor) {
         AnnotationDescriptor annotation = getJsNameAnnotation(descriptor);
-        if (annotation == null) return null;
+        if (annotation == null || annotation.getAllValueArguments().isEmpty()) return null;
 
         ConstantValue<?> value = annotation.getAllValueArguments().values().iterator().next();
-        assert value != null : "JsName annotation should always declare string parameter";
+        if (value == null) return null;
 
         Object result = value.getValue();
-        assert result instanceof String : "Parameter of JsName annotation should be string";
+        if (!(result instanceof String)) return null;
+
         return (String) result;
     }
 
@@ -143,7 +144,7 @@ public final class AnnotationsUtils {
         return false;
     }
 
-    public static boolean hasAnnotationOrInsideAnnotatedClass(
+    private static boolean hasAnnotationOrInsideAnnotatedClass(
             @NotNull DeclarationDescriptor descriptor,
             @NotNull PredefinedAnnotation annotation
     ) {

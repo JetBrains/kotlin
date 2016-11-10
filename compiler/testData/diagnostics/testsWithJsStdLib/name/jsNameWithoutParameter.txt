@@ -1,0 +1,6 @@
+package
+
+package foo {
+    @kotlin.js.JsName(name = 23) public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    @kotlin.js.JsName public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+}
