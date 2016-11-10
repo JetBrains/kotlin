@@ -92,6 +92,7 @@ public class AsmUtil {
             .put(JavaVisibilities.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
             .build();
 
+    public static final String RECEIVER_NAME = "$receiver";
     public static final String CAPTURED_RECEIVER_FIELD = "receiver$0";
     public static final String CAPTURED_THIS_FIELD = "this$0";
 

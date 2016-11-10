@@ -11,6 +11,12 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var includeRuntime: kotlin.Boolean
 
     /**
+     * Generate metadata for Java 1.8 reflection on method parameters
+     * Default value: false
+     */
+     var javaParameters: kotlin.Boolean
+
+    /**
      * Path to JDK home directory to include into classpath, if differs from default JAVA_HOME
      * Default value: null
      */

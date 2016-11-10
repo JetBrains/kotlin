@@ -167,6 +167,8 @@ class GenerationState @JvmOverloads constructor(
 
     val classFileVersion: Int = if (isJvm8Target) Opcodes.V1_8 else Opcodes.V1_6
 
+    val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
+
     init {
         this.interceptedBuilderFactory = builderFactory
                 .wrapWith(

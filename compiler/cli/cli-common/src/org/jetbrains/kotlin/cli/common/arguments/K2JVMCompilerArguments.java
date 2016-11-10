@@ -72,6 +72,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<version>")
     public String jvmTarget;
 
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @Argument(value = "java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")
+    public boolean javaParameters;
+
     // Advanced options
     @Argument(value = "Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
     public boolean noCallAssertions;

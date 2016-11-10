@@ -139,6 +139,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
+        configuration.put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
+
         if (arguments.interfaceCompatibility) {
             val target = configuration.get(JVMConfigurationKeys.JVM_TARGET)
             if (target != JvmTarget.JVM_1_8) {

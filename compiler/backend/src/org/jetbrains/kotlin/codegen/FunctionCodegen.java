@@ -196,7 +196,9 @@ public class FunctionCodegen {
 
         generateMethodAnnotations(functionDescriptor, asmMethod, mv);
 
-        generateParameterAnnotations(functionDescriptor, mv, typeMapper.mapSignatureSkipGeneric(functionDescriptor));
+        JvmMethodSignature signature = typeMapper.mapSignatureSkipGeneric(functionDescriptor);
+        generateParameterAnnotations(functionDescriptor, mv, signature);
+        GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, signature, state, (flags & ACC_SYNTHETIC) != 0);
 
         generateBridges(functionDescriptor);
 

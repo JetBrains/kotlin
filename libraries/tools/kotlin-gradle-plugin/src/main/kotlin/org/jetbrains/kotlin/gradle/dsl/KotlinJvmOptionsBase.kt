@@ -29,6 +29,11 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         get() = includeRuntimeField ?: false
         set(value) { includeRuntimeField = value }
 
+    private var javaParametersField: kotlin.Boolean? = null
+    override var javaParameters: kotlin.Boolean
+        get() = javaParametersField ?: false
+        set(value) { javaParametersField = value }
+
     private var jdkHomeField: kotlin.String?? = null
     override var jdkHome: kotlin.String?
         get() = jdkHomeField ?: null
@@ -60,6 +65,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
         includeRuntimeField?.let { args.includeRuntime = it }
+        javaParametersField?.let { args.javaParameters = it }
         jdkHomeField?.let { args.jdkHome = it }
         jvmTargetField?.let { args.jvmTarget = it }
         noJdkField?.let { args.noJdk = it }
@@ -74,6 +80,7 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     suppressWarnings = false
     verbose = false
     includeRuntime = false
+    javaParameters = false
     jdkHome = null
     jvmTarget = "1.6"
     noJdk = false
