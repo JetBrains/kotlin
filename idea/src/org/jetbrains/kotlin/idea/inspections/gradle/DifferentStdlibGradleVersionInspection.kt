@@ -49,8 +49,8 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
 
             if (dependenciesCall.parent !is PsiFile) return
 
-            val stdlibStatement = findLibraryStatement(closure, "org.jetbrains.kotlin", "kotlin-stdlib") ?: return
-            val stdlibVersion = getResolvedKotlinStdlibVersion(closure.containingFile, "org.jetbrains.kotlin:kotlin-stdlib:") ?: return
+            val stdlibStatement = findLibraryStatement(closure, "org.jetbrains.kotlin", libraryId) ?: return
+            val stdlibVersion = getResolvedKotlinStdlibVersion(closure.containingFile, "org.jetbrains.kotlin:$libraryId:") ?: return
 
             onFound(stdlibVersion, stdlibStatement)
         }
