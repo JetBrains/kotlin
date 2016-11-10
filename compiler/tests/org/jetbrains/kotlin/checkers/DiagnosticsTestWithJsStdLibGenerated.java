@@ -386,6 +386,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("jsNameWithoutParameter.kt")
+        public void testJsNameWithoutParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameWithoutParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("methodAndMethod.kt")
         public void testMethodAndMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");
