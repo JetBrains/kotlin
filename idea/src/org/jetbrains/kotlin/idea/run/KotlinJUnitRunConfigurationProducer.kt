@@ -29,13 +29,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
@@ -89,9 +90,9 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             return false
         }
 
-        val jetFile = leaf.containingFile as KtFile
+        val ktFile = leaf.containingFile as KtFile
 
-        if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
+        if (TargetPlatformDetector.getPlatform(ktFile) != JvmPlatform) {
             return false
         }
 

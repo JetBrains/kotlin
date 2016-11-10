@@ -51,11 +51,12 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -69,6 +70,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
@@ -77,7 +79,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -242,11 +243,9 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
             if (!expression.isImportDirectiveExpression() && !isSelectorInQualified(expression)) {
                 val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
-                if (ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
-                    indicesHelper.getKotlinClasses({ it == name }, { true }).filterTo(result, filterByCallType)
-                }
-                else {
-                    indicesHelper.getJvmClassesByName(name).filterTo(result, filterByCallType)
+                when (TargetPlatformDetector.getPlatform(expression.getContainingKtFile())) {
+                    JsPlatform -> indicesHelper.getKotlinClasses({ it == name }, { true }).filterTo(result, filterByCallType)
+                    JvmPlatform -> indicesHelper.getJvmClassesByName(name).filterTo(result, filterByCallType)
                 }
 
                 indicesHelper.getTopLevelTypeAliases { it == name }.filterTo(result, filterByCallType)
@@ -419,7 +418,7 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
                     processor = processor
             )
 
-            if (!ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())) {
+            if (TargetPlatformDetector.getPlatform(element.getContainingKtFile()) == JvmPlatform) {
                 indicesHelper.processJvmCallablesByName(
                         name,
                         filter = { it.hasModifierProperty(PsiModifier.STATIC) },

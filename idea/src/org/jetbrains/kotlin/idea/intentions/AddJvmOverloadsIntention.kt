@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 private val annotationFqName = FqName("kotlin.jvm.JvmOverloads")
 
@@ -68,7 +69,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
 
         text = "Add '@JvmOverloads' annotation to $targetName"
 
-        return !ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())
+        return TargetPlatformDetector.getPlatform(element.getContainingKtFile()) == JvmPlatform
                && parameters.any { it.hasDefaultValue() }
                && element.findAnnotation(annotationFqName) == null
     }
@@ -84,5 +85,4 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
             element.addAnnotation(annotationFqName)
         }
     }
-
 }

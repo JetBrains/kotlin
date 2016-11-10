@@ -27,12 +27,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isJavaClassNotToBeUsedInKotlin
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -67,7 +68,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                     .forEach { classifierDescriptorCollector(it) }
         }
 
-        if (!ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as KtFile)) {
+        if (TargetPlatformDetector.getPlatform(parameters.originalFile as KtFile) == JvmPlatform) {
             addAdaptedJavaCompletion(javaClassCollector)
         }
     }

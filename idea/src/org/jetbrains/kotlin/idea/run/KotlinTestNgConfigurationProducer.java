@@ -37,9 +37,10 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 import java.util.List;
 
@@ -74,9 +75,9 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
             return false;
         }
 
-        KtFile jetFile = (KtFile) leaf.getContainingFile();
+        KtFile ktFile = (KtFile) leaf.getContainingFile();
 
-        if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
+        if (TargetPlatformDetector.getPlatform(ktFile) != JvmPlatform.INSTANCE) {
             return false;
         }
 

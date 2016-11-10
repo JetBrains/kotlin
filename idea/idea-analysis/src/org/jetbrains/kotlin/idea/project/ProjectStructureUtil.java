@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.project;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.roots.libraries.Library;
@@ -32,17 +31,11 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
-import org.jetbrains.kotlin.psi.KtFile;
 
 public class ProjectStructureUtil {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
 
     private ProjectStructureUtil() {
-    }
-
-    public static boolean isJsKotlinModule(@NotNull KtFile file) {
-        Module module = ModuleUtilCore.findModuleForPsiElement(file);
-        return module != null && isJsKotlinModule(module);
     }
 
     public static boolean isJsKotlinModule(@NotNull final Module module) {

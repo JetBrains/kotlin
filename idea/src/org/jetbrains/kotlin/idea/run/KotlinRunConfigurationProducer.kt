@@ -29,10 +29,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfiguration>(JetRunConfigurationType.getInstance()) {
 
@@ -57,7 +58,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfigurat
 
         val module = location.module ?: return null
 
-        if (ProjectStructureUtil.isJsKotlinModule(module)) return null
+        if (TargetPlatformDetector.getPlatform(module) != JvmPlatform) return null
 
         val locationElement = location.psiElement
 
