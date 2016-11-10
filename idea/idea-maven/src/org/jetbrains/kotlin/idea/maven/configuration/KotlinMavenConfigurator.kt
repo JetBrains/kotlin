@@ -33,7 +33,6 @@ import com.intellij.psi.xml.XmlFile
 import org.jetbrains.idea.maven.dom.MavenDomUtil
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.model.MavenId
-import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.excludeMavenChildrenModules
+import org.jetbrains.kotlin.idea.maven.kotlinPluginId
 
 abstract class KotlinMavenConfigurator
         protected constructor(private val stdlibArtifactId: String,
@@ -57,23 +57,24 @@ abstract class KotlinMavenConfigurator
         if (psi == null
             || !psi.isValid
             || psi !is XmlFile
-            || psi.virtualFile == null
-            || MavenDomUtil.getMavenDomProjectModel(module.project, psi.virtualFile) == null) {
+            || psi.virtualFile == null) {
             return ConfigureKotlinStatus.BROKEN
         }
 
-        val mavenProject = MavenProjectsManager.getInstance(module.project).findProject(module) ?: return ConfigureKotlinStatus.BROKEN
+        val pom = PomFile(psi)
 
-        if (isKotlinModule(module) && hasKotlinPlugin(mavenProject)) {
+        if (isKotlinModule(module) && hasKotlinPlugin(pom)) {
             return ConfigureKotlinStatus.CONFIGURED
         }
         return ConfigureKotlinStatus.CAN_BE_CONFIGURED
     }
 
-    private fun hasKotlinPlugin(mavenProject: MavenProject): Boolean {
-        val plugin = mavenProject.findPlugin(GROUP_ID, MAVEN_PLUGIN_ID) ?: return false
+    private fun hasKotlinPlugin(pom: PomFile): Boolean {
+        val plugin = pom.findPlugin(kotlinPluginId(null)) ?: return false
 
-        return plugin.executions?.any { it.goals?.any { it != null && isRelevantGoal(it) } ?: false } ?: false
+        return plugin.executions.executions.any {
+            it.goals.goals.any { isRelevantGoal(it.stringValue ?: "") }
+        }
     }
 
     override fun configure(project: Project, excludeModules: Collection<Module>) {
