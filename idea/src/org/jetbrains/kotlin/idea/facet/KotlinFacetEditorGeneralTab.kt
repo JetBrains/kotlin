@@ -105,7 +105,7 @@ class KotlinFacetEditorGeneralTab(
     }
 
     override fun isModified(): Boolean {
-        return with(configuration.state.versionInfo) {
+        return with(configuration.settings.versionInfo) {
             languageVersionComboBox.selectedItem != languageLevel
             || targetPlatformComboBox.selectedItem != targetPlatformKindKind
             || apiVersionComboBox.selectedItem != apiLevel
@@ -113,7 +113,7 @@ class KotlinFacetEditorGeneralTab(
     }
 
     override fun reset() {
-        with(configuration.state.versionInfo) {
+        with(configuration.settings.versionInfo) {
             languageVersionComboBox.selectedItem = languageLevel
             targetPlatformComboBox.selectedItem = targetPlatformKindKind
             apiVersionComboBox.selectedItem = apiLevel
@@ -121,7 +121,7 @@ class KotlinFacetEditorGeneralTab(
     }
 
     override fun apply() {
-        with(configuration.state.versionInfo) {
+        with(configuration.settings.versionInfo) {
             languageLevel = languageVersionComboBox.selectedItem as LanguageVersion?
             targetPlatformKindKind = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
             apiLevel = apiVersionComboBox.selectedItem as LanguageVersion?
