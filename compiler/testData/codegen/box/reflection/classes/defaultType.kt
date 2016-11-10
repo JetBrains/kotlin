@@ -1,3 +1,6 @@
+// Actually this test removed in master
+// TARGET_BACKEND: JVM
+
 // WITH_REFLECT
 
 import kotlin.reflect.defaultType

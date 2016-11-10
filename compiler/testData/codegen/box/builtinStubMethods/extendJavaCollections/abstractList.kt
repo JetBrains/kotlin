@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS
+// until collections will be backported
+
 import java.util.AbstractList
 
 class A : AbstractList<String>() {

@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS
+// until HashSet will be backported
+
 import java.util.*
 
 open class Base<Target : DatabaseEntity>() : HashSet<Target>() {

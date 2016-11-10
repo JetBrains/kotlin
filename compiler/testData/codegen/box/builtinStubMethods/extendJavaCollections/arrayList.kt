@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS
+// until collections will be backported
+
 // KT-6042 java.lang.UnsupportedOperationException with ArrayList
 
 import java.util.ArrayList

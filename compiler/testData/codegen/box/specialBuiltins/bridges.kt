@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS
+// until ArrayList will be backported
+
 import java.util.*;
 
 interface A0 {

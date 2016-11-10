@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS
+// until collections will be backported
+
 // WITH_RUNTIME
 
 import java.util.*

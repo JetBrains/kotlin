@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS
+// until HashMap will be backported
+
 import java.util.HashMap
 
 fun box() : String {
