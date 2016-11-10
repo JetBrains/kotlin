@@ -68,8 +68,8 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
     val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
     val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
     return when {
-        sdkVersion != null && sdkVersion <= JavaSdkVersion.JDK_1_6 -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
-        else -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_8]
+        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_8]
+        else -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
     }
 }
 
