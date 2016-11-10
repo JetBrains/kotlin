@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -48,11 +49,15 @@ fun resolveKDocLink(context: BindingContext,
     val scope = getKDocLinkResolutionScope(resolutionFacade, fromDescriptor)
 
     if (qualifiedName.size == 1) {
-        val descriptorsByName = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == qualifiedName.single() })
+        val shortName = qualifiedName.single()
+        val descriptorsByName = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == shortName })
         // Try to find a matching local descriptor (parameter or type parameter) first.
         val localDescriptors = descriptorsByName.filter { it.containingDeclaration == fromDescriptor }
         if (localDescriptors.isNotEmpty()) return localDescriptors
-        return descriptorsByName
+        if (descriptorsByName.isNotEmpty()) return descriptorsByName
+
+        val moduleDescriptor = fromDescriptor.module
+        return moduleDescriptor.getSubPackagesOf(FqName.ROOT, { it.asString() == shortName }).map { moduleDescriptor.getPackage(it) }
     }
 
     val moduleDescriptor = fromDescriptor.module
