@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -282,7 +283,7 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     // This generates a simple onDestroy(): Unit = super.onDestroy() function.
     // CLEAR_CACHE_METHOD_NAME() method call will be inserted in ClassBuilder interceptor.
     private fun SyntheticPartsGenerateContext.generateOnDestroyFunctionForFragment() {
-        val methodVisitor = classBuilder.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, ON_DESTROY_METHOD_NAME, "()V", null, null)
+        val methodVisitor = classBuilder.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC or ACC_SYNTHETIC, ON_DESTROY_METHOD_NAME, "()V", null, null)
         methodVisitor.visitCode()
         val iv = InstructionAdapter(methodVisitor)
 
