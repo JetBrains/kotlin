@@ -97,6 +97,8 @@ var JsNameRef.coroutineResult by MetadataProperty(default = false)
  */
 var JsNameRef.coroutineController by MetadataProperty(default = false)
 
+var JsFunction.continuationInterfaceRef: JsExpression? by MetadataProperty(default = null)
+
 enum class TypeCheck {
     TYPEOF,
     INSTANCEOF,

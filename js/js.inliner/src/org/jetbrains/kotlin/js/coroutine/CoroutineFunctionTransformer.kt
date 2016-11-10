@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.js.coroutine
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
-import com.google.dart.compiler.backend.js.ast.metadata.coroutineController
-import com.google.dart.compiler.backend.js.ast.metadata.coroutineResult
-import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
+import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
@@ -70,7 +67,7 @@ class CoroutineFunctionTransformer(
         return additionalStatements
     }
 
-    private fun generateContinuationConstructor(bodyTransformer: CoroutineBodyTransformer,statements: MutableList<JsStatement>) {
+    private fun generateContinuationConstructor(bodyTransformer: CoroutineBodyTransformer, statements: MutableList<JsStatement>) {
         val constructor = JsFunction(function.scope.parent, JsBlock(), "Continuation")
         constructor.name = className
         constructor.parameters += function.parameters.map { JsParameter(it.name) }
@@ -96,7 +93,21 @@ class CoroutineFunctionTransformer(
             }
         }
 
-        statements.add(0, constructor.makeStmt())
+        statements.addAll(0, listOf(constructor.makeStmt(), generateCoroutineMetadata(constructor.name)))
+    }
+
+    private fun generateCoroutineMetadata(constructorName: JsName): JsStatement {
+        val interfaceRef = function.continuationInterfaceRef!!.deepCopy()
+
+        val metadataObject = JsObjectLiteral(true)
+        metadataObject.propertyInitializers += JsPropertyInitializer(
+                JsNameRef("type"), JsNameRef("CLASS", JsNameRef("TYPE", Namer.KOTLIN_NAME)))
+        metadataObject.propertyInitializers += JsPropertyInitializer(
+                JsNameRef("classIndex"), JsInvocation(JsNameRef("newClassIndex", Namer.KOTLIN_NAME)))
+        metadataObject.propertyInitializers += JsPropertyInitializer(JsNameRef("simpleName"), JsLiteral.NULL)
+        metadataObject.propertyInitializers += JsPropertyInitializer(JsNameRef("baseClasses"), JsArrayLiteral(listOf(interfaceRef)))
+
+        return JsAstUtils.assignment(JsNameRef(Namer.METADATA, constructorName.makeRef()), metadataObject).makeStmt()
     }
 
     private fun generateContinuationMethods(doResumeName: JsName, statements: MutableList<JsStatement>) {
