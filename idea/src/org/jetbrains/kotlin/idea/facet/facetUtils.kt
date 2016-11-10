@@ -146,3 +146,19 @@ fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): Kotlin
     facetModel.addFacet(facet)
     return facet
 }
+
+fun KotlinFacet.configureFacet(compilerVersion: String, modelsProvider: IdeModifiableModelsProvider) {
+    val module = module
+    with(configuration.settings) {
+        versionInfo.targetPlatformKind = null
+        versionInfo.apiLevel = null
+        initializeIfNeeded(module, modelsProvider.getModifiableRootModel(module))
+        with(versionInfo) {
+            languageLevel = LanguageVersion.fromFullVersionString(compilerVersion) ?: LanguageVersion.LATEST
+            // Both apiLevel and languageLevel should be initialized in the lines above
+            if (apiLevel!! > languageLevel!!) {
+                apiLevel = languageLevel
+            }
+        }
+    }
+}

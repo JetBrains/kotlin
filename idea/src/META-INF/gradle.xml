@@ -9,6 +9,8 @@
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectDataService"/>
+
         <localInspection
             implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
             displayName="Kotlin Gradle and IDE plugins versions are different"

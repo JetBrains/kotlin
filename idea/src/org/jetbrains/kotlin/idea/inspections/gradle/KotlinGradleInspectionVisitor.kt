@@ -72,7 +72,7 @@ fun getResolvedKotlinGradleVersion(module: Module): String? {
     return null
 }
 
-private fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): String? {
+internal fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): String? {
     for (classPathEntry in classpathData.classpathEntries) {
         for (path in classPathEntry.classesFile) {
             val uniformedPath = path.replace('\\', '/')
