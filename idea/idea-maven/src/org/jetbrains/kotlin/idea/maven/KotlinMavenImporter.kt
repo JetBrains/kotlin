@@ -35,6 +35,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.facet.mavenLibraryId
@@ -90,22 +91,9 @@ class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtif
     }
 
     private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
-        val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version ?: return
-        val artifacts = mavenProject.dependencyArtifactIndex.data[KotlinPluginGroupId]?.values?.flatMap { it.filter { it.isResolved } }
-        val expectedLibraryIds = TargetPlatformKind.ALL_PLATFORMS.map { it.mavenLibraryId }
-        val stdlibArtifact = artifacts?.firstOrNull { it.artifactId in expectedLibraryIds }
-
-        val facet = module.getOrCreateFacet(modifiableModelsProvider)
-        with(facet.configuration.settings.versionInfo) {
-            targetPlatformKind = null
-            apiLevel = null
-            facet.configuration.settings.initializeIfNeeded(module, modifiableModelsProvider.getModifiableRootModel(module))
-            languageLevel = LanguageVersion.fromFullVersionString(compilerVersion)
-            // Both apiLevel and languageLevel should be initialized in the lines above
-            if (apiLevel!! > languageLevel!!) {
-                apiLevel = languageLevel
-            }
-        }
+        val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version
+                              ?: return
+        module.getOrCreateFacet(modifiableModelsProvider).configureFacet(compilerVersion, modifiableModelsProvider)
     }
 
     // TODO in theory it should work like this but it doesn't as it couldn't unmark source roots that are not roots anymore.
