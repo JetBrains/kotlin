@@ -86,7 +86,14 @@ done
 
     @Test
     fun testResolveStdHelloWorld() {
-        Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardScript::class))
+        try {
+            compileScript("args-junit-hello-world.kts", StandardScript::class)
+            Assert.fail("Should throw exception")
+        }
+        catch (e: Exception) {
+            val expectedMsg = "Unable to resolve dependency"
+            Assert.assertTrue("Expecting message \"$expectedMsg...\"", e.message?.startsWith(expectedMsg) ?: false)
+        }
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardScriptWithAnnotatedResolving::class)
         if (scriptClass == null) {
