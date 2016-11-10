@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.ide.actions.OpenFileAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.DependencyScope
@@ -30,10 +29,11 @@ import com.intellij.openapi.vfs.WritingAccessProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
@@ -82,7 +82,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         dialog.show()
         if (!dialog.isOK) return
 
-        CommandProcessor.getInstance().executeCommand(project, {
+        project.executeCommand("Configure Kotlin") {
             val collector = createConfigureKotlinNotificationCollector(project)
             val changedFiles = HashSet<GroovyFile>()
             val projectGradleFile = getBuildGradleFile(project, getTopLevelProjectFilePath(project))
@@ -110,7 +110,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                 OpenFileAction.openFile(file.virtualFile, project)
             }
             collector.showNotification()
-        }, "Configure Kotlin", null)
+        }
     }
 
     protected fun addElementsToModuleFile(file: GroovyFile, version: String): Boolean {
@@ -130,13 +130,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                     wasModified = true
                 }
                 else {
-                    val statements = file.statements
-                    if (statements.size > 0) {
-                        file.addAfter(apply, statements[statements.size - 1])
-                    }
-                    else {
-                        file.addAfter(apply, file.firstChild)
-                    }
+                    file.addAfter(apply, file.statements.lastOrNull() ?: file.firstChild)
                     wasModified = true
                 }
             }
@@ -220,19 +214,18 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
             if (gradleFile != null && canConfigureFile(gradleFile)) {
                 gradleFile.project.executeWriteCommand("Add Kotlin library") {
-                    val groovyScope: String
-                    when (scope) {
-                        DependencyScope.COMPILE -> groovyScope = "compile"
+                    val groovyScope = when (scope) {
+                        DependencyScope.COMPILE -> "compile"
                         DependencyScope.TEST -> if (KotlinPluginUtil.isAndroidGradleModule(module)) {
                             // TODO we should add testCompile or androidTestCompile
-                            groovyScope = "compile"
+                            "compile"
                         }
                         else {
-                            groovyScope = "testCompile"
+                            "testCompile"
                         }
-                        DependencyScope.RUNTIME -> groovyScope = "runtime"
-                        DependencyScope.PROVIDED -> groovyScope = "compile"
-                        else -> groovyScope = "compile"
+                        DependencyScope.RUNTIME -> "runtime"
+                        DependencyScope.PROVIDED -> "compile"
+                        else -> "compile"
                     }
 
                     val dependencyString = String.format(
@@ -344,13 +337,9 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return getBlockOrCreate(file, "dependencies")
         }
 
-        fun getSourceSetsBlock(parent: GrStatementOwner): GrClosableBlock {
-            return getBlockOrCreate(parent, "sourceSets")
-        }
+        fun getSourceSetsBlock(parent: GrStatementOwner) = getBlockOrCreate(parent, "sourceSets")
 
-        private fun getBuildScriptBlock(file: GrStatementOwner): GrClosableBlock {
-            return getBlockOrCreate(file, "buildscript")
-        }
+        private fun getBuildScriptBlock(file: GrStatementOwner) = getBlockOrCreate(file, "buildscript")
 
         private fun getBuildScriptDependenciesBlock(file: GrStatementOwner): GrClosableBlock {
             val buildScript = getBuildScriptBlock(file)
@@ -362,22 +351,14 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return getBlockOrCreate(buildScript, "repositories")
         }
 
-        private fun getRepositoriesBlock(file: GrStatementOwner): GrClosableBlock {
-            return getBlockOrCreate(file, "repositories")
-        }
+        private fun getRepositoriesBlock(file: GrStatementOwner) = getBlockOrCreate(file, "repositories")
 
         fun getBlockOrCreate(parent: GrStatementOwner, name: String): GrClosableBlock {
             var block = getBlockByName(parent, name)
             if (block == null) {
                 val factory = GroovyPsiElementFactory.getInstance(parent.project)
                 val newBlock = factory.createExpressionFromText("$name{\n}\n")
-                val statements = parent.statements
-                if (statements.size > 0) {
-                    parent.addAfter(newBlock, statements[statements.size - 1])
-                }
-                else {
-                    parent.addAfter(newBlock, parent.firstChild)
-                }
+                parent.addAfter(newBlock, parent.statements.lastOrNull() ?: parent.firstChild)
                 block = getBlockByName(parent, name)!!
             }
             return block
@@ -392,17 +373,10 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         private fun getBlockByName(parent: PsiElement, name: String): GrClosableBlock? {
-            val allExpressions = PsiTreeUtil.getChildrenOfType(parent, GrMethodCallExpression::class.java)
-            if (allExpressions != null) {
-                for (expression in allExpressions) {
-                    val invokedExpression = expression.invokedExpression
-                    if (expression.closureArguments.size == 0) continue
-
-                    val expressionText = invokedExpression.text
-                    if (expressionText == name) return expression.closureArguments[0]
-                }
-            }
-            return null
+            return parent.getChildrenOfType<GrMethodCallExpression>()
+                    .filter { it.closureArguments.isNotEmpty() }
+                    .find { it.invokedExpression.text == name }
+                    ?.let { it.closureArguments[0] }
         }
 
         private fun addExpressionInBlockIfNeeded(text: String, block: GrClosableBlock, isFirst: Boolean): Boolean {
@@ -410,7 +384,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             val newStatement = GroovyPsiElementFactory.getInstance(block.project).createExpressionFromText(text)
             CodeStyleManager.getInstance(block.project).reformat(newStatement)
             val statements = block.statements
-            if (!isFirst && statements.size > 0) {
+            if (!isFirst && statements.isNotEmpty()) {
                 val lastStatement = statements[statements.size - 1]
                 if (lastStatement != null) {
                     block.addAfter(newStatement, lastStatement)
@@ -425,16 +399,9 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return true
         }
 
-        private fun getApplyStatement(file: GroovyFile): GrApplicationStatement? {
-            val applyStatement = PsiTreeUtil.getChildrenOfType(file, GrApplicationStatement::class.java) ?: return null
-            for (callExpression in applyStatement) {
-                val invokedExpression = callExpression.invokedExpression
-                if (invokedExpression.text == "apply") {
-                    return callExpression
-                }
-            }
-            return null
-        }
+        private fun getApplyStatement(file: GroovyFile): GrApplicationStatement? =
+                file.getChildrenOfType<GrApplicationStatement>()
+                        .find { it.invokedExpression.text == "apply" }
 
         private fun showErrorMessage(project: Project, message: String?) {
             Messages.showErrorDialog(project,
