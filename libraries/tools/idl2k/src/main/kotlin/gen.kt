@@ -66,9 +66,9 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
     return listOf(realFunction, getterOrSetterFunction, functionWithCallbackOrNull).filterNotNull()
 }
 
-fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute): GenerateAttribute =
+fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute, nullableAttributes: Boolean): GenerateAttribute =
         GenerateAttribute(attribute.name,
-                type = mapType(repository, attribute.type),
+                type = mapType(repository, attribute.type).let { if (nullableAttributes) it.toNullable() else it },
                 initializer = mapLiteral(attribute.defaultValue, mapType(repository, attribute.type)),
                 getterSetterNoImpl = putNoImpl,
                 kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
@@ -80,6 +80,7 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
 private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructors: List<ExtendedAttribute> = iface.findConstructors()): GenerateDefinitionKind =
         when {
+            iface.dictionary -> GenerateDefinitionKind.INTERFACE
             iface.extendedAttributes.any { it.call == "NoInterfaceObject" } -> GenerateDefinitionKind.INTERFACE
             constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS } -> {
                 GenerateDefinitionKind.CLASS
@@ -88,7 +89,8 @@ private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefini
             else -> GenerateDefinitionKind.ABSTRACT_CLASS
         }
 
-private fun InterfaceDefinition.mapAttributes(repository: Repository) = attributes.map { generateAttribute(!dictionary, repository, it) }
+private fun InterfaceDefinition.mapAttributes(repository: Repository)
+        = attributes.map { generateAttribute(putNoImpl = !dictionary, repository = repository, attribute = it, nullableAttributes = dictionary) }
 private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
 private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, AttributeKind.VAL, false, false, true)
 private val EMPTY_CONSTRUCTOR = ExtendedAttribute(null, "Constructor", emptyList())

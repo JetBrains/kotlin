@@ -32,9 +32,17 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, modali
     append(arg.name.replaceKeywords())
     append(": ")
     append(arg.type.render())
-    if (arg.initializer != null && !omitDefaults) {
+    if (arg.initializer != null) {
+        if (omitDefaults) {
+            append(" /*")
+        }
+
         append(" = ")
         append(arg.initializer.replaceWrongConstants(arg.type))
+
+        if (omitDefaults) {
+            append(" */")
+        }
     }
 }
 
