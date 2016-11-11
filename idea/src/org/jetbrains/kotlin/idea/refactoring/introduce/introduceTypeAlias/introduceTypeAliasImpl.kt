@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.containers.LinkedMultiMap
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.compareDescriptors
@@ -42,7 +45,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
-import org.jetbrains.kotlin.utils.SmartList
+import java.util.*
 
 sealed class IntroduceTypeAliasAnalysisResult {
     class Error(val message: String) : IntroduceTypeAliasAnalysisResult()
@@ -152,6 +155,7 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
 
 fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
     val aliasName = typeAlias.name?.quoteIfNeeded() ?: return emptyMap()
+    val aliasRange = typeAlias.textRange
     val typeAliasDescriptor = typeAlias.resolveToDescriptor() as TypeAliasDescriptor
 
     val unifierParameters = typeAliasDescriptor.declaredTypeParameters.map { UnifierParameter(it, null) }
@@ -159,33 +163,77 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
 
     val psiFactory = KtPsiFactory(typeAlias)
 
-    fun replaceOccurrence(occurrence: KtTypeElement, arguments: List<KtTypeElement>) {
-        val typeText = if (arguments.isNotEmpty()) "$aliasName<${arguments.joinToString { it.text }}>" else aliasName
-        occurrence.replace(psiFactory.createType(typeText).typeElement!!)
+    fun replaceOccurrence(occurrence: PsiElement, arguments: List<KtTypeElement>) {
+        val typeArgumentsText = if (arguments.isNotEmpty()) "<${arguments.joinToString { it.text }}>" else ""
+        when (occurrence) {
+            is KtTypeElement -> {
+                occurrence.replace(psiFactory.createType("$aliasName$typeArgumentsText").typeElement!!)
+            }
+
+            is KtCallElement -> {
+                val typeArgumentList = occurrence.typeArgumentList
+                if (arguments.isNotEmpty()) {
+                    val newTypeArgumentList = psiFactory.createTypeArguments(typeArgumentsText)
+                    typeArgumentList?.replace(newTypeArgumentList) ?: occurrence.addAfter(newTypeArgumentList, occurrence)
+                }
+                else {
+                    typeArgumentList?.delete()
+                }
+                occurrence.calleeExpression?.replace(psiFactory.createExpression(aliasName))
+            }
+        }
     }
 
-    val aliasRange = typeAlias.textRange
-    return typeAlias
+    val rangesWithReplacers = ArrayList<Pair<KotlinPsiRange, () -> Unit>>()
+
+    val originalTypePsi = typeAliasDescriptor.underlyingType.constructor.declarationDescriptor?.let {
+        DescriptorToSourceUtilsIde.getAnyDeclaration(typeAlias.project, it)
+    }
+    if (originalTypePsi != null) {
+        for (reference in ReferencesSearch.search(originalTypePsi, LocalSearchScope(typeAlias.parent))) {
+            val element = reference.element as? KtSimpleNameExpression ?: continue
+            if ((element.textRange.intersects(aliasRange))) continue
+
+            val arguments: List<KtTypeElement>
+            val occurrence: KtElement
+
+            val callElement = element.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
+            if (callElement != null) {
+                occurrence = callElement
+                arguments = callElement.typeArguments.mapNotNull { it.typeReference?.typeElement }
+            }
+            else {
+                val userType = element.getParentOfTypeAndBranch<KtUserType> { referenceExpression }
+                if (userType != null) {
+                    occurrence = userType
+                    arguments = userType.typeArgumentsAsTypes.mapNotNull { it.typeElement }
+                }
+                else continue
+            }
+            if (arguments.size != typeAliasDescriptor.declaredTypeParameters.size) continue
+            rangesWithReplacers += occurrence.toRange() to { replaceOccurrence(occurrence, arguments) }
+        }
+    }
+    typeAlias
             .getTypeReference()
             ?.typeElement
             .toRange()
             .match(typeAlias.parent, unifier)
             .asSequence()
             .filter { !(it.range.getTextRange().intersects(aliasRange)) }
-            .mapNotNull { match ->
-                val occurrence = match.range.elements.singleOrNull() as? KtTypeElement ?: return@mapNotNull null
+            .mapNotNullTo(rangesWithReplacers) { match ->
+                val occurrence = match.range.elements.singleOrNull() as? KtTypeElement ?: return@mapNotNullTo null
                 val arguments = unifierParameters.mapNotNull { (match.substitution[it] as? KtTypeReference)?.typeElement }
-                if (arguments.size != unifierParameters.size) return@mapNotNull null
+                if (arguments.size != unifierParameters.size) return@mapNotNullTo null
                 match.range to { replaceOccurrence(occurrence, arguments) }
             }
-            .toMap()
+    return rangesWithReplacers.toMap()
 }
 
 private var KtTypeReference.typeParameterInfo : TypeParameter? by CopyableUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
 
 fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false): KtTypeAlias {
     val originalType = originalData.originalType
-    val targetSibling = originalData.targetSibling
     val psiFactory = KtPsiFactory(originalType)
 
     for (typeParameter in typeParameters)

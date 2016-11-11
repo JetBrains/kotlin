@@ -333,6 +333,10 @@ class KotlinPsiUnifier(
                 typeRef2: KtTypeReference? = null
         ): Status? {
             if (type1 != null && type2 != null) {
+                val unwrappedType1 = type1.unwrap()
+                val unwrappedType2 = type2.unwrap()
+                if (unwrappedType1 !== type1 || unwrappedType2 !== type2) return matchTypes(unwrappedType1, unwrappedType2, typeRef1, typeRef2)
+
                 if (type1.isError || type2.isError) return null
                 if (type1 is AbbreviatedType != type2 is AbbreviatedType) return UNMATCHED
                 if (type1.isExtensionFunctionType != type2.isExtensionFunctionType) return UNMATCHED
