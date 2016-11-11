@@ -53,13 +53,14 @@ class CoroutineFunctionTransformer(
         bodyTransformer.preProcess(body)
         body.statements.forEach { it.accept(bodyTransformer) }
         val coroutineBlocks = bodyTransformer.postProcess()
+        val globalCatchBlockIndex = coroutineBlocks.indexOf(context.globalCatchBlock)
 
         coroutineBlocks.forEach { it.jsBlock.collectAdditionalLocalVariables() }
         coroutineBlocks.forEach { it.jsBlock.replaceLocalVariables(function.scope, context, localVariables) }
 
         val additionalStatements = mutableListOf<JsStatement>()
         val resumeName = generateDoResume(coroutineBlocks, context, additionalStatements, throwName)
-        generateContinuationConstructor(context, additionalStatements, bodyTransformer.hasFinallyBlocks)
+        generateContinuationConstructor(context, additionalStatements, bodyTransformer.hasFinallyBlocks, globalCatchBlockIndex)
         generateContinuationMethods(resumeName, additionalStatements)
 
         generateCoroutineInstantiation()
@@ -70,7 +71,8 @@ class CoroutineFunctionTransformer(
     private fun generateContinuationConstructor(
             context: CoroutineTransformationContext,
             statements: MutableList<JsStatement>,
-            hasFinallyBlocks: Boolean
+            hasFinallyBlocks: Boolean,
+            globalCatchBlockIndex: Int
     ) {
         val constructor = JsFunction(function.scope.parent, JsBlock(), "Continuation")
         constructor.name = className
@@ -86,7 +88,7 @@ class CoroutineFunctionTransformer(
 
         constructor.body.statements.run {
             assign(context.stateFieldName, program.getNumberLiteral(0))
-            assign(context.exceptionStateName, program.getNumberLiteral(0))
+            assign(context.exceptionStateName, program.getNumberLiteral(globalCatchBlockIndex))
             if (hasFinallyBlocks) {
                 assign(context.finallyPathFieldName, JsLiteral.NULL)
             }

@@ -52,12 +52,11 @@ class CoroutineBodyTransformer(
     fun preProcess(node: JsNode) {
         breakContinueTargetStatements += node.collectBreakContinueTargets()
         nodesToSplit = node.collectNodesToSplit()
-        currentStatements += exceptionState(currentCatchBlock)
     }
 
     fun postProcess(): List<CoroutineBlock> {
         currentBlock.statements += JsReturn()
-        val graph = entryBlock.buildGraph()
+        val graph = entryBlock.buildGraph(globalCatchBlock)
         val orderedBlocks = DFS.topologicalOrder(listOf(entryBlock)) { graph[it].orEmpty() }
         orderedBlocks.replaceCoroutineFlowStatements(context, program)
         return orderedBlocks

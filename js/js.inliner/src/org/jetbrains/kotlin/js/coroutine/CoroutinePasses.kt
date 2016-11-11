@@ -118,7 +118,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
     return forEach { blockReplacementVisitor.accept(it.jsBlock) }
 }
 
-fun CoroutineBlock.buildGraph(): Map<CoroutineBlock, Set<CoroutineBlock>> {
+fun CoroutineBlock.buildGraph(globalCatchBlock: CoroutineBlock?): Map<CoroutineBlock, Set<CoroutineBlock>> {
     // That's a little more than DFS due to need of tracking finally paths
 
     val visitedBlocks = mutableSetOf<CoroutineBlock>()
@@ -139,6 +139,9 @@ fun CoroutineBlock.buildGraph(): Map<CoroutineBlock, Set<CoroutineBlock>> {
 
         val successors = graph.getOrPut(block) { mutableSetOf() }
         successors += block.collectTargetBlocks()
+        if (block == this && globalCatchBlock != null) {
+            successors += globalCatchBlock
+        }
         successors.forEach(::visitBlock)
     }
 
