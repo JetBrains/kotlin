@@ -601,9 +601,8 @@
                     <file file="@{idea.dir}/lib/log4j.jar"/>
                     <file file="@{idea.dir}/lib/xstream-1.4.8.jar"/>
                     <file file="@{idea.dir}/lib/xpp3-1.1.4-min.jar"/>
-                    <file file="@{idea.dir}/lib/jsr166e.jar"/>
                     <file file="@{idea.dir}/lib/asm-all.jar"/>
-                    <file file="@{idea.dir}/lib/snappy-in-java-0.3.1.jar"/>
+                    <file file="@{idea.dir}/lib/snappy-in-java-0.5.1.jar"/>
 
                     <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
                     <file file="@{idea.dir}/lib/util.jar"/>
