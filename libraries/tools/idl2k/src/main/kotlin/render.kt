@@ -174,6 +174,8 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
         .map { it.dynamicIfUnknownType(allTypes.keys) }
         .groupBy { it.name }
+        .mapValues { it.value.filter { "${iface.name}.${it.name}" !in commentOutDeclarations && "${iface.name}.${it.name}: ${it.type.render()}" !in commentOutDeclarations  } }
+        .filterValues { it.isNotEmpty() }
         .reduceValues(::merge).values.forEach { attribute ->
             val modality = when {
                 attribute.signature in superSignatures -> MemberModality.OVERRIDE
