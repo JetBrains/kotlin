@@ -136,33 +136,35 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         super.onFirstRun(fromContext, context, performRunnable)
     }
 
-    private fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
-        val function = leaf.getParentOfType<KtNamedFunction>(false) ?: return null
-        val owner = PsiTreeUtil.getParentOfType(function, KtFunction::class.java, KtClass::class.java)
-
-        if (owner is KtClass) {
-            val delegate = owner.toLightClass() ?: return null
-            val method = delegate.methods.firstOrNull() { it.navigationElement == function } ?: return null
-            val methodLocation = PsiLocation.fromPsiElement(method)
-            if (JUnitUtil.isTestMethod(methodLocation, false)) {
-                return methodLocation
+    companion object {
+         fun getTestClass(leaf: PsiElement): PsiClass? {
+            val containingFile = leaf.containingFile as? KtFile ?: return null
+            var ktClass = leaf.getParentOfType<KtClass>(false)
+            if (!ktClass.isJUnitTestClass()) {
+                ktClass = getTestClassInFile(containingFile)
             }
+            return ktClass?.toLightClass()
         }
-        return null
-    }
 
-    private fun getTestClass(leaf: PsiElement): PsiClass? {
-        val containingFile = leaf.containingFile as? KtFile ?: return null
-        var jetClass = leaf.getParentOfType<KtClass>(false)
-        if (!jetClass.isJUnitTestClass()) {
-            jetClass = getTestClassInFile(containingFile)
+        fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
+            val function = leaf.getParentOfType<KtNamedFunction>(false) ?: return null
+            val owner = PsiTreeUtil.getParentOfType(function, KtFunction::class.java, KtClass::class.java)
+
+            if (owner is KtClass) {
+                val delegate = owner.toLightClass() ?: return null
+                val method = delegate.methods.firstOrNull() { it.navigationElement == function } ?: return null
+                val methodLocation = PsiLocation.fromPsiElement(method)
+                if (JUnitUtil.isTestMethod(methodLocation, false)) {
+                    return methodLocation
+                }
+            }
+            return null
         }
-        return jetClass?.toLightClass()
+
+        private fun KtClass?.isJUnitTestClass() =
+                this?.toLightClass()?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
+
+        private fun getTestClassInFile(ktFile: KtFile) =
+                ktFile.declarations.filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
     }
-
-    private fun KtClass?.isJUnitTestClass() =
-            this?.toLightClass()?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
-
-    private fun getTestClassInFile(jetFile: KtFile) =
-            jetFile.declarations.filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
 }
