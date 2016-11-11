@@ -186,10 +186,14 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
     private fun adaptJavaSource(text: String): String {
         val typeAnnotations = arrayOf("NotNull", "Nullable", "ReadOnly", "Mutable")
-        return typeAnnotations.fold(text) { text, annotation -> text.replace("@$annotation", "") }.replace(
-                "@interface",
-                "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
-        )
+        val adaptedSource = typeAnnotations.fold(text) { text, annotation -> text.replace("@$annotation", "") }
+        if ("@Retention" !in adaptedSource) {
+            return adaptedSource.replace(
+                    "@interface",
+                    "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
+            )
+        }
+        return adaptedSource
     }
 
     private class SyntheticPackageViewForTest(override val module: ModuleDescriptor,

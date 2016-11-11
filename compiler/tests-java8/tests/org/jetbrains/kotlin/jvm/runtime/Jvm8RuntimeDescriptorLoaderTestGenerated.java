@@ -36,6 +36,12 @@ public class Jvm8RuntimeDescriptorLoaderTestGenerated extends AbstractJvm8Runtim
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true, "sam", "kotlinSignature/propagation");
     }
 
+    @TestMetadata("InnerClassTypeAnnotation.java")
+    public void testInnerClassTypeAnnotation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/InnerClassTypeAnnotation.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("MapRemove.java")
     public void testMapRemove() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/MapRemove.java");
