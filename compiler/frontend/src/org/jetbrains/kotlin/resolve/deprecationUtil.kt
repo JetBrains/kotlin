@@ -36,13 +36,21 @@ private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
 interface Deprecation {
     val deprecationLevel: DeprecationLevelValue
-    val message: String
+    val message: String?
     val target: DeclarationDescriptor
 }
 
 fun Deprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
-private data class DeprecatedByAnnotation(private val annotation: AnnotationDescriptor, override val target: DeclarationDescriptor) : Deprecation {
+fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? {
+    val annotation = (this as? DeprecatedByAnnotation)?.annotation ?: return null
+    val replaceWithAnnotation = annotation.argumentValue(kotlin.Deprecated::replaceWith.name)
+                                        as? AnnotationDescriptor ?: return null
+
+    return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name) as String
+}
+
+private data class DeprecatedByAnnotation(val annotation: AnnotationDescriptor, override val target: DeclarationDescriptor) : Deprecation {
     override val deprecationLevel: DeprecationLevelValue
         get() {
             val level = annotation.argumentValue("level") as? ClassDescriptor
@@ -55,8 +63,8 @@ private data class DeprecatedByAnnotation(private val annotation: AnnotationDesc
             }
         }
 
-    override val message: String
-        get() = annotation.argumentValue("message") as? String ?: ""
+    override val message: String?
+        get() = annotation.argumentValue("message") as? String
 }
 
 private data class DeprecatedByOverridden(private val deprecations: Collection<Deprecation>) : Deprecation {
@@ -184,7 +192,7 @@ internal fun createDeprecationDiagnostic(element: PsiElement, deprecation: Depre
         ERROR -> Errors.DEPRECATION_ERROR
         HIDDEN -> Errors.DEPRECATION_ERROR
     }
-    return diagnosticFactory.on(element, targetOriginal, deprecation.message)
+    return diagnosticFactory.on(element, targetOriginal, deprecation.message ?: "")
 }
 
 // values from kotlin.DeprecationLevel
