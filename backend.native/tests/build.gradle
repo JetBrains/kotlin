@@ -86,9 +86,19 @@ abstract class KonanTest extends DefaultTask {
         return project.isLinux()
     }
 
+    // TODO: stop copy-pasting
     protected String linkDl() {
        if (linux()) {
          return "-ldl"
+       }
+       else {
+         return ""
+       }
+    }
+
+    protected String linkM() {
+       if (linux()) {
+         return "-lm"
        }
        else {
          return ""
@@ -110,7 +120,7 @@ class UnitKonanTest extends KonanTest {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
             commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), rdynamic()
+                    "-o", "${exe.absolutePath}", linkDl(), linkM(), rdynamic()
         }
     }
 }
@@ -119,7 +129,7 @@ class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File exe) {
         project.execClang {
             commandLine "clang", "-DRUN_TEST", "${runtimeS.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), rdynamic()
+                    "-o", "${exe.absolutePath}", linkDl(), linkM(), rdynamic()
         }
     }
 }
