@@ -6,6 +6,8 @@ if (new File("$project.rootDir/local.properties").exists()) {
   props.each {prop -> project.ext.set(prop.key, prop.value)}
 }
 
+convention.plugins.platformInfo = new PlatformInfo()
+
 allprojects {
     if (path != ":dependencies") {
         evaluationDependsOn(":dependencies")
@@ -33,5 +35,34 @@ allprojects {
                 }
             }
         }
+    }
+}
+
+class PlatformInfo {
+    private final String osName = System.properties['os.name']
+    private final String osArch = System.properties['os.arch']
+
+    boolean isMac() {
+        return osName == 'Mac OS X'
+    }
+
+    boolean isLinux() {
+        return osName == 'Linux'
+    }
+
+    boolean isAmd64() {
+        return osArch in ['x86_64', 'amd64']
+    }
+
+    String getGnuTriplet() {
+        if (isLinux() && isAmd64()) {
+            return "x86_64-unknown-linux-gnu"
+        } else {
+            throw unsupportedPlatformException()
+        }
+    }
+
+    Throwable unsupportedPlatformException() {
+        return new Error("unsupported platform: $osName/$osArch")
     }
 }

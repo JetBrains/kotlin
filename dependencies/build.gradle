@@ -1,20 +1,12 @@
 abstract class NativeDep extends DefaultTask {
 
-    private static String getCurrentHostTarget() {
-        String osName = System.properties['os.name']
-        String osArch = System.properties['os.arch']
-
-        // TODO: implement more generally
-        if (osArch in ['x86_64', 'amd64']) {
-            if (osName == 'Mac OS X') {
-                return 'darwin-macos'
-            } else if (osName == 'Linux') {
-                return 'linux-x86-64'
-            } else {
-                throw new Error("Unsupported OS: $osName")
-            }
+    private String getCurrentHostTarget() {
+        if (project.isMac() && project.isAmd64()) {
+            return 'darwin-macos'
+        } else if (project.isLinux() && project.isAmd64()) {
+            return 'linux-x86-64'
         } else {
-            throw new Error("Unsupported arch: $osArch")
+            throw project.unsupportedPlatformException()
         }
     }
 
@@ -67,6 +59,7 @@ class TgzNativeDep extends NativeDep {
                 args "xf", archived
             }
         } catch (Throwable e) {
+            e.printStackTrace()
             project.delete(outputDir)
             throw e
         }

@@ -92,7 +92,7 @@ String[] linkerOpts1() {
                     '-lLLVMCore',
                     '-lLLVMSupport']
     List<String> ldflags = new ArrayList<>()
-    if (System.properties['os.name'].startsWith("Linux"))
+    if (isLinux())
         ldflags.addAll(["-L$llvmDir/lib",
                 "-Wl,-Bstatic", "-Wl,--whole-archive"]
                 + libs

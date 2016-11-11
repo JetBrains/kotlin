@@ -83,7 +83,7 @@ abstract class KonanTest extends DefaultTask {
     }
 
     private linux() {
-        return System.properties['os.name'].startsWith('Linux')
+        return project.isLinux()
     }
 
     protected String linkDl() {
