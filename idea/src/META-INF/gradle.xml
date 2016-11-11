@@ -30,5 +30,8 @@
             language="Groovy"
             hasStaticDescription="true"
             level="WARNING"/>
+
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestClassGradleConfigurationProducer"/>
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestMethodGradleConfigurationProducer"/>
     </extensions>
 </idea-plugin>
