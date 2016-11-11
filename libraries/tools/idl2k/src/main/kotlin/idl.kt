@@ -279,7 +279,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
 
     override fun defaultResult(): Definition = when (kind) {
         DefinitionKind.INTERFACE -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, false, partial, callback)
-        DefinitionKind.DICTIONARY -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, true, partial, callback)
+        DefinitionKind.DICTIONARY -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, /* dictionary = */ true, partial, callback)
         DefinitionKind.EXTENSION_INTERFACE -> ExtensionInterfaceDefinition(namespace, name, implements ?: "")
         DefinitionKind.TYPEDEF -> TypedefDefinition(typedefType ?: AnyType(true), namespace, name)
         DefinitionKind.ENUM -> EnumDefinition(namespace, name)
