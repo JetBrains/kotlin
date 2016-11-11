@@ -72,7 +72,7 @@ class IntArray : Cloneable {
         get() = getArrayLength()
 
     @SymbolName("Kotlin_IntArray_get")
-    external public operator fun get(index: Int): Char
+    external public operator fun get(index: Int): Int
 
     @SymbolName("Kotlin_IntArray_set")
     external public operator fun set(index: Int, value: Int): Unit
@@ -93,7 +93,7 @@ class LongArray : Cloneable {
         get() = getArrayLength()
 
     @SymbolName("Kotlin_LongArray_get")
-    external public operator fun get(index: Int): Char
+    external public operator fun get(index: Int): Long
 
     @SymbolName("Kotlin_LongArray_set")
     external public operator fun set(index: Int, value: Long): Unit
@@ -114,7 +114,7 @@ class FloatArray : Cloneable {
         get() = getArrayLength()
 
     @SymbolName("Kotlin_FloatArray_get")
-    external public operator fun get(index: Int): Char
+    external public operator fun get(index: Int): Float
 
     @SymbolName("Kotlin_FloatArray_set")
     external public operator fun set(index: Int, value: Float): Unit
@@ -135,7 +135,7 @@ class DoubleArray : Cloneable {
         get() = getArrayLength()
 
     @SymbolName("Kotlin_DoubleArray_get")
-    external public operator fun get(index: Int): Char
+    external public operator fun get(index: Int): Double
 
     @SymbolName("Kotlin_DoubleArray_set")
     external public operator fun set(index: Int, value: Double): Unit
@@ -156,7 +156,7 @@ class BooleanArray : Cloneable {
         get() = getArrayLength()
 
     @SymbolName("Kotlin_BooleanArray_get")
-    external public operator fun get(index: Int): Char
+    external public operator fun get(index: Int): Boolean
 
     @SymbolName("Kotlin_BooleanArray_set")
     external public operator fun set(index: Int, value: Boolean): Unit

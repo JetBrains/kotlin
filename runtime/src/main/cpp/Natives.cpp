@@ -90,6 +90,8 @@ KString Kotlin_String_fromUtf8Array(const ArrayHeader* array) {
 
 KString Kotlin_String_plusImpl(KString thiz, KString other) {
   // TODO: support UTF-8
+  RuntimeAssert(thiz != nullptr, "this cannot be null");
+  RuntimeAssert(other != nullptr, "other cannot be null");
   RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
   RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
   uint32_t result_length = thiz->count_ + other->count_;
