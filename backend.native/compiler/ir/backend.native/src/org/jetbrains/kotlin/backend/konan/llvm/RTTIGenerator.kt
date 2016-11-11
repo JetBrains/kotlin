@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
 
@@ -137,11 +138,16 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private val arrayClasses = mapOf(
-            "kotlin.Array"      to -pointerSize,
-            "kotlin.ByteArray"  to -1,
-            "kotlin.CharArray"  to -2,
-            "kotlin.IntArray"   to -4,
-            "kotlin.String"     to -1
+            "kotlin.Array"        to -pointerSize,
+            "kotlin.ByteArray"    to -1,
+            "kotlin.CharArray"    to -2,
+            "kotlin.ShortArray"   to -2,
+            "kotlin.IntArray"     to -4,
+            "kotlin.LongArray"    to -8,
+            "kotlin.FloatArray"   to -4,
+            "kotlin.DoubleArray"  to -8,
+            "kotlin.BooleanArray" to -1,
+            "kotlin.String"       to -1
     )
 
     private fun getInstanceSize(classType: LLVMOpaqueType?, className: FqName) : Int {
@@ -160,7 +166,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val size = getInstanceSize(classType, className)
 
-        val superType = classDesc.getSuperClassOrAny().llvmTypeInfoPtr
+        val superTypeOrNull = classDesc.getSuperClassNotAny()
+        val superType = if (superTypeOrNull != null) superTypeOrNull.llvmTypeInfoPtr
+                else NullPointer(runtime.typeInfoType)
 
         val interfaces = classDesc.implementedInterfaces.map { it.llvmTypeInfoPtr }
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",

@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.isArray
 import org.jetbrains.kotlin.backend.konan.isInterface
 import org.jetbrains.kotlin.backend.konan.isIntrinsic
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
-
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
@@ -407,9 +407,20 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateConstructorCall(variableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         logger.log("evaluateConstructorCall    : $variableName = ${ir2string(callee)}")
         memScoped {
-            val params = allocNativeArrayOf(LLVMOpaqueValue, generator.typeInfoValue((callee.descriptor as ClassConstructorDescriptor).containingDeclaration), Int32(1).getLlvmValue())
-            val thisValue = LLVMBuildCall(context.llvmBuilder, context.allocInstanceFunction, params[0], 2, variableName)
-
+            val containingClass = (callee.descriptor as ClassConstructorDescriptor).containingDeclaration
+            val typeInfo = generator.typeInfoValue(containingClass)
+            val allocHint = Int32(1).getLlvmValue()
+            val thisValue = if (containingClass.isArray) {
+                assert(args.size == 1 && LLVMTypeOf(args[0]) == LLVMInt32Type())
+                val size = args[0]
+                val params = allocNativeArrayOf(LLVMOpaqueValue, typeInfo, allocHint, size)
+                LLVMBuildCall(
+                        context.llvmBuilder, context.allocArrayFunction, params[0], 3, variableName)
+            } else {
+                val params = allocNativeArrayOf(LLVMOpaqueValue, typeInfo, allocHint)
+                LLVMBuildCall(
+                        context.llvmBuilder, context.allocInstanceFunction, params[0], 2, variableName)
+            }
             val constructorParams: MutableList<LLVMOpaqueValue?> = mutableListOf()
             constructorParams += thisValue
             constructorParams += args

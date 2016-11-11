@@ -85,11 +85,10 @@ inline void* AddressOfElementAt(ArrayHeader* obj, int32_t index) {
       obj->type_info()->instanceSize_ * index;
 }
 
-inline uint32_t ArraySizeBytes(const ArrayHeader* obj) {
+inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
   // Instance size is negative.
   return -obj->type_info()->instanceSize_ * obj->count_;
 }
-
 
 // Those two operations are implemented by translator when storing references
 // to objects.
@@ -259,7 +258,8 @@ extern "C" {
 
 void InitMemory();
 void* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
-void* AllocArrayInstance(const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
+void* AllocArrayInstance(
+    const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
 int IsInstance(const ObjHeader* obj, const TypeInfo* type_info);
 
 #ifdef __cplusplus

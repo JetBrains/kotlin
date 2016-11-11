@@ -25,6 +25,7 @@ internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
 
     val allocInstanceFunction = importRtFunction("AllocInstance")
+    val allocArrayFunction = importRtFunction("AllocArrayInstance")
 
     fun dispose() {
         LLVMDisposeBuilder(llvmBuilder)

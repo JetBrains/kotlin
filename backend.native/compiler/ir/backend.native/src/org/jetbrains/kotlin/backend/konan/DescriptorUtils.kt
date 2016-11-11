@@ -42,8 +42,25 @@ private val intrinsicTypes = setOf(
         "kotlin.Float", "kotlin.Double"
 )
 
+private val arrayTypes = setOf(
+        "kotlin.Array",
+        "kotlin.ByteArray",
+        "kotlin.CharArray",
+        "kotlin.ShortArray",
+        "kotlin.IntArray",
+        "kotlin.LongArray",
+        "kotlin.FloatArray",
+        "kotlin.DoubleArray",
+        "kotlin.BooleanArray"
+)
+
 internal val ClassDescriptor.isIntrinsic: Boolean
     get() = this.fqNameSafe.asString() in intrinsicTypes
+
+
+internal val ClassDescriptor.isArray: Boolean
+    get() = this.fqNameSafe.asString() in arrayTypes
+
 
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)

@@ -4,7 +4,7 @@
 #include "Memory.h"
 #include "Types.h"
 
-typedef uint8_t KBool;
+typedef uint8_t KBoolean;
 typedef uint8_t KByte;
 typedef uint16_t KChar;
 // Note that it is signed.
@@ -28,21 +28,15 @@ inline const KByte* ByteArrayAddressOfElementAt(
   return reinterpret_cast<const KByte*>(obj + 1) + index;
 }
 
-inline KChar* CharArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
-  return reinterpret_cast<KChar*>(obj + 1) + index;
+template <typename T>
+inline T* PrimitiveArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
+  return reinterpret_cast<T*>(obj + 1) + index;
 }
 
-inline const KChar* CharArrayAddressOfElementAt(
+template <typename T>
+inline const T* PrimitiveArrayAddressOfElementAt(
     const ArrayHeader* obj, KInt index) {
-  return reinterpret_cast<const KChar*>(obj + 1) + index;
-}
-
-inline KInt* IntArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
-  return reinterpret_cast<KInt*>(obj + 1) + index;
-}
-
-inline const KInt* IntArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
-  return reinterpret_cast<const KInt*>(obj + 1) + index;
+  return reinterpret_cast<const T*>(obj + 1) + index;
 }
 
 inline KRef* ArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
@@ -58,7 +52,7 @@ extern "C" {
 #endif
 
 // Any.kt
-KBool Kotlin_Any_equals(KConstRef thiz, KConstRef other);
+KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other);
 KInt Kotlin_Any_hashCode(KConstRef thiz);
 KString Kotlin_Any_toString(KConstRef thiz);
 
@@ -95,7 +89,7 @@ KString Kotlin_Int_toString(KInt value);
 
 // String.kt
 KInt Kotlin_String_hashCode(KString thiz);
-KBool Kotlin_String_equals(KString thiz, KConstRef other);
+KBoolean Kotlin_String_equals(KString thiz, KConstRef other);
 KInt Kotlin_String_compareTo(KString thiz, KString other);
 KChar Kotlin_String_get(KString thiz, KInt index);
 KString Kotlin_String_fromUtf8Array(const ArrayHeader* array);

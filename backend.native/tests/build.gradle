@@ -186,10 +186,14 @@ task hello3(type: RunKonanTest) {
     source = "runtime/basic/hello3.kt"
 } */
 
-
 task tostring0(type: RunKonanTest) {
     goldValue = "127\n255\n239\nA\n1122334455\n112233445566778899\n1E+27\n1E-300\ntrue\nfalse\n"
     source = "runtime/basic/tostring0.kt"
+}
+
+task array0(type: RunKonanTest) {
+    goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
+    source = "runtime/basic/array0.kt"
 }
 
 task if_else(type: UnitKonanTest) {

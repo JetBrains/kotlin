@@ -1,9 +1,10 @@
 package kotlin
 
+// TODO: remove that, as RTTI shall be per instantiation.
 @ExportTypeInfo("theArrayTypeInfo")
 class Array<T> : Cloneable {
     // Constructors are handled with compiler magic.
-    private constructor() {}
+    public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
     public val size: Int
         get() = getArrayLength()

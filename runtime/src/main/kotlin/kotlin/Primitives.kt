@@ -841,12 +841,12 @@ public class Float : Number(), Comparable<Float> {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
-        //public val MIN_VALUE: Float
+        //public const val MIN_VALUE: Float
 
         /**
          * A constant holding the largest positive finite value of Float.
          */
-        //public val MAX_VALUE: Float
+        //public const val MAX_VALUE: Float
 
         /**
          * A constant holding the positive infinity value of Float.
@@ -856,12 +856,12 @@ public class Float : Number(), Comparable<Float> {
         /**
          * A constant holding the negative infinity value of Float.
          */
-        //public val NEGATIVE_INFINITY: Float
+        //public const val NEGATIVE_INFINITY: Float
 
         /**
          * A constant holding the "not a number" value of Float.
          */
-        //public val NaN: Float
+        //public const val NaN: Float
     }
 
     /**
@@ -1045,27 +1045,27 @@ public class Double : Number(), Comparable<Double> {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */
-        //public val MIN_VALUE: Double
+        //public const val MIN_VALUE: Double
 
         /**
          * A constant holding the largest positive finite value of Double.
          */
-        //public val MAX_VALUE: Double
+        //public const val MAX_VALUE: Double
 
         /**
          * A constant holding the positive infinity value of Double.
          */
-        // public val POSITIVE_INFINITY: Double
+        // public const val POSITIVE_INFINITY: Double
 
         /**
          * A constant holding the negative infinity value of Double.
          */
-        // public val NEGATIVE_INFINITY: Double
+        // public const val NEGATIVE_INFINITY: Double
 
         /**
          * A constant holding the "not a number" value of Double.
          */
-        // public val NaN: Double
+        // public const val NaN: Double
     }
 
     /**
