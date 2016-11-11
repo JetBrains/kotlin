@@ -4,7 +4,7 @@ package kotlin
 external fun fromUtf8Array(array: ByteArray) : String
 
 @ExportTypeInfo("theStringTypeInfo")
-class String : Comparable<String>, CharSequence {
+public final class String : Comparable<String>, CharSequence {
     @SymbolName("Kotlin_String_hashCode")
     external public override fun hashCode(): Int
 

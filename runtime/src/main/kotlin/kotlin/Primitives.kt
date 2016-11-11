@@ -4,7 +4,7 @@ package kotlin
  * Represents a 8-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
-public class Byte : Number(), Comparable<Byte> {
+public final class Byte : Number(), Comparable<Byte> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
@@ -201,7 +201,7 @@ public class Byte : Number(), Comparable<Byte> {
  * Represents a 16-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
-public class Short : Number(), Comparable<Short> {
+public final class Short : Number(), Comparable<Short> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
@@ -398,7 +398,7 @@ public class Short : Number(), Comparable<Short> {
  * Represents a 32-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
-public class Int : Number(), Comparable<Int> {
+public final class Int : Number(), Comparable<Int> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
@@ -617,7 +617,7 @@ public class Int : Number(), Comparable<Int> {
  * Represents a 64-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
-public class Long : Number(), Comparable<Long> {
+public final class Long : Number(), Comparable<Long> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
@@ -836,7 +836,7 @@ public class Long : Number(), Comparable<Long> {
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
-public class Float : Number(), Comparable<Float> {
+public final class Float : Number(), Comparable<Float> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -1040,7 +1040,7 @@ public class Float : Number(), Comparable<Float> {
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
-public class Double : Number(), Comparable<Double> {
+public final class Double : Number(), Comparable<Double> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
