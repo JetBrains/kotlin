@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.introduce.findExpressionOrStringFragment
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.awt.Component
@@ -102,7 +103,9 @@ fun getSmartSelectSuggestions(
         var keepPrevious = true
 
         if (element is KtTypeElement) {
-            addElement = elementKind == CodeInsightUtils.ElementKind.TYPE_ELEMENT
+            addElement =
+                    elementKind == CodeInsightUtils.ElementKind.TYPE_ELEMENT
+                    && element.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } == null
             if (!addElement) {
                 keepPrevious = false
             }

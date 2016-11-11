@@ -4178,6 +4178,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceTypeAliasTest(fileName);
         }
 
+        @TestMetadata("skipQualifiers.kt")
+        public void testSkipQualifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/skipQualifiers.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
         @TestMetadata("suggestedName.kt")
         public void testSuggestedName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/suggestedName.kt");

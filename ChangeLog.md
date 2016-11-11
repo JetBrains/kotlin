@@ -3,6 +3,13 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.1-M04 (EAP-4)
+
+### IDE
+
+###### Issues fixed
+- [`KT-14693`](https://youtrack.jetbrains.com/issue/KT-14693) Introduce Type Alias: Do not suggest type qualifiers
+
 ## 1.1-M03 (EAP-3)
 
 ### New language features
