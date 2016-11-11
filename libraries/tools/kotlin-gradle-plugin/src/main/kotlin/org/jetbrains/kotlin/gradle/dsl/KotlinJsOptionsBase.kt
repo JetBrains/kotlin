@@ -31,7 +31,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
 
     private var mainField: kotlin.String? = null
     override var main: kotlin.String
-        get() = mainField ?: "noCall"
+        get() = mainField ?: "call"
         set(value) { mainField = value }
 
     private var metaInfoField: kotlin.Boolean? = null
@@ -86,7 +86,7 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fil
     suppressWarnings = false
     verbose = false
     kjsm = true
-    main = "noCall"
+    main = "call"
     metaInfo = true
     moduleKind = "plain"
     noStdlib = true
