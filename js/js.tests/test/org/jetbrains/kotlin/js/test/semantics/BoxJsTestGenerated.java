@@ -782,7 +782,7 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CrossModuleRef extends AbstractBoxJsTest {
         public void testAllFilesPresentInCrossModuleRef() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("callableObjectRef.kt")
