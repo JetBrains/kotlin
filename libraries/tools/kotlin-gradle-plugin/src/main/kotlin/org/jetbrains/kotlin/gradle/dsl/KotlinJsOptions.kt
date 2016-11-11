@@ -13,7 +13,7 @@ interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
     /**
      * Whether a main function should be called
      * Possible values: "call", "noCall"
-     * Default value: "noCall"
+     * Default value: "call"
      */
      var main: kotlin.String
 
