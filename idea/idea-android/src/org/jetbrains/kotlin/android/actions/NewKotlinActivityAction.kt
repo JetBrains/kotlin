@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.android.actions
 
-import com.android.tools.idea.gradle.GradleSyncState
-import com.android.tools.idea.gradle.project.GradleSyncListener
+import com.android.tools.idea.gradle.project.sync.GradleSyncListener
+import com.android.tools.idea.gradle.project.sync.GradleSyncState
 import com.intellij.history.core.RevisionsCollector
 import com.intellij.history.core.revisions.Revision
 import com.intellij.history.integration.LocalHistoryImpl
