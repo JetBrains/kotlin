@@ -13,8 +13,21 @@ allprojects {
         evaluationDependsOn(":dependencies")
     }
 
-    ext.clangArgs = ["--sysroot=$sysrootDir", "-B$sysrootDir/usr/bin"]
     ext.clangPath = ["$llvmDir/bin"]
+    ext.clangArgs = []
+    final String binDir
+    if (isLinux()) {
+        binDir = "$gccToolchainDir/$gnuTriplet/bin"
+        ext.clangArgs.addAll([
+                "--sysroot=$gccToolchainDir/$gnuTriplet/sysroot",
+                "--gcc-toolchain=$gccToolchainDir"
+        ])
+    } else {
+        binDir = "$sysrootDir/usr/bin"
+        ext.clangArgs << "--sysroot=$sysrootDir"
+    }
+    ext.clangArgs << "-B$binDir"
+    ext.clangPath << binDir
 
     convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 

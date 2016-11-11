@@ -78,9 +78,14 @@ task llvm(type: TgzNativeDep) {
     baseName = "clang+llvm-3.8.0-$target"
 }
 
-task sysroot(type: TgzNativeDep) {
-    String version = (target == 'linux-x86-64') ? '2' : '1'
-    baseName = "target-sysroot-$version-$target"
+if (isLinux()) {
+    task gccToolchain(type: TgzNativeDep) {
+        baseName = "target-gcc-toolchain-3-$target"
+    }
+} else {
+    task sysroot(type: TgzNativeDep) {
+        baseName = "target-sysroot-1-$target"
+    }
 }
 
 
