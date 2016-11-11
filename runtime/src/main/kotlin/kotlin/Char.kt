@@ -76,5 +76,8 @@ public class Char : Comparable<Char> {
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
     }
 
+    // Konan-specific.
+    @SymbolName("Kotlin_Char_toString")
+    external public override fun toString(): String
 }
 

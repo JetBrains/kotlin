@@ -193,7 +193,7 @@ public class Byte : Number(), Comparable<Byte> {
     external public override fun toDouble(): Double
 
     // Konan-specific.
-    @SymbolName("Kotlin_Int_toString")
+    @SymbolName("Kotlin_Byte_toString")
     external public override fun toString(): String
 }
 
@@ -388,6 +388,10 @@ public class Short : Number(), Comparable<Short> {
     external public override fun toFloat(): Float
     @SymbolName("Kotlin_Short_toDouble")
     external public override fun toDouble(): Double
+
+    // Konan-specific.
+    @SymbolName("Kotlin_Short_toString")
+    external public override fun toString(): String
 }
 
 /**
@@ -603,6 +607,10 @@ public class Int : Number(), Comparable<Int> {
     external public override fun toFloat(): Float
     @SymbolName("Kotlin_Int_toDouble")
     external public override fun toDouble(): Double
+
+    // Konan-specific.
+    @SymbolName("Kotlin_Int_toString")
+    external public override fun toString(): String
 }
 
 /**
@@ -818,6 +826,10 @@ public class Long : Number(), Comparable<Long> {
     external public override fun toFloat(): Float
     @SymbolName("Kotlin_Long_toDouble")
     external public override fun toDouble(): Double
+
+    // Konan-specific.
+    @SymbolName("Kotlin_Long_toString")
+    external public override fun toString(): String
 }
 
 /**
@@ -1018,6 +1030,10 @@ public class Float : Number(), Comparable<Float> {
     external public override fun toFloat(): Float
     @SymbolName("Kotlin_Float_toDouble")
     external public override fun toDouble(): Double
+
+    // Konan-specific.
+    @SymbolName("Kotlin_Float_toString")
+    external public override fun toString(): String
 }
 
 /**
@@ -1218,4 +1234,8 @@ public class Double : Number(), Comparable<Double> {
     external public override fun toFloat(): Float
     @SymbolName("Kotlin_Double_toDouble")
     external public override fun toDouble(): Double
+
+    // Konan-specific.
+    @SymbolName("Kotlin_Double_toString")
+    external public override fun toString(): String
 }

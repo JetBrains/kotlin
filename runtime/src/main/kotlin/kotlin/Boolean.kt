@@ -26,4 +26,8 @@ public class Boolean : Comparable<Boolean> {
     external public infix fun xor(other: Boolean): Boolean
 
     external public override fun compareTo(other: Boolean): Int
+
+    // Konan-specific.
+    @SymbolName("Kotlin_Boolean_toString")
+    external public override fun toString(): String
 }
