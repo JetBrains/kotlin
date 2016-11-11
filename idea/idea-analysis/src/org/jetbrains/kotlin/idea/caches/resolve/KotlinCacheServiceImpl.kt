@@ -307,10 +307,15 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getFacadeForSyntheticFiles(files: Set<KtFile>): ProjectResolutionFacade {
-        synchronized(syntheticFileCachesLock) {
+        val cachedValue = synchronized(syntheticFileCachesLock) {
             //NOTE: computations inside createCacheForSyntheticFiles depend on project root structure
             // so we additionally drop the whole slru cache on change
-            return CachedValuesManager.getManager(project).getCachedValue(project, syntheticFilesCacheProvider).get(files)
+            CachedValuesManager.getManager(project).getCachedValue(project, syntheticFilesCacheProvider)
+        }
+        // In Upsource, we create multiple instances of KotlinCacheService, which all access the same CachedValue instance (UP-8046)
+        // To avoid race conditions, we can't use the local lock to access the cached value contents.
+        synchronized(cachedValue) {
+            return cachedValue.get(files)
         }
     }
 
