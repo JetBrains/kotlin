@@ -72,6 +72,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("DeprecationWithReplaceInfo.kt")
+    public void testDeprecationWithReplaceInfo() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/DeprecationWithReplaceInfo.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("EscapeHtmlInsideCodeBlocks.kt")
     public void testEscapeHtmlInsideCodeBlocks() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/EscapeHtmlInsideCodeBlocks.kt");

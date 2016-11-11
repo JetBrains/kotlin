@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.google.common.html.HtmlEscapers
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.java.JavaDocumentationProvider
@@ -41,7 +42,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.deprecatedByAnnotationReplaceWithExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.getDeprecation
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 
@@ -153,6 +156,9 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             if (!quickNavigation) {
                 renderedDecl = "<pre>$renderedDecl</pre>"
             }
+
+            renderedDecl += renderDeprecationInfo(declarationDescriptor)
+
             val comment = declarationDescriptor.findKDoc()
             if (comment != null) {
                 val renderedComment = KDocRenderer.renderKDoc(comment)
@@ -165,6 +171,39 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             }
 
             return renderedDecl
+        }
+
+        private fun renderDeprecationInfo(declarationDescriptor: DeclarationDescriptor): String {
+            val deprecation = declarationDescriptor.getDeprecation() ?: return ""
+
+            return buildString {
+                wrapTag("DL") {
+                    deprecation.message?.let { message ->
+                        wrapTag("DT") { wrapTag("b") { append("Deprecated:") } }
+                        wrapTag("DD") {
+                            append(message.htmlEscape())
+                        }
+                    }
+                    deprecation.deprecatedByAnnotationReplaceWithExpression()?.let { replaceWith ->
+                        wrapTag("DT") { wrapTag("b") { append("Replace with:") } }
+                        wrapTag("DD") {
+                            wrapTag("code") { append(replaceWith.htmlEscape()) }
+                        }
+                    }
+                }
+            }
+        }
+
+        fun String.htmlEscape(): String = HtmlEscapers.htmlEscaper().escape(this)
+
+        private inline fun StringBuilder.wrap(prefix: String, postfix: String, crossinline body: () -> Unit) {
+            this.append(prefix)
+            body()
+            this.append(postfix)
+        }
+
+        private inline fun StringBuilder.wrapTag(tag: String, crossinline body: () -> Unit) {
+            wrap("<$tag>", "</$tag>", body)
         }
 
         private fun mixKotlinToJava(declarationDescriptor: DeclarationDescriptor, element: PsiElement, originalElement: PsiElement?): String? {
