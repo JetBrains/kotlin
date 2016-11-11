@@ -49,7 +49,7 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
     )
 
     object JsMain : DefaultValues(
-            "\"" + NO_CALL + "\"",
+            "\"" + CALL + "\"",
             listOf("\"" + CALL + "\"", "\"" + NO_CALL + "\"")
     )
 }
