@@ -202,7 +202,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val vtablePtr = staticData.placeGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
 
         val methods = getMethodTableEntries(classDesc).map {
-            val nameSignature = it.name.localHash // FIXME: add signature
+            val nameSignature = it.functionName.localHash // FIXME: add signature
             // TODO: compile-time resolution limits binary compatibility
             val methodEntryPoint = it.implementation.entryPointAddress
             MethodTableRecord(nameSignature, methodEntryPoint)

@@ -22,6 +22,9 @@ internal val FunctionDescriptor.symbolName: String
         return "kfun:" + this.fqNameSafe.toString() // FIXME: add signature
     }
 
+internal val FunctionDescriptor.functionName: String
+    get() = this.name.asString() // FIXME: add signature
+
 internal val ClassDescriptor.symbolName: String
     get() = when (this.kind) {
         CLASS -> "kclass:"
