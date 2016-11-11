@@ -23,7 +23,10 @@ private object EmptyMap : Map<Any?, Nothing>, Serializable {
     private fun readResolve(): Any = EmptyMap
 }
 
-/** Returns an empty read-only map of specified type. The returned map is serializable (JVM). */
+/**
+ * Returns an empty read-only map of specified type. The returned map is serializable (JVM).
+ * @sample samples.collections.Maps.Instantiation.emptyReadOnlyMap
+ */
 public fun <K, V> emptyMap(): Map<K, V> = @Suppress("UNCHECKED_CAST") (EmptyMap as Map<K, V>)
 
 /**
@@ -33,16 +36,22 @@ public fun <K, V> emptyMap(): Map<K, V> = @Suppress("UNCHECKED_CAST") (EmptyMap 
  *
  * Entries of the map are iterated in the order they were specified.
  * The returned map is serializable (JVM).
+ *
+ * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
 public fun <K, V> mapOf(vararg pairs: Pair<K, V>): Map<K, V> = if (pairs.size > 0) linkedMapOf(*pairs) else emptyMap()
 
-/** Returns an empty read-only map. The returned map is serializable (JVM). */
+/**
+ * Returns an empty read-only map. The returned map is serializable (JVM).
+ * @sample samples.collections.Maps.Instantiation.emptyReadOnlyMap
+ */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> mapOf(): Map<K, V> = emptyMap()
 
 /**
  * Returns an immutable map, mapping only the specified key to the
  * specified value.  The returned map is serializable.
+ * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
 @JvmVersion
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
@@ -52,6 +61,8 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.sin
  * where the first component is the key and the second is the value. If multiple pairs have
  * the same key, the resulting map will contain the value from the last of those pairs.
  * Entries of the map are iterated in the order they were specified.
+ * @sample samples.collections.Maps.Instantiation.mutableMapFromPairs
+ * @sample samples.collections.Maps.Instantiation.emptyMutableMap
  */
 public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
         = LinkedHashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
@@ -60,7 +71,7 @@ public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
  * where the first component is the key and the second is the value.
  *
- * @sample test.collections.MapTest.createUsingPairs
+ * @sample samples.collections.Maps.Instantiation.hashMapFromPairs
  */
 public fun <K, V> hashMapOf(vararg pairs: Pair<K, V>): HashMap<K, V>
         = HashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
@@ -72,7 +83,7 @@ public fun <K, V> hashMapOf(vararg pairs: Pair<K, V>): HashMap<K, V>
  * the same key, the resulting map will contain the value from the last of those pairs.
  * Entries of the map are iterated in the order they were specified.
  *
- * @sample test.collections.MapTest.createLinkedMap
+ * @sample samples.collections.Maps.Instantiation.linkedMapFromPairs
  */
 public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V>
         = LinkedHashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
@@ -182,7 +193,7 @@ public inline fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
 /**
  * Returns the value for the given key, or the result of the [defaultValue] function if there was no entry for the given key.
  *
- * @sample test.collections.MapTest.getOrElse
+ * @sample samples.collections.Maps.Usage.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V = get(key) ?: defaultValue()
@@ -203,7 +214,7 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
  * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
  * puts its result into the map under the given key and returns it.
  *
- * @sample test.collections.MapTest.getOrPut
+ * @sample samples.collections.Maps.Usage.getOrPut
  */
 public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     val value = get(key)
@@ -219,7 +230,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
 /**
  * Returns an [Iterator] over the entries in the [Map].
  *
- * @sample test.collections.MapTest.iterateWithProperties
+ * @sample samples.collections.Maps.Usage.forOverEntries
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <K, V> Map<out K, V>.iterator(): Iterator<Map.Entry<K, V>> = entries.iterator()
@@ -285,7 +296,7 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K,V>>): Uni
  *
  * The returned map preserves the entry iteration order of the original map.
  *
- * @sample test.collections.MapTest.mapValues
+ * @sample samples.collections.Maps.Transforms.mapValues
  */
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <K, V, R> Map<out K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
@@ -301,7 +312,7 @@ public inline fun <K, V, R> Map<out K, V>.mapValues(transform: (Map.Entry<K, V>)
  *
  * The returned map preserves the entry iteration order of the original map.
  *
- * @sample test.collections.MapTest.mapKeys
+ * @sample samples.collections.Maps.Transforms.mapKeys
  */
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <K, V, R> Map<out K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {

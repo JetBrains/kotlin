@@ -40,7 +40,7 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -
 /**
  * Converts this [Map] to a [SortedMap] so iteration order will be in key order.
  *
- * @sample test.collections.MapJVMTest.toSortedMap
+ * @sample samples.collections.Maps.Transformations.mapToSortedMap
  */
 public fun <K : Comparable<K>, V> Map<out K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
 
@@ -48,7 +48,7 @@ public fun <K : Comparable<K>, V> Map<out K, V>.toSortedMap(): SortedMap<K, V> =
  * Converts this [Map] to a [SortedMap] using the given [comparator] so that iteration order will be in the order
  * defined by the comparator.
  *
- * @sample test.collections.MapJVMTest.toSortedMapWithComparator
+ * @sample samples.collections.Maps.Transformations.mapToSortedMapWithComparator
  */
 public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap<K, V>
         = TreeMap<K, V>(comparator).apply { putAll(this@toSortedMap) }
@@ -57,7 +57,7 @@ public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): Sorte
  * Returns a new [SortedMap] with the specified contents, given as a list of pairs
  * where the first value is the key and the second is the value.
  *
- * @sample test.collections.MapJVMTest.createSortedMap
+ * @sample samples.collections.Maps.Instantiation.sortedMapFromPairs
  */
 public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V>
         = TreeMap<K, V>().apply { putAll(pairs) }
@@ -66,7 +66,7 @@ public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedM
 /**
  * Converts this [Map] to a [Properties] object.
  *
- * @sample test.collections.MapJVMTest.toProperties
+ * @sample samples.collections.Maps.Transformations.mapToProperties
  */
 @kotlin.internal.InlineOnly
 public inline fun Map<String, String>.toProperties(): Properties

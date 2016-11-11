@@ -113,7 +113,7 @@ public val Collection<*>.indices: IntRange
 /**
  * Returns the index of the last item in the list or -1 if the list is empty.
  *
- * @sample test.collections.ListSpecificTest.lastIndex
+ * @sample samples.collections.Collections.Lists.lastIndexOfList
  */
 public val <T> List<T>.lastIndex: Int
     get() = this.size - 1

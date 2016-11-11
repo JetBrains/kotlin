@@ -297,7 +297,7 @@ fun mapping(): List<GenericFunction> {
 
             The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
 
-            @sample test.collections.CollectionTest.groupBy
+            @sample samples.collections.Collections.Transformations.groupBy
             """
         }
         typeParam("K")
@@ -318,7 +318,7 @@ fun mapping(): List<GenericFunction> {
 
             @return The [destination] map.
 
-            @sample test.collections.CollectionTest.groupBy
+            @sample samples.collections.Collections.Transformations.groupBy
             """
         }
         returns("M")
@@ -346,7 +346,7 @@ fun mapping(): List<GenericFunction> {
 
             The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
 
-            @sample test.collections.CollectionTest.groupByKeysAndValues
+            @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
         typeParam("K")
@@ -372,7 +372,7 @@ fun mapping(): List<GenericFunction> {
 
             @return The [destination] map.
 
-            @sample test.collections.CollectionTest.groupByKeysAndValues
+            @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
         returns("M")

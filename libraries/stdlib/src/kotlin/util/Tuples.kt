@@ -9,7 +9,7 @@ package kotlin
  * Pair exhibits value semantics, i.e. two pairs are equal if both components are equal.
  *
  * An example of decomposing it into values:
- * @sample test.tuples.PairTest.pairMultiAssignment
+ * @sample samples.misc.Tuples.pairDestructuring
  *
  * @param A type of the first value.
  * @param B type of the second value.
@@ -32,7 +32,7 @@ public data class Pair<out A, out B>(
  * Creates a tuple of type [Pair] from this and [that].
  *
  * This can be useful for creating [Map] literals with less noise, for example:
- * @sample test.collections.MapTest.createUsingTo
+ * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
 public infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
@@ -47,7 +47,7 @@ public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
  * There is no meaning attached to values in this class, it can be used for any purpose.
  * Triple exhibits value semantics, i.e. two triples are equal if all three components are equal.
  * An example of decomposing it into values:
- * @sample test.tuples.TripleTest.tripleMultiAssignment
+ * @sample samples.misc.Tuples.tripleDestructuring
  *
  * @param A type of the first value.
  * @param B type of the second value.
