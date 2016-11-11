@@ -48,18 +48,18 @@ class CoroutineFunctionTransformer(
             function.scope.declareName(throwId)
         }
 
-        val bodyTransformer = CoroutineBodyTransformer(program, function.scope, throwName)
+        val context = CoroutineTransformationContext(function.scope)
+        val bodyTransformer = CoroutineBodyTransformer(program, context, throwName)
         bodyTransformer.preProcess(body)
         body.statements.forEach { it.accept(bodyTransformer) }
         val coroutineBlocks = bodyTransformer.postProcess()
 
-        for (coroutineBlock in coroutineBlocks) {
-            coroutineBlock.jsBlock.replaceLocalVariables(function.scope, bodyTransformer)
-        }
+        coroutineBlocks.forEach { it.jsBlock.collectAdditionalLocalVariables() }
+        coroutineBlocks.forEach { it.jsBlock.replaceLocalVariables(function.scope, context, localVariables) }
 
         val additionalStatements = mutableListOf<JsStatement>()
-        val resumeName = generateDoResume(coroutineBlocks, bodyTransformer, additionalStatements, throwName)
-        generateContinuationConstructor(bodyTransformer, additionalStatements)
+        val resumeName = generateDoResume(coroutineBlocks, context, additionalStatements, throwName)
+        generateContinuationConstructor(context, additionalStatements, bodyTransformer.hasFinallyBlocks)
         generateContinuationMethods(resumeName, additionalStatements)
 
         generateCoroutineInstantiation()
@@ -67,7 +67,11 @@ class CoroutineFunctionTransformer(
         return additionalStatements
     }
 
-    private fun generateContinuationConstructor(bodyTransformer: CoroutineBodyTransformer, statements: MutableList<JsStatement>) {
+    private fun generateContinuationConstructor(
+            context: CoroutineTransformationContext,
+            statements: MutableList<JsStatement>,
+            hasFinallyBlocks: Boolean
+    ) {
         val constructor = JsFunction(function.scope.parent, JsBlock(), "Continuation")
         constructor.name = className
         constructor.parameters += function.parameters.map { JsParameter(it.name) }
@@ -81,12 +85,12 @@ class CoroutineFunctionTransformer(
         val parameterNames = (function.parameters.map { it.name } + innerFunction?.parameters?.map { it.name }.orEmpty()).toSet()
 
         constructor.body.statements.run {
-            assign(bodyTransformer.stateFieldName, program.getNumberLiteral(0))
-            assign(bodyTransformer.exceptionStateName, program.getNumberLiteral(0))
-            if (bodyTransformer.hasFinallyBlocks) {
-                assign(bodyTransformer.finallyPathFieldName, JsLiteral.NULL)
+            assign(context.stateFieldName, program.getNumberLiteral(0))
+            assign(context.exceptionStateName, program.getNumberLiteral(0))
+            if (hasFinallyBlocks) {
+                assign(context.finallyPathFieldName, JsLiteral.NULL)
             }
-            assign(bodyTransformer.controllerFieldName, controllerName.makeRef())
+            assign(context.controllerFieldName, controllerName.makeRef())
             for (localVariable in localVariables) {
                 val value = if (localVariable !in parameterNames) JsLiteral.NULL else localVariable.makeRef()
                 assign(function.scope.getFieldName(localVariable), value)
@@ -142,7 +146,7 @@ class CoroutineFunctionTransformer(
 
     private fun generateDoResume(
             coroutineBlocks: List<CoroutineBlock>,
-            bodyTransformer: CoroutineBodyTransformer,
+            context: CoroutineTransformationContext,
             statements: MutableList<JsStatement>,
             throwName: JsName?
     ): JsName {
@@ -151,11 +155,11 @@ class CoroutineFunctionTransformer(
         val resumeException = resumeFunction.scope.declareFreshName("exception")
         resumeFunction.parameters += listOf(JsParameter(resumeParameter), JsParameter(resumeException))
 
-        val coroutineBody = generateCoroutineBody(bodyTransformer, coroutineBlocks, throwName, resumeException)
+        val coroutineBody = generateCoroutineBody(context, coroutineBlocks, throwName, resumeException)
         functionWithBody.body.statements.clear()
 
         resumeFunction.body.statements.apply {
-            assign(bodyTransformer.resultFieldName, resumeParameter.makeRef())
+            assign(context.resultFieldName, resumeParameter.makeRef())
             this += coroutineBody
         }
 
@@ -182,29 +186,29 @@ class CoroutineFunctionTransformer(
     }
 
     private fun generateCoroutineBody(
-            transformer: CoroutineBodyTransformer,
+            context: CoroutineTransformationContext,
             blocks: List<CoroutineBlock>,
             throwName: JsName?,
             exceptionName: JsName
     ): List<JsStatement> {
-        val indexOfGlobalCatch = blocks.indexOf(transformer.globalCatchBlock)
-        val stateRef = JsNameRef(transformer.stateFieldName, JsLiteral.THIS)
+        val indexOfGlobalCatch = blocks.indexOf(context.globalCatchBlock)
+        val stateRef = JsNameRef(context.stateFieldName, JsLiteral.THIS)
 
         val isFromGlobalCatch = JsAstUtils.equality(stateRef, program.getNumberLiteral(indexOfGlobalCatch))
         val catch = JsCatch(functionWithBody.scope, "e")
         val continueWithException = JsBlock(
-                JsAstUtils.assignment(stateRef.deepCopy(), JsNameRef(transformer.exceptionStateName, JsLiteral.THIS)).makeStmt(),
-                JsAstUtils.assignment(JsNameRef(transformer.exceptionFieldName, JsLiteral.THIS), catch.parameter.name.makeRef()).makeStmt()
+                JsAstUtils.assignment(stateRef.deepCopy(), JsNameRef(context.exceptionStateName, JsLiteral.THIS)).makeStmt(),
+                JsAstUtils.assignment(JsNameRef(context.exceptionFieldName, JsLiteral.THIS), catch.parameter.name.makeRef()).makeStmt()
         )
         catch.body = JsBlock(JsIf(isFromGlobalCatch, JsThrow(catch.parameter.name.makeRef()), continueWithException))
 
-        val throwResultRef = JsNameRef(transformer.exceptionFieldName, JsLiteral.THIS)
+        val throwResultRef = JsNameRef(context.exceptionFieldName, JsLiteral.THIS)
         if (throwName != null) {
-            val throwMethodRef = JsNameRef(throwName, JsNameRef(transformer.controllerFieldName, JsLiteral.THIS))
-            transformer.globalCatchBlock.statements += JsReturn(JsInvocation(throwMethodRef.deepCopy(), throwResultRef))
+            val throwMethodRef = JsNameRef(throwName, JsNameRef(context.controllerFieldName, JsLiteral.THIS))
+            context.globalCatchBlock.statements += JsReturn(JsInvocation(throwMethodRef.deepCopy(), throwResultRef))
         }
         else {
-            transformer.globalCatchBlock.statements += JsThrow(throwResultRef)
+            context.globalCatchBlock.statements += JsThrow(throwResultRef)
         }
 
         val cases = blocks.withIndex().map { (index, block) ->
@@ -219,95 +223,29 @@ class CoroutineFunctionTransformer(
         val testExceptionPassed = JsAstUtils.notOptimized(
                 JsAstUtils.typeOfIs(exceptionName.makeRef(), program.getStringLiteral("undefined")))
         val stateToException = JsAstUtils.assignment(
-                JsNameRef(transformer.stateFieldName, JsLiteral.THIS),
-                JsNameRef(transformer.exceptionStateName, JsLiteral.THIS))
-        val exceptionToResult = JsAstUtils.assignment(JsNameRef(transformer.exceptionFieldName, JsLiteral.THIS), exceptionName.makeRef())
+                JsNameRef(context.stateFieldName, JsLiteral.THIS),
+                JsNameRef(context.exceptionStateName, JsLiteral.THIS))
+        val exceptionToResult = JsAstUtils.assignment(JsNameRef(context.exceptionFieldName, JsLiteral.THIS), exceptionName.makeRef())
         val throwExceptionIfNeeded = JsIf(testExceptionPassed, JsBlock(stateToException.makeStmt(), exceptionToResult.makeStmt()))
 
         return listOf(throwExceptionIfNeeded, loop)
     }
 
-    private fun JsBlock.replaceLocalVariables(scope: JsScope, transformer: CoroutineBodyTransformer) {
+    private fun JsBlock.collectAdditionalLocalVariables() {
         accept(object : RecursiveJsVisitor() {
             override fun visit(x: JsVars.JsVar) {
                 super.visit(x)
                 localVariables += x.name
             }
         })
-
-        val visitor = object : JsVisitorWithContextImpl() {
-            override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
-                when {
-                    x.coroutineController -> {
-                        ctx.replaceMe(JsNameRef(transformer.controllerFieldName, x.qualifier).apply {
-                            sideEffects = SideEffectKind.PURE
-                        })
-                    }
-
-                    x.coroutineResult -> {
-                        ctx.replaceMe(JsNameRef(transformer.resultFieldName, x.qualifier).apply {
-                            sideEffects = SideEffectKind.DEPENDS_ON_STATE
-                        })
-                    }
-
-                    x.qualifier == null && x.name in localVariables -> {
-                        val fieldName = scope.getFieldName(x.name!!)
-                        ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS))
-                    }
-                }
-            }
-
-            override fun endVisit(x: JsVars, ctx: JsContext<in JsStatement>) {
-                val declaredNames = x.vars.map { it.name }
-                val totalCount = declaredNames.size
-                val localVarCount = declaredNames.count()
-
-                when {
-                    totalCount == localVarCount -> {
-                        val assignments = x.vars.mapNotNull {
-                            val fieldName = scope.getFieldName(it.name)
-                            val initExpression = it.initExpression
-                            if (initExpression != null) {
-                                JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), it.initExpression)
-                            }
-                            else {
-                                null
-                            }
-                        }
-                        if (assignments.isNotEmpty()) {
-                            ctx.replaceMe(JsExpressionStatement(JsAstUtils.newSequence(assignments)))
-                        }
-                        else {
-                            ctx.removeMe()
-                        }
-                    }
-                    localVarCount > 0 -> {
-                        for (declaration in x.vars) {
-                            if (declaration.name in localVariables) {
-                                val fieldName = scope.getFieldName(declaration.name)
-                                val assignment = JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), declaration.initExpression)
-                                ctx.addPrevious(assignment.makeStmt())
-                            }
-                            else {
-                                ctx.addPrevious(JsVars(declaration))
-                            }
-                        }
-                        ctx.removeMe()
-                    }
-                }
-                super.endVisit(x, ctx)
-            }
-        }
-        visitor.accept(this)
     }
+
 
     private fun ClassDescriptor.findFunction(name: String): FunctionDescriptor? {
         val functions = unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                 .filter { it.name.asString() == name }
         return functions.mapNotNull { it as? FunctionDescriptor }.firstOrNull { it.kind.isReal }
     }
-
-    private fun JsScope.getFieldName(variableName: JsName) = declareName("local\$${variableName.ident}")
 
     private fun MutableList<JsStatement>.assign(fieldName: JsName, value: JsExpression) {
         this += JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), value).makeStmt()

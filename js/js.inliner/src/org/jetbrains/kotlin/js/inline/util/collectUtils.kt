@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
+
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -183,4 +184,112 @@ fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {
         accept(scope)
         collected
     }
+}
+
+fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
+    val targets = mutableMapOf<JsContinue, JsStatement>()
+
+    accept(object : RecursiveJsVisitor() {
+        var defaultBreakTarget: JsStatement? = null
+        var breakTargets = mutableMapOf<JsName, JsStatement>()
+        var defaultContinueTarget: JsStatement? = null
+        var continueTargets = mutableMapOf<JsName, JsStatement>()
+
+        override fun visitLabel(x: JsLabel) {
+            val inner = x.statement
+            when (inner) {
+                is JsDoWhile -> handleLoop(inner, inner.body, x.name)
+
+                is JsWhile -> handleLoop(inner, inner.body, x.name)
+
+                is JsFor -> handleLoop(inner, inner.body, x.name)
+
+                else -> {
+                    withBreakAndContinue(x.name, x.statement, null) {
+                        accept(inner)
+                    }
+                }
+            }
+        }
+
+        override fun visitWhile(x: JsWhile) = handleLoop(x, x.body, null)
+
+        override fun visitDoWhile(x: JsDoWhile) = handleLoop(x, x.body, null)
+
+        override fun visitFor(x: JsFor) = handleLoop(x, x.body, null)
+
+        private fun handleLoop(loop: JsStatement, body: JsStatement, label: JsName?) {
+            withBreakAndContinue(label, loop, loop) {
+                body.accept(this)
+            }
+        }
+
+        override fun visitBreak(x: JsBreak) {
+            val targetLabel = x.label?.name
+            targets[x] = if (targetLabel == null) {
+                defaultBreakTarget!!
+            }
+            else {
+                breakTargets[targetLabel]!!
+            }
+        }
+
+        override fun visitContinue(x: JsContinue) {
+            val targetLabel = x.label?.name
+            targets[x] = if (targetLabel == null) {
+                defaultContinueTarget!!
+            }
+            else {
+                continueTargets[targetLabel]!!
+            }
+        }
+
+        private fun withBreakAndContinue(
+                label: JsName?,
+                breakTargetStatement: JsStatement,
+                continueTargetStatement: JsStatement? = null,
+                action: () -> Unit
+        ) {
+            val oldDefaultBreakTarget = defaultBreakTarget
+            val oldDefaultContinueTarget = defaultContinueTarget
+            val (oldBreakTarget, oldContinueTarget) = if (label != null) {
+                Pair(breakTargets[label], continueTargets[label])
+            }
+            else {
+                Pair(null, null)
+            }
+
+            defaultBreakTarget = breakTargetStatement
+            if (label != null) {
+                breakTargets[label] = breakTargetStatement
+                if (continueTargetStatement != null) {
+                    continueTargets[label] = continueTargetStatement
+                }
+            }
+            if (continueTargetStatement != null) {
+                defaultContinueTarget = continueTargetStatement
+            }
+
+            action()
+
+            defaultBreakTarget = oldDefaultBreakTarget
+            defaultContinueTarget = oldDefaultContinueTarget
+            if (label != null) {
+                if (oldBreakTarget == null) {
+                    breakTargets.keys -= label
+                }
+                else {
+                    breakTargets[label] = oldBreakTarget
+                }
+                if (oldContinueTarget == null) {
+                    continueTargets.keys -= label
+                }
+                else {
+                    continueTargets[label] = oldContinueTarget
+                }
+            }
+        }
+    })
+
+    return targets
 }
