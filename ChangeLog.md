@@ -9,6 +9,7 @@
 
 ###### Issues fixed
 - [`KT-14693`](https://youtrack.jetbrains.com/issue/KT-14693) Introduce Type Alias: Do not suggest type qualifiers
+- [`KT-14696`](https://youtrack.jetbrains.com/issue/KT-14696) Introduce Type Alias: Fix NPE during dialog repaint
 
 ## 1.1-M03 (EAP-3)
 

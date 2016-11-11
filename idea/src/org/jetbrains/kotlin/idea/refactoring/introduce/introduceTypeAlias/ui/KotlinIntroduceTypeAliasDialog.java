@@ -137,7 +137,7 @@ public class KotlinIntroduceTypeAliasDialog extends DialogWrapper {
                             boolean isSelected,
                             boolean cellHasFocus
                     ) {
-                        String tokenValue = ((KtModifierKeywordToken) value).getValue();
+                        String tokenValue = value != null ? ((KtModifierKeywordToken) value).getValue() : null;
                         return super.getListCellRendererComponent(list, tokenValue, index, isSelected, cellHasFocus);
                     }
                 }
