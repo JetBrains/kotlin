@@ -182,13 +182,11 @@ task hello1(type: RunKonanTest) {
     source = "runtime/basic/hello1.kt"
 }
 
-/*
 task hello2(type: RunKonanTest) {
     goldValue = "you entered 'Hello World'"
     testData = "Hello World"
     source = "runtime/basic/hello2.kt"
 }
-*/
 
 /* TODO: enable, once can call toString() on Int.
 task hello3(type: RunKonanTest) {
