@@ -124,6 +124,7 @@ object KotlinJavascriptSerializationUtil {
     fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArray) -> Unit) {
         val packageView = module.getPackage(fqName)
 
+        // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module }
 
         val serializerExtension = KotlinJavascriptSerializerExtension()
@@ -142,7 +143,10 @@ object KotlinJavascriptSerializationUtil {
 
         val packageStream = ByteArrayOutputStream()
         val fragments = packageView.fragments
-        val packageProto = serializer.packageProto(fragments, skip).build() ?: error("Package fragments not serialized: $fragments")
+        val members = fragments
+                .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
+                .filterNot(skip)
+        val packageProto = serializer.packagePartProto(members).build() ?: error("Package fragments not serialized: $fragments")
         if (packageProto.functionCount > 0 || packageProto.propertyCount > 0 || packageProto.typeAliasCount > 0) {
             packageProto.writeTo(packageStream)
             writeFun(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName), packageStream.toByteArray())

@@ -495,17 +495,6 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    @JvmOverloads
-    fun packageProto(
-            fragments: Collection<PackageFragmentDescriptor>,
-            skip: (DeclarationDescriptor) -> Boolean = { false }
-    ): ProtoBuf.Package.Builder {
-        val members = fragments
-                .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
-                .filter { !skip(it) }
-        return packagePartProto(members)
-    }
-
     fun packagePartProto(members: Collection<DeclarationDescriptor>): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 

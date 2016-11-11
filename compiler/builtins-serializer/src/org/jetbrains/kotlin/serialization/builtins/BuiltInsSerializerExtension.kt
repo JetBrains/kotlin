@@ -17,18 +17,16 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 
 class BuiltInsSerializerExtension(
-        private val packageFragments: Collection<PackageFragmentDescriptor>
+        private val packageFqName: FqName
 ) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 
     override fun serializePackage(proto: ProtoBuf.Package.Builder) {
-        if (packageFragments.isEmpty()) return
-
-        proto.setExtension(BuiltInsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(packageFragments.first().fqName))
+        proto.setExtension(BuiltInsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(packageFqName))
     }
 }

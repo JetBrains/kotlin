@@ -26,7 +26,11 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.MetadataSerializer
 import java.io.File
 
@@ -74,5 +78,21 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(depe
         }
     }
 
-    override fun getPackageFilePath(fqName: FqName): String = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
+    override fun performSerialization(files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File) {
+        destDir.deleteRecursively()
+        if (!destDir.mkdirs()) {
+            throw AssertionError("Could not make directories: " + destDir)
+        }
+
+        files.map { it.packageFqName }.toSet().forEach {
+            fqName ->
+            val packageView = module.getPackage(fqName)
+            PackageSerializer(
+                    packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS),
+                    packageView.fragments.flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) },
+                    packageView.fqName,
+                    File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageView.fqName))
+            ).run()
+        }
+    }
 }

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
-import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -28,12 +27,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializerExtension
 import java.io.ByteArrayOutputStream
@@ -43,9 +45,6 @@ import java.io.File
 open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
     protected var totalSize = 0
     protected var totalFiles = 0
-
-    protected open fun getPackageFilePath(fqName: FqName): String =
-            fqName.asString().replace('.', '/') + "/" + (if (fqName.isRoot) "default-package" else fqName.shortName().asString()) + "." + METADATA_FILE_EXTENSION
 
     fun serialize(environment: KotlinCoreEnvironment) {
         val configuration = environment.configuration
@@ -63,36 +62,69 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
             override fun analyze(): AnalysisResult = DefaultAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns)
         })
 
-        val moduleDescriptor = analyzer.analysisResult.moduleDescriptor
+        if (analyzer.hasErrors()) return
 
-        destDir.deleteRecursively()
+        val (bindingContext, moduleDescriptor) = analyzer.analysisResult
 
-        if (!destDir.mkdirs()) {
-            throw AssertionError("Could not make directories: " + destDir)
-        }
+        performSerialization(files, bindingContext, moduleDescriptor, destDir)
+    }
 
-        files.map { it.packageFqName }.toSet().forEach {
-            fqName ->
-            PackageSerializer(moduleDescriptor.getPackage(fqName), destDir, { bytesWritten ->
-                totalSize += bytesWritten
-                totalFiles++
-            }).run()
+    protected open fun performSerialization(
+            files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File
+    ) {
+        for (file in files) {
+            val packageFqName = file.packageFqName
+            val members = arrayListOf<DeclarationDescriptor>()
+            for (declaration in file.declarations) {
+                declaration.accept(object : KtVisitorVoid() {
+                    override fun visitNamedFunction(function: KtNamedFunction) {
+                        members.add(bindingContext.get(BindingContext.FUNCTION, function)
+                                    ?: error("No descriptor found for function ${function.fqName}"))
+                    }
+
+                    override fun visitProperty(property: KtProperty) {
+                        members.add(bindingContext.get(BindingContext.VARIABLE, property)
+                                    ?: error("No descriptor found for property ${property.fqName}"))
+                    }
+
+                    override fun visitTypeAlias(typeAlias: KtTypeAlias) {
+                        members.add(bindingContext.get(BindingContext.TYPE_ALIAS, typeAlias)
+                                    ?: error("No descriptor found for type alias ${typeAlias.fqName}"))
+                    }
+
+                    override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+                        val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
+                                              ?: error("No descriptor found for class ${classOrObject.fqName}")
+                        val destFile = File(destDir, getClassFilePath(ClassId(packageFqName, classDescriptor.name)))
+                        PackageSerializer(listOf(classDescriptor), emptyList(), packageFqName, destFile).run()
+                    }
+                })
+            }
+            // TODO (!): store list of all such files somewhere
+            val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
+            PackageSerializer(emptyList(), members, packageFqName, destFile).run()
         }
     }
 
-    private inner class PackageSerializer(
-            private val packageView: PackageViewDescriptor,
-            private val destDir: File,
-            private val onFileWrite: (bytesWritten: Int) -> Unit
+    private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
+            packageFqName.asString().replace('.', '/') + "/" +
+            PackagePartClassUtils.getPartClassName(fileName.substringBeforeLast(".kt")) + METADATA_FILE_EXTENSION
+
+    private fun getClassFilePath(classId: ClassId): String =
+            classId.asSingleFqName().asString().replace('.', '/') + METADATA_FILE_EXTENSION
+
+    protected inner class PackageSerializer(
+            private val classes: Collection<DeclarationDescriptor>,
+            private val members: Collection<DeclarationDescriptor>,
+            packageFqName: FqName,
+            private val destFile: File
     ) {
-        private val fqName = packageView.fqName
-        private val fragments = packageView.fragments
         private val proto = BuiltInsProtoBuf.BuiltIns.newBuilder()
-        private val extension = BuiltInsSerializerExtension(fragments)
+        private val extension = BuiltInsSerializerExtension(packageFqName)
 
         fun run() {
-            serializeClasses(packageView.memberScope)
-            serializePackageFragments(fragments)
+            serializeClasses(classes)
+            serializeMembers(members)
             serializeStringTable()
             serializeBuiltInsFile()
         }
@@ -101,19 +133,19 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
             val classProto = DescriptorSerializer.createTopLevel(extension).classProto(classDescriptor).build()
             proto.addClass_(classProto)
 
-            serializeClasses(classDescriptor.unsubstitutedInnerClassesScope)
+            serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
         }
 
-        private fun serializeClasses(scope: MemberScope) {
-            for (descriptor in DescriptorSerializer.sort(scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))) {
+        private fun serializeClasses(classes: Collection<DeclarationDescriptor>) {
+            for (descriptor in DescriptorSerializer.sort(classes)) {
                 if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ENUM_ENTRY) {
                     serializeClass(descriptor)
                 }
             }
         }
 
-        private fun serializePackageFragments(fragments: List<PackageFragmentDescriptor>) {
-            proto.`package` = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
+        private fun serializeMembers(members: Collection<DeclarationDescriptor>) {
+            proto.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(members).build()
         }
 
         private fun serializeStringTable() {
@@ -130,14 +162,15 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
                 version.forEach { writeInt(it) }
             }
             proto.build().writeTo(stream)
-            write(getPackageFilePath(fqName), stream)
+            write(stream)
         }
 
-        private fun write(fileName: String, stream: ByteArrayOutputStream) {
-            onFileWrite(stream.size())
-            val file = File(destDir, fileName)
-            file.parentFile.mkdirs()
-            file.writeBytes(stream.toByteArray())
+        private fun write(stream: ByteArrayOutputStream) {
+            totalSize += stream.size()
+            totalFiles++
+            assert(!destFile.isDirectory) { "Cannot write because output destination is a directory: $destFile" }
+            destFile.parentFile.mkdirs()
+            destFile.writeBytes(stream.toByteArray())
         }
     }
 
