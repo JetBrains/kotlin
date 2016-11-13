@@ -16,14 +16,6 @@
 
 package java.util
 
-interface Comparator<T> {
-    @JsName("compare") fun compare(a: T, b: T): Int
-}
-
-inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Comparator<T> = object : Comparator<T> {
-    override fun compare(a: T, b: T): Int = comparison(a, b)
-}
-
 
 // TODO: Not supported
 // typealias Date = kotlin.js.Date
