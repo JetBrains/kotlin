@@ -37,7 +37,6 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 VolatileAnnotationChecker(),
                 SynchronizedAnnotationChecker(),
                 LocalFunInlineChecker(),
-                ReifiedTypeParameterAnnotationChecker(),
                 ExternalFunChecker(),
                 OverloadsAnnotationChecker(),
                 JvmFieldApplicabilityChecker(),

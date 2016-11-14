@@ -224,39 +224,3 @@ class TypeParameterBoundIsNotArrayChecker : SimpleDeclarationChecker {
         }
     }
 }
-
-class ReifiedTypeParameterAnnotationChecker : SimpleDeclarationChecker {
-
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
-        if (descriptor is CallableDescriptor &&
-            !(InlineUtil.isInline(descriptor) || InlineUtil.isPropertyWithAllAccessorsAreInline(descriptor))) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.typeParameters, diagnosticHolder)
-        }
-
-        if (descriptor is ClassDescriptor) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.declaredTypeParameters, diagnosticHolder)
-        }
-    }
-
-
-    private fun checkTypeParameterDescriptorsAreNotReified(
-            typeParameterDescriptors: List<TypeParameterDescriptor>,
-            diagnosticHolder: DiagnosticSink
-    ) {
-        for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified }) {
-            val typeParameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(reifiedTypeParameterDescriptor)
-            if (typeParameterDeclaration !is KtTypeParameter) throw AssertionError("JetTypeParameter expected")
-
-            diagnosticHolder.report(
-                    Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(
-                            typeParameterDeclaration.getModifierList()!!.getModifier(KtTokens.REIFIED_KEYWORD)!!
-                    )
-            )
-        }
-    }
-}

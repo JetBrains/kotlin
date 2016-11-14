@@ -249,6 +249,21 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/inline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inline extends AbstractDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("Reified.kt")
+        public void testReified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/inline/Reified.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
