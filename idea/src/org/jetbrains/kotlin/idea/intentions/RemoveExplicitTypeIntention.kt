@@ -22,7 +22,6 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class RemoveSetterParameterTypeInspection()
@@ -48,10 +47,14 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             return element.textRange
         }
 
-        val initializer = (element as? KtDeclarationWithInitializer)?.initializer ?: return null
+        val initializer = (element as? KtDeclarationWithInitializer)?.initializer
         if (element !is KtProperty && (element !is KtNamedFunction || element.hasBlockBody())) return null
 
-        return TextRange(element.startOffset, initializer.startOffset - 1)
+        return when {
+            initializer != null -> TextRange(element.startOffset, initializer.startOffset - 1)
+            element is KtProperty && element.getter != null -> TextRange(element.startOffset, element.typeReference!!.endOffset)
+            else -> null
+        }
     }
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
