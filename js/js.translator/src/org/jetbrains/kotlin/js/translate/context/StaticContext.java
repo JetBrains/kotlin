@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import java.util.*;
 
 import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.UNKNOWN_EXTERNAL_MODULE_NAME;
+import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
@@ -434,6 +435,10 @@ public final class StaticContext {
                     }
                     if (descriptor instanceof LocalVariableDescriptor || descriptor instanceof ParameterDescriptor) {
                         return getNameForDescriptor(descriptor);
+                    }
+                    if (isNativeObject(descriptor)) {
+                        String name = getNameForAnnotatedObject(descriptor);
+                        if (name != null) return rootFunction.getScope().declareName(name);
                     }
                     if (descriptor instanceof ConstructorDescriptor) {
                         if (((ConstructorDescriptor) descriptor).isPrimary()) {
