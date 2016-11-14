@@ -1,9 +1,13 @@
 var amdModules = {};
 function define(moduleName, dependencies, body) {
     var resolvedDependencies = [];
+    var currentModule = {};
+    amdModules[moduleName] = currentModule;
     for (var i = 0; i < dependencies.length; ++i) {
-        resolvedDependencies.push(amdModules[dependencies[i]]);
+        var dependencyName = dependencies[i];
+        var dependency = dependencyName === 'exports' ? currentModule : amdModules[dependencyName];
+        resolvedDependencies.push(dependency);
     }
-    amdModules[moduleName] = body.apply(body, resolvedDependencies);
+    body.apply(body, resolvedDependencies);
 }
 define.amd = {};
