@@ -186,8 +186,6 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
 
-        add(pattern("kotlin", "Throwable", "getMessage"), MESSAGE_PROPERTY_INTRINSIC);
-
         add(pattern("kotlin.js", "jsClass"), JS_CLASS_FUN_INTRINSIC);
     }
 

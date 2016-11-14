@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 class MyThrowable(message: String? = null, cause: Throwable? = null) : Throwable(message, cause) {
 
     override val message: String?

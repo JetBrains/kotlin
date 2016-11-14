@@ -199,8 +199,6 @@ Kotlin.intDownto = function (from, to) {
     return new Kotlin.kotlin.ranges.IntProgression(from, to, -1);
 };
 
-Kotlin.Throwable = Error;
-
 Kotlin.throwNPE = function (message) {
     throw new Kotlin.kotlin.NullPointerException(message);
 };

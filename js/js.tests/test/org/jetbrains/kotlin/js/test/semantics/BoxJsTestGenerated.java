@@ -2953,6 +2953,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/expression/try"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("exceptionToString.kt")
+            public void testExceptionToString() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/try/exceptionToString.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multipleCatchBlocks.kt")
             public void testMultipleCatchBlocks() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/try/multipleCatchBlocks.kt");
