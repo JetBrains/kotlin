@@ -7,7 +7,8 @@ class StubGenerator(
         val nativeIndex: NativeIndex,
         val pkgName: String,
         val libName: String,
-        val excludedFunctions: Set<String>) {
+        val excludedFunctions: Set<String>,
+        val dumpShims: Boolean) {
 
     /**
      * The names that should not be used for struct classes to prevent name clashes
@@ -583,7 +584,18 @@ class StubGenerator(
                     out(binding.convFree.invoke(externalParamNames[i]))
                 }
             }
+
+            if (dumpShims) {
+                val returnValueRepresentation  = retValBinding.conv("res")
+                out("print(\"\${${returnValueRepresentation}}\\t= \")")
+                out("print(\"${func.name}( \")")
+                val argsRepresentation = paramNames.map{"\${${it}}"}.joinToString(", ")
+                out("print(\"${argsRepresentation}\")")
+                out("println(\")\")")
+            }
+
             out("return " + retValBinding.conv("res"))
+
         }
         out("}")
     }

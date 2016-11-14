@@ -86,6 +86,11 @@ private fun Properties.getSpaceSeparated(name: String): List<String> {
     return this.getProperty(name)?.split(' ') ?: emptyList()
 }
 
+private fun List<String>?.isTrue(): Boolean {
+    // The rightmost wins
+    return this?.last() == "true" ?: false
+}
+
 private fun processLib(ktGenRoot: String,
                        nativeLibsDir: String,
                        llvmInstallPath: String,
@@ -105,6 +110,7 @@ private fun processLib(ktGenRoot: String,
     val additionalHeaders = args["-h"].orEmpty()
     val additionalCompilerOpts = args["-copt"].orEmpty()
     val additionalLinkerOpts = args["-lopt"].orEmpty()
+    val generateShims = args["-shims"].isTrue()
 
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
     val compilerOpts = config.getSpaceSeparated("compilerOpts") + additionalCompilerOpts
@@ -127,7 +133,7 @@ private fun processLib(ktGenRoot: String,
 
     val nativeIndex = buildNativeIndex(headerFiles, compilerOpts)
 
-    val gen = StubGenerator(nativeIndex, outKtPkg, libName, excludedFunctions)
+    val gen = StubGenerator(nativeIndex, outKtPkg, libName, excludedFunctions, generateShims)
 
     outKtFile.parentFile.mkdirs()
     outKtFile.bufferedWriter().use { out ->
