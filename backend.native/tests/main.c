@@ -20,7 +20,7 @@ void * resolve_symbol(char *name) {
 int
 kotlinNativeMain() {
 #ifdef RUN_TEST
-  void (*main)(void *) = resolve_symbol("kfun:main");
+  void (*main)(void *) = resolve_symbol("kfun:main(Array<String>)");
   main((void *)0);
   return 0;
 #else

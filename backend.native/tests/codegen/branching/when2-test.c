@@ -2,7 +2,7 @@ extern void *resolve_symbol(const char*);
 
 int
 run_test() {
-  int (*when2)(int) = resolve_symbol("kfun:when2");
+  int (*when2)(int) = resolve_symbol("kfun:when2(Int)");
 
   if (when2(0) != 42) return 1;
 
