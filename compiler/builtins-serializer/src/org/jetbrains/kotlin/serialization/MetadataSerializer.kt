@@ -24,12 +24,15 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.serializeToByteArray
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -38,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializerExtension
+import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
@@ -72,6 +76,8 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
     protected open fun performSerialization(
             files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File
     ) {
+        val packageTable = hashMapOf<FqName, PackageParts>()
+
         for (file in files) {
             val packageFqName = file.packageFqName
             val members = arrayListOf<DeclarationDescriptor>()
@@ -100,10 +106,24 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
                     }
                 })
             }
-            // TODO (!): store list of all such files somewhere
-            val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
-            PackageSerializer(emptyList(), members, packageFqName, destFile).run()
+
+            if (members.isNotEmpty()) {
+                val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
+                PackageSerializer(emptyList(), members, packageFqName, destFile).run()
+
+                packageTable.getOrPut(packageFqName) { PackageParts(packageFqName.asString()) }.metadataParts.add(destFile.nameWithoutExtension)
+            }
         }
+
+        val kotlinModuleFile = File(destDir, JvmCodegenUtil.getMappingFileName(JvmCodegenUtil.getModuleName(module)))
+        val packageTableBytes = JvmPackageTable.PackageTable.newBuilder().apply {
+            for (table in packageTable.values) {
+                table.addTo(this)
+            }
+        }.serializeToByteArray()
+
+        kotlinModuleFile.parentFile.mkdirs()
+        kotlinModuleFile.writeBytes(packageTableBytes)
     }
 
     private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =

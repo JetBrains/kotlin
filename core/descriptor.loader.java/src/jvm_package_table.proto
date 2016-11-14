@@ -20,10 +20,16 @@ option java_outer_classname = "JvmPackageTable";
 option optimize_for = LITE_RUNTIME;
 
 message PackageTable {
+  // Names of .class files for each package
   repeated PackageParts package_parts = 1;
+
+  // Names of .kotlin_metadata files for each package
+  repeated PackageParts metadata_parts = 2;
 }
 
 message PackageParts {
     required string package_fq_name = 1;
+
+    // Short names of files, without extension, present in this package
     repeated string class_name = 2;
 }

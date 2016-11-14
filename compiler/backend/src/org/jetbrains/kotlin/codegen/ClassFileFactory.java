@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
-import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.DataOutputStream;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.MapsKt;
 import kotlin.jvm.functions.Function0;
@@ -31,7 +29,6 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
@@ -40,9 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -100,47 +95,28 @@ public class ClassFileFactory implements OutputFileCollection {
         final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
-        List<PackageParts> parts = new SmartList<PackageParts>(partsGroupedByPackage.values());
-
-        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(parts, state)) {
-            PackageParts.Companion.serialize(part, builder);
+        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(partsGroupedByPackage.values(), state)) {
+            part.addTo(builder);
         }
 
-        if (builder.getPackagePartsCount() != 0) {
-            generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
-                @Override
-                public byte[] asBytes(ClassBuilderFactory factory) {
-                    try {
-                        ByteArrayOutputStream moduleMapping = new ByteArrayOutputStream(4096);
-                        DataOutputStream dataOutStream = new DataOutputStream(moduleMapping);
-                        int[] version = JvmMetadataVersion.INSTANCE.toArray();
-                        dataOutStream.writeInt(version.length);
-                        for (int number : version) {
-                            dataOutStream.writeInt(number);
-                        }
-                        builder.build().writeTo(dataOutStream);
-                        dataOutStream.flush();
-                        return moduleMapping.toByteArray();
-                    }
-                    catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
-                    catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+        if (builder.getPackagePartsCount() == 0) return;
 
-                @Override
-                public String asText(ClassBuilderFactory factory) {
-                    try {
-                        return new String(asBytes(factory), "UTF-8");
-                    }
-                    catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
+        generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
+            @Override
+            public byte[] asBytes(ClassBuilderFactory factory) {
+                return ClassFileUtilsKt.serializeToByteArray(builder);
+            }
+
+            @Override
+            public String asText(ClassBuilderFactory factory) {
+                try {
+                    return new String(asBytes(factory), "UTF-8");
                 }
-            });
-        }
+                catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @NotNull

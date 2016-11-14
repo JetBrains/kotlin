@@ -14,17 +14,55 @@ public final class JvmPackageTable {
 
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> 
         getPackagePartsList();
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getPackageParts(int index);
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     int getPackagePartsCount();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> 
+        getMetadataPartsList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getMetadataParts(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    int getMetadataPartsCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageTable}
@@ -84,6 +122,14 @@ public final class JvmPackageTable {
               packageParts_.add(input.readMessage(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.PARSER, extensionRegistry));
               break;
             }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                metadataParts_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              metadataParts_.add(input.readMessage(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -94,6 +140,9 @@ public final class JvmPackageTable {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           packageParts_ = java.util.Collections.unmodifiableList(packageParts_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          metadataParts_ = java.util.Collections.unmodifiableList(metadataParts_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -124,12 +173,20 @@ public final class JvmPackageTable {
     private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> packageParts_;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getPackagePartsList() {
       return packageParts_;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public java.util.List<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder> 
         getPackagePartsOrBuilderList() {
@@ -137,26 +194,94 @@ public final class JvmPackageTable {
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public int getPackagePartsCount() {
       return packageParts_.size();
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getPackageParts(int index) {
       return packageParts_.get(index);
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+     *
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
      */
     public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder getPackagePartsOrBuilder(
         int index) {
       return packageParts_.get(index);
     }
 
+    public static final int METADATA_PARTS_FIELD_NUMBER = 2;
+    private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> metadataParts_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getMetadataPartsList() {
+      return metadataParts_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder> 
+        getMetadataPartsOrBuilderList() {
+      return metadataParts_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public int getMetadataPartsCount() {
+      return metadataParts_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getMetadataParts(int index) {
+      return metadataParts_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+     *
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     */
+    public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackagePartsOrBuilder getMetadataPartsOrBuilder(
+        int index) {
+      return metadataParts_.get(index);
+    }
+
     private void initFields() {
       packageParts_ = java.util.Collections.emptyList();
+      metadataParts_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -166,6 +291,12 @@ public final class JvmPackageTable {
 
       for (int i = 0; i < getPackagePartsCount(); i++) {
         if (!getPackageParts(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getMetadataPartsCount(); i++) {
+        if (!getMetadataParts(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -180,6 +311,9 @@ public final class JvmPackageTable {
       for (int i = 0; i < packageParts_.size(); i++) {
         output.writeMessage(1, packageParts_.get(i));
       }
+      for (int i = 0; i < metadataParts_.size(); i++) {
+        output.writeMessage(2, metadataParts_.get(i));
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -192,6 +326,10 @@ public final class JvmPackageTable {
       for (int i = 0; i < packageParts_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, packageParts_.get(i));
+      }
+      for (int i = 0; i < metadataParts_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, metadataParts_.get(i));
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -289,6 +427,8 @@ public final class JvmPackageTable {
         super.clear();
         packageParts_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
+        metadataParts_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -316,6 +456,11 @@ public final class JvmPackageTable {
           bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.packageParts_ = packageParts_;
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          metadataParts_ = java.util.Collections.unmodifiableList(metadataParts_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.metadataParts_ = metadataParts_;
         return result;
       }
 
@@ -331,6 +476,16 @@ public final class JvmPackageTable {
           }
           
         }
+        if (!other.metadataParts_.isEmpty()) {
+          if (metadataParts_.isEmpty()) {
+            metadataParts_ = other.metadataParts_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureMetadataPartsIsMutable();
+            metadataParts_.addAll(other.metadataParts_);
+          }
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -339,6 +494,12 @@ public final class JvmPackageTable {
       public final boolean isInitialized() {
         for (int i = 0; i < getPackagePartsCount(); i++) {
           if (!getPackageParts(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getMetadataPartsCount(); i++) {
+          if (!getMetadataParts(i).isInitialized()) {
             
             return false;
           }
@@ -376,24 +537,40 @@ public final class JvmPackageTable {
 
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getPackagePartsList() {
         return java.util.Collections.unmodifiableList(packageParts_);
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public int getPackagePartsCount() {
         return packageParts_.size();
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getPackageParts(int index) {
         return packageParts_.get(index);
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
@@ -407,6 +584,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
@@ -417,6 +598,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
         if (value == null) {
@@ -429,6 +614,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
@@ -442,6 +631,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(
           org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
@@ -452,6 +645,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
@@ -462,6 +659,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder addAllPackageParts(
           java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> values) {
@@ -473,6 +674,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder clearPackageParts() {
         packageParts_ = java.util.Collections.emptyList();
@@ -482,10 +687,187 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts package_parts = 1;</code>
+       *
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
        */
       public Builder removePackageParts(int index) {
         ensurePackagePartsIsMutable();
         packageParts_.remove(index);
+
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> metadataParts_ =
+        java.util.Collections.emptyList();
+      private void ensureMetadataPartsIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          metadataParts_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts>(metadataParts_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> getMetadataPartsList() {
+        return java.util.Collections.unmodifiableList(metadataParts_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public int getMetadataPartsCount() {
+        return metadataParts_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts getMetadataParts(int index) {
+        return metadataParts_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder setMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMetadataPartsIsMutable();
+        metadataParts_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder setMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(
+          org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addMetadataParts(
+          int index, org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts.Builder builderForValue) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder addAllMetadataParts(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.jvm.JvmPackageTable.PackageParts> values) {
+        ensureMetadataPartsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, metadataParts_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder clearMetadataParts() {
+        metadataParts_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.jvm.PackageParts metadata_parts = 2;</code>
+       *
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       */
+      public Builder removeMetadataParts(int index) {
+        ensureMetadataPartsIsMutable();
+        metadataParts_.remove(index);
 
         return this;
       }
@@ -521,19 +903,35 @@ public final class JvmPackageTable {
 
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
         getClassNameList();
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     int getClassNameCount();
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     java.lang.String getClassName(int index);
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getClassNameBytes(int index);
@@ -686,6 +1084,10 @@ public final class JvmPackageTable {
     private org.jetbrains.kotlin.protobuf.LazyStringList className_;
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
         getClassNameList() {
@@ -693,18 +1095,30 @@ public final class JvmPackageTable {
     }
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     public int getClassNameCount() {
       return className_.size();
     }
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     public java.lang.String getClassName(int index) {
       return className_.get(index);
     }
     /**
      * <code>repeated string class_name = 2;</code>
+     *
+     * <pre>
+     * Short names of files, without extension, present in this package
+     * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
         getClassNameBytes(int index) {
@@ -1028,6 +1442,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
           getClassNameList() {
@@ -1035,18 +1453,30 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public int getClassNameCount() {
         return className_.size();
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public java.lang.String getClassName(int index) {
         return className_.get(index);
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
           getClassNameBytes(int index) {
@@ -1054,6 +1484,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public Builder setClassName(
           int index, java.lang.String value) {
@@ -1067,6 +1501,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public Builder addClassName(
           java.lang.String value) {
@@ -1080,6 +1518,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public Builder addAllClassName(
           java.lang.Iterable<java.lang.String> values) {
@@ -1091,6 +1533,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public Builder clearClassName() {
         className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
@@ -1100,6 +1546,10 @@ public final class JvmPackageTable {
       }
       /**
        * <code>repeated string class_name = 2;</code>
+       *
+       * <pre>
+       * Short names of files, without extension, present in this package
+       * </pre>
        */
       public Builder addClassNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {

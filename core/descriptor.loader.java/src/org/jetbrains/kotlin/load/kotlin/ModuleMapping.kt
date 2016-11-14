@@ -66,26 +66,32 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
 }
 
 class PackageParts(val packageFqName: String) {
+    // See JvmPackageTable.PackageTable.package_parts
     val parts = linkedSetOf<String>()
+    // See JvmPackageTable.PackageTable.metadata_parts
+    val metadataParts = linkedSetOf<String>()
 
-    override fun equals(other: Any?) =
-            other is PackageParts && other.packageFqName == packageFqName && other.parts == parts
-
-    override fun hashCode() =
-            packageFqName.hashCode() * 31 + parts.hashCode()
-
-    override fun toString() =
-            parts.toString()
-
-    companion object {
-        @JvmStatic
-        fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
-            if (this.parts.isNotEmpty()) {
-                val packageParts = JvmPackageTable.PackageParts.newBuilder()
-                packageParts.packageFqName = this.packageFqName
-                packageParts.addAllClassName(this.parts.sorted())
-                builder.addPackageParts(packageParts)
-            }
+    fun addTo(builder: JvmPackageTable.PackageTable.Builder) {
+        if (parts.isNotEmpty()) {
+            builder.addPackageParts(JvmPackageTable.PackageParts.newBuilder().apply {
+                packageFqName = this@PackageParts.packageFqName
+                addAllClassName(parts.sorted())
+            })
+        }
+        if (metadataParts.isNotEmpty()) {
+            builder.addMetadataParts(JvmPackageTable.PackageParts.newBuilder().apply {
+                packageFqName = this@PackageParts.packageFqName
+                addAllClassName(metadataParts.sorted())
+            })
         }
     }
+
+    override fun equals(other: Any?) =
+            other is PackageParts && other.packageFqName == packageFqName && other.parts == parts && other.metadataParts == metadataParts
+
+    override fun hashCode() =
+            (packageFqName.hashCode() * 31 + parts.hashCode()) * 31 + metadataParts.hashCode()
+
+    override fun toString() =
+            (parts + metadataParts).toString()
 }
