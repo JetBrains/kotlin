@@ -926,13 +926,8 @@ public class DescriptorResolver {
                 else {
                     type = typeResolver.resolveType(scopeWithTypeParameters, typeReference, trace, true);
                     KotlinType inType = propertyDescriptor.getType();
-                    if (inType != null) {
-                        if (!TypeUtils.equalTypes(type, inType)) {
-                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType, type));
-                        }
-                    }
-                    else {
-                        // TODO : the same check may be needed later???
+                    if (!TypeUtils.equalTypes(type, inType)) {
+                        trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType, type));
                     }
                 }
 
