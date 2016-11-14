@@ -3455,6 +3455,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nativeNativeKotlin.kt")
+        public void testNativeNativeKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inheritance/nativeNativeKotlin.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overrideAnyMethods.kt")
         public void testOverrideAnyMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inheritance/overrideAnyMethods.kt");

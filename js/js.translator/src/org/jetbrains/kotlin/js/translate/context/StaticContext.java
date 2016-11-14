@@ -684,8 +684,9 @@ public final class StaticContext {
     }
 
     private void addClassPrototypes(@NotNull ClassDescriptor cls, @NotNull Set<ClassDescriptor> visited) {
-        if (DescriptorUtilsKt.getModule(cls) != currentModule) return;
         if (!visited.add(cls)) return;
+        if (DescriptorUtilsKt.getModule(cls) != currentModule) return;
+        if (isNativeObject(cls) || isLibraryObject(cls)) return;
 
         ClassDescriptor superclass = DescriptorUtilsKt.getSuperClassNotAny(cls);
         if (superclass != null) {
