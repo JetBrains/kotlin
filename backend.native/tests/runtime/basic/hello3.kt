@@ -1,3 +1,7 @@
 fun main(args : Array<String>) {
-    print(239)
+    println(239)
+    // TODO: enable, once override by name is implemented.
+    println(true)
+    println(3.14159)
+    println('A')
 }
