@@ -25,7 +25,7 @@ import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
 import com.android.repository.api.LocalPackage;
-import com.android.sdklib.repositoryv2.AndroidSdkHandler;
+import com.android.sdklib.repository.AndroidSdkHandler;
 import com.android.tools.klint.client.api.LintClient;
 //import com.android.tools.klint.client.api.SdkWrapper;
 import com.android.tools.klint.detector.api.LintUtils;
