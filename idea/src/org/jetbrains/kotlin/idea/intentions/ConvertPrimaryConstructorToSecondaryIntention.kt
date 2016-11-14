@@ -79,7 +79,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                     for (valueParameter in element.valueParameters) {
                         val annotations = valueParameter.annotationEntries.joinToString(separator = " ") { it.text }
                         val vararg = if (valueParameter.isVarArg) VARARG_KEYWORD.value else ""
-                        param("$annotations $vararg ${valueParameter.name!!}",
+                        param("$annotations $vararg ${valueParameter.name ?: ""}",
                               valueParameter.typeReference!!.text, valueParameter.defaultValue?.text)
                     }
                     noReturnType()
