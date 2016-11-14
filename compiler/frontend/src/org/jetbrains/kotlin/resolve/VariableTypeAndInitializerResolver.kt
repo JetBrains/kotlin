@@ -43,6 +43,10 @@ class VariableTypeAndInitializerResolver(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
         private val delegatedPropertyResolver: DelegatedPropertyResolver
 ) {
+    companion object {
+        @JvmField
+        val STUB_FOR_PROPERTY_WITHOUT_TYPE = ErrorUtils.createErrorType("No type, no body")
+    }
 
     fun resolveType(
             variableDescriptor: VariableDescriptorWithInitializerImpl,
@@ -52,8 +56,24 @@ class VariableTypeAndInitializerResolver(
             notLocal: Boolean,
             trace: BindingTrace
     ): KotlinType {
-        val propertyTypeRef = variable.typeReference
+        resolveTypeNullable(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, notLocal, trace)?.let { return it }
 
+        if (!notLocal) {
+            trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable))
+        }
+
+        return STUB_FOR_PROPERTY_WITHOUT_TYPE
+    }
+
+    fun resolveTypeNullable(
+            variableDescriptor: VariableDescriptorWithInitializerImpl,
+            scopeForInitializer: LexicalScope,
+            variable: KtVariableDeclaration,
+            dataFlowInfo: DataFlowInfo,
+            notLocal: Boolean,
+            trace: BindingTrace
+    ): KotlinType? {
+        val propertyTypeRef = variable.typeReference
         return when {
             propertyTypeRef != null -> typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true)
 
@@ -74,12 +94,7 @@ class VariableTypeAndInitializerResolver(
 
                 else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
             }
-            else -> {
-                if (!notLocal) {
-                    trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable))
-                }
-                ErrorUtils.createErrorType("No type, no body")
-            }
+            else -> null
         }
     }
 

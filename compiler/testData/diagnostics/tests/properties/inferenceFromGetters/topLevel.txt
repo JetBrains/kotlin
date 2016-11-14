@@ -1,0 +1,11 @@
+package
+
+public val x: kotlin.Int
+public val y: kotlin.Int
+public val y2: kotlin.Int
+public val z: kotlin.collections.List<kotlin.String>
+public val z2: kotlin.collections.List<kotlin.collections.List<kotlin.String>>
+public val </*0*/ T> T.u: T
+public fun foo(): kotlin.Unit
+public fun </*0*/ E> id(/*0*/ x: E): E
+public fun </*0*/ E> l(/*0*/ x: E): kotlin.collections.List<E>

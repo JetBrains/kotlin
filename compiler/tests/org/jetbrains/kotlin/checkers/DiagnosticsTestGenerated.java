@@ -572,12 +572,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("RecursiveGetter.kt")
-        public void testRecursiveGetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/RecursiveGetter.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("RecursiveResolve.kt")
         public void testRecursiveResolve() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/RecursiveResolve.kt");
@@ -14522,6 +14516,84 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public void testVisibility() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/privateInFile/visibility.kt");
                 doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/properties")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Properties extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInProperties() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/properties"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class InferenceFromGetters extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInInferenceFromGetters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/inferenceFromGetters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("blockBodyGetter.kt")
+                public void testBlockBodyGetter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/blockBodyGetter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("cantBeInferred.kt")
+                public void testCantBeInferred() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/cantBeInferred.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("explicitGetterType.kt")
+                public void testExplicitGetterType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/explicitGetterType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("members.kt")
+                public void testMembers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/members.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullAsNothing.kt")
+                public void testNullAsNothing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/nullAsNothing.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectExpression.kt")
+                public void testObjectExpression() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/objectExpression.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("overrides.kt")
+                public void testOverrides() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/overrides.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveGetter.kt")
+                public void testRecursiveGetter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/recursiveGetter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevel.kt")
+                public void testTopLevel() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/topLevel.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("vars.kt")
+                public void testVars() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/vars.kt");
+                    doTest(fileName);
+                }
             }
         }
 

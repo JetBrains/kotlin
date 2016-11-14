@@ -1,3 +1,0 @@
-class A {
-    <!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>val a<!> get() = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
-}

@@ -678,7 +678,7 @@ class DeclarationsChecker(
                     trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
                 }
             }
-            else if (property.typeReference == null) {
+            else if (noExplicitTypeOrGetterType(property)) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
             if (backingFieldRequired && !inTrait && propertyDescriptor.isLateInit && !isUninitialized) {
@@ -689,6 +689,10 @@ class DeclarationsChecker(
             }
         }
     }
+
+    private fun noExplicitTypeOrGetterType(property: KtProperty) =
+            property.typeReference == null
+                && (property.getter == null || (property.getter!!.hasBlockBody() && property.getter!!.returnTypeReference == null))
 
     fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
         val typeParameterList = function.typeParameterList

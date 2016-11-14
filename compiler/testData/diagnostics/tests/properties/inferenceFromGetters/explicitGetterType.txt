@@ -1,0 +1,9 @@
+package
+
+public val u: kotlin.String
+public val x: kotlin.String
+public val y: kotlin.collections.List<kotlin.Int>
+public val z: kotlin.collections.List<kotlin.Int>
+public fun </*0*/ E> bar(): kotlin.collections.List<E>
+public fun baz(): kotlin.Unit
+public fun </*0*/ E> foo(): E
