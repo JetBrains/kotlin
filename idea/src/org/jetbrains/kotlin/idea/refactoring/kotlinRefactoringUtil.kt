@@ -386,11 +386,9 @@ fun <T> chooseContainerElement(
                                          else -> null
                                      } ?: return null
                     val name = renderName()
-                    val params = (descriptor as? FunctionDescriptor)?.let { descriptor ->
-                        descriptor.valueParameters
-                                .map { DescriptorRenderer.Companion.SHORT_NAMES_IN_TYPES.renderType(it.type) }
-                                .joinToString(", ", "(", ")")
-                    } ?: ""
+                    val params = (descriptor as? FunctionDescriptor)?.valueParameters
+                                         ?.map { DescriptorRenderer.Companion.SHORT_NAMES_IN_TYPES.renderType(it.type) }
+                                         ?.joinToString(", ", "(", ")") ?: ""
                     return "$name$params"
                 }
 
