@@ -436,10 +436,6 @@ public final class StaticContext {
                     if (descriptor instanceof LocalVariableDescriptor || descriptor instanceof ParameterDescriptor) {
                         return getNameForDescriptor(descriptor);
                     }
-                    if (isNativeObject(descriptor)) {
-                        String name = getNameForAnnotatedObject(descriptor);
-                        if (name != null) return rootFunction.getScope().declareName(name);
-                    }
                     if (descriptor instanceof ConstructorDescriptor) {
                         if (((ConstructorDescriptor) descriptor).isPrimary()) {
                             return getInnerNameForDescriptor(((ConstructorDescriptor) descriptor).getConstructedClass());
@@ -694,7 +690,15 @@ public final class StaticContext {
 
             List<JsStatement> statements = rootFunction.getBody().getStatements();
 
-            JsExpression superPrototype = JsAstUtils.prototypeOf(new JsNameRef(getInnerNameForDescriptor(superclass)));
+            JsNameRef superclassRef;
+            if (isNativeObject(superclass) || isLibraryObject(superclass)) {
+                superclassRef = getQualifiedReference(superclass);
+            }
+            else {
+                superclassRef = getInnerNameForDescriptor(superclass).makeRef();
+            }
+
+            JsExpression superPrototype = JsAstUtils.prototypeOf(superclassRef);
             JsExpression superPrototypeInstance = new JsInvocation(new JsNameRef("create", "Object"), superPrototype);
             JsExpression classRef = new JsNameRef(getInnerNameForDescriptor(cls));
             JsExpression prototype = JsAstUtils.prototypeOf(classRef);
