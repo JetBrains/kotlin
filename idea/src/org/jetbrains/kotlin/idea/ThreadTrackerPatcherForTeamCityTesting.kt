@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory
 import com.intellij.testFramework.ThreadTracker
+import java.lang.reflect.Modifier
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -53,7 +54,9 @@ object ThreadTrackerPatcherForTeamCityTesting {
                 ThreadTracker::class.java.getDeclaredField("wellKnownOffenders")
             }
             catch (communityPropertyNotFoundEx: NoSuchFieldException) {
-                ThreadTracker::class.java.getDeclaredField("a")
+                ThreadTracker::class.java.declaredFields.single {
+                    Modifier.isStatic(it.modifiers) && MutableSet::class.java.isAssignableFrom(it.type)
+                }
             }
 
             wellKnownOffendersField.isAccessible = true
