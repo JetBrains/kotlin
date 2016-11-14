@@ -9,6 +9,25 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 private val symbolNameAnnotation = FqName("kotlin.SymbolName")
 
+private val FunctionDescriptor.signature: String
+    get() {
+        // TODO: KotlinType.toString seems to use unqualified names
+
+        val extensionReceiverPart = this.extensionReceiverParameter?.let { "${it.type}." } ?: ""
+
+        val argsPart = this.valueParameters.map { it.type }.joinToString(";")
+
+        // TODO: add return type
+        // (it is not simple because return type can be changed when overriding)
+        return "$extensionReceiverPart($argsPart)"
+    }
+
+// TODO: rename to indicate that it has signature included
+internal val FunctionDescriptor.functionName: String
+    get() = with(this.original) { // basic support for generics
+        "$name$signature"
+    }
+
 internal val FunctionDescriptor.symbolName: String
     get() {
         this.annotations.findAnnotation(symbolNameAnnotation)?.let {
@@ -19,11 +38,11 @@ internal val FunctionDescriptor.symbolName: String
                 // ignore; TODO: report compile error
             }
         }
-        return "kfun:" + this.fqNameSafe.toString() // FIXME: add signature
+        val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
+            if (it.isRoot) "" else "$it."
+        }
+        return "kfun:$containingDeclarationPart$functionName"
     }
-
-internal val FunctionDescriptor.functionName: String
-    get() = this.name.asString() // FIXME: add signature
 
 internal val ClassDescriptor.symbolName: String
     get() = when (this.kind) {
