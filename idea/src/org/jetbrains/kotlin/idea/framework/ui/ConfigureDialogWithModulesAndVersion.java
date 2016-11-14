@@ -35,7 +35,6 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
@@ -172,7 +171,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     protected static Collection<String> loadVersions() throws Exception {
         List<String> versions = Lists.newArrayList();
 
-        String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion(KotlinPluginUtil.getPluginVersion());
+        String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion();
         if (ConfigureKotlinInProjectUtilsKt.isEap(bundledRuntimeVersion)) {
             HttpURLConnection eapConnection = HttpConfigurable.getInstance().openHttpConnection(EAP_VERSIONS_URL + bundledRuntimeVersion);
             try {

@@ -168,8 +168,18 @@ private enum class LibraryJarDescriptor private constructor(val jarName: String,
     JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false)
 }
 
+fun bundledRuntimeVersion(): String {
+    return bundledRuntimeBuildNumber ?: pluginRuntimeVersion(KotlinPluginUtil.getPluginVersion())
+}
+
+private val bundledRuntimeBuildNumber: String? by lazy {
+    val file = PathUtil.getKotlinPathsForIdeaPlugin().buildNumberFile
+    if (file.exists()) file.readText().trim() else null
+}
+
 private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release", "dev", "Studio")
-@JvmOverloads fun bundledRuntimeVersion(pluginVersion: String = KotlinPluginUtil.getPluginVersion()): String {
+
+fun pluginRuntimeVersion(pluginVersion: String): String {
     var placeToSplit = -1
 
     for (separator in PLUGIN_VERSIONS_SEPARATORS) {
