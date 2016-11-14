@@ -816,7 +816,7 @@ public class DescriptorResolver {
         LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeWithTypeParameters, propertyDescriptor);
         KotlinType typeIfKnown = variableTypeAndInitializerResolver.resolveTypeNullable(
                 propertyDescriptor, scopeForInitializer,
-                property, dataFlowInfo, true, trace
+                property, dataFlowInfo, /* local = */ trace, false
         );
 
         PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(

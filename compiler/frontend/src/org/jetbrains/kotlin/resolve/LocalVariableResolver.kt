@@ -149,10 +149,10 @@ class LocalVariableResolver(
                     /* isConst = */ false
             )
             // For a local variable the type must not be deferred
-            type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, false, trace)
+            type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, trace, local = true)
 
             val receiverParameter = (containingDeclaration as ScriptDescriptor).thisAsReceiverParameter
-            propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null as? KotlinType)
+            propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null as KotlinType?)
             initializeWithDefaultGetterSetter(propertyDescriptor)
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor)
             result = propertyDescriptor
@@ -160,7 +160,7 @@ class LocalVariableResolver(
         else {
             val variableDescriptor = resolveLocalVariableDescriptorWithType(scope, variable, null, trace)
             // For a local variable the type must not be deferred
-            type = variableTypeAndInitializerResolver.resolveType(variableDescriptor, scope, variable, dataFlowInfo, false, trace)
+            type = variableTypeAndInitializerResolver.resolveType(variableDescriptor, scope, variable, dataFlowInfo, trace, local = true)
             variableDescriptor.setOutType(type)
             result = variableDescriptor
         }

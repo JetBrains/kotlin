@@ -53,12 +53,12 @@ class VariableTypeAndInitializerResolver(
             scopeForInitializer: LexicalScope,
             variable: KtVariableDeclaration,
             dataFlowInfo: DataFlowInfo,
-            notLocal: Boolean,
-            trace: BindingTrace
+            trace: BindingTrace,
+            local: Boolean
     ): KotlinType {
-        resolveTypeNullable(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, notLocal, trace)?.let { return it }
+        resolveTypeNullable(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, trace, local)?.let { return it }
 
-        if (!notLocal) {
+        if (local) {
             trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable))
         }
 
@@ -70,8 +70,8 @@ class VariableTypeAndInitializerResolver(
             scopeForInitializer: LexicalScope,
             variable: KtVariableDeclaration,
             dataFlowInfo: DataFlowInfo,
-            notLocal: Boolean,
-            trace: BindingTrace
+            trace: BindingTrace,
+            local: Boolean
     ): KotlinType? {
         val propertyTypeRef = variable.typeReference
         return when {
@@ -82,7 +82,7 @@ class VariableTypeAndInitializerResolver(
                     resolveDelegatedPropertyType(variable, variableDescriptor, scopeForInitializer, dataFlowInfo, trace)
 
             variable.hasInitializer() -> when {
-                notLocal ->
+                !local ->
                     DeferredType.createRecursionIntolerant(
                             storageManager,
                             trace
