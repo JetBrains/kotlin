@@ -1194,8 +1194,6 @@ public abstract interface class kotlin/reflect/KParameter : kotlin/reflect/KAnno
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getType ()Lkotlin/reflect/KType;
 	public abstract fun isCoroutine ()Z
-	public abstract fun isCrossinline ()Z
-	public abstract fun isNoinline ()Z
 	public abstract fun isOptional ()Z
 	public abstract fun isVararg ()Z
 }
