@@ -82,10 +82,17 @@ class IllegalIdentifierInspection : AbstractKotlinInspection() {
             val file = element.containingFile ?: return
             if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
             val editorManager = FileEditorManager.getInstance(project)
-            val editor = editorManager.getSelectedEditor(file.virtualFile) ?: return
-            val dataContext = DataManager.getInstance().getDataContext(editor.component)
+            val fileEditor = editorManager.getSelectedEditor(file.virtualFile) ?: return
+            val dataContext = DataManager.getInstance().getDataContext(fileEditor.component)
             val renameHandler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext)
-            renameHandler?.invoke(project, arrayOf(element), dataContext);
+
+            val editor = editorManager.selectedTextEditor
+            if (editor != null) {
+                renameHandler?.invoke(project, editor, file, dataContext)
+            }
+            else {
+                renameHandler?.invoke(project, arrayOf(element.parent), dataContext)
+            }
         }
     }
 }
