@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.android.util.AndroidUtils
 import com.android.SdkConstants
+import com.intellij.openapi.module.ModuleUtil
 import org.jetbrains.android.augment.AndroidPsiElementFinder
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -67,6 +68,7 @@ private fun getReferredInfo(
     val firstPart = getReceiverAsSimpleNameExpression(middlePart) ?: return null
 
     val resolvedClass = firstPart.mainReference.resolve() as? PsiClass ?: return null
+    val resolvedModule = ModuleUtil.findModuleForPsiElement(resolvedClass)
 
     //the following code is copied from
     // org.jetbrains.android.util.AndroidResourceUtil.getReferredResourceOrManifestField
@@ -81,7 +83,7 @@ private fun getReferredInfo(
     val qName = resolvedClass.qualifiedName
 
     if (SdkConstants.CLASS_R == qName || AndroidPsiElementFinder.INTERNAL_R_CLASS_QNAME == qName) {
-        return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, true, false)
+        return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, resolvedModule, true, false)
     }
     val containingFile = resolvedClass.containingFile ?: return null
 
@@ -93,7 +95,7 @@ private fun getReferredInfo(
         return null
     }
 
-    return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, false, fromManifest)
+    return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, resolvedModule, false, fromManifest)
 }
 
 private fun getReceiverAsSimpleNameExpression(exp: KtSimpleNameExpression): KtSimpleNameExpression? {
