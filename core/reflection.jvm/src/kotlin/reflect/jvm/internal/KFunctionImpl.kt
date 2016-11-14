@@ -135,9 +135,6 @@ internal class KFunctionImpl private constructor(
     override val isInfix: Boolean
         get() = descriptor.isInfix
 
-    override val isTailrec: Boolean
-        get() = descriptor.isTailrec
-
     override val isSuspend: Boolean
         get() = descriptor.isSuspend
 

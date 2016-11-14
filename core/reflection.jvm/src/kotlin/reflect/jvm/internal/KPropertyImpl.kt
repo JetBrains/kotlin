@@ -118,7 +118,6 @@ internal abstract class KPropertyImpl<out R> private constructor(
         override val isExternal: Boolean get() = descriptor.isExternal
         override val isOperator: Boolean get() = descriptor.isOperator
         override val isInfix: Boolean get() = descriptor.isInfix
-        override val isTailrec: Boolean get() = descriptor.isTailrec
         override val isSuspend: Boolean get() = descriptor.isSuspend
     }
 

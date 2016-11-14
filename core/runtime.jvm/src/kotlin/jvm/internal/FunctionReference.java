@@ -62,11 +62,6 @@ public class FunctionReference extends CallableReference implements FunctionImpl
     }
 
     @Override
-    public boolean isTailrec() {
-        return getReflected().isTailrec();
-    }
-
-    @Override
     public boolean isSuspend() {
         return getReflected().isSuspend();
     }

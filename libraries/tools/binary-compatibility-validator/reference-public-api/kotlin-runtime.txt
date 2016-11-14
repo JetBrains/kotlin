@@ -509,7 +509,6 @@ public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/Callabl
 	public fun isInline ()Z
 	public fun isOperator ()Z
 	public fun isSuspend ()Z
-	public fun isTailrec ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1156,7 +1155,6 @@ public abstract interface class kotlin/reflect/KFunction : kotlin/Function, kotl
 	public abstract fun isInline ()Z
 	public abstract fun isOperator ()Z
 	public abstract fun isSuspend ()Z
-	public abstract fun isTailrec ()Z
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty : kotlin/reflect/KProperty {
