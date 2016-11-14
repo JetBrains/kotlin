@@ -8,7 +8,7 @@
     <property name="android.studio.version" value="2.2.0.1"/>
     <property name="android.studio.build.number" value="145.2915834"/>
     <property name="android.studio.intellij-core.build.number" value="145.597.3"/>
-    <property name="android.studio.url" value="http://tools.android.com/download/studio/builds/2-2-2"/>
+    <property name="android.studio.check.url" value="http://tools.android.com/download/studio/builds/2-2-2"/>
 
     <property name="kotlin.bootstrap.branch" value=""/>
     <property name="kotlin.bootstrap.branch.locator" value=""/>
@@ -903,7 +903,7 @@
 
         <sequential unless:set="have.android.version">
             <loadresource property="android.version">
-                <url url="${android.studio.url}"/>
+                <url url="${android.studio.check.url}"/>
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
@@ -914,7 +914,7 @@
                 </filterchain>
             </loadresource>
             <loadresource property="android.build.version">
-                <url url="${android.studio.url}"/>
+                <url url="${android.studio.check.url}"/>
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
