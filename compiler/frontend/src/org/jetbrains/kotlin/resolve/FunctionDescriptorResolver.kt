@@ -128,8 +128,7 @@ class FunctionDescriptorResolver(
             builtIns.unitType
         }
         else if (function.hasBody()) {
-            descriptorResolver.inferReturnTypeFromExpressionBody(storageManager, expressionTypingServices, trace, scope,
-                                              dataFlowInfo, function, functionDescriptor)
+            descriptorResolver.inferReturnTypeFromExpressionBody(trace, scope, dataFlowInfo, function, functionDescriptor)
         }
         else {
             ErrorUtils.createErrorType("No type, no body")

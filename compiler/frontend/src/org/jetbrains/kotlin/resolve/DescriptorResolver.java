@@ -1017,9 +1017,7 @@ public class DescriptorResolver {
         KtProperty property = getter.getProperty();
         if (!property.hasDelegateExpressionOrInitializer() && property.getTypeReference() == null &&
             getter.hasBody() && !getter.hasBlockBody()) {
-            return inferReturnTypeFromExpressionBody(
-                    storageManager, expressionTypingServices, trace, scope, DataFlowInfoFactory.EMPTY, getter, getterDescriptor
-            );
+            return inferReturnTypeFromExpressionBody(trace, scope, DataFlowInfoFactory.EMPTY, getter, getterDescriptor);
         }
 
         return propertyType;
@@ -1027,8 +1025,6 @@ public class DescriptorResolver {
 
     @NotNull
     /*package*/ DeferredType inferReturnTypeFromExpressionBody(
-            @NotNull StorageManager storageManager,
-            @NotNull final ExpressionTypingServices expressionTypingServices,
             @NotNull final BindingTrace trace,
             @NotNull final LexicalScope scope,
             @NotNull final DataFlowInfo dataFlowInfo,
