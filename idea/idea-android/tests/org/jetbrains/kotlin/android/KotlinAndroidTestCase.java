@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.android;
 
 import com.android.SdkConstants;
-import com.android.ide.common.rendering.RenderSecurityManager;
-import com.android.tools.idea.rendering.PsiProjectListener;
+import com.android.tools.idea.rendering.RenderSecurityManager;
+import com.android.tools.idea.res.PsiProjectListener;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
@@ -129,7 +129,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
             final Module additionalModule = data.myModuleFixtureBuilder.getFixture().getModule();
             myAdditionalModules.add(additionalModule);
             final AndroidFacet facet = addAndroidFacet(additionalModule, sdkPath, getPlatformDir());
-            facet.setLibraryProject(data.myLibrary);
+            facet.setProjectType(data.myLibrary ? 1 : 0);
             final String rootPath = getContentRootPath(data.myDirName);
             myFixture.copyDirectoryToProject("res", rootPath + "/res");
             myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML,
