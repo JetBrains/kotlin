@@ -107,7 +107,18 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
             if (initExpression != null) {
                 initExpression = v.accept(initExpression);
             } else if (initVars != null) {
-                initVars = v.acceptStatement(initVars);
+                JsStatement newInitVars = v.<JsStatement>acceptStatement(initVars);
+                if (newInitVars instanceof JsVars) {
+                    initVars = (JsVars) newInitVars;
+                }
+                else {
+                    initVars = null;
+                    if (newInitVars instanceof JsExpressionStatement) {
+                        initExpression = ((JsExpressionStatement) newInitVars).getExpression();
+                    } else if (newInitVars != null) {
+                        ctx.addPrevious(newInitVars);
+                    }
+                }
             }
 
             if (condition != null) {

@@ -21,11 +21,13 @@ import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-fun JsNode.collectNodesToSplit(): Set<JsNode> {
+fun JsNode.collectNodesToSplit(breakContinueTargets: Map<JsContinue, JsStatement>): Set<JsNode> {
+    val root = this
     val nodes = mutableSetOf<JsNode>()
 
     val visitor = object : RecursiveJsVisitor() {
         var childrenInSet = false
+        var finallyLevel = 0
 
         override fun visitInvocation(invocation: JsInvocation) {
             super.visitInvocation(invocation)
@@ -37,23 +39,41 @@ fun JsNode.collectNodesToSplit(): Set<JsNode> {
 
         override fun visitReturn(x: JsReturn) {
             super.visitReturn(x)
-            nodes += x
-            childrenInSet = true
+
+            if (root in nodes || finallyLevel > 0) {
+                nodes += x
+                childrenInSet = true
+            }
         }
 
         override fun visitBreak(x: JsBreak) {
             super.visitBreak(x)
 
-            // It's a simplification
-            // TODO: don't split break and continue statements when possible
-            nodes += x
-            childrenInSet = true
+            val breakTarget = breakContinueTargets[x]!!
+            if (breakTarget in nodes) {
+                nodes += x
+                childrenInSet = true
+            }
         }
 
         override fun visitContinue(x: JsContinue) {
             super.visitContinue(x)
-            nodes += x
-            childrenInSet = true
+
+            val continueTarget = breakContinueTargets[x]!!
+            if (continueTarget in nodes) {
+                nodes += x
+                childrenInSet = true
+            }
+        }
+
+        override fun visitTry(x: JsTry) {
+            if (x.finallyBlock != null) {
+                finallyLevel++
+            }
+            super.visitTry(x)
+            if (x.finallyBlock != null) {
+                finallyLevel--
+            }
         }
 
         override fun visitElement(node: JsNode) {
@@ -71,8 +91,12 @@ fun JsNode.collectNodesToSplit(): Set<JsNode> {
         }
     }
 
-    visitor.accept(this)
-    visitor.accept(this)
+    while (true) {
+        val countBefore = nodes.size
+        visitor.accept(this)
+        val countAfter = nodes.size
+        if (countAfter == countBefore) break
+    }
 
     return nodes
 }

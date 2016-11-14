@@ -51,7 +51,7 @@ class CoroutineBodyTransformer(
 
     fun preProcess(node: JsNode) {
         breakContinueTargetStatements += node.collectBreakContinueTargets()
-        nodesToSplit = node.collectNodesToSplit()
+        nodesToSplit = node.collectNodesToSplit(breakContinueTargetStatements)
     }
 
     fun postProcess(): List<CoroutineBlock> {
