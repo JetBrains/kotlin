@@ -240,9 +240,6 @@ public final class StaticContext {
             if (KotlinBuiltIns.isAny(classDescriptor)) {
                 return pureFqn("Object", null);
             }
-            if (DescriptorUtils.getFqName(classDescriptor).asString().equals("kotlin.Throwable")) {
-                return pureFqn("Error", null);
-            }
         }
 
         SuggestedName suggested = nameSuggestion.suggest(descriptor);
