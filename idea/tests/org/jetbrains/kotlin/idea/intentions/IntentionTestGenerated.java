@@ -11799,6 +11799,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSingleLineLetIntention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/assignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("comparisons.kt")
+        public void testComparisons() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/comparisons.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaWithBinaryExpression.kt")
         public void testLambdaWithBinaryExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/lambdaWithBinaryExpression.kt");
@@ -11949,6 +11961,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("plusNullable.kt")
+        public void testPlusNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/plusNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("receiverWithLambda.kt")
         public void testReceiverWithLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/receiverWithLambda.kt");
@@ -11967,6 +11985,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("smartCastInBody.kt")
+        public void testSmartCastInBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/smartCastInBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("this.kt")
         public void testThis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/this.kt");
@@ -11976,6 +12000,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("thisShort.kt")
         public void testThisShort() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/thisShort.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeChecks.kt")
+        public void testTypeChecks() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/typeChecks.kt");
             doTest(fileName);
         }
     }
