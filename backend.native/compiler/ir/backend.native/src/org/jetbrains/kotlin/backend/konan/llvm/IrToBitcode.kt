@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
+import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -331,7 +333,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (value.descriptor.dispatchReceiverParameter != null) {
             if (value.descriptor.getter != null) {
                 val tmpThis = codegen.load(codegen.thisVariable(), codegen.newVar())
-                return evaluateSimpleFunctionCall(codegen.newVar(), value.descriptor.getter!!.original, mutableListOf(tmpThis))!!
+                return evaluateSimpleFunctionCall(codegen.newVar(), value.descriptor.getter!!.original, listOf(tmpThis))!!
             } else {
                 val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
                 val typedPtr = codegen.bitcast(pointerType(codegen.classType(codegen.currentClass!!)), thisPtr, codegen.newVar())
@@ -385,7 +387,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+    private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         //logger.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
         if (descriptor.isOverridable)
             return callVirtual(descriptor, args, tmpVariableName)
@@ -395,7 +397,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+    private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
         when (descriptor) {
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (tmpVariableName, callee,     args)
@@ -406,7 +408,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateConstructorCall(variableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+    private fun evaluateConstructorCall(variableName: String, callee: IrCall, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
         logger.log("evaluateConstructorCall    : $variableName = ${ir2string(callee)}")
         memScoped {
             val containingClass = (callee.descriptor as ClassConstructorDescriptor).containingDeclaration
@@ -414,9 +416,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val allocHint = Int32(1).getLlvmValue()
             val thisValue = if (containingClass.isArray) {
                 assert(args.size == 1 && LLVMTypeOf(args[0]) == LLVMInt32Type())
-                codegen.call(context.allocArrayFunction, mutableListOf(typeInfo, allocHint, args[0]), variableName)
+                codegen.call(context.allocArrayFunction, listOf(typeInfo, allocHint, args[0]), variableName)
             } else {
-                codegen.call(context.allocInstanceFunction, mutableListOf(typeInfo, allocHint), variableName)
+                codegen.call(context.allocInstanceFunction, listOf(typeInfo, allocHint), variableName)
             }
             val constructorParams: MutableList<LLVMOpaqueValue?> = mutableListOf()
             constructorParams += thisValue
@@ -426,30 +428,51 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-    private val EQEQ = Name.identifier("EQEQ")
+    private val kEqeq        = Name.identifier("EQEQ")
+    private val kGt0         = Name.identifier("GT0")
+    private val kGteq0       = Name.identifier("GTEQ0")
+    private val kLt0         = Name.identifier("LT0")
+    private val kLteq0       = Name.identifier("LTEQ0")
+    private val kNot         = Name.identifier("NOT")
+    private val kImmZero     = LLVMConstInt(LLVMInt32Type(),  0, 1)!!
+    private val kTrue        = LLVMConstInt(LLVMInt1Type(),   1, 1)!!
+    private val kFalse       = LLVMConstInt(LLVMInt1Type(),   0, 1)!!
 
-    private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: MutableList<LLVMOpaqueValue?>): LLVMOpaqueValue {
+
+    private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue {
         logger.log("evaluateCall $tmpVariableName origin:$callee")
         val descriptor = callee.descriptor
         when (descriptor.name) {
-            EQEQ -> return evaluateOperatorEqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
+            kEqeq  -> return evaluateOperatorEqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
+            kGt0   -> return codegen.icmpGt(args[0]!!, kImmZero, tmpVariableName)
+            kGteq0 -> return codegen.icmpGe(args[0]!!, kImmZero, tmpVariableName)
+            kLt0   -> return codegen.icmpLt(args[0]!!, kImmZero, tmpVariableName)
+            kLteq0 -> return codegen.icmpLe(args[0]!!, kImmZero, tmpVariableName)
+            kNot   -> return codegen.icmpNe(args[0]!!, kTrue,    tmpVariableName)
             else -> {
                 TODO()
             }
         }
     }
 
+    //-------------------------------------------------------------------------//
+
     private fun evaluateOperatorEqeq(callee: IrBinaryPrimitiveImpl, arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, tmpVariableName: String):LLVMOpaqueValue {
-        val operandType = callee.argument0.type
-        assert(operandType == callee.argument1.type)
+        val arg0Type = callee.argument0.type
+        val isFp  = KotlinBuiltIns.isDouble(arg0Type) || KotlinBuiltIns.isFloat(arg0Type)
+        val isInt = KotlinBuiltIns.isPrimitiveType(arg0Type) && !isFp
+        assert(arg0Type == callee.argument1.type)
         when {
-            KotlinBuiltIns.isByte  (operandType) -> return codegen.icmpEq(arg0, arg1, tmpVariableName)
-            KotlinBuiltIns.isShort (operandType) -> return codegen.icmpEq(arg0, arg1, tmpVariableName)
-            KotlinBuiltIns.isInt   (operandType) -> return codegen.icmpEq(arg0, arg1, tmpVariableName)
-            KotlinBuiltIns.isLong  (operandType) -> return codegen.icmpEq(arg0, arg1, tmpVariableName)
-            KotlinBuiltIns.isFloat (operandType) -> return codegen.fcmpEq(arg0, arg1, tmpVariableName)
-            KotlinBuiltIns.isDouble(operandType) -> return codegen.fcmpEq(arg0, arg1, tmpVariableName)
-            else                                 -> TODO("ComplexType")
+            isFp  -> return codegen.fcmpEq(arg0, arg1, tmpVariableName)
+            isInt -> return codegen.icmpEq(arg0, arg1, tmpVariableName)
+            else  -> {
+                val functions = arg0Type.memberScope.getContributedFunctions(Name.identifier("equals"), NoLookupLocation.FROM_BACKEND).filter {
+                    it.valueParameters.size == 1 && KotlinBuiltIns.isAnyOrNullableAny(it.valueParameters[0].type)
+                }
+                assert(functions.size == 1)
+                val descriptor = functions.first()
+                return evaluateSimpleFunctionCall(tmpVariableName, descriptor, listOf(arg0, arg1))!!
+            }
         }
     }
 

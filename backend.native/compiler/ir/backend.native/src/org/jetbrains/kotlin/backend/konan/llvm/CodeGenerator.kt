@@ -127,6 +127,11 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
     /* integers comparisons */
     fun icmpEq(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, result)!!
+    fun icmpGt(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, result)!!
+    fun icmpGe(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGE, arg0, arg1, result)!!
+    fun icmpLt(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, result)!!
+    fun icmpLe(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, result)!!
+    fun icmpNe(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, result)!!
 
     /* floating-point comparisons */
     fun fcmpEq(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildFCmp(context.llvmBuilder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
