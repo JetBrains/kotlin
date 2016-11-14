@@ -10,11 +10,20 @@ package kotlin
  */
 //@Target(AnnotationTarget.FUNCTION)
 //@Retention(AnnotationRetention.SOURCE)
-annotation class SymbolName(val name: kotlin.String)
+annotation class SymbolName(val name: String)
 
 /**
  * Exports the TypeInfo of this class by given name to use it from runtime.
  */
 //@Target(AnnotationTarget.CLASS)
 //@Retention(AnnotationRetention.SOURCE)
-annotation class ExportTypeInfo(val name: kotlin.String)
+annotation class ExportTypeInfo(val name: String)
+
+/**
+ * Suppresses the given compilation warnings in the annotated element.
+ * @property names names of the compiler diagnostics to suppress.
+ */
+//@Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
+//        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE, TYPEALIAS)
+//@Retention(SOURCE)
+public annotation class Suppress(vararg val names: String)
