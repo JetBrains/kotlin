@@ -158,11 +158,8 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                 val referencedElement = reference.element
 
-                val argList = referencedElement.getNonStrictParentOfType<KtUserType>()?.let { jetType ->
-                    jetType.typeArgumentList
-                } ?: referencedElement.getNonStrictParentOfType<KtCallExpression>()?.let { callExpression ->
-                    callExpression.typeArgumentList
-                } ?: null
+                val argList = referencedElement.getNonStrictParentOfType<KtUserType>()?.typeArgumentList
+                              ?: referencedElement.getNonStrictParentOfType<KtCallExpression>()?.typeArgumentList
 
                 if (argList != null) {
                     val projections = argList.arguments

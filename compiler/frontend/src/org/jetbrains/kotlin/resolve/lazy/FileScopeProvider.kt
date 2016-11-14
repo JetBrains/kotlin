@@ -42,7 +42,8 @@ class FileScopeProviderImpl(
 ) : FileScopeProvider {
 
     private val cache = storageManager.createMemoizedFunction<KtFile, FileScopes> { file ->
-        val scopes = (file.originalFile as KtFile?)?.fileScopesCustomizer?.let { it.createFileScopes(fileScopeFactory) } ?: fileScopeFactory.createScopesForFile(file)
+        val scopes = (file.originalFile as KtFile?)?.fileScopesCustomizer?.createFileScopes(fileScopeFactory)
+                     ?: fileScopeFactory.createScopesForFile(file)
         bindingTrace.recordScope(scopes.lexicalScope, file)
         scopes
     }
