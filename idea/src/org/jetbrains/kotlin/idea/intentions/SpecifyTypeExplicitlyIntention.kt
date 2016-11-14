@@ -76,10 +76,6 @@ class SpecifyTypeExplicitlyIntention :
     }
 
     companion object {
-
-        private val PropertyDescriptor.getterType: KotlinType?
-            get() = getter?.returnType?.let { if (it.isError) null else it }
-
         private val PropertyDescriptor.setterType: KotlinType?
             get() = setter?.valueParameters?.firstOrNull()?.type?.let { if (it.isError) null else it }
 
@@ -110,7 +106,7 @@ class SpecifyTypeExplicitlyIntention :
             val descriptor = declaration.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
             val type = (descriptor as? CallableDescriptor)?.returnType
             if (type != null && type.isError && descriptor is PropertyDescriptor) {
-                return descriptor.getterType ?: descriptor.setterType ?: ErrorUtils.createErrorType("null type")
+                return descriptor.setterType ?: ErrorUtils.createErrorType("null type")
             }
             return type ?: ErrorUtils.createErrorType("null type")
         }

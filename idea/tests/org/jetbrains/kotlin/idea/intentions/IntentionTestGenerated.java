@@ -12916,6 +12916,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyTypeFromGetter.kt")
+        public void testPropertyTypeFromGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/propertyTypeFromGetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("publicMember.kt")
         public void testPublicMember() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/publicMember.kt");
