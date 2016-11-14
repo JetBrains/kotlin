@@ -94,7 +94,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
 
         return when (bodyExpression) {
-            is KtBinaryExpression -> bodyExpression.isApplicable(parameterName)
+            is KtBinaryExpression -> element.parent !is KtSafeQualifiedExpression && bodyExpression.isApplicable(parameterName)
             is KtDotQualifiedExpression -> bodyExpression.isApplicable(parameterName)
             else -> false
         }
@@ -105,6 +105,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         when (left) {
             is KtNameReferenceExpression -> if (left.text != parameterName) return false
             is KtDotQualifiedExpression -> if (!left.isApplicable(parameterName)) return false
+            else -> return false
         }
 
         val right = right ?: return false
