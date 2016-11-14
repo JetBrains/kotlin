@@ -560,22 +560,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return parameters.invoke();
     }
 
-    private class LazyClassTypeConstructor extends AbstractClassTypeConstructor implements LazyEntity {
+    private class LazyClassTypeConstructor extends AbstractClassTypeConstructor {
         private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
             @Override
             public List<TypeParameterDescriptor> invoke() {
                 return TypeParameterUtilsKt.computeConstructorTypeParameters(LazyClassDescriptor.this);
             }
         });
-
-        private final NullableLazyValue<Void> forceResolveAllContents =
-                c.getStorageManager().createRecursionTolerantNullableLazyValue(new Function0<Void>() {
-                    @Override
-                    public Void invoke() {
-                        doForceResolveAllContents();
-                        return null;
-                    }
-                }, null);
 
         public LazyClassTypeConstructor() {
             super(LazyClassDescriptor.this.c.getStorageManager());
@@ -672,17 +663,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         @Override
         public String toString() {
             return LazyClassDescriptor.this.getName().toString();
-        }
-
-        @Override
-        public void forceResolveAllContents() {
-            forceResolveAllContents.invoke();
-        }
-
-        private void doForceResolveAllContents() {
-            ForceResolveUtil.forceResolveAllContents(getAnnotations());
-            ForceResolveUtil.forceResolveAllContents(getSupertypes());
-            ForceResolveUtil.forceResolveAllContents(getParameters());
         }
     }
 }
