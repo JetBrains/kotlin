@@ -246,6 +246,10 @@ task minus_eq(type: UnitKonanTest) {
     source = "codegen/function/minus_eq.kt"
 }
 
+task eqeq(type: UnitKonanTest) {
+    source = "codegen/function/eqeq.kt"
+}
+
 task cycle(type: UnitKonanTest) {
     source = "codegen/cycles/cycle.kt"
 }
