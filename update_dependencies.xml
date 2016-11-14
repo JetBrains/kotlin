@@ -46,7 +46,7 @@
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
         <execute_update_with_idea_maven_artifacts
-            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
             idea.maven.version="${ideaVersion}"/>
     </target>
 
