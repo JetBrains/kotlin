@@ -194,7 +194,6 @@ object KDocRenderer {
                     }
                 }
                 MarkdownTokenTypes.TEXT,
-                MarkdownTokenTypes.CODE_LINE,
                 MarkdownTokenTypes.WHITE_SPACE,
                 MarkdownTokenTypes.COLON,
                 MarkdownTokenTypes.SINGLE_QUOTE,
@@ -205,6 +204,9 @@ object KDocRenderer {
                 MarkdownTokenTypes.RBRACKET,
                 MarkdownTokenTypes.EXCLAMATION_MARK -> {
                     sb.append(nodeText)
+                }
+                MarkdownTokenTypes.CODE_LINE -> {
+                    sb.append(nodeText.removePrefix(KDocTag.indentationWhiteSpaces).htmlEscape())
                 }
                 MarkdownTokenTypes.CODE_FENCE_CONTENT -> {
                     sb.append(nodeText.htmlEscape())

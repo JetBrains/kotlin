@@ -84,6 +84,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("IndentedCodeBlock.kt")
+    public void testIndentedCodeBlock() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/IndentedCodeBlock.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaClassUsedInKotlin.kt")
     public void testJavaClassUsedInKotlin() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaClassUsedInKotlin.kt");
