@@ -129,7 +129,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
             final Module additionalModule = data.myModuleFixtureBuilder.getFixture().getModule();
             myAdditionalModules.add(additionalModule);
             final AndroidFacet facet = addAndroidFacet(additionalModule, sdkPath, getPlatformDir());
-            facet.setLibraryProject(data.myLibrary);
+            facet.setProjectType(data.myLibrary ? 1 : 0);
             final String rootPath = getContentRootPath(data.myDirName);
             myFixture.copyDirectoryToProject("res", rootPath + "/res");
             myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML,
