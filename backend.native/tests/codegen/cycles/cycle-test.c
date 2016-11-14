@@ -2,7 +2,7 @@ extern void *resolve_symbol(const char*);
 
 int
 run_test() {
-  int (*cycle)(int) = resolve_symbol("kfun:cycle");
+  int (*cycle)(int) = resolve_symbol("kfun:cycle(Int)");
 
   if (cycle(1) != 2) return 1;
   if (cycle(0) != 1) return 1;
