@@ -57,6 +57,10 @@ class NamedNativeInteropConfig implements Named {
     }
 
     void linkerOpts(String... values) {
+        this.linkerOpts(values.toList())
+    }
+
+    void linkerOpts(List<String> values) {
         linkerOpts.addAll(values)
     }
 

@@ -62,57 +62,59 @@ compileCompilerKotlin {
     dependsOn('generateCompilerProto')
 }
 
-String[] linkerOpts1() {
-        def libs = ['-lLLVMX86Disassembler',
-                    '-lLLVMX86AsmParser',
-                    '-lLLVMX86CodeGen',
-                    '-lLLVMSelectionDAG',
-                    '-lLLVMAsmPrinter',
-                    '-lLLVMX86Desc',
-                    '-lLLVMMCDisassembler',
-                    '-lLLVMX86Info',
-                    '-lLLVMX86AsmPrinter',
-                    '-lLLVMX86Utils',
-                    '-lLLVMInterpreter',
-                    '-lLLVMCodeGen',
-                    '-lLLVMScalarOpts',
-                    '-lLLVMInstCombine',
-                    '-lLLVMInstrumentation',
-                    '-lLLVMProfileData',
-                    '-lLLVMTransformUtils',
-                    '-lLLVMBitWriter',
-                    '-lLLVMExecutionEngine',
-                    '-lLLVMTarget',
-                    '-lLLVMAnalysis',
-                    '-lLLVMRuntimeDyld',
-                    '-lLLVMObject',
-                    '-lLLVMMCParser',
-                    '-lLLVMBitReader',
-                    '-lLLVMMC',
-                    '-lLLVMCore',
-                    '-lLLVMSupport']
-    List<String> ldflags = new ArrayList<>()
-    if (isLinux())
-        ldflags.addAll(["-L$llvmDir/lib",
-                "-Wl,-Bstatic", "-Wl,--whole-archive"]
+List<String> llvmLinkerOpts() {
+    // TODO: cannot use llvm-config because it can be inaccessible during project configuration
+    final List<String> libs = [
+            '-lLLVMX86Disassembler',
+            '-lLLVMX86AsmParser',
+            '-lLLVMX86CodeGen',
+            '-lLLVMSelectionDAG',
+            '-lLLVMAsmPrinter',
+            '-lLLVMX86Desc',
+            '-lLLVMMCDisassembler',
+            '-lLLVMX86Info',
+            '-lLLVMX86AsmPrinter',
+            '-lLLVMX86Utils',
+            '-lLLVMInterpreter',
+            '-lLLVMCodeGen',
+            '-lLLVMScalarOpts',
+            '-lLLVMInstCombine',
+            '-lLLVMInstrumentation',
+            '-lLLVMProfileData',
+            '-lLLVMTransformUtils',
+            '-lLLVMBitWriter',
+            '-lLLVMExecutionEngine',
+            '-lLLVMTarget',
+            '-lLLVMAnalysis',
+            '-lLLVMRuntimeDyld',
+            '-lLLVMObject',
+            '-lLLVMMCParser',
+            '-lLLVMBitReader',
+            '-lLLVMMC',
+            '-lLLVMCore',
+            '-lLLVMSupport'
+    ]
+
+    final List<String> res = new ArrayList<>()
+
+    res << "-L$llvmDir/lib"
+
+    if (isLinux()) {
+        res.addAll(["-Wl,-Bstatic", "-Wl,--whole-archive"]
                 + libs
-                + ["-Wl,--no-whole-archive", "-Wl,-Bdynamic",
-                "-L$libffiDir/lib -lffi",
-                "-lrt", "-ldl","-lpthread", "-lz", "-lm"])
-    else
-     ldflags.addAll(["-L$llvmDir/lib", "-lc++"]
-             + libs
-             + ["-L$libffiDir/lib", "-lffi"])
-    ArrayList<String> strldflags = new ArrayList<>()
-    ldflags.forEach{strldflags.add(it.toString())}
-    return strldflags.toArray(new String[0])
+                + ["-Wl,--no-whole-archive", "-Wl,-Bdynamic"])
+    } else {
+        res.addAll(libs)
+    }
+
+    return res
 }
 
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
      compilerOpts "-fPIC", "-I$llvmDir/include"
-     linkerOpts linkerOpts1()
+     linkerOpts llvmLinkerOpts()
    }
 
    hash { // TODO: copy-pasted from ':common:compileHash'

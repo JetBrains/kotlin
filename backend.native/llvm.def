@@ -8,7 +8,7 @@ compilerOpts = -std=c99 -fPIC \
 
 linker = clang++
 
-linkerOpts = -stdlib=libc++ -fPIC -fvisibility-inlines-hidden \
+linkerOpts = -fPIC -fvisibility-inlines-hidden \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers \
     -pedantic -Wno-long-long -Wcovered-switch-default -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
     -std=c++11 \
@@ -19,4 +19,5 @@ linkerOpts.osx = \
     -lpthread -lz -lm  -lcurses
 
 linkerOpts.linux=\
-     -Wl,-z,noexecstack
+     -Wl,-z,noexecstack \
+     -lrt -ldl -lpthread -lz -lm
