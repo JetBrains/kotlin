@@ -3,6 +3,10 @@ package kotlin
 @SymbolName("Kotlin_String_fromUtf8Array")
 external fun fromUtf8Array(array: ByteArray) : String
 
+// TODO: enable, once global variables implemented.
+// @SymbolName("theEmptyString")
+// val theEmptyString = ""
+
 @ExportTypeInfo("theStringTypeInfo")
 public final class String : Comparable<String>, CharSequence {
     @SymbolName("Kotlin_String_hashCode")

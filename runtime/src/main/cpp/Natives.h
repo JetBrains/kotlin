@@ -51,6 +51,8 @@ inline const KRef* ArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
 extern "C" {
 #endif
 
+extern KString theEmptyString;
+
 // Any.kt
 KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other);
 KInt Kotlin_Any_hashCode(KConstRef thiz);
@@ -95,7 +97,7 @@ KChar Kotlin_String_get(KString thiz, KInt index);
 KString Kotlin_String_fromUtf8Array(const ArrayHeader* array);
 KString Kotlin_String_plusImpl(KString thiz, KString other);
 KInt Kotlin_String_getStringLength(KString thiz);
-KRef Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex);
+KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex);
 
 #ifdef __cplusplus
 }
