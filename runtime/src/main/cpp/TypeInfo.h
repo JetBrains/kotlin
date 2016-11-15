@@ -32,8 +32,10 @@ struct TypeInfo {
     int32_t objOffsetsCount_;
     const TypeInfo* const* implementedInterfaces_;
     int32_t implementedInterfacesCount_;
+    // Null for abstract classes and interfaces.
     // TODO: place vtable at the end of TypeInfo to eliminate the indirection.
     void* const* vtable_;
+    // Null for abstract classes and interfaces.
     const MethodTableRecord* openMethods_;
     uint32_t openMethodsCount_;
     const FieldTableRecord* fields_;

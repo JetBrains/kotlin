@@ -15,19 +15,13 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     var currentFunction:FunctionDescriptor? = null
 
     fun function(declaration: IrFunction) {
-        if (declaration.descriptor.isExternal) {
+        if (declaration.body == null) {
+            // Abstract and external methods.
             return
         }
 
         if (currentFunction == declaration.descriptor) return
         val fn = prolog(declaration)
-
-        // TODO: functions without Kotlin body must not have a bitcode body,
-        // which is required to workaround link errors
-        if (declaration.body == null) {
-            trap()
-            return
-        }
 
         var indexOffset = 0
         if (declaration.descriptor is ClassConstructorDescriptor || declaration.descriptor.dispatchReceiverParameter != null) {

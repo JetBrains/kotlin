@@ -78,9 +78,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     // TODO: optimize
     private fun getVtableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
-        if (classDesc.isInterface) {
-            return emptyList()
-        }
+        assert (!classDesc.isInterface)
 
         val superVtableEntries = if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDesc)) {
             emptyList()
@@ -108,9 +106,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private fun getMethodTableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
-        if (classDesc.isInterface) {
-            return emptyList()
-        }
+        assert (classDesc.modality != Modality.ABSTRACT)
 
         val contributedDescriptors = classDesc.unsubstitutedMemberScope.getContributedDescriptors()
         // (includes declarations from supers)
@@ -197,16 +193,26 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val fieldsPtr = staticData.placeGlobalConstArray("kfields:$className",
                 runtime.fieldTableRecordType, fields)
 
-        // TODO: compile-time resolution limits binary compatibility
-        val vtable = getVtableEntries(classDesc).map { it.implementation.entryPointAddress }
-        val vtablePtr = staticData.placeGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
+        val vtable: List<ConstValue>
+        val methods: List<ConstValue>
 
-        val methods = getMethodTableEntries(classDesc).map {
-            val nameSignature = it.functionName.localHash
+        if (classDesc.modality != Modality.ABSTRACT) {
             // TODO: compile-time resolution limits binary compatibility
-            val methodEntryPoint = it.implementation.entryPointAddress
-            MethodTableRecord(nameSignature, methodEntryPoint)
-        }.sortedBy { it.nameSignature.value }
+            vtable = getVtableEntries(classDesc).map { it.implementation.entryPointAddress }
+
+            methods = getMethodTableEntries(classDesc).map {
+                val nameSignature = it.functionName.localHash
+                // TODO: compile-time resolution limits binary compatibility
+                val methodEntryPoint = it.implementation.entryPointAddress
+                MethodTableRecord(nameSignature, methodEntryPoint)
+            }.sortedBy { it.nameSignature.value }
+        } else {
+            vtable = emptyList()
+            methods = emptyList()
+        }
+
+
+        val vtablePtr = staticData.placeGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
 
         val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
                 runtime.methodTableRecordType, methods)
