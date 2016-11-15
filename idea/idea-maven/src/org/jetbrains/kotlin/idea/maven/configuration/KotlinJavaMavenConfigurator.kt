@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.idea.maven.configuration
 
 import com.intellij.openapi.module.Module
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
-import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.configuration.hasKotlinJvmRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfigurator.STD_LIB_ID, KotlinJavaMavenConfigurator.TEST_LIB_ID, false, KotlinJavaMavenConfigurator.NAME, KotlinJavaMavenConfigurator.PRESENTABLE_TEXT) {
+class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(MAVEN_STDLIB_ID, KotlinJavaMavenConfigurator.TEST_LIB_ID, false, KotlinJavaMavenConfigurator.NAME, KotlinJavaMavenConfigurator.PRESENTABLE_TEXT) {
 
     override fun isKotlinModule(module: Module): Boolean {
         return hasKotlinJvmRuntimeInScope(module)
@@ -43,7 +44,6 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfi
 
     companion object {
         private val NAME = "maven"
-        val STD_LIB_ID = "kotlin-stdlib"
         val TEST_LIB_ID = "kotlin-test"
         private val PRESENTABLE_TEXT = "Maven"
     }

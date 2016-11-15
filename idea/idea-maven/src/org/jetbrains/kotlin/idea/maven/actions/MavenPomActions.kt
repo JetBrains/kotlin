@@ -29,8 +29,8 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.kotlin.idea.maven.PomFile
-import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class GenerateMavenCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.Compile, PomFile.DefaultPhases.Compile))
@@ -136,4 +136,4 @@ private fun MavenDomPlugin.isKotlinMavenPlugin() = groupId.stringValue == Kotlin
                                                    && artifactId.stringValue == KotlinMavenConfigurator.MAVEN_PLUGIN_ID
 
 private fun MavenDomDependency.isKotlinStdlib() = groupId.stringValue == KotlinMavenConfigurator.GROUP_ID
-                                                  && artifactId.stringValue == KotlinJavaMavenConfigurator.STD_LIB_ID
+                                                  && artifactId.stringValue == MAVEN_STDLIB_ID

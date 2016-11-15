@@ -34,9 +34,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.getLibraryProperties
-import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
-import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator
-import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
+import org.jetbrains.kotlin.idea.versions.*
 
 private fun getRuntimeLibraryVersions(
         module: Module,
@@ -134,6 +132,6 @@ internal fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: M
 
 val TargetPlatformKind<*>.mavenLibraryId: String
     get() = when (this) {
-        is TargetPlatformKind.Jvm -> KotlinJavaMavenConfigurator.STD_LIB_ID
-        is TargetPlatformKind.JavaScript -> KotlinJavascriptMavenConfigurator.STD_LIB_ID
+        is TargetPlatformKind.Jvm -> MAVEN_STDLIB_ID
+        is TargetPlatformKind.JavaScript -> MAVEN_JS_STDLIB_ID
     }

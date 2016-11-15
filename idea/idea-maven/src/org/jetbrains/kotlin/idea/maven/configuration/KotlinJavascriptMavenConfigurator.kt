@@ -20,10 +20,11 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJsRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
-class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(KotlinJavascriptMavenConfigurator.STD_LIB_ID, null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
+class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(MAVEN_JS_STDLIB_ID, null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
 
     override fun isKotlinModule(module: Module): Boolean {
         return hasKotlinJsRuntimeInScope(module)
@@ -43,7 +44,6 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(KotlinJavascri
 
     companion object {
         private val NAME = "js maven"
-        val STD_LIB_ID = "kotlin-js-library"
         private val PRESENTABLE_TEXT = "JavaScript Maven - experimental"
     }
 }
