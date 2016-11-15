@@ -365,7 +365,7 @@ fun getStepOverAction(
         // Pretend we had already did a backing step
         methodLocations
                 .filter(::isLocationSuitable)
-                .first { it.ktLineNumber() == location.ktLineNumber() }
+                .firstOrNull { it.ktLineNumber() == location.ktLineNumber() } ?: location
     }
     else {
         location
