@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetterCallImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -68,6 +69,8 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
     }
 
 }
+
+//-------------------------------------------------------------------------//
 
 internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid {
 
@@ -179,7 +182,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
    //-------------------------------------------------------------------------//
 
     override fun visitCall(expression: IrCall) {
-        logger.log("visitCall ${ir2string(expression)}")
+        logger.log("visitCall                  : ${ir2string(expression)}")
         val isUnit = KotlinBuiltIns.isUnit(expression.descriptor.returnType!!)
         val tmpVariable = if (isUnit) "" else codegen.newVar()
         evaluateExpression(tmpVariable, expression)
@@ -245,40 +248,73 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
+    // top level setter for field
+    override fun visitSetField(expression: IrSetField) {
+        logger.log("visitSetField              : ${ir2string(expression)}")
+        evaluateExpression("", expression)
+    }
 
-    private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMOpaqueValue? {
-        when (value) {
-            is IrCall            -> return evaluateCall           (tmpVariableName, value)
-            is IrGetValue        -> return evaluateGetValue       (tmpVariableName, value)
-            is IrSetVariable     -> return evaluateSetVariable    (                 value)
-            is IrVariable        -> return evaluateVariable       (                 value)
-            is IrGetField        -> return evaluateGetField       (                 value)
-            is IrConst<*>        -> return evaluateConst          (                 value)
-            is IrReturn          -> return evaluateReturn         (                 value)
-            is IrBlock           -> return evaluateBlock          (                 value)
-            null                 -> return null
-            else                 -> {
-                TODO()
-            }
-        }
+    //-------------------------------------------------------------------------//
+    // top level getter for field:
+    // normally GetField appears in following manner:
+    //
+    // PROPERTY private var globalValue: kotlin.Int
+    //   FIELD PROPERTY_BACKING_FIELD private var globalValue: kotlin.Int
+    //     EXPRESSION_BODY
+    //       CONST Int type=kotlin.Int value='1'
+    //   FUN DEFAULT_PROPERTY_ACCESSOR private fun <get-globalValue>(): kotlin.Int
+    //     BLOCK_BODY
+    //       RETURN type=kotlin.Nothing from='<get-globalValue>(): Int'
+    //         GET_FIELD 'globalValue: Int' type=kotlin.Int origin=null
+    //
+    // and this case processed via evaluateExpression from RETURN processing,
+    // where we process similar thing with generating temporal variable to return
+    // alternatively top level IR, let's assume following IR:
+    //
+    // PROPERTY private var globalValue: kotlin.Int
+    //   FUN DEFAULT_PROPERTY_ACCESSOR private fun <get-globalValue>(): kotlin.Int
+    //     BLOCK_BODY
+    //       GET_FIELD 'globalValue: Int' type=kotlin.Int origin=null
+    //
+    // in this situation our visitGetField will be charged, that why no
+    // temporal variable is required.
+    override fun visitGetField(expression: IrGetField) {
+        logger.log("visitGetField              : ${ir2string(expression)}")
+        evaluateExpression("", expression)
     }
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression?): LLVMOpaqueValue? {
-        logger.log("evaluateCall               : $tmpVariableName = ${ir2string(value)}")
-        val args = mutableListOf<LLVMOpaqueValue?>()                            // Create list of function args.
-        value!!.acceptChildrenVoid(object: IrElementVisitorVoid {               // Iterate args of the function.
-            override fun visitElement(element: IrElement) {                     // Visit arg.
-                val tmp = codegen.newVar()                                      // Create variable representing the arg in codegen
-                args.add(evaluateExpression(tmp, element as IrExpression))      // Evaluate expression and get LLVM arg
-            }
-        })
+    override fun visitField(expression: IrField) {
+        logger.log("visitField                : ${ir2string(expression)}")
+        val descriptor = expression.descriptor
+        if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
+            val globalProperty = LLVMAddGlobal(context.llvmModule, getLLVMType(descriptor.type), descriptor.symbolName)
+            LLVMSetInitializer(globalProperty, evaluateExpression("", expression.initializer))
+            return
+        }
 
-        when {
-            value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
-            value is IrDelegatingConstructorCall -> return superCall(tmpVariableName, value.descriptor, args)
-            else -> {
+        super.visitField(expression)
+
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMOpaqueValue? {
+        when (value) {
+            is IrSetterCallImpl  -> return evaluateSetterCall  (tmpVariableName, value)
+            is IrCall            -> return evaluateCall        (tmpVariableName, value)
+            is IrGetValue        -> return evaluateGetValue    (tmpVariableName, value)
+            is IrSetVariable     -> return evaluateSetVariable (                 value)
+            is IrVariable        -> return evaluateVariable    (                 value)
+            is IrGetField        -> return evaluateGetField    (                 value)
+            is IrSetField        -> return evaluateSetField    (                 value)
+            is IrConst<*>        -> return evaluateConst       (                 value)
+            is IrReturn          -> return evaluateReturn      (                 value)
+            is IrBlock           -> return evaluateBlock       (                 value)
+            is IrExpressionBody  -> return evaluateExpression  (tmpVariableName, value.expression)
+            null                 -> return null
+            else                 -> {
                 TODO()
             }
         }
@@ -331,17 +367,74 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateGetField(value: IrGetField): LLVMOpaqueValue {
         logger.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
-            if (value.descriptor.getter != null) {
-                val tmpThis = codegen.load(codegen.thisVariable(), codegen.newVar())
-                return evaluateSimpleFunctionCall(codegen.newVar(), value.descriptor.getter!!.original, listOf(tmpThis))!!
-            } else {
-                val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
-                val typedPtr = codegen.bitcast(pointerType(codegen.classType(codegen.currentClass!!)), thisPtr, codegen.newVar())
-                val fieldPtr = LLVMBuildStructGEP(codegen.context.llvmBuilder, typedPtr, codegen.indexInClass(value.descriptor), codegen.newVar())
-                return codegen.load(fieldPtr!!, codegen.newVar())
-            }
+            val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
+            return codegen.load(fieldPtrOfClass(thisPtr, value)!!, codegen.newVar())
         }
-        TODO()
+        else {
+            val ptr = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)!!
+            return codegen.load(ptr, codegen.newVar())
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateSetField(value: IrSetField): LLVMOpaqueValue {
+        logger.log("evaluateSetField           : ${ir2string(value)}")
+        val valueToAssign = evaluateExpression(codegen.newVar(), value.value)!!
+        if (value.descriptor.dispatchReceiverParameter != null) {
+            val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
+            return codegen.store(valueToAssign, fieldPtrOfClass(thisPtr, value)!!)
+        }
+        else {
+            val globalValue = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)
+            return codegen.store(valueToAssign, globalValue!!)
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    /*
+       in C:
+       struct ObjHeader *header = (struct ObjHeader *)ptr;
+       struct T* obj = (T*)&header[1];
+       return &obj->fieldX;
+
+       in llvm ir:
+       %struct.ObjHeader = type { i32, i32 }
+       %struct.Object = type { i32, i32 }
+
+       ; Function Attrs: nounwind ssp uwtable
+       define i32 @fooField2(i8*) #0 {
+         %2 = alloca i8*, align 8
+         %3 = alloca %struct.ObjHeader*, align 8
+         %4 = alloca %struct.Object*, align 8
+         store i8* %0, i8** %2, align 8
+         %5 = load i8*, i8** %2, align 8
+         %6 = bitcast i8* %5 to %struct.ObjHeader*
+         store %struct.ObjHeader* %6, %struct.ObjHeader** %3, align 8
+         %7 = load %struct.ObjHeader*, %struct.ObjHeader** %3, align 8
+
+         %8 = getelementptr inbounds %struct.ObjHeader, %struct.ObjHeader* %7, i64 1; <- (T*)&header[1];
+
+         %9 = bitcast %struct.ObjHeader* %8 to %struct.Object*
+         store %struct.Object* %9, %struct.Object** %4, align 8
+         %10 = load %struct.Object*, %struct.Object** %4, align 8
+         %11 = getelementptr inbounds %struct.Object, %struct.Object* %10, i32 0, i32 0 <-  &obj->fieldX
+         %12 = load i32, i32* %11, align 4
+         ret i32 %12
+       }
+
+    */
+    private fun fieldPtrOfClass(thisPtr: LLVMOpaqueValue, value: IrFieldAccessExpression): LLVMOpaqueValue? {
+        val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, thisPtr, codegen.newVar())
+        val typePtr = pointerType(codegen.classType(codegen.currentClass!!))
+        memScoped {
+            val args = allocNativeArrayOf(LLVMOpaqueValue, Int32(1).getLlvmValue())
+            val objectPtr = LLVMBuildGEP(codegen.context.llvmBuilder, objHeaderPtr,  args[0], 1, codegen.newVar())
+            val typedObjPtr = codegen.bitcast(typePtr, objectPtr!!, codegen.newVar())
+            val fieldPtr = LLVMBuildStructGEP(codegen.context.llvmBuilder, typedObjPtr, codegen.indexInClass(value.descriptor), codegen.newVar())
+            return fieldPtr
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -387,12 +480,23 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
-        //logger.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
-        if (descriptor.isOverridable)
-            return callVirtual(descriptor, args, tmpVariableName)
-        else
-            return callDirect(descriptor, args, tmpVariableName)
+    private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression?): LLVMOpaqueValue? {
+        logger.log("evaluateCall               : $tmpVariableName = ${ir2string(value)}")
+        val args = mutableListOf<LLVMOpaqueValue?>()                            // Create list of function args.
+        value!!.acceptChildrenVoid(object: IrElementVisitorVoid {               // Iterate args of the function.
+            override fun visitElement(element: IrElement) {                     // Visit arg.
+                val tmp = codegen.newVar()                                      // Create variable representing the arg in codegen
+                args.add(evaluateExpression(tmp, element as IrExpression))      // Evaluate expression and get LLVM arg
+            }
+        })
+
+        when {
+            value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
+            value is IrDelegatingConstructorCall -> return superCall(tmpVariableName, value.descriptor, args)
+            else -> {
+                TODO()
+            }
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -404,6 +508,27 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is ClassConstructorDescriptor      -> return evaluateConstructorCall   (tmpVariableName, callee,     args)
             else                               -> return evaluateSimpleFunctionCall(tmpVariableName, descriptor, args)
         }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+        //logger.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
+        if (descriptor.isOverridable)
+            return callVirtual(descriptor, args, tmpVariableName)
+        else
+            return callDirect(descriptor, args, tmpVariableName)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateSetterCall(tmpVariableName: String, value: IrSetterCallImpl): LLVMOpaqueValue? {
+        val descriptor = value.descriptor as FunctionDescriptor
+        val args       = mutableListOf<LLVMOpaqueValue?>()
+        if (descriptor.dispatchReceiverParameter != null)
+            args.add(evaluateExpression(codegen.newVar(), value.dispatchReceiver))         //add this ptr
+        args.add(evaluateExpression(codegen.newVar(), value.getValueArgument(0)))
+        return evaluateSimpleFunctionCall(tmpVariableName, descriptor, args)
     }
 
     //-------------------------------------------------------------------------//
@@ -533,10 +658,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     /* Runtime constant */
-    private val kTypeInfo    = LLVMGetTypeByName(context.llvmModule, "struct.TypeInfo")!!
-    private val kTypeInfoPtr = pointerType(kTypeInfo)
-    private val kInt8Ptr     = pointerType(LLVMInt8Type())
-    private val kInt8PtrPtr  = pointerType(kInt8Ptr)
+    private val kTypeInfo     = LLVMGetTypeByName(context.llvmModule, "struct.TypeInfo")!!
+    private val kObjHeader    = LLVMGetTypeByName(context.llvmModule, "struct.ObjHeader")!!
+    private val kObjHeaderPtr = pointerType(kObjHeader)!!
+    private val kTypeInfoPtr  = pointerType(kTypeInfo)
+    private val kInt8Ptr      = pointerType(LLVMInt8Type())
+    private val kInt8PtrPtr   = pointerType(kInt8Ptr)
 
     //-------------------------------------------------------------------------//
 

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -54,3 +55,6 @@ internal val ClassDescriptor.symbolName: String
 
 internal val ClassDescriptor.typeInfoSymbolName: String
     get() = "ktype:" + this.fqNameSafe.toString()
+
+internal val PropertyDescriptor.symbolName:String
+get() = "kvar:${this.containingDeclaration.name.asString()}.${this.name.asString()}"
