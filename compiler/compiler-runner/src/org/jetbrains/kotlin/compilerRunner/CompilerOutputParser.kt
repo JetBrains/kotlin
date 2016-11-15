@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -155,15 +154,14 @@ object CompilerOutputParser {
         }
 
         companion object {
-            private val CATEGORIES = ContainerUtil.ImmutableMapBuilder<String, CompilerMessageSeverity>()
-                    .put("error", ERROR)
-                    .put("warning", WARNING)
-                    .put("logging", LOGGING)
-                    .put("output", OUTPUT)
-                    .put("exception", EXCEPTION)
-                    .put("info", INFO)
-                    .put("messages", INFO) // Root XML element
-                    .build()
+            private val CATEGORIES = mapOf(
+                    "error" to ERROR,
+                    "warning" to WARNING,
+                    "logging" to LOGGING,
+                    "output" to OUTPUT,
+                    "exception" to EXCEPTION,
+                    "info" to INFO,
+                    "messages" to INFO)
 
             private fun safeParseInt(value: String?, defaultValue: Int): Int {
                 if (value == null) {
