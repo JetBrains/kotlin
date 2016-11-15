@@ -18,7 +18,10 @@ task uploadPlugins() << {
     if (channel == "_default_") {
         channel = null
     }
-    def path = env['PLUGIN_UPLOAD_PATH'] || "."
+    def path = env['PLUGIN_UPLOAD_PATH']
+    if (path == null) {
+        path = "."
+    }
     def repo = new org.jetbrains.intellij.pluginRepository.PluginRepositoryInstance(
             "https://plugins.jetbrains.com/",
             username, password)
