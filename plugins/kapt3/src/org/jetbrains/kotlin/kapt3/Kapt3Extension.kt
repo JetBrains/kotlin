@@ -46,10 +46,14 @@ class ClasspathBasedKapt3Extension(
         val stubsOutputDir: File?,
         options: Map<String, String>,
         aptOnly: Boolean,
+        val useLightAnalysis: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger
 ) : AbstractKapt3Extension(annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
                            classFilesOutputDir, options, aptOnly, pluginInitializedTime, logger) {
+    override val analyzePartially: Boolean
+        get() = useLightAnalysis
+
     override fun loadProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
         val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
