@@ -26,6 +26,8 @@ open class KaptExtension {
 
     open var inheritedAnnotations: Boolean = true
 
+    open var useLightAnalysis: Boolean = true
+
     private var closure: Closure<*>? = null
 
     open fun arguments(closure: Closure<*>) {
