@@ -96,6 +96,18 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("JavaDocFromOverridenClass.kt")
+    public void testJavaDocFromOverridenClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaDocFromOverridenClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("JavaDocFromOverridenInterface.kt")
+    public void testJavaDocFromOverridenInterface() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaDocFromOverridenInterface.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaMethodUsedInKotlin.kt")
     public void testJavaMethodUsedInKotlin() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/JavaMethodUsedInKotlin.kt");

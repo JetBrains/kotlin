@@ -18,12 +18,18 @@ package org.jetbrains.kotlin.idea
 
 import com.google.common.html.HtmlEscapers
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
+import com.intellij.codeInsight.javadoc.JavaDocInfoGenerator
+import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.java.JavaDocumentationProvider
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -36,6 +42,7 @@ import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.idea.kdoc.isBoringBuiltinClass
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -167,6 +174,18 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
                 else {
                     renderedDecl = "$renderedDecl<br/>$renderedComment"
+                }
+            }
+            else {
+                if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
+                    val psi = declarationDescriptor.findPsi() as? KtFunction
+                    if (psi != null) {
+                        val lightElement = LightClassUtil.getLightClassMethod(psi) // Light method for super's scan in javadoc info gen
+                        val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
+                        val builder = StringBuilder()
+                        if (javaDocInfoGenerator.generateDocInfoCore(builder, false))
+                            renderedDecl += builder.toString().substringAfter("</PRE>") // Cut off light method signature
+                    }
                 }
             }
 
