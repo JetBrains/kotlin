@@ -54,6 +54,18 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
         doTest(fileName);
     }
 
+    @TestMetadata("FQLinkInTag1.kt")
+    public void testFQLinkInTag1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/FQLinkInTag1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FQLinkInTag2.kt")
+    public void testFQLinkInTag2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/FQLinkInTag2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Link.kt")
     public void testLink() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/kdoc/Link.kt");
