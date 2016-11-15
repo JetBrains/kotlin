@@ -7595,380 +7595,230 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class TailRecursion extends AbstractJsCodegenBoxTest {
-                public void testAllFilesPresentInTailRecursion() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/tailRecursion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-                }
-
                 @TestMetadata("defaultArgs.kt")
-                public void testDefaultArgs() throws Exception {
+                public void ignoreDefaultArgs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgs.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("defaultArgsOverridden.kt")
-                public void testDefaultArgsOverridden() throws Exception {
+                public void ignoreDefaultArgsOverridden() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsOverridden.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("extensionTailCall.kt")
-                public void testExtensionTailCall() throws Exception {
+                public void ignoreExtensionTailCall() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/extensionTailCall.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("functionWithNoTails.kt")
-                public void testFunctionWithNoTails() throws Exception {
+                public void ignoreFunctionWithNoTails() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/functionWithNoTails.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("functionWithNonTailRecursions.kt")
-                public void testFunctionWithNonTailRecursions() throws Exception {
+                public void ignoreFunctionWithNonTailRecursions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/functionWithNonTailRecursions.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("functionWithoutAnnotation.kt")
-                public void testFunctionWithoutAnnotation() throws Exception {
+                public void ignoreFunctionWithoutAnnotation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/functionWithoutAnnotation.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("infixCall.kt")
-                public void testInfixCall() throws Exception {
+                public void ignoreInfixCall() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/infixCall.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("infixRecursiveCall.kt")
-                public void testInfixRecursiveCall() throws Exception {
+                public void ignoreInfixRecursiveCall() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/infixRecursiveCall.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("insideElvis.kt")
-                public void testInsideElvis() throws Exception {
+                public void ignoreInsideElvis() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/insideElvis.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("labeledThisReferences.kt")
-                public void testLabeledThisReferences() throws Exception {
+                public void ignoreLabeledThisReferences() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/labeledThisReferences.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("loops.kt")
-                public void testLoops() throws Exception {
+                public void ignoreLoops() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/loops.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("multilevelBlocks.kt")
-                public void testMultilevelBlocks() throws Exception {
+                public void ignoreMultilevelBlocks() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/multilevelBlocks.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("realIteratorFoldl.kt")
-                public void testRealIteratorFoldl() throws Exception {
+                public void ignoreRealIteratorFoldl() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/realIteratorFoldl.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("realStringEscape.kt")
-                public void testRealStringEscape() throws Exception {
+                public void ignoreRealStringEscape() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/realStringEscape.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("realStringRepeat.kt")
-                public void testRealStringRepeat() throws Exception {
+                public void ignoreRealStringRepeat() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/realStringRepeat.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("recursiveCallInLambda.kt")
-                public void testRecursiveCallInLambda() throws Exception {
+                public void ignoreRecursiveCallInLambda() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/recursiveCallInLambda.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("recursiveCallInLocalFunction.kt")
-                public void testRecursiveCallInLocalFunction() throws Exception {
+                public void ignoreRecursiveCallInLocalFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/recursiveCallInLocalFunction.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("recursiveInnerFunction.kt")
-                public void testRecursiveInnerFunction() throws Exception {
+                public void ignoreRecursiveInnerFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/recursiveInnerFunction.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("returnIf.kt")
-                public void testReturnIf() throws Exception {
+                public void ignoreReturnIf() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/returnIf.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("returnInCatch.kt")
-                public void testReturnInCatch() throws Exception {
+                public void ignoreReturnInCatch() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/returnInCatch.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("returnInFinally.kt")
-                public void testReturnInFinally() throws Exception {
+                public void ignoreReturnInFinally() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/returnInFinally.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("returnInIfInFinally.kt")
-                public void testReturnInIfInFinally() throws Exception {
+                public void ignoreReturnInIfInFinally() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/returnInIfInFinally.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("returnInParentheses.kt")
-                public void testReturnInParentheses() throws Exception {
+                public void ignoreReturnInParentheses() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/returnInParentheses.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("returnInTry.kt")
-                public void testReturnInTry() throws Exception {
+                public void ignoreReturnInTry() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/returnInTry.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("simpleBlock.kt")
-                public void testSimpleBlock() throws Exception {
+                public void ignoreSimpleBlock() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/simpleBlock.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("simpleReturn.kt")
-                public void testSimpleReturn() throws Exception {
+                public void ignoreSimpleReturn() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/simpleReturn.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("simpleReturnWithElse.kt")
-                public void testSimpleReturnWithElse() throws Exception {
+                public void ignoreSimpleReturnWithElse() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/simpleReturnWithElse.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("sum.kt")
-                public void testSum() throws Exception {
+                public void ignoreSum() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/sum.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("tailCallInBlockInParentheses.kt")
-                public void testTailCallInBlockInParentheses() throws Exception {
+                public void ignoreTailCallInBlockInParentheses() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/tailCallInBlockInParentheses.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("tailCallInParentheses.kt")
-                public void testTailCallInParentheses() throws Exception {
+                public void ignoreTailCallInParentheses() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/tailCallInParentheses.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("tailRecursionInFinally.kt")
-                public void testTailRecursionInFinally() throws Exception {
+                public void ignoreTailRecursionInFinally() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/tailRecursionInFinally.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("thisReferences.kt")
-                public void testThisReferences() throws Exception {
+                public void ignoreThisReferences() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/thisReferences.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("unitBlocks.kt")
-                public void testUnitBlocks() throws Exception {
+                public void ignoreUnitBlocks() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/unitBlocks.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("whenWithCondition.kt")
-                public void testWhenWithCondition() throws Exception {
+                public void ignoreWhenWithCondition() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/whenWithCondition.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("whenWithInRange.kt")
-                public void testWhenWithInRange() throws Exception {
+                public void ignoreWhenWithInRange() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/whenWithInRange.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("whenWithIs.kt")
-                public void testWhenWithIs() throws Exception {
+                public void ignoreWhenWithIs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/whenWithIs.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("whenWithoutCondition.kt")
-                public void testWhenWithoutCondition() throws Exception {
+                public void ignoreWhenWithoutCondition() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/whenWithoutCondition.kt");
-                    try {
-                        doTest(fileName);
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInTailRecursion() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/tailRecursion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
                 }
             }
         }

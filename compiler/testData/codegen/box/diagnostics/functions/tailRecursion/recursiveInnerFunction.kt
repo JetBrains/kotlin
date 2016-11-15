@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 fun test() {
     tailrec fun g3(counter : Int) {
         if (counter > 0) { g3(counter - 1) }

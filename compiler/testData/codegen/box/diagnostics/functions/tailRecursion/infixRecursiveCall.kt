@@ -1,4 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+
 tailrec infix fun Int.foo(x: Int) {
     if (x == 0) return
     val xx = x - 1
