@@ -3,6 +3,13 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.0.5-2
+
+- Fixed compatibility with Android Studio 2.3 Canary
+- [`KT-14751`](https://youtrack.jetbrains.com/issue/KT-14751) Fixed inability to resolve references to Java classes with type annotations on inner class or enum constructor parameters
+- [`KT-14752`](https://youtrack.jetbrains.com/issue/KT-14752) Fixed error when analyzing incomplete `@JsName` annotation
+- [`KT-14724`](https://youtrack.jetbrains.com/issue/KT-14724) Kotlin code compiled to JavaScript with Gradle calls `main` function by default
+
 ## 1.0.5
 
 ### Compiler
