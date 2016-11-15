@@ -21,5 +21,6 @@
     <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="module" module-name="idea-jps-common" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>
