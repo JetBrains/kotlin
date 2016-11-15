@@ -14,174 +14,168 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.compilerRunner;
+package org.jetbrains.kotlin.compilerRunner
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Stack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.xml.sax.Attributes
+import org.xml.sax.InputSource
+import org.xml.sax.SAXException
+import org.xml.sax.helpers.DefaultHandler
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Map;
+import javax.xml.parsers.SAXParser
+import javax.xml.parsers.SAXParserFactory
+import java.io.IOException
+import java.io.Reader
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
-import static org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil.reportException;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.Companion.NO_LOCATION
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil.reportException
 
-public class CompilerOutputParser {
-    public static void parseCompilerMessagesFromReader(MessageCollector messageCollector, final Reader reader, OutputItemsCollector collector) {
+object CompilerOutputParser {
+    fun parseCompilerMessagesFromReader(messageCollector: MessageCollector, reader: Reader, collector: OutputItemsCollector) {
         // Sometimes the compiler doesn't output valid XML.
         // Example: error in command line arguments passed to the compiler.
         // The compiler will print the usage and the SAX parser will break.
         // In this case, we want to read everything from this stream and report it as an IDE error.
-        final StringBuilder stringBuilder = new StringBuilder();
-        Reader wrappingReader = new Reader() {
-            @Override
-            public int read(@NotNull char[] cbuf, int off, int len) throws IOException {
-                int read = reader.read(cbuf, off, len);
-                stringBuilder.append(cbuf, off, len);
-                return read;
+        val stringBuilder = StringBuilder()
+        val wrappingReader = object : Reader() {
+            @Throws(IOException::class)
+            override fun read(cbuf: CharArray, off: Int, len: Int): Int {
+                val read = reader.read(cbuf, off, len)
+                stringBuilder.append(cbuf, off, len)
+                return read
             }
 
-            @Override
-            public void close() throws IOException {
+            @Throws(IOException::class)
+            override fun close() {
                 // Do nothing:
                 // If the SAX parser sees a syntax error, it throws an exception
                 // and calls close() on the reader.
                 // We prevent hte reader from being closed here, and close it later,
                 // when all the text is read from it
             }
-        };
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser parser = factory.newSAXParser();
-            parser.parse(new InputSource(wrappingReader), new CompilerOutputSAXHandler(messageCollector, collector));
         }
-        catch (Throwable e) {
+        try {
+            val factory = SAXParserFactory.newInstance()
+            val parser = factory.newSAXParser()
+            parser.parse(InputSource(wrappingReader), CompilerOutputSAXHandler(messageCollector, collector))
+        }
+        catch (e: Throwable) {
             // Load all the text into the stringBuilder
             try {
                 // This will not close the reader (see the wrapper above)
-                FileUtil.loadTextAndClose(wrappingReader);
+                FileUtil.loadTextAndClose(wrappingReader)
             }
-            catch (IOException ioException) {
-                reportException(messageCollector, ioException);
+            catch (ioException: IOException) {
+                reportException(messageCollector, ioException)
             }
-            String message = stringBuilder.toString();
-            reportException(messageCollector, new IllegalStateException(message, e));
-            messageCollector.report(ERROR, message, NO_LOCATION);
+
+            val message = stringBuilder.toString()
+            reportException(messageCollector, IllegalStateException(message, e))
+            messageCollector.report(ERROR, message, NO_LOCATION)
         }
         finally {
             try {
-                reader.close();
+                reader.close()
             }
-            catch (IOException e) {
-                reportException(messageCollector, e);
+            catch (e: IOException) {
+                reportException(messageCollector, e)
             }
+
         }
     }
 
-    private static class CompilerOutputSAXHandler extends DefaultHandler {
-        private static final Map<String, CompilerMessageSeverity> CATEGORIES = new ContainerUtil.ImmutableMapBuilder<String, CompilerMessageSeverity>()
-                .put("error", ERROR)
-                .put("warning", WARNING)
-                .put("logging", LOGGING)
-                .put("output", OUTPUT)
-                .put("exception", EXCEPTION)
-                .put("info", INFO)
-                .put("messages", INFO) // Root XML element
-                .build();
+    private class CompilerOutputSAXHandler(private val messageCollector: MessageCollector, private val collector: OutputItemsCollector) : DefaultHandler() {
 
-        private final MessageCollector messageCollector;
-        private final OutputItemsCollector collector;
+        private val message = StringBuilder()
+        private val tags = Stack<String>()
+        private var path: String? = null
+        private var line: Int = 0
+        private var column: Int = 0
 
-        private final StringBuilder message = new StringBuilder();
-        private final Stack<String> tags = new Stack<String>();
-        private String path;
-        private int line;
-        private int column;
+        @Throws(SAXException::class)
+        override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+            tags.push(qName)
 
-        public CompilerOutputSAXHandler(MessageCollector messageCollector, OutputItemsCollector collector) {
-            this.messageCollector = messageCollector;
-            this.collector = collector;
+            message.setLength(0)
+
+            path = attributes.getValue("path")
+            line = safeParseInt(attributes.getValue("line"), -1)
+            column = safeParseInt(attributes.getValue("column"), -1)
         }
 
-        @Override
-        public void startElement(@NotNull String uri, @NotNull String localName, @NotNull String qName, @NotNull Attributes attributes)
-                throws SAXException {
-            tags.push(qName);
-
-            message.setLength(0);
-
-            path = attributes.getValue("path");
-            line = safeParseInt(attributes.getValue("line"), -1);
-            column = safeParseInt(attributes.getValue("column"), -1);
-        }
-
-        @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
-            if (tags.size() == 1) {
+        @Throws(SAXException::class)
+        override fun characters(ch: CharArray?, start: Int, length: Int) {
+            if (tags.size == 1) {
                 // We're directly inside the root tag: <MESSAGES>
-                String message = new String(ch, start, length);
-                if (!message.trim().isEmpty()) {
-                    messageCollector.report(ERROR, "Unhandled compiler output: " + message, NO_LOCATION);
+                val message = String(ch!!, start, length)
+                if (!message.trim { it <= ' ' }.isEmpty()) {
+                    messageCollector.report(ERROR, "Unhandled compiler output: " + message, NO_LOCATION)
                 }
             }
             else {
-                message.append(ch, start, length);
+                message.append(ch, start, length)
             }
         }
 
-        @Override
-        public void endElement(String uri, @NotNull String localName, @NotNull String qName) throws SAXException {
-            if (tags.size() == 1) {
+        @Throws(SAXException::class)
+        override fun endElement(uri: String?, localName: String, qName: String) {
+            if (tags.size == 1) {
                 // We're directly inside the root tag: <MESSAGES>
-                return;
+                return
             }
-            String qNameLowerCase = qName.toLowerCase();
-            CompilerMessageSeverity category = CATEGORIES.get(qNameLowerCase);
+            val qNameLowerCase = qName.toLowerCase()
+            var category: CompilerMessageSeverity? = CATEGORIES[qNameLowerCase]
             if (category == null) {
-                messageCollector.report(ERROR, "Unknown compiler message tag: " + qName, NO_LOCATION);
-                category = INFO;
+                messageCollector.report(ERROR, "Unknown compiler message tag: " + qName, NO_LOCATION)
+                category = INFO
             }
-            String text = message.toString();
+            val text = message.toString()
 
             if (category == OUTPUT) {
-                reportToCollector(text);
+                reportToCollector(text)
             }
             else {
-                messageCollector.report(category, text, CompilerMessageLocation.create(path, line, column, null));
+                messageCollector.report(category, text, CompilerMessageLocation.create(path, line, column, null))
             }
-            tags.pop();
+            tags.pop()
         }
 
-        private void reportToCollector(String text) {
-            OutputMessageUtil.Output output = OutputMessageUtil.parseOutputMessage(text);
+        private fun reportToCollector(text: String) {
+            val output = OutputMessageUtil.parseOutputMessage(text)
             if (output != null) {
-                collector.add(output.sourceFiles, output.outputFile);
+                collector.add(output.sourceFiles, output.outputFile)
             }
         }
 
-        private static int safeParseInt(@Nullable String value, int defaultValue) {
-            if (value == null) {
-                return defaultValue;
-            }
-            try {
-                return Integer.parseInt(value.trim());
-            }
-            catch (NumberFormatException e) {
-                return defaultValue;
+        companion object {
+            private val CATEGORIES = ContainerUtil.ImmutableMapBuilder<String, CompilerMessageSeverity>()
+                    .put("error", ERROR)
+                    .put("warning", WARNING)
+                    .put("logging", LOGGING)
+                    .put("output", OUTPUT)
+                    .put("exception", EXCEPTION)
+                    .put("info", INFO)
+                    .put("messages", INFO) // Root XML element
+                    .build()
+
+            private fun safeParseInt(value: String?, defaultValue: Int): Int {
+                if (value == null) {
+                    return defaultValue
+                }
+                try {
+                    return Integer.parseInt(value.trim { it <= ' ' })
+                }
+                catch (e: NumberFormatException) {
+                    return defaultValue
+                }
+
             }
         }
     }
