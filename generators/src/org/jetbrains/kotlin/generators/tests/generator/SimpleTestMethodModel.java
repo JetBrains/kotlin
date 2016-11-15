@@ -83,11 +83,14 @@ public class SimpleTestMethodModel implements TestMethodModel {
         p.println(doTestMethodName, "(fileName);");
 
         if (isIgnoredTarget(targetBackend, file)) {
-            p.println("throw new AssertionError(\"Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.\");");
             p.popIndent();
             p.println("}");
             p.println("catch (Throwable ignore) {");
+            p.pushIndent();
+            p.println("return;");
+            p.popIndent();
             p.println("}");
+            p.println("throw new AssertionError(\"Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.\");");
         }
     }
 
