@@ -149,13 +149,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.pluginOptions = pluginOptions.arguments.toTypedArray()
         args.moduleName = moduleName
 
-        friendTaskName?.let addFriendPathForTestTask@ { friendKotlinTaskName ->
-            val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return@addFriendPathForTestTask
-            args.friendPaths = arrayOf(friendTask.javaOutputDir!!.absolutePath)
-            args.moduleName = friendTask.moduleName
-            logger.kotlinDebug("java destination directory for production = ${friendTask.javaOutputDir}")
-        }
-
+        friendTaskName?.let { addFriendPathForTestTask(it, args) }
         parentKotlinOptionsImpl?.updateArguments(args)
         kotlinOptionsImpl.updateArguments(args)
 
