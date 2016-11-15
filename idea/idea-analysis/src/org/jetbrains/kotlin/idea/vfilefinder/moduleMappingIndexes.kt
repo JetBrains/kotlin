@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.vfilefinder
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
@@ -27,14 +27,12 @@ import java.io.DataOutput
 
 object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>() {
 
-    private val classOfIndex = KotlinModuleMappingIndex::class.java.canonicalName
-
-    val KEY: ID<String, PackageParts> = ID.create(classOfIndex)
+    val KEY: ID<String, PackageParts> = ID.create(KotlinModuleMappingIndex::class.java.canonicalName)
 
     private val KEY_DESCRIPTOR = object : KeyDescriptor<String> {
-        override fun save(output: DataOutput, value: String) = output.writeUTF(value)
+        override fun save(output: DataOutput, value: String) = IOUtil.writeUTF(output, value)
 
-        override fun read(input: DataInput) = input.readUTF()
+        override fun read(input: DataInput) = IOUtil.readUTF(input)
 
         override fun getHashCode(value: String) = value.hashCode()
 
@@ -42,25 +40,16 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
     }
 
     private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
-        override fun read(`in`: DataInput): PackageParts? {
-            val packageFqName = `in`.readUTF()
-            val parts = PackageParts(packageFqName)
-            val size = `in`.readInt()
-            (1..size).forEach {
-                parts.parts.add(`in`.readUTF())
-            }
-
-            return parts
-        }
+        override fun read(input: DataInput): PackageParts? =
+                PackageParts(IOUtil.readUTF(input)).apply {
+                    parts.addAll(IOUtil.readStringList(input))
+                }
 
         override fun save(out: DataOutput, value: PackageParts?) {
-            out.writeUTF(value!!.packageFqName)
-            out.writeInt(value.parts.size)
-            value.parts.forEach { out.writeUTF(it) }
+            IOUtil.writeUTF(out, value!!.packageFqName)
+            IOUtil.writeStringList(out, value.parts)
         }
     }
-
-    private val LOG = Logger.getInstance(classOfIndex)
 
     override fun getName() = KEY
 
@@ -74,7 +63,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
         return FileBasedIndex.InputFilter { file -> file.extension == ModuleMapping.MAPPING_FILE_EXT }
     }
 
-    override fun getVersion(): Int = 1
+    override fun getVersion(): Int = 2
 
     override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
         return DataIndexer<String, PackageParts, FileContent> { inputData ->

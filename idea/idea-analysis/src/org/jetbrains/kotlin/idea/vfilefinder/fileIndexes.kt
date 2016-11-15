@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.vfilefinder
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.indexing.*
+import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.js.JsMetaFileUtils
@@ -32,9 +33,9 @@ abstract class KotlinFileIndexBase<T>(classOfIndex: Class<T>) : ScalarIndexExten
     val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
 
     private val KEY_DESCRIPTOR : KeyDescriptor<FqName> = object : KeyDescriptor<FqName> {
-        override fun save(output: DataOutput, value: FqName) = output.writeUTF(value.asString())
+        override fun save(output: DataOutput, value: FqName) = IOUtil.writeUTF(output, value.asString())
 
-        override fun read(input: DataInput) = FqName(input.readUTF())
+        override fun read(input: DataInput) = FqName(IOUtil.readUTF(input))
 
         override fun getHashCode(value: FqName) = value.asString().hashCode()
 
@@ -76,9 +77,9 @@ object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(KotlinCl
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 2
+    private val VERSION = 3
 
-    private val INDEXER = indexer() { fileContent ->
+    private val INDEXER = indexer { fileContent ->
         val headerInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file, fileContent.content)
         if (headerInfo != null && headerInfo.classHeader.metadataVersion.isCompatible()) headerInfo.classId.asSingleFqName() else null
     }
@@ -92,9 +93,9 @@ object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaF
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 2
+    private val VERSION = 3
 
-    private val INDEXER = indexer() { fileContent ->
+    private val INDEXER = indexer { fileContent ->
         if (fileContent.fileType == KotlinJavaScriptMetaFileType) JsMetaFileUtils.getClassFqName(fileContent.file) else null
     }
 
