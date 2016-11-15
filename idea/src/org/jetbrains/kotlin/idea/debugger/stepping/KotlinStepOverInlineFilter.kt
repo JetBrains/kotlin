@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.Range
 import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.idea.debugger.noStrataLineNumber
+import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
 
 class StepOverFilterData(
         val lineNumber: Int,
@@ -33,7 +33,7 @@ class StepOverFilterData(
 )
 
 class KotlinStepOverInlineFilter(val project: Project, val data: StepOverFilterData) : KotlinMethodFilter {
-    private fun Location.ktLineNumber() = noStrataLineNumber(this, data.isDexDebug, project)
+    private fun Location.ktLineNumber() = ktLocationInfo(this, data.isDexDebug, project).first
 
     override fun locationMatches(context: SuspendContextImpl, location: Location): Boolean {
         val frameProxy = context.frameProxy ?: return true

@@ -122,16 +122,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
 
         if (sourceLineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
-            val thisFunLine = getLastLineNumberForLocation(location, myDebugProcess.project)
-            if (thisFunLine != null && thisFunLine != location.lineNumber()) {
-                return SourcePosition.createFromLine(psiFile, thisFunLine - 1)
-            }
-
-            val inlinePosition = getOriginalPositionOfInlinedLine(location, myDebugProcess.project)
-
-            if (inlinePosition != null) {
-                return SourcePosition.createFromLine(inlinePosition.first, inlinePosition.second)
-            }
+            val (line, ktFile) = ktLocationInfo(location, true, myDebugProcess.project, false, psiFile)
+            return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
         }
 
         return SourcePosition.createFromLine(psiFile, sourceLineNumber)

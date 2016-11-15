@@ -67,26 +67,30 @@ fun readBytecodeInfo(project: Project,
     return KotlinDebuggerCaches.getOrReadDebugInfoFromBytecode(project, jvmName, file)
 }
 
-fun noStrataLineNumber(location: Location, isDexDebug: Boolean, project: Project, preferInlined: Boolean = false): Int {
-    if (isDexDebug) {
+fun ktLocationInfo(location: Location, isDexDebug: Boolean, project: Project,
+                   preferInlined: Boolean = false, locationFile: KtFile? = null): Pair<Int, KtFile?> {
+    if (isDexDebug && (locationFile == null || location.lineNumber() > locationFile.getLineCount())) {
         if (!preferInlined) {
             val thisFunLine = runReadAction { getLastLineNumberForLocation(location, project) }
             if (thisFunLine != null && thisFunLine != location.lineNumber()) {
-                // TODO: bad line because of inlining
-                return thisFunLine
+                return thisFunLine to locationFile
             }
         }
 
         val inlinePosition = runReadAction { getOriginalPositionOfInlinedLine(location, project) }
-
         if (inlinePosition != null) {
-            return inlinePosition.second + 1
+            val (file, line) = inlinePosition
+            return line + 1 to file
         }
     }
 
-    return location.lineNumber()
+    return location.lineNumber() to locationFile
 }
 
+/**
+ * Only the first line number is stored for instruction in dex. It can be obtained through location.lineNumber().
+ * This method allows to get last stored linenumber for instruction.
+ */
 fun getLastLineNumberForLocation(location: Location, project: Project, searchScope: GlobalSearchScope = GlobalSearchScope.allScope(project)): Int? {
     val lineNumber = location.lineNumber()
     val fqName = FqName(location.declaringType().name())
