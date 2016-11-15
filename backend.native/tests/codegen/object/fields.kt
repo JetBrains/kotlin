@@ -1,6 +1,9 @@
-class fields(a:Int) {
-    public val b:Int
-            get() = getB()
+private var globalValue = 1
+var global:Int
+    get() = globalValue
+    set(value:Int) {globalValue = value}
 
-    external fun getB():Int
+fun globalTest(i:Int):Int {
+    global += i
+    return global
 }
