@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
 
-class Kapt2IT: BaseGradleIT() {
+class Kapt3IT : BaseGradleIT() {
     companion object {
         private const val GRADLE_VERSION = "2.10"
         private const val GRADLE_2_14_VERSION = "2.14.1"
         private const val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
 
-        private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete in [0-9]+ ms, 0 errors, 0 warnings".toRegex()
+        private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete, errors: 0".toRegex()
     }
 
     private fun androidBuildOptions() =
@@ -51,7 +51,7 @@ class Kapt2IT: BaseGradleIT() {
             assertKaptSuccessful()
             assertContains(":compileKotlin")
             assertContains(":compileJava")
-            assertFileExists("build/generated/source/kapt2/main/example/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
             assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
@@ -106,7 +106,7 @@ class Kapt2IT: BaseGradleIT() {
         Project("arguments", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertFileExists("build/generated/source/kapt2/main/example/TestClassCustomized.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassCustomized.class")
         }
@@ -117,8 +117,8 @@ class Kapt2IT: BaseGradleIT() {
         Project("inheritedAnnotations", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertFileExists("build/generated/source/kapt2/main/example/TestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt2/main/example/AncestorClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/AncestorClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
             assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
         }
@@ -132,7 +132,7 @@ class Kapt2IT: BaseGradleIT() {
         project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertFileExists("app/build/generated/source/kapt2/release/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
+            assertFileExists("app/build/generated/source/kapt/release/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
             assertFileExists("app/build/intermediates/classes/release/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.class")
             assertFileExists("app/build/intermediates/classes/release/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
         }
@@ -152,8 +152,8 @@ class Kapt2IT: BaseGradleIT() {
         project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertFileExists("app/build/generated/source/kapt2/release/com/example/dagger/kotlin/DaggerApplicationComponent.java")
-            assertFileExists("app/build/generated/source/kapt2/release/com/example/dagger/kotlin/ui/HomeActivity_MembersInjector.java")
+            assertFileExists("app/build/generated/source/kapt/release/com/example/dagger/kotlin/DaggerApplicationComponent.java")
+            assertFileExists("app/build/generated/source/kapt/release/com/example/dagger/kotlin/ui/HomeActivity_MembersInjector.java")
             assertFileExists("app/build/intermediates/classes/release/com/example/dagger/kotlin/DaggerApplicationComponent.class")
             assertFileExists("app/build/intermediates/classes/release/com/example/dagger/kotlin/AndroidModule.class")
         }
@@ -167,10 +167,10 @@ class Kapt2IT: BaseGradleIT() {
         project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertFileExists("app/build/generated/source/kapt2/release/com/raizlabs/android/dbflow/config/GeneratedDatabaseHolder.java")
-            assertFileExists("app/build/generated/source/kapt2/release/com/raizlabs/android/dbflow/config/AppDatabaseapp_Database.java")
-            assertFileExists("app/build/generated/source/kapt2/release/mobi/porquenao/poc/kotlin/core/Item_Table.java")
-            assertFileExists("app/build/generated/source/kapt2/release/mobi/porquenao/poc/kotlin/core/Item_Adapter.java")
+            assertFileExists("app/build/generated/source/kapt/release/com/raizlabs/android/dbflow/config/GeneratedDatabaseHolder.java")
+            assertFileExists("app/build/generated/source/kapt/release/com/raizlabs/android/dbflow/config/AppDatabaseapp_Database.java")
+            assertFileExists("app/build/generated/source/kapt/release/mobi/porquenao/poc/kotlin/core/Item_Table.java")
+            assertFileExists("app/build/generated/source/kapt/release/mobi/porquenao/poc/kotlin/core/Item_Adapter.java")
         }
     }
 
@@ -182,10 +182,10 @@ class Kapt2IT: BaseGradleIT() {
         project.build("compileReleaseSources", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertFileExists("build/generated/source/kapt2/release/io/realm/CatRealmProxy.java")
-            assertFileExists("build/generated/source/kapt2/release/io/realm/CatRealmProxyInterface.java")
-            assertFileExists("build/generated/source/kapt2/release/io/realm/DefaultRealmModule.java")
-            assertFileExists("build/generated/source/kapt2/release/io/realm/DefaultRealmModuleMediator.java")
+            assertFileExists("build/generated/source/kapt/release/io/realm/CatRealmProxy.java")
+            assertFileExists("build/generated/source/kapt/release/io/realm/CatRealmProxyInterface.java")
+            assertFileExists("build/generated/source/kapt/release/io/realm/DefaultRealmModule.java")
+            assertFileExists("build/generated/source/kapt/release/io/realm/DefaultRealmModuleMediator.java")
         }
     }
 
@@ -200,10 +200,10 @@ class Kapt2IT: BaseGradleIT() {
             assertContains(":compileJava")
             assertFileExists("build/classes/main/example/TestClass.class")
 
-            assertFileExists("build/generated/source/kapt2/main/example/TestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt2/main/example/SourceAnnotatedTestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt2/main/example/BinaryAnnotatedTestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt2/main/example/RuntimeAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/SourceAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/BinaryAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/RuntimeAnnotatedTestClassGenerated.java")
 
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
             assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
@@ -220,10 +220,10 @@ class Kapt2IT: BaseGradleIT() {
             assertContains(":compileJava")
             assertFileExists("build/classes/main/example/TestClass.class")
 
-            assertFileExists("build/generated/source/kapt2/main/example/TestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt2/main/example/SourceAnnotatedTestClassGenerated.java")
-            /*!*/   assertNoSuchFile("build/generated/source/kapt2/main/example/BinaryAnnotatedTestClassGenerated.java")
-            assertFileExists("build/generated/source/kapt2/main/example/RuntimeAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/SourceAnnotatedTestClassGenerated.java")
+            /*!*/   assertNoSuchFile("build/generated/source/kapt/main/example/BinaryAnnotatedTestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/example/RuntimeAnnotatedTestClassGenerated.java")
 
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
             assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
