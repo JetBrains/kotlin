@@ -4234,6 +4234,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("interceptResume.kt")
+            public void testInterceptResume() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/interceptResume.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("irrelevantSuspendDeclarations.kt")
             public void testIrrelevantSuspendDeclarations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/irrelevantSuspendDeclarations.kt");

@@ -71,4 +71,7 @@ object OperatorModifierChecker {
 }
 
 private val COROUTINE_OPERATOR_NAMES =
-        setOf(OperatorNameConventions.COROUTINE_HANDLE_RESULT, OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION)
+        setOf(OperatorNameConventions.COROUTINE_HANDLE_RESULT,
+              OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION,
+              OperatorNameConventions.COROUTINE_INTERCEPT_RESUME
+        )

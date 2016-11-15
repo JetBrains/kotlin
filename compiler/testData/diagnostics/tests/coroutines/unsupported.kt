@@ -10,6 +10,9 @@ class Controller {
 
     <!UNSUPPORTED_FEATURE!>operator<!> fun handleException(x: Throwable, y: Continuation<Nothing>) {
     }
+
+    <!UNSUPPORTED_FEATURE!>operator<!> fun interceptResume(x: () -> Unit) {
+    }
 }
 
 fun builder(<!UNSUPPORTED_FEATURE!>coroutine<!> c: Controller.() -> Continuation<Unit>) {

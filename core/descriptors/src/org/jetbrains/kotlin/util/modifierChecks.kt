@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.util
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
 import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_RESULT
+import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_INTERCEPT_RESUME
 import org.jetbrains.kotlin.util.OperatorNameConventions.DEC
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET
@@ -163,7 +163,7 @@ internal class Checks private constructor(
 
 abstract class AbstractModifierChecks {
     abstract internal val checks: List<Checks>
-    
+
     inline fun ensure(cond: Boolean, msg: () -> String) = if (!cond) msg() else null
 
     fun check(functionDescriptor: FunctionDescriptor): CheckResult {
@@ -216,6 +216,14 @@ object OperatorChecks : AbstractModifierChecks() {
                 ?: ensure(valueParameters[0].type.isThrowable()) {
                     "First parameter should be 'Throwable'"
                 }
+            },
+            Checks(COROUTINE_INTERCEPT_RESUME, Member, ValueParameterCountCheck.Equals(1), ReturnsUnit, NoDefaultAndVarargsCheck,
+                   NoTypeParametersCheck
+            ) {
+                val parameterType = valueParameters.single().type
+                ensure(parameterType.isNonExtensionFunctionType && parameterType.getValueParameterTypesFromFunctionType().isEmpty() &&
+                            parameterType.getReturnTypeFromFunctionType().isUnit()
+                ) { "Value parameter must have a functional type '() -> Unit'" }
             },
             Checks(PROPERTY_DELEGATED, Member, ValueParameterCountCheck.Equals(1)) //TODO: more checks required!
     )
