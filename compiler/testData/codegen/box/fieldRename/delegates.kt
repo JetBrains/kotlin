@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 import kotlin.reflect.KProperty
 
 public open class TestDelegate<T: Any>(private val initializer: () -> T) {

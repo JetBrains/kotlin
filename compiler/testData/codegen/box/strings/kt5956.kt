@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 // KT-5956 java.lang.AbstractMethodError: test.Thing.subSequence(II)Ljava/lang/CharSequence
 
 class Thing(val delegate: CharSequence) : CharSequence {
