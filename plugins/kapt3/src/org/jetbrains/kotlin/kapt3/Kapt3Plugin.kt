@@ -56,6 +56,9 @@ object Kapt3ConfigurationKeys {
 
     val APT_ONLY: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("do only annotation processing")
+
+    val USE_LIGHT_ANALYSIS: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("do not analyze declaration bodies if can")
 }
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
@@ -84,13 +87,16 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
         val APT_ONLY_OPTION: CliOption =
                 CliOption("aptOnly", "true | false", "Run only annotation processing, do not compile Kotlin files", required = false)
+
+        val USE_LIGHT_ANALYSIS_OPTION: CliOption =
+                CliOption("useLightAnalysis", "true | false", "Do not analyze declaration bodies if can", required = false)
     }
 
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> =
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
-                   CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION)
+                   CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, USE_LIGHT_ANALYSIS_OPTION)
 
     private fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
         val paths = getList(option).toMutableList()
@@ -107,6 +113,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             STUBS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR, value)
             VERBOSE_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.VERBOSE_MODE, value)
             APT_ONLY_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_ONLY, value)
+            USE_LIGHT_ANALYSIS_OPTION -> configuration.put(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -137,6 +144,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
         val isAptOnly = configuration.get(Kapt3ConfigurationKeys.APT_ONLY) == "true"
+        val useLightAnalysis = configuration.get(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS) == "true"
 
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesKapt3())
 
@@ -154,7 +162,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
                 classpath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
-                isAptOnly, System.currentTimeMillis(), logger)
+                isAptOnly, useLightAnalysis, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 }
