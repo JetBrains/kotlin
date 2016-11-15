@@ -55,6 +55,7 @@ open class KaptTask : AbstractCompile() {
         args.moduleName = kotlinCompileTask.moduleName
         args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
         args.pluginOptions = pluginOptions.arguments.toTypedArray()
+        kotlinCompileTask.friendTaskName?.let { kotlinCompileTask.addFriendPathForTestTask(it, args) }
         kotlinCompileTask.parentKotlinOptionsImpl?.updateArguments(args)
         KotlinJvmOptionsImpl().updateArguments(args)
 
