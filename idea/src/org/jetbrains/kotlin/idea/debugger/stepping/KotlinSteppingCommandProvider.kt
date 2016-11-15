@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
-import org.jetbrains.kotlin.idea.debugger.noStrataLineNumber
+import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.GOTO
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.MOVE
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN
@@ -317,7 +317,7 @@ fun getStepOverAction(
 
 fun getStepOverAction(
         location: Location,
-        file: KtFile,
+        sourceFile: KtFile,
         range: IntRange,
         inlineFunctionArguments: List<KtElement>,
         frameProxy: StackFrameProxyImpl,
@@ -325,12 +325,17 @@ fun getStepOverAction(
 ): Action {
     location.declaringType() ?: return Action.STEP_OVER()
 
-    val project = file.project
+    val project = sourceFile.project
 
     val methodLocations = location.method().allLineLocations()
-    val ktLineNumbers = methodLocations.keysToMap { noStrataLineNumber(it, isDexDebug, project, true) }
+    val locationsLineAndFile = methodLocations.keysToMap { ktLocationInfo(it, isDexDebug, project, true) }
 
-    fun Location.ktLineNumber(): Int = ktLineNumbers[this] ?: noStrataLineNumber(this, isDexDebug, project, true)
+    fun Location.ktLineNumber(): Int = (locationsLineAndFile[this] ?: ktLocationInfo(this, isDexDebug, project, true)).first
+    fun Location.ktFileName(): String {
+        val ktFile = (locationsLineAndFile[this] ?: ktLocationInfo(this, isDexDebug, project, true)).second
+        // File is not null only for inlined locations. Get file name from debugger information otherwise.
+        return ktFile?.name ?: this.sourceName(KOTLIN_STRATA_NAME)
+    }
 
     fun isLocationSuitable(nextLocation: Location): Boolean {
         if (nextLocation.method() != location.method()) {
@@ -342,8 +347,8 @@ fun getStepOverAction(
             return false
         }
 
-        return try {
-            nextLocation.sourceName(KOTLIN_STRATA_NAME) == file.name
+        try {
+            return nextLocation.ktFileName() == sourceFile.name
         }
         catch(e: AbsentInformationException) {
             return true
@@ -362,7 +367,7 @@ fun getStepOverAction(
     }
 
     val patchedLocation = if (isBackEdgeLocation()) {
-        // Pretend we had already did a backing step
+        // Pretend we had already done a backing step
         methodLocations
                 .filter(::isLocationSuitable)
                 .firstOrNull { it.ktLineNumber() == location.ktLineNumber() } ?: location
