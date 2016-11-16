@@ -32,22 +32,19 @@ class JvmCliVirtualFileFinder(
         private val index: JvmDependenciesIndex,
         private val scope: GlobalSearchScope
 ) : VirtualFileKotlinClassFinder() {
-    override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? {
-        val classFileName = classId.relativeClassName.asString().replace('.', '$') + ".class"
-        return index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, rootType ->
-            dir.findChild(classFileName)?.check(VirtualFile::isValid)
-        }?.check { it in scope }
-    }
+    override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
+            findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
 
     override fun findBuiltInsData(packageFqName: FqName): InputStream? {
-        val fileName = BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName)
-
         // "<builtins-metadata>" is just a made-up name
         // JvmDependenciesIndex requires the ClassId of the class which we're searching for, to cache the last request+result
         val classId = ClassId(packageFqName, Name.special("<builtins-metadata>"))
 
-        return index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, rootType ->
-            dir.findChild(fileName)?.check(VirtualFile::isValid)
-        }?.check { it in scope }?.inputStream
+        return findBinaryClass(classId, BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName))?.inputStream
     }
+
+    private fun findBinaryClass(classId: ClassId, fileName: String): VirtualFile? =
+            index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, _ ->
+                dir.findChild(fileName)?.check(VirtualFile::isValid)
+            }?.check { it in scope }
 }

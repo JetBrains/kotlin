@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin
+package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
+import org.jetbrains.kotlin.name.FqName
+import java.io.InputStream
 
-interface KotlinClassFinder : KotlinMetadataFinder {
-    fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass?
-
-    fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass?
+interface KotlinMetadataFinder {
+    /**
+     * @return an [InputStream] which should be used to load the .kotlin_builtins file for package with the given [packageFqName].
+     */
+    fun findBuiltInsData(packageFqName: FqName): InputStream?
 }
