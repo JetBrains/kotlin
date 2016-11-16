@@ -49,13 +49,10 @@ class UsageTracker(
 
         // local named function
         if (descriptor is FunctionDescriptor && descriptor.visibility == Visibilities.LOCAL) {
-            if (descriptor.isCoroutineLambda) {
-                captureIfNeed(descriptor)
+            assert(descriptor.isCoroutineLambda || !descriptor.getName().isSpecial) {
+                "Function with special name can not be captured, descriptor: $descriptor"
             }
-            else {
-                assert(!descriptor.getName().isSpecial) { "Function with special name can not be captured, descriptor: $descriptor" }
-                captureIfNeed(descriptor)
-            }
+            captureIfNeed(descriptor)
         }
         // local variable
         else if (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor) {

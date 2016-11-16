@@ -191,9 +191,9 @@ fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
 
     accept(object : RecursiveJsVisitor() {
         var defaultBreakTarget: JsStatement? = null
-        var breakTargets = mutableMapOf<JsName, JsStatement>()
+        var breakTargets = mutableMapOf<JsName, JsStatement?>()
         var defaultContinueTarget: JsStatement? = null
-        var continueTargets = mutableMapOf<JsName, JsStatement>()
+        var continueTargets = mutableMapOf<JsName, JsStatement?>()
 
         override fun visitLabel(x: JsLabel) {
             val inner = x.statement
@@ -203,6 +203,8 @@ fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
                 is JsWhile -> handleLoop(inner, inner.body, x.name)
 
                 is JsFor -> handleLoop(inner, inner.body, x.name)
+
+                is JsSwitch -> handleSwitch(inner, x.name)
 
                 else -> {
                     withBreakAndContinue(x.name, x.statement, null) {
@@ -217,6 +219,14 @@ fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
         override fun visitDoWhile(x: JsDoWhile) = handleLoop(x, x.body, null)
 
         override fun visitFor(x: JsFor) = handleLoop(x, x.body, null)
+
+        override fun visit(x: JsSwitch) = handleSwitch(x, null)
+
+        private fun handleSwitch(statement: JsSwitch, label: JsName?) {
+            withBreakAndContinue(label, statement) {
+                statement.cases.forEach { accept(it) }
+            }
+        }
 
         private fun handleLoop(loop: JsStatement, body: JsStatement, label: JsName?) {
             withBreakAndContinue(label, loop, loop) {
@@ -262,9 +272,7 @@ fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
             defaultBreakTarget = breakTargetStatement
             if (label != null) {
                 breakTargets[label] = breakTargetStatement
-                if (continueTargetStatement != null) {
-                    continueTargets[label] = continueTargetStatement
-                }
+                continueTargets[label] = continueTargetStatement
             }
             if (continueTargetStatement != null) {
                 defaultContinueTarget = continueTargetStatement
@@ -275,18 +283,8 @@ fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
             defaultBreakTarget = oldDefaultBreakTarget
             defaultContinueTarget = oldDefaultContinueTarget
             if (label != null) {
-                if (oldBreakTarget == null) {
-                    breakTargets.keys -= label
-                }
-                else {
-                    breakTargets[label] = oldBreakTarget
-                }
-                if (oldContinueTarget == null) {
-                    continueTargets.keys -= label
-                }
-                else {
-                    continueTargets[label] = oldContinueTarget
-                }
+                breakTargets[label] = oldBreakTarget
+                continueTargets[label] = oldContinueTarget
             }
         }
     })

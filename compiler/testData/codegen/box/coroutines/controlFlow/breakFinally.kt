@@ -38,13 +38,14 @@ fun box(): String {
                 }
                 result += "ignore"
             }
+            result += "*"
         }
         finally {
             result += "finally"
         }
         result += "."
     }
-    if (value != "AC!ED!@finally.") return "fail: $value"
+    if (value != "AC!ED!@*finally.") return "fail: $value"
 
     return "OK"
 }

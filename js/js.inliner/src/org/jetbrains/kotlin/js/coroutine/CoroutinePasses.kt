@@ -46,6 +46,10 @@ fun JsNode.collectNodesToSplit(breakContinueTargets: Map<JsContinue, JsStatement
             }
         }
 
+        // We don't handle JsThrow case here the same way as we do for JsReturn.
+        // Exception will be caught by the surrounding catch and then dispatched to a corresponding $exceptionState.
+        // Even if there's no `catch` clause, we generate a fake one that dispatches to a finally block.
+
         override fun visitBreak(x: JsBreak) {
             super.visitBreak(x)
 
@@ -218,43 +222,24 @@ fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformati
         }
 
         override fun endVisit(x: JsVars, ctx: JsContext<in JsStatement>) {
-            val declaredNames = x.vars.map { it.name }
-            val totalCount = declaredNames.size
-            val localVarCount = declaredNames.count()
-
-            when {
-                totalCount == localVarCount -> {
-                    val assignments = x.vars.mapNotNull {
-                        val fieldName = scope.getFieldName(it.name)
-                        val initExpression = it.initExpression
-                        if (initExpression != null) {
-                            JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), it.initExpression)
-                        }
-                        else {
-                            null
-                        }
-                    }
-                    if (assignments.isNotEmpty()) {
-                        ctx.replaceMe(JsExpressionStatement(JsAstUtils.newSequence(assignments)))
-                    }
-                    else {
-                        ctx.removeMe()
-                    }
+            val assignments = x.vars.mapNotNull {
+                val fieldName = scope.getFieldName(it.name)
+                val initExpression = it.initExpression
+                if (initExpression != null) {
+                    JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), it.initExpression)
                 }
-                localVarCount > 0 -> {
-                    for (declaration in x.vars) {
-                        if (declaration.name in localVariables) {
-                            val fieldName = scope.getFieldName(declaration.name)
-                            val assignment = JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), declaration.initExpression)
-                            ctx.addPrevious(assignment.makeStmt())
-                        }
-                        else {
-                            ctx.addPrevious(JsVars(declaration))
-                        }
-                    }
-                    ctx.removeMe()
+                else {
+                    null
                 }
             }
+
+            if (assignments.isNotEmpty()) {
+                ctx.replaceMe(JsExpressionStatement(JsAstUtils.newSequence(assignments)))
+            }
+            else {
+                ctx.removeMe()
+            }
+
             super.endVisit(x, ctx)
         }
     }

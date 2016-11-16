@@ -112,29 +112,28 @@ class CoroutineBodyTransformer(
     }
 
     override fun visitWhile(x: JsWhile) = splitIfNecessary(x) {
-        val predecessor = currentBlock
         val successor = CoroutineBlock()
-
         val bodyEntryBlock = CoroutineBlock()
+        currentStatements += stateAndJump(bodyEntryBlock)
+
         currentBlock = bodyEntryBlock
+        if (x.condition != JsLiteral.TRUE) {
+            currentStatements += JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor))).apply { source = x.source }
+        }
+
         withBreakAndContinue(x, successor, bodyEntryBlock) {
             x.body.accept(this)
         }
 
-        if (x.condition != JsLiteral.TRUE) {
-            val jsIf = JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor))).apply { source = x.source }
-            bodyEntryBlock.statements.add(0, jsIf)
-        }
-        currentBlock.statements += stateAndJump(bodyEntryBlock)
-        predecessor.statements += stateAndJump(bodyEntryBlock)
+        currentStatements += stateAndJump(bodyEntryBlock)
         currentBlock = successor
     }
 
     override fun visitDoWhile(x: JsDoWhile) = splitIfNecessary(x) {
-        val predecessor = currentBlock
         val successor = CoroutineBlock()
-
         val bodyEntryBlock = CoroutineBlock()
+        currentStatements += stateAndJump(bodyEntryBlock)
+
         currentBlock = bodyEntryBlock
         withBreakAndContinue(x, successor, bodyEntryBlock) {
             x.body.accept(this)
@@ -142,10 +141,10 @@ class CoroutineBodyTransformer(
 
         if (x.condition != JsLiteral.TRUE) {
             val jsIf = JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor))).apply { source = x.source }
-            currentBlock.statements.add(jsIf)
+            currentStatements.add(jsIf)
         }
         currentBlock.statements += stateAndJump(bodyEntryBlock)
-        predecessor.statements += stateAndJump(bodyEntryBlock)
+
         currentBlock = successor
     }
 
@@ -159,29 +158,26 @@ class CoroutineBodyTransformer(
             }
         }
 
-        val predecessor = currentBlock
         val increment = CoroutineBlock()
         val successor = CoroutineBlock()
-
         val bodyEntryBlock = CoroutineBlock()
+        currentStatements += stateAndJump(bodyEntryBlock)
+
         currentBlock = bodyEntryBlock
-        withBreakAndContinue(x, successor, predecessor) {
+        if (x.condition != null && x.condition != JsLiteral.TRUE) {
+            currentStatements += JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor))).apply { source = x.source }
+        }
+
+        withBreakAndContinue(x, successor, increment) {
             x.body.accept(this)
         }
-        val bodyExitBlock = currentBlock
 
-        if (x.condition != null && x.condition != JsLiteral.TRUE) {
-            val jsIf = JsIf(JsAstUtils.notOptimized(x.condition), JsBlock(stateAndJump(successor))).apply { source = x.source }
-            bodyEntryBlock.statements.add(0, jsIf)
-        }
-
-        bodyExitBlock.statements += stateAndJump(increment)
+        currentStatements += stateAndJump(increment)
         currentBlock = increment
 
         x.incrementExpression?.let { JsExpressionStatement(it).accept(this) }
         currentStatements += stateAndJump(bodyEntryBlock)
 
-        predecessor.statements += stateAndJump(bodyEntryBlock)
         currentBlock = successor
     }
 
@@ -201,6 +197,10 @@ class CoroutineBodyTransformer(
         currentStatements += jump()
     }
 
+    /**
+     * When we perform break, continue or return, we can leave try blocks, so we should update $exceptionHandler correspondingly.
+     * Also, these try blocks can contain finally clauses, therefore we need to update $finallyPath as well.
+     */
     private fun jumpWithFinally(targetTryDepth: Int, successor: CoroutineBlock) {
         if (targetTryDepth < tryStack.size) {
             val tryBlock = tryStack[targetTryDepth]
@@ -223,15 +223,17 @@ class CoroutineBodyTransformer(
         val catchBlock = CoroutineBlock()
         val finallyBlock = CoroutineBlock()
 
-        val tryBlock = TryBlock(catchBlock, if (finallyNode != null) finallyBlock else null)
-        tryStack += tryBlock
+        tryStack += TryBlock(catchBlock, if (finallyNode != null) finallyBlock else null)
 
         val oldCatchBlock = currentCatchBlock
         currentCatchBlock = catchBlock
         currentStatements += exceptionState(catchBlock)
 
         x.tryBlock.statements.forEach { it.accept(this) }
+
         currentStatements += exceptionState(oldCatchBlock)
+        currentCatchBlock = oldCatchBlock
+
         if (finallyNode != null) {
             currentStatements += updateFinallyPath(listOf(successor))
             currentStatements += stateAndJump(finallyBlock)
@@ -239,8 +241,6 @@ class CoroutineBodyTransformer(
         else {
             currentStatements += stateAndJump(successor)
         }
-
-        currentCatchBlock = oldCatchBlock
 
         // Handle catch node
         currentBlock = catchBlock
@@ -278,6 +278,9 @@ class CoroutineBodyTransformer(
 
         currentBlock = successor
     }
+
+    // There's no implementation for JsSwitch, since we don't generate it. However, when we implement optimization
+    // for simple `when` statement, we will need to support JsSwitch here
 
     private fun generateFinallyExit() {
         val finallyPathRef = JsNameRef(context.finallyPathFieldName, JsLiteral.THIS)
@@ -320,6 +323,7 @@ class CoroutineBodyTransformer(
 
     override fun visitThrow(x: JsThrow) {
         if (throwFunctionName != null) {
+            // TODO: what if we catch exception in coroutine?
             val methodRef = JsNameRef(throwFunctionName, JsNameRef(context.controllerFieldName, JsLiteral.THIS))
             val invocation = JsInvocation(methodRef, x.expression).apply {
                 source = x.source
