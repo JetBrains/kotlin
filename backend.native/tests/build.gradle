@@ -209,7 +209,7 @@ task array0(type: RunKonanTest) {
 }
 
 task array1(type: RunKonanTest) {
-    goldValue = "4 2\n1-1\n69\n83\n"
+    goldValue = "4 2\n1-1\n69\n38\n"
     source = "runtime/basic/array1.kt"
 }
 
