@@ -1,10 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 // WITH_RUNTIME
-
-import java.util.ArrayList
-import java.util.Arrays
 
 fun box(): String {
     val list = ArrayList<Pair<String,String>>()
@@ -13,7 +7,7 @@ fun box(): String {
 
     val keys = list.map { it.first }.toTypedArray<String>()
 
-    val keysToString = Arrays.toString(keys)
+    val keysToString = keys.contentToString()
     if (keysToString != "[Sample, Scripting]") return keysToString
 
     return "OK"

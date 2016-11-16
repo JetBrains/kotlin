@@ -1,7 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
-import java.util.*
+// WITH_RUNTIME
 
 class A() {
     infix fun <T> ArrayList<T>.add3(el: T) = add(el)
@@ -22,6 +19,6 @@ fun box() : String{
       list add2 i
     }
     A().test(list)
-    System.out?.println(list)
+    println(list)
     return "OK"
 }

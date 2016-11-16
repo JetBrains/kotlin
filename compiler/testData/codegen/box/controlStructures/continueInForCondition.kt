@@ -1,9 +1,6 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// WITH_RUNTIME
 
-import java.util.Arrays
-
-fun foo(): List<String>? = Arrays.asList("abcde")
+fun foo(): List<String>? = listOf("abcde")
 
 fun box(): String {
     for (i in 1..3) {

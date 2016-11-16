@@ -1,14 +1,11 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-import java.util.Arrays
-
+// WITH_RUNTIME
 
 abstract class A {
     abstract fun foo(): List<String>
 }
 
 interface B {
-    fun foo(): ArrayList<String> = ArrayList(Arrays.asList("B"))
+    fun foo(): ArrayList<String> = ArrayList(listOf("B"))
 }
 
 open class C : A(), B {

@@ -1,9 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 // WITH_RUNTIME
-
-import java.util.*
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()
@@ -32,6 +27,8 @@ class MME : MutableMap.MutableEntry<String, String> {
     override val value: String get() = throw UnsupportedOperationException()
     override fun setValue(value: String): String = throw UnsupportedOperationException()
 }
+
+fun assert(condition: Boolean, message: () -> String) { if (!condition) throw AssertionError(message())}
 
 fun box(): String {
     val itr = Itr() as Any

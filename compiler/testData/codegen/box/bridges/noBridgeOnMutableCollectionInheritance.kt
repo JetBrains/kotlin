@@ -1,6 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-import java.util.Arrays
+// WITH_RUNTIME
 
 interface A {
     fun foo(): Collection<String>
@@ -11,7 +9,7 @@ interface B : A {
 }
 
 class C : B {
-    override fun foo(): MutableList<String> = ArrayList(Arrays.asList("C"))
+    override fun foo(): MutableList<String> = ArrayList(listOf("C"))
 }
 
 fun box(): String {

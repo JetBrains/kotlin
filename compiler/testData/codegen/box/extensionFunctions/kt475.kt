@@ -1,7 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
-import java.util.ArrayList
 
 fun box() : String {
   val array = ArrayList<String>()
@@ -14,7 +10,7 @@ fun box() : String {
 
 var <T> ArrayList<T>.length : Int
     get() = size
-    set(value: Int) = throw java.lang.Error()
+    set(value: Int) = throw Error()
 
 var <T> ArrayList<T>.last : T
     get() = get(size-1)!!
