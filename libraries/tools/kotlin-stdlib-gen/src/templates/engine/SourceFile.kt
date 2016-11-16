@@ -8,6 +8,7 @@ enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = tru
     Maps(packageName = "kotlin.collections"),
     Sequences(packageName = "kotlin.sequences"),
     Ranges(packageName = "kotlin.ranges"),
+    Comparisons(packageName = "kotlin.comparisons"),
     Strings(packageName = "kotlin.text"),
     Misc(),
     ;

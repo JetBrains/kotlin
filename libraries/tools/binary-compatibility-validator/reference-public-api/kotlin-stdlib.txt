@@ -1699,6 +1699,14 @@ public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun compareBy ([Lkotlin/jvm/functions/Function1;)Ljava/util/Comparator;
 	public static final fun compareValues (Ljava/lang/Comparable;Ljava/lang/Comparable;)I
 	public static final fun compareValuesBy (Ljava/lang/Object;Ljava/lang/Object;[Lkotlin/jvm/functions/Function1;)I
+	public static final fun maxOf (Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun maxOf (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun maxOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun maxOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun minOf (Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun minOf (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun minOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun minOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun naturalOrder ()Ljava/util/Comparator;
 	public static final fun nullsFirst (Ljava/util/Comparator;)Ljava/util/Comparator;
 	public static final fun nullsLast (Ljava/util/Comparator;)Ljava/util/Comparator;

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 @file:kotlin.jvm.JvmName("ComparisonsKt")
+@file:kotlin.jvm.JvmMultifileClass
 
 package kotlin.comparisons
 

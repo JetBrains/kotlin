@@ -12,9 +12,11 @@ public external class MathClass() {
     public fun cos(value: Double): Double = noImpl
     public fun sin(value: Double): Double = noImpl
     public fun exp(value: Double): Double = noImpl
-    public fun max(vararg values: Double): Double = noImpl
     public fun max(vararg values: Int): Int = noImpl
+    public fun max(vararg values: Float): Float = noImpl
+    public fun max(vararg values: Double): Double = noImpl
     public fun min(vararg values: Int): Int = noImpl
+    public fun min(vararg values: Float): Float = noImpl
     public fun min(vararg values: Double): Double = noImpl
     public fun sqrt(value: Double): Double = noImpl
     public fun tan(value: Double): Double = noImpl
@@ -26,3 +28,6 @@ public external class MathClass() {
 }
 
 public external val Math: MathClass
+
+public fun MathClass.min(a: Long, b: Long): Long = if (a <= b) a else b
+public fun MathClass.max(a: Long, b: Long): Long = if (a >= b) a else b
