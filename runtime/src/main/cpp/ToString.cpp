@@ -55,6 +55,7 @@ KString Kotlin_Long_toString(KLong value) {
   return makeString(cstring);
 }
 
+// TODO: use David Gay's dtoa() here instead. It's *very* big and ugly.
 KString Kotlin_Float_toString(KFloat value) {
   char cstring[32];
   snprintf(cstring, sizeof(cstring), "%G", value);

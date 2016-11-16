@@ -5,7 +5,7 @@
 #include "Types.h"
 
 typedef uint8_t KBoolean;
-typedef uint8_t KByte;
+typedef int8_t KByte;
 typedef uint16_t KChar;
 // Note that it is signed.
 typedef int16_t KShort;
@@ -28,6 +28,7 @@ inline const KByte* ByteArrayAddressOfElementAt(
   return reinterpret_cast<const KByte*>(obj + 1) + index;
 }
 
+// Consider aligning of base to sizeof(T).
 template <typename T>
 inline T* PrimitiveArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
   return reinterpret_cast<T*>(obj + 1) + index;

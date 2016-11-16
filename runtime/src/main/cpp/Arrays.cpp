@@ -87,8 +87,8 @@ ArrayHeader* Kotlin_CharArray_clone(const ArrayHeader* array) {
   ArrayHeader* result = ArrayContainer(
       theCharArrayTypeInfo, array->count_).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
+      PrimitiveArrayAddressOfElementAt<KChar>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KChar>(array, 0),
       ArrayDataSizeBytes(array));
   return result;
 }
@@ -115,8 +115,8 @@ ArrayHeader* Kotlin_ShortArray_clone(const ArrayHeader* array) {
   ArrayHeader* result = ArrayContainer(
       theShortArrayTypeInfo, array->count_).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
+      PrimitiveArrayAddressOfElementAt<KShort>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KShort>(array, 0),
       ArrayDataSizeBytes(array));
   return result;
 }
@@ -143,8 +143,8 @@ ArrayHeader* Kotlin_IntArray_clone(const ArrayHeader* array) {
   ArrayHeader* result = ArrayContainer(
       theIntArrayTypeInfo, array->count_).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
+      PrimitiveArrayAddressOfElementAt<KInt>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KInt>(array, 0),
       ArrayDataSizeBytes(array));
   return result;
 }
@@ -171,8 +171,8 @@ ArrayHeader* Kotlin_LongArray_clone(const ArrayHeader* array) {
   ArrayHeader* result = ArrayContainer(
       theLongArrayTypeInfo, array->count_).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
+      PrimitiveArrayAddressOfElementAt<KLong>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KLong>(array, 0),
       ArrayDataSizeBytes(array));
   return result;
 }
@@ -199,8 +199,8 @@ ArrayHeader* Kotlin_FloatArray_clone(const ArrayHeader* array) {
   ArrayHeader* result = ArrayContainer(
       theFloatArrayTypeInfo, array->count_).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
+      PrimitiveArrayAddressOfElementAt<KFloat>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KFloat>(array, 0),
       ArrayDataSizeBytes(array));
   return result;
 }
@@ -227,8 +227,8 @@ ArrayHeader* Kotlin_DoubleArray_clone(const ArrayHeader* array) {
   ArrayHeader* result = ArrayContainer(
       theDoubleArrayTypeInfo, array->count_).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
+      PrimitiveArrayAddressOfElementAt<KDouble>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KDouble>(array, 0),
       ArrayDataSizeBytes(array));
   return result;
 }
@@ -255,8 +255,8 @@ ArrayHeader* Kotlin_BooleanArray_clone(const ArrayHeader* array) {
   ArrayHeader* result = ArrayContainer(
       theBooleanArrayTypeInfo, array->count_).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
+      PrimitiveArrayAddressOfElementAt<KBoolean>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KBoolean>(array, 0),
       ArrayDataSizeBytes(array));
   return result;
 }
