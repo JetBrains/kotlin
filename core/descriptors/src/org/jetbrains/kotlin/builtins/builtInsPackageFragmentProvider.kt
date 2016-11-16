@@ -35,7 +35,9 @@ fun createBuiltInPackageFragmentProvider(
         loadResource: (String) -> InputStream?
 ): PackageFragmentProvider {
     val packageFragments = packageFqNames.map { fqName ->
-        BuiltInsPackageFragment(fqName, storageManager, module, loadResource)
+        val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
+        val inputStream = loadResource(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
+        BuiltInsPackageFragment(fqName, storageManager, module, inputStream)
     }
     val provider = PackageFragmentProviderImpl(packageFragments)
 

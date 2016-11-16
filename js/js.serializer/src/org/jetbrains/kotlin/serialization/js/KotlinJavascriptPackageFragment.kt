@@ -30,8 +30,8 @@ class KotlinJavascriptPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        loadResource: (path: String) -> InputStream?
-) : DeserializedPackageFragment(fqName, storageManager, module, loadResource) {
+        private val loadResource: (path: String) -> InputStream?
+) : DeserializedPackageFragment(fqName, storageManager, module) {
     private val nameResolver =
             loadResourceSure(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName)).use { stream ->
                 NameResolverImpl.read(stream)
@@ -53,4 +53,7 @@ class KotlinJavascriptPackageFragment(
                 val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, JsSerializerProtocol.extensionRegistry)
                 classesProto.classNameList?.map { id -> nameResolver.getName(id) } ?: listOf()
             }
+
+    private fun loadResourceSure(path: String): InputStream =
+            loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
 }

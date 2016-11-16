@@ -40,7 +40,7 @@ class JvmBuiltInsPackageFragmentProvider(
 
     private val fragments = storageManager.createMemoizedFunctionWithNullableValues<FqName, PackageFragmentDescriptor> { fqName ->
         finder.findBuiltInsData(fqName)?.let { inputStream ->
-            BuiltInsPackageFragment(fqName, storageManager, moduleDescriptor) { path -> inputStream }.apply {
+            BuiltInsPackageFragment(fqName, storageManager, moduleDescriptor, inputStream).apply {
                 components = this@JvmBuiltInsPackageFragmentProvider.components
             }
         }

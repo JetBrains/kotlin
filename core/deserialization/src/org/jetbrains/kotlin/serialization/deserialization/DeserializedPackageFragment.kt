@@ -23,14 +23,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import java.io.InputStream
 import javax.inject.Inject
 
 abstract class DeserializedPackageFragment(
         fqName: FqName,
         protected val storageManager: StorageManager,
-        module: ModuleDescriptor,
-        private val loadResource: (path: String) -> InputStream?
+        module: ModuleDescriptor
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     // component dependency cycle
     @set:Inject
@@ -49,7 +47,4 @@ abstract class DeserializedPackageFragment(
     internal fun hasTopLevelClass(name: Name): Boolean {
         return name in getMemberScope().classNames
     }
-
-    protected fun loadResourceSure(path: String): InputStream =
-            loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
 }

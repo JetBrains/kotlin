@@ -29,9 +29,9 @@ class BuiltInsPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        loadResource: (path: String) -> InputStream?
-) : DeserializedPackageFragment(fqName, storageManager, module, loadResource) {
-    private val proto = loadResourceSure(BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)).use { stream ->
+        inputStream: InputStream
+) : DeserializedPackageFragment(fqName, storageManager, module) {
+    private val proto = inputStream.use { stream ->
         val version = BuiltInsBinaryVersion.readFrom(stream)
 
         if (!version.isCompatible()) {
