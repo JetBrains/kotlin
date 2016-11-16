@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "Assert.h"
+#include "Exceptions.h"
 #include "Memory.h"
 
 void FreeObject(ContainerHeader* header) {
@@ -103,6 +104,13 @@ int IsInstance(const ObjHeader* obj, const TypeInfo* type_info) {
     obj_type_info = obj_type_info->superType_;
   }
   return obj_type_info != nullptr;
+}
+
+void CheckInstance(const ObjHeader* obj, const TypeInfo* type_info) {
+  if (IsInstance(obj, type_info)) {
+    return;
+  }
+  ThrowClassCastException();
 }
 
 #ifdef __cplusplus
