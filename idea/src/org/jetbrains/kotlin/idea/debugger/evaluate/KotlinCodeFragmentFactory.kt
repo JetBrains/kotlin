@@ -338,8 +338,10 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             for ((variableName, variableValue) in entries) {
                 if (!psiNameHelper.isIdentifier(variableName)) continue
 
-                val kotlinProperty = createKotlinProperty(project, variableName, variableValue.type().name(), variableValue)
-                                     ?: continue
+                val variableTypeName = variableValue.type()?.name() ?: continue
+
+                val kotlinProperty = createKotlinProperty(project, variableName, variableTypeName, variableValue) ?: continue
+
                 sb.append("${kotlinProperty.text}\n")
             }
 
