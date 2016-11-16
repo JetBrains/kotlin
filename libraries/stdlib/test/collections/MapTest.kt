@@ -1,6 +1,5 @@
 package test.collections
 
-import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
 

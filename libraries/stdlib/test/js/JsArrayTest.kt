@@ -18,7 +18,6 @@ package test.collections.js
 
 import org.junit.Test as test
 import kotlin.test.*
-import java.util.*
 
 class JsArrayTest {
 

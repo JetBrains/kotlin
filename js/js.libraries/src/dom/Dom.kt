@@ -17,7 +17,6 @@
 package kotlin.dom
 
 import org.w3c.dom.*
-import java.util.*
 import kotlin.dom.*
 import kotlin.collections.*
 

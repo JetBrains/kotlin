@@ -20,8 +20,6 @@
 
 package kotlin.collections
 
-import java.util.*
-
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()

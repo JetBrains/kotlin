@@ -3,8 +3,6 @@
 
 package kotlin.collections
 
-import java.util.*
-
 /**
  * Removes a single instance of the specified element from this
  * collection, if it is present.

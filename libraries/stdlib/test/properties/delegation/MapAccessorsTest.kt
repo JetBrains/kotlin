@@ -1,7 +1,5 @@
 package test.properties.delegation.map
 
-import java.util.*
-import kotlin.properties.*
 import kotlin.test.*
 import org.junit.Test as test
 

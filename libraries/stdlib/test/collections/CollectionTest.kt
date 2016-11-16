@@ -16,7 +16,6 @@
 
 package test.collections
 
-import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
 import test.collections.behaviors.*

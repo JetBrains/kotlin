@@ -3,7 +3,6 @@ package test.collections
 import org.junit.Test as test
 import org.junit.Test
 import kotlin.test.*
-import java.util.*
 import kotlin.comparisons.*
 
 fun fibonacci(): Sequence<Int> {

@@ -19,7 +19,6 @@
 
 package kotlin.collections
 
-import java.util.*
 import kotlin.comparisons.compareValues
 
 internal object EmptyIterator : ListIterator<Nothing> {
@@ -89,7 +88,7 @@ public inline fun <T> listOf(): List<T> = emptyList()
  * The returned list is serializable.
  */
 @JvmVersion
-public fun <T> listOf(element: T): List<T> = Collections.singletonList(element)
+public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
 
 /** Returns a new [MutableList] with the given elements. */
 public fun <T> mutableListOf(vararg elements: T): MutableList<T>
@@ -137,7 +136,7 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
  */
 @JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
+public inline fun <T> java.util.Enumeration<T>.toList(): List<T> = java.util.Collections.list(this)
 
 /**
  * Checks if all elements in the specified collection are contained in this collection.
@@ -160,7 +159,7 @@ private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
             // if the array came from varargs and already is array of Any, copying isn't required
             @Suppress("UNCHECKED_CAST") (this as Array<Any?>)
         else
-            Arrays.copyOf(this, this.size, Array<Any?>::class.java)
+            java.util.Arrays.copyOf(this, this.size, Array<Any?>::class.java)
 
 /**
  * Searches this list or its range for the provided [element] using the binary search algorithm.

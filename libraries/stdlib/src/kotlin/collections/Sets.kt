@@ -3,8 +3,6 @@
 
 package kotlin.collections
 
-import java.util.*
-
 
 internal object EmptySet : Set<Nothing>, Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
@@ -61,7 +59,7 @@ public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
  * The returned set is serializable.
  */
 @JvmVersion
-public fun <T> setOf(element: T): Set<T> = Collections.singleton(element)
+public fun <T> setOf(element: T): Set<T> = java.util.Collections.singleton(element)
 
 
 /**

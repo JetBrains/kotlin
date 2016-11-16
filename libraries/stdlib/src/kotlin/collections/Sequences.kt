@@ -3,8 +3,6 @@
 
 package kotlin.sequences
 
-import java.util.*
-
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
  * provided by that function.
@@ -25,7 +23,7 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constra
  */
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
-public inline fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
+public inline fun<T> java.util.Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
 
 /**
  * Creates a sequence that returns the specified values.

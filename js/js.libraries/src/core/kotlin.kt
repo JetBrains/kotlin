@@ -16,8 +16,6 @@
 
 package kotlin
 
-import java.util.*
-
 /**
  * Returns an empty array of the specified type [T].
  */

@@ -3,8 +3,6 @@
 
 package kotlin.collections
 
-import java.util.*
-
 private object EmptyMap : Map<Any?, Nothing>, Serializable {
     private const val serialVersionUID: Long = 8246714829545688274
 
@@ -47,7 +45,7 @@ public inline fun <K, V> mapOf(): Map<K, V> = emptyMap()
  * specified value.  The returned map is serializable.
  */
 @JvmVersion
-public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = Collections.singletonMap(pair.first, pair.second)
+public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
 
 /**
  * Returns a new [MutableMap] with the specified contents, given as a list of pairs
@@ -568,4 +566,4 @@ internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = toSingl
 // creates a singleton copy of map
 @kotlin.jvm.JvmVersion
 internal fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
-    = with (entries.iterator().next()) { Collections.singletonMap(key, value) }
+    = with (entries.iterator().next()) { java.util.Collections.singletonMap(key, value) }

@@ -3,8 +3,6 @@
 
 package kotlin.collections
 
-import java.util.*
-
 /**
  * Returns the value for the given key, or the implicit default value for this map.
  * By default no implicit value is provided for maps and a [NoSuchElementException] is thrown.
