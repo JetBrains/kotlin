@@ -208,12 +208,10 @@ task array0(type: RunKonanTest) {
     source = "runtime/basic/array0.kt"
 }
 
-/*
 task array1(type: RunKonanTest) {
-    goldValue = "42\n1-1\n69\n83\n"
+    goldValue = "4 2\n1-1\n69\n83\n"
     source = "runtime/basic/array1.kt"
-}*/
-
+}
 
 task if_else(type: UnitKonanTest) {
     source = "codegen/branching/if_else.kt"

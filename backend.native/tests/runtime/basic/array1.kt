@@ -2,7 +2,7 @@ fun main(args : Array<String>) {
     val byteArray = ByteArray(5)
     byteArray[1] = 2
     byteArray[3] = 4
-    println(byteArray[3].toString() + " "  + byteArray[1].toString())
+    println(byteArray[3].toString() + " "  + byteArray[1])
 
     val shortArray = ShortArray(2)
     shortArray[0] = -1
