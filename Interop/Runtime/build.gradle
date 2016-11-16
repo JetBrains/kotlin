@@ -1,7 +1,10 @@
 buildscript {
-   repositories {
-     mavenCentral()
-   }
+    repositories {
+        mavenCentral()
+        maven {
+            url  "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+        }
+    }
 
    dependencies {
      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -30,10 +33,6 @@ model {
         }
    }
 
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {

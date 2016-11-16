@@ -13,6 +13,13 @@ allprojects {
         evaluationDependsOn(":dependencies")
     }
 
+    repositories {
+        mavenCentral()
+        maven {
+            url  "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+        }
+    }
+
     ext.clangPath = ["$llvmDir/bin"]
     ext.clangArgs = []
     final String binDir
