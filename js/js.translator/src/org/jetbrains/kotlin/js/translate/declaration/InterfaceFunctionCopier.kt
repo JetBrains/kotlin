@@ -22,6 +22,7 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.StaticContext
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.prototypeOf
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
@@ -43,6 +44,9 @@ class InterfaceFunctionCopier(val context: StaticContext) {
     }
 
     private fun addInterfaceDefaultMembers(descriptor: ClassDescriptor, context: StaticContext) {
+        // optimization: don't do anything for native declarations
+        if (isNativeObject(descriptor)) return
+
         val classModel = ClassModel(descriptor)
         classModels[descriptor] = classModel
 
@@ -60,7 +64,7 @@ class InterfaceFunctionCopier(val context: StaticContext) {
         }
 
         val superModels = DescriptorUtils.getSuperclassDescriptors(descriptor)
-                .filter { it.kind == ClassKind.INTERFACE }
+                .filter { it.kind == ClassKind.INTERFACE && !isNativeObject(it) }
                 .map { classModels[it]!! }
         for (superModel in superModels) {
             for (name in superModel.copiedFunctions) {
