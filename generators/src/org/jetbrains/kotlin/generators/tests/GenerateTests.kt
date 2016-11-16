@@ -150,7 +150,7 @@ import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
+import org.jetbrains.kotlin.uast.AbstractKotlinLintTest
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -1055,6 +1055,12 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("plugins/lint/lint-checks/test", "plugins/lint/lint-checks/testData") {
+        testClass<AbstractKotlinLintTest>() {
+            model("lint", excludeParentDirs = true)
+        }
+    }
+
     testGroup("plugins/plugins-tests/tests", "plugins/annotation-collector/testData") {
         testClass<AbstractAnnotationProcessorBoxTest>() {
             model("collectToFile", recursive = false, extension = null)
@@ -1104,10 +1110,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidQuickFixMultiFileTest>() {
             model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
-        }
-
-        testClass<AbstractKotlinLintTest>() {
-            model("android/lint", excludeParentDirs = true)
         }
     }
 

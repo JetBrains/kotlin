@@ -66,15 +66,11 @@
           <element id="module-output" name="android-extensions-compiler" />
         </element>
         <element id="archive" name="android-lint.jar">
-          <element id="module-output" name="uast-kotlin" />
           <element id="module-output" name="lint-idea" />
-          <element id="module-output" name="uast-java" />
-          <element id="module-output" name="uast-common" />
           <element id="module-output" name="lint-checks" />
-          <element id="library" level="project" name="guava" />
           <element id="module-output" name="lint-api" />
-          <element id="module-output" name="uast-android" />
         </element>
+        <element id="library" level="project" name="uast-kotlin" />
       </element>
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

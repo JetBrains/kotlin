@@ -32,7 +32,6 @@
     <orderEntry type="module" module-name="build-common" scope="TEST" />
     <orderEntry type="module" module-name="plugins-tests" scope="TEST" />
     <orderEntry type="module" module-name="idea-android" scope="TEST" />
-    <orderEntry type="module" module-name="uast-kotlin" scope="TEST" />
     <orderEntry type="module" module-name="generators" />
   </component>
 </module>

@@ -20,6 +20,5 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="module" module-name="idea-core" />
-    <orderEntry type="module" module-name="lint-idea" scope="TEST" />
   </component>
 </module>
