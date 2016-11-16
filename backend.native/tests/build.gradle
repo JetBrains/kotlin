@@ -262,3 +262,11 @@ task cycle(type: UnitKonanTest) {
 task cycle_do(type: UnitKonanTest) {
     source = "codegen/cycles/cycle_do.kt"
 }
+
+task abstract_super(type: UnitKonanTest) {
+    source = "datagen/rtti/abstract_super.kt"
+}
+
+task vtable1(type: UnitKonanTest) {
+    source = "datagen/rtti/vtable1.kt"
+}
