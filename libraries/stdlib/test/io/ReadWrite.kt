@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmVersion
 package test.io
 
-import org.junit.Test as test
+import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 import java.io.Reader
@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 fun sample(): Reader = StringReader("Hello\nWorld");
 
 class ReadWriteTest {
-    @test fun testAppendText() {
+    @Test fun testAppendText() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
         file.writeText("Hello\n")
         file.appendText("World\n")
@@ -25,7 +25,7 @@ class ReadWriteTest {
         file.deleteOnExit()
     }
 
-    @test fun reader() {
+    @Test fun reader() {
         val list = ArrayList<String>()
 
         /* TODO would be nicer maybe to write this as
@@ -71,7 +71,7 @@ class ReadWriteTest {
         assertEquals(2, c)
     }
 
-    @test fun file() {
+    @Test fun file() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
         val writer = file.outputStream().writer().buffered()
 
@@ -125,7 +125,7 @@ class ReadWriteTest {
 
 
 
-    @test fun testUse() {
+    @Test fun testUse() {
         val list = ArrayList<String>()
         val reader = sample().buffered()
 
@@ -142,7 +142,7 @@ class ReadWriteTest {
         assertEquals(arrayListOf("Hello", "World"), list)
     }
 
-    @test fun testPlatformNullUse() {
+    @Test fun testPlatformNullUse() {
         fun <T> platformNull() = java.util.Collections.singleton(null as T).first()
         val resource = platformNull<java.io.Closeable>()
         val result = resource.use {
@@ -151,7 +151,7 @@ class ReadWriteTest {
         assertEquals("ok", result)
     }
 
-    @test fun testURL() {
+    @Test fun testURL() {
         val url = URL("http://kotlinlang.org")
         val text = url.readText()
         assertFalse(text.isEmpty())
@@ -162,7 +162,7 @@ class ReadWriteTest {
 
 
 class LineIteratorTest {
-    @test fun useLines() {
+    @Test fun useLines() {
         // TODO we should maybe zap the useLines approach as it encourages
         // use of iterators which don't close the underlying stream
         val list1 = sample().useLines { it.toList() }
@@ -172,7 +172,7 @@ class LineIteratorTest {
         assertEquals(listOf("Hello", "World"), list2)
     }
 
-    @test fun manualClose() {
+    @Test fun manualClose() {
         val reader = sample().buffered()
         try {
             val list = reader.lineSequence().toList()
@@ -182,7 +182,7 @@ class LineIteratorTest {
         }
     }
 
-    @test fun boundaryConditions() {
+    @Test fun boundaryConditions() {
         var reader = StringReader("").buffered()
         assertEquals(emptyList(), reader.lineSequence().toList())
         reader.close()

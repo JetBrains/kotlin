@@ -2,53 +2,53 @@ package test.collections.js
 
 import kotlin.test.*
 import kotlin.comparisons.*
-import org.junit.Test as test
+import org.junit.Test
 
 class JsCollectionsTest {
     val TEST_LIST = arrayOf(2, 0, 9, 7, 1).toList()
 
-    @test fun collectionToArray() {
+    @Test fun collectionToArray() {
         val array = TEST_LIST.toTypedArray()
         assertEquals(array.toList(), TEST_LIST)
     }
 
-    @test fun toListDoesNotCreateArrayView() {
+    @Test fun toListDoesNotCreateArrayView() {
         snapshotDoesNotCreateView(arrayOf("first", "last"), { it.toList() })
         snapshotDoesNotCreateView(arrayOf<Any>("item", 1), { it.toList() })
     }
 
-    @test fun toMutableListDoesNotCreateArrayView() {
+    @Test fun toMutableListDoesNotCreateArrayView() {
         snapshotDoesNotCreateView(arrayOf("first", "last"), { it.toMutableList() })
         snapshotDoesNotCreateView(arrayOf<Any>("item", 2), { it.toMutableList() })
     }
 
-    @test fun listOfDoesNotCreateView() {
+    @Test fun listOfDoesNotCreateView() {
         snapshotDoesNotCreateView(arrayOf("first", "last"), { listOf(*it) })
         snapshotDoesNotCreateView(arrayOf<Any>("item", 3), { listOf(*it) })
     }
 
-    @test fun mutableListOfDoesNotCreateView() {
+    @Test fun mutableListOfDoesNotCreateView() {
         snapshotDoesNotCreateView(arrayOf("first", "last"), { mutableListOf(*it) })
         snapshotDoesNotCreateView(arrayOf<Any>("item", 4), { mutableListOf(*it) })
     }
 
-    @test fun arrayListDoesNotCreateArrayView() {
+    @Test fun arrayListDoesNotCreateArrayView() {
         snapshotDoesNotCreateView(arrayOf(1, 2), { arrayListOf(*it) })
         snapshotDoesNotCreateView(arrayOf<Any>("first", "last"), { arrayListOf(*it) })
     }
 
-    @test fun arrayListCapacity() {
+    @Test fun arrayListCapacity() {
         val list = ArrayList<Any>(20)
         list.ensureCapacity(100)
         list.trimToSize()
         assertTrue(list.isEmpty())
     }
 
-    @test fun listEqualsOperatesOnAny() {
+    @Test fun listEqualsOperatesOnAny() {
         assertFalse(listOf(1, 2, 3).equals(object {}))
     }
 
-    @test fun arrayListValidatesIndexRange() {
+    @Test fun arrayListValidatesIndexRange() {
         val list = mutableListOf(1)
         for (index in listOf(-1, 1, 3)) {
             if (index != list.size) { // size is a valid position index
@@ -63,7 +63,7 @@ class JsCollectionsTest {
         assertEquals(listOf(1), list)
     }
 
-    @test fun mutableIteratorRemove() {
+    @Test fun mutableIteratorRemove() {
         val a = mutableListOf(1, 2, 3)
         val it = a.iterator()
         assertFailsWith<IllegalStateException> { it.remove() }

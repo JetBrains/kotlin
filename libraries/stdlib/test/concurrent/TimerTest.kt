@@ -7,10 +7,10 @@ import kotlin.test.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.Timer
 
-import org.junit.Test as test
+import org.junit.Test
 
 class TimerTest {
-    @test fun scheduledTask() {
+    @Test fun scheduledTask() {
         val counter = AtomicInteger(0)
         val timer = Timer()
 

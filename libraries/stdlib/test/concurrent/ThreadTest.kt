@@ -4,13 +4,13 @@ package test.concurrent
 import kotlin.concurrent.*
 import kotlin.test.*
 
-import org.junit.Test as test
+import org.junit.Test
 
 import java.util.concurrent.*
 import java.util.concurrent.TimeUnit.*
 
 class ThreadTest {
-    @test fun scheduledTask() {
+    @Test fun scheduledTask() {
 
         val pool = Executors.newFixedThreadPool(1)
         val countDown = CountDownLatch(1)
@@ -20,7 +20,7 @@ class ThreadTest {
         assertTrue(countDown.await(2, SECONDS), "Count down is executed")
     }
 
-    @test fun callableInvoke() {
+    @Test fun callableInvoke() {
 
         val pool = Executors.newFixedThreadPool(1)
         val future = pool.submit<String> {  // type specification required here to choose overload for callable, see KT-7882
@@ -29,7 +29,7 @@ class ThreadTest {
         assertEquals("Hello", future.get(2, SECONDS))
     }
 
-    @test fun threadLocalGetOrSet() {
+    @Test fun threadLocalGetOrSet() {
         val v = ThreadLocal<String>()
 
         assertEquals("v1", v.getOrSet { "v1" })

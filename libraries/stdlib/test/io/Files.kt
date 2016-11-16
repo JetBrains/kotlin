@@ -3,7 +3,7 @@ package test.io
 
 import java.io.*
 import java.util.*
-import org.junit.Test as test
+import org.junit.Test
 import kotlin.io.walkTopDown
 import kotlin.test.*
 
@@ -13,13 +13,13 @@ class FilesTest {
     private val isBackslashSeparator = File.separatorChar == '\\'
 
 
-    @test fun testPath() {
+    @Test fun testPath() {
         val fileSuf = System.currentTimeMillis().toString()
         val file1 = createTempFile("temp", fileSuf)
         assertTrue(file1.path.endsWith(fileSuf), file1.path)
     }
 
-    @test fun testCreateTempDir() {
+    @Test fun testCreateTempDir() {
         val dirSuf = System.currentTimeMillis().toString()
         val dir1 = createTempDir("temp", dirSuf)
         assertTrue(dir1.exists() && dir1.isDirectory && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
@@ -38,7 +38,7 @@ class FilesTest {
         dir3.delete()
     }
 
-    @test fun testCreateTempFile() {
+    @Test fun testCreateTempFile() {
         val fileSuf = System.currentTimeMillis().toString()
         val file1 = createTempFile("temp", fileSuf)
         assertTrue(file1.exists() && file1.name.startsWith("temp") && file1.name.endsWith(fileSuf))
@@ -57,7 +57,7 @@ class FilesTest {
         file3.delete()
     }
 
-    @test fun listFilesWithFilter() {
+    @Test fun listFilesWithFilter() {
         val dir = createTempDir("temp")
 
         createTempFile("temp1", ".kt", dir)
@@ -72,7 +72,7 @@ class FilesTest {
         assertEquals(2, result2!!.size)
     }
 
-    @test fun relativeToRooted() {
+    @Test fun relativeToRooted() {
         val file1 = File("/foo/bar/baz")
         val file2 = File("/foo/baa/ghoo")
 
@@ -116,7 +116,7 @@ class FilesTest {
         }
     }
 
-    @test fun relativeToRelative() {
+    @Test fun relativeToRelative() {
         val nested = File("foo/bar")
         val base = File("foo")
 
@@ -150,7 +150,7 @@ class FilesTest {
         }
     }
 
-    @test fun relativeToFails() {
+    @Test fun relativeToFails() {
         val absolute = File("/foo/bar/baz")
         val relative = File("foo/bar")
         val networkShare1 = File("""\\my.host\share1/folder""")
@@ -177,7 +177,7 @@ class FilesTest {
         }
     }
 
-    @test fun relativeTo() {
+    @Test fun relativeTo() {
         assertEquals("kotlin", File("src/kotlin").toRelativeString(File("src")))
         assertEquals("", File("dir").toRelativeString(File("dir")))
         assertEquals("..", File("dir").toRelativeString(File("dir/subdir")))
@@ -192,7 +192,7 @@ class FilesTest {
         assertEquals(elements, components.segments.map { it.toString() })
     }
 
-    @test fun filePathComponents() {
+    @Test fun filePathComponents() {
         checkFilePathComponents(File("/foo/bar"), File("/"), listOf("foo", "bar"))
         checkFilePathComponents(File("/foo/bar/gav"), File("/"), listOf("foo", "bar", "gav"))
         checkFilePathComponents(File("/foo/bar/gav/"), File("/"), listOf("foo", "bar", "gav"))
@@ -213,7 +213,7 @@ class FilesTest {
         checkFilePathComponents(File(".."), File(""), listOf(".."))
     }
 
-    @test fun fileRoot() {
+    @Test fun fileRoot() {
         val rooted = File("/foo/bar")
         assertTrue(rooted.isRooted)
 //        assertEquals("/", rooted.root.invariantSeparatorsPath)
@@ -233,7 +233,7 @@ class FilesTest {
 //        assertEquals("", relative.rootName)
     }
 
-    @test fun startsWith() {
+    @Test fun startsWith() {
         assertTrue(File("foo/bar").startsWith(File("foo/bar")))
         assertTrue(File("foo/bar").startsWith(File("foo")))
         assertTrue(File("foo/bar").startsWith(""))
@@ -258,7 +258,7 @@ class FilesTest {
         }
     }
 
-    @test fun endsWith() {
+    @Test fun endsWith() {
         assertTrue(File("/foo/bar").endsWith("bar"))
         assertTrue(File("/foo/bar").endsWith("foo/bar"))
         assertTrue(File("/foo/bar").endsWith("/foo/bar"))
@@ -277,7 +277,7 @@ class FilesTest {
     }
 
 /*
-    @test fun subPath() {
+    @Test fun subPath() {
         if (isBackslashSeparator) {
             // Check only in Windows
             assertEquals(File("mike"), File("//my.host.net/home/mike/temp").subPath(0, 1))
@@ -289,7 +289,7 @@ class FilesTest {
     }
 */
 
-    @test fun normalize() {
+    @Test fun normalize() {
         assertEquals(File("/foo/bar/baaz"), File("/foo/./bar/gav/../baaz").normalize())
         assertEquals(File("/foo/bar/baaz"), File("/foo/bak/../bar/gav/../baaz").normalize())
         assertEquals(File("../../bar"), File("../foo/../../bar").normalize())
@@ -302,7 +302,7 @@ class FilesTest {
         assertEquals(File("/../foo"), File("/bar/../../foo").normalize())
     }
 
-    @test fun resolve() {
+    @Test fun resolve() {
         assertEquals(File("/foo/bar/gav"), File("/foo/bar").resolve("gav"))
         assertEquals(File("/foo/bar/gav"), File("/foo/bar/").resolve("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolve("/gav"))
@@ -322,7 +322,7 @@ class FilesTest {
 //        assertEquals(File("foo/bar"), File("foo").resolve("./bar"))
     }
 
-    @test fun resolveSibling() {
+    @Test fun resolveSibling() {
         assertEquals(File("/foo/gav"), File("/foo/bar").resolveSibling("gav"))
         assertEquals(File("/foo/gav"), File("/foo/bar/").resolveSibling("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolveSibling("/gav"))
@@ -337,7 +337,7 @@ class FilesTest {
         assertEquals(File("../gav"), File("").resolveSibling("gav"))
     }
 
-    @test fun extension() {
+    @Test fun extension() {
         assertEquals("bbb", File("aaa.bbb").extension)
         assertEquals("", File("aaa").extension)
         assertEquals("", File("aaa.").extension)
@@ -346,7 +346,7 @@ class FilesTest {
         assertEquals("", File("/my.dir/log").extension)
     }
 
-    @test fun nameWithoutExtension() {
+    @Test fun nameWithoutExtension() {
         assertEquals("aaa", File("aaa.bbb").nameWithoutExtension)
         assertEquals("aaa", File("aaa").nameWithoutExtension)
         assertEquals("aaa", File("aaa.").nameWithoutExtension)
@@ -354,7 +354,7 @@ class FilesTest {
         assertEquals("log", File("/my.dir/log").nameWithoutExtension)
     }
 
-    @test fun testCopyTo() {
+    @Test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
         try {
@@ -419,7 +419,7 @@ class FilesTest {
         }
     }
 
-    @test fun copyToNameWithoutParent() {
+    @Test fun copyToNameWithoutParent() {
         val currentDir = File("").absoluteFile!!
         val srcFile = createTempFile()
         val dstFile = createTempFile(directory = currentDir)
@@ -439,7 +439,7 @@ class FilesTest {
         }
     }
 
-    @test fun deleteRecursively() {
+    @Test fun deleteRecursively() {
         val dir = createTempDir()
         dir.delete()
         dir.mkdir()
@@ -453,7 +453,7 @@ class FilesTest {
         assertTrue(dir.deleteRecursively())
     }
 
-    @test fun deleteRecursivelyWithFail() {
+    @Test fun deleteRecursivelyWithFail() {
         val basedir = FileTreeWalkTest.createTestFiles()
         val restricted = File(basedir, "1")
         try {
@@ -491,7 +491,7 @@ class FilesTest {
         }
     }
 
-    @test fun copyRecursively() {
+    @Test fun copyRecursively() {
         val src = createTempDir()
         val dst = createTempDir()
         dst.delete()
@@ -562,7 +562,7 @@ class FilesTest {
         }
     }
 
-    @test fun copyRecursivelyWithOverwrite() {
+    @Test fun copyRecursivelyWithOverwrite() {
         val src = createTempDir()
         val dst = createTempDir()
         fun check() = compareDirectories(src, dst)
@@ -596,7 +596,7 @@ class FilesTest {
         }
     }
 
-    @test fun helpers1() {
+    @Test fun helpers1() {
         val str = "123456789\n"
         System.setIn(str.byteInputStream())
         val reader = System.`in`.bufferedReader()
@@ -607,7 +607,7 @@ class FilesTest {
         assertEquals('3', stringReader.read().toChar())
     }
 
-    @test fun helpers2() {
+    @Test fun helpers2() {
         val file = createTempFile()
         val writer = file.printWriter()
         val str1 = "Hello, world!"

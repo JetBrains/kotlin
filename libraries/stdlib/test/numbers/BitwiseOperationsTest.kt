@@ -1,35 +1,35 @@
 package test.numbers
 
 import kotlin.test.*
-import org.junit.Test as test
+import org.junit.Test
 
 // TODO: Run these tests during compiler test only (JVM & JS)
 class BitwiseOperationsTest {
-    @test fun orForInt() {
+    @Test fun orForInt() {
         assertEquals(3, 2 or 1)
     }
 
-    @test fun andForInt() {
+    @Test fun andForInt() {
         assertEquals(0, 1 and 0)
     }
 
-    @test fun xorForInt() {
+    @Test fun xorForInt() {
         assertEquals(1, 2 xor 3)
     }
 
-    @test fun shlForInt() {
+    @Test fun shlForInt() {
         assertEquals(4, 1 shl 2)
     }
 
-    @test fun shrForInt() {
+    @Test fun shrForInt() {
         assertEquals(1, 2 shr 1)
     }
 
-    @test fun ushrForInt() {
+    @Test fun ushrForInt() {
         assertEquals(2147483647, -1 ushr 1)
     }
 
-    @test fun invForInt() {
+    @Test fun invForInt() {
         assertEquals(0, (-1).inv())
     }
 }

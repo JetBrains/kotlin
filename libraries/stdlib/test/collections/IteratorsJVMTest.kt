@@ -1,13 +1,13 @@
 @file:kotlin.jvm.JvmVersion
 package test.collections
 
-import org.junit.Test as test
+import org.junit.Test
 import kotlin.test.*
 import java.util.*
 
 class IteratorsJVMTest {
 
-    @test fun testEnumeration() {
+    @Test fun testEnumeration() {
         val v = Vector<Int>()
         for (i in 1..5)
             v.add(i)

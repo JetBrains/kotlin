@@ -18,7 +18,7 @@ package test.utils
 
 import kotlin.*
 import kotlin.test.*
-import org.junit.Test as test
+import org.junit.Test
 
 class TODOTest {
     private class PartiallyImplementedClass {
@@ -52,7 +52,7 @@ class TODOTest {
     }
 
 
-    @test fun usage() {
+    @Test fun usage() {
         val inst = PartiallyImplementedClass()
 
         assertNotImplemented { inst.prop }

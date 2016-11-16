@@ -1,11 +1,11 @@
 package test.text
 
 import kotlin.test.*
-import org.junit.Test as test
+import org.junit.Test
 
 class StringBuilderTest {
 
-    @test fun stringBuild() {
+    @Test fun stringBuild() {
         val s = buildString {
             append("a")
             append(true)
@@ -13,20 +13,20 @@ class StringBuilderTest {
         assertEquals("atrue", s)
     }
 
-    @test fun appendMany() {
+    @Test fun appendMany() {
         assertEquals("a1", StringBuilder().append("a", "1").toString())
         assertEquals("a1", StringBuilder().append("a", 1).toString())
         assertEquals("a1", StringBuilder().append("a", StringBuilder().append("1")).toString())
     }
 
-    @test fun append() {
+    @Test fun append() {
         // this test is needed for JS implementation
         assertEquals("em", buildString {
             append("element", 2, 4)
         })
     }
 
-    @test fun asCharSequence() {
+    @Test fun asCharSequence() {
         val original = "Some test string"
         val sb = StringBuilder(original)
         val result = sb.toString()
@@ -41,7 +41,7 @@ class StringBuilderTest {
         assertEquals(result.substring(2, 6), cs.subSequence(2, 6).toString())
     }
 
-    @test fun constructors() {
+    @Test fun constructors() {
         StringBuilder().let { sb ->
             assertEquals(0, sb.length)
             assertEquals("", sb.toString())

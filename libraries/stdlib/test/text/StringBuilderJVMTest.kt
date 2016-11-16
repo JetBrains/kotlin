@@ -2,17 +2,17 @@
 package test.text
 
 import kotlin.test.*
-import org.junit.Test as test
+import org.junit.Test
 
 class StringBuilderJVMTest() {
 
-    @test fun stringBuildWithInitialCapacity() {
+    @Test fun stringBuildWithInitialCapacity() {
         val s = buildString(123) {
             assertEquals(123, capacity())
         }
     }
 
-    @test fun getAndSetChar() {
+    @Test fun getAndSetChar() {
         val sb = StringBuilder("abc")
         sb[1] = 'z'
 

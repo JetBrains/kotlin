@@ -9,7 +9,7 @@ import kotlin.test.*
 import kotlin.comparisons.*
 import java.util.*
 
-import org.junit.Test as test
+import org.junit.Test
 
 class CollectionJVMTest {
 
@@ -21,7 +21,7 @@ class CollectionJVMTest {
 
     private data class IdentityData(public val value: Int)
 
-    @test fun removeAllWithDifferentEquality() {
+    @Test fun removeAllWithDifferentEquality() {
         val data = listOf(IdentityData(1), IdentityData(1))
         val list = data.toMutableList()
         list -= identitySetOf(data[0]) as Iterable<IdentityData>
@@ -36,7 +36,7 @@ class CollectionJVMTest {
         assertTrue(set3.isEmpty(), "Array doesn't have contains, equality contains is used instead")
     }
 
-    @test fun flatMap() {
+    @Test fun flatMap() {
         val data = listOf("", "foo", "bar", "x", "")
         val characters = data.flatMap { it.toList() }
         println("Got list of characters ${characters}")
@@ -46,7 +46,7 @@ class CollectionJVMTest {
     }
 
 
-    @test fun filterIntoLinkedList() {
+    @Test fun filterIntoLinkedList() {
         val data = listOf("foo", "bar")
         val foo = data.filterTo(LinkedList<String>()) { it.startsWith("f") }
 
@@ -61,7 +61,7 @@ class CollectionJVMTest {
         }
     }
 
-    @test fun filterNotIntoLinkedListOf() {
+    @Test fun filterNotIntoLinkedListOf() {
         val data = listOf("foo", "bar")
         val foo = data.filterNotTo(LinkedList<String>()) { it.startsWith("f") }
 
@@ -76,7 +76,7 @@ class CollectionJVMTest {
         }
     }
 
-    @test fun filterNotNullIntoLinkedListOf() {
+    @Test fun filterNotNullIntoLinkedListOf() {
         val data = listOf(null, "foo", null, "bar")
         val foo = data.filterNotNullTo(LinkedList<String>())
 
@@ -88,7 +88,7 @@ class CollectionJVMTest {
         }
     }
 
-    @test fun filterIntoSortedSet() {
+    @Test fun filterIntoSortedSet() {
         val data = listOf("foo", "bar")
         val sorted = data.filterTo(sortedSetOf<String>()) { it.length == 3 }
         assertEquals(2, sorted.size)
@@ -98,26 +98,26 @@ class CollectionJVMTest {
         }
     }
 
-    @test fun first() {
+    @Test fun first() {
         assertEquals(19, TreeSet(listOf(90, 47, 19)).first())
     }
 
-    @test fun last() {
+    @Test fun last() {
         val data = listOf("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, listOf(15, 19, 20, 25).last())
         assertEquals('a', LinkedList(listOf('a')).last())
     }
 
-    @test fun lastException() {
+    @Test fun lastException() {
         assertFails { LinkedList<String>().last() }
     }
 
-    @test fun contains() {
+    @Test fun contains() {
         assertTrue(LinkedList(listOf(15, 19, 20)).contains(15))
     }
 
-    @test fun toArray() {
+    @Test fun toArray() {
         val data = listOf("foo", "bar")
         val arr = data.toTypedArray()
         println("Got array ${arr}")
@@ -129,7 +129,7 @@ class CollectionJVMTest {
         }
     }
 
-    @test fun toSortedSet() {
+    @Test fun toSortedSet() {
         val data = listOf("foo", "Foo", "bar")
         val set1 = data.toSortedSet()
         assertEquals(listOf("Foo", "bar", "foo"), set1.toList())
@@ -141,11 +141,11 @@ class CollectionJVMTest {
         assertEquals(listOf("bar", "foo"), set3.toList())
     }
 
-    @test fun takeReturnsFirstNElements() {
+    @Test fun takeReturnsFirstNElements() {
         expect(setOf(1, 2)) { sortedSetOf(1, 2, 3, 4, 5).take(2).toSet() }
     }
 
-    @test fun filterIsInstanceList() {
+    @Test fun filterIsInstanceList() {
         val values: List<Any> = listOf(1, 2, 3.toDouble(), "abc", "cde")
 
         val intValues: List<Int> = values.filterIsInstance<Int>()
@@ -164,7 +164,7 @@ class CollectionJVMTest {
         assertEquals(0, charValues.size)
     }
 
-    @test fun filterIsInstanceArray() {
+    @Test fun filterIsInstanceArray() {
         val src: Array<Any> = arrayOf(1, 2, 3.toDouble(), "abc", "cde")
 
         val intValues: List<Int> = src.filterIsInstance<Int>()
@@ -183,11 +183,11 @@ class CollectionJVMTest {
         assertEquals(0, charValues.size)
     }
 
-    @test fun emptyListIsSerializable() = testSingletonSerialization(emptyList<Any>())
+    @Test fun emptyListIsSerializable() = testSingletonSerialization(emptyList<Any>())
 
-    @test fun emptySetIsSerializable() = testSingletonSerialization(emptySet<Any>())
+    @Test fun emptySetIsSerializable() = testSingletonSerialization(emptySet<Any>())
 
-    @test fun emptyMapIsSerializable() = testSingletonSerialization(emptyMap<Any, Any>())
+    @Test fun emptyMapIsSerializable() = testSingletonSerialization(emptyMap<Any, Any>())
 
     private fun testSingletonSerialization(value: Any) {
         val result = serializeAndDeserialize(value)
@@ -209,15 +209,15 @@ class CollectionJVMTest {
         return inputObjectStream.readObject() as T
     }
 
-    @test fun deserializeEmptyList() = testPersistedDeserialization(
+    @Test fun deserializeEmptyList() = testPersistedDeserialization(
             "ac ed 00 05 73 72 00 1c 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 4c 69 73 74 99 6f c7 d0 a7 e0 60 32 02 00 00 78 70",
             emptyList<Any>())
 
-    @test fun deserializeEmptySet() = testPersistedDeserialization(
+    @Test fun deserializeEmptySet() = testPersistedDeserialization(
             "ac ed 00 05 73 72 00 1b 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 53 65 74 2f 46 b0 15 76 d7 e2 f4 02 00 00 78 70",
             emptySet<Any>())
 
-    @test fun deserializeEmptyMap() = testPersistedDeserialization(
+    @Test fun deserializeEmptyMap() = testPersistedDeserialization(
             "ac ed 00 05 73 72 00 1b 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 4d 61 70 72 72 37 71 cb 04 4c d2 02 00 00 78 70",
             emptyMap<Any, Any>())
 

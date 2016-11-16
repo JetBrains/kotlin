@@ -1,6 +1,6 @@
 package test.ranges
 
-import org.junit.Test as test
+import org.junit.Test
 import kotlin.test.*
 
 public open class RangeIterationTestBase {
@@ -48,14 +48,14 @@ public open class RangeIterationTestBase {
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
 public class RangeIterationTest : RangeIterationTestBase() {
 
-    @test fun emptyConstant() {
+    @Test fun emptyConstant() {
         doTest(IntRange.EMPTY, 1, 0, 1, listOf())
         doTest(LongRange.EMPTY, 1.toLong(), 0.toLong(), 1.toLong(), listOf())
 
         doTest(CharRange.EMPTY, 1.toChar(), 0.toChar(), 1, listOf())
     }
 
-    @test fun emptyRange() {
+    @Test fun emptyRange() {
         doTest(10..5, 10, 5, 1, listOf())
         doTest(10.toByte()..(-5).toByte(), 10, (-5), 1, listOf())
         doTest(10.toShort()..(-5).toShort(), 10, (-5), 1, listOf())
@@ -64,7 +64,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest('z'..'a', 'z', 'a', 1, listOf())
     }
 
-    @test fun oneElementRange() {
+    @Test fun oneElementRange() {
         doTest(5..5, 5, 5, 1, listOf(5))
         doTest(5.toByte()..5.toByte(), 5, 5, 1, listOf(5))
         doTest(5.toShort()..5.toShort(), 5, 5, 1, listOf(5))
@@ -73,7 +73,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest('k'..'k', 'k', 'k', 1, listOf('k'))
     }
 
-    @test fun simpleRange() {
+    @Test fun simpleRange() {
         doTest(3..9, 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
         doTest(3.toByte()..9.toByte(), 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
         doTest(3.toShort()..9.toShort(), 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
@@ -83,7 +83,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
    }
 
 
-    @test fun simpleRangeWithNonConstantEnds() {
+    @Test fun simpleRangeWithNonConstantEnds() {
         doTest((1 + 2)..(10 - 1), 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
         doTest((1.toByte() + 2.toByte()).toByte()..(10.toByte() - 1.toByte()).toByte(), 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
         doTest((1.toShort() + 2.toShort()).toShort()..(10.toShort() - 1.toShort()).toShort(), 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
@@ -92,7 +92,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(("ace"[1])..("age"[1]), 'c', 'g', 1, listOf('c', 'd', 'e', 'f', 'g'))
     }
 
-    @test fun openRange() {
+    @Test fun openRange() {
         doTest(1 until 5, 1, 4, 1, listOf(1, 2, 3, 4))
         doTest(1.toByte() until 5.toByte(), 1, 4, 1, listOf(1, 2, 3, 4))
         doTest(1.toShort() until 5.toShort(), 1, 4, 1, listOf(1, 2, 3, 4))
@@ -101,7 +101,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
     }
 
 
-    @test fun emptyDownto() {
+    @Test fun emptyDownto() {
         doTest(5 downTo 10, 5, 10, -1, listOf())
         doTest(5.toByte() downTo 10.toByte(), 5, 10, -1, listOf())
         doTest(5.toShort() downTo 10.toShort(), 5, 10, -1, listOf())
@@ -110,7 +110,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest('a' downTo 'z', 'a', 'z', -1, listOf())
     }
 
-    @test fun oneElementDownTo() {
+    @Test fun oneElementDownTo() {
         doTest(5 downTo 5, 5, 5, -1, listOf(5))
         doTest(5.toByte() downTo 5.toByte(), 5, 5, -1, listOf(5))
         doTest(5.toShort() downTo 5.toShort(), 5, 5, -1, listOf(5))
@@ -119,7 +119,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest('k' downTo 'k', 'k', 'k', -1, listOf('k'))
     }
 
-    @test fun simpleDownTo() {
+    @Test fun simpleDownTo() {
         doTest(9 downTo 3, 9, 3, -1, listOf(9, 8, 7, 6, 5, 4, 3))
         doTest(9.toByte() downTo 3.toByte(), 9, 3, -1, listOf(9, 8, 7, 6, 5, 4, 3))
         doTest(9.toShort() downTo 3.toShort(), 9, 3, -1, listOf(9, 8, 7, 6, 5, 4, 3))
@@ -129,7 +129,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
     }
 
 
-    @test fun simpleSteppedRange() {
+    @Test fun simpleSteppedRange() {
         doTest(3..9 step 2, 3, 9, 2, listOf(3, 5, 7, 9))
         doTest(3.toByte()..9.toByte() step 2, 3, 9, 2, listOf(3, 5, 7, 9))
         doTest(3.toShort()..9.toShort() step 2, 3, 9, 2, listOf(3, 5, 7, 9))
@@ -138,7 +138,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest('c'..'g' step 2, 'c', 'g', 2, listOf('c', 'e', 'g'))
     }
 
-    @test fun simpleSteppedDownTo() {
+    @Test fun simpleSteppedDownTo() {
         doTest(9 downTo 3 step 2, 9, 3, -2, listOf(9, 7, 5, 3))
         doTest(9.toByte() downTo 3.toByte() step 2, 9, 3, -2, listOf(9, 7, 5, 3))
         doTest(9.toShort() downTo 3.toShort() step 2, 9, 3, -2, listOf(9, 7, 5, 3))
@@ -149,7 +149,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
 
 
     // 'inexact' means last element is not equal to sequence end
-    @test fun inexactSteppedRange() {
+    @Test fun inexactSteppedRange() {
         doTest(3..8 step 2, 3, 7, 2, listOf(3, 5, 7))
         doTest(3.toByte()..8.toByte() step 2, 3, 7, 2, listOf(3, 5, 7))
         doTest(3.toShort()..8.toShort() step 2, 3, 7, 2, listOf(3, 5, 7))
@@ -159,7 +159,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
     }
 
     // 'inexact' means last element is not equal to sequence end
-    @test fun inexactSteppedDownTo() {
+    @Test fun inexactSteppedDownTo() {
         doTest(8 downTo 3 step 2, 8, 4, -2, listOf(8, 6, 4))
         doTest(8.toByte() downTo 3.toByte() step 2, 8, 4, -2, listOf(8, 6, 4))
         doTest(8.toShort() downTo 3.toShort() step 2, 8, 4, -2, listOf(8, 6, 4))
@@ -169,7 +169,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
     }
 
 
-    @test fun reversedEmptyRange() {
+    @Test fun reversedEmptyRange() {
         doTest((5..3).reversed(), 3, 5, -1, listOf())
         doTest((5.toByte()..3.toByte()).reversed(), 3, 5, -1, listOf())
         doTest((5.toShort()..3.toShort()).reversed(), 3, 5, -1, listOf())
@@ -178,7 +178,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(('c'..'a').reversed(), 'a', 'c', -1, listOf())
     }
 
-    @test fun reversedEmptyBackSequence() {
+    @Test fun reversedEmptyBackSequence() {
         doTest((3 downTo 5).reversed(), 5, 3, 1, listOf())
         doTest((3.toByte() downTo 5.toByte()).reversed(), 5, 3, 1, listOf())
         doTest((3.toShort() downTo 5.toShort()).reversed(), 5, 3, 1, listOf())
@@ -187,7 +187,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(('a' downTo 'c').reversed(), 'c', 'a', 1, listOf())
     }
 
-    @test fun reversedRange() {
+    @Test fun reversedRange() {
         doTest((3..5).reversed(), 5, 3, -1, listOf(5, 4, 3))
         doTest((3.toByte()..5.toByte()).reversed(),5, 3, -1, listOf(5, 4, 3))
         doTest((3.toShort()..5.toShort()).reversed(), 5, 3, -1, listOf(5, 4, 3))
@@ -196,7 +196,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(('a'..'c').reversed(), 'c', 'a', -1, listOf('c', 'b', 'a'))
     }
 
-    @test fun reversedBackSequence() {
+    @Test fun reversedBackSequence() {
         doTest((5 downTo 3).reversed(), 3, 5, 1, listOf(3, 4, 5))
         doTest((5.toByte() downTo 3.toByte()).reversed(), 3, 5, 1, listOf(3, 4, 5))
         doTest((5.toShort() downTo 3.toShort()).reversed(), 3, 5, 1, listOf(3, 4, 5))
@@ -206,7 +206,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
 
      }
 
-    @test fun reversedSimpleSteppedRange() {
+    @Test fun reversedSimpleSteppedRange() {
         doTest((3..9 step 2).reversed(), 9, 3, -2, listOf(9, 7, 5, 3))
         doTest((3.toByte()..9.toByte() step 2).reversed(), 9, 3, -2, listOf(9, 7, 5, 3))
         doTest((3.toShort()..9.toShort() step 2).reversed(), 9, 3, -2, listOf(9, 7, 5, 3))
@@ -217,7 +217,7 @@ public class RangeIterationTest : RangeIterationTestBase() {
 
     // invariant progression.reversed().toList() == progression.toList().reversed() is preserved
     // 'inexact' means that start of reversed progression is not the end of original progression, but the last element
-    @test fun reversedInexactSteppedDownTo() {
+    @Test fun reversedInexactSteppedDownTo() {
         doTest((8 downTo 3 step 2).reversed(), 4, 8, 2, listOf(4, 6, 8))
         doTest((8.toByte() downTo 3.toByte() step 2).reversed(), 4, 8, 2, listOf(4, 6, 8))
         doTest((8.toShort() downTo 3.toShort() step 2).reversed(), 4, 8, 2, listOf(4, 6, 8))

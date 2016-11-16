@@ -40,7 +40,7 @@ public class GenerateRangesCodegenTestData {
             new File("libraries/stdlib/test/ranges/RangeIterationJVMTest.kt")
     };
 
-    private static final Pattern TEST_FUN_PATTERN = Pattern.compile("test fun (\\w+)\\(\\) \\{.+?}", Pattern.DOTALL);
+    private static final Pattern TEST_FUN_PATTERN = Pattern.compile("@Test fun (\\w+)\\(\\) \\{.+?}", Pattern.DOTALL);
     private static final Pattern SUBTEST_INVOCATION_PATTERN = Pattern.compile("doTest\\(([^,]+), [^,]+, [^,]+, [^,]+,\\s+listOf[\\w<>]*\\(([^\\n]*)\\)\\)", Pattern.DOTALL);
 
     // $LIST.size() check is needed in order for tests not to run forever

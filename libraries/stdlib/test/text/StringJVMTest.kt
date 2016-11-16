@@ -5,35 +5,35 @@ import test.collections.assertArrayNotSameButEquals
 import java.util.Locale
 import kotlin.test.*
 
-import org.junit.Test as test
+import org.junit.Test
 
 class StringJVMTest {
 
-    @test fun toBoolean() {
+    @Test fun toBoolean() {
         assertEquals(true, "true".toBoolean())
         assertEquals(true, "True".toBoolean())
         assertEquals(false, "false".toBoolean())
         assertEquals(false, "not so true".toBoolean())
     }
 
-    @test fun toByte() {
+    @Test fun toByte() {
         assertEquals(77.toByte(), "77".toByte())
         assertFails { "255".toByte() }
     }
 
-    @test fun toShort() {
+    @Test fun toShort() {
         assertEquals(77.toShort(), "77".toShort())
     }
 
-    @test fun toInt() {
+    @Test fun toInt() {
         assertEquals(77, "77".toInt())
     }
 
-    @test fun toLong() {
+    @Test fun toLong() {
         assertEquals(77.toLong(), "77".toLong())
     }
 
-    @test fun testSplitByPattern() = withOneCharSequenceArg("ab1cd2def3") { s ->
+    @Test fun testSplitByPattern() = withOneCharSequenceArg("ab1cd2def3") { s ->
         val isDigit = "\\d".toRegex()
         assertEquals(listOf("ab", "cd", "def", ""), s.split(isDigit))
         assertEquals(listOf("ab", "cd", "def3"), s.split(isDigit, 3))
@@ -46,7 +46,7 @@ class StringJVMTest {
         }
     }
 
-    @test fun sliceCharSequenceFails() = withOneCharSequenceArg { arg1 ->
+    @Test fun sliceCharSequenceFails() = withOneCharSequenceArg { arg1 ->
         assertFails {
             arg1("abc").slice(1..4)
         }
@@ -55,7 +55,7 @@ class StringJVMTest {
         }
     }
 
-    @test fun formatter() {
+    @Test fun formatter() {
         assertEquals("12", "%d%d".format(1, 2))
         assertEquals("12", String.format("%d%d", 1, 2))
 
@@ -67,12 +67,12 @@ class StringJVMTest {
         assertEquals("1 234 567,890", String.format(Locale("fr"),   "%,.3f", 1234567.890))
     }
 
-    @test fun toByteArrayEncodings() {
+    @Test fun toByteArrayEncodings() {
         val s = "hello®"
         assertEquals(String(s.toByteArray()), String(s.toByteArray(Charsets.UTF_8)))
     }
 
-    @test fun toCharArray() {
+    @Test fun toCharArray() {
         val s = "hello"
         val chars = s.toCharArray()
         assertArrayNotSameButEquals(charArrayOf('h', 'e', 'l', 'l', 'o'), chars)
@@ -82,13 +82,13 @@ class StringJVMTest {
         assertArrayNotSameButEquals(charArrayOf('\u0000', '\u0000', 'e', 'l'), buffer)
     }
 
-    @test fun orderIgnoringCase() {
+    @Test fun orderIgnoringCase() {
         val list = listOf("Beast", "Ast", "asterisk")
         assertEquals(listOf("Ast", "Beast", "asterisk"), list.sorted())
         assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
     }
 
-    @test fun charsets() {
+    @Test fun charsets() {
         assertEquals("UTF-32", Charsets.UTF_32.name())
         assertEquals("UTF-32LE", Charsets.UTF_32LE.name())
         assertEquals("UTF-32BE", Charsets.UTF_32BE.name())

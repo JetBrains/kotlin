@@ -1,32 +1,32 @@
 package test.collections
 
 import kotlin.test.*
-import org.junit.Test as test
+import org.junit.Test
 
 class SetOperationsTest {
-    @test fun distinct() {
+    @Test fun distinct() {
         assertEquals(listOf(1, 3, 5), listOf(1, 3, 3, 1, 5, 1, 3).distinct())
         assertTrue(listOf<Int>().distinct().isEmpty())
     }
 
-    @test fun distinctBy() {
+    @Test fun distinctBy() {
         assertEquals(listOf("some", "cat", "do"), arrayOf("some", "case", "cat", "do", "dog", "it").distinctBy { it.length })
         assertTrue(charArrayOf().distinctBy { it }.isEmpty())
     }
 
-    @test fun union() {
+    @Test fun union() {
         assertEquals(listOf(1, 3, 5), listOf(1, 3).union(listOf(5)).toList())
         assertEquals(listOf(1), listOf<Int>().union(listOf(1)).toList())
     }
 
-    @test fun subtract() {
+    @Test fun subtract() {
         assertEquals(listOf(1, 3), listOf(1, 3).subtract(listOf(5)).toList())
         assertEquals(listOf(1, 3), listOf(1, 3, 5).subtract(listOf(5)).toList())
         assertTrue(listOf(1, 3, 5).subtract(listOf(1, 3, 5)).none())
         assertTrue(listOf<Int>().subtract(listOf(1)).none())
     }
 
-    @test fun intersect() {
+    @Test fun intersect() {
         assertTrue(listOf(1, 3).intersect(listOf(5)).none())
         assertEquals(listOf(5), listOf(1, 3, 5).intersect(listOf(5)).toList())
         assertEquals(listOf(1, 3, 5), listOf(1, 3, 5).intersect(listOf(1, 3, 5)).toList())
@@ -40,12 +40,12 @@ class SetOperationsTest {
         assertEquals(setOf("foo", "bar", "cheese", "wine"), set2)
     }
 
-    @test fun plusElement() = testPlus { it + "bar" + "cheese" + "wine" }
-    @test fun plusCollection() = testPlus { it + listOf("bar", "cheese", "wine") }
-    @test fun plusArray() = testPlus { it + arrayOf("bar", "cheese", "wine") }
-    @test fun plusSequence() = testPlus { it + sequenceOf("bar", "cheese", "wine") }
+    @Test fun plusElement() = testPlus { it + "bar" + "cheese" + "wine" }
+    @Test fun plusCollection() = testPlus { it + listOf("bar", "cheese", "wine") }
+    @Test fun plusArray() = testPlus { it + arrayOf("bar", "cheese", "wine") }
+    @Test fun plusSequence() = testPlus { it + sequenceOf("bar", "cheese", "wine") }
 
-    @test fun plusAssign() {
+    @Test fun plusAssign() {
         // lets use a mutable variable
         var set = setOf("a")
         val setOriginal = set
@@ -70,9 +70,9 @@ class SetOperationsTest {
         assertEquals(setOf("foo"), b)
     }
 
-    @test fun minusElement() = testMinus { it - "bar" - "zoo" }
-    @test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
-    @test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
-    @test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+    @Test fun minusElement() = testMinus { it - "bar" - "zoo" }
+    @Test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
+    @Test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
+    @Test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
 
 }

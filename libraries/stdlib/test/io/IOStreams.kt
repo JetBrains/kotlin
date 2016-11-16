@@ -1,13 +1,13 @@
 @file:kotlin.jvm.JvmVersion
 package test.io
 
-import org.junit.Test as test
+import org.junit.Test
 import kotlin.test.*
 import java.io.Writer
 import java.io.BufferedReader
 
 class IOStreamsTest {
-    @test fun testGetStreamOfFile() {
+    @Test fun testGetStreamOfFile() {
         val tmpFile = createTempFile()
         var writer: Writer? = null
         try {
@@ -27,7 +27,7 @@ class IOStreamsTest {
         assertEquals("Hello, World!", act)
     }
 
-    @test fun testInputStreamIterator() {
+    @Test fun testInputStreamIterator() {
         val x = ByteArray(10) { it.toByte() }
 
         val result = mutableListOf<Byte>()

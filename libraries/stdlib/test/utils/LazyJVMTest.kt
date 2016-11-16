@@ -8,11 +8,11 @@ import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
-import org.junit.Test as test
+import org.junit.Test
 
 class LazyJVMTest {
 
-    @test fun synchronizedLazy() {
+    @Test fun synchronizedLazy() {
         val counter = AtomicInteger(0)
         val lazy = lazy {
             val value = counter.incrementAndGet()
@@ -26,7 +26,7 @@ class LazyJVMTest {
         assertEquals(1, counter.get())
     }
 
-    @test fun externallySynchronizedLazy() {
+    @Test fun externallySynchronizedLazy() {
         val counter = AtomicInteger(0)
         var initialized: Boolean = false
         val runs = ConcurrentHashMap<Int, Boolean>()
@@ -51,7 +51,7 @@ class LazyJVMTest {
         }
     }
 
-    @test fun publishOnceLazy() {
+    @Test fun publishOnceLazy() {
         val counter = AtomicInteger(0)
         var initialized: Boolean = false
         val runs = ConcurrentHashMap<Int, Boolean>()
@@ -75,7 +75,7 @@ class LazyJVMTest {
         }
     }
 
-    @test fun lazyInitializationForcedOnSerialization() {
+    @Test fun lazyInitializationForcedOnSerialization() {
         for(mode in listOf(LazyThreadSafetyMode.SYNCHRONIZED, LazyThreadSafetyMode.PUBLICATION, LazyThreadSafetyMode.NONE)) {
             val lazy = lazy(mode) { "initialized" }
             assertFalse(lazy.isInitialized())

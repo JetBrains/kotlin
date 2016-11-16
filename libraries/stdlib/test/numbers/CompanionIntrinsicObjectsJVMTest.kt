@@ -19,17 +19,17 @@ package test.numbers
 
 import kotlin.test.*
 
-import org.junit.Test as test
+import org.junit.Test
 
 class CompanionIntrinsicObjectsJVMTest {
-    @test fun intTest() {
+    @Test fun intTest() {
         val i = Int
 
         assertEquals(java.lang.Integer.MAX_VALUE, Int.MAX_VALUE)
         assertEquals(java.lang.Integer.MIN_VALUE, Int.MIN_VALUE)
     }
 
-    @test fun doubleTest() {
+    @Test fun doubleTest() {
         val d = Double
 
         assertEquals(java.lang.Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
@@ -40,7 +40,7 @@ class CompanionIntrinsicObjectsJVMTest {
         assertEquals(java.lang.Double.MIN_VALUE, Double.MIN_VALUE)
     }
 
-    @test fun floatTest() {
+    @Test fun floatTest() {
         val f = Float
 
         assertEquals(java.lang.Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
@@ -51,34 +51,34 @@ class CompanionIntrinsicObjectsJVMTest {
         assertEquals(java.lang.Float.MIN_VALUE, Float.MIN_VALUE)
     }
 
-    @test fun longTest() {
+    @Test fun longTest() {
         val l = Long
 
         assertEquals(java.lang.Long.MAX_VALUE, Long.MAX_VALUE)
         assertEquals(java.lang.Long.MIN_VALUE, Long.MIN_VALUE)
     }
 
-    @test fun shortTest() {
+    @Test fun shortTest() {
         val s = Short
 
         assertEquals(java.lang.Short.MAX_VALUE, Short.MAX_VALUE)
         assertEquals(java.lang.Short.MIN_VALUE, Short.MIN_VALUE)
     }
 
-    @test fun byteTest() {
+    @Test fun byteTest() {
         val b = Byte
 
         assertEquals(java.lang.Byte.MAX_VALUE, Byte.MAX_VALUE)
         assertEquals(java.lang.Byte.MIN_VALUE, Byte.MIN_VALUE)
     }
 
-    @test fun charTest() {
+    @Test fun charTest() {
         val ch = Char
 
         assertEquals(ch, Char)
     }
 
-    @test fun stringTest() {
+    @Test fun stringTest() {
         val s = String
 
         assertEquals(s, String)

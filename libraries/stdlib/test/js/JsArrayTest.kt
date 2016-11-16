@@ -16,12 +16,12 @@
 
 package test.collections.js
 
-import org.junit.Test as test
+import org.junit.Test
 import kotlin.test.*
 
 class JsArrayTest {
 
-    @test fun arraySizeAndToList() {
+    @Test fun arraySizeAndToList() {
         val a1 = arrayOf<String>()
         val a2 = arrayOf("foo")
         val a3 = arrayOf("foo", "bar")
@@ -36,7 +36,7 @@ class JsArrayTest {
 
     }
 
-    @test fun arrayListFromCollection() {
+    @Test fun arrayListFromCollection() {
         var c: Collection<String>  = arrayOf("A", "B", "C").toList()
         var a = ArrayList(c)
 

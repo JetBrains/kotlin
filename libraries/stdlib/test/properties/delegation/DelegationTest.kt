@@ -1,11 +1,11 @@
 package test.properties.delegation
 
-import org.junit.Test as test
+import org.junit.Test
 import kotlin.test.*
 import kotlin.properties.*
 
 class NotNullVarTest() {
-    @test fun doTest() {
+    @Test fun doTest() {
         NotNullVarTestGeneric("a", "b").doTest()
     }
 }
@@ -31,7 +31,7 @@ class ObservablePropertyTest {
         assertEquals(new, b, "New value has already been set")
     })
 
-    @test fun doTest() {
+    @Test fun doTest() {
         b = 4
         assertTrue(b == 4, "fail: b != 4")
         assertTrue(result, "fail: result should be true")
@@ -49,7 +49,7 @@ class VetoablePropertyTest {
         result
     })
 
-    @test fun doTest() {
+    @Test fun doTest() {
         val firstValue = A(true)
         b = firstValue
         assertTrue(b == firstValue, "fail1: b should be firstValue = A(true)")
