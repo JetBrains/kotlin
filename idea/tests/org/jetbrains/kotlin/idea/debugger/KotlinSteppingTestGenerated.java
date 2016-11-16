@@ -704,6 +704,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInInlineCallLocalFunLambda.kt")
+        public void testStopInInlineCallLocalFunLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlineCallLocalFunLambda.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInInlineFunDex.kt")
         public void testStopInInlineFunDex() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlineFunDex.kt");
@@ -722,9 +728,57 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInInlinedInSpecialNamedFun.kt")
+        public void testStopInInlinedInSpecialNamedFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlinedInSpecialNamedFun.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInInlinedInSpecialNamedFunWithGet.kt")
+        public void testStopInInlinedInSpecialNamedFunWithGet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlinedInSpecialNamedFunWithGet.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInLabdaOfCrossinlineCalledInAnonymous.kt")
         public void testStopInLabdaOfCrossinlineCalledInAnonymous() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLabdaOfCrossinlineCalledInAnonymous.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInLambdaInlineCallLambda.kt")
+        public void testStopInLambdaInlineCallLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLambdaInlineCallLambda.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInLocalFunInlineCallLambda.kt")
+        public void testStopInLocalFunInlineCallLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLocalFunInlineCallLambda.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInNonInlinedLambdaInInlineCallWithClosure.kt")
+        public void testStopInNonInlinedLambdaInInlineCallWithClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInNonInlinedLambdaInInlineCallWithClosure.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInNonInlinedLambdaInInlineCallWithoutClosure.kt")
+        public void testStopInNonInlinedLambdaInInlineCallWithoutClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInNonInlinedLambdaInInlineCallWithoutClosure.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInObjectLiteralInInlineCallNoClosure.kt")
+        public void testStopInObjectLiteralInInlineCallNoClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInObjectLiteralInInlineCallNoClosure.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInObjectLiteralInInlineCallWithClosure.kt")
+        public void testStopInObjectLiteralInInlineCallWithClosure() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInObjectLiteralInInlineCallWithClosure.kt");
             doStepOverTest(fileName);
         }
     }

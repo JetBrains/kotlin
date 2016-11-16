@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -119,7 +120,12 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
         when {
             element is KtFunctionLiteral -> {
                 val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                return CachedClassNames(asmType.internalName)
+                val className = asmType.internalName
+
+                val inlineCallClassPatterns = inlineCallClassPatterns(typeMapper, element)
+                val names = listOf(className) + inlineCallClassPatterns
+
+                return CachedClassNames(names)
             }
             element is KtAnonymousInitializer -> {
                 // Class-object initializer
@@ -159,12 +165,44 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                 val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
                 if (parentInternalName == null) return CachedClassNames(inlinedCalls)
 
-                return CachedClassNames(listOf(parentInternalName) + inlinedCalls)
+                val inlineCallPatterns = if (parent != null) inlineCallClassPatterns(typeMapper, parent) else emptyList()
 
+                return CachedClassNames((listOf(parentInternalName) + inlinedCalls + inlineCallPatterns).filterNotNull())
             }
         }
 
         return CachedClassNames(getClassNameForFile(file))
+    }
+
+    private fun inlineCallClassPatterns(typeMapper: KotlinTypeMapper, element: KtElement): List<String> {
+        val context = typeMapper.bindingContext
+
+        val (inlineCall, functionLiteral) = runReadAction {
+            element.parents.filterIsInstance<KtFunctionLiteral>().map {
+                val lambdaExpression = it.parent as? KtLambdaExpression ?: return@map null
+                val ktCallExpression =
+                        lambdaExpression.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>() ?:
+                        lambdaExpression.typedParent<KtLambdaArgument>()?.typedParent<KtCallExpression>() ?:
+                        return@map null
+
+                ktCallExpression to it
+            }.lastOrNull {
+                it != null && isInlineCall(context, it.component1())
+            }
+        } ?: return emptyList()
+
+        val lexicalScope = context[BindingContext.LEXICAL_SCOPE, inlineCall] ?: return emptyList()
+
+        val resolvedCall = runReadAction { inlineCall.getResolvedCall(context) } ?: return emptyList()
+        val inlineFunctionName = resolvedCall.resultingDescriptor.name
+
+        val originalInternalClassName = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, functionLiteral).internalName
+        val ownerDescriptorName = lexicalScope.ownerDescriptor.name
+
+        val mangledInternalClassName = originalInternalClassName.funPrefix() + (if (ownerDescriptorName.isSpecial) "\$\$special\$" else "$") +
+                       InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX + "$" + inlineFunctionName
+
+        return listOf("$mangledInternalClassName*")
     }
 
     private fun getClassNameForClass(klass: KtClassOrObject, typeMapper: KotlinTypeMapper) = klass.readAction { getJvmInternalNameForImpl(typeMapper, it) }
@@ -329,14 +367,32 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
     }
 
     private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
+}
 
-    private fun String.substringIndex(): String {
-        if (lastIndexOf("$") < 0) return this
+private fun isInlineCall(context: BindingContext, expr: KtCallExpression): Boolean {
+    val resolvedCall = expr.getResolvedCall(context) ?: return false
+    return InlineUtil.isInline(resolvedCall.resultingDescriptor)
+}
 
-        val suffix = substringAfterLast("$")
-        if (suffix.all(Char::isDigit)) {
-            return substringBeforeLast("$") + "$"
-        }
-        return this
+private inline fun <reified T : PsiElement> PsiElement.typedParent(): T? = getStrictParentOfType()
+
+private fun String.funPrefix(): String {
+    if (lastIndexOf("$") < 0) return this
+
+    val trimmed = trimEnd { it == '$' || it.isDigit() } // Can accidentally trim end of function name if it ends with a number
+    val nextDollarIndex = indexOf('$', startIndex = trimmed.length - 1)
+
+    if (nextDollarIndex < 0) return this
+
+    return this.substring(0, nextDollarIndex)
+}
+
+private fun String.substringIndex(): String {
+    if (lastIndexOf("$") < 0) return this
+
+    val suffix = substringAfterLast("$")
+    if (suffix.all(Char::isDigit)) {
+        return substringBeforeLast("$") + "$"
     }
+    return this
 }
