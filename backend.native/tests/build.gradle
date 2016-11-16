@@ -179,6 +179,10 @@ task local_variable(type: UnitKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
 
+task cast_simple(type: UnitKonanTest) {
+    source = "codegen/basics/cast_simple.kt"
+}
+
 task hello0(type: RunKonanTest) {
     goldValue = "Hello, world!\n"
     source = "runtime/basic/hello0.kt"
