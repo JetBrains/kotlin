@@ -2,9 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlin_native.interop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.isArray
-import org.jetbrains.kotlin.backend.konan.isInterface
-import org.jetbrains.kotlin.backend.konan.isIntrinsic
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
@@ -21,6 +19,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.TypeUtils
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
@@ -294,6 +294,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMOpaqueValue? {
         when (value) {
             is IrSetterCallImpl  -> return evaluateSetterCall  (tmpVariableName, value)
+            is IrTypeOperatorCall-> return evaluateTypeOperator(tmpVariableName, value)
             is IrCall            -> return evaluateCall        (tmpVariableName, value)
             is IrGetValue        -> return evaluateGetValue    (tmpVariableName, value)
             is IrSetVariable     -> return evaluateSetVariable (                 value)
@@ -368,6 +369,32 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val variable = codegen.alloca(LLVMTypeOf(ret), variableName)
         codegen.registerVariable(variableName, variable)
         return codegen.store(ret!!, variable)
+    }
+
+    //-------------------------------------------------------------------------//
+    //   table of conversion with llvm for primitive types
+    //   to be used in replacement fo primitive.toX() calls with
+    //   translator intrinsics.
+    //            | byte     short   int     long     float     double
+    //------------|----------------------------------------------------
+    //    byte    |   x       sext   sext    sext     sitofp    sitofp
+    //    short   | trunc      x     sext    sext     sitofp    sitofp
+    //    int     | trunc    trunc    x      sext     sitofp    sitofp
+    //    long    | trunc    trunc   trunc     x      sitofp    sitofp
+    //    float   | fptosi   fptosi  fptosi  fptosi      x      fpext
+    //    double  | fptosi   fptosi  fptosi  fptosi   fptrunc      x
+
+    private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+        logger.log("evaluateTypeOperator       : ${ir2string(value)}")
+        assert(!KotlinBuiltIns.isPrimitiveType(value.type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
+
+        val dstDescriptor = TypeUtils.getClassDescriptor(value.type)                   // Get class descriptor for dst type.
+        val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
+        val srcArg        = evaluateExpression(codegen.newVar(), value.argument)!!     // Evaluate src expression.
+        val srcObjInfoPtr = codegen.bitcast(kObjHeaderPtr, srcArg, codegen.newVar())   // Cast src to ObjInfoPtr.
+        val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
+        codegen.call(context.checkInstanceFunction, args, "")                          // Check if dst is subclass of src.
+        return srcArg
     }
 
     //-------------------------------------------------------------------------//
@@ -603,7 +630,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             isInt -> return codegen.icmpEq(arg0, arg1, tmpVariableName)
             else  -> {
                 val functions = arg0Type.memberScope.getContributedFunctions(Name.identifier("equals"), NoLookupLocation.FROM_BACKEND).filter {
-                    it.valueParameters.size == 1 && KotlinBuiltIns.isAnyOrNullableAny(it.valueParameters[0].type)
+                    it.valueParameters.size == 1 && KotlinBuiltIns.isNullableAny(it.valueParameters[0].type)
                 }
                 assert(functions.size == 1)
                 val descriptor = functions.first()
@@ -659,8 +686,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     fun callDirect(descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
-        val llvmFunction = codegen.functionLlvmValue(descriptor)
-        return call(descriptor, llvmFunction, args, result)
+        val realDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor)
+        val llvmFunction = codegen.functionLlvmValue(realDescriptor)
+        return codegen.call(llvmFunction, args, result)
     }
 
     //-------------------------------------------------------------------------//
