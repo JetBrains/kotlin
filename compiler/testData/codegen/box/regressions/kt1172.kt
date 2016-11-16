@@ -1,15 +1,13 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
+// not sure if it's ok to change Object to Any
 
 // WITH_RUNTIME
 
 package test.regressions.kt1172
 
-import kotlin.concurrent.*
-import java.util.*
-
 public fun scheduleRefresh(vararg files : Object) {
-    java.util.ArrayList<Object>(files.map{ it })
+    ArrayList<Object>(files.map { it })
 }
 
 fun box(): String {
