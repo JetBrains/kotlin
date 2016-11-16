@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.serializeToByteArray
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializerExtension
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment.Companion.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -63,7 +65,9 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val analyzer = AnalyzerWithCompilerReport(messageCollector)
         analyzer.analyzeAndReport(files, object : AnalyzerWithCompilerReport.Analyzer {
-            override fun analyze(): AnalysisResult = DefaultAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns)
+            override fun analyze(): AnalysisResult = DefaultAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns) {
+                _, content -> JvmPackagePartProvider(environment, content.moduleContentScope)
+            }
         })
 
         if (analyzer.hasErrors()) return
@@ -192,9 +196,5 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
             destFile.parentFile.mkdirs()
             destFile.writeBytes(stream.toByteArray())
         }
-    }
-
-    companion object {
-        private val METADATA_FILE_EXTENSION = ".kotlin_metadata"
     }
 }

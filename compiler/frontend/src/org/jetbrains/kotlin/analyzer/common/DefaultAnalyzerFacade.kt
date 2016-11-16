@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.analyzer.common
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.ApiVersion
@@ -30,9 +31,11 @@ import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -40,6 +43,7 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 
 /**
  * A facade that is used to analyze platform independent modules in multi-platform projects.
@@ -97,7 +101,12 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, packagePartProvider
         )
 
-        return ResolverForModule(container.get<ResolveSession>().packageFragmentProvider, container)
+        val packageFragmentProviders = listOf(
+                container.get<ResolveSession>().packageFragmentProvider,
+                container.get<MetadataPackageFragmentProvider>()
+        )
+
+        return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
     }
 
     private fun createContainerToResolveCommonCode(
@@ -119,6 +128,11 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         useImpl<CompilerDeserializationConfiguration>()
         useInstance(packagePartProvider)
         useInstance(declarationProviderFactory)
+        useImpl<MetadataPackageFragmentProvider>()
+
+        val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
+                                    ?: error("No MetadataFinderFactory in project")
+        useInstance(metadataFinderFactory.create(moduleContentScope))
 
         targetEnvironment.configure(this)
         useImpl<LazyResolveToken>()

@@ -227,6 +227,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.caches.resolve.KotlinCacheService"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheServiceImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory"
+                    serviceImplementation="org.jetbrains.kotlin.idea.vfilefinder.JvmIDEVirtualFileFinderFactory"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory"
                     serviceImplementation="org.jetbrains.kotlin.idea.vfilefinder.JvmIDEVirtualFileFinderFactory"/>
 

@@ -36,6 +36,9 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
         return findKotlinClass(javaClass.fqName?.asString() ?: return null)
     }
 
+    // TODO
+    override fun findMetadata(classId: ClassId): InputStream? = null
+
     // TODO: load built-ins from classLoader
     override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
 }

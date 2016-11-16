@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import org.jetbrains.kotlin.load.kotlin.PackageParts
 import java.io.EOFException
 
 class JvmPackagePartProvider(
@@ -38,11 +39,16 @@ class JvmPackagePartProvider(
 
     private val loadedModules: MutableList<ModuleMapping> = SmartList()
 
-    @Synchronized
-    override fun findPackageParts(packageFqName: String): List<String> {
-        processNotLoadedRelevantRoots(packageFqName)
+    override fun findPackageParts(packageFqName: String): List<String> =
+            getPackageParts(packageFqName).flatMap(PackageParts::parts).distinct()
 
-        return loadedModules.flatMap { it.findPackageParts(packageFqName)?.parts ?: emptySet<String>() }.distinct()
+    override fun findMetadataPackageParts(packageFqName: String): List<String> =
+            getPackageParts(packageFqName).flatMap(PackageParts::metadataParts).distinct()
+
+    @Synchronized
+    private fun getPackageParts(packageFqName: String): List<PackageParts> {
+        processNotLoadedRelevantRoots(packageFqName)
+        return loadedModules.mapNotNull { it.findPackageParts(packageFqName) }
     }
 
     private fun processNotLoadedRelevantRoots(packageFqName: String) {

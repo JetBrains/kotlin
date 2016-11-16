@@ -39,6 +39,9 @@ internal class IncrementalPackagePartProvider private constructor(
                 parent.findPackageParts(packageFqName)).distinct()
     }
 
+    // TODO
+    override fun findMetadataPackageParts(packageFqName: String): List<String> = TODO()
+
     companion object {
         @JvmStatic
         fun create(

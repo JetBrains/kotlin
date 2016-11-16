@@ -18,15 +18,11 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class JvmBuiltInsPackageFragmentProvider(
         storageManager: StorageManager,
@@ -35,22 +31,12 @@ class JvmBuiltInsPackageFragmentProvider(
         notFoundClasses: NotFoundClasses,
         additionalClassPartsProvider: AdditionalClassPartsProvider,
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter
-) : PackageFragmentProvider {
-    private lateinit var components: DeserializationComponents
-
-    private val fragments = storageManager.createMemoizedFunctionWithNullableValues<FqName, PackageFragmentDescriptor> { fqName ->
-        finder.findBuiltInsData(fqName)?.let { inputStream ->
-            BuiltInsPackageFragment(fqName, storageManager, moduleDescriptor, inputStream).apply {
-                components = this@JvmBuiltInsPackageFragmentProvider.components
-            }
-        }
-    }
-
+) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
                 storageManager,
                 moduleDescriptor,
-                DeserializationConfiguration.Default,
+                DeserializationConfiguration.Default, // TODO
                 DeserializedClassDataFinder(this),
                 AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol),
                 this,
@@ -64,10 +50,10 @@ class JvmBuiltInsPackageFragmentProvider(
                 ),
                 notFoundClasses, additionalClassPartsProvider, platformDependentDeclarationFilter
         )
-
     }
 
-    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> = fragments(fqName).singletonOrEmptyList()
-
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> = emptySet()
+    override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
+            finder.findBuiltInsData(fqName)?.let { inputStream ->
+                BuiltInsPackageFragment(fqName, storageManager, moduleDescriptor, inputStream)
+            }
 }

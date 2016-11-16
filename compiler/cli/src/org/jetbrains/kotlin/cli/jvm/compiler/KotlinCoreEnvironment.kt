@@ -86,6 +86,7 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
@@ -160,7 +161,9 @@ class KotlinCoreEnvironment private constructor(
         (ServiceManager.getService(project, CoreJavaFileManager::class.java)
                 as KotlinCliJavaFileManagerImpl).initIndex(rootsIndex)
 
-        project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(rootsIndex))
+        val finderFactory = JvmCliVirtualFileFinderFactory(rootsIndex)
+        project.registerService(MetadataFinderFactory::class.java, finderFactory)
+        project.registerService(JvmVirtualFileFinderFactory::class.java, finderFactory)
 
         ExpressionCodegenExtension.registerExtensionPoint(project)
         ClassBuilderInterceptorExtension.registerExtensionPoint(project)

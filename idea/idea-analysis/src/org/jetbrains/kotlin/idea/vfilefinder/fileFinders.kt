@@ -56,6 +56,9 @@ class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVirtualFi
 }
 
 class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), JvmVirtualFileFinder {
+    // TODO
+    override fun findMetadata(classId: ClassId): InputStream? = null
+
     // TODO: load built-ins metadata from scope
     override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
 

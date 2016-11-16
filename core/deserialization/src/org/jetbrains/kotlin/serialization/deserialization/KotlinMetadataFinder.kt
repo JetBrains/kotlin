@@ -16,10 +16,17 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.io.InputStream
 
 interface KotlinMetadataFinder {
+    /**
+     * @return an [InputStream] which should be used to load the .kotlin_metadata file for class with the given [classId].
+     * [classId] identifies either a real top level class, or a package part (e.g. it can be "foo/bar/_1Kt")
+     */
+    fun findMetadata(classId: ClassId): InputStream?
+
     /**
      * @return an [InputStream] which should be used to load the .kotlin_builtins file for package with the given [packageFqName].
      */

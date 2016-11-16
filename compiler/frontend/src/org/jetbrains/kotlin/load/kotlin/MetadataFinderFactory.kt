@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,9 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
-interface JvmVirtualFileFinderFactory : VirtualFileFinderFactory, MetadataFinderFactory {
-    override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder
-
-    object SERVICE {
-        @JvmStatic fun getInstance(project: Project): JvmVirtualFileFinderFactory =
-            ServiceManager.getService(project, JvmVirtualFileFinderFactory::class.java)
-    }
+interface MetadataFinderFactory {
+    fun create(scope: GlobalSearchScope): KotlinMetadataFinder
 }

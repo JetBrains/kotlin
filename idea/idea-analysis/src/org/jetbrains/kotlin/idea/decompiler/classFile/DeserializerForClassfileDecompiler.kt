@@ -116,6 +116,9 @@ class DirectoryBasedClassFinder(
         return null
     }
 
+    // TODO
+    override fun findMetadata(classId: ClassId): InputStream? = null
+
     // TODO: load built-ins from packageDirectory?
     override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
 }

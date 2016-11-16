@@ -34,24 +34,20 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
         @JvmField
         val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), "EMPTY")
 
-        fun create(proto: ByteArray?, debugName: String?): ModuleMapping {
-            if (proto == null) {
+        fun create(bytes: ByteArray?, debugName: String?): ModuleMapping {
+            if (bytes == null) {
                 return EMPTY
             }
 
-            val stream = DataInputStream(ByteArrayInputStream(proto))
+            val stream = DataInputStream(ByteArrayInputStream(bytes))
             val version = JvmMetadataVersion(*IntArray(stream.readInt()) { stream.readInt() })
 
             if (version.isCompatible()) {
                 val parseFrom = JvmPackageTable.PackageTable.parseFrom(stream)
                 if (parseFrom != null) {
-                    val packageFqNameParts = hashMapOf<String, PackageParts>()
-                    parseFrom.packagePartsList.forEach {
-                        val packageParts = PackageParts(it.packageFqName)
-                        packageFqNameParts.put(it.packageFqName, packageParts)
-                        it.classNameList.forEach {
-                            packageParts.parts.add(it)
-                        }
+                    val packageFqNameParts = hashMapOf<String, PackageParts>().apply {
+                        addParts(this, parseFrom.packagePartsList, PackageParts::parts)
+                        addParts(this, parseFrom.metadataPartsList, PackageParts::metadataParts)
                     }
                     return ModuleMapping(packageFqNameParts, debugName ?: "<unknown>")
                 }
@@ -61,6 +57,19 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
             }
 
             return EMPTY
+        }
+
+        private inline fun addParts(
+                result: MutableMap<String, PackageParts>,
+                partsList: List<JvmPackageTable.PackageParts>,
+                whichParts: (PackageParts) -> MutableSet<String>
+        ) {
+            for (proto in partsList) {
+                PackageParts(proto.packageFqName).apply {
+                    result.put(proto.packageFqName, this)
+                    whichParts(this).addAll(proto.classNameList)
+                }
+            }
         }
     }
 }
