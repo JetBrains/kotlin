@@ -16,28 +16,23 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure.EnrichedProjectionKind.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure.*
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.*
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
@@ -72,13 +67,19 @@ class VarianceCheckerCore(
             if (!checkClassHeader(klass)) return false
         }
         for (member in klass.declarations + klass.getPrimaryConstructorParameters()) {
-            member as? KtCallableDeclaration ?: continue
             val descriptor = when (member) {
                 is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
-                is KtCallableDeclaration -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
+                is KtDeclaration -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
                 else -> null
-            } as? CallableMemberDescriptor ?: continue
-            if (!checkMember(member, descriptor)) return false
+            } as? MemberDescriptor ?: continue
+            when (member) {
+                is KtClassOrObject -> {
+                    if (!checkClassOrObject(member)) return false
+                }
+                is KtCallableDeclaration -> {
+                    if (descriptor is CallableMemberDescriptor && !checkMember(member, descriptor)) return false
+                }
+            }
         }
         return true
     }
@@ -109,7 +110,7 @@ class VarianceCheckerCore(
             Visibilities.isPrivate(descriptor.visibility) || checkCallableDeclaration(context, member, descriptor)
 
     private fun TypeParameterDescriptor.varianceWithManual() =
-            if (manualVariance != null && this == manualVariance.descriptor) manualVariance.variance else variance
+            if (manualVariance != null && this.original == manualVariance.descriptor) manualVariance.variance else variance
 
     fun recordPrivateToThisIfNeeded(descriptor: CallableMemberDescriptor) {
         if (isIrrelevant(descriptor) || descriptor.visibility != Visibilities.PRIVATE) return
