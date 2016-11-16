@@ -160,31 +160,34 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             }
 
             var renderedDecl = DESCRIPTOR_RENDERER.render(declarationDescriptor)
+
             if (!quickNavigation) {
                 renderedDecl = "<pre>$renderedDecl</pre>"
             }
 
             renderedDecl += renderDeprecationInfo(declarationDescriptor)
 
-            val comment = declarationDescriptor.findKDoc()
-            if (comment != null) {
-                val renderedComment = KDocRenderer.renderKDoc(comment)
-                if (renderedComment.startsWith("<p>")) {
-                    renderedDecl += renderedComment
+            if (!quickNavigation) {
+                val comment = declarationDescriptor.findKDoc()
+                if (comment != null) {
+                    val renderedComment = KDocRenderer.renderKDoc(comment)
+                    if (renderedComment.startsWith("<p>")) {
+                        renderedDecl += renderedComment
+                    }
+                    else {
+                        renderedDecl = "$renderedDecl<br/>$renderedComment"
+                    }
                 }
                 else {
-                    renderedDecl = "$renderedDecl<br/>$renderedComment"
-                }
-            }
-            else {
-                if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
-                    val psi = declarationDescriptor.findPsi() as? KtFunction
-                    if (psi != null) {
-                        val lightElement = LightClassUtil.getLightClassMethod(psi) // Light method for super's scan in javadoc info gen
-                        val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
-                        val builder = StringBuilder()
-                        if (javaDocInfoGenerator.generateDocInfoCore(builder, false))
-                            renderedDecl += builder.toString().substringAfter("</PRE>") // Cut off light method signature
+                    if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
+                        val psi = declarationDescriptor.findPsi() as? KtFunction
+                        if (psi != null) {
+                            val lightElement = LightClassUtil.getLightClassMethod(psi) // Light method for super's scan in javadoc info gen
+                            val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
+                            val builder = StringBuilder()
+                            if (javaDocInfoGenerator.generateDocInfoCore(builder, false))
+                                renderedDecl += builder.toString().substringAfter("</PRE>") // Cut off light method signature
+                        }
                     }
                 }
             }

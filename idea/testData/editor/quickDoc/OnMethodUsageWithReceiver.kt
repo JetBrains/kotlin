@@ -13,7 +13,7 @@ fun test() {
     1.<caret>testMethod("value")
 }
 
-//INFO: <b>public</b> <b>fun</b> Int.testMethod(b: String): Unit <i>defined in</i> root package<p>Some documentation</p>
+//INFO: <pre><b>public</b> <b>fun</b> Int.testMethod(b: String): Unit <i>defined in</i> root package</pre><p>Some documentation</p>
 //INFO: <dl><dt><b>Receiver:</b></dt><dd>Some int</dd></dl>
 //INFO: <dl><dt><b>Parameters:</b></dt><dd><code>b</code> - String</dd></dl>
 //INFO: <dl><dt><b>Returns:</b></dt><dd>Return <a href="psi_element://a">a</a> and nothing else</dd></dl>

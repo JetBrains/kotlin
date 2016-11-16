@@ -4,4 +4,4 @@ class C(var v: Int) {
     }
 }
 
-//INFO: <b>public</b> <b>final</b> <b>var</b> v: Int <i>defined in</i> C
+//INFO: <pre><b>public</b> <b>final</b> <b>var</b> v: Int <i>defined in</i> C</pre>

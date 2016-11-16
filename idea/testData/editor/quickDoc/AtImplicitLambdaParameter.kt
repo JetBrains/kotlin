@@ -4,4 +4,4 @@ fun foo() {
     }
 }
 
-//INFO: <b>value-parameter</b> it: Int <i>defined in</i> foo.&lt;anonymous&gt;
+//INFO: <pre><b>value-parameter</b> it: Int <i>defined in</i> foo.&lt;anonymous&gt;</pre>
