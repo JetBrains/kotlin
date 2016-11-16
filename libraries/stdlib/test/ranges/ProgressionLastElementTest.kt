@@ -1,6 +1,7 @@
 package test.ranges
 
 import org.junit.Test
+import kotlin.comparisons.*
 import kotlin.test.assertEquals
 
 
@@ -72,7 +73,7 @@ class ProgressionLastElementTest  {
                     var x = start
                     while (true) {
                         val next = x + increment
-                        if (next < Math.min(start, end) || next > Math.max(start, end)) break
+                        if (next !in minOf(start, end)..maxOf(start, end)) break
                         x = next
                     }
 

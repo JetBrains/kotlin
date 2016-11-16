@@ -74,14 +74,6 @@ internal inline header fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean)
 
 internal header interface Serializable
 
-// temporary
-internal header object Math {
-    fun max(a: Int, b: Int): Int
-    fun min(a: Int, b: Int): Int
-}
-
-
-
 // From numbers.kt
 
 header fun Double.isNaN(): Boolean

@@ -1144,7 +1144,7 @@ public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
  * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
  */
 public inline fun <V> CharSequence.zip(other: CharSequence, transform: (Char, Char) -> V): List<V> {
-    val length = Math.min(this.length, other.length)
+    val length = minOf(this.length, other.length)
     val list = ArrayList<V>(length)
     for (i in 0..length-1) {
         list.add(transform(this[i], other[i]))

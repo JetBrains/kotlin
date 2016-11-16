@@ -11684,7 +11684,7 @@ public infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>> {
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11696,7 +11696,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (T,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (Byte, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11708,7 +11708,7 @@ public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (Byte, R)
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (Short, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11720,7 +11720,7 @@ public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (Short, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (Int, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11732,7 +11732,7 @@ public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (Int, R) -
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (Long, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11744,7 +11744,7 @@ public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (Long, R)
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (Float, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11756,7 +11756,7 @@ public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (Float, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (Double, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11768,7 +11768,7 @@ public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (Double
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (Boolean, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11780,7 +11780,7 @@ public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (Boole
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (Char, R) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -11856,7 +11856,7 @@ public infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
  */
 public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11870,7 +11870,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, 
  */
 public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11884,7 +11884,7 @@ public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) 
  */
 public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11898,7 +11898,7 @@ public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R
  */
 public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11912,7 +11912,7 @@ public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) ->
  */
 public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11926,7 +11926,7 @@ public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) 
  */
 public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11940,7 +11940,7 @@ public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R
  */
 public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11954,7 +11954,7 @@ public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double,
  */
 public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -11968,7 +11968,7 @@ public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolea
  */
 public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
     val arraySize = size
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
         if (i >= arraySize) break
@@ -12037,7 +12037,7 @@ public infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>> {
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ByteArray.zip(other: ByteArray, transform: (Byte, Byte) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -12049,7 +12049,7 @@ public inline fun <V> ByteArray.zip(other: ByteArray, transform: (Byte, Byte) ->
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ShortArray.zip(other: ShortArray, transform: (Short, Short) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -12061,7 +12061,7 @@ public inline fun <V> ShortArray.zip(other: ShortArray, transform: (Short, Short
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> IntArray.zip(other: IntArray, transform: (Int, Int) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -12073,7 +12073,7 @@ public inline fun <V> IntArray.zip(other: IntArray, transform: (Int, Int) -> V):
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> LongArray.zip(other: LongArray, transform: (Long, Long) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -12085,7 +12085,7 @@ public inline fun <V> LongArray.zip(other: LongArray, transform: (Long, Long) ->
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> FloatArray.zip(other: FloatArray, transform: (Float, Float) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -12097,7 +12097,7 @@ public inline fun <V> FloatArray.zip(other: FloatArray, transform: (Float, Float
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (Double, Double) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -12109,7 +12109,7 @@ public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (Double, Do
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))
@@ -12121,7 +12121,7 @@ public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (Boolean,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> CharArray.zip(other: CharArray, transform: (Char, Char) -> V): List<V> {
-    val size = Math.min(size, other.size)
+    val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], other[i]))

@@ -545,7 +545,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
-            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
+            val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
@@ -555,7 +555,7 @@ fun generators(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             val arraySize = size
-            val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+            val list = ArrayList<V>(minOf(other.collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in other) {
                 if (i >= arraySize) break
@@ -580,7 +580,7 @@ fun generators(): List<GenericFunction> {
         body {
             """
             val arraySize = other.size
-            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+            val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in this) {
                 if (i >= arraySize) break
@@ -591,7 +591,7 @@ fun generators(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val size = Math.min(size, other.size)
+            val size = minOf(size, other.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
                 list.add(transform(this[i], other[i]))
@@ -614,7 +614,7 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body() {
             """
-            val size = Math.min(size, other.size)
+            val size = minOf(size, other.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
                 list.add(transform(this[i], other[i]))
@@ -653,7 +653,7 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body {
             """
-            val length = Math.min(this.length, other.length)
+            val length = minOf(this.length, other.length)
 
             val list = ArrayList<V>(length)
             for (i in 0..length-1) {
