@@ -221,7 +221,7 @@ public class MethodInliner {
 
                     if (invokeCall.lambdaInfo.getFunctionDescriptor().getValueParameters().isEmpty()) {
                         // There won't be no parameters processing and line call can be left without actual instructions.
-                        // Note: if function is called on the line with other instructions like 1 + foo() no will still be generated.
+                        // Note: if function is called on the line with other instructions like 1 + foo(), 'nop' will still be generated.
                         visitInsn(Opcodes.NOP);
                     }
 
