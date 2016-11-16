@@ -17,13 +17,13 @@
 package kotlin.text
 
 
-interface Appendable {
+public interface Appendable {
     fun append(csq: CharSequence?): Appendable
     fun append(csq: CharSequence?, start: Int, end: Int): Appendable
     fun append(c: Char): Appendable
 }
 
-class StringBuilder(content: String = "") : Appendable, CharSequence {
+public class StringBuilder(content: String = "") : Appendable, CharSequence {
     constructor(capacity: Int) : this() {}
 
     constructor(content: CharSequence) : this(content.toString()) {}
