@@ -158,10 +158,10 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val annotations = FamilyProperty<String>()
     val sourceFile = FamilyProperty<SourceFile>()
 
-    fun bodyForTypes(family: Family, vararg primitiveTypes: PrimitiveType, b: () -> String) {
+    fun bodyForTypes(family: Family, vararg primitiveTypes: PrimitiveType, b: (PrimitiveType) -> String) {
         include(family)
         for (primitive in primitiveTypes) {
-            customPrimitiveBodies.put(family to primitive, b())
+            customPrimitiveBodies.put(family to primitive, b(primitive))
         }
     }
 
@@ -433,7 +433,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         val receiverType = (if (toNullableT) receiver.replace("T>", "T?>") else receiver).renderType()
 
         builder.append(receiverType)
-        builder.append(".${(customSignature[f] ?: signature).renderType()}: ${returnType.renderType()}")
+        if (receiverType.isNotEmpty()) builder.append('.')
+        builder.append("${(customSignature[f] ?: signature).renderType()}: ${returnType.renderType()}")
         if (keyword == "fun") builder.append(" {")
 
         val body = (
