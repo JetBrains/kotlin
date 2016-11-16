@@ -1,13 +1,11 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
-import java.util.Collections
+// TARGET_BACKEND: JVM
+// WITH_RUNTIME
 
 class A<U : Number, V : U, W : V> : Set<W> {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
     override fun contains(o: W): Boolean = false
-    override fun iterator(): Iterator<W> = Collections.emptySet<W>().iterator()
+    override fun iterator(): Iterator<W> = emptySet<W>().iterator()
     override fun containsAll(c: Collection<W>): Boolean = c.isEmpty()
 }
 
