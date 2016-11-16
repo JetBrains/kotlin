@@ -102,7 +102,7 @@ internal fun getReferredResourceOrManifestField(facet: AndroidFacet, expression:
         val qName = rClassDescriptor.fqNameSafe.asString()
 
         if (SdkConstants.CLASS_R == qName || AndroidPsiElementFinder.INTERNAL_R_CLASS_QNAME == qName) {
-            return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, true, false)
+            return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, facet.module, true, false)
         }
     }
 
@@ -111,7 +111,7 @@ internal fun getReferredResourceOrManifestField(facet: AndroidFacet, expression:
         return null
     }
 
-    return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, false, false)
+    return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, facet.module, false, false)
 }
 
 private fun KtExpression.getPreviousInQualifiedChain(): KtExpression? {
