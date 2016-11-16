@@ -19,7 +19,7 @@ fun <caret>castTextSpell(spell: String) {
     throw SecurityException("Magic prohibited outside Hogwarts")
 }
 
-//INFO: <b>public</b> <b>fun</b> castTextSpell(spell: String): Unit <i>defined in</i> magic<br/>
+//INFO: <pre><b>public</b> <b>fun</b> castTextSpell(spell: String): Unit <i>defined in</i> magic</pre><br/>
 //INFO: <dl><dt><b>Samples:</b></dt><dd><a href="psi_element://Samples.sampleMagic"><code>Samples.sampleMagic</code></a><pre><code>
 //INFO: castTextSpell("[asd] [dse] [asz]")
 //INFO: </code></pre></dd><dd><a href="psi_element://sampleScroll"><code>sampleScroll</code></a><pre><code>

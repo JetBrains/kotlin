@@ -14,4 +14,4 @@ fun test() {
     D().f<caret>oo
 }
 
-//INFO: <b>public</b> <b>open</b> <b>val</b> foo: Int <i>defined in</i> D<p>This property returns zero.</p>
+//INFO: <pre><b>public</b> <b>open</b> <b>val</b> foo: Int <i>defined in</i> D</pre><p>This property returns zero.</p>

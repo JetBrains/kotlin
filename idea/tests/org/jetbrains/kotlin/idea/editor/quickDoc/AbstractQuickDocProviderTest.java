@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.editor.quickDoc;
 
+import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.navigation.CtrlMouseHandler;
 import com.intellij.openapi.util.io.FileUtil;
@@ -41,8 +42,9 @@ public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsigh
 
         DocumentationManager documentationManager = DocumentationManager.getInstance(myFixture.getProject());
         PsiElement targetElement = documentationManager.findTargetElement(myFixture.getEditor(), myFixture.getFile());
+        PsiElement originalElement = DocumentationManager.getOriginalElement(targetElement);
 
-        String info = CtrlMouseHandler.getInfo(targetElement, element);
+        String info = DocumentationManager.getProviderFromElement(targetElement).generateDoc(targetElement, originalElement);
         if (info != null) {
             info = StringUtil.convertLineSeparators(info);
         }

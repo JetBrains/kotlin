@@ -8,4 +8,4 @@ class Testing {
     }
 }
 
-//INFO: <b>public</b> <b>fun</b> foo(bar: Int): Unit <i>defined in</i> some<p>KDoc foo</p>
+//INFO: <pre><b>public</b> <b>fun</b> foo(bar: Int): Unit <i>defined in</i> some</pre><p>KDoc foo</p>
