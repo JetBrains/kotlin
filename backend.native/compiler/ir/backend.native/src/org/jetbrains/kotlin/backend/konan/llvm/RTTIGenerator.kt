@@ -86,29 +86,24 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             getVtableEntries(classDesc.getSuperClassOrAny())
         }
 
-        val inheritedVtableSlots = Array<FunctionDescriptor?>(superVtableEntries.size, { null })
-        val methods = getMethodTableEntries(classDesc) // TODO: ensure order is well-defined
-        val entriesForNewVtableSlots = methods.toMutableSet()
+        val methods = classDesc.getContributedMethods() // TODO: ensure order is well-defined
 
-        methods.forEach { method ->
-            superVtableEntries.forEachIndexed { i, superMethod ->
-                if (OverridingUtil.overrides(method, superMethod)) {
-                    assert (inheritedVtableSlots[i] == null)
-                    inheritedVtableSlots[i] = method
-
-                    assert (method in entriesForNewVtableSlots)
-                    entriesForNewVtableSlots.remove(method)
-                }
-            }
+        val inheritedVtableSlots = superVtableEntries.map { superMethod ->
+            methods.single { OverridingUtil.overrides(it, superMethod) }
         }
 
-        return inheritedVtableSlots.map { it!! } + methods.filter { it in entriesForNewVtableSlots }
+        return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
     }
 
     private fun getMethodTableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
         assert (classDesc.modality != Modality.ABSTRACT)
 
-        val contributedDescriptors = classDesc.unsubstitutedMemberScope.getContributedDescriptors()
+        return classDesc.getContributedMethods().filter { it.isOverridableOrOverrides }
+        // TODO: probably method table should contain all accessible methods to improve binary compatibility
+    }
+
+    private fun ClassDescriptor.getContributedMethods(): List<FunctionDescriptor> {
+        val contributedDescriptors = unsubstitutedMemberScope.getContributedDescriptors()
         // (includes declarations from supers)
 
         val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
@@ -118,9 +113,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val setters = properties.mapNotNull { it.setter }
 
         val allMethods = functions + getters + setters
-
-        // TODO: adding or removing 'open' modifier will break the binary compatibility
-        return allMethods.filter { it.modality != Modality.FINAL }
+        return allMethods
     }
 
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMOpaqueValue?) {
