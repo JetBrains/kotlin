@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class LocalFunInlineChecker : SimpleDeclarationChecker {
@@ -183,24 +183,27 @@ class OverloadsAnnotationChecker: SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor.hasJvmOverloadsAnnotation()) {
-            checkDeclaration(declaration, descriptor, diagnosticHolder)
+        descriptor.findJvmOverloadsAnnotation()?.let { annotation ->
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation)
+            if (annotationEntry != null) {
+                checkDeclaration(annotationEntry, descriptor, diagnosticHolder)
+            }
         }
     }
 
-    private fun checkDeclaration(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    private fun checkDeclaration(annotationEntry: KtAnnotationEntry, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor !is CallableDescriptor) {
             return
         }
         if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(annotationEntry))
         }
         else if ((!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) ||
                  DescriptorUtils.isLocal(descriptor)) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(annotationEntry))
         }
         else if (descriptor.valueParameters.none { it.declaresDefaultValue() }) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(annotationEntry))
         }
     }
 }
