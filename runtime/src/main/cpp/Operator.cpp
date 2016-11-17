@@ -10,7 +10,7 @@ extern "C" {
 KInt    Kotlin_Char_compareTo_Char   (KChar a, KChar   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
 KChar   Kotlin_Char_plus_Char        (KChar a, KInt    b) { return a + b; }
 KChar   Kotlin_Char_minus_Char       (KChar a, KChar   b) { return a - b; }
-KChar   Kotlin_Char_minus_Char       (KChar a, KInt    b) { return a - b; }
+KChar   Kotlin_Char_minus_Int        (KChar a, KInt    b) { return a - b; }
 KChar   Kotlin_Char_inc              (KChar a           ) { return a + 1; }
 KChar   Kotlin_Char_dec              (KChar a           ) { return a - 1; }
 
