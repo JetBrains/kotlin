@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 object JsPlatform : TargetPlatform("JS") {
-    override val defaultImports: List<ImportPath> = Default.defaultImports + listOf(
-            ImportPath("java.lang.*"),
-            ImportPath("kotlin.js.*")
-    )
+    override val defaultImports: List<ImportPath> = Default.defaultImports + ImportPath("kotlin.js.*")
 
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
 
