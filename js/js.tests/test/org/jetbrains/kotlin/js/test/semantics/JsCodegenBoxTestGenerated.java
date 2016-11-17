@@ -9665,13 +9665,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("prefixIncDec.kt")
         public void testPrefixIncDec() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/prefixIncDec.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("rangeFromCollection.kt")
@@ -12368,13 +12362,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt4152.kt")
         public void testKt4152() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/kt4152.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("kt4987.kt")
@@ -19892,25 +19880,13 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("incInClassObject.kt")
         public void testIncInClassObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/statics/incInClassObject.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("incInObject.kt")
         public void testIncInObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/statics/incInObject.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("inheritedPropertyInClassObject.kt")
