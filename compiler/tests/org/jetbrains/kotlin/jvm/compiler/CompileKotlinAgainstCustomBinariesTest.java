@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
-import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -439,5 +436,15 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         KotlinTestUtils.assertEqualsToFile(
                 new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
         );
+    }
+
+    public void testInnerClassPackageConflict() throws Exception {
+        compileJava("library");
+        FileUtil.copy(new File(getTestDataDirectory(), "library/test/Foo/x.txt"),
+                      new File(tmpdir, "library/test/Foo/x.txt"));
+        MockLibraryUtil.createJarFile(tmpdir, new File(tmpdir, "library"), null, "library", false);
+        File jarPath = new File(tmpdir, "library.jar");
+        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, jarPath);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 }

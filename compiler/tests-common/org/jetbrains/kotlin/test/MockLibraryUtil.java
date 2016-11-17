@@ -155,7 +155,7 @@ public class MockLibraryUtil {
         }
     }
 
-    private static File createJarFile(File contentDir, File dirToAdd, String sourcesPath, String jarName, boolean addSources) throws IOException {
+    public static File createJarFile(File contentDir, File dirToAdd, String sourcesPath, String jarName, boolean addSources) throws IOException {
         File jarFile = new File(contentDir, jarName + ".jar");
 
         ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(jarFile));
