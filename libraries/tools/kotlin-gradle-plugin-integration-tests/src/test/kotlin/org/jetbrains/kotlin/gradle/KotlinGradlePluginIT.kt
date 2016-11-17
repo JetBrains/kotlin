@@ -308,6 +308,23 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testCustomCompilerFile() {
+        val project = Project("customCompilerFile", GRADLE_VERSION)
+        project.setupWorkingDir()
+
+        // copy compiler embeddable to project dir using custom name
+        val classpath = System.getProperty("java.class.path").split(File.pathSeparator)
+        val kotlinEmbeddableJar = File(classpath.find { it.contains("kotlin-compiler-embeddable") })
+        val compilerJar = File(project.projectDir, "compiler.jar")
+        kotlinEmbeddableJar.copyTo(compilerJar)
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Using kotlin compiler jar: $compilerJar")
+        }
+    }
+
 
     @Test
     fun testMultiplatformCompile() {

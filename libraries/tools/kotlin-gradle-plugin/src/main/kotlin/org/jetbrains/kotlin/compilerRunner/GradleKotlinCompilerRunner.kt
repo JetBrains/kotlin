@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
-import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.incremental.makeModuleFile
@@ -30,15 +29,12 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.net.URL
-import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
 internal const val DAEMON_EXECUTION_STRATEGY = "daemon"
 internal const val IN_PROCESS_EXECUTION_STRATEGY = "in-process"
 internal const val OUT_OF_PROCESS_EXECUTION_STRATEGY = "out-of-process"
-
-internal const val KOTLIN_COMPILER_JAR_PATH_PROPERTY = "kotlin.compiler.jar.path"
 
 internal class GradleCompilerRunner(private val project: Project) : KotlinCompilerRunner<GradleCompilerEnvironment>() {
     override val log = GradleKotlinLogger(project.logger)
@@ -57,10 +53,13 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             javaSourceRoots: Iterable<File>,
             args: K2JVMCompilerArguments,
             messageCollector: MessageCollector,
-            outputItemsCollector: OutputItemsCollector
+            outputItemsCollector: OutputItemsCollector,
+            kotlinCompilerJar: File
     ): ExitCode {
         val outputDir = args.destinationAsFile
         log.debug("Removing all kotlin classes in $outputDir")
+        log.info("Using kotlin compiler jar: $kotlinCompilerJar")
+
         // we're free to delete all classes since only we know about that directory
         outputDir.deleteRecursively()
 
@@ -77,7 +76,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val additionalArguments = ""
 
         try {
-            return runCompiler(K2JVM_COMPILER, args, additionalArguments, messageCollector, outputItemsCollector, GradleCompilerEnvironment(project, K2JVM_COMPILER))
+            return runCompiler(K2JVM_COMPILER, args, additionalArguments, messageCollector, outputItemsCollector, GradleCompilerEnvironment(kotlinCompilerJar))
         }
         finally {
             moduleFile.delete()
@@ -180,59 +179,11 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 }
 
 internal class GradleCompilerEnvironment(
-        private val project: Project,
-        private val compilerClassName: String
+        val compilerJar: File
 ) : CompilerEnvironment(Services.EMPTY) {
-    val compilerJar: File by lazy {
-        val file = findKotlinCompilerJar(project, compilerClassName)
-                ?: throw IllegalStateException("Could not found Kotlin compiler jar. " +
-                "As a workaround you may specify path to compiler jar using " +
-                "\"$KOTLIN_COMPILER_JAR_PATH_PROPERTY\" system property")
-
-        project.logger.kotlinInfo("Using kotlin compiler jar: $file")
-        file
-    }
-
     val compilerClasspath: List<File>
         get() = listOf(compilerJar).filterNotNull()
 
     val compilerClasspathURLs: List<URL>
         get() = compilerClasspath.map { it.toURI().toURL() }
-}
-
-fun findKotlinCompilerJar(project: Project, compilerClassName: String): File? {
-    fun Project.classpathJars(): Sequence<File> =
-            buildscript.configurations.findByName("classpath")?.files?.asSequence() ?: emptySequence()
-
-    val pathFromSysProperties = System.getProperty(KOTLIN_COMPILER_JAR_PATH_PROPERTY)
-    if (pathFromSysProperties != null) {
-        val fileFromSysProperties = File(pathFromSysProperties)
-
-        if (fileFromSysProperties.exists()) return fileFromSysProperties
-    }
-
-    val projectsToRoot = generateSequence(project) { if (it != it.rootProject) it.parent else null }
-    val classpathDeps = projectsToRoot.flatMap { it.classpathJars() }
-    val entryToFind = compilerClassName.replace(".", "/") + ".class"
-    val jarCandidate = classpathDeps.firstOrNull { it.hasEntry(entryToFind) }
-
-    System.setProperty(KOTLIN_COMPILER_JAR_PATH_PROPERTY, jarCandidate?.absolutePath)
-    return jarCandidate
-}
-
-private fun File.hasEntry(entryToFind: String): Boolean {
-    try {
-        val zip = ZipFile(this)
-        val enumeration = zip.entries()
-
-        while (enumeration.hasMoreElements()) {
-            val entry = enumeration.nextElement()
-            if (entry.name.equals(entryToFind, ignoreCase = true)) return true
-        }
-    }
-    catch (e: Exception) {
-        return false
-    }
-
-    return false
 }
