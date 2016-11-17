@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDispatchReceiverParameterForConstructorCall
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
@@ -155,6 +156,15 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         if (!isStatic) {
             val thisIndex = frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
             v.load(thisIndex, methodOwner) // Load this on stack
+
+            if (functionDescriptor is ConstructorDescriptor) {
+                val closure = state.bindingContext.get(CodegenBinding.CLOSURE, functionDescriptor.constructedClass)
+                val captureThis = getDispatchReceiverParameterForConstructorCall(functionDescriptor, closure)
+                if (captureThis != null) {
+                    val outerIndex = frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
+                    v.load(outerIndex, typeMapper.mapType(captureThis))
+                }
+            }
         }
         else {
             val delegateOwner = delegateFunctionDescriptor.containingDeclaration
