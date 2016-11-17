@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -80,9 +80,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             contextKind: OwnerKind,
             classBuilder: ClassBuilder
     ): Boolean {
-        if (!functionDescriptor.hasJvmOverloadsAnnotation()) {
-            return false
-        }
+        functionDescriptor.findJvmOverloadsAnnotation() ?: return false
 
         val count = functionDescriptor.countDefaultParameters()
 
