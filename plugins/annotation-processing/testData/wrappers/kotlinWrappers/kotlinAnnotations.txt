@@ -16,10 +16,10 @@ public final class Test {
     public final void c(int a, java.lang.String b)
 
     @kotlin.jvm.JvmOverloads
-    public void c(int a)
+    public final void c(int a)
 
     @kotlin.jvm.JvmOverloads
-    public void c()
+    public final void c()
 
     @java.lang.Deprecated
     public final void d()

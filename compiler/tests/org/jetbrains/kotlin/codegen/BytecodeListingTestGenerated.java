@@ -116,6 +116,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             doTest(fileName);
         }
 
+        @TestMetadata("deprecatedJvmOverloads.kt")
+        public void testDeprecatedJvmOverloads() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/deprecatedJvmOverloads.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("JvmSynthetic.kt")
         public void testJvmSynthetic() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/JvmSynthetic.kt");
