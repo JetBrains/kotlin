@@ -13,6 +13,8 @@ run_test() {
   void *(*goodbyeString)()        = resolve_symbol("kfun:goodbyeString()");
   int (*eqeqStr)(void *, void *) = resolve_symbol("kfun:eqeqStr(String;String)");
 
+  int (*eqeqeq)(void *, void *)  = resolve_symbol("kfun:eqeqeq(Any?;Any?)");
+
   int (*gtI  )(int    , int    ) = resolve_symbol("kfun:gtI(Int;Int)");
   int (*ltI  )(int    , int    ) = resolve_symbol("kfun:ltI(Int;Int)");
   int (*geI  )(int    , int    ) = resolve_symbol("kfun:geI(Int;Int)");
@@ -33,6 +35,9 @@ run_test() {
   if (!eqeqD(3.0 , 3.0 )) return 1;
 
   if (!eqeqStr(helloString(), helloString())) return 1;
+
+  if (!eqeqeq(helloString(), helloString())) return 1;
+  if (eqeqeq(helloString(), goodbyeString())) return 1;
 
   if (gtI   (2   , 3   )) return 1;
   if (ltI   (3   , 2   )) return 1;

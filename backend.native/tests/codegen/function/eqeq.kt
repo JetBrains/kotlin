@@ -6,6 +6,8 @@ fun eqeqF  (a:Float,  b:Float ) = a == b
 fun eqeqD  (a:Double, b:Double) = a == b
 fun eqeqStr(a:String, b:String) = a == b
 
+fun eqeqeq (a: Any?, b: Any?) = a === b
+
 fun gtI  (a:Int,    b:Int   ) = a >  b
 fun ltI  (a:Int,    b:Int   ) = a >  b
 fun geI  (a:Int,    b:Int   ) = a >= b
