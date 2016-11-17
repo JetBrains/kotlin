@@ -12,4 +12,11 @@ public open class Throwable(open val message: String?, open val cause: Throwable
     constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
     constructor() : this(null, null)
+
+    override fun toString(): String {
+        /* enable, once codegen is improved.
+        val s = "Throwable"
+        return if (message != null) s + ": " + message.toString() else s */
+        return "Throwable"
+    }
 }
