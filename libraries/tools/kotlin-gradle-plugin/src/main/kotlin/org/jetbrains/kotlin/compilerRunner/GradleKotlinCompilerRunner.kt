@@ -33,8 +33,12 @@ import java.net.URL
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
+internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
+internal const val DAEMON_EXECUTION_STRATEGY = "daemon"
+internal const val IN_PROCESS_EXECUTION_STRATEGY = "in-process"
+internal const val OUT_OF_PROCESS_EXECUTION_STRATEGY = "out-of-process"
 
-const val KOTLIN_COMPILER_JAR_PATH_PROPERTY = "kotlin.compiler.jar.path"
+internal const val KOTLIN_COMPILER_JAR_PATH_PROPERTY = "kotlin.compiler.jar.path"
 
 internal class GradleCompilerRunner(private val project: Project) : KotlinCompilerRunner<GradleCompilerEnvironment>() {
     override val log = GradleKotlinLogger(project.logger)
@@ -80,6 +84,95 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         }
     }
 
+    override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, messageCollector: MessageCollector, collector: OutputItemsCollector): ExitCode {
+        val executionStrategy = System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
+        if (executionStrategy == DAEMON_EXECUTION_STRATEGY) {
+            val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)
+
+            if (daemonExitCode != null) {
+                return daemonExitCode
+            }
+            else {
+                log.warn("Could not connect to kotlin daemon. Using fallback strategy.")
+            }
+        }
+
+        val isGradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean)
+        return if (executionStrategy == IN_PROCESS_EXECUTION_STRATEGY || isGradleDaemonUsed == false) {
+            compileInProcess(argsArray, collector, compilerClassName, environment, messageCollector)
+        }
+        else {
+            compileOutOfProcess(argsArray, compilerClassName, environment)
+        }
+    }
+
+    override fun compileWithDaemon(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, messageCollector: MessageCollector, collector: OutputItemsCollector, retryOnConnectionError: Boolean): ExitCode? {
+        val exitCode = super.compileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector, retryOnConnectionError)
+        exitCode?.let {
+            logFinish(DAEMON_EXECUTION_STRATEGY)
+        }
+        return exitCode
+    }
+
+    private fun compileOutOfProcess(
+            argsArray: Array<String>,
+            compilerClassName: String,
+            environment: GradleCompilerEnvironment
+    ): ExitCode {
+        val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
+        val classpathString = environment.compilerClasspath.map {it.absolutePath}.joinToString(separator = File.pathSeparator)
+        val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, *argsArray)
+        val process = builder.start()
+
+        // important to read inputStream, otherwise the process may hang on some systems
+        val readErrThread = thread {
+            process.errorStream!!.bufferedReader().forEachLine {
+                System.err.println(it)
+            }
+        }
+        process.inputStream!!.bufferedReader().forEachLine {
+            System.out.println(it)
+        }
+        readErrThread.join()
+
+        val exitCode = process.waitFor()
+        logFinish(OUT_OF_PROCESS_EXECUTION_STRATEGY)
+        return exitCodeFromProcessExitCode(exitCode)
+    }
+
+    private fun compileInProcess(
+            argsArray: Array<String>,
+            collector: OutputItemsCollector,
+            compilerClassName: String,
+            environment: GradleCompilerEnvironment,
+            messageCollector: MessageCollector
+    ): ExitCode {
+        val stream = ByteArrayOutputStream()
+        val out = PrintStream(stream)
+        // todo: cache classloader?
+        val classLoader = ParentLastURLClassLoader(environment.compilerClasspathURLs, this.javaClass.classLoader)
+        val servicesClass = Class.forName(Services::class.java.canonicalName, true, classLoader)
+        val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
+        val compiler = Class.forName(compilerClassName, true, classLoader)
+
+        val exec = compiler.getMethod(
+                "execAndOutputXml",
+                PrintStream::class.java,
+                servicesClass,
+                Array<String>::class.java
+        )
+
+        val res = exec.invoke(compiler.newInstance(), out, emptyServices, argsArray)
+        val exitCode = ExitCode.valueOf(res.toString())
+        processCompilerOutput(messageCollector, collector, stream, exitCode)
+        logFinish(IN_PROCESS_EXECUTION_STRATEGY)
+        return exitCode
+    }
+
+    private fun logFinish(strategy: String) {
+        log.debug("Finished executing kotlin compiler using $strategy strategy")
+    }
+
     @Synchronized
     override fun getDaemonConnection(environment: GradleCompilerEnvironment, messageCollector: MessageCollector): DaemonConnection {
         return newDaemonConnection(environment.compilerJar, messageCollector, flagFile)
@@ -93,13 +186,18 @@ internal class GradleCompilerEnvironment(
     val compilerJar: File by lazy {
         val file = findKotlinCompilerJar(project, compilerClassName)
                 ?: throw IllegalStateException("Could not found Kotlin compiler jar. " +
-                        "As a workaround you may specify path to compiler jar using " +
-                        "\"$KOTLIN_COMPILER_JAR_PATH_PROPERTY\" system property")
+                "As a workaround you may specify path to compiler jar using " +
+                "\"$KOTLIN_COMPILER_JAR_PATH_PROPERTY\" system property")
 
         project.logger.kotlinInfo("Using kotlin compiler jar: $file")
         file
     }
 
+    val compilerClasspath: List<File>
+        get() = listOf(compilerJar).filterNotNull()
+
+    val compilerClasspathURLs: List<URL>
+        get() = compilerClasspath.map { it.toURI().toURL() }
 }
 
 fun findKotlinCompilerJar(project: Project, compilerClassName: String): File? {

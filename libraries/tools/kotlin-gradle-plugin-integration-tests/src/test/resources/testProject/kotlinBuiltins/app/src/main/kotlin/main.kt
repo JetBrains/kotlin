@@ -1,3 +1,5 @@
 package foo
 
-fun f(fn: (x: Int)->Unit) {}
+fun main() {
+    f { it * 2 }
+}
