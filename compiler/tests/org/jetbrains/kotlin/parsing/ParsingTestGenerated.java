@@ -680,6 +680,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("PropertyInvokes.kt")
+        public void testPropertyInvokes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/PropertyInvokes.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("QuotedIdentifiers.kt")
         public void testQuotedIdentifiers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/QuotedIdentifiers.kt");
