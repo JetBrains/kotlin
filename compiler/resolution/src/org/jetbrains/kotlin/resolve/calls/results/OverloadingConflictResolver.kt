@@ -219,7 +219,7 @@ class OverloadingConflictResolver<C : Any>(
     }
 
     /**
-     * Returns `true` if `d1` is definitely not less specific than `d2`,
+     * Returns `true` if [call1] is definitely not less specific than [call2],
      * `false` otherwise.
      */
     private fun compareCallsByUsedArguments(
@@ -236,6 +236,9 @@ class OverloadingConflictResolver<C : Any>(
             // two generics are non-comparable
             if (isGeneric1 && isGeneric2) return false
         }
+
+        if (!call1.isPlatform && call2.isPlatform) return true
+        if (call1.isPlatform && !call2.isPlatform) return false
 
         return createEmptyConstraintSystem().isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator)
     }

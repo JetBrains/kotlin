@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.types.*
@@ -41,7 +42,8 @@ class FlatSignature<out T>(
         val valueParameterTypes: List<KotlinType?>,
         val hasExtensionReceiver: Boolean,
         val hasVarargs: Boolean,
-        val numDefaults: Int
+        val numDefaults: Int,
+        val isPlatform: Boolean
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 
@@ -52,7 +54,8 @@ class FlatSignature<out T>(
                               valueParameterTypes = descriptor.extensionReceiverTypeOrEmpty() + descriptor.valueParameters.map { it.argumentValueType },
                               hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
                               hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
-                              numDefaults = 0)
+                              numDefaults = 0,
+                              isPlatform = descriptor is MemberDescriptor && descriptor.isPlatform)
 
         val ValueParameterDescriptor.argumentValueType: KotlinType
             get() = varargElementType ?: type
