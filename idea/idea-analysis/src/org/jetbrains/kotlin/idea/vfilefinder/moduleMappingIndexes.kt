@@ -18,12 +18,31 @@ package org.jetbrains.kotlin.idea.vfilefinder
 
 import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.DataInputOutputUtil
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
 import java.io.DataInput
 import java.io.DataOutput
+import java.io.IOException
+import java.util.*
+
+private fun writeStringList(out: DataOutput, list: Collection<String>) {
+    DataInputOutputUtil.writeINT(out, list.size)
+    for (s in list) {
+        IOUtil.writeUTF(out, s)
+    }
+}
+
+private fun readStringList(`in`: DataInput): List<String> {
+    val size = DataInputOutputUtil.readINT(`in`)
+    val strings = ArrayList<String>(size)
+    for (i in 0..size - 1) {
+        strings.add(IOUtil.readUTF(`in`))
+    }
+    return strings
+}
 
 object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>() {
 
@@ -42,19 +61,19 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
     private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
         override fun read(input: DataInput): PackageParts? =
                 PackageParts(IOUtil.readUTF(input)).apply {
-                    val shortPartNames = IOUtil.readStringList(input)
-                    val shortFacadeNames = IOUtil.readStringList(input)
+                    val shortPartNames = readStringList(input)
+                    val shortFacadeNames = readStringList(input)
                     for ((partName, facadeName) in shortPartNames zip shortFacadeNames) {
                         addPart(partName, if (facadeName.isNotEmpty()) facadeName else null)
                     }
-                    IOUtil.readStringList(input).forEach(this::addMetadataPart)
+                    readStringList(input).forEach(this::addMetadataPart)
                 }
 
         override fun save(out: DataOutput, value: PackageParts) {
             IOUtil.writeUTF(out, value.packageFqName)
-            IOUtil.writeStringList(out, value.parts)
-            IOUtil.writeStringList(out, value.parts.map { value.getMultifileFacadeName(it).orEmpty() })
-            IOUtil.writeStringList(out, value.metadataParts)
+            writeStringList(out, value.parts)
+            writeStringList(out, value.parts.map { value.getMultifileFacadeName(it).orEmpty() })
+            writeStringList(out, value.metadataParts)
         }
     }
 
