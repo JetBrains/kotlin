@@ -47,7 +47,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.keysToMap
@@ -352,7 +353,7 @@ open class KotlinChangeInfo(
         fun matchOriginalAndCurrentMethods(currentPsiMethods: List<PsiMethod>): Map<PsiMethod, PsiMethod> {
             if (!(isPrimaryMethodUpdated
                   && originalBaseFunctionDescriptor is FunctionDescriptor
-                  && originalBaseFunctionDescriptor.hasJvmOverloadsAnnotation())) {
+                  && originalBaseFunctionDescriptor.findJvmOverloadsAnnotation() != null)) {
                 return (originalPsiMethods.zip(currentPsiMethods)).toMap()
             }
 

@@ -1,0 +1,6 @@
+// "Remove @JvmOverloads annotation" "true"
+// WITH_RUNTIME
+
+interface T {
+    fun foo(s: String = "OK")
+}
