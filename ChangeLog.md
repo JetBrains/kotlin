@@ -8,7 +8,9 @@
 ### New language features
 
 - [`KT-2964`](https://youtrack.jetbrains.com/issue/KT-2964) Underscores in integer literals
+    (see [KEEP-54](https://github.com/Kotlin/KEEP/pull/54))
 - [`KT-3824`](https://youtrack.jetbrains.com/issue/KT-3824) Underscore in lambda for unused parameters
+    (see [KEEP-56](https://github.com/Kotlin/KEEP/pull/56))
 - [`KT-2783`](https://youtrack.jetbrains.com/issue/KT-2783) Allow to skip some components in a multi-declaration
 
 ### Compiler
@@ -34,7 +36,8 @@
 - [`KT-550`](https://youtrack.jetbrains.com/issue/KT-550) Properties without initializer but with get must infer type from getter
 - [`KT-8816`](https://youtrack.jetbrains.com/issue/KT-8816) Generate Kotlin parameter names in the same form as expected for Java 8 reflection
 - [`KT-10569`](https://youtrack.jetbrains.com/issue/KT-10569) Cannot iterate over values of an enum class when it is used as a generic parameter
-- [`KT-11551`](https://youtrack.jetbrains.com/issue/KT-11551) limited scope for dsl writers
+    (see [KEEP-37](https://github.com/Kotlin/KEEP/pull/37))
+- [`KT-11551`](https://youtrack.jetbrains.com/issue/KT-11551) limited scope for dsl writers (see [KEEP-38](https://github.com/Kotlin/KEEP/pull/38))
 - [`KT-13557`](https://youtrack.jetbrains.com/issue/KT-13557) VerifyError with delegated local variable used in object expression
 - [`KT-13890`](https://youtrack.jetbrains.com/issue/KT-13890) IllegalAccessError when invoking protected method with default arguments
 - [`KT-14012`](https://youtrack.jetbrains.com/issue/KT-14012) Back-end (JVM) Internal error every first compilation after the source code change
@@ -53,11 +56,25 @@
 ### JS
 
 #### Feature support
+- [`KT-6985`](https://youtrack.jetbrains.com/issue/KT-6985) Support Exceptions in JS
 - [`KT-13574`](https://youtrack.jetbrains.com/issue/KT-13574) JS: support coroutines
 - [`KT-14422`](https://youtrack.jetbrains.com/issue/KT-14422) JS: Support destructuring in lambda parameters
 - [`KT-14507`](https://youtrack.jetbrains.com/issue/KT-14507) JS: allow to skip some components in a multi-declaration
 
 #### Library updates
+- [`KT-14637`](https://youtrack.jetbrains.com/issue/KT-14637) JS: Missing ArrayList.ensureCapacity
+    
+#### Other issues
+- [`KT-2328`](https://youtrack.jetbrains.com/issue/KT-2328) js: kotlin exceptions must inherit Error
+- [`KT-5537`](https://youtrack.jetbrains.com/issue/KT-5537) Drop Cloneable in JS
+- [`KT-7014`](https://youtrack.jetbrains.com/issue/KT-7014) JS: generate code which more friendly to js tools (minifier, optimizer, linter etc)
+- [`KT-8019`](https://youtrack.jetbrains.com/issue/KT-8019) JS: no stackTrace in exception subclasses
+- [`KT-10911`](https://youtrack.jetbrains.com/issue/KT-10911) JS: Throwable properties aren't supported well
+- [`KT-13912`](https://youtrack.jetbrains.com/issue/KT-13912) JS: Compiler NPE at JsSourceGenerationVisitor. Lambda with empty [if] block passed 
+    to inline function
+- [`KT-14535`](https://youtrack.jetbrains.com/issue/KT-14535) JS: Broken modification of captured variables defined by a destructuring declaration
+
+### Standard Library
 - [`KT-2084`](https://youtrack.jetbrains.com/issue/KT-2084) Common API should be available without referring to java.* packages
 
     Now those common types, which are supported on all platforms, are available in `kotlin.*` packages, and are imported by default. These include:
@@ -65,17 +82,6 @@
     - `Appendable` and `StringBuilder` in `kotlin.text`
     - `Comparator` in `kotlin.comparisons`
     On JVM these are just typealiases of the good old types from `java.util` and `java.lang`
-- [`KT-14637`](https://youtrack.jetbrains.com/issue/KT-14637) JS: Missing ArrayList.ensureCapacity
-    
-#### Other issues
-- [`KT-5537`](https://youtrack.jetbrains.com/issue/KT-5537) Drop Cloneable in JS
-- [`KT-7014`](https://youtrack.jetbrains.com/issue/KT-7014) JS: generate code which more friendly to js tools (minifier, optimizer, linter etc)
-- [`KT-13912`](https://youtrack.jetbrains.com/issue/KT-13912) JS: Compiler NPE at JsSourceGenerationVisitor. Lambda with empty [if] block passed 
-    to inline function
-- [`KT-14535`](https://youtrack.jetbrains.com/issue/KT-14535) JS: Broken modification of captured variables defined by a destructuring declaration
-- [`KT-14752`](https://youtrack.jetbrains.com/issue/KT-14752) Exception while typing @JsName annotation in editor
-
-### Libraries
 - [`KT-13554`](https://youtrack.jetbrains.com/issue/KT-13554) Introduce bitwise operations `and`/`or`/`xor`/`inv` for Byte and Short
 - [`KT-13582`](https://youtrack.jetbrains.com/issue/KT-13582)  New platform-agnostic extensions for arrays: `contentEquals` to compare arrays' 
     content for equality, `contentHashCode` to get hashcode of array's content, and `contentToString` to get the string representation of array elements.
