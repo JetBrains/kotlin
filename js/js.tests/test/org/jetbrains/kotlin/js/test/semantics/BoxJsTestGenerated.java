@@ -3425,12 +3425,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("formNestedNativeClass.kt")
-        public void testFormNestedNativeClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inheritance/formNestedNativeClass.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("fromFakeClasses.kt")
         public void testFromFakeClasses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inheritance/fromFakeClasses.kt");
@@ -3440,6 +3434,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("fromNativeInterface.kt")
         public void testFromNativeInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inheritance/fromNativeInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fromNestedNativeClass.kt")
+        public void testFromNestedNativeClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inheritance/fromNestedNativeClass.kt");
             doTest(fileName);
         }
 
