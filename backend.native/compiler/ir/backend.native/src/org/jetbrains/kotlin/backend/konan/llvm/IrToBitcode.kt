@@ -429,6 +429,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
     private val kEqeq        = Name.identifier("EQEQ")
+    private val ktEqeqeq     = Name.identifier("EQEQEQ")
     private val kGt0         = Name.identifier("GT0")
     private val kGteq0       = Name.identifier("GTEQ0")
     private val kLt0         = Name.identifier("LT0")
@@ -444,13 +445,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val descriptor = callee.descriptor
         when (descriptor.name) {
             kEqeq  -> return evaluateOperatorEqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
+            ktEqeqeq ->
+                return evaluateOperatorEqeqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
             kGt0   -> return codegen.icmpGt(args[0]!!, kImmZero, tmpVariableName)
             kGteq0 -> return codegen.icmpGe(args[0]!!, kImmZero, tmpVariableName)
             kLt0   -> return codegen.icmpLt(args[0]!!, kImmZero, tmpVariableName)
             kLteq0 -> return codegen.icmpLe(args[0]!!, kImmZero, tmpVariableName)
             kNot   -> return codegen.icmpNe(args[0]!!, kTrue,    tmpVariableName)
             else -> {
-                TODO()
+                TODO(descriptor.name.toString())
             }
         }
     }
@@ -473,6 +476,23 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val descriptor = functions.first()
                 return evaluateSimpleFunctionCall(tmpVariableName, descriptor, listOf(arg0, arg1))!!
             }
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateOperatorEqeqeq(callee: IrBinaryPrimitiveImpl,
+                                       arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue,
+                                       tmpVariableName: String):LLVMOpaqueValue {
+
+        val arg0Type = callee.argument0.type
+        val arg1Type = callee.argument1.type
+
+        assert (arg0Type == arg1Type)
+
+        return when {
+            KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO()
+            else -> codegen.icmpEq(arg0, arg1, tmpVariableName)
         }
     }
 
