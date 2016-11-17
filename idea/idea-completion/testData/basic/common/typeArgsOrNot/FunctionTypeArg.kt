@@ -3,6 +3,6 @@ fun foo() {
 }
 
 // EXIST: String
-// EXIST: java
+// EXIST: kotlin
 // ABSENT: defaultBufferSize
 // ABSENT: readLine
