@@ -360,7 +360,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrConstKind.Int    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(),   1)
             IrConstKind.Long   -> return LLVMConstInt(LLVMInt64Type(), value.value as Long,             1)
             IrConstKind.String ->
-                return context.staticData.createStringLiteral(value as IrConst<String>).getLlvmValue()
+                return context.staticData.kotlinStringLiteral(value as IrConst<String>).getLlvmValue()
             IrConstKind.Float  -> return LLVMConstRealOfString(LLVMFloatType(), (value.value as Float).toString())
             IrConstKind.Double -> return LLVMConstRealOfString(LLVMDoubleType(), (value.value as Double).toString())
         }

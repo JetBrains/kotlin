@@ -21,7 +21,7 @@ private fun StaticData.staticContainerHeader(): Struct {
     return Struct(runtime.containerHeaderType, Int32(CONTAINER_TAG_NOCOUNT))
 }
 
-internal fun StaticData.createStringLiteral(value: IrConst<String>): ConstPointer {
+internal fun StaticData.createKotlinStringLiteral(value: IrConst<String>): ConstPointer {
     val base64Str = value.value.globalHashBase64
     val valueBytes = value.value.toByteArray(Charsets.UTF_8)
 

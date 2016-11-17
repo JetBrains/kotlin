@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
 
 /**
  * Provides utilities to create static data.
@@ -108,4 +109,9 @@ internal class StaticData(override val context: Context): ContextUtils {
 
         return global
     }
+
+    private val stringLiterals = mutableMapOf<String, ConstPointer>()
+
+    fun kotlinStringLiteral(value: IrConst<String>) =
+            stringLiterals.getOrPut(value.value) { createKotlinStringLiteral(value) }
 }
