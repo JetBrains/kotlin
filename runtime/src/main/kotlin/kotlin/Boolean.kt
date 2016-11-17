@@ -8,23 +8,28 @@ public final class Boolean : Comparable<Boolean> {
     /**
      * Returns the inverse of this boolean.
      */
+    @SymbolName("Kotlin_Boolean_not")
     external public operator fun not(): Boolean
 
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one.
      */
+    @SymbolName("Kotlin_Boolean_and_Boolean")
     external public infix fun and(other: Boolean): Boolean
 
     /**
      * Performs a logical `or` operation between this Boolean and the [other] one.
      */
+    @SymbolName("Kotlin_Boolean_or_Boolean")
     external public infix fun or(other: Boolean): Boolean
 
     /**
      * Performs a logical `xor` operation between this Boolean and the [other] one.
      */
+    @SymbolName("Kotlin_Boolean_xor_Boolean")
     external public infix fun xor(other: Boolean): Boolean
 
+    @SymbolName("Kotlin_Boolean_compareTo_Boolean")
     external public override fun compareTo(other: Boolean): Int
 
     // Konan-specific.

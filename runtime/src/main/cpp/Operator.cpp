@@ -5,11 +5,19 @@
 
 extern "C" {
 
+//--- Boolean -----------------------------------------------------------------//
+
+KBoolean Kotlin_Boolean_not              (KBoolean a            ) { return     !a; }
+KBoolean Kotlin_Boolean_and_Boolean      (KBoolean a, KBoolean b) { return a && b; }
+KBoolean Kotlin_Boolean_or_Boolean       (KBoolean a, KBoolean b) { return a || b; }
+KBoolean Kotlin_Boolean_xor_Boolean      (KBoolean a, KBoolean b) { return a != b; }
+KInt     Kotlin_Boolean_compareTo_Boolean(KBoolean a, KBoolean b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
+
 //--- Char --------------------------------------------------------------------//
 
 KInt    Kotlin_Char_compareTo_Char   (KChar a, KChar   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
 KChar   Kotlin_Char_plus_Char        (KChar a, KInt    b) { return a + b; }
-KChar   Kotlin_Char_minus_Char       (KChar a, KChar   b) { return a - b; }
+KInt    Kotlin_Char_minus_Char       (KChar a, KChar   b) { return a - b; }
 KChar   Kotlin_Char_minus_Int        (KChar a, KInt    b) { return a - b; }
 KChar   Kotlin_Char_inc              (KChar a           ) { return a + 1; }
 KChar   Kotlin_Char_dec              (KChar a           ) { return a - 1; }

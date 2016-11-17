@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.asSimpleType
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
@@ -372,6 +373,21 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
+
+    private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+        when (value.operator) {
+            IrTypeOperator.CAST                      -> return evaluateCast(tmpVariableName, value)
+            IrTypeOperator.IMPLICIT_CAST             -> TODO()
+            IrTypeOperator.IMPLICIT_NOTNULL          -> TODO()
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> TODO()
+            IrTypeOperator.SAFE_CAST                 -> TODO()
+            IrTypeOperator.INSTANCEOF                -> return evaluateInstanceOf(tmpVariableName, value)
+            IrTypeOperator.NOT_INSTANCEOF            -> return evaluateNotInstanceOf(tmpVariableName, value)
+        }
+
+    }
+
+    //-------------------------------------------------------------------------//
     //   table of conversion with llvm for primitive types
     //   to be used in replacement fo primitive.toX() calls with
     //   translator intrinsics.
@@ -384,8 +400,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //    float   | fptosi   fptosi  fptosi  fptosi      x      fpext
     //    double  | fptosi   fptosi  fptosi  fptosi   fptrunc      x
 
-    private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
-        logger.log("evaluateTypeOperator       : ${ir2string(value)}")
+    private fun evaluateCast(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+        logger.log("evaluateCast               : ${ir2string(value)}")
         assert(!KotlinBuiltIns.isPrimitiveType(value.type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
 
         val dstDescriptor = TypeUtils.getClassDescriptor(value.type)                   // Get class descriptor for dst type.
@@ -395,6 +411,28 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
         codegen.call(context.checkInstanceFunction, args, "")                          // Check if dst is subclass of src.
         return srcArg
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateInstanceOf(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+        logger.log("evaluateInstanceOf         : ${ir2string(value)}")
+
+        val dstDescriptor = TypeUtils.getClassDescriptor(value.typeOperand)            // Get class descriptor for dst type.
+        val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
+        val srcArg        = evaluateExpression(codegen.newVar(), value.argument)!!     // Evaluate src expression.
+        val srcObjInfoPtr = codegen.bitcast(kObjHeaderPtr, srcArg, codegen.newVar())   // Cast src to ObjInfoPtr.
+        val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
+
+        val result = codegen.call(context.isInstanceFunction, args, codegen.newVar())  // Check if dst is subclass of src.
+        return LLVMBuildTrunc(context.llvmBuilder, result!!, kInt1, tmpVariableName)!! // Truncate result to boolean
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateNotInstanceOf(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+        val instanceOfResult = evaluateInstanceOf(codegen.newVar(), value)
+        return LLVMBuildNot(context.llvmBuilder, instanceOfResult, tmpVariableName)!!
     }
 
     //-------------------------------------------------------------------------//
@@ -698,6 +736,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private val kObjHeader    = LLVMGetTypeByName(context.llvmModule, "struct.ObjHeader")!!
     private val kObjHeaderPtr = pointerType(kObjHeader)!!
     private val kTypeInfoPtr  = pointerType(kTypeInfo)
+    private val kInt1         = LLVMInt1Type()
     private val kInt8Ptr      = pointerType(LLVMInt8Type())
     private val kInt8PtrPtr   = pointerType(kInt8Ptr)
 
