@@ -11,37 +11,50 @@ public final class Char : Comparable<Char> {
      * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
      * or a positive number if its greater than other.
      */
+    @SymbolName("Kotlin_Char_compareTo_Char")
     external public override fun compareTo(other: Char): Int
 
     /** Adds the other Int value to this value resulting a Char. */
+    @SymbolName("Kotlin_Char_plus_Int")
     external public operator fun plus(other: Int): Char
 
     /** Subtracts the other Char value from this value resulting an Int. */
+    @SymbolName("Kotlin_Char_minus_Char")
     external public operator fun minus(other: Char): Int
     /** Subtracts the other Int value from this value resulting a Char. */
+    @SymbolName("Kotlin_Char_minus_Int")
     external public operator fun minus(other: Int): Char
 
     /** Increments this value. */
+    @SymbolName("Kotlin_Char_inc")
     external public operator fun inc(): Char
     /** Decrements this value. */
+    @SymbolName("Kotlin_Char_dec")
     external public operator fun dec(): Char
 
     /** Creates a range from this value to the specified [other] value. */
     // external public operator fun rangeTo(other: Char): CharRange
 
     /** Returns the value of this character as a `Byte`. */
+    @SymbolName("Kotlin_Char_toByte")
     external public fun toByte(): Byte
     /** Returns the value of this character as a `Char`. */
+    @SymbolName("Kotlin_Char_toChar")
     external public fun toChar(): Char
     /** Returns the value of this character as a `Short`. */
+    @SymbolName("Kotlin_Char_toShort")
     external public fun toShort(): Short
     /** Returns the value of this character as a `Int`. */
+    @SymbolName("Kotlin_Char_toInt")
     external public fun toInt(): Int
     /** Returns the value of this character as a `Long`. */
+    @SymbolName("Kotlin_Char_toLong")
     external public fun toLong(): Long
     /** Returns the value of this character as a `Float`. */
+    @SymbolName("Kotlin_Char_toFloat")
     external public fun toFloat(): Float
     /** Returns the value of this character as a `Double`. */
+    @SymbolName("Kotlin_Char_toDouble")
     external public fun toDouble(): Double
 
     companion object {

@@ -4,6 +4,24 @@
 
 
 extern "C" {
+
+//--- Char --------------------------------------------------------------------//
+
+KInt    Kotlin_Char_compareTo_Char   (KChar a, KChar   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
+KChar   Kotlin_Char_plus_Char        (KChar a, KInt    b) { return a + b; }
+KChar   Kotlin_Char_minus_Char       (KChar a, KChar   b) { return a - b; }
+KChar   Kotlin_Char_minus_Char       (KChar a, KInt    b) { return a - b; }
+KChar   Kotlin_Char_inc              (KChar a           ) { return a + 1; }
+KChar   Kotlin_Char_dec              (KChar a           ) { return a - 1; }
+
+KByte   Kotlin_Char_toByte           (KChar a           ) { return a; }
+KChar   Kotlin_Char_toChar           (KChar a           ) { return a; }
+KShort  Kotlin_Char_toShort          (KChar a           ) { return a; }
+KInt    Kotlin_Char_toInt            (KChar a           ) { return a; }
+KLong   Kotlin_Char_toLong           (KChar a           ) { return a; }
+KFloat  Kotlin_Char_toFloat          (KChar a           ) { return a; }
+KDouble Kotlin_Char_toDouble         (KChar a           ) { return a; }
+
 //--- Byte --------------------------------------------------------------------//
 
 KInt    Kotlin_Byte_compareTo_Byte   (KByte a, KByte   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
