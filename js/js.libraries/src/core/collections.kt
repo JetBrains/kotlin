@@ -18,12 +18,25 @@ package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
 
-@library("copyToArray")
-public fun <T> Collection<T>.toTypedArray(): Array<T> = noImpl
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
+@JsName("copyToArray")
+internal fun <T> copyToArray(collection: Collection<T>): Array<T> {
+    return if (collection.asDynamic().toArray !== undefined)
+        collection.asDynamic().toArray()
+    else
+        copyToArrayImpl(collection).asDynamic()
+}
 
-@library("copyToArrayImpl")
-internal fun copyToArrayImpl(collection: Collection<*>): Array<Any?> = noImpl
+@JsName("copyToArrayImpl")
+internal fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
+    val array = emptyArray<Any?>()
+    val iterator = collection.iterator()
+    while (iterator.hasNext())
+        array.asDynamic().push(iterator.next())
+    return array
+}
 
 @library("arrayToString")
 internal fun arrayToString(array: Array<*>): String = noImpl

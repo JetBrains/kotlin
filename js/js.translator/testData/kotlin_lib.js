@@ -406,7 +406,7 @@ Kotlin.collectionsSort = function (mutableList, comparator) {
     }
 
     if (mutableList.size > 1) {
-        var array = Kotlin.copyToArray(mutableList);
+        var array = _.kotlin.collections.copyToArray(mutableList);
 
         array.sort(boundComparator);
 
@@ -418,21 +418,6 @@ Kotlin.collectionsSort = function (mutableList, comparator) {
 
 Kotlin.primitiveArraySort = function(array) {
     array.sort(Kotlin.primitiveCompareTo)
-};
-
-Kotlin.copyToArray = function (collection) {
-    if (typeof collection.toArray !== "undefined") return collection.toArray();
-    return Kotlin.copyToArrayImpl(collection);
-};
-
-Kotlin.copyToArrayImpl = function (collection) {
-    var array = [];
-    var it = collection.iterator();
-    while (it.hasNext()) {
-        array.push(it.next());
-    }
-
-    return array;
 };
 
 Kotlin.splitString = function (str, regex, limit) {
