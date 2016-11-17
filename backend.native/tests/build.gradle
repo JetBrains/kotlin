@@ -281,10 +281,3 @@ task strdedup1(type: RunKonanTest) {
     goldValue = "true\ntrue\n"
     source = "datagen/literals/strdedup1.kt"
 }
-
-/* TODO: enable after Unit.toString() gets implemented
-task strdedup1(type: RunKonanTest) {
-    goldValue = "true\ntrue\n"
-    source = "datagen/literals/strdedup1.kt"
-}
-*/
