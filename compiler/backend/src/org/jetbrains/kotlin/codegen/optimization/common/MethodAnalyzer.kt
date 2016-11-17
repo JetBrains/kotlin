@@ -46,6 +46,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -56,7 +57,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 import java.util.*
 
 /**
- * This class is a slightly version of `org.objectweb.asm.tree.analysis.Analyzer`
+ * This class is a modified version of `org.objectweb.asm.tree.analysis.Analyzer`
  * @author Eric Bruneton
  * @author Dmitry Petrov
  */
@@ -145,10 +146,10 @@ open class MethodAnalyzer<V : Value>(
 
             }
             catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction " + insn + ": " + e.message, e)
+                throw AnalyzerException(e.node, "Error at instruction #" + insn + " ${InlineCodegenUtil.getInsnText(insnNode)}: " + e.message, e)
             }
             catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction " + insn + ": " + e.message, e)
+                throw AnalyzerException(insnNode, "Error at instruction #" + insn + " ${InlineCodegenUtil.getInsnText(insnNode)}: " + e.message, e)
             }
 
         }

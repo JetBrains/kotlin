@@ -389,6 +389,17 @@ public class InlineCodegenUtil {
     }
 
     @NotNull
+    public static String getInsnText(@Nullable AbstractInsnNode node) {
+        if (node == null) return "<null>";
+        Textifier textifier = new Textifier();
+        node.accept(new TraceMethodVisitor(textifier));
+        StringWriter sw = new StringWriter();
+        textifier.print(new PrintWriter(sw));
+        sw.flush();
+        return sw.toString().trim();
+    }
+
+    @NotNull
     /* package */ static ClassReader buildClassReaderByInternalName(@NotNull GenerationState state, @NotNull String internalName) {
         //try to find just compiled classes then in dependencies
         try {
