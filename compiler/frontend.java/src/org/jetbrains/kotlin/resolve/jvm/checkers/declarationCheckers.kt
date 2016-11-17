@@ -195,7 +195,10 @@ class OverloadsAnnotationChecker: DeclarationChecker {
         if (descriptor !is CallableDescriptor) {
             return
         }
-        if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
+        if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_INTERFACE.on(annotationEntry))
+        }
+        else if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(annotationEntry))
         }
         else if (DescriptorUtils.isLocal(descriptor)) {

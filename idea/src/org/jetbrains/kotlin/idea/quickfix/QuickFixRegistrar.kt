@@ -438,6 +438,7 @@ class QuickFixRegistrar : QuickFixContributor {
         INAPPLICABLE_LATEINIT_MODIFIER.registerFactory(RemoveNullableFix.LATEINIT_FACTORY)
 
         OVERLOADS_ABSTRACT.registerFactory(RemoveAnnotationFix.JvmOverloads)
+        OVERLOADS_INTERFACE.registerFactory(RemoveAnnotationFix.JvmOverloads)
         OVERLOADS_PRIVATE.registerFactory(RemoveAnnotationFix.JvmOverloads)
         OVERLOADS_LOCAL.registerFactory(RemoveAnnotationFix.JvmOverloads)
         OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.registerFactory(RemoveAnnotationFix.JvmOverloads)
