@@ -87,32 +87,6 @@ void* AllocArrayInstance(
   return ArrayContainer(type_info, elements).GetPlace();
 }
 
-int IsInstance(const ObjHeader* obj, const TypeInfo* type_info) {
-  // We assume null check is handled by caller.
-  RuntimeAssert(obj != nullptr, "must not be null");
-  const TypeInfo* obj_type_info = obj->type_info();
-  // If it is an interface - check in list of implemented interfaces.
-  if (type_info->fieldsCount_ < 0) {
-    for (int i = 0; i < obj_type_info->implementedInterfacesCount_; ++i) {
-      if (obj_type_info->implementedInterfaces_[i] == type_info) {
-        return 1;
-      }
-    }
-    return 0;
-  }
-  while (obj_type_info != nullptr && obj_type_info != type_info) {
-    obj_type_info = obj_type_info->superType_;
-  }
-  return obj_type_info != nullptr;
-}
-
-void CheckInstance(const ObjHeader* obj, const TypeInfo* type_info) {
-  if (IsInstance(obj, type_info)) {
-    return;
-  }
-  ThrowClassCastException();
-}
-
 #ifdef __cplusplus
 }
 #endif

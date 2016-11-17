@@ -34,6 +34,9 @@ extern const TypeInfo* theDoubleArrayTypeInfo;
 extern const TypeInfo* theBooleanArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 
+KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info);
+void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
+
 #ifdef __cplusplus
 }
 #endif

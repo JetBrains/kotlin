@@ -266,9 +266,6 @@ void InitMemory();
 void* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
 void* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
-int IsInstance(const ObjHeader* obj, const TypeInfo* type_info);
-void CheckInstance(const ObjHeader* obj, const TypeInfo* type_info);
-
 #ifdef __cplusplus
 }
 #endif
