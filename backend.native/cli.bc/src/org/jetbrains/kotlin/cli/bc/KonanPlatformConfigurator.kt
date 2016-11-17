@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
-import org.jetbrains.kotlin.types.DynamicTypesAllowed
+import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 
 object KonanPlatformConfigurator : PlatformConfigurator(
-        DynamicTypesAllowed(),
+        DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(),
         additionalCallCheckers = listOf(),
         additionalTypeCheckers = listOf(),
