@@ -4976,9 +4976,15 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inherietFromRenamedNativeClass.kt")
-        public void testInherietFromRenamedNativeClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/inherietFromRenamedNativeClass.kt");
+        @TestMetadata("inheritFromRenamedNativeClass.kt")
+        public void testInheritFromRenamedNativeClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/inheritFromRenamedNativeClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inheritFromRenamedNativeClassMultimodule.kt")
+        public void testInheritFromRenamedNativeClassMultimodule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/inheritFromRenamedNativeClassMultimodule.kt");
             doTest(fileName);
         }
 
