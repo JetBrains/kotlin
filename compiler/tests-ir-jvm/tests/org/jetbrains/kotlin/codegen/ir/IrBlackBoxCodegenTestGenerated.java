@@ -14540,6 +14540,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("reifiedChain.kt")
+        public void testReifiedChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reified/reifiedChain.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("reifiedInlineFunOfObject.kt")
         public void testReifiedInlineFunOfObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reified/reifiedInlineFunOfObject.kt");

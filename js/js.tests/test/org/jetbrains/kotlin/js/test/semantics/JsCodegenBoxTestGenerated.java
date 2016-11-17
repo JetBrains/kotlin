@@ -19112,6 +19112,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("reifiedChain.kt")
+        public void testReifiedChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reified/reifiedChain.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("reifiedInlineFunOfObject.kt")
         public void testReifiedInlineFunOfObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reified/reifiedInlineFunOfObject.kt");

@@ -138,7 +138,9 @@ public final class PatternTranslator extends AbstractTranslator {
     public JsExpression getIsTypeCheckCallable(@NotNull KotlinType type) {
         JsExpression callable = doGetIsTypeCheckCallable(type);
 
-        if (isNullableType(type)) {
+        // If the type is reified, rely on the corresponding is type callable.
+        // Otherwise make sure that passing null yields true
+        if (!isReifiedTypeParameter(type) && isNullableType(type)) {
             return namer().orNull(callable);
         }
 
