@@ -8046,6 +8046,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/joinDeclarationAndAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("assignmentInIf.kt")
+        public void testAssignmentInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/assignmentInIf.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("cannotRemoveType.kt")
         public void testCannotRemoveType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/cannotRemoveType.kt");
@@ -8058,9 +8064,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("cannotRemoveType3.kt")
-        public void testCannotRemoveType3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/cannotRemoveType3.kt");
+        @TestMetadata("capturedInitialization.kt")
+        public void testCapturedInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/capturedInitialization.kt");
             doTest(fileName);
         }
 
@@ -8070,9 +8076,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("correctConditionalAssignment.kt")
+        public void testCorrectConditionalAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/correctConditionalAssignment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("deleteInitBlock.kt")
         public void testDeleteInitBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/deleteInitBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incorrectConditionalAssignment.kt")
+        public void testIncorrectConditionalAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/incorrectConditionalAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleConstructors.kt")
+        public void testMultipleConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/multipleConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyReassignment.kt")
+        public void testPropertyReassignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/propertyReassignment.kt");
             doTest(fileName);
         }
 
@@ -8082,9 +8112,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("simpleLocal.kt")
+        public void testSimpleLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/simpleLocal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleConstructor.kt")
+        public void testSingleConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/singleConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("usedLocal.kt")
         public void testUsedLocal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedLocal2.kt")
+        public void testUsedLocal2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varReassignment.kt")
+        public void testVarReassignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/varReassignment.kt");
             doTest(fileName);
         }
     }

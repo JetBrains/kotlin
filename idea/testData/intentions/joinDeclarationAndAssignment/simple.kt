@@ -1,9 +1,9 @@
 class A {
-    var a: Int
+    var a<caret>: Int
     var b: Int
 
     init {
-        <caret>a = 1
+        a = 1
         b = 2
     }
 }

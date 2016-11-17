@@ -1,8 +1,8 @@
 class A {
-    var a: Int
+    var a<caret>: Int
 
     init {
         // Initialize a
-        <caret>a = 1
+        a = 1
     }
 }
