@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.sure
 
 class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getPackages(): List<FqName> = listOf(
-            "java.util", "jquery", "jquery.ui", "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
+            "jquery", "jquery.ui", "kotlin", "kotlin.collections", "kotlin.browser", "kotlin.dom", "kotlin.js"
     ).map { FqName(it) }
 
     override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin" to "intArrayOf")
