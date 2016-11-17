@@ -17,6 +17,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
+            assertContains("Finished executing kotlin compiler using daemon strategy")
             assertReportExists("build/reports/tests/classes/demo.TestSource.html")
             assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
