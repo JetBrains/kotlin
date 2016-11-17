@@ -198,8 +198,10 @@ class OverloadsAnnotationChecker: DeclarationChecker {
         if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(annotationEntry))
         }
-        else if ((!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) ||
-                 DescriptorUtils.isLocal(descriptor)) {
+        else if (DescriptorUtils.isLocal(descriptor)) {
+            diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
+        }
+        else if (!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(annotationEntry))
         }
         else if (descriptor.valueParameters.none { it.declaresDefaultValue() }) {

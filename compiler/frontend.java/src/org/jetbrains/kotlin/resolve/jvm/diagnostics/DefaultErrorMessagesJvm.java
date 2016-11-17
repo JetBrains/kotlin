@@ -62,7 +62,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object");
         MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "'@JvmOverloads' annotation has no effect for methods without default arguments");
         MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "'@JvmOverloads' annotation cannot be used on abstract methods");
-        MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private and local declarations");
+        MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations");
+        MAP.put(ErrorsJvm.OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations");
         MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration");
         MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name");
         MAP.put(ErrorsJvm.VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
