@@ -68,6 +68,10 @@ internal fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
 }
 
+internal fun Logger.kotlinWarn(message: String) {
+    this.warn("[KOTLIN] $message")
+}
+
 internal inline fun Logger.kotlinDebug(message: () -> String) {
     if (isDebugEnabled) {
         kotlinDebug(message())
