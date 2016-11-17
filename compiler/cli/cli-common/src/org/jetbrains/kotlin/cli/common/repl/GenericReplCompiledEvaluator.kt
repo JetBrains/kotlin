@@ -38,6 +38,10 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
             return@eval ReplEvalResult.HistoryMismatch(it)
         }
 
+        var mainLineClassName: String? = null
+
+        fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.replaceFirst("\\.class$".toRegex(), ""))
+
         classLoaderLock.read {
             if (newClasspath.isNotEmpty()) {
                 classLoaderLock.write {
@@ -46,11 +50,22 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
             }
             compiledClasses.filter { it.path.endsWith(".class") }
                     .forEach {
-                        classLoader.addClass(JvmClassName.byInternalName(it.path.replaceFirst("\\.class$".toRegex(), "")), it.bytes)
+                        val className = classNameFromPath(it.path)
+                        if (className.fqNameForClassNameWithoutDollars.shortName().asString() == "Line${codeLine.no}") {
+                            mainLineClassName = className.fqNameForClassNameWithoutDollars.asString()
+                        }
+                        classLoader.addClass(className, it.bytes)
                     }
         }
 
-        val scriptClass = classLoaderLock.read { classLoader.loadClass("Line${codeLine.no}") }
+        val scriptClass = classLoaderLock.read {
+            try {
+                classLoader.loadClass(mainLineClassName!!)
+            }
+            catch (e: Exception) {
+                throw Exception("Error loading class $mainLineClassName: known classes: ${compiledClasses.map { classNameFromPath(it.path).fqNameForClassNameWithoutDollars.asString() }}", e)
+            }
+        }
 
         val constructorParams: Array<Class<*>> =
                 (compiledLoadedClassesHistory.map { it.second.klass } +

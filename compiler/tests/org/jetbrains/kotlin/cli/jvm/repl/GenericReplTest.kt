@@ -82,6 +82,38 @@ class GenericReplTest : TestCase() {
 
         Disposer.dispose(disposable)
     }
+
+    @Test
+    fun testRepPackage() {
+
+        val disposable = Disposer.newDisposable()
+
+        val repl = TestRepl(disposable,
+                            listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
+                            "kotlin.script.templates.standard.ScriptTemplateWithArgs")
+
+        val codeLine1 = ReplCodeLine(0, "package mypackage\n\nval x = 1\nx+2")
+        val res1 = repl.replCompiler?.compile(codeLine1, emptyList())
+        val res1c = res1 as? ReplCompileResult.CompiledClasses
+        TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
+
+        val res11 = repl.compiledEvaluator.eval(codeLine1, emptyList(), res1c!!.classes, res1c.hasResult, res1c.newClasspath)
+        val res11e = res11 as? ReplEvalResult.ValueResult
+        TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
+        TestCase.assertEquals(3, res11e!!.value)
+        
+        val codeLine2 = ReplCodeLine(0, "x+4")
+        val res2 = repl.replCompiler?.compile(codeLine2, listOf(codeLine1))
+        val res2c = res2 as? ReplCompileResult.CompiledClasses
+        TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
+
+        val res21 = repl.compiledEvaluator.eval(codeLine2, listOf(codeLine1), res2c!!.classes, res2c.hasResult, res2c.newClasspath)
+        val res21e = res21 as? ReplEvalResult.ValueResult
+        TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
+        TestCase.assertEquals(5, res21e!!.value)
+
+        Disposer.dispose(disposable)
+    }
 }
 
 internal class TestRepl(
