@@ -7842,6 +7842,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     }
 
+    @TestMetadata("idea/testData/intentions/joinDeclarationAndAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JoinDeclarationAndAssignment extends AbstractIntentionTest {
+        public void testAllFilesPresentInJoinDeclarationAndAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/joinDeclarationAndAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("cannotRemoveType.kt")
+        public void testCannotRemoveType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/cannotRemoveType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("cannotRemoveType2.kt")
+        public void testCannotRemoveType2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/cannotRemoveType2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("cannotRemoveType3.kt")
+        public void testCannotRemoveType3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/cannotRemoveType3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("comment.kt")
+        public void testComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/comment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deleteInitBlock.kt")
+        public void testDeleteInitBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/deleteInitBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usedLocal.kt")
+        public void testUsedLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/usedLocal.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/loopToCallChain")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -9393,57 +9444,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toCollection/toSetWithMap.kt");
                 doTest(fileName);
             }
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/moveAssignmentToInitializer")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class MoveAssignmentToInitializer extends AbstractIntentionTest {
-        public void testAllFilesPresentInMoveAssignmentToInitializer() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveAssignmentToInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("cannotRemoveType.kt")
-        public void testCannotRemoveType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/cannotRemoveType.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("cannotRemoveType2.kt")
-        public void testCannotRemoveType2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/cannotRemoveType2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("cannotRemoveType3.kt")
-        public void testCannotRemoveType3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/cannotRemoveType3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("comment.kt")
-        public void testComment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/comment.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("deleteInitBlock.kt")
-        public void testDeleteInitBlock() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/deleteInitBlock.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/simple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("usedLocal.kt")
-        public void testUsedLocal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/usedLocal.kt");
-            doTest(fileName);
         }
     }
 

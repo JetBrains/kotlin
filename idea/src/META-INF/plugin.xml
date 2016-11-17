@@ -1217,7 +1217,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.MoveAssignmentToInitializerIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.JoinDeclarationAndAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
