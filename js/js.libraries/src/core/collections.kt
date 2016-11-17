@@ -26,7 +26,7 @@ internal fun <T> copyToArray(collection: Collection<T>): Array<T> {
     return if (collection.asDynamic().toArray !== undefined)
         collection.asDynamic().toArray()
     else
-        copyToArrayImpl(collection).asDynamic()
+        copyToArrayImpl(collection).unsafeCast<Array<T>>()
 }
 
 @JsName("copyToArrayImpl")

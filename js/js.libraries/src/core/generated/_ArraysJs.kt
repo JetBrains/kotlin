@@ -14,119 +14,119 @@ import kotlin.comparisons.*
  * Returns a [List] that wraps the original array.
  */
 public fun <T> Array<out T>.asList(): List<T> {
-    return ArrayList<T>(this as Array<Any?>)
+    return ArrayList<T>(this.unsafeCast<Array<Any?>>())
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun ByteArray.asList(): List<Byte> {
-    return (this as Array<Byte>).asList()
+    return this.unsafeCast<Array<Byte>>().asList()
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun ShortArray.asList(): List<Short> {
-    return (this as Array<Short>).asList()
+    return this.unsafeCast<Array<Short>>().asList()
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun IntArray.asList(): List<Int> {
-    return (this as Array<Int>).asList()
+    return this.unsafeCast<Array<Int>>().asList()
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun LongArray.asList(): List<Long> {
-    return (this as Array<Long>).asList()
+    return this.unsafeCast<Array<Long>>().asList()
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun FloatArray.asList(): List<Float> {
-    return (this as Array<Float>).asList()
+    return this.unsafeCast<Array<Float>>().asList()
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun DoubleArray.asList(): List<Double> {
-    return (this as Array<Double>).asList()
+    return this.unsafeCast<Array<Double>>().asList()
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun BooleanArray.asList(): List<Boolean> {
-    return (this as Array<Boolean>).asList()
+    return this.unsafeCast<Array<Boolean>>().asList()
 }
 
 /**
  * Returns a [List] that wraps the original array.
  */
 public inline fun CharArray.asList(): List<Char> {
-    return (this as Array<Char>).asList()
+    return this.unsafeCast<Array<Char>>().asList()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun ByteArray.toTypedArray(): Array<Byte> {
-    return copyOf() as Array<Byte>
+    return copyOf().unsafeCast<Array<Byte>>()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun ShortArray.toTypedArray(): Array<Short> {
-    return copyOf() as Array<Short>
+    return copyOf().unsafeCast<Array<Short>>()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun IntArray.toTypedArray(): Array<Int> {
-    return copyOf() as Array<Int>
+    return copyOf().unsafeCast<Array<Int>>()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun LongArray.toTypedArray(): Array<Long> {
-    return copyOf() as Array<Long>
+    return copyOf().unsafeCast<Array<Long>>()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun FloatArray.toTypedArray(): Array<Float> {
-    return copyOf() as Array<Float>
+    return copyOf().unsafeCast<Array<Float>>()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun DoubleArray.toTypedArray(): Array<Double> {
-    return copyOf() as Array<Double>
+    return copyOf().unsafeCast<Array<Double>>()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun BooleanArray.toTypedArray(): Array<Boolean> {
-    return copyOf() as Array<Boolean>
+    return copyOf().unsafeCast<Array<Boolean>>()
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun CharArray.toTypedArray(): Array<Char> {
-    return copyOf() as Array<Char>
+    return copyOf().unsafeCast<Array<Char>>()
 }
 
 /**

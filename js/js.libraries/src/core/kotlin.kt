@@ -21,7 +21,7 @@ import java.util.*
 /**
  * Returns an empty array of the specified type [T].
  */
-public inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
+public inline fun <reified T> emptyArray(): Array<T> = js("[]")
 
 @library
 public fun <T> arrayOf(vararg elements: T): Array<T> = noImpl
@@ -70,7 +70,7 @@ public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(
 
 
 internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
-    return arrayOfNulls<Any>(size) as Array<T>
+    return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
 
 internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {

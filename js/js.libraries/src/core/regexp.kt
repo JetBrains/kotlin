@@ -50,4 +50,4 @@ public fun RegExp.reset() {
 }
 
 
-public inline fun RegExpMatch.asArray(): Array<out String?> = this.asDynamic()
+public inline fun RegExpMatch.asArray(): Array<out String?> = unsafeCast<Array<out String?>>()

@@ -27,12 +27,12 @@ fun specialJS(): List<GenericFunction> {
         returns("List<T>")
         body(ArraysOfObjects) {
             """
-            return ArrayList<T>(this as Array<Any?>)
+            return ArrayList<T>(this.unsafeCast<Array<Any?>>())
             """
         }
 
         inline(true, ArraysOfPrimitives)
-        body(ArraysOfPrimitives) {"""return (this as Array<T>).asList()"""}
+        body(ArraysOfPrimitives) {"""return this.unsafeCast<Array<T>>().asList()"""}
     }
 
 
@@ -46,7 +46,7 @@ fun specialJS(): List<GenericFunction> {
         }
         body {
             """
-            return copyOf() as Array<T>
+            return copyOf().unsafeCast<Array<T>>()
             """
         }
     }

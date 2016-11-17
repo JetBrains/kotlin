@@ -16,17 +16,22 @@
 
 package kotlin.js
 
-inline fun Any?.asDynamic(): dynamic = this
+public inline fun Any?.asDynamic(): dynamic = this
+
+/**
+ * Reinterprets this value as a value of the specified type [T] without any actual type checking.
+ */
+public inline fun <T> Any?.unsafeCast(): @kotlin.internal.NoInfer T = this.asDynamic()
 
 // TODO add the support ES6 iterators
-operator fun dynamic.iterator(): Iterator<dynamic> {
-    val r = this
+public operator fun dynamic.iterator(): Iterator<dynamic> {
+    val r: Any? = this
 
     return when {
         this["iterator"] != null ->
             this["iterator"]()
         js("Array.isArray(r)") ->
-            (this as Array<*>).iterator()
+            r.unsafeCast<Array<*>>().iterator()
 
         else ->
             (r as Iterable<*>).iterator()
