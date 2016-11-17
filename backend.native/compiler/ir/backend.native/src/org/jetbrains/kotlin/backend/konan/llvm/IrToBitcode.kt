@@ -652,7 +652,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     fun callDirect(descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
         val llvmFunction = codegen.functionLlvmValue(descriptor)
-        return codegen.call(llvmFunction, args, result)
+        return call(descriptor, llvmFunction, args, result)
     }
 
     //-------------------------------------------------------------------------//
@@ -680,7 +680,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         val functionPtrType = pointerType(getLlvmFunctionType(descriptor))                      // Construct type of the method to be invoked
         val function        = codegen.bitcast(functionPtrType, llvmMethod!!, codegen.newVar())  // Cast method address to the type
-        return codegen.call(function, args, result)                                             // Invoke the method
+        return call(descriptor, function, args, result)                                         // Invoke the method
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun call(descriptor: FunctionDescriptor, function: LLVMOpaqueValue?, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+        return codegen.call(function, args, if (KotlinBuiltIns.isUnit(descriptor.returnType!!)) "" else result)
     }
 
     //-------------------------------------------------------------------------//
