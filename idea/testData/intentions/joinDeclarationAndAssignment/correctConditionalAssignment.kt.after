@@ -1,0 +1,3 @@
+fun foo(flag: Boolean) {
+    val x<selection>: Double</selection><caret> = if (flag) 3.14 else 2.71
+}

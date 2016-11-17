@@ -1,9 +1,9 @@
 // IS_APPLICABLE: false
 class A {
-    var b: Int
+    var b<caret>: Int
 
     init {
         val i = 0
-        b = <caret>i
+        b = i
     }
 }

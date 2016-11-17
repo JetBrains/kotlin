@@ -1,7 +1,7 @@
 class A {
-    var a: String?
+    var a<caret>: String?
 
     init {
-        <caret>a = null
+        a = null
     }
 }

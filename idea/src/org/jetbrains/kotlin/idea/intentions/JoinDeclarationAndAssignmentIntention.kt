@@ -24,38 +24,44 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.unblockDocument
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class JoinDeclarationAndAssignmentIntention :
-        SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Join declaration and assignment") {
+class JoinDeclarationAndAssignmentInspection : IntentionBasedInspection<KtProperty>(
+        JoinDeclarationAndAssignmentIntention::class,
+        "Can be joined with assignment"
+)
 
-    override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
-        if (element.operationToken != KtTokens.EQ) {
+class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentIntention<KtProperty>(
+        KtProperty::class.java,
+        "Join declaration and assignment"
+) {
+
+    override fun isApplicableTo(element: KtProperty): Boolean {
+        if (element.hasDelegate()
+            || element.hasInitializer()
+            || element.setter != null
+            || element.getter != null
+            || element.receiverTypeReference != null
+            || element.name == null) {
             return false
         }
-        val rightExpression = element.right ?: return false
 
-        val initializer = PsiTreeUtil.getParentOfType(element,
-                                                      KtAnonymousInitializer::class.java,
-                                                      KtSecondaryConstructor::class.java) ?: return false
-
-        val target = findTargetProperty(element)
-        return target != null && target.initializer == null && target.receiverTypeReference == null &&
-               target.getNonStrictParentOfType<KtClassOrObject>() == element.getNonStrictParentOfType<KtClassOrObject>() &&
-               hasNoLocalDependencies(rightExpression, initializer)
-
+        val assignment = findAssignment(element) ?: return false
+        return assignment.right?.let { hasNoLocalDependencies(it, element.parent) } ?: false
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
-        val property = findTargetProperty(element) ?: return
-        val initializer = element.right ?: return
-        val newInitializer = property.setInitializer(initializer)!!
+    override fun applyTo(element: KtProperty, editor: Editor?) {
+        val typeReference = element.typeReference ?: return
 
-        val initializerBlock = element.getStrictParentOfType<KtAnonymousInitializer>()
-        element.delete()
+        val assignment = findAssignment(element) ?: return
+        val initializer = assignment.right ?: return
+        val newInitializer = element.setInitializer(initializer)!!
+
+        val initializerBlock = assignment.parent?.parent as? KtAnonymousInitializer
+        assignment.delete()
         if (initializerBlock != null && (initializerBlock.body as? KtBlockExpression)?.isEmpty() == true) {
             initializerBlock.delete()
         }
@@ -63,11 +69,10 @@ class JoinDeclarationAndAssignmentIntention :
         editor?.apply {
             unblockDocument()
 
-            val typeRef = property.typeReference
-            if (typeRef != null && property.canOmitDeclaredType(newInitializer, canChangeTypeToSubtype = !property.isVar)) {
-                val colon = property.colon!!
-                selectionModel.setSelection(colon.startOffset, typeRef.endOffset)
-                moveCaret(typeRef.endOffset, ScrollType.CENTER)
+            if (element.canOmitDeclaredType(newInitializer, canChangeTypeToSubtype = !element.isVar)) {
+                val colon = element.colon!!
+                selectionModel.setSelection(colon.startOffset, typeReference.endOffset)
+                moveCaret(typeReference.endOffset, ScrollType.CENTER)
             }
             else {
                 moveCaret(newInitializer.startOffset, ScrollType.CENTER)
@@ -75,15 +80,40 @@ class JoinDeclarationAndAssignmentIntention :
         }
     }
 
-    private fun findTargetProperty(expr: KtBinaryExpression): KtProperty? {
-        val leftExpression = expr.left as? KtNameReferenceExpression ?: return null
-        return leftExpression.resolveAllReferences().firstIsInstanceOrNull<KtProperty>()
+    private fun findAssignment(property: KtProperty): KtBinaryExpression? {
+        val propertyContainer = property.parent as? KtElement ?: return null
+        property.typeReference ?: return null
+
+        val assignments = mutableListOf<KtBinaryExpression>()
+        fun process(binaryExpr: KtBinaryExpression) {
+            if (binaryExpr.operationToken != KtTokens.EQ) return
+            val leftReference = binaryExpr.left as? KtNameReferenceExpression ?: return
+            if (leftReference.getReferencedName() != property.name) return
+            assignments += binaryExpr
+        }
+        propertyContainer.forEachDescendantOfType(::process)
+
+        fun PsiElement?.invalidParent(): Boolean {
+            when {
+                this == null -> return true
+                this === propertyContainer -> return false
+                else -> {
+                    val grandParent = parent
+                    if (grandParent.parent !== propertyContainer) return true
+                    return grandParent !is KtAnonymousInitializer && grandParent !is KtSecondaryConstructor
+                }
+            }
+        }
+
+        if (assignments.any { it.parent.invalidParent() }) return null
+
+        val first = assignments.firstOrNull() ?: return null
+        if (assignments.any { it !== first && it.parent?.parent is KtSecondaryConstructor}) return null
+        return first
     }
 
-    fun KtBlockExpression.isEmpty(): Boolean {
-        // a block that only contains comments is not empty
-        return contentRange().isEmpty
-    }
+    // a block that only contains comments is not empty
+    private fun KtBlockExpression.isEmpty() = contentRange().isEmpty
 
     private fun hasNoLocalDependencies(element: KtElement, localContext: PsiElement): Boolean {
         return !element.anyDescendantOfType<PsiElement> { child ->
@@ -97,5 +127,3 @@ private fun PsiElement.resolveAllReferences(): Sequence<PsiElement?> {
             .asSequence()
             .map { it.resolve() }
 }
-
-
