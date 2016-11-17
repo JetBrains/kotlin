@@ -228,7 +228,7 @@ public class AsmUtil {
         return flags;
     }
 
-    private static int getCommonCallableFlags(FunctionDescriptor functionDescriptor) {
+    public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor) {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);

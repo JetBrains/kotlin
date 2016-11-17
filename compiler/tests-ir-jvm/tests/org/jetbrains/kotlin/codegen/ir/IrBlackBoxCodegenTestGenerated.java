@@ -8638,6 +8638,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmOverloads/simpleJavaCall.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("varargs.kt")
+        public void testVarargs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmOverloads/varargs.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/jvmStatic")

@@ -123,7 +123,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
     ) {
         val typeMapper = state.typeMapper
         val isStatic = AsmUtil.isStaticMethod(contextKind, functionDescriptor)
-        val flags = AsmUtil.getVisibilityAccessFlag(functionDescriptor) or (if (isStatic) Opcodes.ACC_STATIC else 0)
+        val flags = AsmUtil.getCommonCallableFlags(functionDescriptor) or (if (isStatic) Opcodes.ACC_STATIC else 0)
         val remainingParameters = getRemainingParameters(functionDescriptor.original, substituteCount)
         val signature = typeMapper.mapSignature(functionDescriptor, contextKind, remainingParameters, false)
         val mv = classBuilder.newMethod(OtherOrigin(methodElement, functionDescriptor), flags,
