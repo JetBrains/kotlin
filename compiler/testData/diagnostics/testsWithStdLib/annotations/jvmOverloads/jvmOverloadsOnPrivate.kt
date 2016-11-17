@@ -8,13 +8,16 @@ class C {
 }
 
 fun foo() {
+    <!OVERLOADS_LOCAL!>@kotlin.jvm.JvmOverloads<!> fun quux(s: String = "OK") {
+    }
+
     class D {
-        <!OVERLOADS_PRIVATE!>@kotlin.jvm.JvmOverloads<!> fun foo(s: String = "OK") {
+        <!OVERLOADS_LOCAL!>@kotlin.jvm.JvmOverloads<!> fun foo(s: String = "OK") {
         }
     }
 
     val <!UNUSED_VARIABLE!>x<!> = object {
-        <!OVERLOADS_PRIVATE!>@kotlin.jvm.JvmOverloads<!> fun foo(s: String = "OK") {
-    }
+        <!OVERLOADS_LOCAL!>@kotlin.jvm.JvmOverloads<!> fun foo(s: String = "OK") {
+        }
     }
 }

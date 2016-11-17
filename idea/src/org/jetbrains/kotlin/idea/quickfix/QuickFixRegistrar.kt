@@ -447,6 +447,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         OVERLOADS_ABSTRACT.registerFactory(RemoveAnnotationFix.JvmOverloads)
         OVERLOADS_PRIVATE.registerFactory(RemoveAnnotationFix.JvmOverloads)
+        OVERLOADS_LOCAL.registerFactory(RemoveAnnotationFix.JvmOverloads)
         OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.registerFactory(RemoveAnnotationFix.JvmOverloads)
     }
 }
