@@ -158,6 +158,10 @@ task fields(type: UnitKonanTest) {
     source = "$codegen/klass/basic.kt"
 } */
 
+task check_type(type: UnitKonanTest) {
+    source = "codegen/basics/check_type.kt"
+}
+
 task aritmetic(type: UnitKonanTest) {
     source = "codegen/function/arithmetic.kt"
 }
