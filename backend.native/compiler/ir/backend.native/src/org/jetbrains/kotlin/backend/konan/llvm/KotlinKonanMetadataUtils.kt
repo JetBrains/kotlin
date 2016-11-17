@@ -60,10 +60,8 @@ object KotlinKonanMetadataUtils {
     fun loadMetadata(file: File): List<KotlinKonanMetadata> {
         assert(file.exists()) { "Library $file not found" }
         val metadataList = arrayListOf<KotlinKonanMetadata>()
-
-        // For the time being we don't have a reader, so just produce nothing
-        //val content = readModuleMetadata(file)
-        //parseMetadata(content, metadataList)
+        val content = readModuleMetadata(file)
+        parseMetadata(content, metadataList)
 
         return metadataList
     }
@@ -115,3 +113,4 @@ object KotlinKonanMetadataUtils {
         return allMetadata;
     }
 }
+

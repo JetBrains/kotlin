@@ -86,6 +86,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
+    override fun visitModuleFragment(module: IrModuleFragment) {
+        logger.log("visitModule                  : ${ir2string(module)}")
+        module.acceptChildrenVoid(this)
+        metadator.endModule(module)
+    }
+
+    //-------------------------------------------------------------------------//
 
     override fun visitWhen(expression: IrWhen) {
         logger.log("visitWhen                  : ${ir2string(expression)}")
@@ -183,6 +190,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitFunction(declaration: IrFunction) {
+        logger.log("visitFunction                  : ${ir2string(declaration)}")
         codegen.function(declaration)
         metadator.function(declaration)
         declaration.acceptChildrenVoid(this)
@@ -191,6 +199,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitClass(declaration: IrClass) {
+        logger.log("visitClass                  : ${ir2string(declaration)}")
         if (declaration.descriptor.kind == ClassKind.ANNOTATION_CLASS) {
             // do not generate any code for annotation classes as a workaround for NotImplementedError
             return

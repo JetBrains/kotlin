@@ -161,19 +161,38 @@ dependencies {
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 
 
+task stdlib(type: JavaExec) {
+    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+    classpath configurations.cli_bc
+
+    args project(':runtime').file('src/main/kotlin')
+
+    args '-output', project(':runtime').file('build/stdlib.kt.bc')
+
+    jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
+
+    dependsOn ':runtime:build'
+
+    doFirst {
+    args '-runtime', project(':runtime').build.outputs.files.singleFile
+    }
+    environment 'LD_LIBRARY_PATH' : "${llvmDir}/lib:${project.buildDir}/nativelibs"
+}
+
 task run(type: JavaExec) {
    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
    classpath configurations.cli_bc
 
    args 'tests/codegen/function/sum.kt'
 
-   args '-headers', project(':runtime').file('src/main/kotlin')
+   args '-library', project(':runtime').file('build/stdlib.kt.bc')
 
    args '-output', "$buildDir/out.bc"
 
    jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
 
    dependsOn ':runtime:build'
+   dependsOn 'stdlib'
 
    doFirst {
        args '-runtime', project(':runtime').build.outputs.files.singleFile

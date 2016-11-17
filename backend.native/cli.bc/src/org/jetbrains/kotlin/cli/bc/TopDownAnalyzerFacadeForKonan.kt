@@ -38,7 +38,7 @@ object TopDownAnalyzerFacadeForKonan {
         // Make sure the compiler produced BuiltIns module comes in last
         context.setDependencies(
                 listOf(context.module) +
-                config.getModuleDescriptors().map { it.data } +
+                config.moduleDescriptors.map { it.data } +
                 listOf(compilerBuiltInsModule)
         )
         return analyzeFilesWithGivenTrace(files, BindingTraceContext(), context, config)
@@ -51,14 +51,12 @@ object TopDownAnalyzerFacadeForKonan {
             config: KonanConfig
     ): AnalysisResult {
 
-        val allFiles = KonanConfig.withJsLibAdded(files, config)
-
         // we print out each file we compile for now
-        allFiles.forEach{println(it)}
+        files.forEach{println(it)}
 
         val analyzerForKonan = createTopDownAnalyzerForKonan(
                 moduleContext, trace,
-                FileBasedDeclarationProviderFactory(moduleContext.storageManager, allFiles),
+                FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
         )
 
@@ -66,9 +64,9 @@ object TopDownAnalyzerFacadeForKonan {
         return AnalysisResult.success(trace.bindingContext, moduleContext.module)
     }
 
-    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext) {
+    fun checkForErrors(files: Collection<KtFile>, bindingContext: BindingContext) {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext)
-        for (file in allFiles) {
+        for (file in files) {
             AnalyzingUtils.checkForSyntacticErrors(file)
         }
     }

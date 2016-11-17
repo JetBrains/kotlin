@@ -37,25 +37,19 @@ class NativeAnalyzer(
 class K2Native : CLICompiler<K2NativeCompilerArguments>() { 
 
     val defaultModuleName = "main";
-    
+
     override fun doExecute(arguments     : K2NativeCompilerArguments,
                            configuration : CompilerConfiguration,
                            rootDisposable: Disposable
                           ): ExitCode {
 
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, defaultModuleName )
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, defaultModuleName)
 
         configuration.addKotlinSourceRoots(arguments.freeArgs)
 
-
-        // TODO: remove, once linker is available.
-        if (arguments.headers != null) {
-            configuration.addKotlinSourceRoots(arguments.headers.asList())
-        }
-
-        // As of now we don't have any library mechnanism
-        var libraryFiles = listOf<String>()
-        configuration.put(KonanConfigurationKeys.LIBRARY_FILES, libraryFiles)
+        val libraries = arguments.libraries?.asList<String>() ?: listOf<String>()
+        configuration.put(KonanConfigurationKeys.LIBRARY_FILES, libraries)
+        libraries.forEach{println(it)}
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
             configuration, Arrays.asList<String>("extensions/common.xml"))

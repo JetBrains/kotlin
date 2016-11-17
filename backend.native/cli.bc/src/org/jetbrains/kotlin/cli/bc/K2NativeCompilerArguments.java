@@ -14,9 +14,10 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String runtimeFile;
 
-    @Argument(value = "headers", description = "Header files used for compilation")
+    @Argument(value = "library", description = "Bitcode file with metadata attached")
     @ValueDescription("<path>")
-    public String[] headers;
+    public String[] libraries;
+
 
     public K2NativeCompilerArguments() {
     }
@@ -24,7 +25,7 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     public K2NativeCompilerArguments(K2NativeCompilerArguments arguments) {
         this.outputFile = arguments.outputFile;
         this.runtimeFile = arguments.runtimeFile;
-        this.headers = arguments.headers;
+        this.libraries = arguments.libraries;
     }
 
     public CommonCompilerArguments copy() {
