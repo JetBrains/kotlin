@@ -286,7 +286,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitField(expression: IrField) {
-        logger.log("visitField                : ${ir2string(expression)}")
+        logger.log("visitField                 : ${ir2string(expression)}")
         val descriptor = expression.descriptor
         if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
             val globalProperty = LLVMAddGlobal(context.llvmModule, getLLVMType(descriptor.type), descriptor.symbolName)
