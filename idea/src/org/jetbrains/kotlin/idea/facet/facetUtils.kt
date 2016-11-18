@@ -22,6 +22,7 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.config.JvmTarget
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.framework.getLibraryProperties
 import org.jetbrains.kotlin.idea.versions.*
 
 private fun getRuntimeLibraryVersions(
@@ -56,7 +56,7 @@ private fun getRuntimeLibraryVersions(
             .orderEntries
             .asSequence()
             .filterIsInstance<LibraryOrderEntry>()
-            .mapNotNull { it.library?.let { getLibraryProperties(presentationProvider, it) }?.versionString }
+            .mapNotNull { it.library?.let { presentationProvider.detect(it.getFiles(OrderRootType.CLASSES).toList())?.versionString } }
             .toList()
 }
 
