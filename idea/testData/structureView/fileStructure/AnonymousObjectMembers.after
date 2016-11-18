@@ -1,0 +1,10 @@
+-AnonymousObjectMembers.kt
+ -C
+  -bar(): Unit
+   -object : Runnable
+    run(): Unit
+    xyzzy(): Unit
+  -f: Runnable
+   -object : Runnable
+    run(): Unit
+    xyzzy(): Unit

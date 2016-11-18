@@ -36,6 +36,12 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/structureView/fileStructure"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("AnonymousObjectMembers.kt")
+    public void testAnonymousObjectMembers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/AnonymousObjectMembers.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CheckLocationForKotlin.kt")
     public void testCheckLocationForKotlin() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/CheckLocationForKotlin.kt");
