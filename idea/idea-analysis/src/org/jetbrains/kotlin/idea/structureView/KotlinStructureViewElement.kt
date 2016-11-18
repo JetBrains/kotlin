@@ -90,7 +90,7 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
             is KtFile -> element.declarations
             is KtClass -> element.getStructureDeclarations()
             is KtClassOrObject -> element.declarations
-            is KtFunction, is KtClassInitializer -> element.collectLocalDeclarations()
+            is KtFunction, is KtClassInitializer, is KtProperty -> element.collectLocalDeclarations()
             else -> emptyList()
         }
 

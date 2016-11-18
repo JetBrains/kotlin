@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.renderer.DescriptorRenderer.Companion.ONLY_NAMES_WITH_SHORT_TYPES
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getAllOverriddenDeclarations
@@ -82,6 +83,10 @@ internal class KotlinStructureElementPresentation(
     }
 
     private fun getElementText(navigatablePsiElement: NavigatablePsiElement, descriptor: DeclarationDescriptor?): String? {
+        if (navigatablePsiElement is KtObjectDeclaration && navigatablePsiElement.isObjectLiteral()) {
+            return "object" + (navigatablePsiElement.getSuperTypeList()?.text?.let { " : $it" } ?: "")
+        }
+
         if (descriptor != null) {
             return ONLY_NAMES_WITH_SHORT_TYPES.render(descriptor)
         }
