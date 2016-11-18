@@ -88,16 +88,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitWhen(expression: IrWhen) {
         logger.log("visitWhen                  : ${ir2string(expression)}")
-        var bbExit:LLVMOpaqueBasicBlock? = null             // By default "when" does not have "exit"
-        if (!KotlinBuiltIns.isNothing(expression.type))     // If "when" has "exit".
-            bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
-
-        expression.branches.forEach {                       // Iterate through "when" branches (clauses).
-            var bbNext = bbExit                             // For last clause bbNext coincides with bbExit.
-            if (it != expression.branches.last())           // If it is not last clause.
-                bbNext = codegen.basicBlock()               // Create new basic block for next clause.
-            generateWhenCase(it, bbNext, bbExit)            // Generate code for current clause.
-        }
+        evaluateWhen(expression)
     }
 
     //-------------------------------------------------------------------------//
@@ -313,11 +304,28 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrReturn          -> return evaluateReturn      (                 value)
             is IrBlock           -> return evaluateBlock       (                 value)
             is IrExpressionBody  -> return evaluateExpression  (tmpVariableName, value.expression)
+            is IrWhen            -> return evaluateWhen        (                 value)
             null                 -> return null
             else                 -> {
                 TODO()
             }
         }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateWhen(expression: IrWhen): LLVMOpaqueValue? {
+        var bbExit:LLVMOpaqueBasicBlock? = null             // By default "when" does not have "exit"
+        if (!KotlinBuiltIns.isNothing(expression.type))     // If "when" has "exit".
+            bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
+
+        expression.branches.forEach {                       // Iterate through "when" branches (clauses).
+            var bbNext = bbExit                             // For last clause bbNext coincides with bbExit.
+            if (it != expression.branches.last())           // If it is not last clause.
+                bbNext = codegen.basicBlock()               // Create new basic block for next clause.
+            generateWhenCase(it, bbNext, bbExit)            // Generate code for current clause.
+        }
+        return null
     }
 
     //-------------------------------------------------------------------------//
@@ -491,8 +499,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         })
 
         when {
-            value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
             value is IrDelegatingConstructorCall -> return superCall(tmpVariableName, value.descriptor, args)
+            value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
             else -> {
                 TODO()
             }
