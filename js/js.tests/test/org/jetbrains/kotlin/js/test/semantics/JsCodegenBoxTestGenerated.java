@@ -9433,11 +9433,10 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmOverloads/innerClass.kt");
             try {
                 doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
             catch (Throwable ignore) {
-                return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
         @TestMetadata("multipleDefaultParameters.kt")
@@ -9478,11 +9477,10 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmOverloads/privateClass.kt");
             try {
                 doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
             catch (Throwable ignore) {
-                return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
         @TestMetadata("secondaryConstructor.kt")
@@ -9523,11 +9521,10 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmOverloads/varargs.kt");
             try {
                 doTest(fileName);
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
             catch (Throwable ignore) {
-                return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
     }
 

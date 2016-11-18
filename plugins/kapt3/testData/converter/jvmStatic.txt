@@ -1,6 +1,6 @@
 
 public final class JvmStaticTest {
-    private final byte three = "3";
+    private final byte three = (byte)3;
     private final char d = 'D';
     private static final int one = 1;
     private static final int two = 2;
@@ -8,7 +8,7 @@ public final class JvmStaticTest {
     public static final JvmStaticTest.Companion Companion = null;
 
     public final byte getThree() {
-        return "0";
+        return 0;
     }
 
     public final char getD() {
