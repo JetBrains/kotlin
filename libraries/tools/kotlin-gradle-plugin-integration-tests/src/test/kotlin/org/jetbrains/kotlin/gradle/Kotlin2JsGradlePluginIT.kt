@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 
 class Kotlin2JsGradlePluginIT : BaseGradleIT() {
@@ -69,6 +71,21 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertFailed()
             assertReportExists()
             assertContains("compileKotlin2Js.kotlinOptions.outputFile should be specified.")
+        }
+    }
+
+    @Test
+    fun testKotlinJsBuiltins() {
+        val project = Project("kotlinBuiltins", "3.2")
+
+        project.setupWorkingDir()
+        val buildGradle = project.projectDir.getFileByName("build.gradle")
+        buildGradle.modify {
+            it.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\"") +
+                    "\ncompileKotlin2Js.kotlinOptions.outputFile = \"out/out.js\""
+        }
+        project.build("build") {
+            assertSuccessful()
         }
     }
 }
