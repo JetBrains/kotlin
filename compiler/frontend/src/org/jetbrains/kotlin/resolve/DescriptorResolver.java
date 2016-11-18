@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.*;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -195,7 +196,7 @@ public class DescriptorResolver {
                 else {
                     result.add(supertype);
                     KtTypeElement bareSuperType = checkNullableSupertypeAndStripQuestionMarks(trace, typeReference.getTypeElement());
-                    checkProjectionsInImmediateArguments(trace, bareSuperType);
+                    checkProjectionsInImmediateArguments(trace, bareSuperType, supertype);
                 }
             }
             else {
@@ -218,14 +219,28 @@ public class DescriptorResolver {
         return typeElement;
     }
 
-    private static void checkProjectionsInImmediateArguments(@NotNull BindingTrace trace, @Nullable KtTypeElement typeElement) {
+    private static void checkProjectionsInImmediateArguments(
+            @NotNull BindingTrace trace,
+            @Nullable KtTypeElement typeElement,
+            @NotNull KotlinType type
+    ) {
+        if (typeElement == null) return;
+
+        boolean hasProjectionsInWrittenArguments = false;
         if (typeElement instanceof KtUserType) {
             KtUserType userType = (KtUserType) typeElement;
             List<KtTypeProjection> typeArguments = userType.getTypeArguments();
             for (KtTypeProjection typeArgument : typeArguments) {
                 if (typeArgument.getProjectionKind() != KtProjectionKind.NONE) {
                     trace.report(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.on(typeArgument));
+                    hasProjectionsInWrittenArguments = true;
                 }
+            }
+        }
+
+        if (!type.isError() && SpecialTypesKt.getAbbreviatedType(type) != null && !hasProjectionsInWrittenArguments) {
+            if (TypeUtilsKt.isInterface(type) && TypeUtilsKt.containsTypeProjectionsInTopLevelArguments(type)) {
+                trace.report(EXPANDED_TYPE_CANNOT_BE_INHERITED.on(typeElement, type));
             }
         }
     }

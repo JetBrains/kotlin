@@ -203,3 +203,8 @@ fun KotlinType.requiresTypeAliasExpansion(): Boolean =
             } ?: false
         }
 
+fun KotlinType.containsTypeProjectionsInTopLevelArguments(): Boolean {
+    if (isError) return false
+    val possiblyInnerType = buildPossiblyInnerType() ?: return false
+    return possiblyInnerType.arguments.any { it.isStarProjection || it.projectionKind != Variance.INVARIANT }
+}

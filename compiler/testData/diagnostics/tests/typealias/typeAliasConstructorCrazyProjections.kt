@@ -10,4 +10,4 @@ fun <T> listOf(): List<T> = null!!
 // since it has 'out' type projection in 'in' position.
 val test1 = <!UNRESOLVED_REFERENCE!>BOutIn<!>(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>listOf<!>(), null!!)
 
-val test2 = BInIn(listOf(), null!!)
+val test2 = <!EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED!>BInIn(listOf(), null!!)<!>

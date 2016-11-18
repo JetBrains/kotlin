@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
+import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import java.util.*
 
 class CandidateResolver(
@@ -96,6 +97,7 @@ class CandidateResolver(
         checkValueArguments()
 
         checkAbstractAndSuper()
+        checkConstructedExpandedType()
     }
 
     private fun CallCandidateResolutionContext<*>.checkValueArguments() = checkAndReport {
@@ -307,6 +309,17 @@ class CandidateResolver(
         if (superExtensionReceiver != null) {
             trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(superExtensionReceiver, superExtensionReceiver.text))
             candidateCall.addStatus(OTHER_ERROR)
+        }
+    }
+
+    private fun CallCandidateResolutionContext<*>.checkConstructedExpandedType() = check {
+        val descriptor = candidateDescriptor
+
+        if (descriptor is TypeAliasConstructorDescriptor) {
+            if (descriptor.returnType.containsTypeProjectionsInTopLevelArguments()) {
+                trace.report(EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED.on(call.callElement, descriptor.returnType))
+                candidateCall.addStatus(OTHER_ERROR)
+            }
         }
     }
 

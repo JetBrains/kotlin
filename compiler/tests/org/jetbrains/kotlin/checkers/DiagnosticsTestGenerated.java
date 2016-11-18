@@ -21166,6 +21166,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasConstructorForProjection.kt")
+            public void testTypeAliasConstructorForProjection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorForProjection.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasConstructorForProjectionInSupertypes.kt")
+            public void testTypeAliasConstructorForProjectionInSupertypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorForProjectionInSupertypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasConstructorInSuperCall.kt")
             public void testTypeAliasConstructorInSuperCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorInSuperCall.kt");
@@ -21202,6 +21214,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typeAliasConstructorVsFunction.kt")
+            public void testTypeAliasConstructorVsFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorVsFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeAliasConstructorWrongClass.kt")
             public void testTypeAliasConstructorWrongClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasConstructorWrongClass.kt");
@@ -21217,6 +21235,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("typeAliasExpansionRepeatedAnnotations.kt")
             public void testTypeAliasExpansionRepeatedAnnotations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasExpansionRepeatedAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasForProjectionInSuperInterfaces.kt")
+            public void testTypeAliasForProjectionInSuperInterfaces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/typeAliasForProjectionInSuperInterfaces.kt");
                 doTest(fileName);
             }
 
