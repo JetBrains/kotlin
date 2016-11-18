@@ -130,10 +130,6 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
-import org.jetbrains.kotlin.js.test.semantics.AbstractBoxJsTest
-import org.jetbrains.kotlin.js.test.semantics.AbstractJsCodegenBoxTest
-import org.jetbrains.kotlin.js.test.semantics.AbstractNonLocalReturnsTest
-import org.jetbrains.kotlin.js.test.semantics.AbstractPropertyAccessorsInlineTests
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
@@ -158,6 +154,7 @@ import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
+import org.jetbrains.kotlin.js.test.semantics.*
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -1192,6 +1189,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractPropertyAccessorsInlineTests>() {
             model("codegen/boxInline/property/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractNoInlineTests>() {
+            model("codegen/boxInline/noInline/", targetBackend = TargetBackend.JS)
         }
     }
 }

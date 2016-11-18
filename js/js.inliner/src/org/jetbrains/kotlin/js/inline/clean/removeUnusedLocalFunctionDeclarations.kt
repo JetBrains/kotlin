@@ -62,12 +62,11 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     }
 
     override fun visit(x: JsNameRef, ctx: JsContext<*>): Boolean {
-        val name = x.name
-
-        if (name != null) {
-            tracker.markReachable(name)
+        var q: JsNameRef? = x
+        while (q != null) {
+            q.name?.let { tracker.markReachable(it) }
+            q = q.qualifier as? JsNameRef
         }
-
         return false
     }
 
