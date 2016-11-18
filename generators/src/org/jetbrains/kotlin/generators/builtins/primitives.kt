@@ -126,9 +126,24 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
 
             generateConversions(kind)
-
+            if(kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT
+               || kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE ){
+                generateTryParse(className)
+            }
             out.println("}\n")
         }
+    }
+
+    private fun generateTryParse(className: String) {
+        out.println("  fun tryParse(value : String) : Boolean {\n" +
+                    "        try {\n" +
+                    "            value.to${className}()\n" +
+                    "            return true\n" +
+                    "        }\n" +
+                    "        catch (nfe : NumberFormatException){\n" +
+                    "           return false\n" +
+                    "        }\n" +
+                    "    }")
     }
 
     private fun generateDoc(kind: PrimitiveType) {
