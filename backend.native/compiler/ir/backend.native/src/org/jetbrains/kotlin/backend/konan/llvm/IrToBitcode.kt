@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.asSimpleType
+import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
@@ -544,7 +545,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateConst(value: IrConst<*>): LLVMOpaqueValue? {
         logger.log("evaluateConst              : ${ir2string(value)}")
         when (value.kind) {
-            IrConstKind.Null -> TODO() // LLVMConstPointerNull
+            IrConstKind.Null    -> return kNullPtr
             IrConstKind.Boolean -> when (value.value) {
                 true  -> return kTrue
                 false -> return kFalse
@@ -672,14 +673,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("evaluateCall $tmpVariableName origin:$callee")
         val descriptor = callee.descriptor
         when (descriptor.name) {
-            kEqeq  -> return evaluateOperatorEqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
-            ktEqeqeq ->
-                return evaluateOperatorEqeqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
-            kGt0   -> return codegen.icmpGt(args[0]!!, kImmZero, tmpVariableName)
-            kGteq0 -> return codegen.icmpGe(args[0]!!, kImmZero, tmpVariableName)
-            kLt0   -> return codegen.icmpLt(args[0]!!, kImmZero, tmpVariableName)
-            kLteq0 -> return codegen.icmpLe(args[0]!!, kImmZero, tmpVariableName)
-            kNot   -> return codegen.icmpNe(args[0]!!, kTrue,    tmpVariableName)
+            kEqeq    -> return evaluateOperatorEqeq  (callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
+            ktEqeqeq -> return evaluateOperatorEqeqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
+            kGt0     -> return codegen.icmpGt(args[0]!!, kImmZero, tmpVariableName)
+            kGteq0   -> return codegen.icmpGe(args[0]!!, kImmZero, tmpVariableName)
+            kLt0     -> return codegen.icmpLt(args[0]!!, kImmZero, tmpVariableName)
+            kLteq0   -> return codegen.icmpLe(args[0]!!, kImmZero, tmpVariableName)
+            kNot     -> return codegen.icmpNe(args[0]!!, kTrue,    tmpVariableName)
             else -> {
                 TODO(descriptor.name.toString())
             }
@@ -688,22 +688,59 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateOperatorEqeq(callee: IrBinaryPrimitiveImpl, arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, tmpVariableName: String):LLVMOpaqueValue {
+    private fun getEquals(type: KotlinType, methodName: String) : SimpleFunctionDescriptor {
+
+        val name = Name.identifier(methodName)
+        val descriptors = type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).filter {
+            it.valueParameters.size == 1 && KotlinBuiltIns.isAnyOrNullableAny(it.valueParameters[0].type)
+        }
+        assert(descriptors.size == 1)
+        val descriptor = descriptors.first()
+        return descriptor
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateOperatorEqeq(callee: IrBinaryPrimitiveImpl, arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, tmpVariableName: String): LLVMOpaqueValue {
+
         val arg0Type = callee.argument0.type
-        val isFp  = KotlinBuiltIns.isDouble(arg0Type) || KotlinBuiltIns.isFloat(arg0Type)
+        val isFp = KotlinBuiltIns.isDouble(arg0Type) || KotlinBuiltIns.isFloat(arg0Type)
         val isInt = KotlinBuiltIns.isPrimitiveType(arg0Type) && !isFp
-        assert(arg0Type == callee.argument1.type)
         when {
             isFp  -> return codegen.fcmpEq(arg0, arg1, tmpVariableName)
             isInt -> return codegen.icmpEq(arg0, arg1, tmpVariableName)
-            else  -> {
-                val functions = arg0Type.memberScope.getContributedFunctions(Name.identifier("equals"), NoLookupLocation.FROM_BACKEND).filter {
-                    it.valueParameters.size == 1 && KotlinBuiltIns.isNullableAny(it.valueParameters[0].type)
-                }
-                assert(functions.size == 1)
-                val descriptor = functions.first()
-                return evaluateSimpleFunctionCall(tmpVariableName, descriptor, listOf(arg0, arg1))!!
-            }
+            else  -> return generateEqeqForObjects(callee, arg0, arg1, tmpVariableName)
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun generateEqeqForObjects(callee: IrBinaryPrimitiveImpl, arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, tmpVariableName: String): LLVMOpaqueValue {
+        val arg0Type = callee.argument0.type
+        val descriptor = getEquals(arg0Type, "equals")                          // Get descriptor for "arg0.equals".
+        if (arg0Type.isMarkedNullable) {                                        // If arg0 is nullable.
+            val bbEq2  = codegen.basicBlock()!!                                 // Block to process "eqeq".
+            val bbEq3  = codegen.basicBlock()!!                                 // Block to process "eqeqeq".
+            val bbExit = codegen.basicBlock()!!                                 // Exit block for feather generation.
+            val result = codegen.alloca(getLLVMType(callee.type), codegen.newVar())
+
+            val condition = codegen.icmpEq(arg0, kNullPtr, codegen.newVar())    // Compare arg0 with "null".
+            codegen.condBr(condition, bbEq3, bbEq2)                             // If (arg0 == null) bbEq3 else bbEq2.
+
+            codegen.positionAtEnd(bbEq3)                                        // Get generation to bbEq3.
+            val resultIdentityEq = evaluateOperatorEqeqeq(callee, arg0, arg1, codegen.newVar())
+            codegen.store(resultIdentityEq, result)                             // Store "eqeq" result in "result".
+            codegen.br(bbExit)                                                  //
+
+            codegen.positionAtEnd(bbEq2)                                        // Get generation to bbEq2.
+            val resultEquals = evaluateSimpleFunctionCall(codegen.newVar(), descriptor, listOf(arg0, arg1))!!
+            codegen.store(resultEquals, result)                                 // Store "eqeqeq" result in "result".
+            codegen.br(bbExit)                                                  //
+
+            codegen.positionAtEnd(bbExit)                                       // Get generation to bbExit.
+            return codegen.load(result, tmpVariableName)                        // Load result in tmpVariable.
+        } else {
+            return evaluateSimpleFunctionCall(tmpVariableName, descriptor, listOf(arg0, arg1))!!
         }
     }
 
@@ -716,7 +753,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val arg0Type = callee.argument0.type
         val arg1Type = callee.argument1.type
 
-        assert (arg0Type == arg1Type)
+        assert(arg0Type == arg1Type || arg0Type.isNullableNothing() || arg1Type.isNullableNothing())
 
         return when {
             KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO()
@@ -774,6 +811,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private val kInt1         = LLVMInt1Type()
     private val kInt8Ptr      = pointerType(LLVMInt8Type())
     private val kInt8PtrPtr   = pointerType(kInt8Ptr)
+    private val kNullPtr      = LLVMConstNull(kInt8Ptr)!!
 
     //-------------------------------------------------------------------------//
 
