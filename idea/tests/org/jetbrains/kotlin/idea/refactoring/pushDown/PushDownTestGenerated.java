@@ -39,7 +39,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     }
 
     public void testAllFilesPresentInPushDown() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown"), Pattern.compile("^(.+)\\.kt$"));
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
     }
 
     @TestMetadata("clashingMembers.kt")
