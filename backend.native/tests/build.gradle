@@ -141,10 +141,10 @@ task run() {
 task sum (type:UnitKonanTest) {
     source = "codegen/function/sum.kt"
 }
-
-task method_call(type: UnitKonanTest) {
-    source = "codegen/object/method_call.kt"
-}
+// FIXME (https://github.com/JetBrains/kotlin-native/pull/74)
+//task method_call(type: UnitKonanTest) {
+//    source = "codegen/object/method_call.kt"
+//}
 
 task fields(type: UnitKonanTest) {
     source = "codegen/object/fields.kt"
