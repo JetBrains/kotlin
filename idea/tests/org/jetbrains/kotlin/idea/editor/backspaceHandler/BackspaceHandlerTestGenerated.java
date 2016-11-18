@@ -36,6 +36,12 @@ public class BackspaceHandlerTestGenerated extends AbstractBackspaceHandlerTest 
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/backspaceHandler"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("typeArguments.kt")
+    public void testTypeArguments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/backspaceHandler/typeArguments.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/editor/backspaceHandler/stringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

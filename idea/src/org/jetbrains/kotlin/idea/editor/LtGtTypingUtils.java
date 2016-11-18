@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
 final class LtGtTypingUtils {
@@ -43,7 +44,7 @@ final class LtGtTypingUtils {
     }
 
     static boolean shouldAutoCloseAngleBracket(int offset, Editor editor) {
-        return isAfterClassIdentifier(offset, editor) || isAfterFunKeyword(offset, editor);
+        return isAfterClassIdentifier(offset, editor) || isAfterToken(offset, editor, KtTokens.FUN_KEYWORD);
     }
 
     private static boolean isAfterClassIdentifier(int offset, Editor editor) {
@@ -59,7 +60,7 @@ final class LtGtTypingUtils {
         return JavaTypedHandler.isClassLikeIdentifier(offset, editor, iterator, KtTokens.IDENTIFIER);
     }
 
-    private static boolean isAfterFunKeyword(int offset, Editor editor) {
+    static boolean isAfterToken(int offset, Editor editor, KtToken tokenType) {
         HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(offset);
         if (iterator.atEnd()) {
             return false;
@@ -73,6 +74,6 @@ final class LtGtTypingUtils {
             iterator.retreat();
         }
 
-        return iterator.getTokenType() == KtTokens.FUN_KEYWORD;
+        return iterator.getTokenType() == tokenType;
     }
 }
