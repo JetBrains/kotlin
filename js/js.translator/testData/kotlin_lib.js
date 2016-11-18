@@ -230,12 +230,6 @@ function getStringHashCode(str) {
     return hash;
 }
 
-Kotlin.PropertyMetadata = Kotlin.createClassNow(null,
-    function (name) {
-        this.name = name;
-    }
-);
-
 Kotlin.safeParseInt = function (str) {
     var r = parseInt(str, 10);
     return isNaN(r) ? null : r;
@@ -298,82 +292,6 @@ Kotlin.arrayDeepHashCode = function (arr) {
     }
     return result;
 };
-
-var BaseOutput = Kotlin.createClassNow(null, null, {
-       println: function (a) {
-           if (typeof a !== "undefined") this.print(a);
-           this.print("\n");
-       },
-       flush: function () {
-       }
-   }
-);
-
-
-Kotlin.NodeJsOutput = Kotlin.createClassNow(BaseOutput,
-    function(outputStream) {
-        this.outputStream = outputStream;
-    }, {
-        print: function (a) {
-            this.outputStream.write(a);
-        }
-    }
-);
-
-Kotlin.OutputToConsoleLog = Kotlin.createClassNow(BaseOutput, null, {
-        print: function (a) {
-            console.log(a);
-        },
-        println: function (a) {
-            this.print(typeof a !== "undefined" ? a : "");
-        }
-    }
-);
-
-Kotlin.BufferedOutput = Kotlin.createClassNow(BaseOutput,
-    function() {
-        this.buffer = ""
-    }, {
-        print: function (a) {
-            this.buffer += String(a);
-        },
-        flush: function () {
-            this.buffer = "";
-        }
-    }
-);
-
-Kotlin.BufferedOutputToConsoleLog = Kotlin.createClassNow(Kotlin.BufferedOutput,
-    function() {
-        Kotlin.BufferedOutput.call(this);
-    }, {
-        print: function (a) {
-            var s = String(a);
-
-            var i = s.lastIndexOf("\n");
-            if (i != -1) {
-                this.buffer += s.substr(0, i);
-
-                this.flush();
-
-                s = s.substr(i + 1);
-            }
-
-            this.buffer += s;
-        },
-        flush: function () {
-            console.log(this.buffer);
-            this.buffer = "";
-        }
-    }
-);
-Kotlin.out = function() {
-    var isNode = typeof process !== 'undefined' && process.versions && !!process.versions.node;
-
-    if (isNode) return new Kotlin.NodeJsOutput(process.stdout);
-
-    return new Kotlin.BufferedOutputToConsoleLog();
-}();
 
 Kotlin.println = function (s) {
     Kotlin.out.println(s);

@@ -68,34 +68,31 @@ function generateModel(path) {
 }
 
 function supplyAsserter(kotlin) {
-    var asserterContainer = kotlin.defineRootPackage(null, {
-        asserter : kotlin.createClass(
-            function () {
-                return [kotlin.kotlin.test.Asserter];
-            },
-            function () {},
-            {
-                assertTrue_tup0fe$: function (lazyMessage, actual) {
-                    kotlin.kotlin.test.assertTrue_8kj6y5$(actual, lazyMessage());
-                },
-                assertTrue_ivxn3r$: function (message, actual) {
-                    if (!actual) {
-                        this.failWithMessage(message);
-                    }
-                },
-                assertEquals_a59ba6$: kotlin.kotlin.test.Asserter.prototype.assertEquals_a59ba6$,
-                fail_61zpoe$: function (message) {
-                    this.failWithMessage(message);
-                },
-                failWithMessage: function (message) {
-                    if (message == null) {
-                        throw new Kotlin.AssertionError();
-                    } else {
-                        throw new Kotlin.AssertionError(message);
-                    }
-                }
-            }
-        )
-    });
-    kotlin.kotlin.test.asserter = new asserterContainer.asserter();
+    function AsserterClass() {
+    }
+    AsserterClass.prototype.assertTrue_tup0fe$ = function(lazyMessage, actual) {
+        kotlin.kotlin.test.assertTrue_8kj6y5$(actual, lazyMessage());
+    };
+    AsserterClass.prototype.assertTrue_ivxn3r$ = function(message, actual) {
+        if (!actual) {
+            this.failWithMessage(message);
+        }
+    };
+    AsserterClass.prototype.assertEquals_a59ba6$ = kotlin.kotlin.test.Asserter.prototype.assertEquals_a59ba6$;
+    AsserterClass.prototype.fail_61zpoe$ = function(message) {
+        this.failWithMessage(message);
+    };
+    AsserterClass.prototype.failWithMessage = function(message) {
+        if (message == null) {
+            throw new Kotlin.AssertionError();
+        } else {
+            throw new Kotlin.AssertionError(message);
+        }
+    };
+    AsserterClass.$metadata$ = {
+        type: kotlin.TYPE.CLASS,
+        classIndex: kotlin.newClassIndex(),
+        baseClasses: [kotlin.kotlin.test.Asserter]
+    };
+    kotlin.kotlin.test.asserter = new AsserterClass();
 }

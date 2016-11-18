@@ -2,7 +2,9 @@
 package foo
 
 val EXPECTED = """Hello, World
-
+^^
+^^
+^^
 ***
 ####
 """
@@ -10,7 +12,9 @@ val EXPECTED = """Hello, World
 val EXPECTED_NEWLINE_FOR_EACH = """Hello
 , World
 
-
+^^
+^^
+^^
 
 ***
 ##
@@ -28,7 +32,7 @@ fun test(expected: String, initCode: String, getResult: () -> String) {
 
     print("Hello")
     print(", World")
-    print("\n")
+    print("\n^^\n^^\n^^")
     println()
     println("***")
     print("##")
