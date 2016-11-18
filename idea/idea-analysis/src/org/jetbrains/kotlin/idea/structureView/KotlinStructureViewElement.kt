@@ -25,6 +25,8 @@ import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -109,6 +111,9 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
 
         return result
     }
+
+    val isPublic: Boolean
+        get() = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
 }
 
 fun KtClassOrObject.getStructureDeclarations() = getPrimaryConstructorParameters().filter { it.hasValOrVar() } + declarations

@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.structureView
 
 import com.intellij.ide.structureView.StructureViewModelBase
-import com.intellij.ide.util.treeView.smartTree.Sorter
+import com.intellij.ide.util.treeView.smartTree.*
+import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -30,7 +31,26 @@ class KotlinStructureViewModel(ktFile: KtFile) : StructureViewModelBase(ktFile, 
 
     override fun getNodeProviders() = NODE_PROVIDERS
 
+    override fun getFilters() = FILTERS
+
     companion object {
         private val NODE_PROVIDERS = listOf(KotlinInheritedMembersNodeProvider())
+        private val FILTERS = arrayOf<Filter>(PublicElementsFilter)
     }
+}
+
+object PublicElementsFilter : Filter {
+    override fun isVisible(treeNode: TreeElement): Boolean {
+        return (treeNode as? KotlinStructureViewElement)?.isPublic ?: true
+    }
+
+    override fun getPresentation(): ActionPresentation {
+        return ActionPresentationData("Show non-public", null, PlatformIcons.PRIVATE_ICON)
+    }
+
+    override fun getName() = ID
+
+    override fun isReverted() = true
+
+    const val ID = "KOTLIN_SHOW_NON_PUBLIC"
 }
