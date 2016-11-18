@@ -203,11 +203,8 @@ class ClassFileToSourceStubConverter(
 
         val value = field.value
 
-        val initializer = when (value) {
-            is Char -> treeMaker.Literal(TypeTag.CHAR, value.toInt())
-            is Byte, is Boolean, is Short, is Int, is Long, is Float, is Double, is String -> treeMaker.Literal(value)
-            else -> if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
-        }
+        val initializer = convertValueOfPrimitiveTypeOrString(value)
+                          ?: if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
 
         return treeMaker.VarDef(modifiers, name, typeExpression, initializer)
     }
@@ -346,11 +343,21 @@ class ClassFileToSourceStubConverter(
         return treeMaker.Annotation(name, values)
     }
 
+    private fun convertValueOfPrimitiveTypeOrString(value: Any?): JCExpression? {
+        return when (value) {
+            is Char -> treeMaker.Literal(TypeTag.CHAR, value.toInt())
+            is Byte -> treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.BYTE), treeMaker.Literal(TypeTag.INT, value.toInt()))
+            is Short -> treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
+            is Boolean, is Int, is Long, is Float, is Double, is String -> treeMaker.Literal(value)
+            else -> null
+        }
+    }
+
     private fun convertLiteralExpression(value: Any?): JCExpression {
+        convertValueOfPrimitiveTypeOrString(value)?.let { return it }
+
         return when (value) {
             null -> treeMaker.Literal(TypeTag.BOT, null)
-            is Char -> treeMaker.Literal(TypeTag.CHAR, value.toInt())
-            is Byte, is Boolean, is Short, is Int, is Long, is Float, is Double, is String -> treeMaker.Literal(value)
 
             is ByteArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
             is BooleanArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
@@ -375,10 +382,10 @@ class ClassFileToSourceStubConverter(
     }
 
     private fun getDefaultValue(type: Type): Any? = when (type) {
-        Type.BYTE_TYPE -> 0.toByte()
+        Type.BYTE_TYPE -> 0
         Type.BOOLEAN_TYPE -> false
         Type.CHAR_TYPE -> '\u0000'
-        Type.SHORT_TYPE -> 0.toShort()
+        Type.SHORT_TYPE -> 0
         Type.INT_TYPE -> 0
         Type.LONG_TYPE -> 0L
         Type.FLOAT_TYPE -> 0.0F
