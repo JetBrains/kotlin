@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
+import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.SourceTask
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryP
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
+import kotlin.concurrent.thread
 import kotlin.properties.Delegates
 
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
@@ -355,6 +357,8 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     override val kotlinOptions: KotlinJsOptions
             get() = kotlinOptionsImpl
 
+    var compilerJarFile: File? = null
+
     @Suppress("unused")
     val outputFile: String?
         get() = kotlinOptions.outputFile
@@ -375,7 +379,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     }
 
     override fun callCompiler(args: K2JSCompilerArguments, allKotlinSources: List<File>, changedFiles: ChangedFiles) {
-        val messageCollector = GradleMessageCollector(logger)
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
         args.freeArgs = args.freeArgs + allKotlinSources.map { it.absolutePath }
@@ -385,7 +388,21 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
-        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
+
+        val gradleVersion = getGradleVersion()
+        val exitCode = if (gradleVersion == null || gradleVersion >= ParsedGradleVersion(3, 2)) {
+            // Gradle 3.2 bundles kotlin compiler
+            // This can cause problems with builtins resolution
+            // Compiling out of process as a workaround
+            val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
+            val compilerJar = compilerJarFile
+                    ?: findKotlinJsCompilerJar(project)
+                    ?: throw IllegalStateException("Could not find kotlin compiler jar. As a workaround specify $name.compilerJarFile")
+            compileOutOfProcess(argsArray, compiler.javaClass.canonicalName, compilerJar)
+        }
+        else {
+            compileInProcess(args)
+        }
 
         when (exitCode) {
             ExitCode.OK -> {
@@ -395,6 +412,50 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
             ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
             else -> throw GradleException("Unexpected exit code: $exitCode")
         }
+    }
+
+    private fun compileInProcess(args: K2JSCompilerArguments): ExitCode {
+        val messageCollector = GradleMessageCollector(logger)
+        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
+        return exitCode
+    }
+}
+
+private fun Task.getGradleVersion(): ParsedGradleVersion? {
+    val gradleVersion = project.gradle.gradleVersion
+    val result = ParsedGradleVersion.parse(gradleVersion)
+    if (result == null) {
+        project.logger.kotlinDebug("Could not parse gradle version: $gradleVersion")
+    }
+    return result
+}
+
+private fun compileOutOfProcess(
+        argsArray: Array<String>,
+        compilerClassName: String,
+        compilerJar: File
+): ExitCode {
+    try {
+        val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
+        val builder = ProcessBuilder(javaBin, "-cp", compilerJar.absolutePath, compilerClassName, *argsArray)
+        val process = builder.start()
+
+        // important to read inputStream, otherwise the process may hang on some systems
+        val readErrThread = thread {
+            process.errorStream!!.bufferedReader().forEachLine {
+                System.err.println(it)
+            }
+        }
+        process.inputStream!!.bufferedReader().forEachLine {
+            System.out.println(it)
+        }
+        readErrThread.join()
+
+        val exitCode = process.waitFor()
+        if (exitCode == 0) return ExitCode.OK else return ExitCode.COMPILATION_ERROR
+    }
+    catch (e: Throwable) {
+        return ExitCode.INTERNAL_ERROR
     }
 }
 
