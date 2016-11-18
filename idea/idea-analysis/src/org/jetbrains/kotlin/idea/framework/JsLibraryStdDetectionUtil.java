@@ -27,7 +27,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.LibraryUtils;
-import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -37,26 +36,22 @@ import java.util.jar.Attributes;
 public class JsLibraryStdDetectionUtil {
     private static final Key<Boolean> IS_JS_LIBRARY_STD_LIB = Key.create("IS_JS_LIBRARY_STD_LIB");
 
-    public static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots) {
-        return getJsLibraryStdVersion(classesRoots, true);
-    }
-
     public static boolean hasJsStdlibJar(@NotNull Library library) {
         if (library instanceof LibraryEx && ((LibraryEx) library).isDisposed()) return false;
 
         if (!KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)) return false;
 
         List<VirtualFile> classes = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
-        return getJsLibraryStdVersion(classes, false) != null;
+        return getJsLibraryStdVersion(classes) != null;
     }
 
-    private static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots, boolean fixedJarName) {
+    public static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots) {
         if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
             // Prevent clashing with java runtime, in case when library collects all roots.
             return null;
         }
 
-        VirtualFile jar = fixedJarName ? LibraryUtils.getJarFile(classesRoots, PathUtil.JS_LIB_JAR_NAME) : getJsStdLibJar(classesRoots);
+        VirtualFile jar = getJsStdLibJar(classesRoots);
         if (jar == null) return null;
 
         return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION);
