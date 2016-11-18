@@ -9,17 +9,16 @@ fun eqeqStr(a:String, b:String) = a == b
 fun eqeqeq (a: Any?, b: Any?) = a === b
 
 fun gtI  (a:Int,    b:Int   ) = a >  b
-fun ltI  (a:Int,    b:Int   ) = a >  b
+fun ltI  (a:Int,    b:Int   ) = a <  b
 fun geI  (a:Int,    b:Int   ) = a >= b
 fun leI  (a:Int,    b:Int   ) = a <= b
 fun neI  (a:Int,    b:Int   ) = a != b
 
 fun gtF  (a:Float,  b:Float ) = a >  b
-fun ltF  (a:Float,  b:Float ) = a >  b
+fun ltF  (a:Float,  b:Float ) = a <  b
 fun geF  (a:Float,  b:Float ) = a >= b
 fun leF  (a:Float,  b:Float ) = a <= b
 fun neF  (a:Float,  b:Float ) = a != b
-
 
 fun helloString()   =  "Hello"
 fun goodbyeString() =  "Goodbye"
