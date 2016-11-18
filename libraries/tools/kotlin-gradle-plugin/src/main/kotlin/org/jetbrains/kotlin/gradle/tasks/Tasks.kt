@@ -150,6 +150,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
         args.pluginOptions = pluginOptions.arguments.toTypedArray()
         args.moduleName = moduleName
+        args.loadBuiltInsFromDependencies = true
+        args.addCompilerBuiltIns = true
 
         friendTaskName?.let addFriendPathForTestTask@ { friendKotlinTaskName ->
             val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return@addFriendPathForTestTask

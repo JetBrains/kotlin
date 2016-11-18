@@ -282,4 +282,13 @@ class KotlinGradleIT: BaseGradleIT() {
             assertCompiledKotlinSources(project.relativize(curryKt, useCurryKt))
         }
     }
+
+    @Test
+    fun testKotlinBuiltins() {
+        val project = Project("kotlinBuiltins", "3.2")
+
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
 }
