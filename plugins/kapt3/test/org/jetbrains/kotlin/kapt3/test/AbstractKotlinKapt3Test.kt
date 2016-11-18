@@ -66,7 +66,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     }
 
     protected fun convert(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper): JavacList<JCCompilationUnit> {
-        val converter = ClassFileToSourceStubConverter(kaptRunner, typeMapper)
+        val converter = ClassFileToSourceStubConverter(kaptRunner, typeMapper, generateNonExistentClass = false)
         return converter.convert()
     }
 

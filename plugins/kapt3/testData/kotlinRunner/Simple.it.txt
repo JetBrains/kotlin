@@ -30,6 +30,13 @@ public enum EnumClass {
 
 ////////////////////
 
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
 package test;
 
 public final class Simple {
