@@ -9,24 +9,9 @@ buildscript {
 
 apply plugin: "kotlin"
 
-sourceSets {
-    main {
-        kotlin {
-            srcDir 'src'
-        }
-    }
-}
-
-repositories {
-    mavenLocal()
-}
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-}
-
 compileKotlin {
     kotlinOptions {
         languageVersion = "1.0"
+        apiVersion = "1.0"
     }
 }
