@@ -119,6 +119,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             doSymbolTest(fileName);
         }
 
+        @TestMetadata("enumConstants.kt")
+        public void testEnumConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/enumConstants.kt");
+            doSymbolTest(fileName);
+        }
+
         @TestMetadata("functions.kt")
         public void testFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/functions.kt");
