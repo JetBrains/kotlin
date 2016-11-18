@@ -59,26 +59,28 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val kaptContext = KaptContext(logger, classBuilderFactory.compiledClasses,
                                       classBuilderFactory.origins, processorOptions = emptyMap())
         try {
-            check(kaptContext, typeMapper, txtFile)
+            check(kaptContext, typeMapper, txtFile, wholeFile)
         } finally {
             kaptContext.close()
         }
     }
 
-    protected fun convert(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper): JavacList<JCCompilationUnit> {
-        val converter = ClassFileToSourceStubConverter(kaptRunner, typeMapper, generateNonExistentClass = false)
+    protected fun convert(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, generateNonExistentClass: Boolean): JavacList<JCCompilationUnit> {
+        val converter = ClassFileToSourceStubConverter(kaptRunner, typeMapper, generateNonExistentClass)
         return converter.convert()
     }
 
     protected abstract fun check(
             kaptRunner: KaptContext,
             typeMapper: KotlinTypeMapper,
-            txtFile: File)
+            txtFile: File,
+            wholeFile: File)
 }
 
 abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test() {
-    override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File) {
-        val javaFiles = convert(kaptRunner, typeMapper)
+    override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File, wholeFile: File) {
+        val generateNonExistentClass = wholeFile.useLines { lines -> lines.any { it.trim() == "// NON_EXISTENT_CLASS" } }
+        val javaFiles = convert(kaptRunner, typeMapper, generateNonExistentClass)
         kaptRunner.compiler.enterTrees(javaFiles)
 
         val actualRaw = javaFiles.joinToString (FILE_SEPARATOR)
@@ -93,8 +95,8 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
 }
 
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
-    override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File) {
-        val compilationUnits = convert(kaptRunner, typeMapper)
+    override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File, wholeFile: File) {
+        val compilationUnits = convert(kaptRunner, typeMapper, generateNonExistentClass = false)
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
             kaptRunner.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),
