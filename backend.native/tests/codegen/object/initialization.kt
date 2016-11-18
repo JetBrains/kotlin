@@ -2,9 +2,19 @@ open class A(val a:Int, val b:Int)
 
 open class B(val c:Int, d:Int):A(c, d)
 
-//class C():B(42)
+open class C(i:Int, j:Int):B(i + j, 42)
+
+class D (i: Int, j:Int) : C(i, j){
+   constructor(i: Int, j:Int, k:Int) : this(i, j) {
+      foo(i)
+   }
+   constructor():this(1, 2)
+}
+
+fun foo(i:Int) : Unit {}
+
 
 fun foo(i:Int, j:Int):Int {
-   val b = B(i, j)
-   return b.c
+   val c = D(i, j)
+   return c.c
 }

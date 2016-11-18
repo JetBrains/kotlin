@@ -227,9 +227,11 @@ task objectInitialization(type: UnitKonanTest) {
     source = "codegen/object/initialization.kt"
 }
 
-/* task objectBasic(type: KonanTest) {
+/* field initialization test
+task objectBasic(type: UnitKonanTest) {
     source = "$codegen/klass/basic.kt"
-} */
+}
+*/
 
 task check_type(type: UnitKonanTest) {
     source = "codegen/basics/check_type.kt"

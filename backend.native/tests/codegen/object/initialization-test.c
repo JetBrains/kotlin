@@ -4,7 +4,7 @@ int
 run_test() {
   int (*foo)(int, int) = resolve_symbol("kfun:foo(Int;Int)");
   
-  if (foo(2, 3) != 2) return 1;
+  if (foo(2, 3) != 5) return 1;
 
   return 0;
 }
