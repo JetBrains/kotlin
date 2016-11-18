@@ -282,6 +282,11 @@ task hello3(type: RunKonanTest) {
     source = "runtime/basic/hello3.kt"
 }
 
+task hello4(type: RunKonanTest) {
+    goldValue = "Hello\nПока\n"
+    source = "runtime/basic/hello4.kt"
+}
+
 task tostring0(type: RunKonanTest) {
     goldValue = "127\n-1\n239\nA\n1122334455\n112233445566778899\n3.14159\n1E+27\n1E-300\ntrue\nfalse\n"
     source = "runtime/basic/tostring0.kt"
