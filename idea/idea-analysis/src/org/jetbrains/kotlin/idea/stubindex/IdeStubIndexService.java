@@ -50,6 +50,8 @@ public class IdeStubIndexService extends StubIndexService {
 
         sink.occurrence(KotlinExactPackagesIndex.getInstance().getKey(), packageFqName.asString());
 
+        if (stub.isScript()) return;
+
         FqName facadeFqName = ((KotlinFileStubForIde) stub).getFacadeFqName();
         if (facadeFqName != null) {
             sink.occurrence(KotlinFileFacadeFqNameIndex.INSTANCE.getKey(), facadeFqName.asString());
