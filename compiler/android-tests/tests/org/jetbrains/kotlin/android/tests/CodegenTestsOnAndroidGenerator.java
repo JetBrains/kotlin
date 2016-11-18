@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
@@ -243,7 +240,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
             else {
                 String fullFileText = FileUtil.loadFile(file, true);
 
-                if (!hasJvmBackendTarget(fullFileText)) {
+                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file)) {
                     continue;
                 }
 
@@ -270,21 +267,6 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
     private static boolean hasBoxMethod(String text) {
         return text.contains("fun box()");
-    }
-
-    private static boolean hasJvmBackendTarget(String text) {
-        List<String> backends = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// TARGET_BACKEND: ");
-        if (backends.isEmpty()) {
-            return true;
-        }
-
-        for (String backend : backends) {
-            if (backend.equals("JVM")) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static void generateTestMethod(Printer p, String testName, String className, String filePath) {
