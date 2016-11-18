@@ -142,7 +142,7 @@ class LinkKonanTest extends KonanTest {
 
     private File dir2bc(String ktSources) {
         def sourcesKt = project.file(ktSources)
-        def libBc = new File("${sourcesKt.absolutePath}/bc/libout.kt.bc")
+        def libBc = new File("${sourcesKt.absolutePath}/libout.kt.bc")
         def libPath = "${libBc.absolutePath}"
 
         project.javaexec {
@@ -367,11 +367,10 @@ task intrinsic(type: UnitKonanTest) {
     source = "codegen/function/intrinsic.kt"
 }
 
-/* TODO: fix test
 task link(type: LinkKonanTest) {
     source = "link/src/bar.kt"
     lib = "link/lib"
-} */
+} 
 
 task for0(type: RunKonanTest) {
     goldValue = "2\n3\n4\n"
