@@ -108,42 +108,43 @@ class TypeAliasConstructorDescriptorImpl private constructor(
     }
 
     companion object {
-        fun create(
+        fun createIfAvailable(
                 typeAliasDescriptor: TypeAliasDescriptor,
                 constructor: ClassConstructorDescriptor,
-                substitutor: TypeSubstitutor?
+                substitutor: TypeSubstitutor,
+                withDispatchReceiver: Boolean = false
         ): TypeAliasConstructorDescriptor? {
-            val actualSubstitutor = substitutor ?: TypeSubstitutor.EMPTY
 
             val typeAliasConstructor =
                     TypeAliasConstructorDescriptorImpl(typeAliasDescriptor, constructor, null, constructor.annotations,
                                                        constructor.kind, typeAliasDescriptor.source)
 
-            val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, actualSubstitutor, false)
+            val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, substitutor, false)
                                   ?: return null
 
-            val returnType = actualSubstitutor.substitute(constructor.returnType, Variance.INVARIANT)
+            val returnType = substitutor.substitute(constructor.returnType, Variance.INVARIANT)
                              ?: return null
 
-            val containingDeclaration = constructor.containingDeclaration
-            val dispatchReceiverParameter =
-                    if (containingDeclaration.isInner)
-                        containingDeclaration.thisAsReceiverParameter
-                    else
-                        null
+            val receiverParameterType =
+                    if (withDispatchReceiver) null
+                    else constructor.dispatchReceiverParameter?.let { substitutor.safeSubstitute(it.type, Variance.INVARIANT) }
 
-            typeAliasConstructor.initialize(null,
-                                            dispatchReceiverParameter,
-                                            typeAliasDescriptor.declaredTypeParameters,
-                                            valueParameters,
-                                            returnType,
-                                            Modality.FINAL,
-                                            typeAliasDescriptor.visibility)
+            val dispatchReceiver =
+                    if (withDispatchReceiver) constructor.dispatchReceiverParameter?.let { it.substitute(substitutor) }
+                    else null
+
+            typeAliasConstructor.initialize(
+                    receiverParameterType,
+                    dispatchReceiver,
+                    typeAliasDescriptor.declaredTypeParameters,
+                    valueParameters,
+                    returnType,
+                    Modality.FINAL,
+                    typeAliasDescriptor.visibility
+            )
 
             return typeAliasConstructor
         }
-
-
     }
 }
 

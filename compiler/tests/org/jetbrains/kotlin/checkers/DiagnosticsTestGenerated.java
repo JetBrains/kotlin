@@ -20926,6 +20926,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("innerClassTypeAliasConstructor.kt")
+            public void testInnerClassTypeAliasConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/innerClassTypeAliasConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerClassTypeAliasConstructorInSupertypes.kt")
+            public void testInnerClassTypeAliasConstructorInSupertypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/innerClassTypeAliasConstructorInSupertypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("innerTypeAliasAsType.kt")
             public void testInnerTypeAliasAsType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/innerTypeAliasAsType.kt");

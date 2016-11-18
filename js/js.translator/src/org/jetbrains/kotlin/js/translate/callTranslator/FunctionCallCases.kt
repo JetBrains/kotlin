@@ -206,6 +206,8 @@ object ConstructorCallCase : FunctionCallCase() {
 
     override fun FunctionCallInfo.dispatchReceiver() = doTranslate { argsWithReceiver(dispatchReceiver!!) }
 
+    override fun FunctionCallInfo.extensionReceiver() = doTranslate { argsWithReceiver(extensionReceiver!!) }
+
     private inline fun FunctionCallInfo.doTranslate(
             getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>
     ): JsExpression {

@@ -4049,9 +4049,25 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public ClassConstructorDescriptor getConstructorDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
         FunctionDescriptor accessibleDescriptor = accessibleFunctionDescriptor(resolvedCall);
-        assert accessibleDescriptor instanceof ConstructorDescriptor :
+        assert accessibleDescriptor instanceof ClassConstructorDescriptor :
                 "getConstructorDescriptor must be called only for constructors: " + accessibleDescriptor;
         return (ClassConstructorDescriptor) accessibleDescriptor;
+    }
+
+    @Nullable
+    private static ReceiverValue getConstructorReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+        CallableDescriptor constructor = resolvedCall.getResultingDescriptor();
+        if (constructor.getExtensionReceiverParameter() != null) {
+            assert constructor instanceof TypeAliasConstructorDescriptor :
+                    "Only type alias constructor can have an extension receiver: " + constructor;
+            return resolvedCall.getExtensionReceiver();
+        }
+        else if (constructor.getDispatchReceiverParameter() != null) {
+            return resolvedCall.getDispatchReceiver();
+        }
+        else {
+            return null;
+        }
     }
 
     @NotNull
@@ -4068,7 +4084,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 ClassDescriptor containingDeclaration = constructor.getContainingDeclaration();
                 if (dispatchReceiver != null) {
                     Type receiverType = typeMapper.mapType(dispatchReceiver.getType());
-                    ReceiverValue receiver = resolvedCall.getDispatchReceiver();
+                    ReceiverValue receiver = getConstructorReceiver(resolvedCall);
                     boolean callSuper = containingDeclaration.isInner() && receiver instanceof ImplicitClassReceiver;
                     generateReceiverValue(receiver, callSuper).put(receiverType, v);
                 }

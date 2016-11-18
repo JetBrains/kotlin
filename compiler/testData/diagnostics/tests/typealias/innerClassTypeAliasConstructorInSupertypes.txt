@@ -1,0 +1,137 @@
+package
+
+package test {
+
+    public final class Generic</*0*/ T1> {
+        public constructor Generic</*0*/ T1>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class Generic</*0*/ T2> /*captured type parameters: /*1*/ T1*/ {
+            public constructor Generic</*0*/ T2>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public open inner class Inner /*captured type parameters: /*0*/ T1*/ {
+            public constructor Inner()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test1 /*captured type parameters: /*0*/ T1*/ : test.GI<T1> /* = test.Generic<T1>.Inner */ {
+            public constructor Test1()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test10 /*captured type parameters: /*0*/ T1*/ : test.GGInt<T1> /* = test.Generic<T1>.Generic<kotlin.Int> */ {
+            public constructor Test10()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test11 /*captured type parameters: /*0*/ T1*/ : test.GG<T1, kotlin.Int> /* = test.Generic<T1>.Generic<kotlin.Int> */ {
+            public constructor Test11()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test2 /*captured type parameters: /*0*/ T1*/ : test.GIInt /* = test.Generic<kotlin.Int>.Inner */ {
+            public constructor Test2()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test3 /*captured type parameters: /*0*/ T1*/ : test.GIStar /* = test.Generic<*>.Inner */ {
+            public constructor Test3()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test3a /*captured type parameters: /*0*/ T1*/ : test.Generic<*>.Inner {
+            public constructor Test3a()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test4</*0*/ T2> /*captured type parameters: /*1*/ T1*/ : test.GG<T1, T2> /* = test.Generic<T1>.Generic<T2> */ {
+            public constructor Test4</*0*/ T2>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test5 /*captured type parameters: /*0*/ T1*/ : test.GG<T1, kotlin.Int> /* = test.Generic<T1>.Generic<kotlin.Int> */ {
+            public constructor Test5()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test6 /*captured type parameters: /*0*/ T1*/ : test.GG<kotlin.Int, T1> /* = test.Generic<kotlin.Int>.Generic<T1> */ {
+            public constructor Test6()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test7 /*captured type parameters: /*0*/ T1*/ : test.GG<kotlin.Int, kotlin.Int> /* = test.Generic<kotlin.Int>.Generic<kotlin.Int> */ {
+            public constructor Test7()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test8 /*captured type parameters: /*0*/ T1*/ : test.GIntG<kotlin.Int> /* = test.Generic<kotlin.Int>.Generic<kotlin.Int> */ {
+            public constructor Test8()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test9 /*captured type parameters: /*0*/ T1*/ : test.GGInt<kotlin.Int> /* = test.Generic<kotlin.Int>.Generic<kotlin.Int> */ {
+            public constructor Test9()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public final class Outer {
+        public constructor Outer()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class Inner {
+            public constructor Inner()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final inner class Test : test.OI /* = test.Outer.Inner */ {
+            public constructor Test()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+    public typealias GG</*0*/ T1, /*1*/ T2>  = test.Generic<T1>.Generic<T2>
+    public typealias GGInt</*0*/ T1>  = test.Generic<T1>.Generic<kotlin.Int>
+    public typealias GI</*0*/ T>  = test.Generic<T>.Inner
+    public typealias GIInt = test.Generic<kotlin.Int>.Inner
+    public typealias GIStar = test.Generic<*>.Inner
+    public typealias GIntG</*0*/ T2>  = test.Generic<kotlin.Int>.Generic<T2>
+    public typealias OI = test.Outer.Inner
+}

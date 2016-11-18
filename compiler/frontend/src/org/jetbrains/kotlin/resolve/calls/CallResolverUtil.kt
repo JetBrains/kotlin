@@ -248,7 +248,8 @@ private fun ClassConstructorDescriptor.getConstructorDescriptorForResolution(
         typeAliasDescriptor: TypeAliasDescriptor?
 ): ConstructorDescriptor =
         if (typeAliasDescriptor != null)
-            TypeAliasConstructorDescriptorImpl.create(typeAliasDescriptor, this, knownSubstitutor ?: TypeSubstitutor.EMPTY)
+            TypeAliasConstructorDescriptorImpl.createIfAvailable(typeAliasDescriptor, this, knownSubstitutor ?: TypeSubstitutor.EMPTY,
+                                                                 withDispatchReceiver = true)
             ?: throw AssertionError("Failed to create type alias constructor with substitutor: $knownSubstitutor")
         else
             this

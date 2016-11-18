@@ -13,7 +13,7 @@ public val test5a: [ERROR : Type for Outer.Inner()]
 public val test5b: [ERROR : Type for Outer.TestInner()]
 public val test5c: [ERROR : Type for Outer().TestInner()]
 public val test5d: Outer.Inner
-public val test5e: [ERROR : Type for Outer().Test5()]
+public val test5e: Outer.Inner
 
 public abstract class AbstractClass {
     public constructor AbstractClass()

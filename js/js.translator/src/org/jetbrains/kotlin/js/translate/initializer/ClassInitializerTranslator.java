@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.initializer;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -170,6 +171,9 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 List<JsExpression> arguments = new ArrayList<JsExpression>();
 
                 ConstructorDescriptor superDescriptor = (ConstructorDescriptor) superCall.getResultingDescriptor();
+                if (superDescriptor instanceof TypeAliasConstructorDescriptor) {
+                    superDescriptor = ((TypeAliasConstructorDescriptor) superDescriptor).getUnderlyingConstructorDescriptor();
+                }
 
                 List<DeclarationDescriptor> superclassClosure = context.getClassOrConstructorClosure(superDescriptor);
                 if (superclassClosure != null) {
@@ -182,7 +186,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                     }
                 }
 
-                if (superDescriptor.getContainingDeclaration().isInner() && classDescriptor.isInner()) {
+                if (superDescriptor.getConstructedClass().isInner() && classDescriptor.isInner()) {
                     arguments.add(pureFqn(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
                 }
 

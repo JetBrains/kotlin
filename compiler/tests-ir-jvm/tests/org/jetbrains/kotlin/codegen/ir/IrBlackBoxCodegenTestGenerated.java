@@ -16193,6 +16193,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("innerClassTypeAliasConstructor.kt")
+        public void testInnerClassTypeAliasConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/innerClassTypeAliasConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("innerClassTypeAliasConstructorInSupertypes.kt")
+        public void testInnerClassTypeAliasConstructorInSupertypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/innerClassTypeAliasConstructorInSupertypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/simple.kt");
