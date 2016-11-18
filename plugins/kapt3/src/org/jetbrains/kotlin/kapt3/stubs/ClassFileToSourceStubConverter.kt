@@ -40,7 +40,11 @@ import javax.lang.model.element.ElementKind
 import javax.tools.JavaFileManager
 import com.sun.tools.javac.util.List as JavacList
 
-class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMapper: KotlinTypeMapper) {
+class ClassFileToSourceStubConverter(
+        val kaptContext: KaptContext,
+        val typeMapper: KotlinTypeMapper,
+        val generateNonExistentClass: Boolean
+) {
     private companion object {
         private val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
         private val MODALITY_MODIFIERS = (Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT).toLong()
@@ -74,7 +78,28 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
     fun convert(): JavacList<JCCompilationUnit> {
         if (done) error(ClassFileToSourceStubConverter::class.java.simpleName + " can convert classes only once")
         done = true
-        return mapJList(kaptContext.compiledClasses) { convertTopLevelClass(it) }
+
+        var stubs = mapJList(kaptContext.compiledClasses) { convertTopLevelClass(it) }
+
+        if (generateNonExistentClass) {
+            stubs = stubs.append(generateNonExistentClass())
+        }
+
+        return stubs
+    }
+
+    private fun generateNonExistentClass(): JCCompilationUnit {
+        val nonExistentClass = treeMaker.ClassDef(
+                treeMaker.Modifiers((Flags.PUBLIC or Flags.FINAL).toLong()),
+                treeMaker.name("NonExistentClass"),
+                JavacList.nil(),
+                null,
+                JavacList.nil(),
+                JavacList.nil())
+
+        val topLevel = treeMaker.TopLevel(JavacList.nil(), treeMaker.SimpleName("error"), JavacList.of(nonExistentClass))
+        topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass, fileManager)
+        return topLevel
     }
 
     private fun convertTopLevelClass(clazz: ClassNode): JCCompilationUnit? {
@@ -95,8 +120,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContext, val typeMappe
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevel(packageAnnotations, packageClause, imports + classes)
-        val javaFileObject = KaptJavaFileObject(topLevel, classDeclaration, System.currentTimeMillis(), fileManager)
-        topLevel.sourcefile = javaFileObject
+        topLevel.sourcefile = KaptJavaFileObject(topLevel, classDeclaration, fileManager)
         return topLevel
     }
 
