@@ -256,8 +256,13 @@ task local_variable(type: UnitKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
 
+
 task cast_simple(type: UnitKonanTest) {
     source = "codegen/basics/cast_simple.kt"
+}
+
+task null_check(type: UnitKonanTest) {
+    source = "codegen/basics/null_check.kt"
 }
 
 task hello0(type: RunKonanTest) {
