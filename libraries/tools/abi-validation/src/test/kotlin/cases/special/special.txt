@@ -53,8 +53,8 @@ public final class cases/special/JvmNamesKt {
 }
 
 public final class cases/special/JvmOverloadsKt {
-	public static fun publicFunWithOverloads ()V
-	public static fun publicFunWithOverloads (I)V
+	public static final fun publicFunWithOverloads ()V
+	public static final fun publicFunWithOverloads (I)V
 	public static final fun publicFunWithOverloads (ILjava/lang/String;)V
 	public static synthetic fun publicFunWithOverloads$default (ILjava/lang/String;ILjava/lang/Object;)V
 }
