@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.editor
 import com.intellij.codeInsight.editorActions.QuoteHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.highlighter.HighlighterIterator
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 
 class KotlinQuoteHandler : QuoteHandler {
@@ -40,7 +39,7 @@ class KotlinQuoteHandler : QuoteHandler {
     override fun isOpeningQuote(iterator: HighlighterIterator, offset: Int): Boolean {
         val tokenType = iterator.tokenType
 
-        if (tokenType == KtTokens.OPEN_QUOTE) {
+        if (tokenType == KtTokens.OPEN_QUOTE || tokenType == KtTokens.CHARACTER_LITERAL) {
             val start = iterator.start
             return offset == start
         }

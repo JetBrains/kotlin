@@ -552,6 +552,10 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         checkResultByText("val a: List<Set<Int>><caret>")
     }
 
+    fun testCharClosingQuote() {
+        doCharTypeTest('\'', "val c = <caret>", "val c = ''")
+    }
+
     private fun doCharTypeTest(ch: Char, beforeText: String, afterText: String) {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText.trimMargin())
         EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), ch)
