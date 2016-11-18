@@ -260,12 +260,12 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
                 val toBeShortened: Boolean
                 when (result) {
-                    is ShortenNow -> {
+                    is AnalyzeQualifiedElementResult.ShortenNow -> {
                         elementsToShorten.add(element)
                         toBeShortened = true
                     }
 
-                    is ImportDescriptors -> {
+                    is AnalyzeQualifiedElementResult.ImportDescriptors -> {
                         val tryImport = result.descriptors.isNotEmpty()
                                         && result.descriptors.none { it in failedToImportDescriptors }
                                         && result.descriptors.all { mayImport(it, file) }
@@ -278,7 +278,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                         }
                     }
 
-                    is Skip -> {
+                    is AnalyzeQualifiedElementResult.Skip -> {
                         toBeShortened = false
                     }
                 }
@@ -304,10 +304,6 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             class ImportDescriptors(val descriptors: Collection<DeclarationDescriptor>) : AnalyzeQualifiedElementResult()
         }
-
-        typealias Skip = AnalyzeQualifiedElementResult.Skip
-        typealias ShortenNow = AnalyzeQualifiedElementResult.ShortenNow
-        typealias ImportDescriptors = AnalyzeQualifiedElementResult.ImportDescriptors
 
         protected abstract fun shortenElement(element: TElement): KtElement
 
@@ -357,10 +353,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 }
 
         override fun analyzeQualifiedElement(element: KtUserType, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
-            if (element.qualifier == null) return Skip
-            val referenceExpression = element.referenceExpression ?: return Skip
+            if (element.qualifier == null) return AnalyzeQualifiedElementResult.Skip
+            val referenceExpression = element.referenceExpression ?: return AnalyzeQualifiedElementResult.Skip
 
-            val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return Skip
+            val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return AnalyzeQualifiedElementResult.Skip
 
             val scope = element.getResolutionScope(bindingContext, resolutionFacade)
             val name = target.name
@@ -370,7 +366,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 scope.findPackage(name)
 
             val canShortenNow = targetByName?.asString() == target.asString()
-            return if (canShortenNow) ShortenNow else ImportDescriptors(target.singletonOrEmptyList())
+            return if (canShortenNow) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.ImportDescriptors(target.singletonOrEmptyList())
         }
 
         override fun shortenElement(element: KtUserType): KtElement {
@@ -421,17 +417,17 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         override fun analyzeQualifiedElement(element: KtDotQualifiedExpression, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
             val receiver = element.receiverExpression
-            if (receiver !is KtThisExpression && bindingContext[BindingContext.QUALIFIER, receiver] == null) return Skip
+            if (receiver !is KtThisExpression && bindingContext[BindingContext.QUALIFIER, receiver] == null) return AnalyzeQualifiedElementResult.Skip
 
             if (PsiTreeUtil.getParentOfType(
                     element,
-                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return Skip
+                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return AnalyzeQualifiedElementResult.Skip
 
-            val selector = element.selectorExpression ?: return Skip
-            val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return Skip
+            val selector = element.selectorExpression ?: return AnalyzeQualifiedElementResult.Skip
+            val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return AnalyzeQualifiedElementResult.Skip
             val targets = callee.targets(bindingContext)
             val varAsFunResolvedCall = callee.getResolvedCall(bindingContext) as? VariableAsFunctionResolvedCall
-            if (targets.isEmpty()) return Skip
+            if (targets.isEmpty()) return AnalyzeQualifiedElementResult.Skip
 
             val (newContext, selectorCopy) = copyAndAnalyzeSelector(element, bindingContext)
             val newCallee = selectorCopy.getCalleeExpressionIfAny() as KtReferenceExpression
@@ -441,27 +437,27 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                                && (varAsFunResolvedCall == null || resolvedCallsMatch(varAsFunResolvedCall, varAsFunResolvedCallWhenShort))
 
             if (receiver is KtThisExpression) {
-                if (!targetsMatch) return Skip
-                val originalCall = selector.getResolvedCall(bindingContext) ?: return Skip
-                val newCall = selectorCopy.getResolvedCall(newContext) ?: return Skip
+                if (!targetsMatch) return AnalyzeQualifiedElementResult.Skip
+                val originalCall = selector.getResolvedCall(bindingContext) ?: return AnalyzeQualifiedElementResult.Skip
+                val newCall = selectorCopy.getResolvedCall(newContext) ?: return AnalyzeQualifiedElementResult.Skip
                 val receiverKind = originalCall.explicitReceiverKind
                 val newReceiver = when (receiverKind) {
                                       ExplicitReceiverKind.BOTH_RECEIVERS, ExplicitReceiverKind.EXTENSION_RECEIVER -> newCall.extensionReceiver
                                       ExplicitReceiverKind.DISPATCH_RECEIVER -> newCall.dispatchReceiver
-                                      else -> return Skip
-                                  } as? ImplicitReceiver ?: return Skip
+                                      else -> return AnalyzeQualifiedElementResult.Skip
+                                  } as? ImplicitReceiver ?: return AnalyzeQualifiedElementResult.Skip
 
                 val thisTarget = receiver.instanceReference.targets(bindingContext).singleOrNull()
-                if (newReceiver.declarationDescriptor.asString() != thisTarget?.asString()) return Skip
+                if (newReceiver.declarationDescriptor.asString() != thisTarget?.asString()) return AnalyzeQualifiedElementResult.Skip
             }
 
             return when {
-                targetsMatch -> ShortenNow
+                targetsMatch -> AnalyzeQualifiedElementResult.ShortenNow
 
             // it makes no sense to insert import when there is a conflict with function, property etc
-                targetsWhenShort.any { it !is ClassDescriptor && it !is PackageViewDescriptor } -> Skip
+                targetsWhenShort.any { it !is ClassDescriptor && it !is PackageViewDescriptor } -> AnalyzeQualifiedElementResult.Skip
 
-                else -> ImportDescriptors(targets)
+                else -> AnalyzeQualifiedElementResult.ImportDescriptors(targets)
             }
         }
 
@@ -519,10 +515,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 }
 
         override fun analyzeQualifiedElement(element: KtThisExpression, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
-            val targetBefore = element.instanceReference.targets(bindingContext).singleOrNull() ?: return Skip
+            val targetBefore = element.instanceReference.targets(bindingContext).singleOrNull() ?: return AnalyzeQualifiedElementResult.Skip
             val newContext = simpleThis.analyzeAsReplacement(element, bindingContext, resolutionFacade)
             val targetAfter = simpleThis.instanceReference.targets(newContext).singleOrNull()
-            return if (targetBefore == targetAfter) ShortenNow else Skip
+            return if (targetBefore == targetAfter) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.Skip
         }
 
         override fun shortenElement(element: KtThisExpression): KtElement {
@@ -545,27 +541,27 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             if (PsiTreeUtil.getParentOfType(
                     element,
-                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return Skip
+                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return AnalyzeQualifiedElementResult.Skip
 
-            val receiverTarget = receiver.singleTarget(bindingContext) as? ClassDescriptor ?: return Skip
+            val receiverTarget = receiver.singleTarget(bindingContext) as? ClassDescriptor ?: return AnalyzeQualifiedElementResult.Skip
 
-            val selectorExpression = element.selectorExpression ?: return Skip
-            val selectorTarget = selectorExpression.singleTarget(bindingContext) ?: return Skip
+            val selectorExpression = element.selectorExpression ?: return AnalyzeQualifiedElementResult.Skip
+            val selectorTarget = selectorExpression.singleTarget(bindingContext) ?: return AnalyzeQualifiedElementResult.Skip
 
-            if (receiverTarget.companionObjectDescriptor != selectorTarget) return Skip
+            if (receiverTarget.companionObjectDescriptor != selectorTarget) return AnalyzeQualifiedElementResult.Skip
 
             val selectorsSelector = (element.parent as? KtDotQualifiedExpression)?.selectorExpression
-                                    ?: return ShortenNow
+                                    ?: return AnalyzeQualifiedElementResult.ShortenNow
 
-            val selectorsSelectorTarget = selectorsSelector.singleTarget(bindingContext) ?: return Skip
-            if (selectorsSelectorTarget is ClassDescriptor) return Skip
+            val selectorsSelectorTarget = selectorsSelector.singleTarget(bindingContext) ?: return AnalyzeQualifiedElementResult.Skip
+            if (selectorsSelectorTarget is ClassDescriptor) return AnalyzeQualifiedElementResult.Skip
             // TODO: More generic solution may be possible
             if (selectorsSelectorTarget is PropertyDescriptor) {
                 val source = selectorsSelectorTarget.source.getPsi() as? KtProperty
-                if (source != null && isEnumCompanionPropertyWithEntryConflict(source, source.name ?: "")) return Skip
+                if (source != null && isEnumCompanionPropertyWithEntryConflict(source, source.name ?: "")) return AnalyzeQualifiedElementResult.Skip
             }
 
-            return ShortenNow
+            return AnalyzeQualifiedElementResult.ShortenNow
         }
 
         override fun shortenElement(element: KtDotQualifiedExpression): KtElement {

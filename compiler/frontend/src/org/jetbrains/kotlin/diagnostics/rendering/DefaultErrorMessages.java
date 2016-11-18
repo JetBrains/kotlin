@@ -434,6 +434,7 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null");
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
 
+        MAP.put(TOPLEVEL_TYPEALIASES_ONLY, "Nested and local type aliases are not supported");
         MAP.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion: {0}", NAME);
         MAP.put(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
                 "Type argument resulting from type alias expansion is not within required bounds for ''{2}'': " +

@@ -4837,12 +4837,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
                 doTestCompiledKotlin(fileName);
             }
-
-            @TestMetadata("Nested.kt")
-            public void testNested() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Nested.kt");
-                doTestCompiledKotlin(fileName);
-            }
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/visibility")

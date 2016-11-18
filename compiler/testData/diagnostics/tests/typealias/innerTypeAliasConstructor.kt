@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+
 class Pair<X, Y>(val x: X, val y: Y)
 
 class C<T> {

@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+
 class OuterClass<T1> {
     class NestedClass<T2>
     typealias NestedType<T> = NestedClass<T>

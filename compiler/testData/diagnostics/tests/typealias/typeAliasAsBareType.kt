@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+
 typealias L<T> = List<T>
 typealias NL<T> = List<T>?
 typealias LStar<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>> = List<*>

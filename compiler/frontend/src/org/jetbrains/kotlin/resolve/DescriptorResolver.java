@@ -661,6 +661,10 @@ public class DescriptorResolver {
             @NotNull KtTypeAlias typeAlias,
             @NotNull final BindingTrace trace
     ) {
+        if (!(containingDeclaration instanceof PackageFragmentDescriptor)) {
+            trace.report(TOPLEVEL_TYPEALIASES_ONLY.on(typeAlias));
+        }
+
         KtModifierList modifierList = typeAlias.getModifierList();
         Visibility visibility = resolveVisibilityFromModifiers(typeAlias, getDefaultVisibility(typeAlias, containingDeclaration));
 

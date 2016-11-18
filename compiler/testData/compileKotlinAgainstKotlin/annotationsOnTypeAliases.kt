@@ -9,11 +9,6 @@ import java.lang.Class
 @Retention(RUNTIME)
 annotation class Ann(val x: Int)
 
-class C {
-    @Ann(1)
-    typealias TA = Any
-}
-
 @Ann(2)
 typealias TA = Any
 
@@ -28,7 +23,6 @@ fun Class<*>.assertHasDeclaredMethodWithAnn() {
 
 fun box(): String {
     Class.forName("a.AKt").assertHasDeclaredMethodWithAnn()
-    Class.forName("a.C").assertHasDeclaredMethodWithAnn()
 
     return "OK"
 }
