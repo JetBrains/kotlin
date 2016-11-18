@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.structureView;
+package org.jetbrains.kotlin.idea.structureView
 
-import com.intellij.ide.structureView.StructureViewModelBase;
-import com.intellij.ide.util.treeView.smartTree.NodeProvider;
-import com.intellij.ide.util.treeView.smartTree.Sorter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
+import com.intellij.ide.structureView.StructureViewModelBase
+import com.intellij.ide.util.treeView.smartTree.NodeProvider
+import com.intellij.ide.util.treeView.smartTree.Sorter
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Arrays
 
-public class KotlinStructureViewModel extends StructureViewModelBase {
-    private static final Collection<NodeProvider> NODE_PROVIDERS = Arrays.<NodeProvider>asList(
-            new KotlinInheritedMembersNodeProvider());
+class KotlinStructureViewModel(jetFile: KtFile) : StructureViewModelBase(jetFile, KotlinStructureViewElement(jetFile, false)) {
 
-    private static final Sorter[] sorters = new Sorter[] {Sorter.ALPHA_SORTER};
-
-    public KotlinStructureViewModel(@NotNull KtFile jetFile) {
-        super(jetFile, new KotlinStructureViewElement(jetFile, false));
-        withSuitableClasses(KtDeclaration.class);
+    init {
+        withSuitableClasses(KtDeclaration::class.java)
     }
 
-    @NotNull
-    @Override
-    public Collection<NodeProvider> getNodeProviders() {
-        return NODE_PROVIDERS;
+    override fun getNodeProviders(): Collection<NodeProvider<*>> {
+        return NODE_PROVIDERS
     }
 
-    @NotNull
-    @Override
-    public Sorter[] getSorters() {
-        return sorters;
+    override fun getSorters(): Array<Sorter> {
+        return Companion.sorters
+    }
+
+    companion object {
+        private val NODE_PROVIDERS = Arrays.asList<NodeProvider<*>>(
+                KotlinInheritedMembersNodeProvider())
+
+        private val sorters = arrayOf(Sorter.ALPHA_SORTER)
     }
 }
