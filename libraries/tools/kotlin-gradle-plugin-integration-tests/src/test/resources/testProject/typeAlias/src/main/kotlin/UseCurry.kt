@@ -7,7 +7,7 @@ class UseCurry {
         if (plus1(1) != 2) throw AssertionError()
     }
 
-    private object Plus : Curry<Int, Int>.FN2 {
+    private object Plus : FN2<Int, Int> {
         override fun invoke(p0: Int, p1: Int): Int =
                 p0 + p1
     }
