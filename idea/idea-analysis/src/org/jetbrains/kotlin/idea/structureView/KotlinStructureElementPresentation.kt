@@ -21,10 +21,8 @@ import com.intellij.navigation.LocationPresentation
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.Iconable
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.PsiIconUtil
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -47,21 +45,13 @@ internal class KotlinStructureElementPresentation(
     private val locationString = getElementLocationString(isInherited, descriptor)
     private val icon = getElementIcon(navigatablePsiElement, descriptor)
 
-    override fun getTextAttributesKey(): TextAttributesKey? {
-        return attributesKey
-    }
+    override fun getTextAttributesKey() = attributesKey
 
-    override fun getPresentableText(): String? {
-        return elementText
-    }
+    override fun getPresentableText() = elementText
 
-    override fun getLocationString(): String? {
-        return locationString
-    }
+    override fun getLocationString() = locationString
 
-    override fun getIcon(unused: Boolean): Icon? {
-        return icon
-    }
+    override fun getIcon(unused: Boolean) = icon
 
     override fun getLocationPrefix(): String {
         return if (isInherited) " " else LocationPresentation.DEFAULT_LOCATION_PREFIX
@@ -97,7 +87,7 @@ internal class KotlinStructureElementPresentation(
         }
 
         val text = navigatablePsiElement.name
-        if (!StringUtil.isEmpty(text)) {
+        if (!text.isNullOrEmpty()) {
             return text
         }
 
@@ -116,13 +106,10 @@ internal class KotlinStructureElementPresentation(
         }
 
         val overridingDescriptors = filterOutOverridden(getAllOverriddenDeclarations(descriptor))
-        val firstOverriding = ContainerUtil.getFirstItem(overridingDescriptors)
-        if (firstOverriding != null) {
-            return withRightArrow(ONLY_NAMES_WITH_SHORT_TYPES.render(firstOverriding.containingDeclaration))
-        }
-
         // Location can be missing when base in synthesized
-        return null
+        return overridingDescriptors.firstOrNull()?.let {
+            withRightArrow(ONLY_NAMES_WITH_SHORT_TYPES.render(it.containingDeclaration))
+        }
     }
 
     private fun withRightArrow(str: String): String {
