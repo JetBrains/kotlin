@@ -25,20 +25,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.incremental.BuildCacheStorage
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import java.io.File
-
-private fun comparableVersionStr(version: String) =
-        "(\\d+)\\.(\\d+).*"
-                .toRegex()
-                .find(version)
-                ?.groups
-                ?.drop(1)?.take(2)
-                // checking if two subexpression groups are found and length of each is >0 and <4
-                ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
-                ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
 internal class KotlinGradleBuildServices private constructor(gradle: Gradle): BuildAdapter() {
     companion object {
@@ -158,9 +149,9 @@ internal class CompilerServicesCleanup() {
         // It should be noted that because of this behavior there are no benefits of using daemon in these versions.
         // Starting from 2.4 gradle using cached classloaders, that leads to effective class reusing in the daemon, but
         // in that case premature stopping of the static daemons may lead to crashes.
-        comparableVersionStr(gradleVersion)?.let {
+        ParsedGradleVersion.parse(gradleVersion)?.let {
             log.kotlinDebug("detected gradle version $it")
-            if (it < comparableVersionStr("2.4")!!) {
+            if (it < ParsedGradleVersion.parse("2.4")!!) {
                 // TODO: remove ZipFileCache cleanup after switching to recent idea libs
                 stopZipFileCache()
             }

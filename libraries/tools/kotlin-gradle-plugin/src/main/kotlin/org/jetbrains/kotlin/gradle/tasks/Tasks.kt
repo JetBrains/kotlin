@@ -24,6 +24,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
+import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
@@ -150,8 +152,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
         args.pluginOptions = pluginOptions.arguments.toTypedArray()
         args.moduleName = moduleName
-        args.loadBuiltInsFromDependencies = true
         args.addCompilerBuiltIns = true
+
+        val gradleVersion = getGradleVersion()
+        if (gradleVersion == null || gradleVersion >= ParsedGradleVersion(3, 2)) {
+            args.loadBuiltInsFromDependencies = true
+        }
 
         friendTaskName?.let addFriendPathForTestTask@ { friendKotlinTaskName ->
             val friendTask = project.getTasksByName(friendKotlinTaskName, /* recursive = */false).firstOrNull() as? KotlinCompile ?: return@addFriendPathForTestTask
