@@ -128,7 +128,7 @@ abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
                 Extensions.getArea(project),
                 ScriptTemplatesProvider.EP_NAME,
                 provider,
-                myTestRootDisposable
+                testRootDisposable
         )
         KotlinScriptConfigurationManager.reloadScriptDefinitions(project)
     }
