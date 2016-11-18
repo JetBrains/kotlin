@@ -24,7 +24,7 @@ kotlinNativeMain() {
   main((void *)0);
   return 0;
 #else
-  return exit(run_test());
+  exit(run_test());
 #endif
 }
 
