@@ -1,0 +1,47 @@
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class NonExistentType {
+    private static final error.NonExistentClass a = null;
+    private static final java.util.List<error.NonExistentClass> b = null;
+    private static final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> c = null;
+    private static final error.NonExistentClass d = null;
+    public static final NonExistentType INSTANCE = null;
+
+    public final error.NonExistentClass getA() {
+        return null;
+    }
+
+    public final java.util.List<error.NonExistentClass> getB() {
+        return null;
+    }
+
+    public final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> getC() {
+        return null;
+    }
+
+    public final error.NonExistentClass getD() {
+        return null;
+    }
+
+    public final error.NonExistentClass a(error.NonExistentClass a, java.lang.String s) {
+        return null;
+    }
+
+    public final error.NonExistentClass b(java.lang.String s) {
+        return null;
+    }
+
+    private NonExistentType() {
+        super();
+    }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
+
+    public NonExistentClass() {
+        super();
+    }
+}
