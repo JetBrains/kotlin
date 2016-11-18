@@ -187,7 +187,7 @@ abstract class AbstractKapt3Extension(
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext, typeMapper: KotlinTypeMapper): JavacList<JCCompilationUnit> {
         val (stubGenerationTime, kotlinSourceStubs) = measureTimeMillis {
-            ClassFileToSourceStubConverter(kaptContext, typeMapper).convert()
+            ClassFileToSourceStubConverter(kaptContext, typeMapper, generateNonExistentClass = true).convert()
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }

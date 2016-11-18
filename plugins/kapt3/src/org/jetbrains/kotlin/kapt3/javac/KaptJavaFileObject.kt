@@ -29,8 +29,8 @@ import javax.tools.JavaFileObject
 class KaptJavaFileObject(
         val compilationUnit: JCTree.JCCompilationUnit,
         val clazz: JCTree.JCClassDecl,
-        val timestamp: Long,
-        fileManager: JavacFileManager
+        fileManager: JavacFileManager,
+        val timestamp: Long = System.currentTimeMillis()
 ) : BaseFileObject(fileManager) {
     override fun getShortName() = clazz.simpleName.toString()
 
