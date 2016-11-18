@@ -17,31 +17,20 @@
 package org.jetbrains.kotlin.idea.structureView
 
 import com.intellij.ide.structureView.StructureViewModelBase
-import com.intellij.ide.util.treeView.smartTree.NodeProvider
 import com.intellij.ide.util.treeView.smartTree.Sorter
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-import java.util.Arrays
-
-class KotlinStructureViewModel(jetFile: KtFile) : StructureViewModelBase(jetFile, KotlinStructureViewElement(jetFile, false)) {
+class KotlinStructureViewModel(ktFile: KtFile) : StructureViewModelBase(ktFile, KotlinStructureViewElement(ktFile, false)) {
 
     init {
         withSuitableClasses(KtDeclaration::class.java)
+        withSorters(Sorter.ALPHA_SORTER)
     }
 
-    override fun getNodeProviders(): Collection<NodeProvider<*>> {
-        return NODE_PROVIDERS
-    }
-
-    override fun getSorters(): Array<Sorter> {
-        return Companion.sorters
-    }
+    override fun getNodeProviders() = NODE_PROVIDERS
 
     companion object {
-        private val NODE_PROVIDERS = Arrays.asList<NodeProvider<*>>(
-                KotlinInheritedMembersNodeProvider())
-
-        private val sorters = arrayOf(Sorter.ALPHA_SORTER)
+        private val NODE_PROVIDERS = listOf(KotlinInheritedMembersNodeProvider())
     }
 }
