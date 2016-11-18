@@ -30,7 +30,10 @@ import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -76,6 +79,15 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
             else -> null
         }
         if (psiType != null) return psiType
+    }
+
+    // Temporary workaround for local classes (
+    val typeDeclarationDescriptor = this.constructor.declarationDescriptor
+    if (typeDeclarationDescriptor is ClassDescriptor) {
+        val containerDescriptor = typeDeclarationDescriptor.containingDeclaration
+        if (containerDescriptor is PropertyDescriptor || containerDescriptor is FunctionDescriptor) {
+            return UastErrorType
+        }
     }
 
     val project = element.project
