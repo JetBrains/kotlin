@@ -148,17 +148,28 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitConstructor(declaration: IrConstructor) {
-        codegen.initFunction(declaration)
-        val thisValue = codegen.variable("this")
-        //super.visitConstructor(declaration)
-        /**
-         *   %this = alloca i8*
-         *   store i8* %0, i8** %this <- prolog
-         *
-         *   %tmp0 = load i8*, i8** %this <- epilog
-         *   ret i8* %tmp0
-         */
-        codegen.ret(codegen.load(thisValue!!, codegen.newVar()))
+        codegen.function(declaration)
+        val classDescriptor = DescriptorUtils.getContainingClass(declaration.descriptor)
+        val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
+        val typeOfClass = classDescriptor!!.defaultType
+        val names = typeOfClass.memberScope.getVariableNames()
+        val fields = codegen.fields(classDescriptor).toSet()
+        declaration.descriptor.valueParameters
+                .filter { names.contains(it.name) }                             // selects only parameters that match with declared class variables
+                .map {                                                          // maps parameter to list descriptors
+                    val variables = typeOfClass.memberScope.getContributedVariables(it.name, NoLookupLocation.FROM_BACKEND)
+                    assert(variables.size == 1)
+                    variables.first() }
+                .filter {fields.contains(it)}                                   // filter only fields that contains backing store
+                .forEach {                                                      // store parameters to backing storage
+                    val fieldPtr = fieldPtrOfClass(thisPtr, it)
+                    val variable = codegen.variable(it.name.asString())
+                    val value = codegen.load(variable!!, codegen.newVar())
+                    codegen.store(value, fieldPtr!!)
+                }
+
+        /* TODO: body */
+        codegen.ret(thisPtr)
         logger.log("visitConstructor           : ${ir2string(declaration)}")
     }
 
@@ -450,7 +461,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
-            return codegen.load(fieldPtrOfClass(thisPtr, value)!!, codegen.newVar())
+            return codegen.load(fieldPtrOfClass(thisPtr, value.descriptor)!!, codegen.newVar())
         }
         else {
             val ptr = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)!!
@@ -465,7 +476,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val valueToAssign = evaluateExpression(codegen.newVar(), value.value)!!
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
-            return codegen.store(valueToAssign, fieldPtrOfClass(thisPtr, value)!!)
+            return codegen.store(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor)!!)
         }
         else {
             val globalValue = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)
@@ -507,14 +518,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
        }
 
     */
-    private fun fieldPtrOfClass(thisPtr: LLVMOpaqueValue, value: IrFieldAccessExpression): LLVMOpaqueValue? {
+    private fun fieldPtrOfClass(thisPtr: LLVMOpaqueValue, value: PropertyDescriptor): LLVMOpaqueValue? {
         val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, thisPtr, codegen.newVar())
-        val typePtr = pointerType(codegen.classType(codegen.currentClass!!))
+        val typePtr = pointerType(codegen.classType(value.containingDeclaration as ClassDescriptor))
         memScoped {
-            val args = allocNativeArrayOf(LLVMOpaqueValue, Int32(1).getLlvmValue())
+            val args = allocNativeArrayOf(LLVMOpaqueValue, kImmOne)
             val objectPtr = LLVMBuildGEP(codegen.context.llvmBuilder, objHeaderPtr,  args[0], 1, codegen.newVar())
             val typedObjPtr = codegen.bitcast(typePtr, objectPtr!!, codegen.newVar())
-            val fieldPtr = LLVMBuildStructGEP(codegen.context.llvmBuilder, typedObjPtr, codegen.indexInClass(value.descriptor), codegen.newVar())
+            val fieldPtr = LLVMBuildStructGEP(codegen.context.llvmBuilder, typedObjPtr, codegen.indexInClass(value), codegen.newVar())
             return fieldPtr
         }
     }
@@ -643,6 +654,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private val kLteq0       = Name.identifier("LTEQ0")
     private val kNot         = Name.identifier("NOT")
     private val kImmZero     = LLVMConstInt(LLVMInt32Type(),  0, 1)!!
+    private val kImmOne      = LLVMConstInt(LLVMInt32Type(),  1, 1)!!
     private val kTrue        = LLVMConstInt(LLVMInt1Type(),   1, 1)!!
     private val kFalse       = LLVMConstInt(LLVMInt1Type(),   0, 1)!!
 

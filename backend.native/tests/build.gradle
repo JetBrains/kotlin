@@ -209,18 +209,23 @@ task run() {
 task sum (type:UnitKonanTest) {
     source = "codegen/function/sum.kt"
 }
-// FIXME (https://github.com/JetBrains/kotlin-native/pull/74)
-//task method_call(type: UnitKonanTest) {
-//    source = "codegen/object/method_call.kt"
-//}
+
+task method_call(type: UnitKonanTest) {
+    source = "codegen/object/method_call.kt"
+}
 
 task fields(type: UnitKonanTest) {
     source = "codegen/object/fields.kt"
 }
 
-/*task objectInitialization(type: UnitKonanTest) {
+
+task constructor(type: UnitKonanTest) {
+    source = "codegen/object/constructor.kt"
+}
+
+task objectInitialization(type: UnitKonanTest) {
     source = "codegen/object/initialization.kt"
-}*/
+}
 
 /* task objectBasic(type: KonanTest) {
     source = "$codegen/klass/basic.kt"

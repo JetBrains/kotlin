@@ -43,31 +43,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
         }
     }
 
-    /* HACK: */
-    var currentClass:ClassDescriptor? = null
-    /* constructor */
-    fun initFunction(declaration: IrConstructor) {
-        function(declaration)
-        val thisPtr = bitcast(pointerType(classType(declaration.descriptor.containingDeclaration)), load(thisVariable(), newVar()), newVar())
-
-        /**
-         * TODO: check shadowing.
-         */
-        declaration.descriptor.containingDeclaration.fields.forEachIndexed { i, descriptor ->
-            val name = descriptor.name.asString()
-
-            if (!declaration.descriptor.valueParameters.any { it -> it.name.asString() == name })
-                return@forEachIndexed
-
-            val ptr = LLVMBuildStructGEP(context.llvmBuilder, thisPtr, i, newVar())
-            val value = load(variable(name)!!, newVar())
-
-            val typePtr = bitcast(pointerType(LLVMTypeOf(value)), ptr!!, newVar())
-            store(value, typePtr!!)
-        }
-        currentClass = declaration.descriptor.constructedClass
-    }
-
+    fun  fields(descriptor: ClassDescriptor):List<PropertyDescriptor> = descriptor.fields
 
     private fun prolog(declaration: IrFunction): LLVMOpaqueValue? {
         variableIndex = 0
@@ -171,7 +147,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun thisVariable() = variable("this")!!
     fun param(fn: FunctionDescriptor?, i: Int): LLVMOpaqueValue? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
 
-    fun indexInClass(p:PropertyDescriptor):Int = currentClass!!.fields.indexOf(p)
+    fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
 
 
     fun basicBlock(): LLVMOpaqueBasicBlock? = LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), currentFunction!!.bbLabel())
