@@ -2,36 +2,12 @@
 package test.text
 
 import test.collections.assertArrayNotSameButEquals
-import java.util.Locale
-import kotlin.test.*
-
+import java.util.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import org.junit.Test as test
 
 class StringJVMTest {
-
-    @test fun toBoolean() {
-        assertEquals(true, "true".toBoolean())
-        assertEquals(true, "True".toBoolean())
-        assertEquals(false, "false".toBoolean())
-        assertEquals(false, "not so true".toBoolean())
-    }
-
-    @test fun toByte() {
-        assertEquals(77.toByte(), "77".toByte())
-        assertFails { "255".toByte() }
-    }
-
-    @test fun toShort() {
-        assertEquals(77.toShort(), "77".toShort())
-    }
-
-    @test fun toInt() {
-        assertEquals(77, "77".toInt())
-    }
-
-    @test fun toLong() {
-        assertEquals(77.toLong(), "77".toLong())
-    }
 
     @test fun testSplitByPattern() = withOneCharSequenceArg("ab1cd2def3") { s ->
         val isDigit = "\\d".toRegex()
