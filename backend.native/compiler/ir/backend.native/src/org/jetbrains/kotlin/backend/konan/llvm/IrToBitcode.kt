@@ -747,7 +747,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     fun callDirect(descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
         val realDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor)
         val llvmFunction = codegen.functionLlvmValue(realDescriptor)
-        return codegen.call(llvmFunction, args, result)
+        return call(descriptor, llvmFunction, args, result)
     }
 
     //-------------------------------------------------------------------------//
