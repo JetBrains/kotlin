@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
@@ -63,11 +62,12 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     }
 
     private fun serialize(disposable: Disposable, destDir: File, srcDirs: List<File>, extraClassPath: List<File>) {
-        val configuration = CompilerConfiguration()
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        val configuration = CompilerConfiguration().apply {
+            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, createMessageCollector())
 
-        configuration.addKotlinSourceRoots(srcDirs.map { it.path })
-        configuration.addJvmClasspathRoots(extraClassPath)
+            addKotlinSourceRoots(srcDirs.map { it.path })
+            addJvmClasspathRoots(extraClassPath)
+        }
 
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
@@ -85,7 +85,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         destDir.deleteRecursively()
 
         if (!destDir.mkdirs()) {
-            System.err.println("Could not make directories: " + destDir)
+            throw AssertionError("Could not make directories: " + destDir)
         }
 
         files.map { it.packageFqName }.toSet().forEach {
@@ -94,6 +94,18 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 totalSize += bytesWritten
                 totalFiles++
             }).run()
+        }
+    }
+
+    private fun createMessageCollector() = object : GroupingMessageCollector(
+            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, /* verbose = */ false)
+    ) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+            // Only report diagnostics without a particular location because there's plenty of errors in built-in sources
+            // (functions without bodies, incorrect combination of modifiers, etc.)
+            if (location.path == null) {
+                super.report(severity, message, location)
+            }
         }
     }
 
