@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
@@ -210,7 +211,12 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
         }
 
         override fun elementTooltip(element: KtDeclaration): String {
-            return ElementDescriptionUtil.getElementDescription(element, RefactoringDescriptionLocation.WITH_PARENT)
+            try {
+                return ElementDescriptionUtil.getElementDescription(element, RefactoringDescriptionLocation.WITH_PARENT)
+            }
+            catch (e: IndexNotReadyException) {
+                return "Indexing..."
+            }
         }
     }
 
