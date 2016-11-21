@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -42,6 +43,7 @@ class SubpackagesIndexService(private val project: Project) {
         // a map from any existing package (in kotlin) to a set of subpackages (not necessarily direct) containing files
         private val allPackageFqNames = hashSetOf<FqName>()
         private val fqNameByPrefix = MultiMap.createSet<FqName, FqName>()
+        private val oocbCount = PsiManager.getInstance(project).modificationTracker.outOfCodeBlockModificationCount
 
         init {
             for (fqNameAsString in allPackageFqNames) {
@@ -80,6 +82,8 @@ class SubpackagesIndexService(private val project: Project) {
 
             return existingSubPackagesShortNames.map { fqName.child(it) }
         }
+
+        override fun toString() = "SubpackagesIndex: OOCB on creation $oocbCount, all packages size ${allPackageFqNames.size}"
     }
 
     companion object {
