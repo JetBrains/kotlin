@@ -21,9 +21,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.FileASTNode;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.FileContentUtilCore;
+import com.intellij.util.IncorrectOperationException;
 import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -32,9 +35,11 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.utils.CollectionsKt;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -142,6 +147,9 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
         return getPackageFqName().asString();
     }
 
+    @Override
+    public void setPackageName(String packageName) { }
+
     @NotNull
     public FqName getPackageFqName() {
         KotlinFileStub stub = getStub();
@@ -176,9 +184,6 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
         }
         return PsiClass.EMPTY_ARRAY;
     }
-
-    @Override
-    public void setPackageName(String packageName) { }
 
     @Nullable
     public KtScript getScript() {
@@ -267,5 +272,15 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
                         return modifierList.getAnnotationEntries();
                     }
                 });
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        PsiElement result = super.setName(name);
+        boolean willBeScript = name.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT);
+        if (isScript() != willBeScript) {
+            FileContentUtilCore.reparseFiles(CollectionsKt.<VirtualFile>singletonOrEmptyList(getVirtualFile()));
+        }
+        return result;
     }
 }
