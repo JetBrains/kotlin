@@ -1,0 +1,1 @@
+fun foo(x: Boolean, y: Boolean): Boolean = !(x || y)

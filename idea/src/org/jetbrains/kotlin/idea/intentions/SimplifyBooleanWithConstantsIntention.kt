@@ -19,13 +19,15 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
 
@@ -43,12 +45,13 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
 
             is KtBinaryExpression -> {
                 val op = element.operationToken
-                if ((op == KtTokens.ANDAND || op == KtTokens.OROR) &&
-                    (areThereExpressionsToBeSimplified(element.left) ||
-                     areThereExpressionsToBeSimplified(element.right))) return true
+                if (op == ANDAND || op == OROR || op == EQEQ || op == EXCLEQ) {
+                    if (areThereExpressionsToBeSimplified(element.left) && element.right.hasBooleanType()) return true
+                    if (areThereExpressionsToBeSimplified(element.right) && element.left.hasBooleanType()) return true
+                }
             }
         }
-        return element.canBeReducedToBooleanConstant(null)
+        return element.canBeReducedToBooleanConstant()
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
@@ -88,7 +91,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
                 val left = expression.left
                 val right = expression.right
                 val op = expression.operationToken
-                if (left != null && right != null && (op == KtTokens.ANDAND || op == KtTokens.OROR)) {
+                if (left != null && right != null && (op == ANDAND || op == OROR || op == EQEQ || op == EXCLEQ)) {
                     val simpleLeft = simplifyExpression(left)
                     val simpleRight = simplifyExpression(right)
                     return when {
@@ -113,16 +116,30 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
     }
 
     private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(constantOperand: Boolean, otherOperand: KtExpression, operation: IElementType): KtExpression {
-        return when {
-            constantOperand && operation == KtTokens.OROR -> KtPsiFactory(otherOperand).createExpression("true")
-            !constantOperand && operation == KtTokens.ANDAND -> KtPsiFactory(otherOperand).createExpression("false")
-            else -> toSimplifiedExpression(otherOperand)
+        val factory = KtPsiFactory(otherOperand)
+        when (operation) {
+            OROR -> {
+                if (constantOperand) return factory.createExpression("true")
+            }
+            ANDAND -> {
+                if (!constantOperand) return factory.createExpression("false")
+            }
+            EQEQ, EXCLEQ -> toSimplifiedExpression(otherOperand).let {
+                return if (constantOperand == (operation == EQEQ)) it
+                else factory.createExpressionByPattern("!$0", it)
+            }
         }
+        return toSimplifiedExpression(otherOperand)
     }
 
     private fun simplifyExpression(expression: KtExpression) = expression.replaced(toSimplifiedExpression(expression))
 
-    private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean?): Boolean {
+    private fun KtExpression?.hasBooleanType(): Boolean {
+        val type = this?.getType(this.analyze()) ?: return false
+        return KotlinBuiltIns.isBoolean(type)
+    }
+
+    private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean? = null): Boolean {
         return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, this.analyze(), constant)
     }
 
