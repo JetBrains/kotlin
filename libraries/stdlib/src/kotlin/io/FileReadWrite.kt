@@ -51,7 +51,9 @@ public inline fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWrit
  */
 public fun File.readBytes(): ByteArray = FileInputStream(this).use { input ->
     var offset = 0
-    var remaining = this.length().toInt() // TODO: toIntExact()
+    var remaining = this.length().let {
+        if (it > Int.MAX_VALUE) throw OutOfMemoryError("File $this is too big ($it bytes) to fit in memory.") else it
+    }.toInt()
     val result = ByteArray(remaining)
     while (remaining > 0) {
         val read = input.read(result, offset, remaining)
