@@ -238,7 +238,10 @@ public class DescriptorResolver {
             }
         }
 
+        // If we have an abbreviated type (written with a type alias), it still can contain type projections in top-level arguments.
         if (!type.isError() && SpecialTypesKt.getAbbreviatedType(type) != null && !hasProjectionsInWrittenArguments) {
+            // Only interface inheritance should be checked here.
+            // Corresponding check for classes is performed for type alias constructor calls in CandidateResolver.
             if (TypeUtilsKt.isInterface(type) && TypeUtilsKt.containsTypeProjectionsInTopLevelArguments(type)) {
                 trace.report(EXPANDED_TYPE_CANNOT_BE_INHERITED.on(typeElement, type));
             }

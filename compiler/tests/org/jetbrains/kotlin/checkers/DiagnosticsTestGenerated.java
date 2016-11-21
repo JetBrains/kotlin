@@ -20866,6 +20866,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("cyclicInheritanceViaTypeAlias.kt")
+            public void testCyclicInheritanceViaTypeAlias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/cyclicInheritanceViaTypeAlias.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("exposedExpandedType.kt")
             public void testExposedExpandedType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/exposedExpandedType.kt");

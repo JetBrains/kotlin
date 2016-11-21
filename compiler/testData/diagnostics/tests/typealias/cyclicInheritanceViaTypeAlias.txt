@@ -1,0 +1,17 @@
+package
+
+public final class A {
+    public constructor A()
+
+    public open class Nested</*0*/ T> {
+        public constructor Nested</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class B {
+    public constructor B()
+}
+public typealias ANested</*0*/ T>  = A.Nested<T>

@@ -59,6 +59,8 @@ class TypeAliasExpander(
     }
 
     private fun SimpleType.combineAnnotations(annotations: Annotations): SimpleType {
+        if (isError) return this
+
         val existingAnnotationTypes = this.annotations.getAllAnnotations().mapTo(hashSetOf<KotlinType>()) { it.annotation.type }
 
         for (annotation in annotations) {
@@ -101,7 +103,8 @@ class TypeAliasExpander(
         val argumentVariance = argument.projectionKind
         val underlyingVariance = underlyingProjection.projectionKind
 
-        val argumentType = argument.type as? SimpleType ?: throw AssertionError("Non-simple type in type alias argument: $argument")
+        val argumentType = argument.type.unwrap() as? SimpleType ?:
+                           throw AssertionError("Non-simple type in type alias argument: $argument")
 
         val substitutionVariance =
                 when {
@@ -117,7 +120,7 @@ class TypeAliasExpander(
         val parameterVariance = typeParameterDescriptor?.variance ?: Variance.INVARIANT
         val resultingVariance =
                 when {
-                    parameterVariance == substitutionVariance -> Variance.INVARIANT
+                    parameterVariance == substitutionVariance -> substitutionVariance
                     parameterVariance == Variance.INVARIANT -> substitutionVariance
                     substitutionVariance == Variance.INVARIANT -> Variance.INVARIANT
                     else -> {
