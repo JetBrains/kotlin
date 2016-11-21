@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import net.rubygrapefruit.platform.Native
+import net.rubygrapefruit.platform.ProcessLauncher
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -121,7 +123,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
         val classpathString = environment.compilerClasspath.map {it.absolutePath}.joinToString(separator = File.pathSeparator)
         val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, *argsArray)
-        val process = builder.start()
+        val processLauncher = Native.get(ProcessLauncher::class.java)
+        val process = processLauncher.start(builder)
 
         // important to read inputStream, otherwise the process may hang on some systems
         val readErrThread = thread {
