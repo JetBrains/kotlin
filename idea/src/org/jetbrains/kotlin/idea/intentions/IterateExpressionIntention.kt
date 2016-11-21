@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.*
@@ -85,19 +85,19 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                 var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
                 forExpression = element.replaced(forExpression)
 
-                PsiDocumentManager.getInstance(forExpression.project).doPostponedOperationsAndUnblockDocument(editor.document)
+                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(forExpression)?.let { forExpression ->
+                    val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
+                    val parameters = forExpression.destructuringDeclaration?.entries ?: forExpression.loopParameter!!.singletonList()
 
-                val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
-                val parameters = forExpression.destructuringDeclaration?.entries ?: forExpression.loopParameter!!.singletonList()
+                    val templateBuilder = TemplateBuilderImpl(forExpression)
+                    for ((parameter, parameterNames) in (parameters zip names)) {
+                        templateBuilder.replaceElement(parameter, ChooseStringExpression(parameterNames))
+                    }
+                    templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
+                    templateBuilder.setEndVariableAfter(bodyPlaceholder)
 
-                val templateBuilder = TemplateBuilderImpl(forExpression)
-                for ((parameter, parameterNames) in (parameters zip names)) {
-                    templateBuilder.replaceElement(parameter, ChooseStringExpression(parameterNames))
+                    templateBuilder.run(editor, true)
                 }
-                templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
-                templateBuilder.setEndVariableAfter(bodyPlaceholder)
-
-                templateBuilder.run(editor, true)
             }
         }
     }
