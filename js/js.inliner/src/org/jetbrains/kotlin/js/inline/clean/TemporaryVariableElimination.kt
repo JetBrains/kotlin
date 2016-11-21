@@ -130,6 +130,9 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                             temporary += name
                         }
                     }
+                    else {
+                        super.visitExpressionStatement(x)
+                    }
                     return
                 }
                 super.visitExpressionStatement(x)
