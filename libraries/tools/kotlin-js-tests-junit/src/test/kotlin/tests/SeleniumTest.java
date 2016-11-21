@@ -42,7 +42,7 @@ public class SeleniumTest {
 
     protected static class HtmlUnitDriverWithExceptionOnFailingStatusCode extends HtmlUnitDriver {
         HtmlUnitDriverWithExceptionOnFailingStatusCode() {
-            super(BrowserVersion.FIREFOX_17);
+            super(BrowserVersion.CHROME);
             getWebClient().getOptions().setThrowExceptionOnFailingStatusCode(true);
         }
     }

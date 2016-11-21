@@ -46,7 +46,7 @@
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.16</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
-        <selenium.version>2.37.1</selenium.version>
+        <selenium.version>2.52.0</selenium.version>
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
