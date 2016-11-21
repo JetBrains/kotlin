@@ -17,16 +17,42 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import com.google.common.base.Throwables
+import java.io.Serializable
 
-fun <T> checkAndUpdateReplHistoryCollection(col: MutableList<Pair<ReplCodeLine, T>>, baseHistory: Iterable<ReplCodeLine>): Int? {
-    val baseHistoryIt = baseHistory.iterator()
+// TODO: thread safety!!
+data class ReplHistory<T>(
+        val lines: MutableList<ReplCodeLine> = arrayListOf(),
+        val values: MutableList<T> = arrayListOf()
+) : Serializable
+{
+    init { assert(isValid()) }
+    fun isValid() = lines.size == values.size
+
+    fun add(line: ReplCodeLine, value: T) {
+        lines.add(line)
+        values.add(value)
+    }
+
+    fun trimAt(idx: Int) {
+        lines.dropLast(lines.size - idx)
+        values.dropLast(lines.size - idx)
+    }
+
+    companion object {
+        private val serialVersionUID: Long = 8228357578L
+    }
+}
+
+fun <T> checkAndUpdateReplHistoryCollection(history: ReplHistory<T>, linesHistory: Iterable<ReplCodeLine>): Int? {
+    assert(history.isValid())
+    val linesHistoryIt = linesHistory.iterator()
     var idx = 0
-    while (baseHistoryIt.hasNext()) {
-        val curLine = baseHistoryIt.next()
-        if (col[idx].first != curLine) return curLine.no
+    while (linesHistoryIt.hasNext()) {
+        val curLine = linesHistoryIt.next()
+        if (history.lines[idx] != curLine) return curLine.no
         idx += 1
     }
-    col.dropLast(col.size - idx)
+    history.trimAt(idx)
     return null
 }
 

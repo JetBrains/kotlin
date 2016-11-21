@@ -67,7 +67,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
     val localEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult {
 
         fun ReplCompileResult.Error.locationString() =
                 if (location == CompilerMessageLocation.NO_LOCATION) ""
@@ -81,6 +81,6 @@ class KotlinJsr223JvmScriptEngine4Idea(
             is ReplCompileResult.CompiledClasses -> compileResult
         }
 
-        return localEvaluator.eval(codeLine, history, compiled.classes, compiled.hasResult, compiled.newClasspath)
+        return localEvaluator.eval(codeLine, history, compiled.classes, compiled.hasResult, compiled.classpathAddendum)
     }
 }

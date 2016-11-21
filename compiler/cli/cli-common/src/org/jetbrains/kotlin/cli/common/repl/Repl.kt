@@ -35,10 +35,14 @@ data class CompiledClassData(val path: String, val bytes: ByteArray) : Serializa
     }
 }
 
-sealed class ReplCheckResult : Serializable {
-    object Ok : ReplCheckResult()
-    object Incomplete : ReplCheckResult()
-    class Error(val message: String, val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : ReplCheckResult() {
+sealed class ReplCheckResult(val updatedHistory: List<ReplCodeLine>) : Serializable {
+    class Ok(updatedHistory: List<ReplCodeLine>) : ReplCheckResult(updatedHistory)
+    class Incomplete(updatedHistory: List<ReplCodeLine>) : ReplCheckResult(updatedHistory)
+    class Error(updatedHistory: List<ReplCodeLine>,
+                val message: String,
+                val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION
+    ) : ReplCheckResult(updatedHistory)
+    {
         override fun toString(): String = "Error(message = \"$message\""
     }
     companion object {
@@ -46,11 +50,19 @@ sealed class ReplCheckResult : Serializable {
     }
 }
 
-sealed class ReplCompileResult : Serializable {
-    class CompiledClasses(val classes: List<CompiledClassData>, val hasResult: Boolean, val newClasspath: List<File>) : ReplCompileResult()
-    object Incomplete : ReplCompileResult()
-    class HistoryMismatch(val lineNo: Int): ReplCompileResult()
-    class Error(val message: String, val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : ReplCompileResult() {
+sealed class ReplCompileResult(val updatedHistory: List<ReplCodeLine>) : Serializable {
+    class CompiledClasses(updatedHistory: List<ReplCodeLine>,
+                          val classes: List<CompiledClassData>,
+                          val hasResult: Boolean,
+                          val classpathAddendum: List<File>
+    ) : ReplCompileResult(updatedHistory)
+    class Incomplete(updatedHistory: List<ReplCodeLine>) : ReplCompileResult(updatedHistory)
+    class HistoryMismatch(updatedHistory: List<ReplCodeLine>, val lineNo: Int): ReplCompileResult(updatedHistory)
+    class Error(updatedHistory: List<ReplCodeLine>,
+                val message: String,
+                val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION
+    ) : ReplCompileResult(updatedHistory)
+    {
         override fun toString(): String = "Error(message = \"$message\""
     }
     companion object {
@@ -58,16 +70,19 @@ sealed class ReplCompileResult : Serializable {
     }
 }
 
-sealed class ReplEvalResult : Serializable {
-    class ValueResult(val value: Any?) : ReplEvalResult() {
+sealed class ReplEvalResult(val updatedHistory: List<ReplCodeLine>) : Serializable {
+    class ValueResult(updatedHistory: List<ReplCodeLine>, val value: Any?) : ReplEvalResult(updatedHistory) {
         override fun toString(): String = "Result: $value"
     }
-    object UnitResult : ReplEvalResult()
-    object Incomplete : ReplEvalResult()
-    class HistoryMismatch(val lineNo: Int): ReplEvalResult()
-    sealed class Error(val message: String) : ReplEvalResult() {
-        class Runtime(message: String) : Error(message)
-        class CompileTime(message: String, val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(message)
+    class UnitResult(updatedHistory: List<ReplCodeLine>) : ReplEvalResult(updatedHistory)
+    class Incomplete(updatedHistory: List<ReplCodeLine>) : ReplEvalResult(updatedHistory)
+    class HistoryMismatch(updatedHistory: List<ReplCodeLine>, val lineNo: Int): ReplEvalResult(updatedHistory)
+    sealed class Error(updatedHistory: List<ReplCodeLine>, val message: String) : ReplEvalResult(updatedHistory) {
+        class Runtime(updatedHistory: List<ReplCodeLine>, message: String) : Error(updatedHistory, message)
+        class CompileTime(updatedHistory: List<ReplCodeLine>,
+                          message: String,
+                          val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION
+        ) : Error(updatedHistory, message)
         override fun toString(): String = "${this::class.simpleName}Error(message = \"$message\""
     }
     companion object {
@@ -76,16 +91,16 @@ sealed class ReplEvalResult : Serializable {
 }
 
 interface ReplChecker {
-    fun check(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCheckResult
+    fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult
 }
 
 interface ReplCompiler : ReplChecker {
-    fun compile(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCompileResult
+    fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult
 }
 
 interface ReplCompiledEvaluator {
 
-    fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, newClasspath: List<File>): ReplEvalResult
+    fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, classpathAddendum: List<File>): ReplEvalResult
 
     // override to capture output
     fun<T> evalWithIO(body: () -> T): T = body()
@@ -94,7 +109,7 @@ interface ReplCompiledEvaluator {
 
 interface ReplEvaluator : ReplChecker {
 
-    fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult
+    fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult
 
     // override to capture output
     fun<T> evalWithIO(body: () -> T): T = body()

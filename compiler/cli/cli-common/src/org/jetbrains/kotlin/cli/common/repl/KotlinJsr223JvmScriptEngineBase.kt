@@ -19,13 +19,16 @@ package org.jetbrains.kotlin.cli.common.repl
 import java.io.Reader
 import javax.script.*
 
-abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine {
+//val KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY = "kotlin.script.history"
+//
+//val Bindings.kotlinScriptHistory:
 
+abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable, Invocable {
     protected var lineCount = 0
 
     protected val history = arrayListOf<ReplCodeLine>()
 
-    abstract fun  eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult
+    abstract fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult
 
     override fun eval(script: String, context: ScriptContext?): Any? {
 
@@ -48,6 +51,30 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
     }
 
     override fun eval(script: Reader, context: ScriptContext?): Any? = eval(script.readText(), context)
+
+    override fun compile(p0: String?): CompiledScript {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun compile(p0: Reader?): CompiledScript {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun invokeMethod(p0: Any?, p1: String?, vararg p2: Any?): Any {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun <T : Any?> getInterface(p0: Class<T>?): T {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun <T : Any?> getInterface(p0: Any?, p1: Class<T>?): T {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun invokeFunction(p0: String?, vararg p1: Any?): Any {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun createBindings(): Bindings = SimpleBindings()
 

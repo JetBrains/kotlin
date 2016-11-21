@@ -141,11 +141,12 @@ open class KotlinJvmReplService(
         }
     }
 
-    override fun check(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCheckResult {
+    override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
         operationsTracer?.before("check")
         try {
             return replCompiler?.check(codeLine, history)
-                   ?: ReplCheckResult.Error(messageCollector.firstErrorMessage ?: "Unknown error",
+                   ?: ReplCheckResult.Error(history,
+                                            messageCollector.firstErrorMessage ?: "Unknown error",
                                             messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
         }
         finally {
@@ -153,11 +154,12 @@ open class KotlinJvmReplService(
         }
     }
 
-    override fun compile(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCompileResult {
+    override fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult {
         operationsTracer?.before("compile")
         try {
             return replCompiler?.compile(codeLine, history)
-                   ?: ReplCompileResult.Error(messageCollector.firstErrorMessage ?: "Unknown error",
+                   ?: ReplCompileResult.Error(history,
+                                              messageCollector.firstErrorMessage ?: "Unknown error",
                                               messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
         }
         finally {
@@ -165,11 +167,12 @@ open class KotlinJvmReplService(
         }
     }
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult = synchronized(this) {
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult = synchronized(this) {
         operationsTracer?.before("eval")
         try {
             return replCompiler?.let { compileAndEval(it, compiledEvaluator, codeLine, history) }
-                   ?: ReplEvalResult.Error.CompileTime(messageCollector.firstErrorMessage ?: "Unknown error",
+                   ?: ReplEvalResult.Error.CompileTime(history,
+                                                       messageCollector.firstErrorMessage ?: "Unknown error",
                                                        messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
         }
         finally {

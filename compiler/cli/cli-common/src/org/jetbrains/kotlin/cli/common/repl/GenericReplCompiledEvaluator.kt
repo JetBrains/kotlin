@@ -30,12 +30,12 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
 
     private class ClassWithInstance(val klass: Class<*>, val instance: Any)
 
-    private val compiledLoadedClassesHistory = arrayListOf<Pair<ReplCodeLine, ClassWithInstance>>()
+    private val compiledLoadedClassesHistory = ReplHistory<ClassWithInstance>()
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, newClasspath: List<File>): ReplEvalResult {
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, classpathAddendum: List<File>): ReplEvalResult {
 
         checkAndUpdateReplHistoryCollection(compiledLoadedClassesHistory, history)?.let {
-            return@eval ReplEvalResult.HistoryMismatch(it)
+            return@eval ReplEvalResult.HistoryMismatch(compiledLoadedClassesHistory.lines, it)
         }
 
         var mainLineClassName: String? = null
@@ -43,9 +43,9 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
         fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.replaceFirst("\\.class$".toRegex(), ""))
 
         classLoaderLock.read {
-            if (newClasspath.isNotEmpty()) {
+            if (classpathAddendum.isNotEmpty()) {
                 classLoaderLock.write {
-                    classLoader = makeReplClassLoader(classLoader, newClasspath)
+                    classLoader = makeReplClassLoader(classLoader, classpathAddendum)
                 }
             }
             compiledClasses.filter { it.path.endsWith(".class") }
@@ -68,10 +68,10 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
         }
 
         val constructorParams: Array<Class<*>> =
-                (compiledLoadedClassesHistory.map { it.second.klass } +
+                (compiledLoadedClassesHistory.values.map { it.klass } +
                  (scriptArgs?.mapIndexed { i, it -> scriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: emptyList())
                 ).toTypedArray()
-        val constructorArgs: Array<Any?> = (compiledLoadedClassesHistory.map { it.second.instance } + scriptArgs.orEmpty()).toTypedArray()
+        val constructorArgs: Array<Any?> = (compiledLoadedClassesHistory.values.map { it.instance } + scriptArgs.orEmpty()).toTypedArray()
 
         val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
         val scriptInstance =
@@ -80,15 +80,15 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
                 }
                 catch (e: Throwable) {
                     // ignore everything in the stack trace until this constructor call
-                    return ReplEvalResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"))
+                    return ReplEvalResult.Error.Runtime(compiledLoadedClassesHistory.lines, renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"))
                 }
 
-        compiledLoadedClassesHistory.add(codeLine to ClassWithInstance(scriptClass, scriptInstance))
+        compiledLoadedClassesHistory.add(codeLine, ClassWithInstance(scriptClass, scriptInstance))
 
         val rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
         val rv: Any? = rvField.get(scriptInstance)
 
-        return if (hasResult) ReplEvalResult.ValueResult(rv) else ReplEvalResult.UnitResult
+        return if (hasResult) ReplEvalResult.ValueResult(compiledLoadedClassesHistory.lines, rv) else ReplEvalResult.UnitResult(compiledLoadedClassesHistory.lines)
     }
 
     companion object {

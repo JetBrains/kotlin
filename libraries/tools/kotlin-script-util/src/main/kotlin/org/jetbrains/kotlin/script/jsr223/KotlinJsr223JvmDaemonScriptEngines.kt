@@ -57,7 +57,7 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngine(
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
     val localEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult {
 
         fun ReplCompileResult.Error.locationString() = if (location == CompilerMessageLocation.NO_LOCATION) ""
         else " at ${location.line}:${location.column}:"
@@ -70,7 +70,7 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngine(
             is ReplCompileResult.CompiledClasses -> compileResult
         }
 
-        return localEvaluator.eval(codeLine, history, compiled.classes, compiled.hasResult, compiled.newClasspath)
+        return localEvaluator.eval(codeLine, history, compiled.classes, compiled.hasResult, compiled.classpathAddendum)
     }
 }
 
@@ -110,7 +110,7 @@ class KotlinJsr223JvmDaemonRemoteEvalScriptEngine(
         }
     }
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult = repl.eval(codeLine, history)
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult = repl.eval(codeLine, history)
 }
 
 private fun connectToCompileService(compilerJar: File): CompileService {

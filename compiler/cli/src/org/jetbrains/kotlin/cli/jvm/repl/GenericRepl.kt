@@ -74,7 +74,7 @@ open class GenericReplChecker(
     fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 
     @Synchronized
-    override fun check(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCheckResult {
+    override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
         val virtualFile =
                 LightVirtualFile("line${codeLine.no}${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
                     charset = CharsetToolkit.UTF8_CHARSET
@@ -91,9 +91,9 @@ open class GenericReplChecker(
         }
 
         return when {
-            syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete
-            syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(errorHolder.renderedDiagnostics)
-            else -> ReplCheckResult.Ok
+            syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete(history)
+            syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(history, errorHolder.renderedDiagnostics)
+            else -> ReplCheckResult.Ok(history)
         }
     }
 }
@@ -109,21 +109,21 @@ open class GenericReplCompiler(
 
     private var lastDependencies: KotlinScriptExternalDependencies? = null
 
-    private val descriptorsHistory = arrayListOf<Pair<ReplCodeLine, ScriptDescriptor>>()
+    private val descriptorsHistory = ReplHistory<ScriptDescriptor>()
 
     @Synchronized
-    override fun compile(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCompileResult {
+    override fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult {
         checkAndUpdateReplHistoryCollection(descriptorsHistory, history)?.let {
-            return@compile ReplCompileResult.HistoryMismatch(it)
+            return@compile ReplCompileResult.HistoryMismatch(descriptorsHistory.lines, it)
         }
 
         val (psiFile, errorHolder) = run {
             if (lineState == null || lineState!!.codeLine != codeLine) {
                 val res = check(codeLine, history)
                 when (res) {
-                    ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete
-                    is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
-                    ReplCheckResult.Ok -> {} // continue
+                    is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete(res.updatedHistory)
+                    is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.updatedHistory, res.message, res.location)
+                    is ReplCheckResult.Ok -> {} // continue
                 }
             }
             Pair(lineState!!.psiFile, lineState!!.errorHolder)
@@ -137,7 +137,7 @@ open class GenericReplCompiler(
         val analysisResult = analyzerEngine.analyzeReplLine(psiFile, codeLine.no)
         AnalyzerWithCompilerReport.Companion.reportDiagnostics(analysisResult.diagnostics, errorHolder)
         val scriptDescriptor = when (analysisResult) {
-            is CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(errorHolder.renderedDiagnostics)
+            is CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(descriptorsHistory.lines, errorHolder.renderedDiagnostics)
             is CliReplAnalyzerEngine.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
             else -> error("Unexpected result ${analysisResult.javaClass}")
         }
@@ -151,7 +151,7 @@ open class GenericReplCompiler(
                 compilerConfiguration
         )
         state.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
-        state.replSpecific.earlierScriptsForReplInterpreter = descriptorsHistory.map { it.second }
+        state.replSpecific.earlierScriptsForReplInterpreter = descriptorsHistory.values
         state.beforeCompile()
         KotlinCodegenFacade.generatePackage(
                 state,
@@ -159,9 +159,10 @@ open class GenericReplCompiler(
                 setOf(psiFile.script!!.getContainingKtFile()),
                 org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
 
-        descriptorsHistory.add(codeLine to scriptDescriptor)
+        descriptorsHistory.add(codeLine, scriptDescriptor)
 
-        return ReplCompileResult.CompiledClasses(state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
+        return ReplCompileResult.CompiledClasses(descriptorsHistory.lines,
+                                                 state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
                                                  state.replSpecific.hasResult,
                                                  newDependencies?.let { environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) } ?: emptyList())
     }
@@ -185,18 +186,18 @@ open class GenericRepl(
     private val compiledEvaluator = GenericReplCompiledEvaluator(compilerConfiguration.jvmClasspathRoots, baseClassloader, scriptArgs, scriptArgsTypes)
 
     @Synchronized
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult =
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult =
         compileAndEval(this, compiledEvaluator, codeLine, history)
 }
 
 
-fun compileAndEval(replCompiler: ReplCompiler, replCompiledEvaluator: ReplCompiledEvaluator, codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult =
+fun compileAndEval(replCompiler: ReplCompiler, replCompiledEvaluator: ReplCompiledEvaluator, codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult =
         replCompiler.compile(codeLine, history).let {
             when (it) {
-                ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete
-                is ReplCompileResult.HistoryMismatch -> ReplEvalResult.HistoryMismatch(it.lineNo)
-                is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(it.message, it.location)
-                is ReplCompileResult.CompiledClasses -> replCompiledEvaluator.eval(codeLine, history, it.classes, it.hasResult, it.newClasspath)
+                is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete(it.updatedHistory)
+                is ReplCompileResult.HistoryMismatch -> ReplEvalResult.HistoryMismatch(it.updatedHistory, it.lineNo)
+                is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(it.updatedHistory, it.message, it.location)
+                is ReplCompileResult.CompiledClasses -> replCompiledEvaluator.eval(codeLine, history, it.classes, it.hasResult, it.classpathAddendum)
             }
         }
 

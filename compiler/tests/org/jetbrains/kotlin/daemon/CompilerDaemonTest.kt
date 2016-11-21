@@ -515,7 +515,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val res1c = res1 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
 
-        val res11 = localEvaluator.eval(codeLine1, emptyList(), res1c!!.classes, res1c.hasResult, res1c.newClasspath)
+        val res11 = localEvaluator.eval(codeLine1, emptyList(), res1c!!.classes, res1c.hasResult, res1c.classpathAddendum)
         val res11e = res11 as? ReplEvalResult.UnitResult
         TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
 
@@ -527,7 +527,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
 
-        val res21 = localEvaluator.eval(codeLine2, listOf(codeLine1), res2c!!.classes, res2c.hasResult, res2c.newClasspath)
+        val res21 = localEvaluator.eval(codeLine2, listOf(codeLine1), res2c!!.classes, res2c.hasResult, res2c.classpathAddendum)
         val res21e = res21 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
         TestCase.assertEquals(7, res21e!!.value)

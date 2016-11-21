@@ -71,8 +71,8 @@ open class KotlinRemoteReplClientBase(
         })
     }
 
-    override fun check(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCheckResult {
-        return compileService.remoteReplLineCheck(sessionId, codeLine, history.toList()).get()
+    override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
+        return compileService.remoteReplLineCheck(sessionId, codeLine, history).get()
     }
 }
 
@@ -101,8 +101,8 @@ class KotlinRemoteReplCompiler(
         operationsTracer = operationsTracer
 ), ReplCompiler {
 
-    override fun compile(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplCompileResult {
-        return compileService.remoteReplLineCompile(sessionId, codeLine, history.toList()).get()
+    override fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult {
+        return compileService.remoteReplLineCompile(sessionId, codeLine, history).get()
     }
 }
 
@@ -138,7 +138,7 @@ class KotlinRemoteReplEvaluator(
         operationsTracer = operationsTracer
 ), ReplEvaluator {
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
-        return compileService.remoteReplLineEval(sessionId, codeLine, history.toList()).get()
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult {
+        return compileService.remoteReplLineEval(sessionId, codeLine, history).get()
     }
 }

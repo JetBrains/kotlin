@@ -105,7 +105,7 @@ class KotlinJsr223JvmLocalScriptEngine(
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
     }
 
-    override fun eval(codeLine: ReplCodeLine, history: Iterable<ReplCodeLine>): ReplEvalResult {
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult {
         val evalResult = repl.eval(codeLine, history)
         messageCollector.resetAndThrowOnErrors()
         return evalResult
