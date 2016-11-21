@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
 class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -45,6 +47,13 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
         val aClass = file.classes.single()
         assertEquals(1, aClass.findMethodsByName("foo", false).size)
         assertEquals(1, aClass.findMethodsByName("bar", false).size)
+    }
+
+    fun testNoFacadeForScript() {
+        val file = myFixture.configureByText("foo.kts", "package foo") as KtFile
+        assertEquals(0, file.classes.size)
+        val facadeFiles = LightClassGenerationSupport.getInstance(project).findFilesForFacade(FqName("foo.FooKt"), GlobalSearchScope.allScope(project))
+        assertEquals(0, facadeFiles.size)
     }
 
     override fun getTestDataPath(): String? {
