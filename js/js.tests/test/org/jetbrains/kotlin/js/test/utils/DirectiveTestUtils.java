@@ -49,7 +49,7 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler FUNCTION_NOT_CALLED = new DirectiveHandler("CHECK_NOT_CALLED") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkFunctionNotCalled(ast, arguments.getFirst());
+            checkFunctionNotCalled(ast, arguments.getFirst(), arguments.findNamedArgument("except"));
         }
     };
 
@@ -296,12 +296,16 @@ public class DirectiveTestUtils {
     }
 
 
-    public static void checkFunctionNotCalled(JsNode node, String functionName) throws Exception {
-        CallCounter counter = CallCounter.countCalls(node);
+    public static void checkFunctionNotCalled(@NotNull JsNode node, @NotNull String functionName, @Nullable String exceptFunction)
+            throws Exception {
+        Set<String> excludedScopes = exceptFunction != null ? Collections.singleton(exceptFunction) : Collections.<String>emptySet();
+
+        CallCounter counter = CallCounter.countCallsWithExcludedScopes(node, excludedScopes);
         int functionCalledCount = counter.getQualifiedCallsCount(functionName);
 
         String errorMessage = "inline function `" + functionName + "` is called";
         assertEquals(errorMessage, 0, functionCalledCount);
+        assertEquals("Not all excluded scopes found", excludedScopes.size(), counter.getExcludedScopeOccurrenceCount());
     }
 
     public static void checkCalledInScope(
