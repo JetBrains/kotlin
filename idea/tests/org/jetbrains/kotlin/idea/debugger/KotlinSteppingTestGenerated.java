@@ -721,6 +721,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlineInOtherFileWithLambdaArgumentDex.kt");
             doStepOverTest(fileName);
         }
+
+        @TestMetadata("stopInLabdaOfCrossinlineCalledInAnonymous.kt")
+        public void testStopInLabdaOfCrossinlineCalledInAnonymous() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLabdaOfCrossinlineCalledInAnonymous.kt");
+            doStepOverTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/filters")
