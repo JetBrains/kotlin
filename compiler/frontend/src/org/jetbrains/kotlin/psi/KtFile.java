@@ -126,6 +126,11 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
             StubElement<KtPackageDirective> packageDirectiveStub = stub.findChildStubByType(KtStubElementTypes.PACKAGE_DIRECTIVE);
             return packageDirectiveStub != null ? packageDirectiveStub.getPsi() : null;
         }
+        return getPackageDirectiveByTree();
+    }
+
+    @Nullable
+    private KtPackageDirective getPackageDirectiveByTree() {
         ASTNode ast = getNode().findChildByType(KtNodeTypes.PACKAGE_DIRECTIVE);
         return ast != null ? (KtPackageDirective) ast.getPsi() : null;
     }
@@ -148,7 +153,7 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
 
     @NotNull
     public FqName getPackageFqNameByTree() {
-        KtPackageDirective packageDirective = getPackageDirective();
+        KtPackageDirective packageDirective = getPackageDirectiveByTree();
         if (packageDirective == null) {
             return FqName.ROOT;
         }
