@@ -50,6 +50,8 @@ abstract class KotlinExtractSuperDialogBase(
         refactoringName: String,
         private val refactoring: (ExtractSuperInfo) -> Unit
 ) : JavaExtractSuperBaseDialog(originalClass.project, originalClass.toLightClass()!!, emptyList(), refactoringName) {
+    private var initComplete: Boolean = false
+
     private lateinit var memberInfoModel: MemberInfoModelBase
 
     val selectedMembers: List<KotlinMemberInfo>
@@ -70,6 +72,11 @@ abstract class KotlinExtractSuperDialogBase(
 
     val targetFileName: String
         get() = fileNameField.text
+
+    private fun resetFileNameField() {
+        if (!initComplete) return
+        fileNameField.text = "$extractedSuperName.${KotlinFileType.EXTENSION}"
+    }
 
     protected abstract fun createMemberInfoModel(): MemberInfoModelBase
 
@@ -112,7 +119,9 @@ abstract class KotlinExtractSuperDialogBase(
     override fun init() {
         super.init()
 
-        fileNameField.text = "$extractedSuperName.${KotlinFileType.EXTENSION}"
+        initComplete = true
+
+        resetFileNameField()
     }
 
     override fun preparePackage() {

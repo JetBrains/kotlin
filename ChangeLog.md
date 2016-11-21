@@ -81,6 +81,7 @@
 
 ##### Issues fixed
 - [`KT-14583`](https://youtrack.jetbrains.com/issue/KT-14583) Change Signature: Use new signature when looking for redeclaration conflicts
+- [`KT-14854`](https://youtrack.jetbrains.com/issue/KT-14854) Extract Interface: Fix NPE on dialog opening
 
 #### J2K
 - [`KT-14604`](https://youtrack.jetbrains.com/issue/KT-14604) Floating-point literals: "dot" + "exponent" char sequence was processed incorrectly
