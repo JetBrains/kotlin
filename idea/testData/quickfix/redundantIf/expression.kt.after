@@ -1,0 +1,5 @@
+// "Remove redundant 'if' statement" "true"
+fun bar(value: Int): Boolean {
+    val x = value % 2 != 0
+    return x
+}

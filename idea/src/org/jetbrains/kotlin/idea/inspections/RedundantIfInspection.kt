@@ -20,6 +20,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.intentions.negate
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -29,66 +30,81 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
             override fun visitIfExpression(expression: KtIfExpression) {
                 super.visitIfExpression(expression)
                 if (expression.condition == null) return
-                val type = RedundantType.of(expression)
-                if (type == RedundantType.NONE) return
+                val (redundancyType, branchType) = RedundancyType.of(expression)
+                if (redundancyType == RedundancyType.NONE) return
+
                 holder.registerProblem(expression,
                                        "Redundant 'if' statement",
                                        ProblemHighlightType.WEAK_WARNING,
-                                       RemoveRedundantIf(type))
+                                       RemoveRedundantIf(redundancyType, branchType))
             }
         }
     }
 
-    private enum class RedundantType {
+    private sealed class BranchType {
+        object Simple : BranchType()
+
+        object Return : BranchType()
+
+        class Assign(val lvalue: KtExpression) : BranchType() {
+            override fun equals(other: Any?) = other is Assign && lvalue.text == other.lvalue.text
+
+            override fun hashCode() = lvalue.text.hashCode()
+        }
+    }
+
+    private enum class RedundancyType {
         NONE,
         THEN_TRUE,
         ELSE_TRUE;
 
         companion object {
-            internal fun of(expression: KtIfExpression): RedundantType {
-                val thenReturn = getReturnedExpression(expression.then) ?: return NONE
-                val elseReturn = getReturnedExpression(expression.`else`) ?: return NONE
+            internal fun of(expression: KtIfExpression): Pair<RedundancyType, BranchType> {
+                val (thenReturn, thenType) = expression.then.getBranchExpression() ?: return NONE to BranchType.Simple
+                val (elseReturn, elseType) = expression.`else`.getBranchExpression() ?: return NONE to BranchType.Simple
 
-                return if (KtPsiUtil.isTrueConstant(thenReturn) && KtPsiUtil.isFalseConstant(elseReturn)) {
-                    THEN_TRUE
-                }
-                else if (KtPsiUtil.isFalseConstant(thenReturn) && KtPsiUtil.isTrueConstant(elseReturn)) {
-                    ELSE_TRUE
-                }
-                else {
-                    NONE
+                return when {
+                    thenType != elseType -> NONE to BranchType.Simple
+                    KtPsiUtil.isTrueConstant(thenReturn) && KtPsiUtil.isFalseConstant(elseReturn) -> THEN_TRUE to thenType
+                    KtPsiUtil.isFalseConstant(thenReturn) && KtPsiUtil.isTrueConstant(elseReturn) -> ELSE_TRUE to thenType
+                    else -> NONE to BranchType.Simple
                 }
             }
 
-            private fun getReturnedExpression(expression: KtExpression?) : KtExpression? {
-                return when (expression) {
-                    is KtReturnExpression -> {
-                        expression.returnedExpression
-                    }
-                    is KtBlockExpression -> {
-                        val statement = expression.statements.singleOrNull() as? KtReturnExpression ?: return null
-                        statement.returnedExpression
-                    }
-                    else -> {
+            private fun KtExpression?.getBranchExpression(): Pair<KtExpression?, BranchType>? {
+                return when (this) {
+                    is KtReturnExpression -> returnedExpression to BranchType.Return
+                    is KtBlockExpression -> statements.singleOrNull()?.getBranchExpression()
+                    is KtBinaryExpression -> if (operationToken == KtTokens.EQ && left != null)
+                        right to BranchType.Assign(left!!)
+                    else
                         null
-                    }
+                    is KtExpression -> this to BranchType.Simple
+                    else -> null
                 }
             }
         }
     }
 
-    private class RemoveRedundantIf(private val redundantType: RedundantType) : LocalQuickFix {
+    private class RemoveRedundantIf(private val redundancyType: RedundancyType, private val branchType: BranchType) : LocalQuickFix {
         override fun getName() = "Remove redundant 'if' statement"
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement as KtIfExpression
-            val condition = when (redundantType) {
-                RedundantType.NONE -> return
-                RedundantType.THEN_TRUE -> element.condition!!
-                RedundantType.ELSE_TRUE -> element.condition!!.negate()
+            val condition = when (redundancyType) {
+                RedundancyType.NONE -> return
+                RedundancyType.THEN_TRUE -> element.condition!!
+                RedundancyType.ELSE_TRUE -> element.condition!!.negate()
             }
-            element.replace(KtPsiFactory(element).createExpressionByPattern("return $0", condition.text))
+            val factory = KtPsiFactory(element)
+            element.replace(
+                    when (branchType) {
+                        is BranchType.Return -> factory.createExpressionByPattern("return $0", condition)
+                        is BranchType.Assign -> factory.createExpressionByPattern("$0 = $1", branchType.lvalue, condition)
+                        else -> condition
+                    }
+            )
         }
     }
 
