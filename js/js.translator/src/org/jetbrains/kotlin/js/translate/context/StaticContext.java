@@ -240,7 +240,7 @@ public final class StaticContext {
 
     @NotNull
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
-                if (descriptor instanceof ClassDescriptor) {
+        if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (KotlinBuiltIns.isAny(classDescriptor)) {
                 return pureFqn("Object", null);

@@ -48,8 +48,6 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_OVERRIDE, "@JsName is prohibited for overridden members")
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for @native declaration with explicit name")
-        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR, "@JsModule annotation prohibited for 'var' declarations. Use 'val' instead.")
-        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule annotation prohibited for non-@native declarations.")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR, "@JsModule and @JsNonModule annotations prohibited for 'var' declarations. " +
                                                   "Use 'val' instead.")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule and @JsNonModule annotations prohibited for non-@native declarations.")

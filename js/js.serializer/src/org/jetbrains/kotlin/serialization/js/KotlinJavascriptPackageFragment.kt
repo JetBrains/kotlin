@@ -50,7 +50,7 @@ class KotlinJavascriptPackageFragment(
         loadResource(KotlinJavascriptSerializedResourcePaths.getFileListFilePath(fqName))?.use { rawInput ->
             val input = CodedInputStream.newInstance(rawInput)
             val filesProto = JsProtoBuf.Files.parseFrom(input).fileOrBuilderList
-            filesProto.map { it.id to FileHolder(it.annotationList) }.toMap()
+            filesProto.associate { it.id to FileHolder(it.annotationList) }
         }.orEmpty()
     }
 

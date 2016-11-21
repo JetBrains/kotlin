@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.analyze
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.ContextForNewModule

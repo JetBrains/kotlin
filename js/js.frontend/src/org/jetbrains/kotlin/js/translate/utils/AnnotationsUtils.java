@@ -230,7 +230,7 @@ public final class AnnotationsUtils {
     }
 
     @NotNull
-    public static List<AnnotationDescriptor> getContainingFileAnnotations(
+    private static List<AnnotationDescriptor> getContainingFileAnnotations(
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor descriptor
     ) {
