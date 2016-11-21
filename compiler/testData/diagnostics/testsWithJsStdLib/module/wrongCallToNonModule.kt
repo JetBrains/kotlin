@@ -4,17 +4,20 @@ package foo
 
 import kotlin.js.*
 
-@JsNonModule @native object A {
+@JsNonModule
+@native object A {
     fun f(): Int
 
     val g: Int
 }
 
-@JsNonModule @native open class B {
+@JsNonModule
+@native open class B {
     fun foo(): Int
 }
 
-@JsNonModule @native fun bar(): Unit
+@JsNonModule
+@native fun bar(): Unit
 
 // MODULE: m2(m1)
 // MODULE_KIND: AMD
