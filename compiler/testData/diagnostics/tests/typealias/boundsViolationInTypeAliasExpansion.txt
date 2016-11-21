@@ -13,8 +13,8 @@ public fun test10(/*0*/ x: TC<kotlin.Number, kotlin.collections.Collection<kotli
 public fun test11(/*0*/ x: TC<kotlin.Number, kotlin.collections.List<kotlin.Int>> /* = TColl<kotlin.Number, kotlin.collections.List<kotlin.Int>> */): kotlin.Unit
 public fun test12(/*0*/ x: TC<kotlin.Number, kotlin.collections.List<kotlin.Any>> /* = TColl<kotlin.Number, kotlin.collections.List<kotlin.Any>> */): kotlin.Unit
 public fun test2(/*0*/ x: NA<kotlin.Any> /* = Num<kotlin.Any> */): kotlin.Unit
-public fun test3(/*0*/ x: NL<kotlin.Int> /* = NumColl<kotlin.collections.List<out kotlin.Int>> */): kotlin.Unit
-public fun test4(/*0*/ x: NL<kotlin.Any> /* = NumColl<kotlin.collections.List<out kotlin.Any>> */): kotlin.Unit
+public fun test3(/*0*/ x: NL<kotlin.Int> /* = NumColl<kotlin.collections.List<kotlin.Int>> */): kotlin.Unit
+public fun test4(/*0*/ x: NL<kotlin.Any> /* = NumColl<kotlin.collections.List<kotlin.Any>> */): kotlin.Unit
 public fun test9(/*0*/ x: TC<kotlin.Number, kotlin.collections.Collection<kotlin.Number>> /* = TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Number>> */): kotlin.Unit
 
 public final class Num</*0*/ T : kotlin.Number> {

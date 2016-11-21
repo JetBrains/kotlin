@@ -32,21 +32,21 @@ public final class Test2</*0*/ out S> : A2<kotlin.Any, S> /* = I1<S> */ {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Test3</*0*/ out S> : AOut<S> /* = Out<out S> */ {
+public final class Test3</*0*/ out S> : AOut<S> /* = Out<S> */ {
     public constructor Test3</*0*/ out S>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Test4</*0*/ out S> : AInvOut<S, S> /* = InvOut<S, out S> */ {
+public final class Test4</*0*/ out S> : AInvOut<S, S> /* = InvOut<S, S> */ {
     public constructor Test4</*0*/ out S>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Test5</*0*/ out S> : AInvOutTT<S> /* = InvOut<S, out S> */ {
+public final class Test5</*0*/ out S> : AInvOutTT<S> /* = InvOut<S, S> */ {
     public constructor Test5</*0*/ out S>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -18,7 +18,7 @@ public open class BaseDerived2</*0*/ X> : BaseDerived1<kotlin.String, X> {
 
 public final class Derived : BaseDerived2<kotlin.Int> {
     public constructor Derived()
-    public final fun baz(): Outer<kotlin.Int, kotlin.String>.Alias<kotlin.Char> /* = kotlin.collections.Map<kotlin.Char, out kotlin.Int> */
+    public final fun baz(): Outer<kotlin.Int, kotlin.String>.Alias<kotlin.Char> /* = kotlin.collections.Map<kotlin.Char, kotlin.Int> */
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): Outer<kotlin.Int, kotlin.String>.Inner<kotlin.Char>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
