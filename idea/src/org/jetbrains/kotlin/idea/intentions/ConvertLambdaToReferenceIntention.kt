@@ -72,7 +72,7 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
         }
         val context = statement.analyze()
 
-        fun isConvertableCallInLambda(
+        fun isConvertibleCallInLambda(
                 callableExpression: KtExpression,
                 explicitReceiver: KtExpression? = null,
                 lambdaExpression: KtLambdaExpression
@@ -145,12 +145,12 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
 
         return when (statement) {
             is KtCallExpression -> {
-                isConvertableCallInLambda(callableExpression = statement, lambdaExpression = element)
+                isConvertibleCallInLambda(callableExpression = statement, lambdaExpression = element)
             }
             is KtNameReferenceExpression -> false // Global property reference is not possible (?!)
             is KtDotQualifiedExpression -> {
                 val selector = statement.selectorExpression ?: return false
-                isConvertableCallInLambda(callableExpression = selector, explicitReceiver = statement.receiverExpression,
+                isConvertibleCallInLambda(callableExpression = selector, explicitReceiver = statement.receiverExpression,
                                           lambdaExpression = element)
             }
             else -> false
