@@ -335,6 +335,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 #### Refactorings
 
 - [`KT-14583`](https://youtrack.jetbrains.com/issue/KT-14583) Change Signature: Use new signature when looking for redeclaration conflicts
+- [`KT-14854`](https://youtrack.jetbrains.com/issue/KT-14854) Extract Interface: Fix NPE on dialog opening
 
 ## 1.0.5
 
