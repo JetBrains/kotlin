@@ -474,3 +474,5 @@ fun isTypeConstructorReference(e: PsiElement): Boolean {
 }
 
 fun KtParameter.isPropertyParameter() = ownerFunction is KtPrimaryConstructor && hasValOrVar()
+
+fun isDoubleColonReceiver(expression: KtExpression) = expression.getParentOfTypeAndBranch<KtDoubleColonExpression> { this.receiverExpression } != null

@@ -33,12 +33,12 @@ class TypeReferenceInfo(val reference: KtTypeReference, val type: KotlinType)
 internal var KtTypeReference.resolveInfo : TypeReferenceInfo? by CopyableUserDataProperty(Key.create("RESOLVE_INFO"))
 
 class IntroduceTypeAliasData(
-        val originalType: KtTypeElement,
+        val originalTypeElement: KtElement,
         val targetSibling: PsiElement,
         val extractTypeConstructor: Boolean = false
 ) : Disposable {
-    val resolutionFacade = originalType.getResolutionFacade()
-    val bindingContext = resolutionFacade.analyze(originalType, BodyResolveMode.PARTIAL)
+    val resolutionFacade = originalTypeElement.getResolutionFacade()
+    val bindingContext = resolutionFacade.analyze(originalTypeElement, BodyResolveMode.PARTIAL)
 
     init {
         markReferences()
@@ -57,12 +57,12 @@ class IntroduceTypeAliasData(
                 typeElement.typeArgumentsAsTypes.forEach { it.accept(this) }
             }
         }
-        (originalType.parent as? KtTypeReference ?: originalType).accept(visitor)
+        (originalTypeElement.parent as? KtTypeReference ?: originalTypeElement).accept(visitor)
     }
 
     override fun dispose() {
-        if (!originalType.isValid) return
-        originalType.forEachDescendantOfType<KtTypeReference> { it.resolveInfo = null }
+        if (!originalTypeElement.isValid) return
+        originalTypeElement.forEachDescendantOfType<KtTypeReference> { it.resolveInfo = null }
     }
 }
 

@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.INTRODUCE_PROPERTY
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasDescriptor
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.KotlinIntroduceTypeAliasHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.KotlinIntroduceTypeParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
@@ -346,11 +348,19 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
                 KtPsiFactory(project).createModifierList(it).firstChild.node.elementType as KtModifierKeywordToken
             }
             val editor = fixture.editor
-            KotlinIntroduceTypeAliasHandler.selectElements(editor, file) { elements, previousSibling ->
-                KotlinIntroduceTypeAliasHandler.doInvoke(project, editor, elements, explicitPreviousSibling ?: previousSibling) {
-                    it.copy(name = aliasName ?: it.name, visibility = aliasVisibility ?: it.visibility)
+            object : KotlinIntroduceTypeAliasHandler() {
+                override fun doInvoke(
+                        project: Project,
+                        editor: Editor,
+                        elements: List<PsiElement>,
+                        targetSibling: PsiElement,
+                        descriptorSubstitutor: ((IntroduceTypeAliasDescriptor) -> IntroduceTypeAliasDescriptor)?
+                ) {
+                    super.doInvoke(project, editor, elements, explicitPreviousSibling ?: targetSibling) {
+                        it.copy(name = aliasName ?: it.name, visibility = aliasVisibility ?: it.visibility)
+                    }
                 }
-            }
+            }.invoke(project, editor, file, null)
         }
     }
 

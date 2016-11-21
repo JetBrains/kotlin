@@ -55,18 +55,20 @@ sealed class IntroduceTypeAliasAnalysisResult {
 private fun IntroduceTypeAliasData.getTargetScope() = targetSibling.getResolutionScope(bindingContext, resolutionFacade)
 
 fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
-    val psiFactory = KtPsiFactory(originalType)
+    val psiFactory = KtPsiFactory(originalTypeElement)
 
-    val contextExpression = originalType.getStrictParentOfType<KtExpression>()!!
+    val contextExpression = originalTypeElement.getStrictParentOfType<KtExpression>()!!
     val targetScope = getTargetScope()
 
     val dummyVar = psiFactory.createProperty("val a: Int").apply {
-        typeReference!!.replace(originalType.parent as? KtTypeReference ?: psiFactory.createType(originalType))
+        typeReference!!.replace(
+                originalTypeElement.parent as? KtTypeReference ?:
+                if (originalTypeElement is KtTypeElement) psiFactory.createType(originalTypeElement) else psiFactory.createType(originalTypeElement.text))
     }
     val newTypeReference = dummyVar.typeReference!!
     val newReferences = newTypeReference.collectDescendantsOfType<KtTypeReference> { it.resolveInfo != null }
     val newContext = dummyVar.analyzeInContext(targetScope, contextExpression)
-    val project = originalType.project
+    val project = originalTypeElement.project
 
     val unifier = KotlinPsiUnifier.DEFAULT
     val groupedReferencesToExtract = LinkedMultiMap<TypeReferenceInfo, TypeReferenceInfo>()
@@ -106,7 +108,7 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
     val typeParameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(brokenReferences.size, typeParameterNameValidator)
     val typeParameters = (typeParameterNames zip brokenReferences).map { TypeParameter(it.first, groupedReferencesToExtract[it.second]) }
 
-    if (typeParameters.any { it.typeReferenceInfos.any { it.reference.typeElement == originalType } }) {
+    if (typeParameters.any { it.typeReferenceInfos.any { it.reference.typeElement == originalTypeElement } }) {
         return IntroduceTypeAliasAnalysisResult.Error("Type alias cannot refer to types which aren't accessible in the scope where it's defined")
     }
 
@@ -131,7 +133,7 @@ fun IntroduceTypeAliasData.getApplicableVisibilities(): List<KtModifierKeywordTo
 fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithConflicts {
     val conflicts = MultiMap<PsiElement, String>()
 
-    val originalType = originalData.originalType
+    val originalType = originalData.originalTypeElement
     if (name.isEmpty()) {
         conflicts.putValue(originalType, "No name provided for type alias")
     }
@@ -181,6 +183,8 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
                 }
                 occurrence.calleeExpression?.replace(psiFactory.createExpression(aliasName))
             }
+
+            is KtExpression -> occurrence.replace(psiFactory.createExpression(aliasName))
         }
     }
 
@@ -233,15 +237,21 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
 private var KtTypeReference.typeParameterInfo : TypeParameter? by CopyableUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
 
 fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false): KtTypeAlias {
-    val originalType = originalData.originalType
-    val psiFactory = KtPsiFactory(originalType)
+    val originalElement = originalData.originalTypeElement
+    val psiFactory = KtPsiFactory(originalElement)
 
     for (typeParameter in typeParameters)
         for (it in typeParameter.typeReferenceInfos) {
             it.reference.typeParameterInfo = typeParameter
         }
 
-    val typeAlias = psiFactory.createTypeAlias(name, typeParameters.map { it.name }, originalType)
+    val typeParameterNames = typeParameters.map { it.name }
+    val typeAlias = if (originalElement is KtTypeElement) {
+        psiFactory.createTypeAlias(name, typeParameterNames, originalElement)
+    }
+    else {
+        psiFactory.createTypeAlias(name, typeParameterNames, originalElement.text)
+    }
     if (visibility != null && visibility != KtTokens.DEFAULT_VISIBILITY_KEYWORD) {
         typeAlias.addModifier(visibility)
     }
@@ -258,7 +268,10 @@ fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false)
         else {
             name
         }
-        originalType.replace(psiFactory.createType(aliasInstanceText).typeElement!!)
+        when (originalElement) {
+            is KtTypeElement -> originalElement.replace(psiFactory.createType(aliasInstanceText).typeElement!!)
+            is KtExpression -> originalElement.replace(psiFactory.createExpression(aliasInstanceText))
+        }
     }
 
     fun introduceTypeParameters() {

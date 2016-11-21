@@ -4076,6 +4076,24 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceTypeAlias"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/callableReference.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("callableReferenceSelector.kt")
+        public void testCallableReferenceSelector() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/callableReferenceSelector.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
+        @TestMetadata("classLiteral.kt")
+        public void testClassLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/classLiteral.kt");
+            doIntroduceTypeAliasTest(fileName);
+        }
+
         @TestMetadata("constructorCalls.kt")
         public void testConstructorCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/constructorCalls.kt");

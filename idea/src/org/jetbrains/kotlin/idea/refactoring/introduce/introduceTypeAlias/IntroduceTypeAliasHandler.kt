@@ -27,6 +27,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_ELEMENT
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicates
@@ -34,16 +35,16 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.ui.Kot
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetSibling
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtTypeAlias
-import org.jetbrains.kotlin.psi.KtTypeElement
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isTypeConstructorReference
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 
-object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
-    @JvmField
-    val REFACTORING_NAME = "Introduce Type Alias"
+open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
+    companion object {
+        @JvmField
+        val REFACTORING_NAME = "Introduce Type Alias"
+
+        val INSTANCE = KotlinIntroduceTypeAliasHandler()
+    }
 
     fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
         selectElementsWithTargetSibling(
@@ -66,7 +67,7 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
         }
     }
 
-    fun doInvoke(
+    open fun doInvoke(
             project: Project,
             editor: Editor,
             elements: List<PsiElement>,
@@ -76,7 +77,9 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
         val elementToExtract = elements.singleOrNull()
 
         val errorMessage = when (elementToExtract) {
-            is KtSimpleNameExpression -> if (!isTypeConstructorReference(elementToExtract)) "Type reference is expected" else null
+            is KtSimpleNameExpression -> {
+                if (!(isTypeConstructorReference(elementToExtract) || isDoubleColonReceiver(elementToExtract))) "Type reference is expected" else null
+            }
             !is KtTypeElement -> "No type to refactor"
             else -> null
         }
@@ -84,7 +87,7 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
 
         val introduceData = when (elementToExtract) {
             is KtTypeElement -> IntroduceTypeAliasData(elementToExtract, targetSibling)
-            else -> IntroduceTypeAliasData(elementToExtract!!.getStrictParentOfType<KtTypeElement>()!!, targetSibling, true)
+            else -> IntroduceTypeAliasData(elementToExtract!!.getStrictParentOfType<KtTypeElement>() ?: elementToExtract as KtElement, targetSibling, true)
         }
         val analysisResult = introduceData.analyze()
         when (analysisResult) {
@@ -107,6 +110,30 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is KtFile) return
+
+        val offset = if (editor.selectionModel.hasSelection()) editor.selectionModel.selectionStart else editor.caretModel.offset
+
+        val refExpression = file.findElementAt(offset)?.getNonStrictParentOfType<KtSimpleNameExpression>()
+        if (refExpression != null && isDoubleColonReceiver(refExpression)) {
+            val containers = refExpression.getExtractionContainers(strict = true, includeAll = true)
+
+            chooseContainerElementIfNecessary(
+                    containers,
+                    editor,
+                    if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
+                    true,
+                    { it },
+                    {
+                        val targetSibling = refExpression.getOutermostParentContainedIn(it)
+                        if (targetSibling != null) {
+                            doInvoke(project, editor, listOf(refExpression), targetSibling)
+                        }
+                    }
+            )
+
+            return
+        }
+
         selectElements(editor, file) { elements, targetSibling -> doInvoke(project, editor, elements, targetSibling) }
     }
 
@@ -116,5 +143,5 @@ object KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
 }
 
 class IntroduceTypeAliasAction : AbstractIntroduceAction() {
-    override fun getRefactoringHandler(provider: RefactoringSupportProvider) = KotlinIntroduceTypeAliasHandler
+    override fun getRefactoringHandler(provider: RefactoringSupportProvider) = KotlinIntroduceTypeAliasHandler.INSTANCE
 }
