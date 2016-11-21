@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.utils.sure
 
 abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
         private val project: Project
@@ -145,7 +144,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
     }
 
     private fun getRepresentativeVirtualFile(files: Collection<KtFile>): VirtualFile {
-        return files.firstOrNull()?.virtualFile.sure { "No virtual file for " + files.iterator().next() }
+        return files.first().viewProvider.virtualFile
     }
 
     private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: VirtualFile?) {
