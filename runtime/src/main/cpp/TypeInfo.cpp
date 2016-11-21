@@ -1,4 +1,4 @@
-#include <cassert>
+#include "Assert.h"
 #include "TypeInfo.h"
 
 extern "C" {
@@ -10,7 +10,7 @@ int LookupFieldOffset(const TypeInfo* info, FieldNameHash nameSignature) {
       return info->fields_[i].fieldOffset_;
     }
   }
-  assert(false);
+  RuntimeAssert(false, "Unknown field");
   return -1;
 }
 
@@ -21,7 +21,7 @@ void* LookupOpenMethod(const TypeInfo* info, MethodNameHash nameSignature) {
       return info->openMethods_[i].methodEntryPoint_;
     }
   }
-  assert(false); // not implemented yet
+  RuntimeAssert(false, "Unknown open method");
   return nullptr;
 }
 

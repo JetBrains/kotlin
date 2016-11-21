@@ -373,3 +373,7 @@ task link(type: LinkKonanTest) {
     lib = "link/lib"
 } */
 
+task for0(type: RunKonanTest) {
+    goldValue = "2\n3\n4\n"
+    source = "runtime/basic/for0.kt"
+}

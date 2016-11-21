@@ -1,7 +1,13 @@
 package kotlin
 
+import kotlin.collections.*
+
+/**
+ * An array of bytes.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ */
 @ExportTypeInfo("theByteArrayTypeInfo")
-class ByteArray : Cloneable {
+public final class ByteArray : Cloneable {
     // Constructors are handled with compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -19,10 +25,32 @@ class ByteArray : Cloneable {
 
     @SymbolName("Kotlin_ByteArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.ByteIterator {
+        return ByteIteratorImpl(this)
+    }
 }
 
+// TODO: replace with generics, once implemented.
+private class ByteIteratorImpl(val collection: ByteArray) : ByteIterator() {
+    var index : Int = 0
+
+    public override fun nextByte(): Byte {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
+}
+
+/**
+ * An array of chars.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ */
 @ExportTypeInfo("theCharArrayTypeInfo")
-class CharArray : Cloneable {
+public final class CharArray : Cloneable {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -40,10 +68,31 @@ class CharArray : Cloneable {
 
     @SymbolName("Kotlin_CharArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.CharIterator {
+        return CharIteratorImpl(this)
+    }
 }
 
+private class CharIteratorImpl(val collection: CharArray) : CharIterator() {
+    var index : Int = 0
+
+    public override fun nextChar(): Char {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
+}
+
+/**
+ * An array of shorts.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ */
 @ExportTypeInfo("theShortArrayTypeInfo")
-class ShortArray : Cloneable {
+public final class ShortArray : Cloneable {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -61,10 +110,31 @@ class ShortArray : Cloneable {
 
     @SymbolName("Kotlin_ShortArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.ShortIterator {
+        return ShortIteratorImpl(this)
+    }
 }
 
+private class ShortIteratorImpl(val collection: ShortArray) : ShortIterator() {
+    var index : Int = 0
+
+    public override fun nextShort(): Short {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
+}
+
+/**
+ * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ */
 @ExportTypeInfo("theIntArrayTypeInfo")
-class IntArray : Cloneable {
+public final class IntArray : Cloneable {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -82,10 +152,31 @@ class IntArray : Cloneable {
 
     @SymbolName("Kotlin_IntArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.IntIterator {
+        return IntIteratorImpl(this)
+    }
 }
 
+private class IntIteratorImpl(val collection: IntArray) : IntIterator() {
+    var index : Int = 0
+
+    public override fun nextInt(): Int {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
+}
+
+/**
+ * An array of longs.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ */
 @ExportTypeInfo("theLongArrayTypeInfo")
-class LongArray : Cloneable {
+public final class LongArray : Cloneable {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -103,10 +194,31 @@ class LongArray : Cloneable {
 
     @SymbolName("Kotlin_LongArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.LongIterator {
+        return LongIteratorImpl(this)
+    }
 }
 
+private class LongIteratorImpl(val collection: LongArray) : LongIterator() {
+    var index : Int = 0
+
+    public override fun nextLong(): Long {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
+}
+
+/**
+ * An array of floats.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ */
 @ExportTypeInfo("theFloatArrayTypeInfo")
-class FloatArray : Cloneable {
+public final class FloatArray : Cloneable {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -124,10 +236,27 @@ class FloatArray : Cloneable {
 
     @SymbolName("Kotlin_FloatArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.FloatIterator {
+        return FloatIteratorImpl(this)
+    }
+}
+
+private class FloatIteratorImpl(val collection: FloatArray) : FloatIterator() {
+    var index : Int = 0
+
+    public override fun nextFloat(): Float {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
 }
 
 @ExportTypeInfo("theDoubleArrayTypeInfo")
-class DoubleArray : Cloneable {
+public final class DoubleArray : Cloneable {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -145,10 +274,27 @@ class DoubleArray : Cloneable {
 
     @SymbolName("Kotlin_DoubleArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.DoubleIterator {
+        return DoubleIteratorImpl(this)
+    }
+}
+
+private class DoubleIteratorImpl(val collection: DoubleArray) : DoubleIterator() {
+    var index : Int = 0
+
+    public override fun nextDouble(): Double {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
 }
 
 @ExportTypeInfo("theBooleanArrayTypeInfo")
-class BooleanArray : Cloneable {
+public final class BooleanArray : Cloneable {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -166,4 +312,21 @@ class BooleanArray : Cloneable {
 
     @SymbolName("Kotlin_BooleanArray_getArrayLength")
     external private fun getArrayLength(): Int
+
+    /** Creates an iterator over the elements of the array. */
+    public operator fun iterator(): kotlin.collections.BooleanIterator {
+        return BooleanIteratorImpl(this)
+    }
+}
+
+private class BooleanIteratorImpl(val collection: BooleanArray) : BooleanIterator() {
+    var index : Int = 0
+
+    public override fun nextBoolean(): Boolean {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
 }
