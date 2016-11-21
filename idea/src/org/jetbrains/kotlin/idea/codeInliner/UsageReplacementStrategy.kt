@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.ui.GuiUtils
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -68,7 +70,7 @@ private fun UsageReplacementStrategy.replaceUsages(
         commandName: String,
         postAction: () -> Unit
 ) {
-    UIUtil.invokeLaterIfNeeded {
+    GuiUtils.invokeLaterIfNeeded({
         project.executeWriteCommand(commandName) {
             // we should delete imports later to not affect other usages
             val importsToDelete = arrayListOf<KtImportDirective>()
@@ -97,5 +99,5 @@ private fun UsageReplacementStrategy.replaceUsages(
 
             postAction()
         }
-    }
+    }, ModalityState.NON_MODAL)
 }

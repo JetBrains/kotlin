@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.*
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
@@ -28,7 +29,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.util.ui.UIUtil
+import com.intellij.ui.GuiUtils
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -203,7 +204,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
                                             .mapNotNull { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }
                                             .filter { import -> !import.isAllUnder && import.targetDescriptors().size == 1 }
                                 }
-                                UIUtil.invokeLaterIfNeeded {
+                                GuiUtils.invokeLaterIfNeeded({
                                     project.executeWriteCommand(text) {
                                         importsToDelete.forEach { import ->
                                             if (!FileModificationService.getInstance().preparePsiElementForWrite(import)) return@forEach
@@ -216,7 +217,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
                                         }
                                         declaration.delete()
                                     }
-                                }
+                                }, ModalityState.NON_MODAL)
                             }
                         })
             }
