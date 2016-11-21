@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.translate.context.AliasingContext;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
@@ -107,7 +106,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     public JsExpression translateAsMethod() {
         translateAsMethodWithoutMetadata();
 
-        if (shouldBeInlined(descriptor) && DescriptorUtilsKt.isEffectivelyPublicApi(descriptor)) {
+        if (shouldBeInlined(descriptor, context()) && DescriptorUtilsKt.isEffectivelyPublicApi(descriptor)) {
             InlineMetadata metadata = InlineMetadata.compose(functionObject, descriptor);
             return metadata.getFunctionWithMetadata();
         }

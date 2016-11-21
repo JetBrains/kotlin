@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import java.util.List;
 
 import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
-import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
-import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator.getConstant;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
@@ -55,19 +53,12 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             return (new CallExpressionTranslator(expression, receiver, context)).translateJsCode();
         }
 
-        JsExpression callExpression = (new CallExpressionTranslator(expression, receiver, context)).translate();
-
-        if (shouldBeInlined(expression, context)) {
-            setInlineCallMetadata(callExpression, expression, resolvedCall, context);
-        }
-
-        return callExpression;
+        return (new CallExpressionTranslator(expression, receiver, context)).translate();
     }
 
-    public static boolean shouldBeInlined(@NotNull KtCallExpression expression, @NotNull TranslationContext context) {
+    public static boolean shouldBeInlined(@NotNull CallableDescriptor descriptor, @NotNull TranslationContext context) {
         if (context.getConfig().getConfiguration().getBoolean(CommonConfigurationKeys.DISABLE_INLINE)) return false;
 
-        CallableDescriptor descriptor = getFunctionDescriptor(expression, context);
         return shouldBeInlined(descriptor);
     }
 

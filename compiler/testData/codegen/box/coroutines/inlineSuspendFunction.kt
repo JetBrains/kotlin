@@ -1,5 +1,8 @@
 // WITH_RUNTIME
 // WITH_REFLECT
+// CHECK_NOT_CALLED: suspendInline_die06n$
+// CHECK_NOT_CALLED: suspendInline_nesahw$
+// CHECK_NOT_CALLED: suspendInline_grpnnl$
 class Controller {
     fun withValue(v: String, x: Continuation<String>) {
         x.resume(v)

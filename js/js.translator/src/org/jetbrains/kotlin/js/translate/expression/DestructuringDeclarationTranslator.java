@@ -90,7 +90,7 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
             assert entryInitCall != null : "Entry init call must be not null";
             JsExpression entryInitializer = CallTranslator.translate(context(), entryInitCall, multiObjNameRef);
             FunctionDescriptor candidateDescriptor = entryInitCall.getCandidateDescriptor();
-            if (CallExpressionTranslator.shouldBeInlined(candidateDescriptor)) {
+            if (CallExpressionTranslator.shouldBeInlined(candidateDescriptor, context())) {
                 setInlineCallMetadata(entryInitializer, entry, entryInitCall, context());
             }
 

@@ -27,9 +27,12 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
+import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.setInlineCallMetadata
 import org.jetbrains.kotlin.psi.Call.CallType
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
@@ -96,32 +99,43 @@ private fun translateCall(context: TranslationContext,
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
         val variableCall = resolvedCall.variableCall
-        if (variableCall.expectedReceivers()) {
+
+        return if (variableCall.expectedReceivers()) {
             val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.extensionOrDispatchReceiver)
-            return translateFunctionCall(context, resolvedCall.functionCall, ExplicitReceivers(newReceiver))
+            translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(newReceiver))
         } else {
             val dispatchReceiver = CallTranslator.translateGet(context, variableCall, null)
-            if (explicitReceivers.extensionOrDispatchReceiver == null)
-                return translateFunctionCall(context, resolvedCall.functionCall, ExplicitReceivers(dispatchReceiver))
-            else
-                return translateFunctionCall(context, resolvedCall.functionCall, ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver))
+            if (explicitReceivers.extensionOrDispatchReceiver == null) {
+                translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(dispatchReceiver))
+            }
+            else {
+                translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall,
+                                      ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver))
+            }
         }
     }
 
     val call = resolvedCall.call
     if (call.callType == CallType.INVOKE && !isInvokeCallOnVariable(call)) {
         val explicitReceiversForInvoke = computeExplicitReceiversForInvoke(context, resolvedCall, explicitReceivers)
-        return translateFunctionCall(context, resolvedCall, explicitReceiversForInvoke)
+        return translateFunctionCall(context, resolvedCall, resolvedCall, explicitReceiversForInvoke)
     }
 
-    return translateFunctionCall(context, resolvedCall, explicitReceivers)
+    return translateFunctionCall(context, resolvedCall, resolvedCall, explicitReceivers)
 }
 
 private fun translateFunctionCall(context: TranslationContext,
                                   resolvedCall: ResolvedCall<out FunctionDescriptor>,
+                                  inlineResolvedCall: ResolvedCall<out CallableDescriptor>,
                                   explicitReceivers: ExplicitReceivers
 ): JsExpression {
     val callExpression = context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
+
+    if (CallExpressionTranslator.shouldBeInlined(inlineResolvedCall.resultingDescriptor, context)) {
+        setInlineCallMetadata(callExpression, resolvedCall.call.callElement as KtExpression,
+                              inlineResolvedCall.resultingDescriptor, context)
+    }
+
     if (resolvedCall.resultingDescriptor.isSuspend && resolvedCall.resultingDescriptor.initialSignatureDescriptor != null) {
         context.currentBlock.statements += JsAstUtils.asSyntheticStatement((callExpression as JsInvocation).apply {
             isSuspend = true

@@ -20,11 +20,9 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
@@ -99,7 +97,7 @@ public final class PsiUtils {
         return isInOperation(binaryExpression) || isNotInOperation(binaryExpression);
     }
 
-    public static boolean isNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
+    private static boolean isNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
         return (binaryExpression.getOperationToken() == KtTokens.NOT_IN);
     }
 
@@ -124,17 +122,6 @@ public final class PsiUtils {
         KtExpression rangeExpression = expression.getLoopRange();
         assert rangeExpression != null;
         return rangeExpression;
-    }
-
-    @NotNull
-    public static CallableDescriptor getFunctionDescriptor(
-            @NotNull KtCallExpression expression,
-            @NotNull TranslationContext context
-    ) {
-        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context.bindingContext());
-        assert resolvedCall != null;
-
-        return getFunctionDescriptor(resolvedCall);
     }
 
     @NotNull
