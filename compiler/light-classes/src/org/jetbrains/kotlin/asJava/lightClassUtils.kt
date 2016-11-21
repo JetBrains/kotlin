@@ -70,7 +70,7 @@ fun PsiElement.toLightMethods(): List<PsiMethod> =
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
-            is KtClass -> toLightClass()?.getConstructors()?.first().singletonOrEmptyList()
+            is KtClass -> toLightClass()?.getConstructors()?.firstOrNull().singletonOrEmptyList()
             is PsiMethod -> this.singletonList()
             else -> listOf()
         }
