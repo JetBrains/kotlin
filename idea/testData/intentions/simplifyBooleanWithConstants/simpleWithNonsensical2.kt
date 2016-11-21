@@ -1,3 +1,7 @@
+fun bar(): Boolean {
+    return false
+}
+
 fun foo(y: Boolean) {
-    <caret>true && () && y
+    <caret>true && (bar()) && y
 }

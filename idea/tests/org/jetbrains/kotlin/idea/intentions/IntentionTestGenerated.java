@@ -12527,6 +12527,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("equalsConjunction.kt")
+        public void testEqualsConjunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/equalsConjunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsDisjunction.kt")
+        public void testEqualsDisjunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/equalsDisjunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsFalse.kt")
+        public void testEqualsFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/equalsFalse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsTrue.kt")
+        public void testEqualsTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/equalsTrue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsTrueOrFalse.kt")
+        public void testEqualsTrueOrFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/equalsTrueOrFalse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inapplicableNoConstants.kt")
         public void testInapplicableNoConstants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/inapplicableNoConstants.kt");
@@ -12554,6 +12584,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("inapplicableUsesVals3.kt")
         public void testInapplicableUsesVals3() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/inapplicableUsesVals3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notEqualsFalse.kt")
+        public void testNotEqualsFalse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/notEqualsFalse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notEqualsTrue.kt")
+        public void testNotEqualsTrue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/notEqualsTrue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableBoolean.kt")
+        public void testNullableBoolean() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/nullableBoolean.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableComplex.kt")
+        public void testNullableComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/nullableComplex.kt");
             doTest(fileName);
         }
 
