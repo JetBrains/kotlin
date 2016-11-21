@@ -116,14 +116,7 @@ internal interface ContextUtils {
      */
     val String.globalHashBase64: String
         get() {
-            val bytes = this.toByteArray(Charsets.UTF_8)
-            val hashBytes = this.globalHashBytes
-
-            val base64Bytes = java.util.Base64.getEncoder().encode(globalHashBytes)
-            // TODO: do not use JRE for base64
-            // (it is impossible right now due to native interop limitations)
-
-            return String(base64Bytes, Charsets.US_ASCII)
+            return base64Encode(globalHashBytes)
         }
 
     /**

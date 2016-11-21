@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 int Base64Encode(
-    const void* input, uint32_t inputLen, char* output, uint32_t outputLen);
+    const void* input, uint32_t inputLen, void* output, uint32_t outputLen);
 
 int Base64Decode(
     const char* input, uint32_t inputLen, void* output, uint32_t* outputLen);

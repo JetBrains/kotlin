@@ -36,7 +36,8 @@ extern "C" {
 #endif
 
 int Base64Encode(
-    const void* dataBuf, uint32_t dataLength, char* result, uint32_t resultSize) {
+    const void* dataBuf, uint32_t dataLength, void* resultBuf, uint32_t resultSize) {
+  char *result = reinterpret_cast<char*>(resultBuf);
   const uint8_t *data = reinterpret_cast<const uint8_t*>(dataBuf);
   size_t resultIndex = 0;
   size_t x;
