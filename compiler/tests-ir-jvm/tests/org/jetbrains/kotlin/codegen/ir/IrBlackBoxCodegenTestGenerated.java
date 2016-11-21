@@ -4768,6 +4768,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("switchLikeWhen.kt")
+            public void testSwitchLikeWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/switchLikeWhen.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("throwFromCatch.kt")
             public void testThrowFromCatch() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/throwFromCatch.kt");
@@ -7676,6 +7682,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("assignPlusOnSmartCast.kt")
         public void testAssignPlusOnSmartCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/increment/assignPlusOnSmartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augmentedAssignmentWithComplexRhs.kt")
+        public void testAugmentedAssignmentWithComplexRhs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/increment/augmentedAssignmentWithComplexRhs.kt");
             doTest(fileName);
         }
 

@@ -8838,6 +8838,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("augmentedAssignmentWithComplexRhs.kt")
+        public void testAugmentedAssignmentWithComplexRhs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/increment/augmentedAssignmentWithComplexRhs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classNaryGetSet.kt")
         public void testClassNaryGetSet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/increment/classNaryGetSet.kt");

@@ -91,7 +91,11 @@ object DefaultVariableAccessCase : VariableAccessCase() {
             getCapturedVarAccessor(functionRef)
         }
         else {
-            functionRef
+            functionRef.apply {
+                if (isGetAccess()) {
+                    sideEffects = SideEffectKind.DEPENDS_ON_STATE
+                }
+            }
         }
 
         val localVariableDescriptor = resolvedCall.resultingDescriptor as? LocalVariableDescriptor

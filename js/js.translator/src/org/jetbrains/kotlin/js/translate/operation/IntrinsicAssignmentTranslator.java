@@ -23,6 +23,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
+import org.jetbrains.kotlin.lexer.KtSingleValueToken;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -33,8 +34,10 @@ import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.isSimpleN
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateRightExpression;
 
 public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
-    private JsExpression right;
-    private AccessTranslator accessTranslator;
+    private final JsExpression right;
+    private final AccessTranslator accessTranslator;
+    private final boolean rightExpressionTrivial;
+    private final JsBlock rightBlock = new JsBlock();
 
     @NotNull
     public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
@@ -46,10 +49,9 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
                                           @NotNull TranslationContext context) {
         super(expression, context);
 
-        JsBlock rightBlock = new JsBlock();
         right = translateRightExpression(context, expression, rightBlock);
-        accessTranslator = createAccessTranslator(expression.getLeft(), !rightBlock.isEmpty());
-        context.addStatementsToCurrentBlockFrom(rightBlock);
+        rightExpressionTrivial = rightBlock.isEmpty();
+        accessTranslator = createAccessTranslator(expression.getLeft(), !rightExpressionTrivial);
     }
 
     @NotNull
@@ -62,7 +64,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translateAsAssignmentOperation() {
-        if (isSimpleNameExpressionNotDelegatedLocalVar(expression.getLeft(), context())) {
+        if (isSimpleNameExpressionNotDelegatedLocalVar(expression.getLeft(), context()) && rightExpressionTrivial) {
             return translateAsPlainAssignmentOperation();
         }
         return translateAsAssignToCounterpart();
@@ -71,14 +73,19 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
     @NotNull
     private JsExpression translateAsAssignToCounterpart() {
         JsBinaryOperator operator = getCounterpartOperator();
-        JsBinaryOperation counterpartOperation =
-                new JsBinaryOperation(operator, accessTranslator.translateAsGet(), right);
+        JsExpression oldValue = accessTranslator.translateAsGet();
+        if (!rightExpressionTrivial) {
+            oldValue = context().defineTemporary(oldValue);
+        }
+        JsBinaryOperation counterpartOperation = new JsBinaryOperation(operator, oldValue, right);
+        context().addStatementsToCurrentBlockFrom(rightBlock);
         return accessTranslator.translateAsSet(counterpartOperation);
     }
 
     @NotNull
     private JsBinaryOperator getCounterpartOperator() {
         KtToken assignmentOperationToken = getOperationToken(expression);
+        assert assignmentOperationToken instanceof KtSingleValueToken;
         assert OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(assignmentOperationToken);
         KtToken counterpartToken = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(assignmentOperationToken);
         assert OperatorTable.hasCorrespondingBinaryOperator(counterpartToken) :
@@ -88,6 +95,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translateAsPlainAssignmentOperation() {
+        context().addStatementsToCurrentBlockFrom(rightBlock);
         JsBinaryOperator operator = getAssignmentOperator();
         return new JsBinaryOperation(operator, accessTranslator.translateAsGet(), right);
     }
@@ -95,6 +103,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
     @NotNull
     private JsBinaryOperator getAssignmentOperator() {
         KtToken token = getOperationToken(expression);
+        assert token instanceof KtSingleValueToken;
         assert OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(token);
         assert OperatorTable.hasCorrespondingBinaryOperator(token) :
                 "Unsupported token encountered: " + token.toString();
@@ -103,6 +112,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translateAsPlainAssignment() {
+        context().addStatementsToCurrentBlockFrom(rightBlock);
         return accessTranslator.translateAsSet(right);
     }
 }
