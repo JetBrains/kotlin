@@ -33,6 +33,7 @@ extern const TypeInfo* theFloatArrayTypeInfo;
 extern const TypeInfo* theDoubleArrayTypeInfo;
 extern const TypeInfo* theBooleanArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
+extern const TypeInfo* theThrowableTypeInfo;
 
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info);
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);

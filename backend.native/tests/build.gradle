@@ -380,9 +380,14 @@ task intrinsic(type: UnitKonanTest) {
 task link(type: LinkKonanTest) {
     source = "link/src/bar.kt"
     lib = "link/lib"
-} 
+}
 
 task for0(type: RunKonanTest) {
     goldValue = "2\n3\n4\n"
     source = "runtime/basic/for0.kt"
+}
+
+task throw0(type: RunKonanTest) {
+    goldValue = "Done\n"
+    source = "runtime/basic/throw0.kt"
 }

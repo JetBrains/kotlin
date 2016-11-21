@@ -4,6 +4,7 @@
 
 #include "Assert.h"
 #include "Exceptions.h"
+#include "Types.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,6 +33,12 @@ void ThrowClassCastException() {
   snprintf(message, sizeof(message), "ClassCastException at %p", pc);
   write(STDOUT_FILENO, message, strlen(message));
   // TODO: throw it for real.
+  RuntimeAssert(false, "Throwing is unsupported");
+}
+
+void ThrowException(KRef exception) {
+  RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
+                "Throwing something non-throwable");
   RuntimeAssert(false, "Throwing is unsupported");
 }
 

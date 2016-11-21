@@ -13,6 +13,8 @@ void ThrowNullPointerException();
 void ThrowArrayIndexOutOfBoundsException();
 // Throws class cast exception.
 void ThrowClassCastException();
+// Throws arbitrary exception.
+void ThrowException(KRef exception);
 
 #ifdef __cplusplus
 } // extern "C"
