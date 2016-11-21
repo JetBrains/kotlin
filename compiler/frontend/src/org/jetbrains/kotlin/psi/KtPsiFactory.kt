@@ -81,9 +81,6 @@ class KtPsiFactory(private val project: Project) {
     fun createThisExpression() =
                 (createExpression("this.x") as KtQualifiedExpression).receiverExpression as KtThisExpression
 
-    fun createClassLiteral(className: String): KtClassLiteralExpression =
-            createExpression("$className::class") as KtClassLiteralExpression
-
     fun createCallArguments(text: String): KtValueArgumentList {
         val property = createProperty("val x = foo $text")
         return (property.initializer as KtCallExpression).valueArgumentList!!
@@ -328,9 +325,13 @@ class KtPsiFactory(private val project: Project) {
 
     fun createTypeParameter(text: String) = createTypeParameterList("<$text>").parameters.first()!!
 
-    fun createFunctionLiteralParameterList(text: String): KtParameterList {
-        return (createExpression("{ $text -> 0}") as KtLambdaExpression).functionLiteral.valueParameterList!!
-    }
+    fun createFunctionLiteralParameterList(text: String) =
+            createLambdaExpression(text, "0").functionLiteral.valueParameterList!!
+
+    fun createLambdaExpression(parameters: String, body: String): KtLambdaExpression =
+            (if (parameters.isNotEmpty()) createExpression("{ $parameters -> $body }")
+            else createExpression("{ $body }")) as KtLambdaExpression
+
 
     fun createEnumEntry(text: String): KtEnumEntry {
         return createDeclaration<KtClass>("enum class E {$text}").declarations[0] as KtEnumEntry
@@ -387,11 +388,6 @@ class KtPsiFactory(private val project: Project) {
         return file.importDirectives.first()
     }
 
-    fun createImportDirectiveWithImportList(importPath: ImportPath): KtImportList {
-        val importDirective = createImportDirective(importPath)
-        return importDirective.parent as KtImportList
-    }
-
     fun createPrimaryConstructor(): KtPrimaryConstructor {
         return createClass("class A()").getPrimaryConstructor()!!
     }
@@ -405,10 +401,6 @@ class KtPsiFactory(private val project: Project) {
 
     fun createLabeledExpression(labelName: String): KtLabeledExpression
         = createExpression("$labelName@ 1") as KtLabeledExpression
-
-    fun createFieldIdentifier(fieldName: String): PsiElement {
-        return (createExpression("$" + fieldName) as KtNameReferenceExpression).getReferencedNameElement()
-    }
 
     fun createTypeCodeFragment(text: String, context: PsiElement?): KtTypeCodeFragment {
         return KtTypeCodeFragment(project, "fragment.kt", text, context)
