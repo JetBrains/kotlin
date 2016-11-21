@@ -19,25 +19,23 @@ package org.jetbrains.kotlin.js.resolve
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsNameChecker
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsNameClashChecker
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsNativeRttiChecker
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsReifiedNativeChecker
-import org.jetbrains.kotlin.js.resolve.diagnostics.NativeInnerClassChecker
+import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsReflectionAPICallChecker
+import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object JsPlatformConfigurator : PlatformConfigurator(
         DynamicTypesAllowed(),
-        additionalDeclarationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
-                                               NativeInnerClassChecker(), JsNameChecker),
+        additionalDeclarationCheckers = listOf(
+                NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), NativeInnerClassChecker(),
+                JsNameChecker,
+                PlatformImplDeclarationChecker()
+        ),
         additionalCallCheckers = listOf(),
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),

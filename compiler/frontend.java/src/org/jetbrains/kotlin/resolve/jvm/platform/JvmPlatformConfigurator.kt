@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmOverloadFilter
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsTypeChecker
@@ -43,7 +44,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 TypeParameterBoundIsNotArrayChecker(),
                 JvmSyntheticApplicabilityChecker(),
                 StrictfpApplicabilityChecker(),
-                AdditionalBuiltInsMemberOverrideDeclarationChecker
+                AdditionalBuiltInsMemberOverrideDeclarationChecker,
+                PlatformImplDeclarationChecker()
         ),
 
         additionalCallCheckers = listOf(

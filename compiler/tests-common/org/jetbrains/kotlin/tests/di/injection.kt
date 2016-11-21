@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.tests.di
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.container.*
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.getValue
 import org.jetbrains.kotlin.container.useImpl

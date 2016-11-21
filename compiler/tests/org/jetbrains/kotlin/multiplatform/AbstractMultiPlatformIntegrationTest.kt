@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
-class MultiPlatformIntegrationTest : KtUsefulTestCase() {
+abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
     fun doTest(directoryPath: String) {
-        val root = File(KotlinTestUtils.getTestDataPathBase() + directoryPath)
+        val root = File(directoryPath).apply { assert(exists()) }
         val commonSrc = File(root, "common.kt")
         val jsSrc = File(root, "js.kt")
         val jvmSrc = File(root, "jvm.kt")
@@ -46,31 +46,31 @@ class MultiPlatformIntegrationTest : KtUsefulTestCase() {
             appendln("Output:")
             appendln(commonOutput)
 
-            val (jvmOutput, jvmExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
-                    jvmSrc.absolutePath, commonSrc.absolutePath,
-                    "-d", jvmDest.absolutePath,
-                    "-Xmulti-platform"
-            ))
-            appendln("-- JVM --")
-            appendln("Exit code: $jvmExitCode")
-            appendln("Output:")
-            appendln(jvmOutput)
+            if (jvmSrc.exists()) {
+                val (jvmOutput, jvmExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
+                        jvmSrc.absolutePath, commonSrc.absolutePath,
+                        "-d", jvmDest.absolutePath,
+                        "-Xmulti-platform"
+                ))
+                appendln("-- JVM --")
+                appendln("Exit code: $jvmExitCode")
+                appendln("Output:")
+                appendln(jvmOutput)
+            }
 
-            val (jsOutput, jsExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JSCompiler(), listOf(
-                    jsSrc.absolutePath, commonSrc.absolutePath,
-                    "-output", jsDest.absolutePath,
-                    "-Xmulti-platform"
-            ))
-            appendln("-- JS --")
-            appendln("Exit code: $jsExitCode")
-            appendln("Output:")
-            append(jsOutput)
+            if (jsSrc.exists()) {
+                val (jsOutput, jsExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JSCompiler(), listOf(
+                        jsSrc.absolutePath, commonSrc.absolutePath,
+                        "-output", jsDest.absolutePath,
+                        "-Xmulti-platform"
+                ))
+                appendln("-- JS --")
+                appendln("Exit code: $jsExitCode")
+                appendln("Output:")
+                append(jsOutput)
+            }
         }
 
         KotlinTestUtils.assertEqualsToFile(File(root, "output.txt"), result)
-    }
-
-    fun testSimple() {
-        doTest("/multiplatform/simple/")
     }
 }

@@ -33,12 +33,14 @@ import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier;
+import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
@@ -501,6 +503,11 @@ public interface Errors {
     DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+
+    DiagnosticFactory2<KtDeclaration, MemberDescriptor,
+            Map<PlatformImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>> PLATFORM_DECLARATION_WITHOUT_DEFINITION =
+            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<PsiElement> PLATFORM_DEFINITION_WITHOUT_DECLARATION = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

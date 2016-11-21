@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -PLATFORM_DEFINITION_WITHOUT_DECLARATION
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt

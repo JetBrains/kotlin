@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.android.intentions.AbstractAndroidIntentionTest
 import org.jetbrains.kotlin.android.intentions.AbstractAndroidResourceIntentionTest
+import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
 import org.jetbrains.kotlin.android.quickfixes.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
@@ -131,6 +132,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
+import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
@@ -139,6 +141,7 @@ import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
+import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
@@ -154,8 +157,6 @@ import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
-import org.jetbrains.kotlin.js.test.semantics.*
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -187,9 +188,12 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithJsStdLibAndBackendCompilation")
         }
 
-
         testClass<AbstractDiagnosticsWithModifiedMockJdkTest>() {
             model("diagnostics/testWithModifiedMockJdk")
+        }
+
+        testClass<AbstractMultiPlatformIntegrationTest>() {
+            model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
         }
 
         testClass<AbstractForeignAnnotationsTest>() {

@@ -1,0 +1,26 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/incompatibleProperties/common.kt:1:1: error: no definition is found for platform declaration 'pval'
+The following declaration is incompatible because property kinds are different (val vs var):
+    public var pval: String
+
+platform val pval: String
+^
+compiler/testData/multiplatform/incompatibleProperties/common.kt:2:1: error: no definition is found for platform declaration 'pvar'
+The following declaration is incompatible because property kinds are different (val vs var):
+    public val pvar: String
+
+platform var pvar: String
+^
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+impl var pval: String = ""
+^
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+impl val pvar: String = ""
+^
+
