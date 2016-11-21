@@ -73,7 +73,7 @@ class CoroutineBodyTransformer(
 
         val thenEntryBlock = CoroutineBlock()
         currentBlock = thenEntryBlock
-        x.thenStatement?.accept(this)
+        x.thenStatement.accept(this)
         val thenExitBlock = currentBlock
 
         val elseEntryBlock = CoroutineBlock()
@@ -322,8 +322,7 @@ class CoroutineBodyTransformer(
     }
 
     override fun visitThrow(x: JsThrow) {
-        if (throwFunctionName != null) {
-            // TODO: what if we catch exception in coroutine?
+        if (throwFunctionName != null && tryStack.isEmpty()) {
             val methodRef = JsNameRef(throwFunctionName, JsNameRef(context.controllerFieldName, JsLiteral.THIS))
             val invocation = JsInvocation(methodRef, x.expression).apply {
                 source = x.source
