@@ -86,7 +86,11 @@ class FileScopeFactory(
 
         val packageView = moduleDescriptor.getPackage(file.packageFqName)
         val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
-                              ?: error("Could not find fragment ${file.packageFqName} for file ${file.name}")
+        if (packageFragment == null) {
+            // TODO J2K and change return type of diagnoseMissingPackageFragment() to Nothing
+            (topLevelDescriptorProvider as? LazyClassContext)?.declarationProviderFactory?.diagnoseMissingPackageFragment(file)
+            error("Could not find fragment ${file.packageFqName} for file ${file.name}")
+        }
 
         fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace, excludedImports: List<FqName>? = null) =
                 LazyImportResolver(
