@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
 object LightClassUtil {
 
@@ -169,8 +168,8 @@ object LightClassUtil {
     private fun getWrappingClasses(declaration: KtDeclaration): Sequence<PsiClass> {
         val wrapperClass = getWrappingClass(declaration) ?: return emptySequence()
         val wrapperClassOrigin = (wrapperClass as KtLightClass).kotlinOrigin
-        if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion()) {
-            return sequenceOfLazyValues({ wrapperClass }, { wrapperClass.parent as PsiClass })
+        if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion() && wrapperClass.parent is PsiClass) {
+            return sequenceOf(wrapperClass, wrapperClass.parent as PsiClass)
         }
         return sequenceOf(wrapperClass)
     }
