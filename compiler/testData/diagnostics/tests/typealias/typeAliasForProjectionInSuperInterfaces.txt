@@ -34,7 +34,7 @@ public final class Test4 : IT<*> /* = I<*> */ {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Test5 : IT<IT<*> /* = I<*> */> /* = I<IT<*> /* = I<*> */> */ {
+public final class Test5 : IT<IT<*> /* = I<*> */> /* = I<I<*>> */ {
     public constructor Test5()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

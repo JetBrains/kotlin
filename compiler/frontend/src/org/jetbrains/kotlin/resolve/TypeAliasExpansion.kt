@@ -16,14 +16,10 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.contains
 
 class TypeAliasExpansion private constructor(
         val parent: TypeAliasExpansion?,
