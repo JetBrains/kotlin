@@ -210,6 +210,10 @@ class KtLightClassForFacade private constructor(
 
     override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
 
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        return baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
+    }
+
     override fun hashCode() = hashCode
 
     private fun computeHashCode(): Int {
