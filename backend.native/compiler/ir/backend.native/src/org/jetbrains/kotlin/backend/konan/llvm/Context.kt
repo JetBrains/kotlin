@@ -30,6 +30,7 @@ internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val
     val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")
     val isInstanceFunction = importRtFunction("IsInstance")
     val checkInstanceFunction = importRtFunction("CheckInstance")
+    val throwExceptionFunction = importRtFunction("ThrowException")
 
     fun dispose() {
         LLVMDisposeBuilder(llvmBuilder)

@@ -164,6 +164,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
         = LLVMPositionBuilderAtEnd(context.llvmBuilder, bbLabel)
 
     fun ret(value: LLVMOpaqueValue?) = LLVMBuildRet(context.llvmBuilder, value)
+    fun  unreachable(): LLVMOpaqueValue? = LLVMBuildUnreachable(context.llvmBuilder)
 }
 
 

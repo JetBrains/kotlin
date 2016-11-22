@@ -201,6 +201,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
+    override fun visitThrow(expression: IrThrow) {
+        logger.log("visitThrow                 : ${ir2string(expression)}")
+        evaluateExpression("", expression)
+    }
+
+    //-------------------------------------------------------------------------//
+
     override fun visitFunction(declaration: IrFunction) {
         logger.log("visitFunction                  : ${ir2string(declaration)}")
         codegen.function(declaration)
@@ -328,11 +335,21 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrBlock           -> return evaluateBlock       (                 value)
             is IrExpressionBody  -> return evaluateExpression  (tmpVariableName, value.expression)
             is IrWhen            -> return evaluateWhen        (tmpVariableName, value)
+            is IrThrow           -> return evaluateThrow       (tmpVariableName, value)
             null                 -> return null
             else                 -> {
                 TODO()
             }
         }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateThrow(tmpVariableName: String, expression: IrThrow): LLVMOpaqueValue? {
+        val objPointer = evaluateExpression(codegen.newVar(), expression.value)
+        val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, objPointer!!, codegen.newVar())
+        val args = listOf(objHeaderPtr)                         // Create arg list.
+        return codegen.call(context.throwExceptionFunction, args, "")
     }
 
     //-------------------------------------------------------------------------//
