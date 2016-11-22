@@ -53,21 +53,21 @@ class KotlinFileStubForIde(
                                      facadePartSimpleNames = null,
                                      isScript = isScript)
 
-        fun forFileFacadeStub(facadeFqName: FqName, isScript: Boolean): KotlinFileStubImpl =
+        fun forFileFacadeStub(facadeFqName: FqName): KotlinFileStubImpl =
                 KotlinFileStubForIde(jetFile = null,
                                      packageName = facadeFqName.parent().stringRef(),
                                      facadeSimpleName = facadeFqName.shortName().stringRef(),
                                      partSimpleName = facadeFqName.shortName().stringRef(),
                                      facadePartSimpleNames = null,
-                                     isScript = isScript)
+                                     isScript = false)
 
-        fun forMultifileClassStub(facadeFqName: FqName, partNames: List<String>?, isScript: Boolean): KotlinFileStubImpl =
+        fun forMultifileClassStub(facadeFqName: FqName, partNames: List<String>?): KotlinFileStubImpl =
                 KotlinFileStubForIde(jetFile = null,
                                      packageName = facadeFqName.parent().stringRef(),
                                      facadeSimpleName = facadeFqName.shortName().stringRef(),
                                      partSimpleName = null,
                                      facadePartSimpleNames = partNames?.map { StringRef.fromString(it) },
-                                     isScript = isScript)
+                                     isScript = false)
 
         private fun FqName.stringRef() = StringRef.fromString(asString())!!
         private fun Name.stringRef() = StringRef.fromString(asString())!!

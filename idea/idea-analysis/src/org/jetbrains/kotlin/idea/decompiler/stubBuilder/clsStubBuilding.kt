@@ -71,7 +71,7 @@ fun createFileFacadeStub(
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer.Package(
             packageFqName, c.nameResolver, c.typeTable, JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null)
@@ -88,7 +88,7 @@ fun createMultifileClassStub(
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
     val partNames = header.data?.asList()?.map { it.substringAfterLast('/') }
-    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames)
     setupFileStub(fileStub, packageFqName)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
