@@ -4562,6 +4562,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/inlineSizeReduction"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("inlineImportCleanup.kt")
+        public void testInlineImportCleanup() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineSizeReduction/inlineImportCleanup.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineLambdaCleanup.kt")
         public void testInlineLambdaCleanup() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineSizeReduction/inlineLambdaCleanup.kt");

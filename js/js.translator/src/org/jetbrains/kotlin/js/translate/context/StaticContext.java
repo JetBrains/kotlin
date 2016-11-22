@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import java.util.*;
 
 import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.UNKNOWN_EXTERNAL_MODULE_NAME;
-import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
@@ -403,6 +402,7 @@ public final class StaticContext {
         // TODO: remove prefix when problem with scopes is solved
 
         JsName result = rootFunction.getScope().declareFreshName("imported$" + suggestedName);
+        MetadataProperties.setImported(result, true);
         importStatements.add(JsAstUtils.newVar(result, declaration));
         return result;
     }
