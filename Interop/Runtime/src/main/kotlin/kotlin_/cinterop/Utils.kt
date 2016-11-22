@@ -75,11 +75,11 @@ inline fun <reified T : CVariable> NativePlacement.allocArray(length: Int): CArr
  * @param T must not be abstract
  */
 inline fun <reified T : CVariable> NativePlacement.allocArray(length: Long,
-                                                              initializer: T.(Long)->Unit): CArray<T> {
+                                                              initializer: T.(index: Long)->Unit): CArray<T> {
     val res = allocArray<T>(length)
 
-    (0 until length).forEach {
-        res[it].initializer(it)
+    (0 until length).forEach { index ->
+        res[index].initializer(index)
     }
 
     return res
@@ -90,8 +90,11 @@ inline fun <reified T : CVariable> NativePlacement.allocArray(length: Long,
  *
  * @param T must not be abstract
  */
-inline fun <reified T : CVariable> NativePlacement.allocArray(length: Int, initializer: T.(Long)->Unit) =
-        allocArray(length.toLong(), initializer)
+inline fun <reified T : CVariable> NativePlacement.allocArray(length: Int,
+                                                              initializer: T.(index: Int)->Unit): CArray<T> =
+        allocArray(length.toLong()) { index ->
+            this.initializer(index.toInt())
+        }
 
 
 /**
