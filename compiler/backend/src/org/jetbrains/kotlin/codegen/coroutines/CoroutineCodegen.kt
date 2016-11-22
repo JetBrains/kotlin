@@ -64,49 +64,7 @@ class CoroutineCodegen(
                     typeMapper.mapType(parameter.type).descriptor, null, null)
         }
 
-        val classDescriptor = closureContext.contextDescriptor
-
-        // protected fun doResume(result, throwable)
-        val doResumeDescriptor =
-                SimpleFunctionDescriptorImpl.create(
-                        classDescriptor, Annotations.EMPTY, Name.identifier("doResume"), CallableMemberDescriptor.Kind.DECLARATION,
-                        funDescriptor.source
-                ).apply doResume@{
-                    initialize(
-                            /* receiverParameterType = */ null,
-                            classDescriptor.thisAsReceiverParameter,
-                            /* typeParameters = */ emptyList(),
-                            listOf(
-                                    ValueParameterDescriptorImpl(
-                                            this@doResume, null, 0, Annotations.EMPTY, Name.identifier("data"),
-                                            module.builtIns.nullableAnyType,
-                                            /* isDefault = */ false, /* isCrossinline = */ false,
-                                            /* isNoinline = */ false, /* isCoroutine = */ false,
-                                            /* varargElementType = */ null, SourceElement.NO_SOURCE
-                                    ),
-                                    ValueParameterDescriptorImpl(
-                                            this@doResume, null, 1, Annotations.EMPTY, Name.identifier("throwable"),
-                                            module.builtIns.throwable.defaultType.makeNullable(),
-                                            /* isDefault = */ false, /* isCrossinline = */ false,
-                                            /* isNoinline = */ false, /* isCoroutine = */ false,
-                                            /* varargElementType = */ null, SourceElement.NO_SOURCE
-                                    )
-                            ),
-                            module.builtIns.unitType,
-                            Modality.FINAL,
-                            Visibilities.PROTECTED
-                    )
-                }
-
-        functionCodegen.generateMethod(OtherOrigin(element), doResumeDescriptor,
-                                       object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
-                                           override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                                               codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
-                                               codegen.initializeCoroutineParameters()
-                                               super.doGenerateBody(codegen, signature)
-                                               generateExceptionHandlingBlock(codegen)
-                                           }
-                                       })
+        generateDoResume()
 
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, funDescriptor,
                                        object : FunctionGenerationStrategy.CodegenBased(state) {
@@ -188,17 +146,24 @@ class CoroutineCodegen(
             val mappedType = typeMapper.mapType(parameter.type)
             val newIndex = myFrameMap.enter(parameter, mappedType)
 
-            StackValue.field(parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false))
-                    .put(mappedType, v)
+            generateLoadField(parameter.getFieldInfoForCoroutineLambdaParameter())
             v.store(newIndex, mappedType)
         }
     }
 
+    private fun ExpressionCodegen.generateLoadField(fieldInfo: FieldInfo) {
+        StackValue.field(fieldInfo, generateThisOrOuter(context.thisDescriptor, false)).put(fieldInfo.fieldType, v)
+    }
+
     private fun ValueParameterDescriptor.getFieldInfoForCoroutineLambdaParameter() =
+            createHiddenFieldInfo(type, COROUTINE_LAMBDA_PARAMETER_PREFIX + index)
+
+    private fun createHiddenFieldInfo(type: KotlinType, name: String) =
             FieldInfo.createForHiddenField(
                     typeMapper.mapClass(closureContext.thisDescriptor),
-                    typeMapper.mapType(returnType!!),
-                    COROUTINE_LAMBDA_PARAMETER_PREFIX + index)
+                    typeMapper.mapType(type),
+                    name
+            )
 
     private fun generateExceptionHandlingBlock(codegen: ExpressionCodegen) {
         val handleExceptionFunction =
@@ -218,6 +183,52 @@ class CoroutineCodegen(
         codegen.v.invokestatic(COROUTINE_MARKER_OWNER, HANDLE_EXCEPTION_MARKER_NAME, "()V", false)
         codegen.invokeFunction(resolvedCall, StackValue.none()).put(Type.VOID_TYPE, codegen.v)
         codegen.v.areturn(Type.VOID_TYPE)
+    }
+
+    private fun generateDoResume() {
+        val classDescriptor = closureContext.contextDescriptor
+
+        // protected fun doResume(result, throwable)
+        val doResumeDescriptor =
+                SimpleFunctionDescriptorImpl.create(
+                        classDescriptor, Annotations.EMPTY, Name.identifier("doResume"), CallableMemberDescriptor.Kind.DECLARATION,
+                        funDescriptor.source
+                ).apply doResume@{
+                    initialize(
+                            /* receiverParameterType = */ null,
+                            classDescriptor.thisAsReceiverParameter,
+                            /* typeParameters =   */ emptyList(),
+                            listOf(
+                                    ValueParameterDescriptorImpl(
+                                          this@doResume, null, 0, Annotations.EMPTY, Name.identifier("data"),
+                                          module.builtIns.nullableAnyType,
+                                          /* isDefault = */ false, /* isCrossinline = */ false,
+                                          /* isNoinline = */ false, /* isCoroutine = */ false,
+                                          /* varargElementType = */ null, SourceElement.NO_SOURCE
+                                    ),
+                                    ValueParameterDescriptorImpl(
+                                          this@doResume, null, 1, Annotations.EMPTY, Name.identifier("throwable"),
+                                          module.builtIns.throwable.defaultType.makeNullable(),
+                                          /* isDefault = */ false, /* isCrossinline = */ false,
+                                          /* isNoinline = */ false, /* isCoroutine = */ false,
+                                          /* varargElementType = */ null, SourceElement.NO_SOURCE
+                                    )
+                            ),
+                            module.builtIns.unitType,
+                            Modality.FINAL,
+                            Visibilities.PROTECTED
+                    )
+                }
+
+        functionCodegen.generateMethod(OtherOrigin(element), doResumeDescriptor,
+                                       object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
+                                           override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                                               codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
+                                               codegen.initializeCoroutineParameters()
+                                               super.doGenerateBody(codegen, signature)
+                                               generateExceptionHandlingBlock(codegen)
+                                           }
+                                       })
     }
 
     private fun InstructionAdapter.setLabelValue(value: Int) {

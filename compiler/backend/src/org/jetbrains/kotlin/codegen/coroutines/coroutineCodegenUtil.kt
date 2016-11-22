@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
@@ -120,24 +121,40 @@ fun createResolvedCallForHandleExceptionCall(
     val exceptionArgument = CallMaker.makeValueArgument(psiFactory.createExpression("exception"))
     val continuationThisArgument = CallMaker.makeValueArgument(psiFactory.createExpression("this"))
 
-    val valueArguments = listOf(exceptionArgument, continuationThisArgument)
-    val call = CallMaker.makeCall(callElement, null, null, null, valueArguments)
+    val resolvedCall =
+            createFakeResolvedCall(
+                    callElement,
+                    coroutineLambdaDescriptor,
+                    handleExceptionFunction,
+                    listOf(exceptionArgument, continuationThisArgument)
+            )
+
+    return HandleResultCallContext(
+            resolvedCall, exceptionArgument.getArgumentExpression()!!, continuationThisArgument.getArgumentExpression()!!)
+}
+
+private fun createFakeResolvedCall(
+        element: KtElement,
+        coroutineLambdaDescriptor: FunctionDescriptor,
+        descriptor: SimpleFunctionDescriptor,
+        valueArguments: List<ValueArgument>
+): ResolvedCallImpl<SimpleFunctionDescriptor> {
+    val call = CallMaker.makeCall(element, null, null, null, valueArguments)
 
     val resolvedCall = ResolvedCallImpl(
             call,
-            handleExceptionFunction,
+            descriptor,
             coroutineLambdaDescriptor.extensionReceiverParameter!!.value, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for handleException resolution"),
             TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
 
-    handleExceptionFunction.valueParameters.zip(valueArguments).forEach {
+    descriptor.valueParameters.zip(valueArguments).forEach {
         resolvedCall.recordValueArgument(it.first, ExpressionValueArgument(it.second))
     }
 
     resolvedCall.setResultingSubstitutor(TypeSubstitutor.EMPTY)
 
-    return HandleResultCallContext(
-            resolvedCall, exceptionArgument.getArgumentExpression()!!, continuationThisArgument.getArgumentExpression()!!)
+    return resolvedCall
 }
 
 fun ResolvedCall<*>.isSuspensionPoint() =
