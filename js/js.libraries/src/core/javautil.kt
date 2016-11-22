@@ -20,17 +20,23 @@ package java.util
 // TODO: Not supported
 // typealias Date = kotlin.js.Date
 
+@Deprecated("Use kotlin.js.Date instead", ReplaceWith("kotlin.js.Date"))
 @native
 public class Date() {
     public fun getTime(): Int = noImpl
 }
 
-// TODO: Deprecate with replacement
+@Deprecated("Use kotlin.collections.RandomAccess instead", ReplaceWith("kotlin.collections.RandomAccess"))
 public typealias RandomAccess = kotlin.collections.RandomAccess
+@Deprecated("Use kotlin.collections.ArrayList instead", ReplaceWith("kotlin.collections.ArrayList<E>"))
 public typealias ArrayList<E> = kotlin.collections.ArrayList<E>
+@Deprecated("Use kotlin.collections.HashSet instead", ReplaceWith("kotlin.collections.HashSet<E>"))
 public typealias HashSet<E> = kotlin.collections.HashSet<E>
+@Deprecated("Use kotlin.collections.LinkedHashSet instead", ReplaceWith("kotlin.collections.LinkedHashSet<E>"))
 public typealias LinkedHashSet<E> = kotlin.collections.LinkedHashSet<E>
+@Deprecated("Use kotlin.collections.HashMap instead", ReplaceWith("kotlin.collections.HashMap<E>"))
 public typealias HashMap<K, V> = kotlin.collections.HashMap<K, V>
+@Deprecated("Use kotlin.collections.LinkedHashMap instead", ReplaceWith("kotlin.collections.LinkedHashMap<E>"))
 public typealias LinkedHashMap<K, V> = kotlin.collections.LinkedHashMap<K, V>
 
 @Deprecated("Use AbstractCollection or AbstractMutableCollection from kotlin.collections", ReplaceWith("kotlin.collections.AbstractMutableCollection<E>"))
