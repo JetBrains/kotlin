@@ -3,6 +3,8 @@ class Controller {
     operator fun handleResult(x: Int, y: Continuation<Nothing>) {
         res = x
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>): Int {

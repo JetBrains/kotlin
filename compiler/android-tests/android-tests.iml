@@ -18,5 +18,6 @@
     <orderEntry type="module" module-name="descriptor.loader.java" scope="TEST" />
     <orderEntry type="module" module-name="frontend.java" scope="TEST" />
     <orderEntry type="module" module-name="jps-tests" scope="TEST" />
+    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
   </component>
 </module>

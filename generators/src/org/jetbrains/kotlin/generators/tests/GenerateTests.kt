@@ -240,6 +240,10 @@ fun main(args: Array<String>) {
             model("codegen/boxAgainstJava")
         }
 
+        testClass<AbstractAdditionalCoroutineBlackBoxCodegenTest> {
+            model("codegen/box/coroutines")
+        }
+
         testClass<AbstractScriptCodegenTest>() {
             model("codegen/script", extension = "kts")
         }
@@ -1118,7 +1122,7 @@ fun main(args: Array<String>) {
         testClass<AbstractAnnotationProcessingTest>() {
             model("wrappers", recursive = true, extension = "kt")
         }
-        
+
         testClass<AbstractBytecodeListingTestForSourceRetention>() {
             model("sourceRetention", extension = "kt")
         }

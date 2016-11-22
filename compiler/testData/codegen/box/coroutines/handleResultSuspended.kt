@@ -9,6 +9,8 @@ class Controller {
     operator fun handleResult(value: String, y: Continuation<Nothing>) {
         log += "return($value);"
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {

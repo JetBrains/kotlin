@@ -11,6 +11,8 @@ class Controller {
         lastSuspension = null
         x.resume("56")
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {

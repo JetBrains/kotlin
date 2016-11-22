@@ -10,6 +10,8 @@ class Controller {
     suspend fun suspendWithDouble(v: Double, x: Continuation<Double>) {
         x.resume(v)
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {

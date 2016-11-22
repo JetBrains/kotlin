@@ -20,12 +20,14 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.AbstractAdditionalCoroutineBlackBoxCodegenTest;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,8 +104,19 @@ public class SimpleTestMethodModel implements TestMethodModel {
     }
 
     @Override
-    public boolean shouldBeGenerated() {
-        return InTextDirectivesUtils.isCompatibleTarget(targetBackend, file);
+    public boolean shouldBeGenerated(@NotNull String baseClassName) {
+        if (!InTextDirectivesUtils.isCompatibleTarget(targetBackend, file)) {
+            return false;
+        }
+
+        if (!baseClassName.equals(AbstractAdditionalCoroutineBlackBoxCodegenTest.class.getSimpleName())) return true;
+
+        try {
+            return !InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(file), "// NO_INTERCEPT_RESUME_TESTS");
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @NotNull

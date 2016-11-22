@@ -235,7 +235,7 @@ public class SimpleTestClassModel implements TestClassModel {
         }
 
         @Override
-        public boolean shouldBeGenerated() {
+        public boolean shouldBeGenerated(@NotNull String baseClassName) {
             return true;
         }
     }

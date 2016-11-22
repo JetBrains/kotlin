@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// NO_INTERCEPT_RESUME_TESTS
 
 // Does not work in JVM backend, probably due to bug. It's not clear which behaviour is right.
 // TODO: fix the bug and enable for JVM backend

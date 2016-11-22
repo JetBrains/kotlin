@@ -27,13 +27,15 @@ class ModulesDependenciesTest : TestCase() {
     val GENERATORS_MODULE_FILE = File("generators/generators.iml")
     val COMPILER_TESTS_JAVA8_MODULE_FILE = File("compiler/tests-java8/compiler-tests-java8.iml")
     val NON_COMPILER_TESTS_MODULE_FILE = File("non-compiler-tests/non-compiler-tests.iml")
+    val ANDROID_TESTS_MODULE_FILE = File("compiler/android-tests/android-tests.iml")
 
     val COMPILER_TESTS_MODULE_NAME = COMPILER_TESTS_MODULE_FILE.nameWithoutExtension
-    val MODULES_CAN_DEPEND_ON_COMPILER_TESTS = listOf(COMPILER_TESTS_JAVA8_MODULE_FILE, GENERATORS_MODULE_FILE)
+    val MODULES_CAN_DEPEND_ON_COMPILER_TESTS = listOf(COMPILER_TESTS_JAVA8_MODULE_FILE, GENERATORS_MODULE_FILE, ANDROID_TESTS_MODULE_FILE)
 
     fun testModulesPresent() {
         val modules = listOf(
-                COMPILER_TESTS_MODULE_FILE, GENERATORS_MODULE_FILE, COMPILER_TESTS_JAVA8_MODULE_FILE, NON_COMPILER_TESTS_MODULE_FILE
+                COMPILER_TESTS_MODULE_FILE, GENERATORS_MODULE_FILE, COMPILER_TESTS_JAVA8_MODULE_FILE, NON_COMPILER_TESTS_MODULE_FILE,
+                ANDROID_TESTS_MODULE_FILE
         )
 
         for (module in modules) {

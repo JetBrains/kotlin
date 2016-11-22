@@ -5,6 +5,8 @@ class Controller {
         result++
         x.resume("OK")
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 

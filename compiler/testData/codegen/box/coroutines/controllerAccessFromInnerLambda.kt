@@ -7,6 +7,8 @@ class Controller {
     fun foo() {
         result = true
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {

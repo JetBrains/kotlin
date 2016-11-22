@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// NO_INTERCEPT_RESUME_TESTS
 
 // TODO: fix bug in JVM backend and remove this directive
 // TARGET_BACKEND: JS

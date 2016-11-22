@@ -7,6 +7,8 @@ class Controller {
     suspend fun <T> await(t: T, c: Continuation<T>) {
         c.resume(t)
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {

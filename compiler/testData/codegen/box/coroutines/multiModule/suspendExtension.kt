@@ -11,6 +11,8 @@ class Controller {
     inline suspend fun String.inlineSuspendHere(x: Continuation<String>) {
         suspendHere(x)
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 suspend fun Controller.suspendExtension(v: String, x: Continuation<String>) {

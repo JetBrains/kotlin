@@ -51,4 +51,6 @@ class GeneratorController<T>() : AbstractIterator<T>() {
     operator fun handleResult(result: Unit, c: Continuation<Nothing>) {
         done()
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }

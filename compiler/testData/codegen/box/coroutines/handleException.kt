@@ -26,6 +26,8 @@ class Controller {
             postponedActions.removeAt(0)
         }
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {

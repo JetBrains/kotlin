@@ -2,6 +2,8 @@ class Controller {
     suspend fun suspendHere(x: Continuation<Unit>) {
         x.resume(Unit)
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {

@@ -7,6 +7,8 @@ class Controller {
     operator fun handleResult(x: String, c: Continuation<Nothing>) {
         result = x
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {

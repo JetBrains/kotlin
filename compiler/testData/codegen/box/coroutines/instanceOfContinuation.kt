@@ -11,6 +11,8 @@ class Controller {
         val y: Any = x
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {

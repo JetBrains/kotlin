@@ -6,6 +6,8 @@ class Controller {
     suspend fun suspendHere(x: Continuation<String>) {
         x.resume("OK")
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 // MODULE: main(controller)

@@ -863,10 +863,21 @@ public class KotlinTestUtils {
                         assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }
-                else if (filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
+                else if (filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file) &&
+                         !isThereCustomReasonToSkip(file, testCaseClass)) {
                     assertFilePathPresent(file, rootFile, filePaths);
                 }
             }
+        }
+    }
+
+    private static boolean isThereCustomReasonToSkip(File file, Class<?> aClass) {
+        if (!aClass.getSuperclass().getSimpleName().equals("AbstractAdditionalCoroutineBlackBoxCodegenTest")) return false;
+        try {
+            return InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(file), "// NO_INTERCEPT_RESUME_TESTS");
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

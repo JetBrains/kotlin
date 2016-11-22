@@ -16,6 +16,8 @@ class Controller {
     suspend inline fun <reified T : Any> suspendInline(x: Continuation<String>) {
         suspendInline({ T::class.simpleName!! }, x)
     }
+
+    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {

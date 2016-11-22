@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// NO_INTERCEPT_RESUME_TESTS
 
 class Controller {
     var result = ""

@@ -31,20 +31,25 @@ private val packagePattern = Pattern.compile("(?m)^\\s*package[ |\t]+([\\w|\\.]*
 
 private val importPattern = Pattern.compile("import[ |\t]([\\w|]*\\.)")
 
-internal fun genFiles(file: File, fileContent: String, filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter): FqName? {
-    val testFiles = createTestFiles(file, fileContent)
+internal fun genFiles(
+        testFileName: String,
+        filePath: String,
+        fileContent: String,
+        filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
+): FqName? {
+    val testFiles = createTestFiles(testFileName, fileContent)
     if (testFiles.filter { it.name.endsWith(".java") }.isNotEmpty()) {
         //TODO support java files
-        return null;
+        return null
     }
     val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
     if (ktFiles.isEmpty()) return null
 
-    val newPackagePrefix = file.path.replace("\\\\|-|\\.|/".toRegex(), "_")
+    val newPackagePrefix = filePath.replace("\\\\|-|\\.|/".toRegex(), "_")
     val oldPackage = Ref<FqName>()
     val isSingle = testFiles.size == 1
     val resultFiles = testFiles.map {
-        val fileName = if (isSingle) it.name else file.name.substringBeforeLast(".kt") + "/" + it.name
+        val fileName = if (isSingle) it.name else testFileName.substringBeforeLast(".kt") + "/" + it.name
         TestClassInfo(
                 fileName,
                 changePackage(newPackagePrefix, it.content, oldPackage),
@@ -77,14 +82,14 @@ internal fun genFiles(file: File, fileContent: String, filesHolder: CodegenTests
 
     val boxFiles = resultFiles.filter { hasBoxMethod(it.content) }
     if (boxFiles.size != 1) {
-        println("Several box methods in $file")
+        println("Several box methods in $filePath")
     }
     return boxFiles.last().newClassId
 }
 
 
-private fun createTestFiles(file: File, expectedText: String): List<CodegenTestCase.TestFile> {
-    val files = KotlinTestUtils.createTestFiles(file.name, expectedText, object : KotlinTestUtils.TestFileFactoryNoModules<CodegenTestCase.TestFile>() {
+private fun createTestFiles(fileName: String, expectedText: String): List<CodegenTestCase.TestFile> {
+    val files = KotlinTestUtils.createTestFiles(fileName, expectedText, object : KotlinTestUtils.TestFileFactoryNoModules<CodegenTestCase.TestFile>() {
         override fun create(fileName: String, text: String, directives: Map<String, String>): CodegenTestCase.TestFile {
             return CodegenTestCase.TestFile(fileName, text)
         }
