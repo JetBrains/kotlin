@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils
@@ -65,7 +65,7 @@ class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() 
 
     override fun getProjectDescriptor() = KotlinStdJSProjectDescriptor.instance
 
-    override fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean {
+    override fun isFromFacade(descriptor: MemberDescriptor, facadeFqName: FqName): Boolean {
         val containingDeclaration = descriptor.containingDeclaration
         return containingDeclaration is PackageFragmentDescriptor &&
                facadeFqName == OldPackageFacadeClassUtils.getPackageClassFqName(containingDeclaration.fqName)

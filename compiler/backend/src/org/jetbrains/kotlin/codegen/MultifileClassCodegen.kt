@@ -284,7 +284,7 @@ class MultifileClassCodegenImpl(
         if (compiledPackageFragment == null) return
 
         for (callable in previouslyCompiledCallables) {
-            val partFqName = JvmFileClassUtil.getPartFqNameForDeserializedCallable(callable)
+            val partFqName = JvmFileClassUtil.getPartFqNameForDeserialized(callable)
             val partType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(partFqName)
 
             addDelegateGenerationTaskIfNeeded(callable, { generateDelegateToCompiledMember(callable, compiledPackageFragment, partType) })

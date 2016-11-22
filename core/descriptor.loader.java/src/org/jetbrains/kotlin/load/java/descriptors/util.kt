@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
 fun copyValueParameters(
@@ -67,6 +68,9 @@ fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
     return staticScope
 }
 
-fun DeserializedCallableMemberDescriptor.getImplClassNameForDeserialized(): Name? {
+fun DeserializedMemberDescriptor.getImplClassNameForDeserialized(): Name? {
     return (containerSource as? JvmPackagePartSource)?.simpleName
 }
+
+fun DeserializedMemberDescriptor.isFromJvmPackagePart(): Boolean =
+        containerSource is JvmPackagePartSource

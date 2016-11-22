@@ -43,7 +43,7 @@ abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase()
 
     protected abstract fun getModuleDescriptor(): ModuleDescriptor
 
-    protected abstract fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean
+    protected abstract fun isFromFacade(descriptor: MemberDescriptor, facadeFqName: FqName): Boolean
 
     fun testConsistency() {
         getPackages().forEach { doTestPackage(it) }
@@ -76,7 +76,7 @@ abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase()
 
         override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> =
                 module.getPackage(facadeFqName.parent()).memberScope.getContributedDescriptors().filter {
-                    (it is CallableMemberDescriptor && isFromFacade(it, facadeFqName) || it is TypeAliasDescriptor) &&
+                    (it is MemberDescriptor && it !is ClassDescriptor && isFromFacade(it, facadeFqName)) &&
                     !KotlinBuiltIns.isBuiltIn(it)
                 }.sortedWith(MemberComparator.INSTANCE)
     }
