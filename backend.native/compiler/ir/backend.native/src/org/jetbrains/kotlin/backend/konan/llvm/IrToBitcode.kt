@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_native.interop.*
+import kotlin_.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -36,10 +36,10 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     println("\n--- Generate bitcode ------------------------------------------------------\n")
     module.acceptVoid(CodeGeneratorVisitor(context))
     memScoped {
-        val errorRef = alloc(Int8Box.ref)
+        val errorRef = allocPointerTo<CInt8Var>()
         // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
         if (LLVMVerifyModule(
-                llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef) == 1) {
+                llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef.ptr) == 1) {
             LLVMDumpModule(llvmModule)
             throw Error("Invalid module");
         }
@@ -532,8 +532,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, thisPtr, codegen.newVar())
         val typePtr = pointerType(codegen.classType(value.containingDeclaration as ClassDescriptor))
         memScoped {
-            val args = allocNativeArrayOf(LLVMOpaqueValue, kImmOne)
-            val objectPtr = LLVMBuildGEP(codegen.context.llvmBuilder, objHeaderPtr,  args[0], 1, codegen.newVar())
+            val args = allocArrayOf(kImmOne)
+            val objectPtr = LLVMBuildGEP(codegen.context.llvmBuilder, objHeaderPtr,  args[0].ptr, 1, codegen.newVar())
             val typedObjPtr = codegen.bitcast(typePtr, objectPtr!!, codegen.newVar())
             val fieldPtr = LLVMBuildStructGEP(codegen.context.llvmBuilder, typedObjPtr, codegen.indexInClass(value), codegen.newVar())
             return fieldPtr

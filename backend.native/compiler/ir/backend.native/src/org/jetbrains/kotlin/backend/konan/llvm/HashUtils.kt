@@ -1,22 +1,22 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_native.interop.*
+import kotlin_.cinterop.*
 import org.jetbrains.kotlin.backend.konan.hash.*
 
 internal fun localHash(data: ByteArray): Long {
     memScoped {
-        val hashBox = alloc(Int64Box)
-        val bytes = allocNativeArrayOf(data)
-        MakeLocalHash(bytes.ptr, data.size, hashBox)
-        return hashBox.value
+        val res = alloc<LocalHashVar>()
+        val bytes = allocArrayOf(data)
+        MakeLocalHash(bytes[0].ptr, data.size, res.ptr)
+        return res.value
     }
 }
 
-internal fun globalHash(data: ByteArray, retValPlacement: Placement): GlobalHash {
-    val res = retValPlacement.alloc(GlobalHash)
+internal fun globalHash(data: ByteArray, retValPlacement: NativePlacement): GlobalHash {
+    val res = retValPlacement.alloc<GlobalHash>()
     memScoped {
-        val bytes = allocNativeArrayOf(data)
-        MakeGlobalHash(bytes.ptr, data.size, res)
+        val bytes = allocArrayOf(data)
+        MakeGlobalHash(bytes[0].ptr, data.size, res.ptr)
     }
     return res
 }
@@ -24,8 +24,8 @@ internal fun globalHash(data: ByteArray, retValPlacement: Placement): GlobalHash
 internal fun base64Encode(data: ByteArray): String {
     memScoped {
         val resultSize = 4 * data.size / 3 + 3 + 1
-        val result = alloc(NativeArray of Int8Box length resultSize)
-        val bytes = allocNativeArrayOf(data)
+        val result = allocArray<CInt8Var>(resultSize)
+        val bytes = allocArrayOf(data)
         Base64Encode(bytes.ptr, data.size, result.ptr, resultSize)
         // TODO: any better way to do that without two copies?
         return CString.fromArray(result).toString()

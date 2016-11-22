@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 
-import kotlin_native.interop.*
+import kotlin_.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -33,21 +33,21 @@ fun readModuleMetadata(file: File): String {
 
 class MetadataReader(file: File) {
 
-    lateinit var llvmModule: LLVMOpaqueModule
-    lateinit var llvmContext: LLVMOpaqueContext
+    lateinit var llvmModule: LLVMModuleRef
+    lateinit var llvmContext: LLVMContextRef
 
     init {
         memScoped {
-            val bufRef = alloc(LLVMOpaqueMemoryBuffer.ref)
-            val errorRef = alloc(Int8Box.ref)
-            val res = LLVMCreateMemoryBufferWithContentsOfFile(file.toString(), bufRef, errorRef)
+            val bufRef = alloc<LLVMMemoryBufferRefVar>()
+            val errorRef = allocPointerTo<CInt8Var>()
+            val res = LLVMCreateMemoryBufferWithContentsOfFile(file.toString(), bufRef.ptr, errorRef.ptr)
             if (res != 0) {
                 throw Error(errorRef.value?.asCString()?.toString())
             }
 
             llvmContext = LLVMContextCreate()!!
-            val moduleRef = alloc(LLVMOpaqueModule.ref)
-            val parseResult = LLVMParseBitcodeInContext2(llvmContext, bufRef.value, moduleRef)
+            val moduleRef = alloc<LLVMModuleRefVar>()
+            val parseResult = LLVMParseBitcodeInContext2(llvmContext, bufRef.value, moduleRef.ptr)
             if (parseResult != 0) {
                 throw Error(parseResult.toString())
             }
@@ -59,8 +59,8 @@ class MetadataReader(file: File) {
 
     fun string(node: LLVMOpaqueValue): String {
         memScoped { 
-            val len = alloc(Int32Box)
-            val str1 = LLVMGetMDString(node, len)!!
+            val len = alloc<CInt32Var>()
+            val str1 = LLVMGetMDString(node, len.ptr)!!
             val str = str1.asCString().toString() 
             return str
 
@@ -70,9 +70,9 @@ class MetadataReader(file: File) {
     fun namedMetadataNode(name: String, index: Int): LLVMOpaqueValue {
         memScoped {
             val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, "kmetadata")!!
-            val nodeArray = alloc(array[nodeCount](Ref to LLVMOpaqueValue))
+            val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
 
-            LLVMGetNamedMetadataOperands(llvmModule, "kmetadata", nodeArray[0])!!
+            LLVMGetNamedMetadataOperands(llvmModule, "kmetadata", nodeArray[0].ptr)!!
 
             return nodeArray[0].value!!
         }
@@ -81,9 +81,9 @@ class MetadataReader(file: File) {
     fun metadataOperand(metadataNode: LLVMOpaqueValue, index: Int): LLVMOpaqueValue {
         memScoped {
             val operandCount = LLVMGetMDNodeNumOperands(metadataNode)!!
-            val operandArray = alloc(array[operandCount](Ref to LLVMOpaqueValue))
+            val operandArray = allocArray<LLVMValueRefVar>(operandCount)
 
-            LLVMGetMDNodeOperands(metadataNode, operandArray[0])!!
+            LLVMGetMDNodeOperands(metadataNode, operandArray[0].ptr)!!
 
             return operandArray[0].value!!
         }
@@ -104,9 +104,8 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
 
     private fun metadataNode(args: List<LLVMOpaqueValue?>): LLVMOpaqueValue {
         memScoped {
-            val references = alloc(array[args.size](Ref to LLVMOpaqueValue))
-            args.forEachIndexed { i, llvmOpaqueValue ->  references[i].value = args[i]}
-            return LLVMMDNode(references[0], args.size)!!
+            val references = allocArrayOf(args)
+            return LLVMMDNode(references[0].ptr, args.size)!!
         }
     }
 

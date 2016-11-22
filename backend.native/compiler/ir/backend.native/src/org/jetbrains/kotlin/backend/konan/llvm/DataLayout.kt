@@ -4,7 +4,7 @@ import llvm.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
 
-internal fun getLLVMType(type: KotlinType): LLVMOpaqueType {
+internal fun getLLVMType(type: KotlinType): LLVMTypeRef {
     return when {
         KotlinBuiltIns.isBoolean(type) -> LLVMInt1Type()
         KotlinBuiltIns.isByte(type) -> LLVMInt8Type()
