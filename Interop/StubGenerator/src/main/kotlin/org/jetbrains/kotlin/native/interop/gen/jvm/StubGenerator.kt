@@ -72,7 +72,7 @@ class StubGenerator(
     val FunctionType.kotlinName: String
         get() {
             return usedFunctionTypes.getOrPut(this, {
-                "NativeFunctionType" + (usedFunctionTypes.size + 1)
+                "CFunctionType" + (usedFunctionTypes.size + 1)
             })
         }
 
@@ -156,6 +156,8 @@ class StubGenerator(
                 this.def.spelling
             }
 
+            is Typedef -> this.def.name
+
             else -> throw kotlin.NotImplementedError()
         }
     }
@@ -173,55 +175,169 @@ class StubGenerator(
         }
 
     /**
-     * Describes the Kotlin native reference type
-     *
-     * @param typeName the name of the Kotlin native reference type
-     * @param typeExpr such Kotlin expression that `typeExpr(ptr)` constructs the reference of this type
-     * to the value located at `ptr`
+     * Describes the Kotlin types used to represent some C type.
      */
-    class NativeRefType(val typeName: String, val typeExpr: String = typeName)
+    private sealed class TypeMirror(val pointedTypeName: String, val info: TypeInfo) {
+        /**
+         * Type to be used in bindings for argument or return value.
+         */
+        abstract val argType: String
+
+        /**
+         * Mirror for C type to be represented in Kotlin as by-value type.
+         */
+        class ByValue(pointedTypeName: String, info: TypeInfo, val valueTypeName: String) :
+                TypeMirror(pointedTypeName, info) {
+
+            override val argType: String
+                get() = valueTypeName + if (info is TypeInfo.Pointer) "?" else ""
+        }
+
+        /**
+         * Mirror for C type to be represented in Kotlin as by-ref type.
+         */
+        class ByRef(pointedTypeName: String, info: TypeInfo) : TypeMirror(pointedTypeName, info) {
+            override val argType: String
+                get() = pointedTypeName
+        }
+    }
 
     /**
-     * Returns the Kotlin type which describes the reference to value of given (C) type.
+     * Describes various type conversions for [TypeMirror].
      */
-    fun getKotlinTypeForRefTo(type: Type): NativeRefType = when (type) {
-        is Int8Type, is UInt8Type -> NativeRefType("Int8Box")
-        is Int16Type, is UInt16Type -> NativeRefType("Int16Box")
-        is Int32Type, is UInt32Type -> NativeRefType("Int32Box")
-        is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
-        is Int64Type, is UInt64Type -> NativeRefType("Int64Box")
+    private sealed class TypeInfo {
+        /**
+         * The conversion from [TypeMirror.argType] to [jniType].
+         */
+        abstract fun argToJni(name: String): String
 
-        is RecordType -> NativeRefType("${type.kotlinName}")
+        /**
+         * The conversion from [jniType] to [TypeMirror.argType].
+         */
+        abstract fun argFromJni(name: String): String
+
+        /**
+         * The type to be used for passing [TypeMirror.argType] through JNI.
+         */
+        abstract val jniType: String
+
+        /**
+         * If this info is for [TypeMirror.ByValue], then this method describes how to
+         * construct pointed-type from value type.
+         */
+        abstract fun constructPointedType(valueType: String): String
+
+        class Primitive(override val jniType: String, val varTypeName: String) : TypeInfo() {
+
+            override fun argToJni(name: String) = name
+            override fun argFromJni(name: String) = name
+
+            override fun constructPointedType(valueType: String) = "${varTypeName}WithValueMappedTo<$valueType>"
+        }
+
+        class Enum(val className: String, val baseType: String) : TypeInfo() {
+            override fun argToJni(name: String) = "$name.value"
+
+            override fun argFromJni(name: String) = "$className.byValue($name)"
+
+            override val jniType: String
+                get() = baseType
+
+            override fun constructPointedType(valueType: String) = "$className.Var" // TODO: improve
+
+        }
+
+        class Pointer(val pointee: String) : TypeInfo() {
+            override fun argToJni(name: String) = "$name.rawValue"
+
+            override fun argFromJni(name: String) = "CPointer.createNullable<$pointee>($name)"
+
+            override val jniType: String
+                get() = "Long"
+
+            override fun constructPointedType(valueType: String) = "CPointerVarWithValueMappedTo<$valueType>"
+        }
+
+        class ByRef(val pointed: String) : TypeInfo() {
+            override fun argToJni(name: String) = "$name.rawPtr"
+
+            override fun argFromJni(name: String) = "interpretPointed<$pointed>($name)"
+
+            override val jniType: String
+                get() = "Long"
+
+            override fun constructPointedType(valueType: String): String {
+                // TODO: this method must not exist
+                throw UnsupportedOperationException()
+            }
+        }
+    }
+
+    private fun mirror(type: PrimitiveType): TypeMirror {
+        val varTypeName = when (type) {
+            is Int8Type, is UInt8Type -> "CInt8Var"
+            is Int16Type, is UInt16Type -> "CInt16Var"
+            is Int32Type, is UInt32Type -> "CInt32Var"
+            is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
+            is Int64Type, is UInt64Type -> "CInt64Var"
+            else -> TODO(type.toString())
+        }
+
+        val info = TypeInfo.Primitive(type.kotlinType, varTypeName)
+        return TypeMirror.ByValue(varTypeName, info, type.kotlinType)
+    }
+
+    private fun byRefTypeMirror(pointedTypeName: String) : TypeMirror.ByRef {
+        val info = TypeInfo.ByRef(pointedTypeName)
+        return TypeMirror.ByRef(pointedTypeName, info)
+    }
+
+    private fun mirror(type: Type): TypeMirror = when (type) {
+        is PrimitiveType -> mirror(type)
+
+        is RecordType -> byRefTypeMirror(type.kotlinName)
 
         is EnumType -> if (type.isKotlinEnum) {
-            NativeRefType("${type.kotlinName}.ref")
+            val className = type.kotlinName
+            val info = TypeInfo.Enum(className, type.def.baseType.kotlinType)
+            TypeMirror.ByValue("$className.Var", info, className)
         } else {
-            getKotlinTypeForRefTo(type.def.baseType)
+            mirror(type.def.baseType)
         }
 
         is PointerType -> {
             val pointeeType = type.pointeeType
             if (pointeeType is VoidType) {
-                NativeRefType("NativePtrBox")
+                val info = TypeInfo.Pointer("COpaque")
+                TypeMirror.ByValue("COpaquePointerVar", info, "COpaquePointer")
             } else if (pointeeType is FunctionType) {
-                NativeRefType("NativeFunctionBox<${getKotlinFunctionType(pointeeType)}>", "${pointeeType.kotlinName}.ref")
+                val kotlinName = pointeeType.kotlinName
+                val info = TypeInfo.Pointer("CFunction<$kotlinName>")
+                TypeMirror.ByValue("CFunctionPointerVar<$kotlinName>", info, "CFunctionPointer<$kotlinName>")
             } else {
-                val pointeeRefType = getKotlinTypeForRefTo(pointeeType)
-                NativeRefType("RefBox<${pointeeRefType.typeName}>", "${pointeeRefType.typeExpr}.ref")
+                val pointeeMirror = mirror(pointeeType)
+                val info = TypeInfo.Pointer(pointeeMirror.pointedTypeName)
+                TypeMirror.ByValue("CPointerVar<${pointeeMirror.pointedTypeName}>", info,
+                        "CPointer<${pointeeMirror.pointedTypeName}>")
             }
         }
 
-        is ConstArrayType -> {
-            val elemRefType = getKotlinTypeForRefTo(type.elemType)
-            NativeRefType("NativeArray<${elemRefType.typeName}>", "array[${type.length}](${elemRefType.typeExpr})")
+        is ArrayType -> {
+            val elemMirror = mirror(type.elemType)
+            byRefTypeMirror("CArray<${elemMirror.pointedTypeName}>")
         }
 
-        is IncompleteArrayType -> {
-            val elemRefType = getKotlinTypeForRefTo(type.elemType)
-            NativeRefType("NativeArray<${elemRefType.typeName}>", "array(${elemRefType.typeExpr})")
+        is Typedef -> {
+            val baseType = mirror(type.def.aliased)
+            val name = type.def.name
+            when (baseType) {
+                is TypeMirror.ByValue -> TypeMirror.ByValue("${name}Var", baseType.info, name)
+                is TypeMirror.ByRef -> TypeMirror.ByRef(name, baseType.info)
+            }
+
         }
 
-        else -> throw NotImplementedError()
+        else -> TODO(type.toString())
     }
 
     /**
@@ -249,83 +365,34 @@ class StubGenerator(
                          val kotlinType: String = kotlinJniBridgeType)
 
     /**
-     * Constructs [OutValueBinding] for the value represented by given native reference type in Kotlin.
-     */
-    fun outValueRefBinding(refType: NativeRefType) = OutValueBinding(
-            kotlinType = refType.typeName + "?",
-            kotlinConv = { "$it.getNativePtr().asLong()" },
-            kotlinJniBridgeType = "Long"
-    )
-
-    /**
-     * Constructs [InValueBinding] for the value represented by given native reference type in Kotlin.
-     */
-    fun inValueRefBinding(refType: NativeRefType) = InValueBinding(
-            kotlinJniBridgeType = "Long",
-            conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})" },
-            kotlinType = refType.typeName + "?"
-    )
-
-    /**
      * Constructs [OutValueBinding] for the value of given C type.
      */
-    fun getOutValueBinding(type: Type): OutValueBinding = when (type) {
-
-        is PrimitiveType -> OutValueBinding(type.kotlinType)
-
-        is PointerType -> {
-            if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
-                OutValueBinding(
-                        kotlinType = "NativePtr?",
-                        kotlinConv = { "$it.asLong()" },
-                        kotlinJniBridgeType = "Long"
-                )
-            } else {
-                outValueRefBinding(getKotlinTypeForRefTo(type.pointeeType))
-            }
+    fun getOutValueBinding(type: Type): OutValueBinding {
+        if (type is ArrayType) {
+            // array-typed C function argument or return value is actually a pointer to array.
+            return getOutValueBinding(PointerType(type))
         }
 
-        is EnumType -> if (type.isKotlinEnum) {
-            OutValueBinding(
-                    kotlinType = type.kotlinName,
-                    kotlinConv = { "$it.value" },
-                    kotlinJniBridgeType = type.def.baseType.kotlinType
-            )
-        } else {
-            getOutValueBinding(type.def.baseType)
-        }
+        val mirror = mirror(type)
 
-        is ArrayType -> outValueRefBinding(getKotlinTypeForRefTo(type))
-
-        else -> throw NotImplementedError()
+        return OutValueBinding(
+                kotlinType = mirror.argType,
+                kotlinConv = mirror.info::argToJni,
+                kotlinJniBridgeType = mirror.info.jniType
+        )
     }
 
     fun getCFunctionParamBinding(type: Type): OutValueBinding {
         when (type) {
             is PointerType -> {
-                val pointeeType = type.pointeeType
-                when (pointeeType) {
-                    is FunctionType -> return OutValueBinding(
-                            kotlinType = "(" + getKotlinFunctionType(pointeeType) + ")?",
-                            kotlinConv = { "$it?.staticAsNative(${pointeeType.kotlinName}).asLong()" },
-                            kotlinJniBridgeType = "Long"
-                    )
+                when (type.pointeeType) {
                     is Int8Type -> return OutValueBinding(
                             kotlinType = "String?",
-                            kotlinConv = { name -> "$name?.toCString(memScope).getNativePtr().asLong()" },
+                            kotlinConv = { name -> "$name?.toCString(memScope).rawPtr" },
                             memScoped = true,
                             kotlinJniBridgeType = "Long"
                     )
                 }
-            }
-            is RecordType -> {
-                val refType = getKotlinTypeForRefTo(type)
-                // pointer will be converted to value in C code
-                return OutValueBinding(
-                        kotlinType = refType.typeName,
-                        kotlinConv = { "$it.getNativePtr().asLong()" },
-                        kotlinJniBridgeType = "Long"
-                )
             }
         }
 
@@ -347,65 +414,30 @@ class StubGenerator(
     /**
      * Constructs [InValueBinding] for the value of given C type.
      */
-    fun getInValueBinding(type: Type): InValueBinding = when (type) {
-
-        is PrimitiveType -> InValueBinding(type.kotlinType)
-
-        is PointerType -> {
-            if (type.pointeeType is VoidType || type.pointeeType is FunctionType) {
-                InValueBinding(
-                        kotlinJniBridgeType = "Long",
-                        conv = { "NativePtr.byValue($it)" },
-                        kotlinType = "NativePtr?"
-                )
-            } else {
-                inValueRefBinding(getKotlinTypeForRefTo(type.pointeeType))
-            }
+    fun getInValueBinding(type: Type): InValueBinding  {
+        if (type is ArrayType) {
+            // array-typed C function argument or return value is actually a pointer to array.
+            return getInValueBinding(PointerType(type))
         }
 
-        is EnumType -> if (type.isKotlinEnum) {
-            InValueBinding(
-                    kotlinJniBridgeType = type.def.baseType.kotlinType,
-                    conv = { "${type.kotlinName}.byValue($it)" },
-                    kotlinType = type.kotlinName
-            )
-        } else {
-            getInValueBinding(type.def.baseType)
-        }
+        val mirror = mirror(type)
 
-        is ArrayType -> inValueRefBinding(getKotlinTypeForRefTo(type))
-
-        else -> throw NotImplementedError()
+        return InValueBinding(
+                kotlinJniBridgeType = mirror.info.jniType,
+                conv = mirror.info::argFromJni,
+                kotlinType = mirror.argType
+        )
     }
 
     fun getCFunctionRetValBinding(type: Type): InValueBinding {
         when (type) {
             is VoidType -> return InValueBinding("Unit")
-
-            is RecordType -> {
-                val refType = getKotlinTypeForRefTo(type)
-                return InValueBinding(
-                        kotlinJniBridgeType = "Long",
-                        conv = { "NativePtr.byValue($it).asRef(${refType.typeExpr})!!" },
-                        kotlinType = refType.typeName
-                )
-            }
         }
 
         return getInValueBinding(type)
     }
 
     fun getCallbackParamBinding(type: Type): InValueBinding {
-        when (type) {
-            is RecordType -> {
-                val refType = getKotlinTypeForRefTo(type)
-                return InValueBinding(
-                        kotlinJniBridgeType = "Long",
-                        conv = { throw UnsupportedOperationException() },
-                        kotlinType = refType.typeName
-                )
-            }
-        }
         return getInValueBinding(type)
     }
 
@@ -427,17 +459,19 @@ class StubGenerator(
         }
 
         val className = decl.kotlinName
-        block("class $className(ptr: NativePtr) : NativeStruct(ptr)") {
+        block("class $className(override val rawPtr: NativePtr) : CStructVar()") {
             out("")
-            out("companion object : Type<$className>(${def.size}, ::$className)")
+            out("companion object : Type(${def.size}, ${def.align})") // FIXME: align
             out("")
             def.fields.forEach { field ->
                 try {
                     if (field.offset < 0) throw NotImplementedError();
                     assert(field.offset % 8 == 0L)
                     val offset = field.offset / 8
-                    val fieldRefType = getKotlinTypeForRefTo(field.type)
-                    out("val ${field.name} by ${fieldRefType.typeExpr} at $offset")
+                    val fieldRefType = mirror(field.type)
+                    out("val ${field.name}: ${fieldRefType.pointedTypeName}")
+                    out("    get() = memberAt($offset)")
+                    out("")
                 } catch (e: Throwable) {
                     println("Warning: cannot generate definition for field $className.${field.name}")
                 }
@@ -450,9 +484,7 @@ class StubGenerator(
      */
     private fun generateForwardStruct(s: StructDecl) {
         val className = s.kotlinName
-        block("class $className(ptr: NativePtr) : NativeRef(ptr)") {
-            out("companion object : Type<$className>(::$className)")
-        }
+        out("class $className(override val rawPtr: NativePtr) : COpaque")
     }
 
     /**
@@ -464,7 +496,7 @@ class StubGenerator(
             return
         }
 
-        val baseRefType = getKotlinTypeForRefTo(e.baseType)
+        val baseTypeMirror = mirror(e.baseType)
 
         block("enum class ${e.kotlinName}(val value: ${e.baseType.kotlinType})") {
             e.values.forEach {
@@ -476,11 +508,11 @@ class StubGenerator(
                 out("fun byValue(value: ${e.baseType.kotlinType}) = ${e.kotlinName}.values().find { it.value == value }!!")
             }
             out("")
-            block("class ref(ptr: NativePtr) : NativeRef(ptr)") {
-                out("companion object : TypeWithSize<ref>(${baseRefType.typeExpr}.size, ::ref)")
+            block("class Var(override val rawPtr: NativePtr) : CEnumVar()") {
+                out("companion object : Type(${baseTypeMirror.pointedTypeName}.size.toInt())")
                 out("var value: ${e.kotlinName}")
-                out("    get() = byValue(${baseRefType.typeExpr}.byPtr(ptr).value)")
-                out("    set(value) { ${baseRefType.typeExpr}.byPtr(ptr).value = value.value }")
+                out("    get() = byValue(this.reinterpret<${baseTypeMirror.pointedTypeName}>().value)")
+                out("    set(value) { this.reinterpret<${baseTypeMirror.pointedTypeName}>().value = value.value }")
             }
         }
     }
@@ -504,6 +536,23 @@ class StubGenerator(
         }
     }
 
+    private fun generateTypedef(def: TypedefDef) {
+        val mirror = mirror(Typedef(def))
+        val baseMirror = mirror(def.aliased)
+
+        when (baseMirror) {
+            is TypeMirror.ByValue -> {
+                val name = def.name
+                val varTypeName = mirror.info.constructPointedType(name)
+                out("typealias ${mirror.pointedTypeName} = $varTypeName")
+                out("typealias ${(mirror as TypeMirror.ByValue).valueTypeName} = ${baseMirror.valueTypeName}")
+            }
+            is TypeMirror.ByRef -> {
+                out("typealias ${mirror.pointedTypeName} = ${baseMirror.pointedTypeName}")
+            }
+        }
+    }
+
     /**
      * Constructs [InValueBinding] for return value of Kotlin binding for given C function.
      */
@@ -519,12 +568,11 @@ class StubGenerator(
 
         val retValType = func.returnType
         if (retValType is RecordType) {
-            val retValRefType = getKotlinTypeForRefTo(retValType)
-            val typeExpr = retValRefType.typeExpr
+            val retValMirror = mirror(retValType)
 
             paramBindings.add(OutValueBinding(
-                    kotlinType = "Placement",
-                    kotlinConv = { name -> "$name.alloc($typeExpr.size).asLong()" },
+                    kotlinType = "NativePlacement",
+                    kotlinConv = { name -> "$name.alloc<${retValMirror.pointedTypeName}>().rawPtr" },
                     kotlinJniBridgeType = "Long"
             ))
         }
@@ -653,13 +701,13 @@ class StubGenerator(
 
         val constructorArgsStr = constructorArgs.joinToString(", ")
 
-        block("object $name : NativeFunctionType<$kotlinFunctionType>($constructorArgsStr)") {
-            block("override fun invoke(function: $kotlinFunctionType, args: NativeArray<NativePtrBox>, ret: NativePtr)") {
+        block("object $name : CAdaptedFunctionTypeImpl<$kotlinFunctionType>($constructorArgsStr)") {
+            block("override fun invoke(function: $kotlinFunctionType,  args: CArray<COpaquePointerVar>, ret: COpaquePointer)") {
                 val args = type.parameterTypes.mapIndexed { i, paramType ->
-                    val refType = getKotlinTypeForRefTo(paramType)
-                    val ref = "args[$i].value.asRef(${refType.typeExpr})!!"
+                    val pointedTypeName = mirror(paramType).pointedTypeName
+                    val ref = "args[$i].value!!.reinterpret<$pointedTypeName>().pointed"
                     when (paramType) {
-                        is RecordType -> "$ref"
+                        is RecordType -> ref
                         else -> "$ref.value"
                     }
                 }.joinToString(", ")
@@ -670,8 +718,8 @@ class StubGenerator(
                     is RecordType -> throw NotImplementedError()
                     is VoidType -> {} // nothing to do
                     else -> {
-                        val retRefType = getKotlinTypeForRefTo(type.returnType)
-                        out("${retRefType.typeExpr}.byPtr(ret).value = res")
+                        val pointedTypeName = mirror(type.returnType).pointedTypeName
+                        out("ret.reinterpret<$pointedTypeName>().pointed.value = res")
                     }
                 }
 
@@ -702,7 +750,7 @@ class StubGenerator(
             out("package $pkgName")
             out("")
         }
-        out("import kotlin_native.interop.*")
+        out("import kotlin_.cinterop.*")
         out("")
 
         functionsToBind.forEach {
@@ -730,6 +778,17 @@ class StubGenerator(
         nativeIndex.enums.forEach { e ->
             generateEnum(e)
             out("")
+        }
+
+        nativeIndex.typedefs.forEach { t ->
+            try {
+                transaction {
+                    generateTypedef(t)
+                    out("")
+                }
+            } catch (e: Throwable) {
+                println("Warning: cannot generate typedef ${t.name}")
+            }
         }
 
         usedFunctionTypes.entries.forEach {

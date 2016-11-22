@@ -13,6 +13,7 @@ fun buildNativeIndex(headerFile: File, args: List<String>): NativeIndex = buildN
 abstract class NativeIndex {
     abstract val structs: List<StructDecl>
     abstract val enums: List<EnumDef>
+    abstract val typedefs: List<TypedefDef>
     abstract val functions: List<FunctionDecl>
 }
 
@@ -35,7 +36,9 @@ abstract class StructDecl(val spelling: String) {
  * @param hasNaturalLayout must be `false` if the struct has unnatural layout, e.g. it is `packed`.
  * May be `false` even if the struct has natural layout.
  */
-abstract class StructDef(val size: Long, val decl: StructDecl, val hasNaturalLayout: Boolean) {
+abstract class StructDef(val size: Long, val align: Int,
+                         val decl: StructDecl,
+                         val hasNaturalLayout: Boolean) {
 
     abstract val fields: List<Field>
 }
@@ -62,6 +65,15 @@ class Parameter(val name: String?, val type: Type)
  * C function declaration.
  */
 class FunctionDecl(val name: String, val parameters: List<Parameter>, val returnType: Type)
+
+/**
+ * C typedef definition.
+ *
+ * ```
+ * typedef $aliased $name;
+ * ```
+ */
+class TypedefDef(val aliased: Type, val name: String)
 
 
 /**
@@ -102,5 +114,7 @@ interface ArrayType : Type {
 
 data class ConstArrayType(override val elemType: Type, val length: Long) : ArrayType
 data class IncompleteArrayType(override val elemType: Type) : ArrayType
+
+data class Typedef(val def: TypedefDef) : Type
 
 object UnsupportedType : Type

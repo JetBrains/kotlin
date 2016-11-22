@@ -10,8 +10,8 @@ private class StructDeclImpl(spelling: String) : StructDecl(spelling) {
     override var def: StructDefImpl? = null
 }
 
-private class StructDefImpl(size: Long, decl: StructDecl, hasNaturalLayout: Boolean) :
-        StructDef(size, decl, hasNaturalLayout) {
+private class StructDefImpl(size: Long, align: Int, decl: StructDecl, hasNaturalLayout: Boolean) :
+        StructDef(size, align, decl, hasNaturalLayout) {
 
     override val fields = mutableListOf<Field>()
 }
@@ -37,6 +37,11 @@ private class NativeIndexImpl : NativeIndex() {
 
     override val enums: List<EnumDef>
         get() = enumById.values.toList()
+
+    val typedefById = mutableMapOf<DeclarationID, TypedefDef>()
+
+    override val typedefs: List<TypedefDef>
+        get() = typedefById.values.toList()
 
     val functionByName = mutableMapOf<String, FunctionDecl>()
 
@@ -92,6 +97,31 @@ private class NativeIndexImpl : NativeIndex() {
         val res = EnumDefImpl(typeSpelling, baseType)
         enumById[declId] = res
         return res
+    }
+
+    fun getTypedef(type: CXType): Type {
+        assert (type.kind.value == CXType_Typedef)
+        val declCursor = clang_getTypeDeclaration(type, arena)
+        val name = clang_getCursorSpelling(declCursor, arena).convertAndDispose()
+
+        val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor, arena))
+        if ((underlying is RecordType && underlying.decl.spelling.split(' ').last() == name) ||
+                (underlying is EnumType && underlying.def.spelling.split(' ').last() == name)) {
+
+            // special handling for:
+            // typedef struct { ... } name;
+            // typedef enum { ... } name;
+            // FIXME: implement better solution
+            return underlying
+        }
+
+        val declId = getDeclarationId(declCursor)
+        val typedefDef = typedefById.getOrPut(declId) {
+
+            TypedefDef(underlying, name)
+        }
+
+        return Typedef(typedefDef)
     }
 
     /**
@@ -152,10 +182,7 @@ private class NativeIndexImpl : NativeIndex() {
             CXType_LongLong -> Int64Type
 
             CXType_Typedef -> {
-                val declaration = clang_getTypeDeclaration(type, arena)
-                val underlying = clang_getTypedefDeclUnderlyingType(declaration, arena)
-                assert (underlying.kind.value != CXType_Invalid)
-                convertType(underlying)
+                getTypedef(type)
             }
 
             CXType_Record -> RecordType(getStructTypeDecl(type))
@@ -211,9 +238,11 @@ private class NativeIndexImpl : NativeIndex() {
             CXIdxEntity_Struct, CXIdxEntity_Union -> {
                 val structDecl = getStructDeclAt(cursor)
                 if (clang_isCursorDefinition(cursor) != 0) {
-                    val size = clang_Type_getSizeOf(clang_getCursorType(cursor, arena))
+                    val type = clang_getCursorType(cursor, arena)
+                    val size = clang_Type_getSizeOf(type)
+                    val align = clang_Type_getAlignOf(clang_getCursorType(cursor, arena)).toInt()
                     val hasNaturalLayout = structHasNaturalLayout(cursor)
-                    structDecl.def = StructDefImpl(size, structDecl, hasNaturalLayout)
+                    structDecl.def = StructDefImpl(size, align, structDecl, hasNaturalLayout)
                 }
             }
 
