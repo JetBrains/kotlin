@@ -89,6 +89,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         return globalFacade(platform).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }
 
+    fun <T : Any> tryGetProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T? {
+        return globalFacade(platform).tryGetResolverForModuleInfo(ideaModuleInfo)?.componentProvider?.getService(serviceClass)
+    }
+
     private fun globalFacade(platform: TargetPlatform) = globalFacadesPerPlatform[platform]!!.facadeForModules
 
     private fun librariesFacade(platform: TargetPlatform) = globalFacadesPerPlatform[platform]!!.facadeForLibraries
