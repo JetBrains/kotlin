@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
@@ -168,11 +169,22 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                     val value = codegen.load(variable!!, codegen.newVar())
                     codegen.store(value, fieldPtr!!)
                 }
+        /**
+         * IR for kotlin.Any is:
+         * BLOCK_BODY
+         *   DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+         *   INSTANCE_INITIALIZER_CALL classDescriptor='Any'
+         *
+         *   to avoid possible recursion we manually reject body generation for Any.
+         */
 
-        /* TODO: body */
+        if (!skipConstructorBodyGeneration(declaration))
+            declaration.acceptChildrenVoid(this)
+
         codegen.ret(thisPtr)
         logger.log("visitConstructor           : ${ir2string(declaration)}")
     }
+
 
     //-------------------------------------------------------------------------//
 
@@ -866,4 +878,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         return callDirect(descriptor, rargs!!, result)
     }
 
+    //-------------------------------------------------------------------------//
+
+    private fun skipConstructorBodyGeneration(declaration: IrConstructor): Boolean {
+        var  skipBody = false
+        declaration.acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
+                skipBody = expression.descriptor == declaration.descriptor
+            }
+        })
+        return skipBody
+    }
 }
