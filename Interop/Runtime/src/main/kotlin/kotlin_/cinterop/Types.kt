@@ -84,8 +84,7 @@ class CPointer<T : CPointed> private constructor(val rawValue: NativePtr) {
     }
 
     override fun toString(): String {
-        val hex = "%x".format(rawValue)
-        return "CPointer(raw=0x$hex)"
+        return "CPointer(raw=0x%x)".format(rawValue)
     }
 }
 
@@ -107,7 +106,7 @@ inline val <reified T : CPointed> CPointer<T>.pointed: T
 val CPointer<*>?.rawValue: NativePtr
     get() = this?.rawValue ?: nativeNullPtr
 
-fun <T : CPointed> CPointer<*>.reinterpret() = this as CPointer<T>
+fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = CPointer.create(this.rawValue)
 
 /**
  * The [CPointed] without any specified interpretation.
@@ -155,7 +154,7 @@ interface CVariable : CPointed {
 }
 
 /**
- * The C data which is composed from number of members.
+ * The C data which is composed from several members.
  */
 interface CAggregate : CPointed
 

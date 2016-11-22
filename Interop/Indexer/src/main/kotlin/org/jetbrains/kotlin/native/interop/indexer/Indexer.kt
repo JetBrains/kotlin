@@ -182,9 +182,7 @@ private class NativeIndexImpl : NativeIndex() {
             CXType_ULongLong -> UInt64Type
             CXType_LongLong -> Int64Type
 
-            CXType_Typedef -> {
-                getTypedef(type)
-            }
+            CXType_Typedef -> getTypedef(type)
 
             CXType_Record -> RecordType(getStructTypeDecl(type))
             CXType_Enum -> EnumType(getEnumTypeDef(type))
