@@ -1196,12 +1196,16 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
         }
 
-        testClass<AbstractPropertyAccessorsInlineTests>() {
+        testClass<AbstractPropertyAccessorsInlineTests> {
             model("codegen/boxInline/property/", targetBackend = TargetBackend.JS)
         }
 
-        testClass<AbstractNoInlineTests>() {
+        testClass<AbstractNoInlineTests> {
             model("codegen/boxInline/noInline/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractCallableReferenceInlineTests> {
+            model("codegen/boxInline/callableReference/", targetBackend = TargetBackend.JS)
         }
     }
 }

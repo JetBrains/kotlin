@@ -33,6 +33,8 @@ abstract class AbstractPropertyAccessorsInlineTests : BorrowedInlineTest("proper
 
 abstract class AbstractNoInlineTests : BorrowedInlineTest("noInline/")
 
+abstract class AbstractCallableReferenceInlineTests : BorrowedInlineTest("callableReference/")
+
 abstract class AbstractBoxJsTest() : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
