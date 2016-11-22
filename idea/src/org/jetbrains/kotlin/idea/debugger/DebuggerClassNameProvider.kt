@@ -216,7 +216,8 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                     KtNamedFunction::class.java,
                     KtPropertyAccessor::class.java,
                     KtProperty::class.java,
-                    KtClassInitializer::class.java)
+                    KtClassInitializer::class.java,
+                    KtSecondaryConstructor::class.java)
 
     private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
         if (notPositionedElement?.javaClass as Class<*> in TYPES_TO_CALCULATE_CLASSNAME) return notPositionedElement as KtElement

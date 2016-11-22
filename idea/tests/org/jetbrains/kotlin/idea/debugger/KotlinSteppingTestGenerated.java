@@ -752,6 +752,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInLocalFunInSecondaryConstructor.kt")
+        public void testStopInLocalFunInSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLocalFunInSecondaryConstructor.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInLocalFunInlineCallLambda.kt")
         public void testStopInLocalFunInlineCallLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLocalFunInlineCallLambda.kt");
@@ -779,6 +785,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("stopInObjectLiteralInInlineCallWithClosure.kt")
         public void testStopInObjectLiteralInInlineCallWithClosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInObjectLiteralInInlineCallWithClosure.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInlineCallInLocalFunInSecondaryConstructor.kt")
+        public void testStopInlineCallInLocalFunInSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInlineCallInLocalFunInSecondaryConstructor.kt");
             doStepOverTest(fileName);
         }
     }
