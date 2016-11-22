@@ -222,6 +222,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitFunction(declaration: IrFunction) {
         logger.log("visitFunction                  : ${ir2string(declaration)}")
+        if (declaration.descriptor.modality == Modality.ABSTRACT)
+            return
         codegen.function(declaration)
         metadator.function(declaration)
         declaration.acceptChildrenVoid(this)
