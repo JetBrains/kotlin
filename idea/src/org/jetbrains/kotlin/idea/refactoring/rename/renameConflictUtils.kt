@@ -86,14 +86,24 @@ internal fun checkRedeclarations(
         newName: String,
         result: MutableList<UsageInfo>
 ) {
-    fun MemberScope.findSiblingByName(): DeclarationDescriptor? {
+    fun DeclarationDescriptor.isTopLevelPrivate(): Boolean {
+        return this is DeclarationDescriptorWithVisibility
+               && visibility == Visibilities.PRIVATE
+               && containingDeclaration is PackageFragmentDescriptor
+    }
+
+    fun isInSameFile(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
+        return (d1 as? DeclarationDescriptorWithSource)?.source?.getPsi()?.containingFile == (d2 as? DeclarationDescriptorWithSource)?.source?.getPsi()?.containingFile
+    }
+
+    fun MemberScope.findSiblingsByName(): List<DeclarationDescriptor> {
         val descriptorKindFilter = when (descriptor) {
             is ClassDescriptor -> DescriptorKindFilter.CLASSIFIERS
             is PropertyDescriptor -> DescriptorKindFilter.VARIABLES
             is FunctionDescriptor -> DescriptorKindFilter.FUNCTIONS
-            else -> return null
+            else -> return emptyList()
         }
-        return getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.firstOrNull { it != descriptor }
+        return getDescriptorsFiltered(descriptorKindFilter) { it.asString() == newName }.filter { it != descriptor }
     }
 
     fun getSiblingWithNewName(): DeclarationDescriptor? {
@@ -120,8 +130,11 @@ internal fun checkRedeclarations(
         }
 
         return when (containingDescriptor) {
-            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingByName()
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingByName()
+            is ClassDescriptor -> containingDescriptor.unsubstitutedMemberScope.findSiblingsByName().firstOrNull()
+            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().findSiblingsByName().firstOrNull {
+                it != descriptor
+                && (!(descriptor.isTopLevelPrivate() || it.isTopLevelPrivate()) || isInSameFile(descriptor, it))
+            }
             else -> {
                 val block = (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()?.parent as? KtBlockExpression
                             ?: return null
