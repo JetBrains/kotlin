@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
@@ -24,11 +25,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -166,10 +168,7 @@ class CoroutineCodegen(
             )
 
     private fun generateExceptionHandlingBlock(codegen: ExpressionCodegen) {
-        val handleExceptionFunction =
-                controllerType.memberScope.getContributedFunctions(
-                        OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION, KotlinLookupLocation(element)).singleOrNull { it.isOperator }
-                        ?: return
+        val handleExceptionFunction = findOperatorInController(controllerType, OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION) ?: return
 
         val (resolvedCall, fakeExceptionExpression, fakeThisContinuationException) =
                 createResolvedCallForHandleExceptionCall(element, handleExceptionFunction, coroutineLambdaDescriptor)
@@ -219,17 +218,183 @@ class CoroutineCodegen(
                             Visibilities.PROTECTED
                     )
                 }
-
-        functionCodegen.generateMethod(OtherOrigin(element), doResumeDescriptor,
-                                       object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
-                                           override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                                               codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
-                                               codegen.initializeCoroutineParameters()
-                                               super.doGenerateBody(codegen, signature)
-                                               generateExceptionHandlingBlock(codegen)
-                                           }
-                                       })
+        val interceptResume = findOperatorInController(controllerType, OperatorNameConventions.COROUTINE_INTERCEPT_RESUME)
+        if (interceptResume != null) {
+            processInterceptResume(doResumeDescriptor, interceptResume)
+        }
+        else {
+            functionCodegen.generateMethod(
+                    OtherOrigin(element),
+                    doResumeDescriptor,
+                    object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
+                        override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                            codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
+                            codegen.initializeCoroutineParameters()
+                            super.doGenerateBody(codegen, signature)
+                            generateExceptionHandlingBlock(codegen)
+                        }
+                    }
+            )
+        }
     }
+
+    /**
+     * If there is defined an interceptResume operator in the controller class (it must have 'fun interceptResume(x: () -> Unit): Unit' signature),
+     * then continuation resume* operations must behave as they defined like `fun resume(x: T) = controller.interceptResume { doResume(x) }`.
+     *
+     * We do it the following way, our doResume implementation is defined as (at least for noinline case):
+     * fun doResume(v: Any?, t: Throwable?) {
+     *   this.$v = v
+     *   this.$t = t
+     *   controller.interceptResume(this)
+     * }
+     *
+     * override fun invoke() {
+     *   val v = this.$v
+     *   val t = this.$t
+     *   .. // common continuation state machine encoding
+     * }
+     *
+     * And yes, it means that `this`-object (i.e. a Continuation instance) also implements Function0<Unit>, along with
+     * FunctionK<Controller, .., Unit>.
+     * There are two kinds of interceptResume:
+     * 1. When the defined as not inline. In that case a continuation object is also implements `Function0<Unit>` (literally in class-file) and defines
+     *    an `invoke()Lj/l/Object` bridge.
+     * 2. Otherwise, it's defined as inline and we generate interceptResume call in the following way:
+     *    controller.interceptResume { this.invoke() }
+     *
+     *    The subtle difference with noinline case is that `this.invoke()` call is devirtualized after inlining
+     *    (so there's no need to literally implement `Function0<Unit>` nor to generate the bridges)
+     *
+     *    Note that in the second case there must be created a fake lambda descriptor (and it's done via CodegenAnnotatingVisitor)
+     */
+    private fun processInterceptResume(doResumeDescriptor: SimpleFunctionDescriptor, interceptResume: SimpleFunctionDescriptor) {
+        val (interceptResumeResolvedCall, lambdaExpressionForInterceptResume) =
+                createResolvedCallForInterceptResume(element as KtFunctionLiteral, interceptResume, coroutineLambdaDescriptor)
+
+        val fieldInfoForValue =
+                createHiddenFieldInfo(funDescriptor.builtIns.anyType, COROUTINE_VALUE_FIELD_NAME_FOR_INTERCEPT_RESUME)
+
+        val fieldInfoForThrowable =
+                createHiddenFieldInfo(funDescriptor.builtIns.throwable.defaultType, COROUTINE_THROWABLE_FIELD_NAME_FOR_INTERCEPT_RESUME)
+
+        v.newField(
+                JvmDeclarationOrigin.NO_ORIGIN,
+                Opcodes.ACC_PRIVATE,
+                fieldInfoForValue.fieldName,
+                fieldInfoForValue.fieldType.descriptor, null, null)
+
+        v.newField(
+                JvmDeclarationOrigin.NO_ORIGIN,
+                Opcodes.ACC_PRIVATE,
+                fieldInfoForThrowable.fieldName,
+                fieldInfoForThrowable.fieldType.descriptor, null, null)
+
+        val classDescriptor = closureContext.contextDescriptor
+        val invokeDescriptor =
+                SimpleFunctionDescriptorImpl.create(
+                        classDescriptor, Annotations.EMPTY, Name.identifier("invoke"), CallableMemberDescriptor.Kind.DECLARATION,
+                        funDescriptor.source
+                ).apply {
+                    initialize(
+                            /* receiverParameterType = */ null, classDescriptor.thisAsReceiverParameter,
+                            /* typeParameters = */ emptyList(), emptyList(),
+                            module.builtIns.unitType,
+                            Modality.FINAL,
+                            Visibilities.PUBLIC
+                    )
+
+                    if (!interceptResume.isInline) {
+                        // for generating necessary bridges
+                        overriddenDescriptors =
+                                funDescriptor.builtIns.getFunction(0)
+                                        .defaultType.memberScope.getContributedFunctions(Name.identifier("invoke"),
+                                                                                         NoLookupLocation.FROM_BACKEND
+                                )
+                    }
+                }
+
+        if (interceptResume.isInline) {
+            state.bindingTrace.record(
+                    CodegenBinding.CUSTOM_STRATEGY_FOR_INLINE_LAMBDA, element,
+                    object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
+                        override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                            // ?
+                            val label = Label()
+                            codegen.v.visitLineNumber(1, label)
+                            codegen.v.visitLabel(label)
+
+                            codegen.generateThisOrOuter(context.thisDescriptor, false)
+                                    .put(Type.getObjectType(this@CoroutineCodegen.v.thisName), codegen.v)
+                            codegen.v.invokevirtual(this@CoroutineCodegen.v.thisName, "invoke", "()V", false)
+                            codegen.v.areturn(Type.VOID_TYPE)
+                        }
+                    }
+            )
+        }
+
+        functionCodegen.generateMethod(
+                OtherOrigin(element),
+                invokeDescriptor,
+                object : FunctionGenerationStrategy.FunctionDefault(state, element) {
+                    override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                        codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
+
+                        assert(codegen.frameMap.enterTemp(AsmTypes.OBJECT_TYPE) == COROUTINE_VALUE_PARAMETER_SLOT_IN_DO_RESUME) {
+                            "Next free slot must be $COROUTINE_VALUE_PARAMETER_SLOT_IN_DO_RESUME"
+                        }
+                        assert(codegen.frameMap.enterTemp(AsmTypes.JAVA_THROWABLE_TYPE) == COROUTINE_THROWABLE_PARAMETER_SLOT_IN_DO_RESUME) {
+                            "Next free slot must be $COROUTINE_THROWABLE_PARAMETER_SLOT_IN_DO_RESUME"
+                        }
+
+                        codegen.generateLoadField(fieldInfoForValue)
+                        codegen.v.store(COROUTINE_VALUE_PARAMETER_SLOT_IN_DO_RESUME, AsmTypes.OBJECT_TYPE)
+
+                        codegen.generateLoadField(fieldInfoForThrowable)
+                        codegen.v.store(COROUTINE_THROWABLE_PARAMETER_SLOT_IN_DO_RESUME, AsmTypes.JAVA_THROWABLE_TYPE)
+
+                        codegen.v.invokestatic(
+                                COROUTINE_MARKER_OWNER, ACTUAL_COROUTINE_START_MARKER_NAME, "()V", false
+                        )
+
+                        codegen.initializeCoroutineParameters()
+                        super.doGenerateBody(codegen, signature)
+                        generateExceptionHandlingBlock(codegen)
+                        codegen.v.areturn(Type.VOID_TYPE)
+                    }
+                }
+        )
+
+        functionCodegen.generateMethod(
+                OtherOrigin(element),
+                doResumeDescriptor,
+                object : FunctionGenerationStrategy.CodegenBased(state) {
+                    override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                        AsmUtil.genAssignInstanceFieldFromParam(
+                                fieldInfoForValue, COROUTINE_VALUE_PARAMETER_SLOT_IN_DO_RESUME, codegen.v
+                        )
+
+                        AsmUtil.genAssignInstanceFieldFromParam(
+                                fieldInfoForThrowable, COROUTINE_THROWABLE_PARAMETER_SLOT_IN_DO_RESUME, codegen.v
+                        )
+
+                        if (!interceptResume.isInline) {
+                            codegen.tempVariables.put(
+                                    lambdaExpressionForInterceptResume,
+                                    codegen.generateThisOrOuter(context.thisDescriptor, false)
+                            )
+                        }
+
+                        codegen.invokeFunction(
+                                interceptResumeResolvedCall, StackValue.none()
+                        ).put(Type.VOID_TYPE, codegen.v)
+
+                        codegen.v.areturn(Type.VOID_TYPE)
+                    }
+                }
+        )
+    }
+
 
     private fun InstructionAdapter.setLabelValue(value: Int) {
         load(0, AsmTypes.OBJECT_TYPE)
@@ -273,3 +438,7 @@ class CoroutineCodegen(
 }
 
 private const val COROUTINE_LAMBDA_PARAMETER_PREFIX = "p$"
+private const val COROUTINE_VALUE_FIELD_NAME_FOR_INTERCEPT_RESUME = "v$"
+private const val COROUTINE_THROWABLE_FIELD_NAME_FOR_INTERCEPT_RESUME = "throwable$"
+private const val COROUTINE_VALUE_PARAMETER_SLOT_IN_DO_RESUME = 1
+private const val COROUTINE_THROWABLE_PARAMETER_SLOT_IN_DO_RESUME = 2

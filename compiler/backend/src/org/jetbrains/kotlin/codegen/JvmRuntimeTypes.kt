@@ -16,23 +16,23 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.coroutines.hasNoinlineInterceptResume
 import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.util.createFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
@@ -86,7 +86,22 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
 
         val coroutineControllerType = descriptor.controllerTypeIfCoroutine
         if (coroutineControllerType != null) {
-            return listOf(coroutineImplClass.defaultType, functionType)
+            val additionalType: KotlinType?
+            if (coroutineControllerType.hasNoinlineInterceptResume()) {
+                // for non-inline interceptResume we use coroutine instance as an argument for interceptRun call, i.e. it must be a Function0<Unit>
+                // See org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegen.processInterceptResume() for details
+                additionalType =
+                        createFunctionType(
+                                descriptor.builtIns, Annotations.EMPTY,
+                                /* recieverParameter = */ null, /* parameterTypes = */ emptyList(), /* parameterNames = */ emptyList(),
+                                /* returnType = */ descriptor.builtIns.unitType
+                        )
+            }
+            else {
+                additionalType = null
+            }
+
+            return listOf(coroutineImplClass.defaultType, functionType) + additionalType.singletonOrEmptyList()
         }
 
         return listOf(lambda.defaultType, functionType)

@@ -65,6 +65,13 @@ class CoroutineTransformerMethodVisitor(
         if (methodNode.visibleAnnotations?.none { it.desc == CONTINUATION_METHOD_ANNOTATION_DESC } != false) return
         methodNode.visibleAnnotations.removeAll { it.desc == CONTINUATION_METHOD_ANNOTATION_DESC }
 
+        val customCoroutineStartMarker = methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>().firstOrNull {
+            it.owner == COROUTINE_MARKER_OWNER && it.name == ACTUAL_COROUTINE_START_MARKER_NAME
+        }
+
+        val customCoroutineStart = customCoroutineStartMarker?.next
+        customCoroutineStartMarker?.let(methodNode.instructions::remove)
+
         val suspensionPoints = collectSuspensionPoints(methodNode)
 
         for (suspensionPoint in suspensionPoints) {
@@ -72,7 +79,7 @@ class CoroutineTransformerMethodVisitor(
         }
 
         // Add global exception handler
-        val isThereGlobalExceptionHandler = processHandleExceptionCall(methodNode)
+        val isThereGlobalExceptionHandler = processHandleExceptionCall(methodNode, customCoroutineStart ?: methodNode.instructions.first)
 
         // Spill stack to variables before suspension points, try/catch blocks
         FixStackWithLabelNormalizationMethodTransformer().transform(classBuilder.thisName, methodNode)
@@ -105,7 +112,7 @@ class CoroutineTransformerMethodVisitor(
                         globalExceptionHandler.start.next.next
                     }
                     else
-                        first
+                        customCoroutineStart ?: first
             // tableswitch(this.label)
             insertBefore(firstToInsertBefore,
                          insnListOf(
@@ -408,7 +415,7 @@ class CoroutineTransformerMethodVisitor(
         return
     }
 
-    private fun processHandleExceptionCall(methodNode: MethodNode): Boolean {
+    private fun processHandleExceptionCall(methodNode: MethodNode, coroutineStart: AbstractInsnNode): Boolean {
         val instructions = methodNode.instructions
         val marker = instructions.toArray().firstOrNull { it.isHandleExceptionMarker() } ?: return false
 
@@ -418,7 +425,7 @@ class CoroutineTransformerMethodVisitor(
 
         val startLabel = LabelNode()
         val endLabel = LabelNode()
-        instructions.insertBefore(instructions.first, startLabel)
+        instructions.insertBefore(coroutineStart, startLabel)
         instructions.set(marker, endLabel)
 
         // NOP is necessary to preserve common invariant: first insn of TCB is always NOP

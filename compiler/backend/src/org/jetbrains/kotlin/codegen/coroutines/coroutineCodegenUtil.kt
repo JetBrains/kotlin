@@ -19,10 +19,9 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
@@ -35,9 +34,11 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.coroutine.REPLACED_SUSPENSION_POINT_KEY
 import org.jetbrains.kotlin.resolve.coroutine.SUSPENSION_POINT_KEY
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // These classes do not actually exist at runtime
 val CONTINUATION_METHOD_ANNOTATION_DESC = "Lkotlin/ContinuationMethod;"
@@ -47,6 +48,7 @@ const val BEFORE_SUSPENSION_POINT_MARKER_NAME = "beforeSuspensionPoint"
 const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
 const val HANDLE_EXCEPTION_MARKER_NAME = "handleException"
 const val HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME = "handleExceptionArgument"
+const val ACTUAL_COROUTINE_START_MARKER_NAME = "actualCoroutineStart"
 
 const val COROUTINE_CONTROLLER_FIELD_NAME = "_controller"
 const val COROUTINE_CONTROLLER_GETTER_NAME = "getController"
@@ -157,6 +159,27 @@ private fun createFakeResolvedCall(
     return resolvedCall
 }
 
+data class InterceptResumeCallContext(
+        val resolvedCall: ResolvedCall<*>,
+        val thisExpression: KtExpression
+)
+
+fun createResolvedCallForInterceptResume(
+        coroutineLambda: KtFunctionLiteral,
+        interceptResume: SimpleFunctionDescriptor,
+        coroutineLambdaDescriptor: FunctionDescriptor
+): InterceptResumeCallContext {
+    val psiFactory = KtPsiFactory(coroutineLambda)
+
+    val isInline = interceptResume.isInline
+    val thisExpression = psiFactory.createExpression("this")
+    val blockArgument = CallMaker.makeValueArgument(if (isInline) coroutineLambda.parent as KtExpression else thisExpression)
+
+    val resolvedCall = createFakeResolvedCall(coroutineLambda, coroutineLambdaDescriptor, interceptResume, listOf(blockArgument))
+
+    return InterceptResumeCallContext(resolvedCall, thisExpression)
+}
+
 fun ResolvedCall<*>.isSuspensionPoint() =
         (candidateDescriptor as? FunctionDescriptor)?.let { it.isSuspend && it.getUserData(SUSPENSION_POINT_KEY) ?: false }
         ?: false
@@ -177,3 +200,12 @@ private fun FunctionDescriptor.createCustomCopy(
 
     return result
 }
+
+fun KotlinType.hasInlineInterceptResume() =
+        findOperatorInController(this, OperatorNameConventions.COROUTINE_INTERCEPT_RESUME)?.isInline == true
+
+fun KotlinType.hasNoinlineInterceptResume() =
+        findOperatorInController(this, OperatorNameConventions.COROUTINE_INTERCEPT_RESUME)?.isInline == false
+
+fun findOperatorInController(controllerType: KotlinType, name: Name): SimpleFunctionDescriptor? =
+        controllerType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).singleOrNull { it.isOperator }
