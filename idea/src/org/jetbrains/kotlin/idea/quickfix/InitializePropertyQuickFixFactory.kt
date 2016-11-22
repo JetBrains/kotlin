@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -137,7 +138,9 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                         val classDescriptor = propertyDescriptor.containingDeclaration as ClassDescriptorWithResolutionScopes
                         val constructorScope = classDescriptor.scopeForClassHeaderResolution
                         val validator = CollectingNameValidator(originalDescriptor.parameters.map { it.name }) { name ->
-                            constructorScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES, { it.asString() == name }).isEmpty()
+                            constructorScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES).all {
+                                it !is VariableDescriptor || it.name.asString() != name
+                            }
                         }
                         val initializerText = CodeInsightUtils.defaultInitializer(propertyDescriptor.type) ?: "null"
                         val newParam = KotlinParameterInfo(

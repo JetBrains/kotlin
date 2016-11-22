@@ -5489,6 +5489,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericParameterInScope.kt")
+        public void testGenericParameterInScope() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/genericParameterInScope.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localVar.kt")
         public void testLocalVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/localVar.kt");
