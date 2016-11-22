@@ -58,7 +58,7 @@ void Kotlin_Array_copyImpl(const ArrayHeader* array, KInt fromIndex,
         ThrowArrayIndexOutOfBoundsException();
     }
     // TODO: refcounting!
-    memcpy(ArrayAddressOfElementAt(destination, toIndex),
+    memmove(ArrayAddressOfElementAt(destination, toIndex),
         ArrayAddressOfElementAt(array, fromIndex), count * sizeof(KRef));
 }
 
