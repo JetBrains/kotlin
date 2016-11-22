@@ -1,0 +1,6 @@
+fun main(args: Array<String>) {
+    val writer = File("hello-world.txt").bufferedReader()
+    writer.use { writer ->
+          // do stuff with writer
+    }
+}
