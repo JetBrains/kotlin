@@ -31,6 +31,7 @@
 - [`KT-14215`](https://youtrack.jetbrains.com/issue/KT-14215) Show members of anonymous objects in File Structure window
 - [`KT-14217`](https://youtrack.jetbrains.com/issue/KT-14217) Support visibility filters in File Structure window
 - Implement Kotlin facet
+- [`KT-13811`](https://youtrack.jetbrains.com/issue/KT-13811) Expose JVM target setting in IntelliJ IDEA plugin compiler configuration UI
 
 #### Issues fixed
 - [`KT-6535`](https://youtrack.jetbrains.com/issue/KT-6535) "Go to Symbol" did not include Enum constants
