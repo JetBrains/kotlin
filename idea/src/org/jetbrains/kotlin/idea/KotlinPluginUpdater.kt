@@ -133,16 +133,21 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun updateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         var updateStatus: PluginUpdateStatus
-        try {
-            updateStatus = checkUpdatesInMainRepository()
-
-            for (host in RepositoryHelper.getPluginHosts().filterNotNull()) {
-                val customUpdateStatus = checkUpdatesInCustomRepository(host)
-                updateStatus = updateStatus.mergeWith(customUpdateStatus)
-            }
+        if (KotlinPluginUtil.isSnapshotVersion()) {
+            updateStatus = PluginUpdateStatus.LatestVersionInstalled
         }
-        catch(e: Exception) {
-            updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
+        else {
+            try {
+                updateStatus = checkUpdatesInMainRepository()
+
+                for (host in RepositoryHelper.getPluginHosts().filterNotNull()) {
+                    val customUpdateStatus = checkUpdatesInCustomRepository(host)
+                    updateStatus = updateStatus.mergeWith(customUpdateStatus)
+                }
+            }
+            catch(e: Exception) {
+                updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
+            }
         }
 
         lastUpdateStatus = updateStatus
