@@ -246,6 +246,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nonPrivateTopLevelDeclarationsConflict/nonPrivateTopLevelDeclarationsNoConflict.test")
+    public void testNonPrivateTopLevelDeclarationsConflict_NonPrivateTopLevelDeclarationsNoConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/nonPrivateTopLevelDeclarationsConflict/nonPrivateTopLevelDeclarationsNoConflict.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test")
     public void testNoShadowingConflictForSiblingDeclarations_NoShadowingConflictForSiblingDeclarations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/noShadowingConflictForSiblingDeclarations/noShadowingConflictForSiblingDeclarations.test");
@@ -279,6 +285,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test")
     public void testPrimaryConstructorParameterRedeclaration_PrimaryConstructorParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/primaryConstructorParameterRedeclaration/primaryConstructorParameterRedeclaration.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("privateAndNonPrivateTopLevelDeclarationsNoConflict/privateAndNonPrivateTopLevelDeclarationsNoConflict.test")
+    public void testPrivateAndNonPrivateTopLevelDeclarationsNoConflict_PrivateAndNonPrivateTopLevelDeclarationsNoConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/privateAndNonPrivateTopLevelDeclarationsNoConflict/privateAndNonPrivateTopLevelDeclarationsNoConflict.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("privateTopLevelDeclarationsNoConflict/privateTopLevelDeclarationsNoConflict.test")
+    public void testPrivateTopLevelDeclarationsNoConflict_PrivateTopLevelDeclarationsNoConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/privateTopLevelDeclarationsNoConflict/privateTopLevelDeclarationsNoConflict.test");
         doTest(fileName);
     }
 
