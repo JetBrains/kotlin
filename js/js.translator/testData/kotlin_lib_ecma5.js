@@ -142,11 +142,17 @@
     }
 
     // TODO Store callable references for members in class
-    Kotlin.getCallableRefForMemberFunction = function (klass, memberName) {
+    Kotlin.getCallableRefForMemberFunction = function (memberName) {
         return function () {
             var args = [].slice.call(arguments);
             var instance = args.shift();
             return instance[memberName].apply(instance, args);
+        };
+    };
+
+    Kotlin.getBoundCallableRefForMemberFunction = function (receiver, memberName) {
+        return function () {
+            return receiver[memberName].apply(receiver, arguments);
         };
     };
 
@@ -158,11 +164,25 @@
         };
     };
 
+    Kotlin.getBoundCallableRefForExtensionFunction = function (receiver, extFun) {
+        return function () {
+            var args = [].slice.call(arguments);
+            args.unshift(receiver);
+            return extFun.apply(null, args);
+        };
+    };
+
     Kotlin.getCallableRefForLocalExtensionFunction = function (extFun) {
         return function () {
             var args = [].slice.call(arguments);
             var instance = args.shift();
             return extFun.apply(instance, args);
+        };
+    };
+
+    Kotlin.getBoundCallableRefForLocalExtensionFunction = function (receiver, extFun) {
+        return function () {
+            return extFun.apply(receiver, arguments);
         };
     };
 
@@ -185,9 +205,23 @@
         return getPropertyRefClass(getFun, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
     };
 
+    Kotlin.getBoundCallableRefForMemberProperty = function(receiver, name, isVar) {
+        var getFun = Function("receiver", "return function " + name + "() { return receiver['" + name + "']; }")(receiver);
+        var setFun = isVar ? function(value) { receiver[name] = value; } : null;
+        return getPropertyRefClass(getFun, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.oneArg);
+    };
+
     Kotlin.getCallableRefForExtensionProperty = function(name, getFun, setFun) {
         var getFunWrapper = Function("getFun", "return function " + name + "(receiver, extensionReceiver) { return getFun(receiver, extensionReceiver) }")(getFun);
         return getPropertyRefClass(getFunWrapper, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
+    };
+
+    Kotlin.getBoundCallableRefForExtensionProperty = function(receiver, name, getFun, setFun) {
+        var getFunWrapper = Function("receiver", "getFun", "return function " + name + "(extensionReceiver) { return getFun(receiver, extensionReceiver) }")(receiver, getFun);
+        if (setFun) {
+            setFun = setFun.bind(null, receiver);
+        }
+        return getPropertyRefClass(getFunWrapper, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.oneArg);
     };
 
     function getPropertyRefClass(getFun, getName, setFun, setName, cache) {

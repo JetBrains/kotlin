@@ -77,12 +77,17 @@ public final class Namer {
     public static final String OUTER_FIELD_NAME = "$outer";
 
     private static final String CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME = "getCallableRefForMemberFunction";
+    private static final String BOUND_CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME = "getBoundCallableRefForMemberFunction";
     private static final String CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME = "getCallableRefForExtensionFunction";
+    private static final String BOUND_CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME = "getBoundCallableRefForExtensionFunction";
     private static final String CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME = "getCallableRefForLocalExtensionFunction";
+    private static final String BOUND_CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME = "getBoundCallableRefForLocalExtensionFunction";
     private static final String CALLABLE_REF_FOR_CONSTRUCTOR_NAME = "getCallableRefForConstructor";
     private static final String CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY = "getCallableRefForTopLevelProperty";
     private static final String CALLABLE_REF_FOR_MEMBER_PROPERTY = "getCallableRefForMemberProperty";
+    private static final String BOUND_CALLABLE_REF_FOR_MEMBER_PROPERTY = "getBoundCallableRefForMemberProperty";
     private static final String CALLABLE_REF_FOR_EXTENSION_PROPERTY = "getCallableRefForExtensionProperty";
+    private static final String BOUND_CALLABLE_REF_FOR_EXTENSION_PROPERTY = "getBoundCallableRefForExtensionProperty";
 
     private static final String DELEGATE = "$delegate";
 
@@ -191,9 +196,15 @@ public final class Namer {
     @NotNull
     private final JsName callableRefForMemberFunctionName;
     @NotNull
+    private final JsName boundCallableRefForMemberFunctionName;
+    @NotNull
     private final JsName callableRefForExtensionFunctionName;
     @NotNull
+    private final JsName boundCallableRefForExtensionFunctionName;
+    @NotNull
     private final JsName callableRefForLocalExtensionFunctionName;
+    @NotNull
+    private final JsName boundCallableRefForLocalExtensionFunctionName;
     @NotNull
     private final JsName callableRefForConstructorName;
     @NotNull
@@ -201,7 +212,11 @@ public final class Namer {
     @NotNull
     private final JsName callableRefForMemberProperty;
     @NotNull
+    private final JsName boundCallableRefForMemberProperty;
+    @NotNull
     private final JsName callableRefForExtensionProperty;
+    @NotNull
+    private final JsName boundCallableRefForExtensionProperty;
     @NotNull
     private final JsExpression callGetProperty;
     @NotNull
@@ -217,12 +232,17 @@ public final class Namer {
         callSetProperty = kotlin("callSetter");
 
         callableRefForMemberFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
+        boundCallableRefForMemberFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
         callableRefForExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
+        boundCallableRefForExtensionFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
         callableRefForLocalExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME);
+        boundCallableRefForLocalExtensionFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME);
         callableRefForConstructorName = kotlinScope.declareName(CALLABLE_REF_FOR_CONSTRUCTOR_NAME);
         callableRefForTopLevelProperty = kotlinScope.declareName(CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY);
         callableRefForMemberProperty = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_PROPERTY);
+        boundCallableRefForMemberProperty = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_MEMBER_PROPERTY);
         callableRefForExtensionProperty = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_PROPERTY);
+        boundCallableRefForExtensionProperty = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_EXTENSION_PROPERTY);
 
         isTypeName = kotlinScope.declareName("isType");
     }
@@ -244,13 +264,28 @@ public final class Namer {
     }
 
     @NotNull
+    public JsExpression boundCallableRefForMemberFunctionReference() {
+        return kotlin(boundCallableRefForMemberFunctionName);
+    }
+
+    @NotNull
     public JsExpression callableRefForExtensionFunctionReference() {
         return kotlin(callableRefForExtensionFunctionName);
     }
 
     @NotNull
+    public JsExpression boundCallableRefForExtensionFunctionReference() {
+        return kotlin(boundCallableRefForExtensionFunctionName);
+    }
+
+    @NotNull
     public JsExpression callableRefForLocalExtensionFunctionReference() {
         return kotlin(callableRefForLocalExtensionFunctionName);
+    }
+
+    @NotNull
+    public JsExpression boundCallableRefForLocalExtensionFunctionReference() {
+        return kotlin(boundCallableRefForLocalExtensionFunctionName);
     }
 
     @NotNull
@@ -269,8 +304,18 @@ public final class Namer {
     }
 
     @NotNull
+    public JsExpression boundCallableRefForMemberPropertyReference() {
+        return kotlin(boundCallableRefForMemberProperty);
+    }
+
+    @NotNull
     public JsExpression callableRefForExtensionPropertyReference() {
         return kotlin(callableRefForExtensionProperty);
+    }
+
+    @NotNull
+    public JsExpression boundCallableRefForExtensionPropertyReference() {
+        return kotlin(boundCallableRefForExtensionProperty);
     }
 
     @NotNull

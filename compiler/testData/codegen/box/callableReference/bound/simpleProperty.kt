@@ -1,4 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
+// Enable when callable references to builtin members are supported.
 // IGNORE_BACKEND: JS
 
 fun box(): String {

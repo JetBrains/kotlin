@@ -1525,6 +1525,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("multiCase.kt")
+            public void testMultiCase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/multiCase.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullReceiver.kt")
             public void testNullReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/nullReceiver.kt");
