@@ -5,6 +5,84 @@
 
 ## 1.0.6
 
+### IDE
+- [`KT-14215`](https://youtrack.jetbrains.com/issue/KT-14215) Show members of anonymous objects in File Structure window
+- [`KT-14217`](https://youtrack.jetbrains.com/issue/KT-14217) Support visibility filters in File Structure window
+
+#### Issues fixed
+- [`KT-6535`](https://youtrack.jetbrains.com/issue/KT-6535) "Go to Symbol" does not include Enum constants
+- [`KT-10700`](https://youtrack.jetbrains.com/issue/KT-10700) Run tests via Gradle does not work for Kotlin sources
+- [`KT-12385`](https://youtrack.jetbrains.com/issue/KT-12385) Closing quote is not automatically inserted when typing Char literal
+- [`KT-12445`](https://youtrack.jetbrains.com/issue/KT-12445) Class chooser: IllegalStateException if Kotlin script file exists
+- [`KT-13279`](https://youtrack.jetbrains.com/issue/KT-13279) Deleting `<` in function call expression should delete matching `>`
+- [`KT-13795`](https://youtrack.jetbrains.com/issue/KT-13795) Escaped chars in char literals is not highlighted
+- [`KT-14411`](https://youtrack.jetbrains.com/issue/KT-14411) Code folding does not work in lambdas after some declatation
+- [`KT-14585`](https://youtrack.jetbrains.com/issue/KT-14585) ConvertJavaCopyPasteProcessor shows a dialog under write action
+- [`KT-14741`](https://youtrack.jetbrains.com/issue/KT-14741) Default JVM target is inferred to 1.8 for module with dependency on JDK 1.7
+- [`KT-13354`](https://youtrack.jetbrains.com/issue/KT-13354) Unstable resolve of value parameter types in IDE tests
+
+
+#### Inspections, Intentions and Quickfixes
+- [`KT-12095`](https://youtrack.jetbrains.com/issue/KT-12095) Implement "Join Declaration and Assignment" intention
+- [`KT-12701`](https://youtrack.jetbrains.com/issue/KT-12701) Add a quickfix for `@JvmOverloads` on functions without default parameters, fix corresponding inspection range
+- [`KT-14326`](https://youtrack.jetbrains.com/issue/KT-14326) Implement Intention + Inspection to remove empty secondary constructor body
+- [`KT-14521`](https://youtrack.jetbrains.com/issue/KT-14521) Add Inspection to remove empty primary constructor
+- [`KT-14593`](https://youtrack.jetbrains.com/issue/KT-14593) Add a quickfix which removes a single lambda parameter if it's unused
+
+##### Issues fixed
+- [`KT-14396`](https://youtrack.jetbrains.com/issue/KT-14396) "Remove redundant `.let` call" isn't proposed for binary operations
+- [`KT-14500`](https://youtrack.jetbrains.com/issue/KT-14500) Add new type to "create member/extension function `invoke()`" quickfix
+- [`KT-14501`](https://youtrack.jetbrains.com/issue/KT-14501) Missing create operator member/extension function quickfix if another function with `operator` modifier is present
+- [`KT-14552`](https://youtrack.jetbrains.com/issue/KT-14552) ChangeParameterTypeFix holds a strong reference to PSI
+- [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) ConvertPropertyToFunctionIntention freezes the UI
+- [`KT-14583`](https://youtrack.jetbrains.com/issue/KT-14583) Convert receiver to parameter: when searching for conflicts check proposed function signature, not existent one
+- [`KT-14745`](https://youtrack.jetbrains.com/issue/KT-14745) KotlinNullPointerException in ConvertPrimaryConstructorToSecondary
+- [`KT-14791`](https://youtrack.jetbrains.com/issue/KT-14791) Incorrect "remove redundant .let" inspection for value with smart cast
+
+
+#### Debugger
+- [`KT-13485`](https://youtrack.jetbrains.com/issue/KT-13485) Fix: Smart Step Into can't enter function in object
+- [`KT-14374`](https://youtrack.jetbrains.com/issue/KT-14374) Fix bad step-over behaviour for inline calls in Android Studio
+
+
+#### J2K
+- [`KT-14604`](https://youtrack.jetbrains.com/issue/KT-14604) Floating-point literals: "dot" + "exponent" char sequence is processed incorrectly
+
+
+#### Android
+- [`KT-12880`](https://youtrack.jetbrains.com/issue/KT-12880) Implement "Create XML resources" quickfix
+- [`KT-12020`](https://youtrack.jetbrains.com/issue/KT-12020) Implement "Suppress" intention
+
+##### Android Lint
+- [`KT-13243`](https://youtrack.jetbrains.com/issue/KT-13243) Exception type in a `try..catch` block should be checked
+- [`KT-14047`](https://youtrack.jetbrains.com/issue/KT-14047) Fix overloaded method detection in the API detector
+- [`KT-14439`](https://youtrack.jetbrains.com/issue/KT-14439) Filter only `R` class from the current module in the import quickfix
+- [`KT-14470`](https://youtrack.jetbrains.com/issue/KT-14470) False positives in `FragmentManager.beginTransaction()` inside SAM constructors
+
+
+### Compiler
+- [`KT-12224`](https://youtrack.jetbrains.com/issue/KT-12224) Add a diagnostic message for `@JvmOverloads` on interface methods
+- [`KT-14678`](https://youtrack.jetbrains.com/issue/KT-14678) Internal error with `@JvmOverloads` on constructor of inner class
+- [`KT-12664`](https://youtrack.jetbrains.com/issue/KT-12664) Inner class is not found when a sub-directory with the same name is present in an outer class directory
+- [`KT-14186`](https://youtrack.jetbrains.com/issue/KT-14186) Kotlin vararg parameters are generated as simple array parameters for Java
+- [`KT-14408`](https://youtrack.jetbrains.com/issue/KT-14408) Kotlin should always generate a no-args constructor if all primary constuctor arguments have a default value
+- [`KT-14469`](https://youtrack.jetbrains.com/issue/KT-14469) StackOverflowError at EffectiveVisibilityKt.forVisibility
+- [`KT-14581`](https://youtrack.jetbrains.com/issue/KT-14581) NullPointerException at StackTransformationUtils when inlining extension function to a `do-while` loop condition
+- [`KT-14751`](https://youtrack.jetbrains.com/issue/KT-14751) Kotlin 1.0.5 cannot resolve class (related to annotation on types)
+
+
+### JS
+- [`KT-12976`](https://youtrack.jetbrains.com/issue/KT-12976) Print human-friendly error message on wrong modules order
+- [`KT-13792`](https://youtrack.jetbrains.com/issue/KT-13792) Inner class of local class does not capture the enclosing class properly
+- [`KT-13912`](https://youtrack.jetbrains.com/issue/KT-13912) NullPointerException at JsSourceGenerationVisitor when a Lambda with empty if block passed to inline function
+- [`KT-14535`](https://youtrack.jetbrains.com/issue/KT-14535) Broken modification of captured variables defined by a destructuring declaration
+- [`KT-14752`](https://youtrack.jetbrains.com/issue/KT-14752) Exception while typing `@JsName` annotation in editor
+
+
+### Tools.Gradle
+- [`KT-14724`](https://youtrack.jetbrains.com/issue/KT-14724) Kotlin 1.0.5 javascript does not call main
+
+
 ## 1.0.5
 
 ### Compiler
