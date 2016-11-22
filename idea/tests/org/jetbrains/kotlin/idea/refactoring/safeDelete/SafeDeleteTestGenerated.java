@@ -146,6 +146,12 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("ImportJavaClassToKotlin.java")
+        public void testImportJavaClassToKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/ImportJavaClassToKotlin.java");
+            doJavaClassTest(fileName);
+        }
+
         @TestMetadata("javaInterfaceInSuperTypeList.java")
         public void testJavaInterfaceInSuperTypeList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeList.java");

@@ -102,7 +102,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                                 ignoranceCondition.value(usageElement) -> null
                                 else -> {
                                     usageElement.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
-                                        SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as KtDeclaration)
+                                        SafeDeleteImportDirectiveUsageInfo(importDirective, element)
                                     } ?: usageElement.getParentOfTypeAndBranch<KtSuperTypeEntry> { typeReference }?.let {
                                         if (element is PsiClass && element.isInterface) SafeDeleteSuperTypeUsageInfo(it, element) else usageInfo
                                     } ?: if (forceReferencedElementUnwrapping) {
@@ -140,7 +140,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     .filterNot { reference -> getIgnoranceCondition().value(reference.element) }
                     .mapTo(usages) { reference ->
                         reference.element.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
-                            SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as KtDeclaration)
+                            SafeDeleteImportDirectiveUsageInfo(importDirective, element)
                         } ?: SafeDeleteReferenceSimpleDeleteUsageInfo(element, declaration, false)
                     }
 
