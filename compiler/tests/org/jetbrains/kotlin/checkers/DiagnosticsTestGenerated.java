@@ -12576,6 +12576,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("genericClassImplTypeAlias.kt")
+                public void testGenericClassImplTypeAlias() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/genericClassImplTypeAlias.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("platformClassMember.kt")
                 public void testPlatformClassMember() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/platformClassMember.kt");

@@ -1,0 +1,88 @@
+// -- Module: <m1-common> --
+package
+
+public final platform class C1 {
+    public constructor C1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C10</*0*/ L> {
+    public constructor C10</*0*/ L>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C2</*0*/ A> {
+    public constructor C2</*0*/ A>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C3</*0*/ B> {
+    public constructor C3</*0*/ B>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C4</*0*/ D, /*1*/ E> {
+    public constructor C4</*0*/ D, /*1*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C5</*0*/ F, /*1*/ G> {
+    public constructor C5</*0*/ F, /*1*/ G>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C6</*0*/ H> {
+    public constructor C6</*0*/ H>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C7</*0*/ I> {
+    public constructor C7</*0*/ I>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C8</*0*/ J> {
+    public constructor C8</*0*/ J>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final platform class C9</*0*/ K> {
+    public constructor C9</*0*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+public typealias C1 = kotlin.String
+public typealias C10</*0*/ L>  = Tmp<L>
+public typealias C2</*0*/ A>  = kotlin.collections.List<kotlin.String>
+public typealias C3</*0*/ B>  = kotlin.collections.List<B>
+public typealias C4</*0*/ D, /*1*/ E>  = kotlin.collections.MutableMap<D, E>
+public typealias C5</*0*/ F, /*1*/ G>  = kotlin.collections.MutableMap<G, F>
+public typealias C6</*0*/ H>  = kotlin.collections.MutableList<H>
+public typealias C7</*0*/ I>  = kotlin.collections.MutableList<out I>
+public typealias C8</*0*/ J>  = kotlin.collections.MutableList<*>
+public typealias C9</*0*/ K>  = kotlin.collections.MutableList<in K>
+public typealias Tmp</*0*/ K>  = kotlin.collections.MutableList<K>
