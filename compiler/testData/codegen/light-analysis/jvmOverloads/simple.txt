@@ -1,7 +1,7 @@
 public final class C {
     public method <init>(): void
     public synthetic static method foo$default(p0: C, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
-    public @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(): java.lang.String
     public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
