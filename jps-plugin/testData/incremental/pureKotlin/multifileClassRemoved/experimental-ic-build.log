@@ -10,14 +10,5 @@ Cleaning output files:
 End of files
 Compiling files:
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/foo/DummyKt.class
-End of files
-Compiling files:
-  src/dummy.kt
-End of files
 Exit code: OK
 ------------------------------------------
