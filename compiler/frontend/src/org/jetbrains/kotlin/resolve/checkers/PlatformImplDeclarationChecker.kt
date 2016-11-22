@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -33,11 +34,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
 class PlatformImplDeclarationChecker : DeclarationChecker {
@@ -95,17 +98,28 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
     private fun checkImplementationHasPlatformDeclaration(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink
     ) {
+        fun ClassifierDescriptor.findDeclarationForClass(): ClassDescriptor? =
+                findClassifiersFromTheSameModule().firstOrNull { declaration ->
+                    this != declaration &&
+                    declaration is ClassDescriptor && declaration.isPlatform &&
+                    areCompatibleClassifiers(declaration, this) == Compatible
+                } as? ClassDescriptor
+
         val hasDeclaration = when (descriptor) {
-            is CallableMemberDescriptor -> descriptor.findNamesakesFromTheSameModule().any { declaration ->
-                descriptor != declaration &&
-                declaration.isPlatform &&
-                areCompatibleCallables(declaration, descriptor) == Compatible
+            is CallableMemberDescriptor -> {
+                val container = descriptor.containingDeclaration
+                val candidates = when (container) {
+                    is ClassDescriptor -> container.findDeclarationForClass()?.getMembers(descriptor.name).orEmpty()
+                    is PackageFragmentDescriptor -> descriptor.findNamesakesFromTheSameModule()
+                    else -> return // do not report anything for incorrect code, e.g. 'impl' local function
+                }
+                candidates.any { declaration ->
+                    descriptor != declaration &&
+                    declaration.isPlatform &&
+                    areCompatibleCallables(declaration, descriptor) == Compatible
+                }
             }
-            is ClassifierDescriptor -> descriptor.findClassifiersFromTheSameModule().any { declaration ->
-                descriptor != declaration &&
-                declaration is ClassDescriptor && declaration.isPlatform &&
-                areCompatibleClassifiers(declaration, descriptor) == Compatible
-            }
+            is ClassifierDescriptor -> descriptor.findDeclarationForClass() != null
             else -> false
         }
 
@@ -138,7 +152,10 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
 
     sealed class Compatibility {
         // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
-        sealed class Incompatible(val reason: String?) : Compatibility() {
+        sealed class Incompatible(
+                val reason: String?,
+                val unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>? = null
+        ) : Compatibility() {
             // Callables
 
             object ParameterShape : Incompatible("parameter shapes are different (extension vs non-extension)")
@@ -172,6 +189,10 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
 
             object Supertypes : Incompatible("some supertypes are missing in the implementation")
 
+            class ClassScopes(
+                    unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>
+            ) : Incompatible("some members are not implemented", unimplemented)
+
             // Common
 
             object Modality : Incompatible("modality is different")
@@ -188,7 +209,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
     }
 
     // a is the declaration in common code, b is the definition in the platform-specific code
-    private fun areCompatibleCallables(a: CallableMemberDescriptor, b: CallableMemberDescriptor): Compatibility {
+    private fun areCompatibleCallables(a: CallableMemberDescriptor, b: CallableMemberDescriptor, parentSubstitutor: Substitutor? = null): Compatibility {
         assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
         assert(a.containingDeclaration is ClassDescriptor == b.containingDeclaration is ClassDescriptor) {
             "This function should be invoked only for declarations in the same kind of container (both members or both top level): $a, $b"
@@ -206,7 +227,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
         val bTypeParams = b.typeParameters
         if (aTypeParams.size != bTypeParams.size) return Incompatible.TypeParameterCount
 
-        val substitutor = Substitutor(aTypeParams, bTypeParams)
+        val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
 
         if (aParams.map { substitutor(it.type) } != bParams.map { it.type } ||
             aExtensionReceiver?.type?.let(substitutor) != bExtensionReceiver?.type) return Incompatible.ParameterTypes
@@ -260,9 +281,22 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
     private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): Compatibility {
         assert(a.fqNameUnsafe == other.fqNameUnsafe) { "This function should be invoked only for declarations with the same name: $a, $other" }
 
+        var parentSubstitutor: Substitutor? = null
+
         val b = when (other) {
             is ClassDescriptor -> other
-            is TypeAliasDescriptor -> other.classDescriptor ?: return Incompatible.Unknown
+            is TypeAliasDescriptor -> {
+                val classDescriptor = other.classDescriptor ?: return Compatible // do not report extra error on erroneous typealias
+                // If a platform class test.C is implemented by a typealias test.C = test.CImpl, we must now state that any occurrence
+                // of the type "test.C" in the platform class scope should be replaced with "test.CImpl".
+                // Otherwise the types would not be equal and e.g. test.C's constructor is not going to be found in test.CImpl's scope.
+                // For this, we construct an additional substitutor with a single mapping test.C -> test.CImpl
+                // TODO: this looks like a dirty hack
+                parentSubstitutor = Substitutor(null, TypeSubstitutor.create(TypeConstructorSubstitution.createByConstructorsMap(
+                        mapOf(a.typeConstructor to classDescriptor.defaultType.asTypeProjection())
+                )))
+                classDescriptor
+            }
             else -> throw AssertionError("Incorrect impl classifier for $a: $other")
         }
 
@@ -272,7 +306,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
         val bTypeParams = b.declaredTypeParameters
         if (aTypeParams.size != bTypeParams.size) return Incompatible.TypeParameterCount
 
-        val substitutor = Substitutor(aTypeParams, bTypeParams)
+        val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
 
         if (a.modality != b.modality) return Incompatible.Modality
         if (a.visibility != b.visibility) return Incompatible.Visibility
@@ -283,10 +317,44 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
 
         if (!b.typeConstructor.supertypes.containsAll(a.typeConstructor.supertypes.map(substitutor))) return Incompatible.Supertypes
 
-        // TODO: check scopes
+        areCompatibleClassScopes(a, b, substitutor).let { if (it != Compatible) return it }
+
         // TODO: check 'impl' modifier
 
         return Compatible
+    }
+
+    private fun areCompatibleClassScopes(a: ClassDescriptor, b: ClassDescriptor, substitutor: Substitutor): Compatibility {
+        val unimplemented = arrayListOf<Pair<CallableMemberDescriptor, Map<Incompatible, MutableCollection<CallableMemberDescriptor>>>>()
+
+        val bMembersByName = b.getMembers().groupBy { it.name }
+
+        outer@ for (aMember in a.getMembers()) {
+            val mapping = bMembersByName[aMember.name].orEmpty().keysToMap { bMember -> areCompatibleCallables(aMember, bMember, substitutor) }
+            if (mapping.values.any { it == Compatible }) continue
+
+            val incompatibilityMap = mutableMapOf<Incompatible, MutableCollection<CallableMemberDescriptor>>()
+            for ((descriptor, compatibility) in mapping) {
+                when (compatibility) {
+                    Compatible -> continue@outer
+                    is Incompatible -> incompatibilityMap.getOrPut(compatibility) { SmartList() }.add(descriptor)
+                }
+            }
+
+            unimplemented.add(aMember to incompatibilityMap)
+        }
+
+        // TODO: check static scope, enum entries
+
+        if (unimplemented.isEmpty()) return Compatible
+
+        return Incompatible.ClassScopes(unimplemented)
+    }
+
+    private fun ClassDescriptor.getMembers(name: Name? = null): Collection<CallableMemberDescriptor> {
+        val nameFilter = if (name != null) { it -> it == name } else MemberScope.ALL_NAME_FILTER
+        return defaultType.memberScope.getDescriptorsFiltered(nameFilter = nameFilter).filterIsInstance<CallableMemberDescriptor>() +
+               constructors.filter { nameFilter(it.name) }
     }
 
     private inline fun <T, K> equalBy(first: T, second: T, selector: (T) -> K): Boolean =
@@ -302,14 +370,20 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
 
     // This substitutor takes the type from A's signature and returns the type that should be in that place in B's signature
     private class Substitutor(
-            aTypeParams: List<TypeParameterDescriptor>,
-            bTypeParams: List<TypeParameterDescriptor>
+            private val parent: Substitutor?,
+            private val typeSubstitutor: TypeSubstitutor
     ) : (KotlinType?) -> KotlinType? {
-        val typeSubstitutor = TypeSubstitutor.create(TypeConstructorSubstitution.createByParametersMap(
-                aTypeParams.keysToMap { bTypeParams[it.index].defaultType.asTypeProjection() }
+        constructor(
+                aTypeParams: List<TypeParameterDescriptor>,
+                bTypeParams: List<TypeParameterDescriptor>,
+                parent: Substitutor? = null
+        ) : this(parent, TypeSubstitutor.create(
+                TypeConstructorSubstitution.createByParametersMap(aTypeParams.keysToMap {
+                    bTypeParams[it.index].defaultType.asTypeProjection()
+                })
         ))
 
         override fun invoke(type: KotlinType?): KotlinType? =
-                type?.asTypeProjection()?.let(typeSubstitutor::substitute)?.type
+                (parent?.invoke(type) ?: type)?.asTypeProjection()?.let(typeSubstitutor::substitute)?.type
     }
 }

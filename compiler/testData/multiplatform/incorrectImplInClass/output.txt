@@ -1,0 +1,17 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl constructor(s: String) : this()
+    ^
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl fun nonPlatformFun() {}
+    ^
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl val nonPlatformVal = ""
+    ^
+

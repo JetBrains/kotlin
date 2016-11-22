@@ -1,0 +1,1 @@
+platform class Foo

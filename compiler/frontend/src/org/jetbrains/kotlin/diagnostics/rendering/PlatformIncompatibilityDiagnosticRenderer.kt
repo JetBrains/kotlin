@@ -16,28 +16,58 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker
 
 object PlatformIncompatibilityDiagnosticRenderer :
         DiagnosticParameterRenderer<Map<PlatformImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>> {
+    private val INDENTATION_UNIT = "    "
+
     override fun render(
             obj: Map<PlatformImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>,
             renderingContext: RenderingContext
     ): String {
         if (obj.isEmpty()) return ""
 
+        val renderDescriptor: (DeclarationDescriptor) -> String = { Renderers.COMPACT_WITH_MODIFIERS.render(it, renderingContext) }
+
         return buildString {
             appendln()
-            for ((incompatibility, descriptors) in obj) {
-                append("The following declaration")
-                if (descriptors.size == 1) append(" is") else append("s are")
-                append(" incompatible")
-                incompatibility.reason?.let { append(" because $it") }
+            render(obj, "", renderDescriptor)
+        }
+    }
+
+    private fun StringBuilder.render(
+            map: Map<PlatformImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>,
+            indent: String,
+            renderDescriptor: (DeclarationDescriptor) -> String
+    ) {
+        for ((incompatibility, descriptors) in map) {
+            append(indent)
+            append("The following declaration")
+            if (descriptors.size == 1) append(" is") else append("s are")
+            append(" incompatible")
+            incompatibility.reason?.let { append(" because $it") }
+
+            incompatibility.unimplemented?.let { unimplemented ->
+                appendln(".")
+                append(indent)
+                appendln("No implementations are found for members listed below:")
+                for ((descriptor, mapping) in unimplemented) {
+                    appendln()
+                    append(indent + "    ")
+                    appendln(renderDescriptor(descriptor))
+                    if (mapping.isNotEmpty()) {
+                        appendln()
+                    }
+                    render(mapping, indent + INDENTATION_UNIT, renderDescriptor)
+                }
+            } ?: run {
                 appendln(":")
                 for (descriptor in descriptors) {
-                    append("    ")
-                    appendln(Renderers.COMPACT_WITH_MODIFIERS.render(descriptor, renderingContext))
+                    append(indent + "    ")
+                    appendln(renderDescriptor(descriptor))
                 }
             }
         }

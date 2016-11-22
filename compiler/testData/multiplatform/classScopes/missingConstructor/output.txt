@@ -1,0 +1,22 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/classScopes/missingConstructor/common.kt:1:16: error: no definition is found for platform declaration 'Foo'
+The following declaration is incompatible because some members are not implemented.
+No implementations are found for members listed below:
+
+    public constructor Foo(s: String)
+
+    The following declaration is incompatible because number of value parameters is different:
+        public constructor Foo()
+
+platform class Foo {
+               ^
+compiler/testData/multiplatform/classScopes/missingConstructor/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+impl class Foo
+^
+
