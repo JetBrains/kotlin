@@ -41,7 +41,7 @@ class KotlinFrameworkDetector : FacetBasedFrameworkDetector<KotlinFacet, KotlinF
     override fun detect(
             newFiles: Collection<VirtualFile>,
             context: FrameworkDetectionContext
-    ) = emptyList<DetectedFrameworkDescription>()
+    ) = ArrayList<DetectedFrameworkDescription>()
 
     fun internalDetect(
             newFiles: Collection<VirtualFile>,
