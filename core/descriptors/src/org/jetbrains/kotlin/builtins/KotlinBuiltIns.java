@@ -931,11 +931,19 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isFloat(@NotNull KotlinType type) {
-        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._float);
+        return isFloatOrNullableFloat(type) && !type.isMarkedNullable();
+    }
+
+    public static boolean isFloatOrNullableFloat(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._float);
     }
 
     public static boolean isDouble(@NotNull KotlinType type) {
-        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._double);
+        return isDoubleOrNullableDouble(type) && !type.isMarkedNullable();
+    }
+
+    public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._double);
     }
 
     private static boolean isConstructedFromGivenClassAndNotNullable(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {

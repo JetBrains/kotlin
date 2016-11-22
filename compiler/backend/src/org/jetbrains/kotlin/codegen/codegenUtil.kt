@@ -18,6 +18,7 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
@@ -31,12 +32,15 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
@@ -44,6 +48,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -257,3 +262,38 @@ private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) 
         }
 
 fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filterNot { it.name.isSpecial }
+
+
+fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingContext: BindingContext, descriptor: DeclarationDescriptor): Type? {
+    val ktType = expression.kotlinType(bindingContext) ?: return null
+
+    if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
+        return Type.DOUBLE_TYPE
+    }
+
+    if (KotlinBuiltIns.isFloatOrNullableFloat(ktType)) {
+        return Type.FLOAT_TYPE
+    }
+
+    val dataFlow = DataFlowValueFactory.createDataFlowValue(expression!!, ktType, bindingContext, descriptor)
+    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow)
+    return stableTypes.firstNotNullResult {
+        if (KotlinBuiltIns.isDoubleOrNullableDouble(it)) {
+            Type.DOUBLE_TYPE
+        }
+        else if (KotlinBuiltIns.isFloatOrNullableFloat(it)) {
+            Type.FLOAT_TYPE
+        }
+        else {
+            null
+        }
+    }
+}
+
+fun KotlinType.asmType(typeMapper: KotlinTypeMapper) = typeMapper.mapType(this)
+
+fun KtExpression?.asmType(typeMapper: KotlinTypeMapper, bindingContext: BindingContext): Type =
+        this.kotlinType(bindingContext)?.asmType(typeMapper) ?: Type.VOID_TYPE
+
+fun KtExpression?.kotlinType(bindingContext: BindingContext) = this?.let(bindingContext::getType)
+

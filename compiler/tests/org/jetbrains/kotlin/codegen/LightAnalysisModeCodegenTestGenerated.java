@@ -7761,6 +7761,129 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/ieee754")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Ieee754 extends AbstractLightAnalysisModeCodegenTest {
+        public void testAllFilesPresentInIeee754() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("anyToReal.kt")
+        public void testAnyToReal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/anyToReal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("comparableTypeCast.kt")
+        public void testComparableTypeCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/comparableTypeCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/dataClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsDouble.kt")
+        public void testEqualsDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/equalsDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsFloat.kt")
+        public void testEqualsFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/equalsFloat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("equalsNullableDouble.kt")
+        public void testEqualsNullableDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/equalsNullableDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("explicitCompareCall.kt")
+        public void testExplicitCompareCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/explicitCompareCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("explicitEqualsCall.kt")
+        public void testExplicitEqualsCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/explicitEqualsCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("generic.kt")
+        public void testGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/generic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("greaterDouble.kt")
+        public void testGreaterDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/greaterDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("greaterFloat.kt")
+        public void testGreaterFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/greaterFloat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/inline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lessDouble.kt")
+        public void testLessDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/lessDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lessFloat.kt")
+        public void testLessFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/lessFloat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableAnyToReal.kt")
+        public void testNullableAnyToReal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableAnyToReal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/safeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastToDifferentTypes.kt")
+        public void testSmartCastToDifferentTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/when.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenNoSubject.kt")
+        public void testWhenNoSubject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/whenNoSubject.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/increment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
