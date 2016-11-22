@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -67,7 +67,7 @@ class CoroutineCodegen(
         val classDescriptor = closureContext.contextDescriptor
 
         // protected fun doResume(result, throwable)
-        val combinedResumeFunctionDescriptor =
+        val doResumeDescriptor =
                 SimpleFunctionDescriptorImpl.create(
                         classDescriptor, Annotations.EMPTY, Name.identifier("doResume"), CallableMemberDescriptor.Kind.DECLARATION,
                         funDescriptor.source
@@ -98,7 +98,7 @@ class CoroutineCodegen(
                     )
                 }
 
-        functionCodegen.generateMethod(OtherOrigin(element), combinedResumeFunctionDescriptor,
+        functionCodegen.generateMethod(OtherOrigin(element), doResumeDescriptor,
                                        object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                                                codegen.v.visitAnnotation(CONTINUATION_METHOD_ANNOTATION_DESC, true).visitEnd()
@@ -116,6 +116,10 @@ class CoroutineCodegen(
                                        })
     }
 
+    // invoke for lambda being passes to builder
+    // fun builder(coroutine c: Controller.() -> Continuation<Unit>)
+    //
+    // This lambda must have a receiver parameter, may have value parameters and returns Continuation<Unit> (`this` instance or a copy of it)
     private fun generateInvokeMethod(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
         val classDescriptor = closureContext.contextDescriptor
         val owner = typeMapper.mapClass(classDescriptor)
@@ -232,7 +236,7 @@ class CoroutineCodegen(
                 declaration: KtElement,
                 classBuilder: ClassBuilder
         ): ClosureCodegen? {
-            if (declaration !is KtFunction) return null
+            if (declaration !is KtFunctionLiteral) return null
             val controllerType = originalCoroutineLambdaDescriptor.controllerTypeIfCoroutine ?: return null
 
             val descriptorWithContinuationReturnType =
