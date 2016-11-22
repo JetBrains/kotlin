@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.config.TargetPlatformKind;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
@@ -57,6 +58,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Nullable
     private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
     private final Project project;
+    private final boolean showLanguageVersion;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
@@ -79,6 +81,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JPanel k2jvmPanel;
     private JPanel k2jsPanel;
     private JComboBox jvmVersionComboBox;
+    private JComboBox languageVersionComboBox;
+    private JPanel languageVersionPanel;
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
@@ -93,7 +97,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             K2JSCompilerArguments k2jsCompilerArguments,
             CompilerSettings compilerSettings,
             @Nullable KotlinCompilerWorkspaceSettings compilerWorkspaceSettings,
-            @Nullable K2JVMCompilerArguments k2jvmCompilerArguments
+            @Nullable K2JVMCompilerArguments k2jvmCompilerArguments,
+            boolean showLanguageVersion
     ) {
         this.project = project;
         this.commonCompilerArguments = commonCompilerArguments;
@@ -101,6 +106,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.compilerSettings = compilerSettings;
         this.compilerWorkspaceSettings = compilerWorkspaceSettings;
         this.k2jvmCompilerArguments = k2jvmCompilerArguments;
+        this.showLanguageVersion = showLanguageVersion;
+
+        if (!showLanguageVersion) {
+            languageVersionPanel.setVisible(false);
+        }
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
@@ -120,6 +130,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
         fillModuleKindList();
         fillJvmVersionList();
+        fillLanguageVersionList();
 
         if (compilerWorkspaceSettings == null) {
             keepAliveCheckBox.setVisible(false);
@@ -134,6 +145,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private void fillLanguageVersionList() {
+        for (LanguageVersion version : LanguageVersion.values()) {
+            languageVersionComboBox.addItem(version.getDescription());
+        }
+    }
+
     public void setTargetPlatform(@Nullable TargetPlatformKind<?> targetPlatform) {
         k2jsPanel.setVisible(TargetPlatformKind.JavaScript.INSTANCE.equals(targetPlatform));
     }
@@ -145,7 +163,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
              Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings(),
              KotlinCompilerSettings.getInstance(project).getSettings(),
              ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
-             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings());
+             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings(),
+             true);
     }
 
     @SuppressWarnings("unchecked")
@@ -189,6 +208,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
+               (showLanguageVersion && !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion))) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
                ComparingUtils.isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
                ComparingUtils.isModified(scriptTemplatesClasspathField, compilerSettings.getScriptTemplatesClasspath()) ||
@@ -216,9 +236,17 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         return getJvmVersionOrDefault((String) jvmVersionComboBox.getSelectedItem());
     }
 
+    @NotNull
+    private String getSelectedLanguageVersion() {
+        return getLanguageVersionOrDefault((String) languageVersionComboBox.getSelectedItem());
+    }
+
     @Override
     public void apply() throws ConfigurationException {
         commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
+        if (showLanguageVersion) {
+            commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
+        }
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
         compilerSettings.setScriptTemplates(scriptTemplatesField.getText());
         compilerSettings.setScriptTemplatesClasspath(scriptTemplatesClasspathField.getText());
@@ -259,9 +287,16 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         return jvmVersion != null ? jvmVersion : JvmTarget.DEFAULT.getDescription();
     }
 
+    private static String getLanguageVersionOrDefault(@Nullable String languageVersion) {
+        return languageVersion != null ? languageVersion : LanguageVersion.LATEST.getVersionString();
+    }
+
     @Override
     public void reset() {
         generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
+        if (showLanguageVersion) {
+            languageVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion));
+        }
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
         scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
         scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());

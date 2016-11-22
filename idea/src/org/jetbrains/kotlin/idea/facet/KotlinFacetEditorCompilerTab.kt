@@ -31,7 +31,8 @@ class KotlinFacetEditorCompilerTab(
             compilerInfo.k2jsCompilerArguments,
             compilerInfo.compilerSettings,
             null,
-            null
+            null,
+            false
     )
 
     override fun apply() = compilerConfigurable.apply()

@@ -327,6 +327,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ### IDE
 
 - [`KT-13811`](https://youtrack.jetbrains.com/issue/KT-13811) Expose JVM target setting in IntelliJ IDEA plugin compiler configuration UI
+- [`KT-12410`](https://youtrack.jetbrains.com/issue/KT-12410) Expose language version setting in IntelliJ IDEA plugin compiler configuration UI
 
 #### Intention actions, inspections and quickfixes
 
