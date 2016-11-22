@@ -30,6 +30,7 @@ class KotlinFacetEditorCompilerTab(
             compilerInfo.commonCompilerArguments,
             compilerInfo.k2jsCompilerArguments,
             compilerInfo.compilerSettings,
+            null,
             null
     )
 

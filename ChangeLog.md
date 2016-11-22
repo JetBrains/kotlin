@@ -326,6 +326,8 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 ### IDE
 
+- [`KT-13811`](https://youtrack.jetbrains.com/issue/KT-13811) Expose JVM target setting in IntelliJ IDEA plugin compiler configuration UI
+
 #### Intention actions, inspections and quickfixes
 
 - [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) Convert Property to Function Intention: Search occurrences using progress dialog

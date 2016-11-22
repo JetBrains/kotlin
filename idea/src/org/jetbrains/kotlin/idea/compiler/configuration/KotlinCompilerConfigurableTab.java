@@ -34,8 +34,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.CompilerSettings;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.TargetPlatformKind;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
@@ -50,6 +52,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<String, String>();
     private final CommonCompilerArguments commonCompilerArguments;
     private final K2JSCompilerArguments k2jsCompilerArguments;
+    private final K2JVMCompilerArguments k2jvmCompilerArguments;
     private final CompilerSettings compilerSettings;
     @Nullable
     private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
@@ -75,6 +78,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel scriptTemplatesClasspathLabel;
     private JPanel k2jvmPanel;
     private JPanel k2jsPanel;
+    private JComboBox jvmVersionComboBox;
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
@@ -88,13 +92,15 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             CommonCompilerArguments commonCompilerArguments,
             K2JSCompilerArguments k2jsCompilerArguments,
             CompilerSettings compilerSettings,
-            @Nullable KotlinCompilerWorkspaceSettings compilerWorkspaceSettings
+            @Nullable KotlinCompilerWorkspaceSettings compilerWorkspaceSettings,
+            @Nullable K2JVMCompilerArguments k2jvmCompilerArguments
     ) {
         this.project = project;
         this.commonCompilerArguments = commonCompilerArguments;
         this.k2jsCompilerArguments = k2jsCompilerArguments;
         this.compilerSettings = compilerSettings;
         this.compilerWorkspaceSettings = compilerWorkspaceSettings;
+        this.k2jvmCompilerArguments = k2jvmCompilerArguments;
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
@@ -113,10 +119,18 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         });
 
         fillModuleKindList();
+        fillJvmVersionList();
 
         if (compilerWorkspaceSettings == null) {
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void fillJvmVersionList() {
+        for (TargetPlatformKind.Jvm jvm : TargetPlatformKind.Jvm.Companion.getJVM_PLATFORMS()) {
+            jvmVersionComboBox.addItem(jvm.getVersion().getDescription());
         }
     }
 
@@ -130,7 +144,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
              KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings(),
              Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings(),
              KotlinCompilerSettings.getInstance(project).getSettings(),
-             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class));
+             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
+             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings());
     }
 
     @SuppressWarnings("unchecked")
@@ -187,12 +202,18 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourceMap) ||
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
                isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix) ||
-               !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind));
+               !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind)) ||
+               (k2jvmCompilerArguments != null && !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget)));
     }
 
     @NotNull
     private String getSelectedModuleKind() {
         return getModuleKindOrDefault((String) moduleKindComboBox.getSelectedItem());
+    }
+
+    @NotNull
+    private String getSelectedJvmVersion() {
+        return getJvmVersionOrDefault((String) jvmVersionComboBox.getSelectedItem());
     }
 
     @Override
@@ -219,6 +240,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
         k2jsCompilerArguments.moduleKind = getSelectedModuleKind();
 
+        if (k2jvmCompilerArguments != null) {
+            k2jvmCompilerArguments.jvmTarget = getSelectedJvmVersion();
+        }
+
         BuildManager.getInstance().clearState(project);
     }
 
@@ -228,6 +253,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             moduleKindId = K2JsArgumentConstants.MODULE_PLAIN;
         }
         return moduleKindId;
+    }
+
+    private static String getJvmVersionOrDefault(@Nullable String jvmVersion) {
+        return jvmVersion != null ? jvmVersion : JvmTarget.DEFAULT.getDescription();
     }
 
     @Override
@@ -249,6 +278,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
 
         moduleKindComboBox.setSelectedItem(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind));
+
+        if (k2jvmCompilerArguments != null) {
+            jvmVersionComboBox.setSelectedItem(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
+        }
     }
 
     @Override
