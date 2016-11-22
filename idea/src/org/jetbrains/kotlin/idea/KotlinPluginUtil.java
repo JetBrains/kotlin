@@ -37,6 +37,10 @@ public class KotlinPluginUtil {
         return plugin.getVersion();
     }
 
+    public static boolean isSnapshotVersion() {
+        return "@snapshot@".equals(getPluginVersion());
+    }
+
     public static boolean isAndroidGradleModule(@NotNull Module module) {
         return KotlinModuleTypeManager.getInstance().isAndroidGradleModule(module);
     }

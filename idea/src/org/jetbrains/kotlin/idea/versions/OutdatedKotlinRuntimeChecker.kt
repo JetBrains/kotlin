@@ -37,7 +37,7 @@ data class VersionedLibrary(val library: Library, val version: String?, val used
 
 fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     val pluginVersion = KotlinPluginUtil.getPluginVersion()
-    if ("@snapshot@" == pluginVersion) return emptyList() // plugin is run from sources, can't compare versions
+    if (KotlinPluginUtil.isSnapshotVersion()) return emptyList() // plugin is run from sources, can't compare versions
 
     // user already clicked suppress
     if (pluginVersion == PropertiesComponent.getInstance(project).getValue(SUPPRESSED_PROPERTY_NAME)) {
