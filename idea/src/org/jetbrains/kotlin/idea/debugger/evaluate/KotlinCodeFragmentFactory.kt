@@ -167,7 +167,12 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     else
                         debuggerContext.frameProxy?.stackFrame
 
-                    frameInfo = FrameInfo(frame?.thisObject(), frame?.let { it.getValues(it.visibleVariables()) } ?: emptyMap())
+                    val visibleVariables = frame?.let {
+                        val values = it.getValues(it.visibleVariables())
+                        values.filterValues { it != null }
+                    } ?: emptyMap()
+
+                    frameInfo = FrameInfo(frame?.thisObject(), visibleVariables)
                 }
                 catch(ignored: AbsentInformationException) {
                     // Debug info unavailable
