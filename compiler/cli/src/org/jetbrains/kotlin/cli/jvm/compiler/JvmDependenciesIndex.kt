@@ -232,7 +232,7 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
                 }
             }
             else {
-                currentFile = currentFile.findChild(subPackageName) ?: return null
+                currentFile = currentFile.findChildPackage(subPackageName, pathRoot.type) ?: return null
             }
 
             val correspondingCacheIndex = pathIndex + 1
@@ -243,6 +243,21 @@ class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         }
 
         return currentFile
+    }
+
+    private fun VirtualFile.findChildPackage(subPackageName: String, rootType: JavaRoot.RootType): VirtualFile? {
+        val childDirectory = findChild(subPackageName) ?: return null
+
+        // Resolve conflicts between files and packages with the same qualified name in favor of files
+        val fileExtension = when (rootType) {
+            JavaRoot.RootType.BINARY -> ".class"
+            JavaRoot.RootType.SOURCE -> ".java"
+        }
+
+        if (findChild(subPackageName + fileExtension)?.isDirectory == false) {
+            return null
+        }
+        return childDirectory
     }
 
     private fun cachesPath(path: List<String>): List<Cache> {
