@@ -48,6 +48,11 @@ class KotlinSourceFilterScope private constructor(
         )
     }
 
+    override fun toString(): String {
+        return "KotlinSourceFilterScope(delegate=$myBaseScope src=$includeProjectSourceFiles libSrc=$includeLibrarySourceFiles " +
+               "cls=$includeClassFiles script=$includeScriptDependencies)"
+    }
+
     companion object {
         @JvmStatic
         fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, true, true, project)

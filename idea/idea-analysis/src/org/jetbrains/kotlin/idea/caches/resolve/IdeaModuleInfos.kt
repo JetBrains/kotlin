@@ -187,6 +187,8 @@ private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(mo
     override fun hashCode(): Int = 31 * module.hashCode()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContent(file) && !moduleFileIndex.isInTestSourceContent(file)
+
+    override fun toString() = "ModuleProductionSourceScope($module)"
 }
 
 private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) {
@@ -200,6 +202,8 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun hashCode(): Int = 37 * module.hashCode()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
+
+    override fun toString() = "ModuleTestSourceScope($module)"
 }
 
 open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo {
@@ -287,6 +291,8 @@ private class LibraryWithoutSourceScope(project: Project, private val library: L
     override fun equals(other: Any?) = other is LibraryWithoutSourceScope && library == other.library
 
     override fun hashCode() = library.hashCode()
+
+    override fun toString() = "LibraryWithoutSourceScope($library)"
 }
 
 //TODO: (module refactoring) android sdk has modified scope
@@ -296,6 +302,8 @@ private class SdkScope(project: Project, private val sdk: Sdk) :
     override fun equals(other: Any?) = other is SdkScope && sdk == other.sdk
 
     override fun hashCode() = sdk.hashCode()
+
+    override fun toString() = "SdkScope($sdk)"
 }
 
 internal fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
