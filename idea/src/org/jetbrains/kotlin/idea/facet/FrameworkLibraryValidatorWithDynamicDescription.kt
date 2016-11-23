@@ -45,6 +45,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
             return when (this) {
                 is JVMPlatform -> JavaRuntimeLibraryDescription(project)
                 is JSPlatform -> JSLibraryStdDescription(project)
+                else -> error("Unexpected platform: $this")
             }
         }
 

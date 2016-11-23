@@ -45,8 +45,7 @@ class KotlinFacetEditorGeneralTab(
         override fun check(): ValidationResult {
             val apiLevel = apiVersionComboBox.selectedItem as? LanguageVersion? ?: return ValidationResult.OK
             val languageLevel = languageVersionComboBox.selectedItem as? LanguageVersion? ?: return ValidationResult.OK
-            val targetPlatform = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
-            val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
+            val libraryLevel = LanguageVersion.KOTLIN_1_0
             if (languageLevel < apiLevel || libraryLevel < apiLevel) {
                 return ValidationResult("Language version/Runtime version may not be less than API version", null)
             }

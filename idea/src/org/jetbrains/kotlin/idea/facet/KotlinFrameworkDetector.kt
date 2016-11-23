@@ -23,6 +23,7 @@ import com.intellij.framework.detection.FrameworkDetectionContext
 import com.intellij.framework.detection.impl.FrameworkDetectorRegistry
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import java.util.*
 
 class KotlinFrameworkDetector : FacetBasedFrameworkDetector<KotlinFacet, KotlinFacetConfiguration>(DETECTOR_ID) {
     companion object {

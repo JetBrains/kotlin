@@ -34,6 +34,7 @@ class UnsupportedAsyncFix(val psiElement: PsiElement): KotlinQuickFixAction<PsiE
     override fun getText(): String  = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val element = element
         if (element is KtBinaryExpression) {
             if (element.operationToken != KtTokens.IDENTIFIER) {
                 // async+ {}

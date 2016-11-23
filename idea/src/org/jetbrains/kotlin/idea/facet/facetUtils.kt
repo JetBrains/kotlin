@@ -23,7 +23,6 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
-import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.getLibraryProperties
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator
-import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 private fun getRuntimeLibraryVersions(
         module: Module,
@@ -44,6 +42,7 @@ private fun getRuntimeLibraryVersions(
     val presentationProvider = when (targetPlatform) {
         is JSPlatform -> JSLibraryStdPresentationProvider.getInstance()
         is JVMPlatform -> JavaRuntimePresentationProvider.getInstance()
+        else -> error("Unexpected platform: $targetPlatform")
     }
 
     KotlinVersionInfoProvider.EP_NAME
@@ -68,34 +67,9 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
     val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
     val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
     return when {
-        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> JVMPlatform[JvmTarget.JVM_1_8]
+        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> JVMPlatform[JvmTarget.JVM_1_6]
         else -> JVMPlatform[JvmTarget.JVM_1_6]
     }
-}
-
-private fun getDefaultLanguageLevel(
-        module: Module,
-        explicitVersion: String? = null
-): LanguageVersion {
-    val libVersion = explicitVersion
-                     ?: KotlinVersionInfoProvider.EP_NAME.extensions
-                             .mapNotNull { it.getCompilerVersion(module) }
-                             .minWith(VersionComparatorUtil.COMPARATOR)
-                     ?: bundledRuntimeVersion()
-    return when {
-        libVersion.startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
-        else -> LanguageVersion.KOTLIN_1_1
-    }
-}
-
-internal fun getLibraryLanguageLevel(
-        module: Module,
-        rootModel: ModuleRootModel?,
-        targetPlatform: TargetPlatformKind<*>?
-): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: JVMPlatform[JvmTarget.JVM_1_8])
-            .minWith(VersionComparatorUtil.COMPARATOR)
-    return getDefaultLanguageLevel(module, minVersion)
 }
 
 fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: ModuleRootModel?) {
@@ -107,11 +81,11 @@ fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: ModuleRoot
         }
 
         if (languageLevel == null) {
-            languageLevel = getDefaultLanguageLevel(module)
+            languageLevel = LanguageVersion.KOTLIN_1_0
         }
 
         if (apiLevel == null) {
-            apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKindKind!!))
+            apiLevel = LanguageVersion.KOTLIN_1_0
         }
     }
 
@@ -135,6 +109,7 @@ val TargetPlatformKind<*>.mavenLibraryId: String
         return when (this) {
             is JVMPlatform -> KotlinJavaMavenConfigurator.STD_LIB_ID
             is JSPlatform -> KotlinJavascriptMavenConfigurator.STD_LIB_ID
+            else -> error("Unexpected platform: $this")
         }
     }
 
@@ -151,7 +126,7 @@ fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): Kotlin
 fun KotlinFacet.configureFacet(compilerVersion: String, modelsProvider: IdeModifiableModelsProvider) {
     val module = module
     with(configuration.settings) {
-        versionInfo.targetPlatformKind = null
+        versionInfo.targetPlatformKindKind = null
         versionInfo.apiLevel = null
         initializeIfNeeded(module, modelsProvider.getModifiableRootModel(module))
         with(versionInfo) {

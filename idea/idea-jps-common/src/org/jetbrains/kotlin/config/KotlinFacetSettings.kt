@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.utils.DescriptionAware
 
-sealed class TargetPlatformKind<out Version : DescriptionAware>(
+abstract class TargetPlatformKind<out Version : DescriptionAware>(
         val version: Version,
         val name: String
 ) : DescriptionAware {

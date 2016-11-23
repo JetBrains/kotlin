@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.module.Module
-import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 enum class LanguageFeature(val sinceVersion: LanguageVersion) {
@@ -29,7 +27,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion) {
 }
 
 enum class LanguageVersion(val versionString: String) : DescriptionAware {
-    KOTLIN_1_0("1.0"),
+    KOTLIN_1_0("1.0");
 
     override val description: String
         get() = versionString
