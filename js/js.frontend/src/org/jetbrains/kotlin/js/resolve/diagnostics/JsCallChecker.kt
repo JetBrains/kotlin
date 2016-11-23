@@ -87,10 +87,10 @@ class JsCallChecker(
         val errorReporter = JsCodeErrorReporter(argument, code, context.trace)
 
         try {
-            val parserScope = JsFunctionScope(JsRootScope(JsProgram("<js checker>")), "<js fun>")
+            val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
             val statements = parse(code, errorReporter, parserScope)
 
-            if (statements.size == 0) {
+            if (statements.isEmpty()) {
                 context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))
             }
         } catch (e: AbortParsingException) {

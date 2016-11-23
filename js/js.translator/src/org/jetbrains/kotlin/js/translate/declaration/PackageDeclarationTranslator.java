@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.js.translate.declaration;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
+import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
 
 import java.util.Collection;
 
@@ -42,13 +42,14 @@ public final class PackageDeclarationTranslator extends AbstractTranslator {
 
     private void translate() {
         for (KtFile file : files) {
-            PackageFragmentDescriptor packageFragment =
-                    BindingContextUtils.getNotNull(context().bindingContext(), BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
-
-            PackageTranslator translator = PackageTranslator.create(packageFragment, context());
+            FileDeclarationVisitor fileVisitor = new FileDeclarationVisitor(context());
 
             try {
-                translator.translate(file);
+                for (KtDeclaration declaration : file.getDeclarations()) {
+                    if (!AnnotationsUtils.isPredefinedObject(BindingUtils.getDescriptorForElement(bindingContext(), declaration))) {
+                        declaration.accept(fileVisitor, context());
+                    }
+                }
             }
             catch (TranslationRuntimeException e) {
                 throw e;

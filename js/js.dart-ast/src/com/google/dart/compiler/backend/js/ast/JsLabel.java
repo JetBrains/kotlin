@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents a JavaScript label statement.
  */
 public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasName {
-    private final JsName label;
+    private JsName label;
 
     private JsStatement statement;
 
@@ -28,6 +28,11 @@ public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasNa
     @Override
     public JsName getName() {
         return label;
+    }
+
+    @Override
+    public void setName(JsName name) {
+        label = name;
     }
 
     @Override

@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
-
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.name
-import java.util.*
 
 fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
         collectReferencedNames(scope).filter { it.staticRef is JsFunction }
@@ -87,7 +84,7 @@ fun collectUsedNames(scope: JsNode): Set<JsName> {
 }
 
 fun collectDefinedNames(scope: JsNode): Set<JsName> {
-    val names: MutableMap<String, JsName> = HashMap()
+    val names = mutableSetOf<JsName>()
 
     object : RecursiveJsVisitor() {
         override fun visit(x: JsVars.JsVar) {
@@ -95,7 +92,7 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
             if (initializer != null) {
                 accept(initializer)
             }
-            addNameIfNeeded(x.name)
+            names += x.name
         }
 
         override fun visitExpressionStatement(x: JsExpressionStatement) {
@@ -103,7 +100,7 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
             if (expression is JsFunction) {
                 val name = expression.name
                 if (name != null) {
-                    addNameIfNeeded(name)
+                    names += name
                 }
             }
             super.visitExpressionStatement(x)
@@ -112,16 +109,9 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
         // Skip function expression, since it does not introduce name in scope of containing function.
         // The only exception is function statement, that is handled with the code above.
         override fun visitFunction(x: JsFunction) { }
-
-        private fun addNameIfNeeded(name: JsName) {
-            val ident = name.ident
-            val nameCollected = names[ident]
-            assert(nameCollected == null || nameCollected === name) { "ambiguous identifier $name" }
-            names[ident] = name
-        }
     }.accept(scope)
 
-    return names.values.toSet()
+    return names
 }
 
 fun JsFunction.collectFreeVariables() = collectUsedNames(body) - collectDefinedNames(body) - parameters.map { it.name }

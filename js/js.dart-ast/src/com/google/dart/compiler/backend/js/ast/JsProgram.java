@@ -28,9 +28,9 @@ public final class JsProgram extends SourceInfoAwareJsNode {
     private final Map<String, JsStringLiteral> stringLiteralMap = new THashMap<String, JsStringLiteral>();
     private final JsObjectScope topScope;
 
-    public JsProgram(String unitId) {
+    public JsProgram() {
         rootScope = new JsRootScope(this);
-        topScope = new JsObjectScope(rootScope, "Global", unitId);
+        topScope = new JsObjectScope(rootScope, "Global");
         setFragmentCount(1);
     }
 

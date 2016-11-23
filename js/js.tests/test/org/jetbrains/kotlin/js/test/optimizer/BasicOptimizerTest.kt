@@ -64,7 +64,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
     }
 
     private fun checkOptimizer(unoptimizedCode: String, optimizedCode: String) {
-        val parserScope = JsFunctionScope(JsRootScope(JsProgram("<js checker>")), "<js fun>")
+        val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
         val unoptimizedAst = parse(unoptimizedCode, errorReporter, parserScope)
 
         updateMetadata(unoptimizedCode, unoptimizedAst)

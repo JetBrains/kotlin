@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.context.AliasingContext;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
@@ -78,17 +79,27 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private TranslationContext getFunctionBodyContext() {
-        AliasingContext aliasingContext;
+        Map<DeclarationDescriptor, JsExpression> aliases = new HashMap<DeclarationDescriptor, JsExpression>();
         if (isExtensionFunction()) {
             DeclarationDescriptor expectedReceiverDescriptor = descriptor.getExtensionReceiverParameter();
             assert expectedReceiverDescriptor != null;
             extensionFunctionReceiverName = functionObject.getScope().declareName(Namer.getReceiverParameterName());
             //noinspection ConstantConditions
-            aliasingContext = context().aliasingContext().inner(expectedReceiverDescriptor, extensionFunctionReceiverName.makeRef());
+            aliases.put(expectedReceiverDescriptor, extensionFunctionReceiverName.makeRef());
         }
-        else {
-            aliasingContext = null;
+
+        LocalFunctionCollector functionCollector = new LocalFunctionCollector(context().bindingContext());
+        functionDeclaration.acceptChildren(functionCollector, null);
+        for (FunctionDescriptor localFunction : functionCollector.getFunctions()) {
+            String localIdent = localFunction.getName().isSpecial() ? "lambda" : localFunction.getName().asString();
+            JsName localName = functionObject.getScope().getParent().declareTemporaryName(localIdent);
+            JsExpression alias = JsAstUtils.pureFqn(localName, null);
+            aliases.put(localFunction, alias);
         }
+
+        AliasingContext aliasingContext = !aliases.isEmpty() ? context().aliasingContext().withDescriptorsAliased(aliases) : null;
+
+
         return context().newFunctionBody(functionObject, aliasingContext, descriptor);
     }
 

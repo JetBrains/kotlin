@@ -153,7 +153,7 @@ object CallableReferenceTranslator {
         }
 
         val function = context.createRootScopedFunction(setter)
-        val valueParam = function.scope.declareFreshName("value")
+        val valueParam = function.scope.declareTemporaryName("value")
         function.parameters += JsParameter(valueParam)
 
         val expression = if (TranslationUtils.shouldAccessViaFunctions(descriptor)) {

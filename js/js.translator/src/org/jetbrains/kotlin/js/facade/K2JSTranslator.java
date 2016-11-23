@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.inline.JsInliner;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedImportsKt;
+import org.jetbrains.kotlin.js.inline.clean.ResolveTemporaryNamesKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -85,6 +86,7 @@ public final class K2JSTranslator {
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
         JsProgram program = JsInliner.process(context);
+        ResolveTemporaryNamesKt.resolveTemporaryNames(program);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 

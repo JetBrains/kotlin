@@ -49,7 +49,7 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
      * A var declared using the JavaScript <code>var</code> statement.
      */
     public static class JsVar extends SourceInfoAwareJsNode implements HasName {
-        private final JsName name;
+        private JsName name;
         private JsExpression initExpression;
 
         public JsVar(JsName name) {
@@ -68,6 +68,11 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
         @Override
         public JsName getName() {
             return name;
+        }
+
+        @Override
+        public void setName(JsName name) {
+            this.name = name;
         }
 
         @Override

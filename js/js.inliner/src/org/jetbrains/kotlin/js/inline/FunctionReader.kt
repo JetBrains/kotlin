@@ -148,7 +148,7 @@ class FunctionReader(private val context: TranslationContext) {
             offset++
         }
 
-        val function = parseFunction(source, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram("<inline>")))
+        val function = parseFunction(source, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
         val moduleName = getExternalModuleName(descriptor)!!
         val moduleReference = context.getModuleExpressionFor(descriptor) ?: getRootPackage()
 

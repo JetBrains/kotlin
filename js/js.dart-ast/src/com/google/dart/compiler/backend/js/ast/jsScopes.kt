@@ -18,15 +18,13 @@ package com.google.dart.compiler.backend.js.ast
 
 import java.util.Stack
 
-fun JsObjectScope(parent: JsScope, description: String): JsObjectScope = JsObjectScope(parent, description, null)
+class JsObjectScope(parent: JsScope, description: String) : JsScope(parent, description)
 
-class JsObjectScope(parent: JsScope, description: String, scopeId: String?) : JsScope(parent, description, scopeId)
-
-object JsDynamicScope : JsScope(null, "Scope for dynamic declarations", null) {
-    override fun doCreateName(name: String) = JsName(this, name)
+object JsDynamicScope : JsScope(null, "Scope for dynamic declarations") {
+    override fun doCreateName(name: String) = JsName(this, name, false)
 }
 
-open class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description, null) {
+open class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description) {
 
     private val labelScopes = Stack<LabelScope>()
     private val topLabelScope: LabelScope?
@@ -50,7 +48,7 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsScope(paren
     open fun findLabel(label: String): JsName? =
             topLabelScope?.findName(label)
 
-    private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident", null) {
+    private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident") {
         val labelName: JsName
 
         init {
@@ -60,7 +58,7 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsScope(paren
                 else -> ident
             }
 
-            labelName = JsName(this@JsFunctionScope, freshIdent)
+            labelName = JsName(this@JsFunctionScope, freshIdent, false)
         }
 
         override fun findOwnName(name: String): JsName? =

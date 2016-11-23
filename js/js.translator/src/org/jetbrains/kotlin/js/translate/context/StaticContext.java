@@ -64,7 +64,7 @@ public final class StaticContext {
             @NotNull BindingTrace bindingTrace,
             @NotNull JsConfig config,
             @NotNull ModuleDescriptor moduleDescriptor) {
-        JsProgram program = new JsProgram("main");
+        JsProgram program = new JsProgram();
         Namer namer = Namer.newInstance(program.getRootScope());
         JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
         return new StaticContext(program, rootFunction, bindingTrace, namer, program.getRootScope(), config, moduleDescriptor);
@@ -146,6 +146,9 @@ public final class StaticContext {
     @NotNull
     private final Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
 
+    @NotNull
+    private final Map<FqName, JsScope> packageScopes = new HashMap<FqName, JsScope>();
+
     //TODO: too many parameters in constructor
     private StaticContext(
             @NotNull JsProgram program,
@@ -165,7 +168,7 @@ public final class StaticContext {
         this.config = config;
         this.currentModule = moduleDescriptor;
         this.rootFunction = rootFunction;
-        rootPackageScope = new JsObjectScope(rootScope, "<root package>", "root-package");
+        rootPackageScope = new JsObjectScope(rootScope, "<root package>");
 
         JsName kotlinName = rootScope.declareName(Namer.KOTLIN_NAME);
         importedModules.put(new ImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null),
@@ -362,10 +365,15 @@ public final class StaticContext {
             JsName name = nameCache.get(suggested.getDescriptor());
             if (name == null) {
                 String baseName = suggested.getNames().get(0);
-                if (!DescriptorUtils.isDescriptorWithLocalVisibility(suggested.getDescriptor())) {
-                    baseName += "_0";
+                if (suggested.getDescriptor() instanceof LocalVariableDescriptor) {
+                    name = scope.declareTemporaryName(baseName);
                 }
-                name = scope.declareFreshName(baseName);
+                else {
+                    if (!DescriptorUtils.isDescriptorWithLocalVisibility(suggested.getDescriptor())) {
+                        baseName += "_0";
+                    }
+                    name = scope.declareFreshName(baseName);
+                }
             }
             nameCache.put(suggested.getDescriptor(), name);
             names.add(name);
@@ -425,7 +433,7 @@ public final class StaticContext {
         // since local scope inherited from global scope.
         // TODO: remove prefix when problem with scopes is solved
 
-        JsName result = rootFunction.getScope().declareFreshName("imported$" + suggestedName);
+        JsName result = rootFunction.getScope().declareTemporaryName(suggestedName);
         MetadataProperties.setImported(result, true);
         importStatements.add(JsAstUtils.newVar(result, declaration));
         return result;
@@ -436,7 +444,7 @@ public final class StaticContext {
         ModuleDescriptor module = DescriptorUtilsKt.getModule(descriptor);
         return module != currentModule ?
                 importDeclaration(suggestedName, getQualifiedReference(descriptor)) :
-                rootFunction.getScope().declareFreshName(suggestedName);
+                rootFunction.getScope().declareTemporaryName(suggestedName);
     }
 
     private final class InnerNameGenerator extends Generator<JsName> {
@@ -529,6 +537,21 @@ public final class StaticContext {
         return suggestedName;
     }
 
+    private JsScope getScopeForPackage(FqName fqName) {
+        JsScope scope = packageScopes.get(fqName);
+        if (scope == null) {
+            if (fqName.isRoot()) {
+                scope = new JsRootScope(program);
+            }
+            else {
+                JsScope parentScope = getScopeForPackage(fqName.parent());
+                scope = parentScope.innerObjectScope(fqName.shortName().asString());
+            }
+            packageScopes.put(fqName, scope);
+        }
+        return scope;
+    }
+
     private final class ScopeGenerator extends Generator<JsScope> {
 
         public ScopeGenerator() {
@@ -539,7 +562,7 @@ public final class StaticContext {
                         return null;
                     }
                     if (getSuperclass((ClassDescriptor) descriptor) == null) {
-                        JsFunction function = new JsFunction(rootFunction.getScope(), new JsBlock(), descriptor.toString());
+                        JsFunction function = new JsFunction(new JsRootScope(program), new JsBlock(), descriptor.toString());
                         scopeToFunction.put(function.getScope(), function);
                         return function.getScope();
                     }
@@ -585,6 +608,17 @@ public final class StaticContext {
                     return correspondingFunction.getScope();
                 }
             };
+            Rule<JsScope> scopeForPackage = new Rule<JsScope>() {
+                @Nullable
+                @Override
+                public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!(descriptor instanceof PackageFragmentDescriptor)) return null;
+
+                    PackageFragmentDescriptor packageDescriptor = (PackageFragmentDescriptor) descriptor;
+                    return getScopeForPackage(packageDescriptor.getFqName());
+                }
+            };
+            addRule(scopeForPackage);
             addRule(createFunctionObjectsForCallableDescriptors);
             addRule(generateNewScopesForClassesWithNoAncestors);
             addRule(generateInnerScopesForDerivedClasses);
@@ -625,7 +659,7 @@ public final class StaticContext {
 
         ImportedModule module = importedModules.get(key);
         if (module == null) {
-            JsName internalName = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(baseName));
+            JsName internalName = rootScope.declareTemporaryName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(baseName));
             JsName plainName = descriptor != null ? rootScope.declareName(getPlainId(descriptor)) : null;
             module = new ImportedModule(baseName, internalName, plainName != null ? pureFqn(plainName, null) : null);
             importedModules.put(key, module);

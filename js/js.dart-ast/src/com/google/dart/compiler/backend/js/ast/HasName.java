@@ -11,4 +11,6 @@ import com.google.dart.compiler.common.HasSymbol;
  */
 public interface HasName extends HasSymbol {
   JsName getName();
+
+  void setName(JsName name);
 }

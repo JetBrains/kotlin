@@ -460,13 +460,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsExpression alias = new LiteralFunctionTranslator(context).translate(expression, null, null);
 
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
-        JsName name = context.getNameForDescriptor(descriptor);
+        JsNameRef nameRef = (JsNameRef) ReferenceTranslator.translateAsValueReference(descriptor, context);
+        assert nameRef.getName() != null;
         if (InlineUtil.isInline(descriptor)) {
-            MetadataProperties.setStaticRef(name, alias);
+            MetadataProperties.setStaticRef(nameRef.getName(), alias);
         }
 
         boolean isExpression = BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext());
-        JsNode result = isExpression ? alias : JsAstUtils.newVar(name, alias);
+        JsNode result = isExpression ? alias : JsAstUtils.newVar(nameRef.getName(), alias);
 
         return result.source(expression);
     }
@@ -552,10 +553,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         ResolvedCall<FunctionDescriptor> superCall = BindingUtils.getSuperCall(context.bindingContext(),
                                                                                expression.getObjectDeclaration());
         if (superCall != null) {
-            assert context.getDeclarationDescriptor() != null : "This expression should be inside declaration: " +
-                    PsiUtilsKt.getTextWithLocation(expression);
-            TranslationContext superCallContext = context.newDeclaration(context.getDeclarationDescriptor());
-            closureArgs.addAll(CallArgumentTranslator.translate(superCall, null, superCallContext).getTranslateArguments());
+            closureArgs.addAll(CallArgumentTranslator.translate(superCall, null, context).getTranslateArguments());
         }
 
         return new JsNew(constructor, closureArgs);

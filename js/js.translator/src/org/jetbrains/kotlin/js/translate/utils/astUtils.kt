@@ -24,7 +24,7 @@ fun JsFunction.addStatement(stmt: JsStatement) {
 }
 
 fun JsFunction.addParameter(identifier: String, index: Int? = null): JsParameter {
-    val name = scope.declareFreshName(identifier)
+    val name = scope.declareTemporaryName(identifier)
     val parameter = JsParameter(name)
 
     if (index == null) {

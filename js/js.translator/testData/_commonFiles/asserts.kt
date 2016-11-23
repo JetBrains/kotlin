@@ -6,29 +6,29 @@ fun fail(message: String? = null): Nothing = js("throw new Error(message)")
 
 fun <T> assertEquals(expected: T, actual: T, message: String? = null) {
     if (expected != actual) {
-        val msg = if (message == null) "" else (" message = '" + message + "',")
-        fail("Unexpected value:$msg expected = '$expected', actual = '$actual'")
+        val msg = if (message == null) "" else ", message = '$message'"
+        fail("Unexpected value: expected = '$expected', actual = '$actual'$msg")
     }
 }
 
 fun <T> assertNotEquals(illegal: T, actual: T, message: String? = null) {
     if (illegal == actual) {
-        val msg = if (message == null) "" else (" message = '" + message + "',")
-        fail("Illegal value:$msg illegal = '$illegal', actual = '$actual'")
+        val msg = if (message == null) "" else ", message = '$message'"
+        fail("Illegal value: illegal = '$illegal', actual = '$actual'$msg")
     }
 }
 
 fun <T> assertSame(expected: T, actual: T, message: String? = null) {
     if (expected !== actual) {
-        val msg = if (message == null) "" else (" message = '" + message + "',")
-        fail("Expected same instances, got expected = '$expected', actual = '$actual'")
+        val msg = if (message == null) "" else ", message = '$message'"
+        fail("Expected same instances: expected = '$expected', actual = '$actual'$msg")
     }
 }
 
 fun <T> assertArrayEquals(expected: Array<out T>, actual: Array<out T>, message: String? = null) {
     if (!arraysEqual(expected, actual)) {
-        val msg = if (message == null) "" else (" message = '" + message + "',")
-        fail("Unexpected array:$msg expected = '$expected', actual = '$actual'")
+        val msg = if (message == null) "" else ", message = '$message'"
+        fail("Unexpected array: expected = '$expected', actual = '$actual'$msg")
     }
 }
 

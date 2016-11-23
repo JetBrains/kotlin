@@ -607,7 +607,7 @@ public class TranslationContext {
 
     @NotNull
     public JsName createGlobalName(@NotNull String suggestedName) {
-        return staticContext.getRootFunction().getScope().declareFreshName(suggestedName);
+        return staticContext.getRootFunction().getScope().declareTemporaryName(suggestedName);
     }
 
     @NotNull

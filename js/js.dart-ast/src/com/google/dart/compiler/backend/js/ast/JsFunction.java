@@ -66,6 +66,7 @@ public final class JsFunction extends JsLiteral implements HasName {
         this.body = body;
     }
 
+    @Override
     public void setName(@Nullable JsName name) {
         this.name = name;
     }

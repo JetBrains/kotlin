@@ -8,13 +8,10 @@ import com.google.dart.compiler.util.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.dart.compiler.backend.js.ast.JsScopesKt.JsObjectScope;
 
 /**
  * A scope is a factory for creating and allocating
@@ -46,14 +43,13 @@ public abstract class JsScope {
     @NotNull
     private final String description;
     private Map<String, JsName> names = Collections.emptyMap();
+    private Map<JsName, Object> temporaryNames;
+    private Set<JsName> readonlyTemporaryNames = null;
     private final JsScope parent;
-    private int tempIndex = 0;
-    private final String scopeId;
 
     private static final Pattern FRESH_NAME_SUFFIX = Pattern.compile("[\\$_]\\d+$");
 
-    public JsScope(JsScope parent, @NotNull String description, @Nullable String scopeId) {
-        this.scopeId = scopeId;
+    public JsScope(JsScope parent, @NotNull String description) {
         this.description = description;
         this.parent = parent;
     }
@@ -61,12 +57,21 @@ public abstract class JsScope {
     protected JsScope(@NotNull String description) {
         this.description = description;
         parent = null;
-        scopeId = null;
+    }
+
+    public Set<JsName> getTemporaryNames() {
+        if (temporaryNames == null) {
+            return Collections.emptySet();
+        }
+        if (readonlyTemporaryNames == null) {
+            readonlyTemporaryNames = Collections.unmodifiableSet(temporaryNames.keySet());
+        }
+        return readonlyTemporaryNames;
     }
 
     @NotNull
     public JsScope innerObjectScope(@NotNull String scopeName) {
-        return JsObjectScope(this, scopeName);
+        return new JsObjectScope(this, scopeName);
     }
 
     /**
@@ -97,9 +102,15 @@ public abstract class JsScope {
         return doCreateName(ident);
     }
 
-    private String getNextTempName() {
-        // introduced by the compiler
-        return "tmp$" + (scopeId != null ? scopeId + "$" : "") + tempIndex++;
+    @NotNull
+    public JsName declareTemporaryName(@NotNull String suggestedName) {
+        assert !suggestedName.isEmpty();
+        JsName name = new JsName(this, suggestedName, true);
+        if (temporaryNames == null) {
+            temporaryNames = new WeakHashMap<JsName, Object>();
+        }
+        temporaryNames.put(name, this);
+        return name;
     }
 
     /**
@@ -110,7 +121,7 @@ public abstract class JsScope {
      */
     @NotNull
     public JsName declareTemporary() {
-        return declareFreshName(getNextTempName());
+        return declareTemporaryName("tmp$");
     }
 
     /**
@@ -171,7 +182,7 @@ public abstract class JsScope {
 
     @NotNull
     protected JsName doCreateName(@NotNull String ident) {
-        JsName name = new JsName(this, ident);
+        JsName name = new JsName(this, ident, false);
         names = Maps.put(names, ident, name);
         return name;
     }

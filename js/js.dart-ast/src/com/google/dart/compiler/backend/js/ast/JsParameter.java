@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class JsParameter extends SourceInfoAwareJsNode implements HasName {
     @NotNull
-    private final JsName name;
+    private JsName name;
 
     public JsParameter(@NotNull JsName name) {
         this.name = name;
@@ -22,6 +22,11 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
     @NotNull
     public JsName getName() {
         return name;
+    }
+
+    @Override
+    public void setName(@NotNull JsName name) {
+        this.name = name;
     }
 
     @Override

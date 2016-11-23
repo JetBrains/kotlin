@@ -150,8 +150,8 @@ class ClassTranslator private constructor(
     }
 
     private fun addEnumClassParameters(constructorFunction: JsFunction) {
-        val nameParamName = constructorFunction.scope.declareFreshName("name")
-        val ordinalParamName = constructorFunction.scope.declareFreshName("ordinal")
+        val nameParamName = constructorFunction.scope.declareTemporaryName("name")
+        val ordinalParamName = constructorFunction.scope.declareTemporaryName("ordinal")
         constructorFunction.parameters.addAll(0, listOf(JsParameter(nameParamName), JsParameter(ordinalParamName)))
 
         constructorFunction.body.statements += JsAstUtils.assignmentToThisField(Namer.ENUM_NAME_FIELD, nameParamName.makeRef())
@@ -232,8 +232,8 @@ class ClassTranslator private constructor(
         val leadingArgs = mutableListOf<JsExpression>()
 
         if (descriptor.kind == ClassKind.ENUM_CLASS) {
-            val nameParamName = constructorInitializer.scope.declareFreshName("name")
-            val ordinalParamName = constructorInitializer.scope.declareFreshName("ordinal")
+            val nameParamName = constructorInitializer.scope.declareTemporaryName("name")
+            val ordinalParamName = constructorInitializer.scope.declareTemporaryName("ordinal")
             constructorInitializer.parameters.addAll(0, listOf(JsParameter(nameParamName), JsParameter(ordinalParamName)))
             leadingArgs += listOf(nameParamName.makeRef(), ordinalParamName.makeRef())
         }

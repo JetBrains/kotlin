@@ -50,6 +50,11 @@ public final class JsNameRef extends JsExpression implements HasName {
         return name;
     }
 
+    @Override
+    public void setName(JsName name) {
+        this.name = name;
+    }
+
     @Nullable
     @Override
     public Symbol getSymbol() {

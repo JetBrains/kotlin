@@ -35,12 +35,10 @@ class RedundantBindElimination(private val root: JsBlock) {
             }
 
             private fun tryEliminate(invocation: JsInvocation) {
-                val qualifier = invocation.qualifier
-                if (qualifier !is JsInvocation) return
+                val qualifier = invocation.qualifier as? JsInvocation ?: return
 
-                val outerQualifier = qualifier.qualifier
-                if (outerQualifier !is JsNameRef) return
-                val name = outerQualifier.name?.ident ?: outerQualifier.ident
+                val outerQualifier = qualifier.qualifier as? JsNameRef ?: return
+                val name = outerQualifier.ident
                 if (name != "bind") return
 
                 val qualifierReplacement = outerQualifier.qualifier ?: return
