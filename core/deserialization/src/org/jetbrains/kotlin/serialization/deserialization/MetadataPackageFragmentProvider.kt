@@ -60,7 +60,9 @@ class MetadataPackageFragmentProvider(
     }
 
     override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
-            MetadataPackageFragment(fqName, storageManager, moduleDescriptor, packagePartProvider, finder)
+            if (finder.hasMetadataPackage(fqName))
+                MetadataPackageFragment(fqName, storageManager, moduleDescriptor, packagePartProvider, finder)
+            else null
 }
 
 class MetadataPackageFragment(

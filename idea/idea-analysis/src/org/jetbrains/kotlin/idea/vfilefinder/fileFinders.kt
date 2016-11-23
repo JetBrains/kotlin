@@ -59,6 +59,9 @@ class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFil
     // TODO
     override fun findMetadata(classId: ClassId): InputStream? = null
 
+    // TODO
+    override fun hasMetadataPackage(fqName: FqName): Boolean = false
+
     // TODO: load built-ins metadata from scope
     override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
 

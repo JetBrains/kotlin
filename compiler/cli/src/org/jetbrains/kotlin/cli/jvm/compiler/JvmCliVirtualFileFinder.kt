@@ -42,6 +42,15 @@ class JvmCliVirtualFileFinder(
         return findBinaryClass(classId, classId.shortClassName.asString() + MetadataPackageFragment.METADATA_FILE_EXTENSION)?.inputStream
     }
 
+    override fun hasMetadataPackage(fqName: FqName): Boolean {
+        var found = false
+        index.traverseDirectoriesInPackage(fqName, continueSearch = { dir, _ ->
+            found = found or dir.children.any { it.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION.substring(1) }
+            !found
+        })
+        return found
+    }
+
     override fun findBuiltInsData(packageFqName: FqName): InputStream? {
         // "<builtins-metadata>" is just a made-up name
         // JvmDependenciesIndex requires the ClassId of the class which we're searching for, to cache the last request+result
