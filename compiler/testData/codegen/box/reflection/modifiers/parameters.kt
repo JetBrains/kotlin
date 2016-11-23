@@ -5,6 +5,7 @@
 
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.test.assertEquals
 
 inline fun Unit.foo(
         noinline coroutine x: Unit.() -> Continuation<Unit>,
@@ -14,14 +15,13 @@ inline fun Unit.foo(
 fun box(): String {
     val p = Unit::foo.parameters
 
+    assertEquals(2, p.size)
+
     assertFalse(p[0].isVararg)
-    assertFalse(p[0].isCoroutine)
+    assertTrue(p[0].isCoroutine)
 
-    assertFalse(p[1].isVararg)
-    assertTrue(p[1].isCoroutine)
-
-    assertTrue(p[2].isVararg)
-    assertFalse(p[2].isCoroutine)
+    assertTrue(p[1].isVararg)
+    assertFalse(p[1].isCoroutine)
 
     return "OK"
 }

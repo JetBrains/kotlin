@@ -12348,6 +12348,93 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/simpleTopLevelFunctions.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/call/bound")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Bound extends AbstractIrBlackBoxCodegenTest {
+                public void testAllFilesPresentInBound() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/bound"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("companionObjectPropertyAccessors.kt")
+                public void testCompanionObjectPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/companionObjectPropertyAccessors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFunction.kt")
+                public void testExtensionFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/extensionFunction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionPropertyAccessors.kt")
+                public void testExtensionPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/extensionPropertyAccessors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerClassConstructor.kt")
+                public void testInnerClassConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/innerClassConstructor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("javaInstanceField.kt")
+                public void testJavaInstanceField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/javaInstanceField.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("javaInstanceMethod.kt")
+                public void testJavaInstanceMethod() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/javaInstanceMethod.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("jvmStaticCompanionObjectPropertyAccessors.kt")
+                public void testJvmStaticCompanionObjectPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/jvmStaticCompanionObjectPropertyAccessors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("jvmStaticObjectFunction.kt")
+                public void testJvmStaticObjectFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/jvmStaticObjectFunction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("jvmStaticObjectPropertyAccessors.kt")
+                public void testJvmStaticObjectPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/jvmStaticObjectPropertyAccessors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberFunction.kt")
+                public void testMemberFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/memberFunction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberPropertyAccessors.kt")
+                public void testMemberPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/memberPropertyAccessors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectFunction.kt")
+                public void testObjectFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/objectFunction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectPropertyAccessors.kt")
+                public void testObjectPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/call/bound/objectPropertyAccessors.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy")
@@ -12356,6 +12443,24 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public static class CallBy extends AbstractIrBlackBoxCodegenTest {
             public void testAllFilesPresentInCallBy() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("boundExtensionFunction.kt")
+            public void testBoundExtensionFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/boundExtensionFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundExtensionPropertyAcessor.kt")
+            public void testBoundExtensionPropertyAcessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/boundExtensionPropertyAcessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundJvmStaticInObject.kt")
+            public void testBoundJvmStaticInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/callBy/boundJvmStaticInObject.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("companionObject.kt")
@@ -13544,6 +13649,24 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public static class Parameters extends AbstractIrBlackBoxCodegenTest {
             public void testAllFilesPresentInParameters() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("boundInnerClassConstructor.kt")
+            public void testBoundInnerClassConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/boundInnerClassConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundObjectMemberReferences.kt")
+            public void testBoundObjectMemberReferences() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/boundObjectMemberReferences.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundReferences.kt")
+            public void testBoundReferences() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/parameters/boundReferences.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("findParameterByName.kt")

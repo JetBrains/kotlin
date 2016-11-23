@@ -33,8 +33,9 @@ fun check(lambda: () -> Unit) {
         lambda()
     } catch (e: Throwable) {
         if (e !is InvocationTargetException && e !is StackOverflowError) {
-            throw AssertionError("The current implementation uses reflection to get the value of the property," +
-                                 "so either InvocationTargetException or StackOverflowError should have happened, but was: ${e}")
+            throw RuntimeException("The current implementation uses reflection to get the value of the property," +
+                                   "so either InvocationTargetException or StackOverflowError should have happened",
+                                   e)
         }
         return
     }

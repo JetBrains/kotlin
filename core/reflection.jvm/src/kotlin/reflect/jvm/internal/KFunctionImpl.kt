@@ -50,6 +50,8 @@ internal class KFunctionImpl private constructor(
             descriptor
     )
 
+    override val isBound: Boolean get() = boundReceiver != CallableReference.NO_RECEIVER
+
     override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
     }
@@ -77,13 +79,15 @@ internal class KFunctionImpl private constructor(
         }
 
         when (member) {
-            is Constructor<*> -> FunctionCaller.Constructor(member)
+            is Constructor<*> ->
+                createConstructorCaller(member)
             is Method -> when {
-                !Modifier.isStatic(member.modifiers) -> FunctionCaller.InstanceMethod(member)
+                !Modifier.isStatic(member.modifiers) ->
+                    createInstanceMethodCaller(member)
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
-                    FunctionCaller.JvmStaticInObject(member)
-
-                else -> FunctionCaller.StaticMethod(member)
+                    createJvmStaticInObjectCaller(member)
+                else ->
+                    createStaticMethodCaller(member)
             }
             else -> throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor (member = $member)")
         }
@@ -112,20 +116,34 @@ internal class KFunctionImpl private constructor(
         }
 
         when (member) {
-            is Constructor<*> -> FunctionCaller.Constructor(member)
+            is Constructor<*> ->
+                createConstructorCaller(member)
             is Method -> when {
                 // Note that static $default methods for @JvmStatic functions are generated differently in objects and companion objects.
                 // In objects, $default's signature does _not_ contain the additional object instance parameter,
                 // as opposed to companion objects where the first parameter is the companion object instance.
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null &&
                 !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
-                    FunctionCaller.JvmStaticInObject(member)
+                    createJvmStaticInObjectCaller(member)
 
-                else -> FunctionCaller.StaticMethod(member)
+                else ->
+                    createStaticMethodCaller(member)
             }
             else -> null
         }
     }
+
+    private fun createStaticMethodCaller(member: Method) =
+            if (isBound) FunctionCaller.BoundStaticMethod(member, boundReceiver) else FunctionCaller.StaticMethod(member)
+
+    private fun createJvmStaticInObjectCaller(member: Method) =
+            if (isBound) FunctionCaller.BoundJvmStaticInObject(member) else FunctionCaller.JvmStaticInObject(member)
+
+    private fun createInstanceMethodCaller(member: Method) =
+            if (isBound) FunctionCaller.BoundInstanceMethod(member, boundReceiver) else FunctionCaller.InstanceMethod(member)
+
+    private fun createConstructorCaller(member: Constructor<*>) =
+            if (isBound) FunctionCaller.BoundConstructor(member, boundReceiver) else FunctionCaller.Constructor(member)
 
     override fun getArity() = caller.arity
 

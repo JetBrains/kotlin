@@ -332,12 +332,6 @@ public class AdditionalCoroutineBlackBoxCodegenTestGenerated extends AbstractAdd
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("throwInTryWithHandleResult.kt")
-        public void testThrowInTryWithHandleResult() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/throwInTryWithHandleResult.kt");
-            doTest(fileName);
-        }
-
     }
 
     @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")

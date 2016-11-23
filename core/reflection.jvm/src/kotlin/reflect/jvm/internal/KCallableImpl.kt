@@ -35,6 +35,8 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
 
     abstract val container: KDeclarationContainerImpl
 
+    abstract val isBound: Boolean
+
     private val annotations_ = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
     override val annotations: List<Annotation> get() = annotations_()
@@ -44,11 +46,11 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         val result = ArrayList<KParameter>()
         var index = 0
 
-        if (descriptor.dispatchReceiverParameter != null) {
+        if (descriptor.dispatchReceiverParameter != null && !isBound) {
             result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { descriptor.dispatchReceiverParameter!! })
         }
 
-        if (descriptor.extensionReceiverParameter != null) {
+        if (descriptor.extensionReceiverParameter != null && !isBound) {
             result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { descriptor.extensionReceiverParameter!! })
         }
 
