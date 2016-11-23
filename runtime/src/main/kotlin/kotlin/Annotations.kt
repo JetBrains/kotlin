@@ -27,3 +27,11 @@ annotation class ExportTypeInfo(val name: String)
 //        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE, TYPEALIAS)
 //@Retention(SOURCE)
 public annotation class Suppress(vararg val names: String)
+
+/**
+ * Suppresses errors about variance conflict
+ */
+@Target(AnnotationTarget.TYPE)
+//@Retention(SOURCE)
+//@MustBeDocumented
+public annotation class UnsafeVariance
