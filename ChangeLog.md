@@ -67,6 +67,7 @@
 - [`KT-13393`](https://youtrack.jetbrains.com/issue/KT-13393) Implement intention to convert function reference to lambda
 - [`KT-12100`](https://youtrack.jetbrains.com/issue/KT-12100) Add "Convert `try-finally` to `use`" intention
 - [`KT-14459`](https://youtrack.jetbrains.com/issue/KT-14459) Initialize with Constructor Parameter: Fix IDE freeze on properties in generic class
+- [`KT-14044`](https://youtrack.jetbrains.com/issue/KT-14044) Fix exception on deleting unused declaration in IDEA 2016.3
 
 ##### Issues fixed
 - [`KT-14396`](https://youtrack.jetbrains.com/issue/KT-14396) "Remove redundant `.let` call" was not proposed for binary operations
