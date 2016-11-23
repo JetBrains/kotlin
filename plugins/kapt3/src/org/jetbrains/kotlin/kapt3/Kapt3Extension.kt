@@ -55,8 +55,24 @@ class ClasspathBasedKapt3Extension(
     override val analyzePartially: Boolean
         get() = useLightAnalysis
 
+    private var annotationProcessingClassLoader: URLClassLoader? = null
+
+    override fun analysisCompleted(
+            project: Project,
+            module: ModuleDescriptor,
+            bindingTrace: BindingTrace,
+            files: Collection<KtFile>
+    ): AnalysisResult? {
+        try {
+            return super.analysisCompleted(project, module, bindingTrace, files)
+        } finally {
+            annotationProcessingClassLoader?.close()
+        }
+    }
+
     override fun loadProcessors(): List<Processor> {
         val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
+        this.annotationProcessingClassLoader = classLoader
         val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
 
         if (processors.isEmpty()) {
