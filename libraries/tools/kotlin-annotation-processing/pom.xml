@@ -131,6 +131,9 @@
                 <version>${project.version}</version>
                 <configuration>
                     <jdkHome>${env.JDK_18}</jdkHome>
+                    <classpath>
+                        <classpathEntry>${env.JDK_18}/lib/tools.jar</classpathEntry>
+                    </classpath>
                     <annotationPaths>
                         <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
                     </annotationPaths>
