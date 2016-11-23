@@ -99,9 +99,9 @@ internal fun ExtractionData.inferParametersInfo(
         val dispatchReceiverDescriptor = (resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
         if (twoReceivers
             && resolvedCall!!.extensionReceiver is ExpressionReceiver
-            && DescriptorUtils.isCompanionObject(dispatchReceiverDescriptor)) {
+            && DescriptorUtils.isObject(dispatchReceiverDescriptor)) {
             info.replacementMap.putValue(refInfo.resolveResult.originalRefExpr,
-                                         WrapCompanionInWithReplacement(dispatchReceiverDescriptor as ClassDescriptor))
+                                         WrapObjectInWithReplacement(dispatchReceiverDescriptor as ClassDescriptor))
             continue
         }
 
@@ -188,8 +188,8 @@ private fun ExtractionData.extractReceiver(
         if (options.canWrapInWith
             && resolvedCall != null
             && resolvedCall.hasBothReceivers()
-            && DescriptorUtils.isCompanionObject(referencedClassifierDescriptor)) {
-            info.replacementMap.putValue(originalRef, WrapCompanionInWithReplacement(referencedClassifierDescriptor as ClassDescriptor))
+            && DescriptorUtils.isObject(referencedClassifierDescriptor)) {
+            info.replacementMap.putValue(originalRef, WrapObjectInWithReplacement(referencedClassifierDescriptor as ClassDescriptor))
         } else if (referencedClassifierDescriptor is ClassDescriptor) {
             info.replacementMap.putValue(originalRef, FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe))
         }

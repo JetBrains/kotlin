@@ -115,7 +115,7 @@ class WrapParameterInWithReplacement(override val parameter: Parameter): WrapInW
     override fun copy(parameter: Parameter) = WrapParameterInWithReplacement(parameter)
 }
 
-class WrapCompanionInWithReplacement(val descriptor: ClassDescriptor): WrapInWithReplacement() {
+class WrapObjectInWithReplacement(val descriptor: ClassDescriptor): WrapInWithReplacement() {
     override val argumentText: String
         get() = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor)
 }
