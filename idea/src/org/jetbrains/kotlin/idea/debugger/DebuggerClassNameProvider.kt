@@ -181,15 +181,27 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
     private fun inlineCallClassPatterns(typeMapper: KotlinTypeMapper, element: KtElement): List<String> {
         val context = typeMapper.bindingContext
 
-        val (inlineCall, functionLiteral) = runReadAction {
-            element.parents.filterIsInstance<KtFunctionLiteral>().map {
-                val lambdaExpression = it.parent as? KtLambdaExpression ?: return@map null
-                val ktCallExpression =
-                        lambdaExpression.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>() ?:
-                        lambdaExpression.typedParent<KtLambdaArgument>()?.typedParent<KtCallExpression>() ?:
-                        return@map null
+        val (inlineCall, ktAnonymousClassElementProducer) = runReadAction {
+            element.parents.map {
+                val ktCallExpression: KtCallExpression = when(it) {
+                    is KtFunctionLiteral -> {
+                        val lambdaExpression = it.parent as? KtLambdaExpression
+                        // call(param, { <it> })
+                        lambdaExpression?.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>() ?:
 
-                ktCallExpression to it
+                        // call { <it> }
+                        lambdaExpression?.typedParent<KtLambdaArgument>()?.typedParent<KtCallExpression>()
+                    }
+
+                    is KtNamedFunction -> {
+                        // call(fun () {})
+                        it.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>()
+                    }
+
+                    else -> null
+                } ?: return@map null
+
+                ktCallExpression to (it as KtElement)
             }.lastOrNull {
                 it != null && isInlineCall(context, it.component1())
             }
@@ -200,7 +212,9 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
         val resolvedCall = runReadAction { inlineCall.getResolvedCall(context) } ?: return emptyList()
         val inlineFunctionName = resolvedCall.resultingDescriptor.name
 
-        val originalInternalClassName = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, functionLiteral).internalName
+        val originalInternalClassName = CodegenBinding.asmTypeForAnonymousClass(
+                typeMapper.bindingContext, ktAnonymousClassElementProducer).internalName
+
         val ownerDescriptorName = lexicalScope.ownerDescriptor.name
 
         val mangledInternalClassName = originalInternalClassName.funPrefix() + (if (ownerDescriptorName.isSpecial) "\$\$special\$" else "$") +
