@@ -24,21 +24,34 @@ import org.w3c.xhr.*
     fun append(name: String, value: String): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): String? = noImpl
-    fun getAll(name: String): Array<String> = noImpl
     fun has(name: String): Boolean = noImpl
     fun set(name: String, value: String): Unit = noImpl
 }
 
-@native public open class Request(input: dynamic, init: RequestInit = noImpl) {
+@native public interface Body {
+    val bodyUsed: Boolean
+        get() = noImpl
+    fun arrayBuffer(): dynamic = noImpl
+    fun blob(): dynamic = noImpl
+    fun formData(): dynamic = noImpl
+    fun json(): dynamic = noImpl
+    fun text(): dynamic = noImpl
+}
+
+@native public open class Request(input: dynamic, init: RequestInit = noImpl) : Body {
     open val method: String
         get() = noImpl
     open val url: String
         get() = noImpl
     open val headers: Headers
         get() = noImpl
-    open val context: String
+    open val type: String
+        get() = noImpl
+    open val destination: String
         get() = noImpl
     open val referrer: String
+        get() = noImpl
+    open val referrerPolicy: dynamic
         get() = noImpl
     open val mode: String
         get() = noImpl
@@ -48,45 +61,54 @@ import org.w3c.xhr.*
         get() = noImpl
     open val redirect: String
         get() = noImpl
-    open val bodyUsed: Boolean
+    open val integrity: String
+        get() = noImpl
+    open val keepalive: Boolean
         get() = noImpl
     fun clone(): Request = noImpl
-    fun arrayBuffer(): dynamic = noImpl
-    fun blob(): dynamic = noImpl
-    fun formData(): dynamic = noImpl
-    fun json(): dynamic = noImpl
-    fun text(): dynamic = noImpl
 }
 
 @native public interface RequestInit {
-    var method: String
+    var method: String?
     var headers: dynamic
     var body: dynamic
-    var mode: String
-    var credentials: String
-    var cache: String
-    var redirect: String
+    var referrer: String?
+    var referrerPolicy: dynamic
+    var mode: String?
+    var credentials: String?
+    var cache: String?
+    var redirect: String?
+    var integrity: String?
+    var keepalive: Boolean?
+    var window: Any?
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun RequestInit(method: String, headers: dynamic, body: dynamic, mode: String, credentials: String, cache: String, redirect: String): RequestInit {
+public inline fun RequestInit(method: String?, headers: dynamic, body: dynamic, referrer: String?, referrerPolicy: dynamic, mode: String?, credentials: String?, cache: String?, redirect: String?, integrity: String?, keepalive: Boolean?, window: Any?): RequestInit {
     val o = js("({})")
 
     o["method"] = method
     o["headers"] = headers
     o["body"] = body
+    o["referrer"] = referrer
+    o["referrerPolicy"] = referrerPolicy
     o["mode"] = mode
     o["credentials"] = credentials
     o["cache"] = cache
     o["redirect"] = redirect
+    o["integrity"] = integrity
+    o["keepalive"] = keepalive
+    o["window"] = window
 
     return o
 }
 
-@native public open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) {
+@native public open class Response(body: dynamic = null, init: ResponseInit = noImpl) : Body {
     open val type: String
         get() = noImpl
     open val url: String
+        get() = noImpl
+    open val redirected: Boolean
         get() = noImpl
     open val status: Short
         get() = noImpl
@@ -96,14 +118,11 @@ public inline fun RequestInit(method: String, headers: dynamic, body: dynamic, m
         get() = noImpl
     open val headers: Headers
         get() = noImpl
-    open val bodyUsed: Boolean
+    open val body: dynamic
+        get() = noImpl
+    open val trailer: dynamic
         get() = noImpl
     fun clone(): Response = noImpl
-    fun arrayBuffer(): dynamic = noImpl
-    fun blob(): dynamic = noImpl
-    fun formData(): dynamic = noImpl
-    fun json(): dynamic = noImpl
-    fun text(): dynamic = noImpl
 
     companion object {
         fun error(): Response = noImpl
@@ -112,13 +131,13 @@ public inline fun RequestInit(method: String, headers: dynamic, body: dynamic, m
 }
 
 @native public interface ResponseInit {
-    var status: Short
-    var statusText: String
+    var status: Short? /* = 200 */
+    var statusText: String? /* = "OK" */
     var headers: dynamic
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ResponseInit(status: Short = 200, statusText: String = "OK", headers: dynamic): ResponseInit {
+public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: dynamic): ResponseInit {
     val o = js("({})")
 
     o["status"] = status

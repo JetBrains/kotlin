@@ -20,8 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class Blob() : ImageBitmapSource {
-    constructor(blobParts: Array<dynamic>, options: BlobPropertyBag = noImpl) : this()
+@native public open class Blob(blobParts: Array<dynamic> = noImpl, options: BlobPropertyBag = noImpl) {
     open val size: Int
         get() = noImpl
     open val type: String
@@ -33,11 +32,11 @@ import org.w3c.xhr.*
 }
 
 @native public interface BlobPropertyBag {
-    var type: String
+    var type: String? /* = "" */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
+public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     val o = js("({})")
 
     o["type"] = type
@@ -45,37 +44,36 @@ public inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
     return o
 }
 
-@native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
+@native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob(noImpl, options) {
     open val name: String
         get() = noImpl
     open val lastModified: Int
         get() = noImpl
 }
 
-@native public interface FilePropertyBag {
-    var type: String
-    var lastModified: Int
+@native public interface FilePropertyBag : BlobPropertyBag {
+    var lastModified: Int?
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePropertyBag {
+public inline fun FilePropertyBag(lastModified: Int?, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
-    o["type"] = type
     o["lastModified"] = lastModified
+    o["type"] = type
 
     return o
 }
 
-@native public interface FileList {
-    val length: Int
+@native public abstract class FileList {
+    open val length: Int
         get() = noImpl
     fun item(index: Int): File? = noImpl
     @nativeGetter
     operator fun get(index: Int): File? = noImpl
 }
 
-@native public open class FileReader : EventTarget {
+@native public open class FileReader : EventTarget() {
     open val readyState: Short
         get() = noImpl
     open val result: dynamic
@@ -101,6 +99,7 @@ public inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePro
         get() = noImpl
         set(value) = noImpl
     fun readAsArrayBuffer(blob: Blob): Unit = noImpl
+    fun readAsBinaryString(blob: Blob): Unit = noImpl
     fun readAsText(blob: Blob, label: String = noImpl): Unit = noImpl
     fun readAsDataURL(blob: Blob): Unit = noImpl
     fun abort(): Unit = noImpl
@@ -114,6 +113,7 @@ public inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePro
 
 @native public open class FileReaderSync {
     fun readAsArrayBuffer(blob: Blob): ArrayBuffer = noImpl
+    fun readAsBinaryString(blob: Blob): String = noImpl
     fun readAsText(blob: Blob, label: String = noImpl): String = noImpl
     fun readAsDataURL(blob: Blob): String = noImpl
 }

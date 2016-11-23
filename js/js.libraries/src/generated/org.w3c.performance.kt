@@ -20,63 +20,68 @@ import org.w3c.notifications.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public interface Performance {
-    val timing: PerformanceTiming
+@native public abstract class Performance : EventTarget() {
+    open val timing: PerformanceTiming
         get() = noImpl
-    val navigation: PerformanceNavigation
+    open val navigation: PerformanceNavigation
         get() = noImpl
     fun now(): Double = noImpl
 }
 
-@native public interface PerformanceTiming {
-    val navigationStart: Int
-        get() = noImpl
-    val unloadEventStart: Int
-        get() = noImpl
-    val unloadEventEnd: Int
-        get() = noImpl
-    val redirectStart: Int
-        get() = noImpl
-    val redirectEnd: Int
-        get() = noImpl
-    val fetchStart: Int
-        get() = noImpl
-    val domainLookupStart: Int
-        get() = noImpl
-    val domainLookupEnd: Int
-        get() = noImpl
-    val connectStart: Int
-        get() = noImpl
-    val connectEnd: Int
-        get() = noImpl
-    val secureConnectionStart: Int
-        get() = noImpl
-    val requestStart: Int
-        get() = noImpl
-    val responseStart: Int
-        get() = noImpl
-    val responseEnd: Int
-        get() = noImpl
-    val domLoading: Int
-        get() = noImpl
-    val domInteractive: Int
-        get() = noImpl
-    val domContentLoadedEventStart: Int
-        get() = noImpl
-    val domContentLoadedEventEnd: Int
-        get() = noImpl
-    val domComplete: Int
-        get() = noImpl
-    val loadEventStart: Int
-        get() = noImpl
-    val loadEventEnd: Int
+@native public interface GlobalPerformance {
+    val performance: Performance
         get() = noImpl
 }
 
-@native public interface PerformanceNavigation {
-    val type: Short
+@native public abstract class PerformanceTiming {
+    open val navigationStart: Int
         get() = noImpl
-    val redirectCount: Short
+    open val unloadEventStart: Int
+        get() = noImpl
+    open val unloadEventEnd: Int
+        get() = noImpl
+    open val redirectStart: Int
+        get() = noImpl
+    open val redirectEnd: Int
+        get() = noImpl
+    open val fetchStart: Int
+        get() = noImpl
+    open val domainLookupStart: Int
+        get() = noImpl
+    open val domainLookupEnd: Int
+        get() = noImpl
+    open val connectStart: Int
+        get() = noImpl
+    open val connectEnd: Int
+        get() = noImpl
+    open val secureConnectionStart: Int
+        get() = noImpl
+    open val requestStart: Int
+        get() = noImpl
+    open val responseStart: Int
+        get() = noImpl
+    open val responseEnd: Int
+        get() = noImpl
+    open val domLoading: Int
+        get() = noImpl
+    open val domInteractive: Int
+        get() = noImpl
+    open val domContentLoadedEventStart: Int
+        get() = noImpl
+    open val domContentLoadedEventEnd: Int
+        get() = noImpl
+    open val domComplete: Int
+        get() = noImpl
+    open val loadEventStart: Int
+        get() = noImpl
+    open val loadEventEnd: Int
+        get() = noImpl
+}
+
+@native public abstract class PerformanceNavigation {
+    open val type: Short
+        get() = noImpl
+    open val redirectCount: Short
         get() = noImpl
 
     companion object {

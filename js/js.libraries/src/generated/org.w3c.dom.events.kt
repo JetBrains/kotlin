@@ -25,38 +25,37 @@ import org.w3c.xhr.*
         get() = noImpl
     open val detail: Int
         get() = noImpl
-    fun initUIEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int): Unit = noImpl
 }
 
 @native public interface UIEventInit : EventInit {
-    var view: Window?
-    var detail: Int
+    var view: Window? /* = null */
+    var detail: Int? /* = 0 */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun UIEventInit(view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): UIEventInit {
+public inline fun UIEventInit(view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): UIEventInit {
     val o = js("({})")
 
     o["view"] = view
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
 
-@native public open class FocusEvent(typeArg: String, focusEventInitDict: FocusEventInit = noImpl) : UIEvent(noImpl, noImpl) {
+@native public open class FocusEvent(type: String, eventInitDict: FocusEventInit = noImpl) : UIEvent(type, eventInitDict) {
     open val relatedTarget: EventTarget?
         get() = noImpl
-    fun initFocusEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, relatedTargetArg: EventTarget?): Unit = noImpl
 }
 
 @native public interface FocusEventInit : UIEventInit {
-    var relatedTarget: EventTarget?
+    var relatedTarget: EventTarget? /* = null */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): FocusEventInit {
+public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FocusEventInit {
     val o = js("({})")
 
     o["relatedTarget"] = relatedTarget
@@ -64,40 +63,29 @@ public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Windo
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
 
-@native public open class MouseEvent(typeArg: String, mouseEventInitDict: MouseEventInit = noImpl) : UIEvent(noImpl, noImpl), UnionElementOrMouseEvent {
+@native public open class MouseEvent(type: String, eventInitDict: MouseEventInit = noImpl) : UIEvent(type, eventInitDict), UnionElementOrMouseEvent {
     open val region: String?
-        get() = noImpl
-//    open val screenX: Double
-//        get() = noImpl
-//    open val screenY: Double
-//        get() = noImpl
-    open val pageX: Double
-        get() = noImpl
-    open val pageY: Double
-        get() = noImpl
-//    open val clientX: Double
-//        get() = noImpl
-//    open val clientY: Double
-//        get() = noImpl
-//    open val x: Double
-//        get() = noImpl
-//    open val y: Double
-//        get() = noImpl
-    open val offsetX: Double
-        get() = noImpl
-    open val offsetY: Double
         get() = noImpl
     open val screenX: Int
         get() = noImpl
     open val screenY: Int
         get() = noImpl
+    open val pageX: Double
+        get() = noImpl
+    open val pageY: Double
+        get() = noImpl
     open val clientX: Int
         get() = noImpl
     open val clientY: Int
+        get() = noImpl
+    open val offsetX: Double
+        get() = noImpl
+    open val offsetY: Double
         get() = noImpl
     open val ctrlKey: Boolean
         get() = noImpl
@@ -109,26 +97,25 @@ public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Windo
         get() = noImpl
     open val button: Short
         get() = noImpl
-    open val relatedTarget: EventTarget?
-        get() = noImpl
     open val buttons: Short
         get() = noImpl
+    open val relatedTarget: EventTarget?
+        get() = noImpl
     fun getModifierState(keyArg: String): Boolean = noImpl
-    fun initMouseEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, screenXArg: Int, screenYArg: Int, clientXArg: Int, clientYArg: Int, ctrlKeyArg: Boolean, altKeyArg: Boolean, shiftKeyArg: Boolean, metaKeyArg: Boolean, buttonArg: Short, relatedTargetArg: EventTarget?): Unit = noImpl
 }
 
 @native public interface MouseEventInit : EventModifierInit {
-    var screenX: Int
-    var screenY: Int
-    var clientX: Int
-    var clientY: Int
-    var button: Short
-    var buttons: Short
-    var relatedTarget: EventTarget?
+    var screenX: Int? /* = 0 */
+    var screenY: Int? /* = 0 */
+    var clientX: Int? /* = 0 */
+    var clientY: Int? /* = 0 */
+    var button: Short? /* = 0 */
+    var buttons: Short? /* = 0 */
+    var relatedTarget: EventTarget? /* = null */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun MouseEventInit(screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): MouseEventInit {
+public inline fun MouseEventInit(screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MouseEventInit {
     val o = js("({})")
 
     o["screenX"] = screenX
@@ -148,7 +135,6 @@ public inline fun MouseEventInit(screenX: Int = 0, screenY: Int = 0, clientX: In
     o["modifierFnLock"] = modifierFnLock
     o["modifierHyper"] = modifierHyper
     o["modifierNumLock"] = modifierNumLock
-    o["modifierOS"] = modifierOS
     o["modifierScrollLock"] = modifierScrollLock
     o["modifierSuper"] = modifierSuper
     o["modifierSymbol"] = modifierSymbol
@@ -157,30 +143,30 @@ public inline fun MouseEventInit(screenX: Int = 0, screenY: Int = 0, clientX: In
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
 
 @native public interface EventModifierInit : UIEventInit {
-    var ctrlKey: Boolean
-    var shiftKey: Boolean
-    var altKey: Boolean
-    var metaKey: Boolean
-    var modifierAltGraph: Boolean
-    var modifierCapsLock: Boolean
-    var modifierFn: Boolean
-    var modifierFnLock: Boolean
-    var modifierHyper: Boolean
-    var modifierNumLock: Boolean
-    var modifierOS: Boolean
-    var modifierScrollLock: Boolean
-    var modifierSuper: Boolean
-    var modifierSymbol: Boolean
-    var modifierSymbolLock: Boolean
+    var ctrlKey: Boolean? /* = false */
+    var shiftKey: Boolean? /* = false */
+    var altKey: Boolean? /* = false */
+    var metaKey: Boolean? /* = false */
+    var modifierAltGraph: Boolean? /* = false */
+    var modifierCapsLock: Boolean? /* = false */
+    var modifierFn: Boolean? /* = false */
+    var modifierFnLock: Boolean? /* = false */
+    var modifierHyper: Boolean? /* = false */
+    var modifierNumLock: Boolean? /* = false */
+    var modifierScrollLock: Boolean? /* = false */
+    var modifierSuper: Boolean? /* = false */
+    var modifierSymbol: Boolean? /* = false */
+    var modifierSymbolLock: Boolean? /* = false */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun EventModifierInit(ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): EventModifierInit {
+public inline fun EventModifierInit(ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): EventModifierInit {
     val o = js("({})")
 
     o["ctrlKey"] = ctrlKey
@@ -193,7 +179,6 @@ public inline fun EventModifierInit(ctrlKey: Boolean = false, shiftKey: Boolean 
     o["modifierFnLock"] = modifierFnLock
     o["modifierHyper"] = modifierHyper
     o["modifierNumLock"] = modifierNumLock
-    o["modifierOS"] = modifierOS
     o["modifierScrollLock"] = modifierScrollLock
     o["modifierSuper"] = modifierSuper
     o["modifierSymbol"] = modifierSymbol
@@ -202,11 +187,12 @@ public inline fun EventModifierInit(ctrlKey: Boolean = false, shiftKey: Boolean 
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
 
-@native public open class WheelEvent(typeArg: String, wheelEventInitDict: WheelEventInit = noImpl) : MouseEvent(typeArg, noImpl) {
+@native public open class WheelEvent(type: String, eventInitDict: WheelEventInit = noImpl) : MouseEvent(type, eventInitDict) {
     open val deltaX: Double
         get() = noImpl
     open val deltaY: Double
@@ -215,7 +201,6 @@ public inline fun EventModifierInit(ctrlKey: Boolean = false, shiftKey: Boolean 
         get() = noImpl
     open val deltaMode: Int
         get() = noImpl
-    fun initWheelEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, screenXArg: Int, screenYArg: Int, clientXArg: Int, clientYArg: Int, buttonArg: Short, relatedTargetArg: EventTarget?, modifiersListArg: String, deltaXArg: Double, deltaYArg: Double, deltaZArg: Double, deltaMode: Int): Unit = noImpl
 
     companion object {
         val DOM_DELTA_PIXEL: Int = 0x00
@@ -225,14 +210,14 @@ public inline fun EventModifierInit(ctrlKey: Boolean = false, shiftKey: Boolean 
 }
 
 @native public interface WheelEventInit : MouseEventInit {
-    var deltaX: Double
-    var deltaY: Double
-    var deltaZ: Double
-    var deltaMode: Int
+    var deltaX: Double? /* = 0.0 */
+    var deltaY: Double? /* = 0.0 */
+    var deltaZ: Double? /* = 0.0 */
+    var deltaMode: Int? /* = 0 */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun WheelEventInit(deltaX: Double = 0.0, deltaY: Double = 0.0, deltaZ: Double = 0.0, deltaMode: Int = 0, screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): WheelEventInit {
+public inline fun WheelEventInit(deltaX: Double? = 0.0, deltaY: Double? = 0.0, deltaZ: Double? = 0.0, deltaMode: Int? = 0, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WheelEventInit {
     val o = js("({})")
 
     o["deltaX"] = deltaX
@@ -256,7 +241,6 @@ public inline fun WheelEventInit(deltaX: Double = 0.0, deltaY: Double = 0.0, del
     o["modifierFnLock"] = modifierFnLock
     o["modifierHyper"] = modifierHyper
     o["modifierNumLock"] = modifierNumLock
-    o["modifierOS"] = modifierOS
     o["modifierScrollLock"] = modifierScrollLock
     o["modifierSuper"] = modifierSuper
     o["modifierSymbol"] = modifierSymbol
@@ -265,11 +249,39 @@ public inline fun WheelEventInit(deltaX: Double = 0.0, deltaY: Double = 0.0, del
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
 
-@native public open class KeyboardEvent(typeArg: String, keyboardEventInitDict: KeyboardEventInit = noImpl) : UIEvent(noImpl, noImpl) {
+@native public open class InputEvent(type: String, eventInitDict: InputEventInit = noImpl) : UIEvent(type, eventInitDict) {
+    open val data: String
+        get() = noImpl
+    open val isComposing: Boolean
+        get() = noImpl
+}
+
+@native public interface InputEventInit : UIEventInit {
+    var data: String? /* = "" */
+    var isComposing: Boolean? /* = false */
+}
+
+@Suppress("NOTHING_TO_INLINE")
+public inline fun InputEventInit(data: String? = "", isComposing: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): InputEventInit {
+    val o = js("({})")
+
+    o["data"] = data
+    o["isComposing"] = isComposing
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+    o["composed"] = composed
+
+    return o
+}
+
+@native public open class KeyboardEvent(type: String, eventInitDict: KeyboardEventInit = noImpl) : UIEvent(type, eventInitDict) {
     open val key: String
         get() = noImpl
     open val code: String
@@ -295,7 +307,6 @@ public inline fun WheelEventInit(deltaX: Double = 0.0, deltaY: Double = 0.0, del
     open val which: Int
         get() = noImpl
     fun getModifierState(keyArg: String): Boolean = noImpl
-    fun initKeyboardEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, keyArg: String, locationArg: Int, modifiersListArg: String, repeat: Boolean, locale: String): Unit = noImpl
 
     companion object {
         val DOM_KEY_LOCATION_STANDARD: Int = 0x00
@@ -306,15 +317,15 @@ public inline fun WheelEventInit(deltaX: Double = 0.0, deltaY: Double = 0.0, del
 }
 
 @native public interface KeyboardEventInit : EventModifierInit {
-    var key: String
-    var code: String
-    var location: Int
-    var repeat: Boolean
-    var isComposing: Boolean
+    var key: String? /* = "" */
+    var code: String? /* = "" */
+    var location: Int? /* = 0 */
+    var repeat: Boolean? /* = false */
+    var isComposing: Boolean? /* = false */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun KeyboardEventInit(key: String = "", code: String = "", location: Int = 0, repeat: Boolean = false, isComposing: Boolean = false, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): KeyboardEventInit {
+public inline fun KeyboardEventInit(key: String? = "", code: String? = "", location: Int? = 0, repeat: Boolean? = false, isComposing: Boolean? = false, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): KeyboardEventInit {
     val o = js("({})")
 
     o["key"] = key
@@ -332,7 +343,6 @@ public inline fun KeyboardEventInit(key: String = "", code: String = "", locatio
     o["modifierFnLock"] = modifierFnLock
     o["modifierHyper"] = modifierHyper
     o["modifierNumLock"] = modifierNumLock
-    o["modifierOS"] = modifierOS
     o["modifierScrollLock"] = modifierScrollLock
     o["modifierSuper"] = modifierSuper
     o["modifierSymbol"] = modifierSymbol
@@ -341,22 +351,22 @@ public inline fun KeyboardEventInit(key: String = "", code: String = "", locatio
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
 }
 
-@native public open class CompositionEvent(typeArg: String, compositionEventInitDict: CompositionEventInit = noImpl) : UIEvent(noImpl, noImpl) {
+@native public open class CompositionEvent(type: String, eventInitDict: CompositionEventInit = noImpl) : UIEvent(type, eventInitDict) {
     open val data: String
         get() = noImpl
-    fun initCompositionEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, dataArg: String, locale: String): Unit = noImpl
 }
 
 @native public interface CompositionEventInit : UIEventInit {
-    var data: String
+    var data: String? /* = "" */
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun CompositionEventInit(data: String = "", view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): CompositionEventInit {
+public inline fun CompositionEventInit(data: String? = "", view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CompositionEventInit {
     val o = js("({})")
 
     o["data"] = data
@@ -364,28 +374,9 @@ public inline fun CompositionEventInit(data: String = "", view: Window? = null, 
     o["detail"] = detail
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
+    o["composed"] = composed
 
     return o
-}
-
-@native public open class MutationEvent : Event(noImpl, noImpl) {
-    open val relatedNode: Node?
-        get() = noImpl
-    open val prevValue: String
-        get() = noImpl
-    open val newValue: String
-        get() = noImpl
-    open val attrName: String
-        get() = noImpl
-    open val attrChange: Short
-        get() = noImpl
-    fun initMutationEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, relatedNodeArg: Node?, prevValueArg: String, newValueArg: String, attrNameArg: String, attrChangeArg: Short): Unit = noImpl
-
-    companion object {
-        val MODIFICATION: Short = 1
-        val ADDITION: Short = 2
-        val REMOVAL: Short = 3
-    }
 }
 
 @native public open class Event(type: String, eventInitDict: EventInit = noImpl) {
@@ -403,10 +394,13 @@ public inline fun CompositionEventInit(data: String = "", view: Window? = null, 
         get() = noImpl
     open val defaultPrevented: Boolean
         get() = noImpl
+    open val composed: Boolean
+        get() = noImpl
     open val isTrusted: Boolean
         get() = noImpl
     open val timeStamp: Number
         get() = noImpl
+    fun composedPath(): Array<EventTarget> = noImpl
     fun stopPropagation(): Unit = noImpl
     fun stopImmediatePropagation(): Unit = noImpl
     fun preventDefault(): Unit = noImpl
@@ -420,11 +414,11 @@ public inline fun CompositionEventInit(data: String = "", view: Window? = null, 
     }
 }
 
-@native public interface EventTarget {
-    fun addEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
-    fun addEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
-    fun removeEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
-    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
+@native public abstract class EventTarget {
+    fun addEventListener(type: String, callback: EventListener?, options: dynamic = noImpl): Unit = noImpl
+    fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: dynamic = noImpl): Unit = noImpl
+    fun removeEventListener(type: String, callback: EventListener?, options: dynamic = noImpl): Unit = noImpl
+    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, options: dynamic = noImpl): Unit = noImpl
     fun dispatchEvent(event: Event): Boolean = noImpl
 }
 
