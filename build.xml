@@ -419,6 +419,16 @@
                 </union>
             </src>
         </new-kotlin2js>
+
+        <!-- TODO: it's a temporary hack, until IDEA indexer learns how to process this correctly -->
+        <delete file="${js.stdlib.output.dir}/tmp/kotlin/BaseOutput.kjsm"/>
+        <delete file="${js.stdlib.output.dir}/tmp/kotlin/BufferedOutput.kjsm"/>
+        <delete file="${js.stdlib.output.dir}/tmp/kotlin/BufferedOutputToConsoleLog.kjsm"/>
+        <delete file="${js.stdlib.output.dir}/tmp/kotlin/NodeJsOutput.kjsm"/>
+        <delete file="${js.stdlib.output.dir}/tmp/kotlin/OutputToConsoleLog.kjsm"/>
+        <delete file="${js.stdlib.output.dir}/tmp/kotlin/PropertyMetadata.kjsm"/>
+        <!-- -->
+
         <move file="${js.stdlib.output.dir}/tmp-builtins/kotlin.js" tofile="${js.stdlib.output.dir}/builtins.js" />
         <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
         <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
