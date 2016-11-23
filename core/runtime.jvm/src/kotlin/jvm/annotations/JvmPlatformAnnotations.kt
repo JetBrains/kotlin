@@ -32,7 +32,8 @@ public annotation class JvmOverloads
 
 /**
  * Specifies that a static method or field needs to be generated from this element.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#static-methods)
  * for more information.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
@@ -42,7 +43,8 @@ public annotation class JvmStatic
 
 /**
  * Specifies the name for the Java class or method which is generated from this element.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-jvmname)
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#handling-signature-clashes-with-jvmname)
  * for more information.
  * @property name the name of the element.
  */
@@ -89,6 +91,9 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 
 /**
  * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#instance-fields)
+ * for more information.
  */
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.BINARY)
