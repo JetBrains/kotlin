@@ -34,7 +34,7 @@ class JsReifiedNativeChecker : CallChecker {
                     typeArgumentList[typeParam.index].typeReference
                 }
                 else {
-                    resolvedCall.call.valueArguments[typeParam.index].getArgumentExpression()
+                    resolvedCall.call.callElement
                 }
 
                 context.trace.report(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT.on(typeArgumentPsi!!, typeArg))

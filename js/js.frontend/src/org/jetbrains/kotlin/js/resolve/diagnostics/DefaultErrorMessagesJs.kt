@@ -50,7 +50,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for @native declaration with explicit name")
         put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
         put(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE, "Unchecked cast to native interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
-        put(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass native interface {0} to reified type parameter", RENDER_TYPE)
+        put(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass native interface {0} for reified type parameter", RENDER_TYPE)
 
         this
     }

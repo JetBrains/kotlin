@@ -64,7 +64,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     subject = leftHandSide,
                     sourceType = knownType,
                     targetType = rhsType,
-                    operation = RttiOperation.IS
+                    operation = if (expression.isNegated) RttiOperation.NOT_IS else RttiOperation.IS
             )
             components.rttiExpressionCheckers.forEach {
                 it.check(rttiInformation, expression, context.trace)
