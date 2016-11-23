@@ -37,6 +37,7 @@ import java.io.File
 
 import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
 import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.APT_OPTIONS
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 
 object AnnotationProcessingConfigurationKeys {
     val GENERATED_OUTPUT_DIR: CompilerConfigurationKey<String> =
@@ -142,9 +143,11 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         // Annotations with the "SOURCE" retention will be written to class files
         project.putUserData(IS_KAPT2_ENABLED_KEY, true)
 
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
                 classpath, apOptions, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput,
-                incrementalDataFile)
+                incrementalDataFile, messageCollector)
 
         project.registerService(JeElementRegistry::class.java, JeElementRegistry())
         

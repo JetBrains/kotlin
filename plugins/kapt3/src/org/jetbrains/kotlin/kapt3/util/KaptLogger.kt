@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.kapt3.util
 
 import org.jetbrains.kotlin.cli.common.messages.*
-import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
 import java.io.StringWriter
 
