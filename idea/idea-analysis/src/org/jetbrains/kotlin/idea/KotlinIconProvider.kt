@@ -115,6 +115,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             }
             is KtProperty -> if (isVar) KotlinIcons.FIELD_VAR else KotlinIcons.FIELD_VAL
             is KtClassInitializer -> KotlinIcons.CLASS_INITIALIZER
+            is KtTypeAlias -> KotlinIcons.TYPE_ALIAS
             else -> null
         }
     }
