@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersion
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.toVirtualFile
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
@@ -40,12 +41,14 @@ class GradleKotlinVersionInfoProvider : KotlinVersionInfoProvider {
     }
 
     override fun getCompilerVersion(module: Module): String? {
-        return getGradleFile(module)?.let { DifferentKotlinGradleVersionInspection.getKotlinPluginVersion(it) }
+        return runReadAction { getGradleFile(module)?.let { DifferentKotlinGradleVersionInspection.getKotlinPluginVersion(it) } }
     }
 
     override fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>): Collection<String> {
-        return getGradleFile(module)?.let {
-            DifferentStdlibGradleVersionInspection.getKotlinStdlibVersions(it, targetPlatform.mavenLibraryId)
+        return runReadAction {
+            getGradleFile(module)?.let {
+                DifferentStdlibGradleVersionInspection.getKotlinStdlibVersions(it, targetPlatform.mavenLibraryId)
+            }
         } ?: emptyList()
     }
 }
