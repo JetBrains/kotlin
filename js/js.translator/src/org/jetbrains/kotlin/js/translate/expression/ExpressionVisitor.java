@@ -230,7 +230,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, @NotNull TranslationContext context) {
-        return CallableReferenceTranslator.INSTANCE.translate(expression, context);
+        JsExpression crt = CallableReferenceTranslator.INSTANCE.translate(expression, context);
+
+        return crt;
     }
 
     @Override
