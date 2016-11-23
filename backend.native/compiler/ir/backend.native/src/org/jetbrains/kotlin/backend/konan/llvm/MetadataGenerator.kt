@@ -57,7 +57,7 @@ class MetadataReader(file: File) {
     }
 
 
-    fun string(node: LLVMOpaqueValue): String {
+    fun string(node: LLVMValueRef): String {
         memScoped { 
             val len = alloc<CInt32Var>()
             val str1 = LLVMGetMDString(node, len.ptr)!!
@@ -67,7 +67,7 @@ class MetadataReader(file: File) {
         }
     }
 
-    fun namedMetadataNode(name: String, index: Int): LLVMOpaqueValue {
+    fun namedMetadataNode(name: String, index: Int): LLVMValueRef {
         memScoped {
             val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, "kmetadata")!!
             val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
@@ -78,7 +78,7 @@ class MetadataReader(file: File) {
         }
     }
 
-    fun metadataOperand(metadataNode: LLVMOpaqueValue, index: Int): LLVMOpaqueValue {
+    fun metadataOperand(metadataNode: LLVMValueRef, index: Int): LLVMValueRef {
         memScoped {
             val operandCount = LLVMGetMDNodeNumOperands(metadataNode)!!
             val operandArray = allocArray<LLVMValueRefVar>(operandCount)
@@ -98,24 +98,24 @@ class MetadataReader(file: File) {
 
 internal class MetadataGenerator(override val context: Context): ContextUtils {
 
-    private fun metadataString(str: String): LLVMOpaqueValue {
+    private fun metadataString(str: String): LLVMValueRef {
         return LLVMMDString(str, str.length)!!
     }
 
-    private fun metadataNode(args: List<LLVMOpaqueValue?>): LLVMOpaqueValue {
+    private fun metadataNode(args: List<LLVMValueRef?>): LLVMValueRef {
         memScoped {
             val references = allocArrayOf(args)
             return LLVMMDNode(references[0].ptr, args.size)!!
         }
     }
 
-    private fun metadataFun(fn: LLVMOpaqueValue?, info: String): LLVMOpaqueValue {
+    private fun metadataFun(fn: LLVMValueRef?, info: String): LLVMValueRef {
         val args = listOf(fn, metadataString(info));
         val md = metadataNode(args)
         return md
     }
 
-    private fun emitModuleMetadata(name: String, md: LLVMOpaqueValue?) {
+    private fun emitModuleMetadata(name: String, md: LLVMValueRef?) {
         LLVMAddNamedMetadataOperand(context.llvmModule, name, md)
     }
 

@@ -334,7 +334,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMOpaqueValue? {
+    private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMValueRef? {
         when (value) {
             is IrSetterCallImpl  -> return evaluateSetterCall  (tmpVariableName, value)
             is IrTypeOperatorCall-> return evaluateTypeOperator(tmpVariableName, value)
@@ -359,7 +359,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateThrow(tmpVariableName: String, expression: IrThrow): LLVMOpaqueValue? {
+    private fun evaluateThrow(tmpVariableName: String, expression: IrThrow): LLVMValueRef? {
         val objPointer = evaluateExpression(codegen.newVar(), expression.value)
         val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, objPointer!!, codegen.newVar())
         val args = listOf(objHeaderPtr)                         // Create arg list.
@@ -368,9 +368,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateWhen(tmpVariableName:String, expression: IrWhen): LLVMOpaqueValue? {
+    private fun evaluateWhen(tmpVariableName:String, expression: IrWhen): LLVMValueRef? {
         logger.log("evaluateWhen               : ${ir2string(expression)}")
-        var bbExit:LLVMOpaqueBasicBlock? = null             // By default "when" does not have "exit".
+        var bbExit: LLVMBasicBlockRef? = null             // By default "when" does not have "exit".
         if (!KotlinBuiltIns.isNothing(expression.type))     // If "when" has "exit".
             bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
 
@@ -393,7 +393,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateGetValue(tmpVariableName: String, value: IrGetValue): LLVMOpaqueValue {
+    private fun evaluateGetValue(tmpVariableName: String, value: IrGetValue): LLVMValueRef {
         logger.log("evaluateGetValue           : $tmpVariableName = ${ir2string(value)}")
         when (value.descriptor) {
             is LocalVariableDescriptor,
@@ -416,7 +416,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSetVariable(value: IrSetVariable): LLVMOpaqueValue {
+    private fun evaluateSetVariable(value: IrSetVariable): LLVMValueRef {
         logger.log("evaluateSetVariable        : ${ir2string(value)}")
         val ret = evaluateExpression(codegen.newVar(), value.value)
         return codegen.store(ret!!, codegen.variable(value.descriptor.name.asString())!!)
@@ -424,7 +424,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateVariable(value: IrVariable): LLVMOpaqueValue {
+    private fun evaluateVariable(value: IrVariable): LLVMValueRef {
         logger.log("evaluateVariable           : ${ir2string(value)}")
         val ret = evaluateExpression(codegen.newVar(), value.initializer)
         val variableName = value.descriptor.name.asString()
@@ -435,7 +435,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+    private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef {
         when (value.operator) {
             IrTypeOperator.CAST                      -> return evaluateCast(tmpVariableName, value)
             IrTypeOperator.IMPLICIT_CAST             -> TODO()
@@ -461,7 +461,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //    float   | fptosi   fptosi  fptosi  fptosi      x      fpext
     //    double  | fptosi   fptosi  fptosi  fptosi   fptrunc      x
 
-    private fun evaluateCast(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+    private fun evaluateCast(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef {
         logger.log("evaluateCast               : ${ir2string(value)}")
         assert(!KotlinBuiltIns.isPrimitiveType(value.type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
 
@@ -476,7 +476,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateInstanceOf(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+    private fun evaluateInstanceOf(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef {
         logger.log("evaluateInstanceOf         : ${ir2string(value)}")
 
         val dstDescriptor = TypeUtils.getClassDescriptor(value.typeOperand)            // Get class descriptor for dst type.
@@ -491,14 +491,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateNotInstanceOf(tmpVariableName: String, value: IrTypeOperatorCall): LLVMOpaqueValue {
+    private fun evaluateNotInstanceOf(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef {
         val instanceOfResult = evaluateInstanceOf(codegen.newVar(), value)
         return LLVMBuildNot(context.llvmBuilder, instanceOfResult, tmpVariableName)!!
     }
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateGetField(value: IrGetField): LLVMOpaqueValue {
+    private fun evaluateGetField(value: IrGetField): LLVMValueRef {
         logger.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
@@ -512,7 +512,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSetField(value: IrSetField): LLVMOpaqueValue {
+    private fun evaluateSetField(value: IrSetField): LLVMValueRef {
         logger.log("evaluateSetField           : ${ir2string(value)}")
         val valueToAssign = evaluateExpression(codegen.newVar(), value.value)!!
         if (value.descriptor.dispatchReceiverParameter != null) {
@@ -559,7 +559,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
        }
 
     */
-    private fun fieldPtrOfClass(thisPtr: LLVMOpaqueValue, value: PropertyDescriptor): LLVMOpaqueValue? {
+    private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: PropertyDescriptor): LLVMValueRef? {
         val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, thisPtr, codegen.newVar())
         val typePtr = pointerType(codegen.classType(value.containingDeclaration as ClassDescriptor))
         memScoped {
@@ -573,7 +573,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateConst(value: IrConst<*>): LLVMOpaqueValue? {
+    private fun evaluateConst(value: IrConst<*>): LLVMValueRef? {
         logger.log("evaluateConst              : ${ir2string(value)}")
         when (value.kind) {
             IrConstKind.Null    -> return kNullPtr
@@ -596,7 +596,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateReturn(value: IrReturn): LLVMOpaqueValue? {
+    private fun evaluateReturn(value: IrReturn): LLVMValueRef? {
         logger.log("evaluateReturn             : ${ir2string(value)}")
         val ret = evaluateExpression(codegen.newVar(), value.value)
         return codegen.ret(ret)
@@ -604,7 +604,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateBlock(value: IrBlock): LLVMOpaqueValue? {
+    private fun evaluateBlock(value: IrBlock): LLVMValueRef? {
         logger.log("evaluateBlock              : ${ir2string(value)}")
         value.statements.dropLast(1).forEach {
             evaluateExpression(codegen.newVar(), it)
@@ -614,9 +614,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression?): LLVMOpaqueValue? {
+    private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression?): LLVMValueRef? {
         logger.log("evaluateCall               : $tmpVariableName = ${ir2string(value)}")
-        val args = mutableListOf<LLVMOpaqueValue?>()                            // Create list of function args.
+        val args = mutableListOf<LLVMValueRef?>()                            // Create list of function args.
         value!!.acceptChildrenVoid(object: IrElementVisitorVoid {               // Iterate args of the function.
             override fun visitElement(element: IrElement) {                     // Visit arg.
                 val tmp = codegen.newVar()                                      // Create variable representing the arg in codegen
@@ -635,7 +635,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+    private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: List<LLVMValueRef?>): LLVMValueRef? {
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
         when (descriptor) {
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (tmpVariableName, callee,     args)
@@ -646,7 +646,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+    private fun evaluateSimpleFunctionCall(tmpVariableName: String, descriptor: FunctionDescriptor, args: List<LLVMValueRef?>): LLVMValueRef? {
         //logger.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
         if (descriptor.isOverridable)
             return callVirtual(descriptor, args, tmpVariableName)
@@ -656,9 +656,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSetterCall(tmpVariableName: String, value: IrSetterCallImpl): LLVMOpaqueValue? {
+    private fun evaluateSetterCall(tmpVariableName: String, value: IrSetterCallImpl): LLVMValueRef? {
         val descriptor = value.descriptor as FunctionDescriptor
-        val args       = mutableListOf<LLVMOpaqueValue?>()
+        val args       = mutableListOf<LLVMValueRef?>()
         if (descriptor.dispatchReceiverParameter != null)
             args.add(evaluateExpression(codegen.newVar(), value.dispatchReceiver))         //add this ptr
         args.add(evaluateExpression(codegen.newVar(), value.getValueArgument(0)))
@@ -667,7 +667,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateConstructorCall(variableName: String, callee: IrCall, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue? {
+    private fun evaluateConstructorCall(variableName: String, callee: IrCall, args: List<LLVMValueRef?>): LLVMValueRef? {
         logger.log("evaluateConstructorCall    : $variableName = ${ir2string(callee)}")
         memScoped {
             val containingClass = (callee.descriptor as ClassConstructorDescriptor).containingDeclaration
@@ -679,7 +679,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             } else {
                 codegen.call(context.allocInstanceFunction, listOf(typeInfo, allocHint), variableName)
             }
-            val constructorParams: MutableList<LLVMOpaqueValue?> = mutableListOf()
+            val constructorParams: MutableList<LLVMValueRef?> = mutableListOf()
             constructorParams += thisValue
             constructorParams += args
             return evaluateSimpleFunctionCall(variableName, callee.descriptor as FunctionDescriptor, constructorParams)
@@ -700,7 +700,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private val kFalse       = LLVMConstInt(LLVMInt1Type(),   0, 1)!!
 
 
-    private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: List<LLVMOpaqueValue?>): LLVMOpaqueValue {
+    private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: List<LLVMValueRef?>): LLVMValueRef {
         logger.log("evaluateCall $tmpVariableName origin:$callee")
         val descriptor = callee.descriptor
         when (descriptor.name) {
@@ -732,7 +732,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateOperatorEqeq(callee: IrBinaryPrimitiveImpl, arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, tmpVariableName: String): LLVMOpaqueValue {
+    private fun evaluateOperatorEqeq(callee: IrBinaryPrimitiveImpl, arg0: LLVMValueRef, arg1: LLVMValueRef, tmpVariableName: String): LLVMValueRef {
 
         val arg0Type = callee.argument0.type
         val isFp = KotlinBuiltIns.isDouble(arg0Type) || KotlinBuiltIns.isFloat(arg0Type)
@@ -746,7 +746,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun generateEqeqForObjects(callee: IrBinaryPrimitiveImpl, arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, tmpVariableName: String): LLVMOpaqueValue {
+    private fun generateEqeqForObjects(callee: IrBinaryPrimitiveImpl, arg0: LLVMValueRef, arg1: LLVMValueRef, tmpVariableName: String): LLVMValueRef {
         val arg0Type = callee.argument0.type
         val descriptor = getEquals(arg0Type, "equals")                          // Get descriptor for "arg0.equals".
         if (arg0Type.isMarkedNullable) {                                        // If arg0 is nullable.
@@ -778,8 +778,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateOperatorEqeqeq(callee: IrBinaryPrimitiveImpl,
-                                       arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue,
-                                       tmpVariableName: String):LLVMOpaqueValue {
+                                       arg0: LLVMValueRef, arg1: LLVMValueRef,
+                                       tmpVariableName: String): LLVMValueRef {
 
         val arg0Type = callee.argument0.type
         val arg1Type = callee.argument1.type
@@ -794,7 +794,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun generateWhenCase(isUnit:Boolean, isNothing:Boolean, resultPtr:LLVMOpaqueValue?, branch: IrBranch, bbNext: LLVMOpaqueBasicBlock?, bbExit: LLVMOpaqueBasicBlock?) {
+    private fun generateWhenCase(isUnit:Boolean, isNothing:Boolean, resultPtr: LLVMValueRef?, branch: IrBranch, bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
         val neitherUnitNorNothing = !isNothing && !isUnit                            // If branches doesn't end with 'return' either result hasn't got 'unit' type.
         if (isUnconditional(branch)) {                                               // It is the "else" clause.
             val brResult = evaluateExpression(codegen.newVar(), branch.result)       // Generate clause body.
@@ -826,7 +826,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    fun callDirect(descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+    fun callDirect(descriptor: FunctionDescriptor, args: List<LLVMValueRef?>, result: String?): LLVMValueRef? {
         val realDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor)
         val llvmFunction = codegen.functionLlvmValue(realDescriptor)
         return call(descriptor, llvmFunction, args, result)
@@ -846,7 +846,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+    fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef?>, result: String?): LLVMValueRef? {
         val thisI8PtrPtr    = codegen.bitcast(kInt8PtrPtr, args[0]!!, codegen.newVar())        // Cast "this (i8*)" to i8**.
         val typeInfoI8Ptr   = codegen.load(thisI8PtrPtr!!, codegen.newVar())                   // Load TypeInfo address.
         val typeInfoPtr     = codegen.bitcast(kTypeInfoPtr, typeInfoI8Ptr, codegen.newVar())   // Cast TypeInfo (i8*) to TypeInfo*.
@@ -864,19 +864,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun call(descriptor: FunctionDescriptor, function: LLVMOpaqueValue?, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+    private fun call(descriptor: FunctionDescriptor, function: LLVMValueRef?, args: List<LLVMValueRef?>, result: String?): LLVMValueRef? {
         return codegen.call(function, args, if (KotlinBuiltIns.isUnit(descriptor.returnType!!)) "" else result)
     }
 
     //-------------------------------------------------------------------------//
 
-    fun  superCall(result:String, descriptor:ClassConstructorDescriptor, args:List<LLVMOpaqueValue?> ):LLVMOpaqueValue? {
+    fun  superCall(result:String, descriptor:ClassConstructorDescriptor, args:List<LLVMValueRef?> ): LLVMValueRef? {
         val tmp = codegen.load(codegen.thisVariable(), codegen.newVar())
         val rargs =
                 if (args.isNotEmpty())
-                    listOf<LLVMOpaqueValue?>(tmp, *args.toTypedArray())
+                    listOf<LLVMValueRef?>(tmp, *args.toTypedArray())
                 else
-                    listOf<LLVMOpaqueValue?>(tmp)
+                    listOf<LLVMValueRef?>(tmp)
         return callDirect(descriptor, rargs!!, result)
     }
 

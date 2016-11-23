@@ -38,7 +38,7 @@ fun ir2string(ir: IrElement?): String {
 
 //-----------------------------------------------------------------------------//
 
-fun llvm2string(value: LLVMOpaqueValue?): String {
+fun llvm2string(value: LLVMValueRef?): String {
   if (value == null) return "<null>"
   return LLVMPrintValueToString(value)!!.asCString().toString()
 }

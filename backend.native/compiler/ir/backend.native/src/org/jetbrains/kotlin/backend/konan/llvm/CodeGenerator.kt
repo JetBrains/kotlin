@@ -45,7 +45,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
     fun  fields(descriptor: ClassDescriptor):List<PropertyDescriptor> = descriptor.fields
 
-    private fun prolog(declaration: IrFunction): LLVMOpaqueValue? {
+    private fun prolog(declaration: IrFunction): LLVMValueRef? {
         variableIndex = 0
         labelIndex = 0
         currentFunction = declaration.descriptor
@@ -58,8 +58,8 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
     fun newVar():String = currentFunction!!.tmpVariable()
 
-    val variablesGlobal = mapOf<String, LLVMOpaqueValue?>()
-    fun variable(varName:String):LLVMOpaqueValue? = currentFunction!!.variable(varName)
+    val variablesGlobal = mapOf<String, LLVMValueRef?>()
+    fun variable(varName:String): LLVMValueRef? = currentFunction!!.variable(varName)
 
     private var variableIndex:Int = 0
     private var FunctionDescriptor.tmpVariableIndex: Int
@@ -74,48 +74,48 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun FunctionDescriptor.tmpVariable():String = "tmp_${tmpVariableIndex++}"
     fun FunctionDescriptor.bbLabel():String = "label_${bbLabelIndex++}"
 
-    fun registerVariable(varName: String, value:LLVMOpaqueValue) = currentFunction!!.registerVariable(varName, value)
+    fun registerVariable(varName: String, value: LLVMValueRef) = currentFunction!!.registerVariable(varName, value)
 
-    val function2variables = mutableMapOf<FunctionDescriptor, MutableMap<String, LLVMOpaqueValue?>>()
+    val function2variables = mutableMapOf<FunctionDescriptor, MutableMap<String, LLVMValueRef?>>()
 
 
-    val FunctionDescriptor.variables: MutableMap<String, LLVMOpaqueValue?>
+    val FunctionDescriptor.variables: MutableMap<String, LLVMValueRef?>
         get() = this@CodeGenerator.function2variables[this]!!
 
-    val ClassConstructorDescriptor.thisValue:LLVMOpaqueValue?
+    val ClassConstructorDescriptor.thisValue: LLVMValueRef?
     get() = thisValue
 
 
-    fun FunctionDescriptor.registerVariable(varName: String, value:LLVMOpaqueValue?) = variables.put(varName, value)
-    private fun FunctionDescriptor.variable(varName: String): LLVMOpaqueValue? = variables[varName]
+    fun FunctionDescriptor.registerVariable(varName: String, value: LLVMValueRef?) = variables.put(varName, value)
+    private fun FunctionDescriptor.variable(varName: String): LLVMValueRef? = variables[varName]
 
-    fun plus  (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildAdd (context.llvmBuilder, arg0, arg1, result)!!
-    fun mul   (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildMul (context.llvmBuilder, arg0, arg1, result)!!
-    fun minus (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSub (context.llvmBuilder, arg0, arg1, result)!!
-    fun div   (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSDiv(context.llvmBuilder, arg0, arg1, result)!!
-    fun srem  (arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildSRem(context.llvmBuilder, arg0, arg1, result)!!
+    fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildAdd (context.llvmBuilder, arg0, arg1, result)!!
+    fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildMul (context.llvmBuilder, arg0, arg1, result)!!
+    fun minus (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSub (context.llvmBuilder, arg0, arg1, result)!!
+    fun div   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSDiv(context.llvmBuilder, arg0, arg1, result)!!
+    fun srem  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSRem(context.llvmBuilder, arg0, arg1, result)!!
 
     /* integers comparisons */
-    fun icmpEq(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, result)!!
-    fun icmpGt(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, result)!!
-    fun icmpGe(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGE, arg0, arg1, result)!!
-    fun icmpLt(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, result)!!
-    fun icmpLe(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, result)!!
-    fun icmpNe(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, result)!!
+    fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, result)!!
+    fun icmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, result)!!
+    fun icmpGe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGE, arg0, arg1, result)!!
+    fun icmpLt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, result)!!
+    fun icmpLe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, result)!!
+    fun icmpNe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, result)!!
 
     /* floating-point comparisons */
-    fun fcmpEq(arg0: LLVMOpaqueValue, arg1: LLVMOpaqueValue, result: String): LLVMOpaqueValue = LLVMBuildFCmp(context.llvmBuilder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
+    fun fcmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildFCmp(context.llvmBuilder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
 
-    fun bitcast(type: LLVMOpaqueType?, value: LLVMOpaqueValue, result: String) = LLVMBuildBitCast(context.llvmBuilder, value, type, result)
+    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, result: String) = LLVMBuildBitCast(context.llvmBuilder, value, type, result)
 
-    fun alloca(type: KotlinType, varName: String):LLVMOpaqueValue = alloca( getLLVMType(type), varName)
-    fun alloca(type: LLVMOpaqueType?, varName: String): LLVMOpaqueValue = LLVMBuildAlloca(context.llvmBuilder, type, varName)!!
-    fun load(value:LLVMOpaqueValue, varName: String):LLVMOpaqueValue = LLVMBuildLoad(context.llvmBuilder, value, varName)!!
-    fun store(value:LLVMOpaqueValue, ptr:LLVMOpaqueValue):LLVMOpaqueValue = LLVMBuildStore(context.llvmBuilder, value, ptr)!!
+    fun alloca(type: KotlinType, varName: String): LLVMValueRef = alloca( getLLVMType(type), varName)
+    fun alloca(type: LLVMTypeRef?, varName: String): LLVMValueRef = LLVMBuildAlloca(context.llvmBuilder, type, varName)!!
+    fun load(value: LLVMValueRef, varName: String): LLVMValueRef = LLVMBuildLoad(context.llvmBuilder, value, varName)!!
+    fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(context.llvmBuilder, value, ptr)!!
 
     //-------------------------------------------------------------------------//
 
-    fun call(llvmFunction: LLVMOpaqueValue?, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
+    fun call(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>, result: String?): LLVMValueRef? {
         if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, llvmFunction, null, 0, result)
         memScoped {
             val rargs = allocArrayOf(args)
@@ -139,31 +139,31 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     }
 
     /* to class descriptor */
-    fun classType(descriptor: ClassDescriptor):LLVMOpaqueType = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
-    fun typeInfoType(descriptor: ClassDescriptor): LLVMOpaqueType? = descriptor.llvmTypeInfoPtr.getLlvmType()
-    fun typeInfoValue(descriptor: ClassDescriptor): LLVMOpaqueValue? = descriptor.llvmTypeInfoPtr.getLlvmValue()
+    fun classType(descriptor: ClassDescriptor): LLVMTypeRef = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
+    fun typeInfoType(descriptor: ClassDescriptor): LLVMTypeRef? = descriptor.llvmTypeInfoPtr.getLlvmType()
+    fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef? = descriptor.llvmTypeInfoPtr.getLlvmValue()
 
     fun thisVariable() = variable("this")!!
-    fun param(fn: FunctionDescriptor?, i: Int): LLVMOpaqueValue? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
+    fun param(fn: FunctionDescriptor?, i: Int): LLVMValueRef? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
 
     fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
 
 
-    fun basicBlock(): LLVMOpaqueBasicBlock? = LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), currentFunction!!.bbLabel())
-    fun lastBasicBlock(): LLVMOpaqueBasicBlock? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction.getLlvmValue())
+    fun basicBlock(): LLVMBasicBlockRef? = LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), currentFunction!!.bbLabel())
+    fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction.getLlvmValue())
 
     fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction.getLlvmValue()
-    fun functionHash(descriptor: FunctionDescriptor): LLVMOpaqueValue? = descriptor.functionName.localHash.getLlvmValue()
+    fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef? = descriptor.functionName.localHash.getLlvmValue()
 
-    fun  br(bbLabel: LLVMOpaqueBasicBlock) = LLVMBuildBr(context.llvmBuilder, bbLabel)
-    fun condBr(condition: LLVMOpaqueValue?, bbTrue: LLVMOpaqueBasicBlock?, bbFalse: LLVMOpaqueBasicBlock?)
+    fun  br(bbLabel: LLVMBasicBlockRef) = LLVMBuildBr(context.llvmBuilder, bbLabel)
+    fun condBr(condition: LLVMValueRef?, bbTrue: LLVMBasicBlockRef?, bbFalse: LLVMBasicBlockRef?)
         = LLVMBuildCondBr(context.llvmBuilder, condition, bbTrue, bbFalse)
 
-    fun positionAtEnd(bbLabel: LLVMOpaqueBasicBlock)
+    fun positionAtEnd(bbLabel: LLVMBasicBlockRef)
         = LLVMPositionBuilderAtEnd(context.llvmBuilder, bbLabel)
 
-    fun ret(value: LLVMOpaqueValue?) = LLVMBuildRet(context.llvmBuilder, value)
-    fun  unreachable(): LLVMOpaqueValue? = LLVMBuildUnreachable(context.llvmBuilder)
+    fun ret(value: LLVMValueRef?) = LLVMBuildRet(context.llvmBuilder, value)
+    fun  unreachable(): LLVMValueRef? = LLVMBuildUnreachable(context.llvmBuilder)
 }
 
 

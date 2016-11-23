@@ -10,7 +10,7 @@ import llvm.*
  * If [elements] is empty, then null pointer is returned.
  */
 internal fun StaticData.placeGlobalConstArray(name: String,
-                                              elemType: LLVMOpaqueType?,
+                                              elemType: LLVMTypeRef?,
                                               elements: List<ConstValue>): ConstPointer {
     if (elements.size > 0) {
         val global = this.placeGlobalArray(name, elemType, elements)

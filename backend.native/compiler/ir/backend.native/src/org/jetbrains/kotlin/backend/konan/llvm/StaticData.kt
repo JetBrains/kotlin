@@ -11,9 +11,9 @@ internal class StaticData(override val context: Context): ContextUtils {
     /**
      * Represents the LLVM global variable.
      */
-    class Global private constructor(val staticData: StaticData, val llvmGlobal: LLVMOpaqueValue) {
+    class Global private constructor(val staticData: StaticData, val llvmGlobal: LLVMValueRef) {
         companion object {
-            fun create(staticData: StaticData, type: LLVMOpaqueType, name: String): Global {
+            fun create(staticData: StaticData, type: LLVMTypeRef, name: String): Global {
                 val module = staticData.context.llvmModule
                 if (LLVMGetNamedGlobal(module, name) != null) {
                     throw IllegalArgumentException("Global '$name' already exists")
@@ -87,7 +87,7 @@ internal class StaticData(override val context: Context): ContextUtils {
      *
      * It is external until explicitly initialized with [Global.setInitializer].
      */
-    fun createGlobal(type: LLVMOpaqueType, name: String): Global {
+    fun createGlobal(type: LLVMTypeRef, name: String): Global {
         return Global.create(this, type, name)
     }
 
@@ -103,7 +103,7 @@ internal class StaticData(override val context: Context): ContextUtils {
     /**
      * Creates array-typed global with given name and value.
      */
-    fun placeGlobalArray(name: String, elemType: LLVMOpaqueType?, elements: List<ConstValue>): Global {
+    fun placeGlobalArray(name: String, elemType: LLVMTypeRef?, elements: List<ConstValue>): Global {
         val initializer = ConstArray(elemType, elements)
         val global = placeGlobal(name, initializer)
 

@@ -9,7 +9,7 @@ class Runtime(private val bitcodeFile: String) {
     init {
         llvmModule = memScoped {
 
-            val bufRef = allocPointerTo<LLVMOpaqueMemoryBuffer>()
+            val bufRef = alloc<LLVMMemoryBufferRefVar>()
             val errorRef = allocPointerTo<CInt8Var>()
             val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef.ptr, errorRef.ptr)
             if (res != 0) {

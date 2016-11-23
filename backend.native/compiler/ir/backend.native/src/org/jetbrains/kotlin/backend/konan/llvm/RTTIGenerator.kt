@@ -59,7 +59,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             )
 
     // TODO: probably it should be moved out of this class and shared.
-    private fun createStructFor(className: FqName, fields: List<PropertyDescriptor>): LLVMOpaqueType? {
+    private fun createStructFor(className: FqName, fields: List<PropertyDescriptor>): LLVMTypeRef? {
         val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), "kclass:" + className)
         val fieldTypes = fields.map { getLLVMType(it.returnType!!) }.toTypedArray()
 
@@ -115,7 +115,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return allMethods
     }
 
-    private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMOpaqueValue?) {
+    private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
         val annot = classDesc.annotations.findAnnotation(FqName("kotlin.ExportTypeInfo"))
         if (annot != null) {
             val nameValue = annot.allValueArguments.values.single() as StringValue
@@ -138,7 +138,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             "kotlin.String"       to -1
     )
 
-    private fun getInstanceSize(classType: LLVMOpaqueType?, className: FqName) : Int {
+    private fun getInstanceSize(classType: LLVMTypeRef?, className: FqName) : Int {
         val arraySize = arrayClasses.get(className.asString());
         if (arraySize != null) return arraySize;
         return LLVMStoreSizeOfType(runtime.targetData, classType).toInt()
