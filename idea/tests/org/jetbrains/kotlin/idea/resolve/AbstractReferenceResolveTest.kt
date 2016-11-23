@@ -58,7 +58,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
     protected fun doSingleResolveTest() {
         forEachCaret { index, offset ->
             val expectedResolveData = readResolveData(myFixture.file.text, index, refMarkerText)
-            val psiReference = myFixture.file.findReferenceAt(offset)
+            val psiReference = wrapReference(myFixture.file.findReferenceAt(offset))
             checkReferenceResolve(expectedResolveData, offset, psiReference) { checkResolvedTo(it) }
         }
     }
@@ -66,6 +66,9 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
     open fun checkResolvedTo(element: PsiElement) {
         // do nothing
     }
+
+    open fun wrapReference(reference: PsiReference?): PsiReference? = reference
+    open fun wrapReference(reference: PsiPolyVariantReference): PsiPolyVariantReference = reference
 
     protected fun doMultiResolveTest() {
         forEachCaret { index, offset ->
@@ -75,7 +78,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
             assertTrue(psiReference is PsiPolyVariantReference)
             psiReference as PsiPolyVariantReference
 
-            val results = psiReference.multiResolve(true)
+            val results = wrapReference(psiReference).multiResolve(true)
 
             val actualResolvedTo = Lists.newArrayList<String>()
             for (result in results) {
@@ -140,7 +143,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
                 }
                 else {
                     if (!expectedResolveData.shouldBeUnresolved()) {
-                        assertNull("Element $psiReference wasn't resolved to anything, but $expectedString was expected", expectedString)
+                        assertNull("Element $psiReference (${psiReference.element.text}) wasn't resolved to anything, but $expectedString was expected", expectedString)
                     }
                 }
             }
