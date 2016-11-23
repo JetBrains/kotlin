@@ -122,8 +122,8 @@ class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
-            commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${stdlibKtBc.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), linkM(), rdynamic()
+            commandLine "clang++", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc', testC, mainC
         }
     }
 }
@@ -131,8 +131,8 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File libraryPath, File exe) {
         project.execClang {
-            commandLine "clang", "-DRUN_TEST", "${runtimeS.absolutePath}", "${stdlibKtBc.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), linkM(), rdynamic()
+            commandLine "clang++", "-DRUN_TEST", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc', mainC
         }
     }
 }
@@ -186,8 +186,8 @@ class LinkKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
-            commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${stdlibKtBc.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), rdynamic()
+            commandLine "clang++", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, linkDl(), rdynamic(), '-xc', testC, mainC
         }
     }
 
