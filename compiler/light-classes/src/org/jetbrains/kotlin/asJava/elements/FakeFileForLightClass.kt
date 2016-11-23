@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.stubs.PsiClassHolderFileStub
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -69,4 +70,13 @@ open class FakeFileForLightClass(
     }
 
     override fun isEquivalentTo(another: PsiElement?) = this == another
+
+    override fun setPackageName(packageName: String) {
+        if (lightClass() is KtLightClassForFacade) {
+            ktFile.packageDirective?.fqName = FqName(packageName)
+        }
+        else {
+            super.setPackageName(packageName)
+        }
+    }
 }

@@ -30,6 +30,7 @@ import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinSelectNestedClassRefactoringDialog
@@ -168,7 +169,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     override fun tryToMove(
             element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
     ): Boolean {
-        val elementsToMove = arrayOf(element)
+        val elementsToMove = element.unwrapped?.let { arrayOf(it) } ?: PsiElement.EMPTY_ARRAY
         val targetContainer = dataContext?.let { dataContext -> LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext) }
         return canMove(elementsToMove, targetContainer, true) && doMoveWithCheck(project, elementsToMove, targetContainer, null, editor)
     }
