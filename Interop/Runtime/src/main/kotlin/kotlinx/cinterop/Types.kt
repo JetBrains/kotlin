@@ -1,4 +1,4 @@
-package kotlin_.cinterop
+package kotlinx.cinterop
 
 /**
  * The entity which has an associated native pointer.

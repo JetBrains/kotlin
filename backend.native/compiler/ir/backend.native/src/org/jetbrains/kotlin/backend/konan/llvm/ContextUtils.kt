@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

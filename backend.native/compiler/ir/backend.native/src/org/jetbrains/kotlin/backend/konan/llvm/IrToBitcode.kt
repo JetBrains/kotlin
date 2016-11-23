@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

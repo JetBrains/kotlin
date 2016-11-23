@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

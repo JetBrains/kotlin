@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 import org.jetbrains.kotlin.backend.konan.hash.*
 
 internal fun localHash(data: ByteArray): Long {

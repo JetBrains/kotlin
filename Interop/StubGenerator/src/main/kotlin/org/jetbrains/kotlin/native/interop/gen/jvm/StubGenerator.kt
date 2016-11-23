@@ -750,7 +750,7 @@ class StubGenerator(
             out("package $pkgName")
             out("")
         }
-        out("import kotlin_.cinterop.*")
+        out("import kotlinx.cinterop.*")
         out("")
 
         functionsToBind.forEach {

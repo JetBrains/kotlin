@@ -1,4 +1,4 @@
-package kotlin_.cinterop
+package kotlinx.cinterop
 
 import sun.misc.Unsafe
 

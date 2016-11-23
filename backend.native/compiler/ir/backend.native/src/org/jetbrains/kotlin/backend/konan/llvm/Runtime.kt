@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 import llvm.*
 
 class Runtime(private val bitcodeFile: String) {

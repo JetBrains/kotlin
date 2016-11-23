@@ -1,4 +1,4 @@
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 import llvm.*
 
 fun main(args: Array<String>) = memScoped {

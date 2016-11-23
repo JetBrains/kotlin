@@ -1,6 +1,6 @@
 package clang
 
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 
 fun asctime(arg0: CPointer<tm>?): CPointer<CInt8Var>? {
     val _arg0 = arg0.rawValue

@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.native.interop.indexer
 import clang.*
 import clang.CXIdxEntityKind.*
 import clang.CXTypeKind.*
-import kotlin_.cinterop.*
+import kotlinx.cinterop.*
 import java.io.File
 
 private class StructDeclImpl(spelling: String) : StructDecl(spelling) {

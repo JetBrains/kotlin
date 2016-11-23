@@ -1,4 +1,4 @@
-package kotlin_.cinterop
+package kotlinx.cinterop
 
 /**
  * This class provides a way to create a stable handle to any Kotlin object.
