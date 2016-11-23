@@ -27,6 +27,8 @@ import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import com.intellij.codeInspection.ex.EntryPointsManager
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
@@ -74,7 +76,6 @@ import java.awt.Insets
 import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
-import javax.swing.SwingUtilities
 
 class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
@@ -359,8 +360,9 @@ class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val declaration = descriptor.psiElement.getStrictParentOfType<KtDeclaration>() ?: return
         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
-        SwingUtilities.invokeLater {
-            SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
-        }
+        ApplicationManager.getApplication().invokeLater(
+                { SafeDeleteHandler.invoke(project, arrayOf(declaration), false) },
+                ModalityState.NON_MODAL
+        )
     }
 }
