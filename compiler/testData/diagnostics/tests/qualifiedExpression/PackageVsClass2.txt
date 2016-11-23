@@ -31,14 +31,6 @@ package a {
 package
 
 package a {
-
-    public final class a {
-        // -- Module: <m1> --
-    }
-
-    public final class b {
-        // -- Module: <m1> --
-    }
 }
 
 package test {
@@ -57,18 +49,8 @@ package test {
 package
 
 package a {
-
-    public final class a {
-        // -- Module: <m1> --
-    }
-
-    public final class b {
-        // -- Module: <m1> --
-    }
 }
 
 package test {
     public fun foo(/*0*/ i: a.a): kotlin.Unit
 }
-
-

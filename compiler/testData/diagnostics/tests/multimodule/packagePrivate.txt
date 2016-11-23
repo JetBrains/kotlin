@@ -11,7 +11,5 @@ package p {
 package
 
 package p {
-    private val a: kotlin.Int = 1
-    public val b: kotlin.Int = 1
     public val c: kotlin.Int = 1
 }

@@ -34,14 +34,6 @@ package
 public fun test(/*0*/ b: a.B): kotlin.Unit
 
 package a {
-
-    public final class B {
-        // -- Module: <m1> --
-    }
-
-    public final class B {
-        // -- Module: <m2> --
-    }
 }
 
 
@@ -74,13 +66,3 @@ package
 
 public fun test(/*0*/ b: B): kotlin.Unit
 public fun test2(/*0*/ b: B): kotlin.Unit
-
-public final class B {
-    // -- Module: <top_m1> --
-}
-
-public final class B {
-    // -- Module: <top_m2> --
-}
-
-

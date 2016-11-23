@@ -28,14 +28,6 @@ package p {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    public interface G1</*0*/ T> {
-        // -- Module: <m0> --
-    }
-
-    public interface G2</*0*/ A, /*1*/ B> {
-        // -- Module: <m0> --
-    }
 }
 
 
@@ -44,23 +36,11 @@ package
 
 package p {
 
-    public interface B {
-        // -- Module: <m1> --
-    }
-
     public interface C : p.B {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public abstract override /*1*/ fun foo(/*0*/ a: p.G1<kotlin.Int>?, /*1*/ b: p.G2<p.B, kotlin.String>?): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
-    public interface G1</*0*/ T> {
-        // -- Module: <m0> --
-    }
-
-    public interface G2</*0*/ A, /*1*/ B> {
-        // -- Module: <m0> --
     }
 }
 
@@ -76,14 +56,6 @@ package p {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    public interface G1</*0*/ T> {
-        // -- Module: <m0> --
-    }
-
-    public interface G2</*0*/ A, /*1*/ B> {
-        // -- Module: <m0> --
-    }
 }
 
 
@@ -93,20 +65,4 @@ package
 public fun test(/*0*/ b: p.B?): kotlin.Unit
 
 package p {
-
-    public interface B {
-        // -- Module: <m3> --
-    }
-
-    public interface C : p.B {
-        // -- Module: <m2> --
-    }
-
-    public interface G1</*0*/ T> {
-        // -- Module: <m0> --
-    }
-
-    public interface G2</*0*/ A, /*1*/ B> {
-        // -- Module: <m0> --
-    }
 }

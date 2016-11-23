@@ -50,22 +50,10 @@ public fun test(/*0*/ a: [ERROR : A]): kotlin.Unit
 public fun test(/*0*/ a: p2.A): kotlin.Unit
 
 package p1 {
-
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "1") public final class A {
-        // -- Module: <m1> --
-    }
 }
 
 package p2 {
-
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "2") public final class A {
-        // -- Module: <m2> --
-    }
 }
 
 package p3 {
-
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "3") public final class A {
-        // -- Module: <m3> --
-    }
 }

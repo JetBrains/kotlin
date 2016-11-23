@@ -7,7 +7,6 @@ public fun </*0*/ T> bar(/*0*/ ff: [ERROR : Err].() -> kotlin.Unit): kotlin.Unit
 // -- Module: <m2> --
 package
 
-public fun </*0*/ T> bar(/*0*/ ff: [ERROR : Err].() -> kotlin.Unit): kotlin.Unit
 public fun foo(): kotlin.Unit
 
 public final data class User {

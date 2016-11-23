@@ -59,24 +59,4 @@ public final class Foo : p.C, p.B {
 }
 
 package p {
-
-    public interface A : p.Base {
-        // -- Module: <m1> --
-    }
-
-    public interface B : p.Base {
-        // -- Module: <m2> --
-    }
-
-    public interface Base {
-        // -- Module: <m1> --
-    }
-
-    public interface Base {
-        // -- Module: <m2> --
-    }
-
-    public interface C : p.A {
-        // -- Module: <m1> --
-    }
 }

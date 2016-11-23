@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
@@ -212,6 +213,12 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             get() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
         override val memberScope: MemberScope
             get() = scope
+        override val fragments: List<PackageFragmentDescriptor> = listOf(
+                object : PackageFragmentDescriptorImpl(module, fqName) {
+                    override fun getMemberScope(): MemberScope = scope
+                }
+        )
+
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
                 visitor.visitPackageViewDescriptor(this, data)
 
@@ -221,8 +228,6 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
         override fun getName() = throw UnsupportedOperationException()
         override val annotations: Annotations
-            get() = throw UnsupportedOperationException()
-        override val fragments: Nothing
             get() = throw UnsupportedOperationException()
     }
 

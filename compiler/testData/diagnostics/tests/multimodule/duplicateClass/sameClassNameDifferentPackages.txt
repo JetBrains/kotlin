@@ -33,12 +33,4 @@ public final class A {
 }
 
 package p {
-
-    public final class A {
-        // -- Module: <m1> --
-    }
-
-    public final class B {
-        // -- Module: <m1> --
-    }
 }

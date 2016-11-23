@@ -26,17 +26,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope;
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -105,6 +108,8 @@ public class RecursiveDescriptorComparator {
             @NotNull Printer printer,
             boolean topLevel
     ) {
+        if (!isFromModule(descriptor, module)) return;
+
         boolean isEnumEntry = isEnumEntry(descriptor);
         boolean isClassOrPackage =
                 (descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !isEnumEntry;
@@ -143,7 +148,7 @@ public class RecursiveDescriptorComparator {
             }
             else if (descriptor instanceof PackageViewDescriptor) {
                 appendSubDescriptors(descriptor, module,
-                                     ((PackageViewDescriptor) descriptor).getMemberScope(),
+                                     getPackageScopeInModule((PackageViewDescriptor) descriptor, module),
                                      Collections.<DeclarationDescriptor>emptyList(), printer);
             }
 
@@ -176,6 +181,32 @@ public class RecursiveDescriptorComparator {
         }
     }
 
+    @NotNull
+    private MemberScope getPackageScopeInModule(@NotNull PackageViewDescriptor descriptor, @NotNull ModuleDescriptor module) {
+        // See LazyPackageViewDescriptorImpl#memberScope
+        List<MemberScope> scopes = new ArrayList<MemberScope>();
+        for (PackageFragmentDescriptor fragment : descriptor.getFragments()) {
+            if (isFromModule(fragment, module)) {
+                scopes.add(fragment.getMemberScope());
+            }
+        }
+        scopes.add(new SubpackagesScope(module, descriptor.getFqName()));
+        return ChainedMemberScope.Companion.create("test", scopes);
+    }
+
+    private boolean isFromModule(@NotNull DeclarationDescriptor descriptor, @NotNull ModuleDescriptor module) {
+        if (conf.renderDeclarationsFromOtherModules) return true;
+
+        if (descriptor instanceof PackageViewDescriptor) {
+            // PackageViewDescriptor does not belong to any module, so we check if one of its containing fragments is in our module
+            for (PackageFragmentDescriptor fragment : ((PackageViewDescriptor) descriptor).getFragments()) {
+                if (module.equals(DescriptorUtils.getContainingModule(fragment))) return true;
+            }
+        }
+
+        return module.equals(DescriptorUtils.getContainingModule(descriptor));
+    }
+
     private boolean shouldSkip(@NotNull DeclarationDescriptor subDescriptor) {
         boolean isFunctionFromAny = subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                                     && subDescriptor instanceof FunctionDescriptor
@@ -190,10 +221,7 @@ public class RecursiveDescriptorComparator {
             @NotNull Collection<? extends DeclarationDescriptor> extraSubDescriptors,
             @NotNull Printer printer
     ) {
-        if (!conf.renderDeclarationsFromOtherModules && !module.equals(DescriptorUtils.getContainingModule(descriptor))) {
-            printer.println(String.format("// -- Module: %s --", DescriptorUtils.getContainingModule(descriptor).getName()));
-            return;
-        }
+        if (!isFromModule(descriptor, module)) return;
 
         List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
 

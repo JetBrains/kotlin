@@ -38,17 +38,4 @@ package
 public fun test(): kotlin.Unit
 
 package p {
-    internal val a: p.A
-    internal var v: p.A
-    internal fun a(): p.A
-
-    public final class A {
-        // -- Module: <m1> --
-    }
-
-    internal final class B {
-        // -- Module: <m1> --
-    }
 }
-
-

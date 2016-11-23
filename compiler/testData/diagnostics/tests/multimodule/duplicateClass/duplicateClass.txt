@@ -42,17 +42,4 @@ package
 public fun test(): kotlin.Unit
 
 package p {
-    public fun foo(/*0*/ a: p.A): kotlin.Unit
-
-    public final class A {
-        // -- Module: <m1> --
-    }
-
-    public final class A {
-        // -- Module: <m2> --
-    }
-
-    public final class B {
-        // -- Module: <m1> --
-    }
 }

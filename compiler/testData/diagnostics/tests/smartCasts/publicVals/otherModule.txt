@@ -18,10 +18,6 @@ package
 
 package a {
     public fun a.X.gav(): kotlin.Int
-
-    public final class X {
-        // -- Module: <m1> --
-    }
 }
 
 package b {

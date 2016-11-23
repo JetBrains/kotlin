@@ -151,23 +151,4 @@ package
 public fun test(/*0*/ m1: p.M1): kotlin.Unit
 
 package p {
-    public fun a(/*0*/ p: p.A): kotlin.Unit
-    public fun b(/*0*/ p: p.A.B): kotlin.Unit
-    public fun c(/*0*/ p: p.A.C): kotlin.Unit
-    public fun d(/*0*/ p: p.A.Companion.D): kotlin.Unit
-    public fun e(/*0*/ p: p.A.Companion.D.E): kotlin.Unit
-    public fun f(/*0*/ p: p.A.F): kotlin.Unit
-    public fun g(/*0*/ p: p.A.G): kotlin.Unit
-
-    public final class A {
-        // -- Module: <m1> --
-    }
-
-    public final class A {
-        // -- Module: <m2> --
-    }
-
-    public final class M1 {
-        // -- Module: <m1> --
-    }
 }

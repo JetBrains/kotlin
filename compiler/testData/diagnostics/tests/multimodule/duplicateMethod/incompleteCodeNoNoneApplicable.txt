@@ -20,6 +20,4 @@ package
 public fun test(): kotlin.Unit
 
 package p {
-    public fun f(/*0*/ s: kotlin.String, /*1*/ t: kotlin.String): kotlin.String
-    public fun f(/*0*/ s: kotlin.String, /*1*/ t: kotlin.String): kotlin.String
 }
