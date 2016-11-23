@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.annotation.processing.impl
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import javax.annotation.processing.Messager
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -23,7 +26,7 @@ import javax.lang.model.element.Element
 import javax.tools.Diagnostic
 import javax.tools.Diagnostic.Kind
 
-class KotlinMessager : Messager {
+class KotlinMessager(private val messageCollector: MessageCollector) : Messager {
     var errorCount: Int = 0
         private set
     
@@ -39,17 +42,17 @@ class KotlinMessager : Messager {
     }
 
     override fun printMessage(kind: Diagnostic.Kind, msg: CharSequence, e: Element?, a: AnnotationMirror?, v: AnnotationValue?) {
-        val output = when (kind) {
+        val severity = when (kind) {
             Kind.ERROR -> {
                 errorCount++
-                System.err
+                CompilerMessageSeverity.ERROR
             }
             Kind.WARNING, Kind.MANDATORY_WARNING -> {
                 warningCount++
-                System.err
+                CompilerMessageSeverity.WARNING
             }
-            else -> System.out
+            else -> CompilerMessageSeverity.LOGGING
         }
-        output.println(msg)
+        messageCollector.report(severity, msg.toString(), CompilerMessageLocation.NO_LOCATION)
     }
 }
