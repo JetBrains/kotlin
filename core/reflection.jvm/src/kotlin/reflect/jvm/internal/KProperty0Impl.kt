@@ -23,7 +23,7 @@ import kotlin.reflect.KProperty0
 internal open class KProperty0Impl<out R> : KProperty0<R>, KPropertyImpl<R> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(container, name, signature, boundReceiver)
 
     private val getter_ = ReflectProperties.lazy { Getter(this) }
 
@@ -41,7 +41,7 @@ internal open class KProperty0Impl<out R> : KProperty0<R>, KPropertyImpl<R> {
 internal class KMutableProperty0Impl<R> : KProperty0Impl<R>, KMutableProperty0<R> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(container, name, signature, boundReceiver)
 
     private val setter_ = ReflectProperties.lazy { Setter(this) }
 

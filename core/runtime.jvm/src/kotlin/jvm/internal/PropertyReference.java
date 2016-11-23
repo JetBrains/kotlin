@@ -51,7 +51,7 @@ public abstract class PropertyReference extends CallableReference implements KPr
             return getOwner().equals(other.getOwner()) &&
                    getName().equals(other.getName()) &&
                    getSignature().equals(other.getSignature()) &&
-                   Intrinsics.areEqual(receiver$0, other.receiver$0);
+                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver());
         }
         if (obj instanceof KProperty) {
             return obj.equals(compute());

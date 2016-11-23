@@ -40,7 +40,7 @@ public abstract class CallableReference implements KCallable {
     private KCallable reflected;
 
     protected final Object receiver$0;
-    private static final Object NO_RECEIVER = new Object();
+    public static final Object NO_RECEIVER = new Object();
 
     public CallableReference() {
         this(NO_RECEIVER);
@@ -51,6 +51,10 @@ public abstract class CallableReference implements KCallable {
     }
 
     protected abstract KCallable computeReflected();
+
+    public Object getBoundReceiver() {
+        return receiver$0;
+    }
 
     public KCallable compute() {
         KCallable result = reflected;

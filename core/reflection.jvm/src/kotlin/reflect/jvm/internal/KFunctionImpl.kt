@@ -23,6 +23,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionImpl
 import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
@@ -36,12 +37,17 @@ internal class KFunctionImpl private constructor(
         override val container: KDeclarationContainerImpl,
         name: String,
         private val signature: String,
-        descriptorInitialValue: FunctionDescriptor?
+        descriptorInitialValue: FunctionDescriptor?,
+        private val boundReceiver: Any? = CallableReference.NO_RECEIVER
 ) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionImpl, FunctionWithAllInvokes {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?)
+            : this(container, name, signature, null, boundReceiver)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
-            container, descriptor.name.asString(), RuntimeTypeMapper.mapSignature(descriptor).asString(), descriptor
+            container,
+            descriptor.name.asString(),
+            RuntimeTypeMapper.mapSignature(descriptor).asString(),
+            descriptor
     )
 
     override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
@@ -140,7 +146,7 @@ internal class KFunctionImpl private constructor(
 
     override fun equals(other: Any?): Boolean {
         val that = other.asKFunctionImpl() ?: return false
-        return container == that.container && name == that.name && signature == that.signature
+        return container == that.container && name == that.name && signature == that.signature && boundReceiver == that.boundReceiver
     }
 
     override fun hashCode(): Int =

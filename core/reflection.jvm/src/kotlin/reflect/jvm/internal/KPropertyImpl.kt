@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
+import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -35,10 +36,11 @@ internal abstract class KPropertyImpl<out R> private constructor(
         override val container: KDeclarationContainerImpl,
         override val name: String,
         val signature: String,
-        descriptorInitialValue: PropertyDescriptor?
+        descriptorInitialValue: PropertyDescriptor?,
+        private val boundReceiver: Any? = CallableReference.NO_RECEIVER
 ) : KCallableImpl<R>(), KProperty<R> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(
-            container, name, signature, null
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : this(
+            container, name, signature, null, boundReceiver
     )
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : this(
@@ -95,7 +97,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
 
     override fun equals(other: Any?): Boolean {
         val that = other.asKPropertyImpl() ?: return false
-        return container == that.container && name == that.name && signature == that.signature
+        return container == that.container && name == that.name && signature == that.signature && boundReceiver == that.boundReceiver
     }
 
     override fun hashCode(): Int =

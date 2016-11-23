@@ -21,7 +21,7 @@ import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
 
 internal open class KProperty2Impl<D, E, out R> : KProperty2<D, E, R>, KPropertyImpl<R> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature, null)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 

@@ -2002,9 +2002,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
                 }
 
+                @TestMetadata("propertyAccessors.kt")
+                public void testPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/equals/propertyAccessors.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
                 @TestMetadata("receiverInEquals.kt")
                 public void testReceiverInEquals() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/equals/receiverInEquals.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("reflectionReference.kt")
+                public void testReflectionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/equals/reflectionReference.kt");
                     try {
                         doTest(fileName);
                     }

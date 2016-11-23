@@ -1575,9 +1575,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("propertyAccessors.kt")
+                public void testPropertyAccessors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/equals/propertyAccessors.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("receiverInEquals.kt")
                 public void testReceiverInEquals() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/equals/receiverInEquals.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("reflectionReference.kt")
+                public void testReflectionReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/equals/reflectionReference.kt");
                     doTest(fileName);
                 }
             }

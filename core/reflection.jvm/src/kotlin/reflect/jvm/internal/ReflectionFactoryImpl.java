@@ -66,29 +66,29 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KFunction function(FunctionReference f) {
-        return new KFunctionImpl(getOwner(f), f.getName(), f.getSignature());
+        return new KFunctionImpl(getOwner(f), f.getName(), f.getSignature(), f.getBoundReceiver());
     }
 
     // Properties
 
     @Override
     public KProperty0 property0(PropertyReference0 p) {
-        return new KProperty0Impl(getOwner(p), p.getName(), p.getSignature());
+        return new KProperty0Impl(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
     }
 
     @Override
     public KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
-        return new KMutableProperty0Impl(getOwner(p), p.getName(), p.getSignature());
+        return new KMutableProperty0Impl(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
     }
 
     @Override
     public KProperty1 property1(PropertyReference1 p) {
-        return new KProperty1Impl(getOwner(p), p.getName(), p.getSignature());
+        return new KProperty1Impl(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
     }
 
     @Override
     public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
-        return new KMutableProperty1Impl(getOwner(p), p.getName(), p.getSignature());
+        return new KMutableProperty1Impl(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
     }
 
     @Override

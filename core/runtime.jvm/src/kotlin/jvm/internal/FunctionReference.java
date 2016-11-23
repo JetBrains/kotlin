@@ -80,7 +80,7 @@ public class FunctionReference extends CallableReference implements FunctionImpl
             return getOwner().equals(other.getOwner()) &&
                    getName().equals(other.getName()) &&
                    getSignature().equals(other.getSignature()) &&
-                   Intrinsics.areEqual(receiver$0, other.receiver$0);
+                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver());
         }
         if (obj instanceof KFunction) {
             return obj.equals(compute());

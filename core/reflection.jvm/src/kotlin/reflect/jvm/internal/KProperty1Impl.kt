@@ -21,7 +21,7 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
 internal open class KProperty1Impl<T, out R> : KProperty1<T, R>, KPropertyImpl<R> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(container, name, signature, boundReceiver)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
@@ -39,7 +39,7 @@ internal open class KProperty1Impl<T, out R> : KProperty1<T, R>, KPropertyImpl<R
 }
 
 internal class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(container, name, signature, boundReceiver)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
