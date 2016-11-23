@@ -1,0 +1,20 @@
+public final class CoercionToUnitKt {
+    private static field FALSE: boolean
+    private static field TRUE: boolean
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): java.lang.String
+    public final static method getFALSE(): boolean
+    public final static method getTRUE(): boolean
+    public final static method setFALSE(p0: boolean): void
+    public final static method setTRUE(p0: boolean): void
+}
+
+
+public final class Controller {
+    private @org.jetbrains.annotations.NotNull field result: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method await(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
+    public final method handleResult(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
+    public final method setResult(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}

@@ -5,7 +5,6 @@ public final class BoxKt {
 
 public final class a/MultifileClass {
     public final static @org.jetbrains.annotations.NotNull method ok(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method overlapping(): java.lang.String
 }
 
 
@@ -16,7 +15,7 @@ synthetic final class a/MultifileClass__Part1Kt {
 
 synthetic final class a/MultifileClass__Part2Kt {
     public final static @org.jetbrains.annotations.NotNull method ok(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method overlapping(): java.lang.String
+    private final static method overlapping$MultifileClass__Part2Kt(): java.lang.String
 }
 
 

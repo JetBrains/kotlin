@@ -1,0 +1,14 @@
+public final class Controller {
+    private field isCompleted: boolean
+    public method <init>(): void
+    public final method handleResult(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
+    public final method isCompleted(): boolean
+    public final method setCompleted(p0: boolean): void
+    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class HandleResultNonUnitExpressionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+}

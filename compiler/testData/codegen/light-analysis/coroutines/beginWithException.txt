@@ -1,0 +1,14 @@
+public final class BeginWithExceptionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+}
+
+
+public final class Controller {
+    private @org.jetbrains.annotations.Nullable field exception: java.lang.Throwable
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method getException(): java.lang.Throwable
+    public final method handleException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
+    public final method setException(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}

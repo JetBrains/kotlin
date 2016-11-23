@@ -2,7 +2,7 @@ public final class C {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @kotlin.jvm.Transient @org.jetbrains.annotations.NotNull field del$delegate: CustomDelegate
     private final @kotlin.jvm.Transient field tra: int
-    private @kotlin.jvm.Volatile field vol: int
+    private volatile @kotlin.jvm.Volatile field vol: int
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getDel(): java.lang.String
     public final method getTra(): int

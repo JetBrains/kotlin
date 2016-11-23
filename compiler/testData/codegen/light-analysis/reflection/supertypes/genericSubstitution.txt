@@ -1,0 +1,18 @@
+public interface A
+
+
+public interface B
+
+
+public interface C
+
+
+public interface D
+
+
+public final class GenericSubstitutionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public interface StringList

@@ -292,6 +292,7 @@ public final class MS {
 
 
 public final class ReifiedIsWithMutableKt {
+    public final static method assert(p0: boolean, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method reifiedIs(p0: java.lang.Object): boolean
     private final static method reifiedIsNot(p0: java.lang.Object): boolean

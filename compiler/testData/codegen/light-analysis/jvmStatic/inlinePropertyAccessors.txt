@@ -2,7 +2,7 @@ public final class Foo {
     public final static field INSTANCE: Foo
     private final static field a: java.lang.String
     private method <init>(): void
-    private synthetic deprecated final static @kotlin.jvm.JvmStatic method a$annotations(): void
+    private synthetic deprecated static @kotlin.jvm.JvmStatic method a$annotations(): void
     public final method foo(): void
 }
 

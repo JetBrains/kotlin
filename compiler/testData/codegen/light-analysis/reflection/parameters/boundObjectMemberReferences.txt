@@ -1,0 +1,10 @@
+public final class BoundObjectMemberReferencesKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Host {
+    public final static field INSTANCE: Host
+    private method <init>(): void
+    public final method foo(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+}

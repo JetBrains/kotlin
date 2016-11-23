@@ -21,6 +21,7 @@ public final class C {
 
 
 public final class IsWithMutableKt {
+    public final static method assert(p0: boolean, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 

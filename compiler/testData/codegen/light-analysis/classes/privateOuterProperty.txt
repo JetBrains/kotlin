@@ -17,3 +17,8 @@ private final class C/Inner {
 public final class PrivateOuterPropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
+
+
+public interface Runnable {
+    public abstract method run(): void
+}

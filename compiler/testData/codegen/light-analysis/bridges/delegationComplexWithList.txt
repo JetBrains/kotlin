@@ -62,9 +62,4 @@ public final class Impl {
     public final method indexOf(p0: java.lang.Object): int
     public method lastIndexOf(p0: Content): int
     public final method lastIndexOf(p0: java.lang.Object): int
-    public method remove(p0: Content): boolean
-    public final method remove(p0: int): Content
-    public final method remove(p0: java.lang.Object): boolean
-    public method removeAt(p0: int): Content
-    public final method size(): int
 }

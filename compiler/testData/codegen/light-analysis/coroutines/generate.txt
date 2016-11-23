@@ -1,0 +1,18 @@
+public final class GenerateKt {
+    private static field was: boolean
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method gen(): kotlin.sequences.Sequence
+    public final static @org.jetbrains.annotations.NotNull method generate(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.sequences.Sequence
+    public final static method getWas(): boolean
+    public final static method setWas(p0: boolean): void
+}
+
+
+public final class GeneratorController {
+    private field nextStep: kotlin.coroutines.Continuation
+    public method <init>(): void
+    protected method computeNext(): void
+    public final method handleResult(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
+    public final method setNextStep(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method yield(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}

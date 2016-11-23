@@ -1,0 +1,12 @@
+public final class Controller {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class LoadFromByteArrayKt {
+    private static field byteResult: byte
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static method setByteRes(p0: byte): void
+}

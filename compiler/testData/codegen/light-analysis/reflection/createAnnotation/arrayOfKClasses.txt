@@ -1,0 +1,9 @@
+@java.lang.annotation.Retention
+public annotation class Anno {
+    public abstract method klasses(): java.lang.Class[]
+}
+
+
+public final class ArrayOfKClassesKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

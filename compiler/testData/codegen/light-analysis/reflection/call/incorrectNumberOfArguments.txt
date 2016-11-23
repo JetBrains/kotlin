@@ -20,7 +20,7 @@ public final class O {
     public final static field INSTANCE: O
     private static field baz: java.lang.String
     private method <init>(): void
-    private synthetic deprecated final static @kotlin.jvm.JvmStatic method baz$annotations(): void
+    private synthetic deprecated static @kotlin.jvm.JvmStatic method baz$annotations(): void
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method getBaz(): kotlin.reflect.KMutableProperty
     public final @org.jetbrains.annotations.NotNull method getGetBaz(): kotlin.reflect.KFunction
 }

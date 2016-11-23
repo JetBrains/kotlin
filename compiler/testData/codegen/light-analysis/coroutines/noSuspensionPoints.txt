@@ -1,0 +1,13 @@
+public final class Controller {
+    private field res: int
+    public method <init>(): void
+    public final method getRes(): int
+    public final method handleResult(p0: int, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
+    public final method setRes(p0: int): void
+}
+
+
+public final class NoSuspensionPointsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): int
+}

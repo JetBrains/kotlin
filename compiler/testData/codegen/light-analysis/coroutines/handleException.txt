@@ -1,0 +1,19 @@
+public final class Controller {
+    private @org.jetbrains.annotations.Nullable field exception: java.lang.Throwable
+    private final @org.jetbrains.annotations.NotNull field postponedActions: java.util.ArrayList
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method getException(): java.lang.Throwable
+    public final @org.jetbrains.annotations.NotNull method getPostponedActions(): java.util.ArrayList
+    public final method handleException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
+    public final method run(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final method setException(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public final @org.jetbrains.annotations.Nullable method suspendWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Exception, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method suspendWithValue(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class HandleExceptionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static method commonThrow(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+}

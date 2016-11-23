@@ -79,7 +79,7 @@ public class ClassBuilderMode {
      */
     public final static ClassBuilderMode KAPT3 = new ClassBuilderMode(
             /* bodies = */ false,
-            /* metadata = */ true,
+            /* metadata = */ false,
             /* sourceRetention = */ true,
             /* generateMultiFileFacadePartClasses = */ true);
 }

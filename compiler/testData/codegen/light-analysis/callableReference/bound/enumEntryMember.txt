@@ -1,0 +1,13 @@
+public enum class E {
+    public final static field A: E
+    public final static field B: E
+    protected method <init>(p0: java.lang.String, p1: int): void
+    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+    public static method valueOf(p0: java.lang.String): E
+    public static method values(): E[]
+}
+
+
+public final class EnumEntryMemberKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

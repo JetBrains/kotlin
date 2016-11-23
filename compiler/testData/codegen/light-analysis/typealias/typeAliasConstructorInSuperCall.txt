@@ -1,0 +1,20 @@
+public final class C1 {
+    public method <init>(): void
+}
+
+
+public final class C2 {
+    public method <init>(): void
+}
+
+
+public class Cell {
+    private final field value: java.lang.Object
+    public method <init>(p0: java.lang.Object): void
+    public final method getValue(): java.lang.Object
+}
+
+
+public final class TypeAliasConstructorInSuperCallKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

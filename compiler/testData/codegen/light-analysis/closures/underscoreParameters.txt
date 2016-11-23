@@ -1,0 +1,4 @@
+public final class UnderscoreParametersKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function3): java.lang.String
+}

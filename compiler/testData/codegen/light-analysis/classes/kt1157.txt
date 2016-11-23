@@ -3,6 +3,11 @@ public final class Kt1157Kt {
 }
 
 
+public interface Runnable {
+    public abstract method run(): void
+}
+
+
 public final class SomeClass {
     public final static field INSTANCE: SomeClass
     private final static field work: SomeClass$work$1

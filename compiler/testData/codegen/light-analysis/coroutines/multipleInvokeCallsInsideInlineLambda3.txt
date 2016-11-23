@@ -1,0 +1,21 @@
+public final class Controller {
+    private @org.jetbrains.annotations.Nullable field lastSuspension: kotlin.coroutines.Continuation
+    private @org.jetbrains.annotations.NotNull field result: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method getLastSuspension(): kotlin.coroutines.Continuation
+    public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
+    public final method hasNext(): boolean
+    public final method next(): void
+    public final method setLastSuspension(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): void
+    public final method setResult(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class MultipleInvokeCallsInsideInlineLambda3Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static method builder2(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function3): void
+    public final static method run(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
+    private final static method runControllers(p0: Controller, p1: Controller): void
+}

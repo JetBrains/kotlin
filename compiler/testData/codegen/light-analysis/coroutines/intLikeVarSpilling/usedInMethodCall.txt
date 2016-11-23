@@ -1,0 +1,20 @@
+public final class Controller {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class UsedInMethodCallKt {
+    private static field booleanResult: boolean
+    private static field byteResult: byte
+    private static field charResult: char
+    private static field intResult: int
+    private static field shortResult: short
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static method setBooleanRes(p0: boolean): void
+    public final static method setByteRes(p0: byte): void
+    public final static method setCharRes(p0: char): void
+    public final static method setIntRes(p0: int): void
+    public final static method setShortRes(p0: short): void
+}

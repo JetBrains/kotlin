@@ -1,0 +1,10 @@
+public final class A {
+    public method <init>(): void
+    public final method nonReified(): java.lang.Object
+    private final method reified(): java.lang.Object
+}
+
+
+public final class TypeParametersKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,7 @@
+public final class InIntRangeKt {
+    private static field invocationCounter: int
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method getInvocationCounter(): int
+    public final static method setInvocationCounter(p0: int): void
+    public final static method sideEffect(p0: int): int
+}

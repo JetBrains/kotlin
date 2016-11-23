@@ -1,0 +1,28 @@
+public final class ClassAndTwoInterfaces {
+    public method <init>(): void
+}
+
+
+public interface Interface
+
+
+public interface Interface2
+
+
+public final class OneClass {
+    public method <init>(): void
+}
+
+
+public class Simple {
+    public method <init>(): void
+}
+
+
+public final class SimpleSupertypesKt {
+    public final static @org.jetbrains.annotations.NotNull method any(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method interface2(): Interface2
+    public final static @org.jetbrains.annotations.NotNull method interface_(): Interface
+    public final static @org.jetbrains.annotations.NotNull method simple(): Simple
+}

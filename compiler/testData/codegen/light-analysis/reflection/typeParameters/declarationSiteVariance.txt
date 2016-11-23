@@ -1,0 +1,9 @@
+public final class DeclarationSiteVarianceKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+
+public final class Triple {
+    public method <init>(): void
+    public final method foo(): java.lang.Object
+}

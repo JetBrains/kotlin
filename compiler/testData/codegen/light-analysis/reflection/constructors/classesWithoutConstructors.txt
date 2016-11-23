@@ -1,9 +1,3 @@
-@java.lang.annotation.Retention
-public annotation class Anno {
-    public abstract method x(): int
-}
-
-
 public final class C {
     public final static field Companion: C.Companion
     inner class C/Companion

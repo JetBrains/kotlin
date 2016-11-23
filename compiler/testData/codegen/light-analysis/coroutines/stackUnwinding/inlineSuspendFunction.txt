@@ -1,0 +1,17 @@
+public final class Controller {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method suspendInline(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method suspendInline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final method suspendInline(p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class InlineSuspendFunctionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+}
+
+
+public final class OK {
+    public method <init>(): void
+}

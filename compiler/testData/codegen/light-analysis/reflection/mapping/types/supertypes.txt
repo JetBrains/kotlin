@@ -1,0 +1,19 @@
+public final class A {
+    public method <init>(): void
+}
+
+
+public interface Interface
+
+
+public interface Interface2
+
+
+public class Klass {
+    public method <init>(): void
+}
+
+
+public final class SupertypesKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

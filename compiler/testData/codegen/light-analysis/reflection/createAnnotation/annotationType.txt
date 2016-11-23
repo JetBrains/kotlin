@@ -1,0 +1,6 @@
+public final class AnnotationTypeKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@java.lang.annotation.Retention
+public annotation class Foo

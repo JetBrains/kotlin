@@ -14,7 +14,7 @@ public final class Foo {
 public final static class Foo/Companion {
     inner class Foo/Companion
     private method <init>(): void
-    private synthetic deprecated final static @kotlin.jvm.JvmStatic method a$annotations(): void
+    private synthetic deprecated static @kotlin.jvm.JvmStatic method a$annotations(): void
     public synthetic final static @org.jetbrains.annotations.NotNull method access$getA$p(p0: Foo.Companion): java.lang.String
     private final method getA(): java.lang.String
 }
