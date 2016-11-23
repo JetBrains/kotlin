@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.incremental.makeModuleFile
@@ -98,6 +99,12 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     }
 
     override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, messageCollector: MessageCollector, collector: OutputItemsCollector): ExitCode {
+        with (project.logger) {
+            kotlinDebug { "Kotlin compiler class: $compilerClassName" }
+            kotlinDebug { "Kotlin compiler jar: ${environment.compilerJar}" }
+            kotlinDebug { "Kotlin compiler args: ${argsArray.joinToString(" ")}" }
+        }
+
         val executionStrategy = System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
         if (executionStrategy == DAEMON_EXECUTION_STRATEGY) {
             val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)
