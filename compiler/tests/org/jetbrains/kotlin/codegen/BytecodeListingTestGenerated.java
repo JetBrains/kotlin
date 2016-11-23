@@ -90,6 +90,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noReceiverInCallableReferenceClasses.kt")
+    public void testNoReceiverInCallableReferenceClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/noReceiverInCallableReferenceClasses.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noRemoveAtInReadOnly.kt")
     public void testNoRemoveAtInReadOnly() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/noRemoveAtInReadOnly.kt");

@@ -431,7 +431,7 @@ public class AsmUtil {
         }
 
         KotlinType captureReceiverType = closure.getCaptureReceiverType();
-        if (captureReceiverType != null) {
+        if (captureReceiverType != null && !CallableReferenceUtilKt.isForCallableReference(closure)) {
             allFields.add(Pair.create(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType)));
         }
 

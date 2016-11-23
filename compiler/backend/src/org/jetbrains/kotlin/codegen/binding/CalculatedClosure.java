@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface CalculatedClosure {
+    @NotNull
+    ClassDescriptor getClosureClass();
+
     @Nullable
     ClassDescriptor getCaptureThis();
 

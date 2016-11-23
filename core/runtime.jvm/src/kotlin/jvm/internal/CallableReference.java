@@ -39,6 +39,17 @@ public abstract class CallableReference implements KCallable {
     //    objects are written to it. The latter is guaranteed because both KFunctionImpl and KPropertyImpl have at least one final field.
     private KCallable reflected;
 
+    protected final Object receiver$0;
+    private static final Object NO_RECEIVER = new Object();
+
+    public CallableReference() {
+        this(NO_RECEIVER);
+    }
+
+    protected CallableReference(Object receiver$0) {
+        this.receiver$0 = receiver$0;
+    }
+
     protected abstract KCallable computeReflected();
 
     public KCallable compute() {

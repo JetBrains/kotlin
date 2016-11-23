@@ -20,6 +20,14 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
 
 public abstract class PropertyReference extends CallableReference implements KProperty {
+    public PropertyReference() {
+        super();
+    }
+
+    public PropertyReference(Object receiver$0) {
+        super(receiver$0);
+    }
+
     @Override
     protected KProperty getReflected() {
         return (KProperty) super.getReflected();
@@ -42,7 +50,8 @@ public abstract class PropertyReference extends CallableReference implements KPr
             PropertyReference other = (PropertyReference) obj;
             return getOwner().equals(other.getOwner()) &&
                    getName().equals(other.getName()) &&
-                   getSignature().equals(other.getSignature());
+                   getSignature().equals(other.getSignature()) &&
+                   Intrinsics.areEqual(receiver$0, other.receiver$0);
         }
         if (obj instanceof KProperty) {
             return obj.equals(compute());

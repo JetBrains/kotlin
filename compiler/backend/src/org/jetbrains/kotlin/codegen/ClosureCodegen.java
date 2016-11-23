@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
+import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -78,6 +79,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected final CalculatedClosure closure;
     private final Type asmType;
     private final int visibilityFlag;
+    private final boolean shouldHaveBoundReferenceReceiver;
 
     private Method constructor;
     private Type superClassAsmType;
@@ -125,6 +127,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         this.closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure must be calculated for class: " + classDescriptor;
+
+        this.shouldHaveBoundReferenceReceiver = CallableReferenceUtilKt.isForBoundCallableReference(closure);
 
         this.asmType = typeMapper.mapClass(classDescriptor);
 
@@ -184,7 +188,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     protected void generateClosureBody() {
         functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), funDescriptor, strategy);
-
 
         if (functionReferenceTarget != null) {
             generateFunctionReferenceMethods(functionReferenceTarget);
@@ -415,23 +418,35 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            int k = 1;
-            for (FieldInfo fieldInfo : args) {
-                k = genAssignInstanceFieldFromParam(fieldInfo, k, iv);
+            Pair<Integer, Type> receiverIndexAndType =
+                    CallableReferenceUtilKt.generateClosureFieldsInitializationFromParameters(iv, closure, args);
+            if (shouldHaveBoundReferenceReceiver && receiverIndexAndType == null) {
+                throw new AssertionError("No bound reference receiver in constructor parameters: " + args);
             }
+            int boundReferenceReceiverParameterIndex = shouldHaveBoundReferenceReceiver ? receiverIndexAndType.getFirst() : -1;
+            Type boundReferenceReceiverType = shouldHaveBoundReferenceReceiver ? receiverIndexAndType.getSecond() : null;
 
             iv.load(0, superClassAsmType);
 
+            String superClassConstructorDescriptor;
             if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) || superClassAsmType.equals(COROUTINE_IMPL)) {
                 int arity = funDescriptor.getValueParameters().size();
                 if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
                 if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
                 iv.iconst(arity);
-                iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(I)V", false);
+                if (shouldHaveBoundReferenceReceiver) {
+                    CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(iv, boundReferenceReceiverParameterIndex, boundReferenceReceiverType);
+                    superClassConstructorDescriptor = "(ILjava/lang/Object;)V";
+                }
+                else {
+                    superClassConstructorDescriptor = "(I)V";
+                }
             }
             else {
-                iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V", false);
+                assert !shouldHaveBoundReferenceReceiver : "Unexpected bound reference with supertype " + superClassAsmType;
+                superClassConstructorDescriptor = "()V";
             }
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", superClassConstructorDescriptor, false);
 
             iv.visitInsn(RETURN);
 

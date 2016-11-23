@@ -29,6 +29,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember;
 
 public final class MutableClosure implements CalculatedClosure {
+    private final ClassDescriptor closureClass;
     private final ClassDescriptor enclosingClass;
     private final CallableDescriptor enclosingFunWithReceiverDescriptor;
 
@@ -42,6 +43,7 @@ public final class MutableClosure implements CalculatedClosure {
     private boolean isCoroutine;
 
     MutableClosure(@NotNull ClassDescriptor classDescriptor, @Nullable ClassDescriptor enclosingClass) {
+        this.closureClass = classDescriptor;
         this.enclosingClass = enclosingClass;
         this.enclosingFunWithReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
     }
@@ -56,6 +58,12 @@ public final class MutableClosure implements CalculatedClosure {
             }
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public ClassDescriptor getClosureClass() {
+        return closureClass;
     }
 
     @Nullable

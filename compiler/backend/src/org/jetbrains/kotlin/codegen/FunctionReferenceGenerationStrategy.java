@@ -187,7 +187,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         if (receiverType != null) {
             ClassDescriptor classDescriptor = (ClassDescriptor) codegen.getContext().getParentContext().getContextDescriptor();
             Type asmType = codegen.getState().getTypeMapper().mapClass(classDescriptor);
-            return CallableReferenceUtilKt.capturedReceiver(asmType, receiverType);
+            return CallableReferenceUtilKt.capturedBoundReferenceReceiver(asmType, receiverType);
         }
 
         // 0 is this (the callable reference class), 1 is the invoke() method's first parameter

@@ -26,6 +26,11 @@ public class FunctionReference extends CallableReference implements FunctionImpl
         this.arity = arity;
     }
 
+    public FunctionReference(int arity, Object receiver) {
+        super(receiver);
+        this.arity = arity;
+    }
+
     @Override
     public int getArity() {
         return arity;
@@ -71,9 +76,11 @@ public class FunctionReference extends CallableReference implements FunctionImpl
         if (obj == this) return true;
         if (obj instanceof FunctionReference) {
             FunctionReference other = (FunctionReference) obj;
+
             return getOwner().equals(other.getOwner()) &&
                    getName().equals(other.getName()) &&
-                   getSignature().equals(other.getSignature());
+                   getSignature().equals(other.getSignature()) &&
+                   Intrinsics.areEqual(receiver$0, other.receiver$0);
         }
         if (obj instanceof KFunction) {
             return obj.equals(compute());

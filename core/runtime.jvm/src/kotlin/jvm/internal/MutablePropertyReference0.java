@@ -21,6 +21,13 @@ import kotlin.reflect.KMutableProperty0;
 import kotlin.reflect.KProperty0;
 
 public abstract class MutablePropertyReference0 extends MutablePropertyReference implements KMutableProperty0 {
+    public MutablePropertyReference0() {
+    }
+
+    public MutablePropertyReference0(Object receiver$0) {
+        super(receiver$0);
+    }
+
     @Override
     protected KCallable computeReflected() {
         return Reflection.mutableProperty0(this);

@@ -16,8 +16,58 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-fun capturedReceiver(ownerType: Type, capturedReceiverType: Type): StackValue.Field {
-    return StackValue.field(capturedReceiverType, ownerType, AsmUtil.CAPTURED_RECEIVER_FIELD, /* isStatic = */ false, StackValue.LOCAL_0)
+fun capturedBoundReferenceReceiver(ownerType: Type, expectedReceiverType: Type): StackValue =
+        StackValue.operation(expectedReceiverType) { iv ->
+            iv.load(0, ownerType)
+            iv.getfield(ownerType.internalName, AsmUtil.CAPTURED_RECEIVER_FIELD, AsmTypes.OBJECT_TYPE.descriptor)
+            StackValue.coerce(AsmTypes.OBJECT_TYPE, expectedReceiverType, iv)
+        }
+
+fun ClassDescriptor.isSyntheticClassForCallableReference(): Boolean =
+        this is SyntheticClassDescriptorForLambda &&
+        (this.source as? KotlinSourceElement)?.psi is KtCallableReferenceExpression
+
+fun CalculatedClosure.isForCallableReference(): Boolean =
+        closureClass.isSyntheticClassForCallableReference()
+
+fun CalculatedClosure.isForBoundCallableReference(): Boolean =
+        isForCallableReference() && captureReceiverType != null
+
+fun InstructionAdapter.loadBoundReferenceReceiverParameter(index: Int, type: Type) {
+    load(index, type)
+    StackValue.coerce(type, AsmTypes.OBJECT_TYPE, this)
+}
+
+fun CalculatedClosure.isBoundReferenceReceiverField(fieldInfo: FieldInfo): Boolean =
+        isForBoundCallableReference() &&
+        fieldInfo.fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD
+
+fun InstructionAdapter.generateClosureFieldsInitializationFromParameters(closure: CalculatedClosure, args: List<FieldInfo>): Pair<Int, Type>? {
+    var k = 1
+    var boundReferenceReceiverParameterIndex = -1
+    var boundReferenceReceiverType: Type? = null
+    for (fieldInfo in args) {
+        if (closure.isBoundReferenceReceiverField(fieldInfo)) {
+            boundReferenceReceiverParameterIndex = k
+            boundReferenceReceiverType = fieldInfo.fieldType
+            k += fieldInfo.fieldType.size
+            continue
+        }
+        k = AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, k, this)
+    }
+
+    return when {
+        boundReferenceReceiverType != null ->
+            Pair(boundReferenceReceiverParameterIndex, boundReferenceReceiverType)
+        else ->
+            null
+    }
 }

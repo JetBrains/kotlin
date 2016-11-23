@@ -126,13 +126,20 @@ class PropertyReferenceCodegen(
 
     private fun generateConstructor() {
         generateMethod("property reference init", 0, constructor) {
-            constructorArgs.fold(1) {
-                i, fieldInfo ->
-                AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, i, this)
-            }
+            val shouldHaveBoundReferenceReceiver = closure.isForBoundCallableReference()
+            val receiverIndexAndType = generateClosureFieldsInitializationFromParameters(closure, constructorArgs)
 
-            load(0, OBJECT_TYPE)
-            invokespecial(superAsmType.internalName, "<init>", "()V", false)
+            if (receiverIndexAndType == null) {
+                assert(!shouldHaveBoundReferenceReceiver) { "No bound reference receiver in constructor parameters: $constructorArgs" }
+                load(0, OBJECT_TYPE)
+                invokespecial(superAsmType.internalName, "<init>", "()V", false)
+            }
+            else {
+                val (receiverIndex, receiverType) = receiverIndexAndType
+                load(0, OBJECT_TYPE)
+                loadBoundReferenceReceiverParameter(receiverIndex, receiverType)
+                invokespecial(superAsmType.internalName, "<init>", "(Ljava/lang/Object;)V", false)
+            }
         }
     }
 
@@ -248,7 +255,10 @@ class PropertyReferenceCodegen(
             }
 
             if (receiverType != null) {
-                capturedReceiver(asmType, receiverType).put(receiverType, v)
+                val expectedReceiver = target.dispatchReceiverParameter ?: target.extensionReceiverParameter ?:
+                                       throw AssertionError("receiverType: $receiverType; no dispatch or extension receiver: $target")
+                val expectedReceiverType = typeMapper.mapType(expectedReceiver.type)
+                capturedBoundReferenceReceiver(asmType, expectedReceiverType).put(expectedReceiverType, v)
             }
             else {
                 val receivers = originalFunctionDesc.valueParameters.dropLast(if (isGetter) 0 else 1)

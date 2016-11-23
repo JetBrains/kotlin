@@ -20,6 +20,13 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty1;
 
 public abstract class PropertyReference1 extends PropertyReference implements KProperty1 {
+    public PropertyReference1() {
+    }
+
+    public PropertyReference1(Object receiver$0) {
+        super(receiver$0);
+    }
+
     @Override
     protected KCallable computeReflected() {
         return Reflection.property1(this);

@@ -19,4 +19,10 @@ package kotlin.jvm.internal;
 import kotlin.reflect.KMutableProperty;
 
 public abstract class MutablePropertyReference extends PropertyReference implements KMutableProperty {
+    public MutablePropertyReference() {
+    }
+
+    public MutablePropertyReference(Object receiver$0) {
+        super(receiver$0);
+    }
 }
