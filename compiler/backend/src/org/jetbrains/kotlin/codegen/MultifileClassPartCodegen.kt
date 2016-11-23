@@ -78,17 +78,21 @@ class MultifileClassPartCodegen(
             }
 
     override fun generate() {
-        if (!state.classBuilderMode.generateBodies) return
+        if (!state.classBuilderMode.generateMultiFileFacadePartClasses) return
 
         super.generate()
 
+        val generateBodies = state.classBuilderMode.generateBodies
+
         if (shouldGeneratePartHierarchy) {
             v.newMethod(OtherOrigin(packageFragment), Opcodes.ACC_PUBLIC, "<init>", "()V", null, null).apply {
-                visitCode()
-                visitVarInsn(Opcodes.ALOAD, 0)
-                visitMethodInsn(Opcodes.INVOKESPECIAL, superClassInternalName, "<init>", "()V", false)
-                visitInsn(Opcodes.RETURN)
-                visitMaxs(1, 1)
+                if (generateBodies) {
+                    visitCode()
+                    visitVarInsn(Opcodes.ALOAD, 0)
+                    visitMethodInsn(Opcodes.INVOKESPECIAL, superClassInternalName, "<init>", "()V", false)
+                    visitInsn(Opcodes.RETURN)
+                    visitMaxs(1, 1)
+                }
                 visitEnd()
             }
         }
@@ -99,20 +103,24 @@ class MultifileClassPartCodegen(
                          CLINIT_SYNC_NAME, "I", null, null)
 
                 newSpecialMethod(packageFragment, CLINIT_TRIGGER_NAME).apply {
-                    visitCode()
-                    visitFieldInsn(Opcodes.GETSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
-                    visitInsn(Opcodes.RETURN)
-                    visitMaxs(1, 0)
+                    if (generateBodies) {
+                        visitCode()
+                        visitFieldInsn(Opcodes.GETSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
+                        visitInsn(Opcodes.RETURN)
+                        visitMaxs(1, 0)
+                    }
                     visitEnd()
                 }
 
                 newSpecialMethod(packageFragment, "<clinit>").apply {
-                    visitCode()
-                    visitMethodInsn(Opcodes.INVOKESTATIC, partType.internalName, DEFERRED_PART_CLINIT_NAME, "()V", false)
-                    visitInsn(Opcodes.ICONST_0)
-                    visitFieldInsn(Opcodes.PUTSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
-                    visitInsn(Opcodes.RETURN)
-                    visitMaxs(1, 0)
+                    if (generateBodies) {
+                        visitCode()
+                        visitMethodInsn(Opcodes.INVOKESTATIC, partType.internalName, DEFERRED_PART_CLINIT_NAME, "()V", false)
+                        visitInsn(Opcodes.ICONST_0)
+                        visitFieldInsn(Opcodes.PUTSTATIC, staticInitClassType.internalName, CLINIT_SYNC_NAME, "I")
+                        visitInsn(Opcodes.RETURN)
+                        visitMaxs(1, 0)
+                    }
                     visitEnd()
                 }
 
