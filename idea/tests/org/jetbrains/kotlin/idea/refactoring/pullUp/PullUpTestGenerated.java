@@ -230,12 +230,6 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
-        @TestMetadata("noCaret.kt")
-        public void testNoCaret() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noCaret.kt");
-            doKotlinTest(fileName);
-        }
-
         @TestMetadata("noClashWithAbstractSuper.kt")
         public void testNoClashWithAbstractSuper() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noClashWithAbstractSuper.kt");
@@ -257,12 +251,6 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         @TestMetadata("noVisibilityCheckBetweenMovedMembers.kt")
         public void testNoVisibilityCheckBetweenMovedMembers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noVisibilityCheckBetweenMovedMembers.kt");
-            doKotlinTest(fileName);
-        }
-
-        @TestMetadata("outsideOfClass.kt")
-        public void testOutsideOfClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/outsideOfClass.kt");
             doKotlinTest(fileName);
         }
 
