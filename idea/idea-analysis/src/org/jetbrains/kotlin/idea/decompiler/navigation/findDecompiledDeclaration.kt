@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmBuiltInsSettings
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationContainer
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -147,6 +148,24 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             return classOrObject?.getPrimaryConstructor() ?: classOrObject
         }
 
+        if (!file.isContentsLoaded) {
+            if (original is MemberDescriptor) {
+                val declarationContainer: KtDeclarationContainer? = when {
+                    DescriptorUtils.isTopLevelDeclaration(original) -> file
+                    original.containingDeclaration is ClassDescriptor ->
+                        getDeclarationForDescriptor(original.containingDeclaration as ClassDescriptor, file) as? KtClassOrObject
+                    else -> null
+                }
+
+                if (declarationContainer != null) {
+                    val descriptorName = original.name.asString()
+                    val singleOrNull = declarationContainer.declarations.singleOrNull { it.name == descriptorName }
+                    if (singleOrNull != null) {
+                        return singleOrNull
+                    }
+                }
+            }
+        }
 
         return file.getDeclaration(this, original.toStringKey()) ?: run {
             if (descriptor !is ClassDescriptor) return null

@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerImpl
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import kotlin.test.fail
@@ -48,15 +49,16 @@ object AstAccessControl {
             shouldFail: Boolean, allowedFiles: List<VirtualFile>,
             project: Project, disposable: Disposable, testBody: () -> Unit
     ) {
-        setFilter(allowedFiles, disposable, project)
-        performTest(shouldFail, testBody)
+        val filter = wrapWithDirectiveAllow { file ->
+            file.fileType != KotlinFileType.INSTANCE || file in allowedFiles
+        }
+
+        execute(shouldFail, project, disposable, filter, testBody)
     }
 
-    private fun setFilter(allowedFiles: List<VirtualFile>, disposable: Disposable, project: Project) {
-        val manager = (PsiManager.getInstance(project) as PsiManagerImpl)
-        val filter = VirtualFileFilter {
-            file ->
-            if (file!!.fileType != KotlinFileType.INSTANCE || file in allowedFiles) {
+    fun wrapWithDirectiveAllow(allowedFiles: (VirtualFile) -> Boolean): (VirtualFile) -> Boolean {
+        return { file ->
+            if (allowedFiles(file)) {
                 false
             }
             else {
@@ -64,23 +66,38 @@ object AstAccessControl {
                 !InTextDirectivesUtils.isDirectiveDefined(text, ALLOW_AST_ACCESS_DIRECTIVE)
             }
         }
-        manager.setAssertOnFileLoadingFilter(filter, disposable)
     }
 
-    private fun performTest(shouldFail: Boolean, testBody: () -> Unit) {
+    fun <T : Any> execute(shouldFail: Boolean, disposable: Disposable, fixture: CodeInsightTestFixture, testBody: () -> T): T? {
+        return execute(shouldFail, fixture.project, disposable, { file -> file != fixture.file.virtualFile }, testBody)
+    }
+
+    private fun <T : Any> execute(shouldFail: Boolean, project: Project, disposable: Disposable,
+                                  forbidAstAccessFilter: (VirtualFile) -> Boolean, testBody: () -> T): T? {
+        val manager = (PsiManager.getInstance(project) as PsiManagerImpl)
+
+        manager.setAssertOnFileLoadingFilter(VirtualFileFilter { file -> forbidAstAccessFilter(file) }, disposable)
+
         try {
-            testBody()
+            val result = testBody()
             if (shouldFail) {
                 fail("This failure means that that a test that should fail (by triggering ast switch) in fact did not.\n" +
-                                 "This could happen for the following reasons:\n" +
-                                 "1. This kind of operation no longer trigger ast switch, choose better indicator test case." +
-                                 "2. Test is now misconfigured and no longer checks for ast switch, reconfigure the test.")
+                     "This could happen for the following reasons:\n" +
+                     "1. This kind of operation no longer trigger ast switch, choose better indicator test case." +
+                     "2. Test is now misconfigured and no longer checks for ast switch, reconfigure the test.")
             }
+
+            return result
         }
         catch (e: Throwable) {
             if (!shouldFail) {
                 throw e
             }
         }
+        finally {
+            manager.setAssertOnFileLoadingFilter(VirtualFileFilter.NONE, disposable)
+        }
+
+        return null
     }
 }

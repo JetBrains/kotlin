@@ -78,6 +78,12 @@ public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResol
         doTest(fileName);
     }
 
+    @TestMetadata("overloadFun.kt")
+    public void testOverloadFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/overloadFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("overridingFunctionWithSamAdapter.kt")
     public void testOverridingFunctionWithSamAdapter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/overridingFunctionWithSamAdapter.kt");
