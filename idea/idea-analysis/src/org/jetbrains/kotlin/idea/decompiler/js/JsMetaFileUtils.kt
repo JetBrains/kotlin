@@ -57,7 +57,7 @@ object JsMetaFileUtils {
 
     private fun getPackageFqName(relPath: String): FqName {
         val pathToFile = relPath.substringAfter(VfsUtilCore.VFS_SEPARATOR_CHAR)
-        if (isDefaultPackageMetafile(pathToFile)) return FqName.ROOT
+        if (isDefaultPackageMetafile(pathToFile) || !pathToFile.contains(VfsUtilCore.VFS_SEPARATOR_CHAR)) return FqName.ROOT
 
         val name = pathToFile.substringBeforeLast(VfsUtilCore.VFS_SEPARATOR_CHAR)
         return FqName(name.replace(VfsUtilCore.VFS_SEPARATOR_CHAR, '.'))
