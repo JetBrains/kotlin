@@ -1,6 +1,9 @@
 buildscript {
    repositories {
        mavenCentral()
+       maven {
+           url  "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+       }
    }
 
    dependencies {
@@ -21,7 +24,6 @@ String kotlinCompilerModule = 'org.jetbrains.kotlin:kotlin-compiler:1.1-20161121
 // (gets applied to this project and all its subprojects)
 allprojects {
     repositories {
-        mavenCentral()
         maven {
             url 'http://oss.sonatype.org/content/repositories/snapshots'
         }

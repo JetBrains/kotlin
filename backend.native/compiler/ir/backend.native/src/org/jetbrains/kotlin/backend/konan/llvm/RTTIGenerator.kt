@@ -1,8 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 
-import kotlin_native.interop.allocNativeArrayOf
-import kotlin_native.interop.memScoped
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.implementation
 import org.jetbrains.kotlin.backend.konan.implementedInterfaces
@@ -66,7 +65,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         memScoped {
             val fieldTypesNativeArrayPtr = if (fieldTypes.size > 0) {
-                allocNativeArrayOf(LLVMOpaqueType, *fieldTypes)[0]
+                allocArrayOf(*fieldTypes)[0].ptr
             } else {
                 null
             }

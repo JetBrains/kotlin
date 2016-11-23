@@ -1,4 +1,4 @@
-package kotlin_native.interop
+package kotlinx.cinterop
 
 /**
  * This class provides a way to create a stable handle to any Kotlin object.
@@ -6,21 +6,23 @@ package kotlin_native.interop
  *
  * Any [StableObjPtr] should be manually [disposed][dispose]
  */
-data class StableObjPtr private constructor(val value: NativePtr) {
+data class StableObjPtr private constructor(val value: COpaquePointer) {
 
     companion object {
 
         /**
          * Creates a handle for given object.
          */
-        fun create(any: Any) = StableObjPtr(NativePtr.byValue(newGlobalRef(any))!!)
+        fun create(any: Any) = fromValue(newGlobalRef(any))
+
+        private fun fromValue(value: NativePtr) = fromValue(CPointer.create(value))
 
         /**
          * Creates [StableObjPtr] from given raw value.
          *
          * @param value must be a [value] of some [StableObjPtr]
          */
-        fun fromValue(value: NativePtr) = StableObjPtr(value)
+        fun fromValue(value: COpaquePointer) = StableObjPtr(value)
 
         init {
             loadCallbacksLibrary()
@@ -31,20 +33,21 @@ data class StableObjPtr private constructor(val value: NativePtr) {
      * Disposes the handle. It must not be [used][get] after that.
      */
     fun dispose() {
-        deleteGlobalRef(value.value)
+        deleteGlobalRef(value.rawValue)
     }
 
     /**
      * Returns the object this handle was [created][create] for.
      */
-    fun get(): Any = derefGlobalRef(value.value)
+    fun get(): Any = derefGlobalRef(value.rawValue)
 
 }
 
 /**
- * Describes the type of native function.
+ * Describes the type of C function with adapter for Kotlin functions.
  *
- * The instances of this class are supposed to be Kotlin objects (singletons),
+ * The instances of this class are supposed to be Kotlin object declarations (singletons),
+ * because it is required by [CAdaptedFunctionType] and
  * because creating the instance implies allocating some amount of non-freeable memory for the instance itself
  * and for any unique Kotlin function "converted" to this type.
  *
@@ -53,16 +56,11 @@ data class StableObjPtr private constructor(val value: NativePtr) {
  * -   Implementation of [invoke] method which describes how to convert between these types and Kotlin types used in [F]
  *
  * @param F Kotlin function type corresponding to given native function type
-*/
-abstract class NativeFunctionType<F : Function<*>> protected constructor(returnType: CType, vararg paramTypes: CType) {
+ */
+abstract class CAdaptedFunctionTypeImpl<F : Function<*>>
+        protected constructor(returnType: CType, vararg paramTypes: CType) : CAdaptedFunctionType<F> {
 
-    /**
-     * Returns a native function of this type, which calls given Kotlin *static* function.
-     *
-     * Given function must be *static*, i.e. an (unbound) reference to a Kotlin function or
-     * a closure which doesn't capture any variable
-     */
-    fun fromStatic(function: F): NativePtr {
+    override fun fromStatic(function: F): NativePtr {
         // TODO: optimize synchronization
         synchronized(cache) {
             return cache.getOrPut(function, { createFromStatic(function) })
@@ -76,7 +74,7 @@ abstract class NativeFunctionType<F : Function<*>> protected constructor(returnT
      * This description omits the details that are irrelevant for the ABI.
      */
     protected open class CType internal constructor(val ffiType: ffi_type) {
-        internal constructor(ffiTypePtr: Long) : this(NativePtr.byValue(ffiTypePtr).asRef(ffi_type)!!)
+        internal constructor(ffiTypePtr: Long) : this(interpretPointed<ffi_type>(ffiTypePtr))
     }
 
     protected object Void    : CType(ffiTypeVoid())
@@ -102,7 +100,7 @@ abstract class NativeFunctionType<F : Function<*>> protected constructor(returnT
      * @param args array of pointers to arguments to be passed to [function]
      * @param ret pointer to memory to be filled with return value of [function]
      */
-    protected abstract fun invoke(function: F, args: NativeArray<NativePtrBox>, ret: NativePtr)
+    protected abstract fun invoke(function: F, args: CArray<COpaquePointerVar>, ret: COpaquePointer)
 
     companion object {
         init {
@@ -120,7 +118,7 @@ abstract class NativeFunctionType<F : Function<*>> protected constructor(returnT
             throw IllegalArgumentException()
         }
 
-        val impl = { ret: NativePtr, args: NativeArray<NativePtrBox> ->
+        val impl: UserData = { ret: COpaquePointer, args: CArray<COpaquePointerVar> ->
             invoke(function, args, ret)
         }
 
@@ -150,28 +148,10 @@ abstract class NativeFunctionType<F : Function<*>> protected constructor(returnT
     private val cache = mutableMapOf<F, NativePtr>()
 }
 
-/**
- * @see NativeFunctionType.fromStatic
- */
-fun <F : Function<*>> F.staticAsNative(type: NativeFunctionType<F>) = type.fromStatic(this)
+private typealias UserData = (ret: COpaquePointer, args: CArray<COpaquePointerVar>)->Unit
 
-/**
- * Describes a "struct" with native function pointer field.
- */
-class NativeFunctionBox<F : Function<*>>(ptr: NativePtr, private val type: NativeFunctionType<F>) : NativeRef(ptr) {
-
-    /**
-     * Sets the function pointer field to null or native function calling given Kotlin function.
-     */
-    fun setStatic(function: F?) {
-        val nativeFunPtr = function?.staticAsNative(type)
-        bridge.putPtr(ptr, nativeFunPtr)
-    }
-}
-
-val <F : Function<*>> NativeFunctionType<F>.ref: NativeRef.TypeWithSize<NativeFunctionBox<F>>
-    get() = NativeRef.TypeWithSize(8, { NativeFunctionBox(it, this) }) // TODO: 64-bit specific
-
+inline fun <reified T : CAdaptedFunctionTypeImpl<*>> CAdaptedFunctionTypeImpl.Companion.of(): T =
+    T::class.objectInstance!!
 
 private fun loadCallbacksLibrary() {
     System.loadLibrary("callbacks")
@@ -181,16 +161,12 @@ private fun loadCallbacksLibrary() {
 /**
  * Reference to `ffi_type` struct instance.
  */
-internal class ffi_type (ptr: NativePtr) : NativeRef(ptr) {
-    companion object : Type<ffi_type>(::ffi_type)
-}
+internal class ffi_type(override val rawPtr: NativePtr) : COpaque
 
 /**
  * Reference to `ffi_cif` struct instance.
  */
-internal class ffi_cif (ptr: NativePtr) : NativeRef(ptr) {
-    companion object : Type<ffi_cif>(::ffi_cif)
-}
+internal class ffi_cif(override val rawPtr: NativePtr) : COpaque
 
 private external fun ffiTypeVoid(): Long
 private external fun ffiTypeUInt8(): Long
@@ -211,12 +187,12 @@ private external fun ffiTypeStruct0(elements: Long): Long
  * @param elements types of the struct elements
  */
 private fun ffiTypeStruct(elementTypes: List<ffi_type>): ffi_type {
-    val elements = mallocNativeArrayOf(ffi_type, *elementTypes.toTypedArray(), null).ptr
-    val res = ffiTypeStruct0(elements.value)
+    val elements = nativeHeap.allocArrayOfPointersTo(*elementTypes.toTypedArray(), null)
+    val res = ffiTypeStruct0(elements.rawPtr)
     if (res == 0L) {
         throw OutOfMemoryError()
     }
-    return NativePtr.byValue(res).asRef(ffi_type)!!
+    return interpretPointed(res)
 }
 
 private external fun ffiCreateCif0(nArgs: Int, rType: Long, argTypes: Long): Long
@@ -231,9 +207,8 @@ private external fun ffiCreateCif0(nArgs: Int, rType: Long, argTypes: Long): Lon
  */
 private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_cif {
     val nArgs = paramTypes.size
-    val rType = returnType.ptr
-    val argTypes = mallocNativeArrayOf(ffi_type, *paramTypes.toTypedArray(), null).ptr
-    val res = ffiCreateCif0(nArgs, rType.value, argTypes.value)
+    val argTypes = nativeHeap.allocArrayOfPointersTo(*paramTypes.toTypedArray(), null)
+    val res = ffiCreateCif0(nArgs, returnType.rawPtr, argTypes.rawPtr)
 
     when (res) {
         0L -> throw OutOfMemoryError()
@@ -242,14 +217,14 @@ private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_
         -3L -> throw Error("libffi error occurred")
     }
 
-    return NativePtr.byValue(res).asRef(ffi_cif)!!
+    return interpretPointed(res)
 }
 
 private fun ffiFunImpl0(ffiCif: Long, ret: Long, args: Long, userData: Any) {
-    ffiFunImpl(NativePtr.byValue(ffiCif).asRef(ffi_cif)!!,
-            NativePtr.byValue(ret)!!,
-            NativePtr.byValue(args).asRef(array(NativePtrBox))!!,
-            userData as (ret: NativePtr, args: NativeArray<NativePtrBox>) -> Unit)
+    ffiFunImpl(interpretPointed(ffiCif),
+            CPointer.create(ret),
+            interpretPointed(args),
+            userData as UserData)
 }
 
 /**
@@ -258,8 +233,8 @@ private fun ffiFunImpl0(ffiCif: Long, ret: Long, args: Long, userData: Any) {
  * @param ret pointer to memory to be filled with return value of the invoked native function
  * @param args pointer to array of pointers to arguments passed to the invoked native function
  */
-private fun ffiFunImpl(ffiCif: ffi_cif, ret: NativePtr, args: NativeArray<NativePtrBox>,
-                       userData: (NativePtr, NativeArray<NativePtrBox>) -> Unit) {
+private fun ffiFunImpl(ffiCif: ffi_cif, ret: COpaquePointer, args: CArray<COpaquePointerVar>,
+                       userData: UserData) {
 
     userData.invoke(ret, args)
 }
@@ -271,15 +246,15 @@ private external fun ffiCreateClosure0(ffiCif: Long, userData: Any): Long
  *
  * @param ffiCif describes the type of the function to create
  */
-private fun ffiCreateClosure(ffiCif: ffi_cif, userData: (NativePtr, NativeArray<NativePtrBox>) -> Unit): NativePtr {
-    val res = ffiCreateClosure0(ffiCif.ptr.value, userData)
+private fun ffiCreateClosure(ffiCif: ffi_cif, userData: UserData): NativePtr {
+    val res = ffiCreateClosure0(ffiCif.rawPtr, userData)
 
     when (res) {
         0L -> throw OutOfMemoryError()
         -1L -> throw Error("libffi error occurred")
     }
 
-    return NativePtr.byValue(res)!!
+    return res
 }
 
 private external fun newGlobalRef(any: Any): Long

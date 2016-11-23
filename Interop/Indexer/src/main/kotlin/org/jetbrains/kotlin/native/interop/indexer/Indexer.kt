@@ -3,15 +3,15 @@ package org.jetbrains.kotlin.native.interop.indexer
 import clang.*
 import clang.CXIdxEntityKind.*
 import clang.CXTypeKind.*
-import kotlin_native.interop.*
+import kotlinx.cinterop.*
 import java.io.File
 
 private class StructDeclImpl(spelling: String) : StructDecl(spelling) {
     override var def: StructDefImpl? = null
 }
 
-private class StructDefImpl(size: Long, decl: StructDecl, hasNaturalLayout: Boolean) :
-        StructDef(size, decl, hasNaturalLayout) {
+private class StructDefImpl(size: Long, align: Int, decl: StructDecl, hasNaturalLayout: Boolean) :
+        StructDef(size, align, decl, hasNaturalLayout) {
 
     override val fields = mutableListOf<Field>()
 }
@@ -37,6 +37,11 @@ private class NativeIndexImpl : NativeIndex() {
 
     override val enums: List<EnumDef>
         get() = enumById.values.toList()
+
+    val typedefById = mutableMapOf<DeclarationID, TypedefDef>()
+
+    override val typedefs: List<TypedefDef>
+        get() = typedefById.values.toList()
 
     val functionByName = mutableMapOf<String, FunctionDecl>()
 
@@ -94,6 +99,31 @@ private class NativeIndexImpl : NativeIndex() {
         return res
     }
 
+    fun getTypedef(type: CXType): Type {
+        assert (type.kind.value == CXType_Typedef)
+        val declCursor = clang_getTypeDeclaration(type, arena)
+        val name = clang_getCursorSpelling(declCursor, arena).convertAndDispose()
+
+        val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor, arena))
+        if ((underlying is RecordType && underlying.decl.spelling.split(' ').last() == name) ||
+                (underlying is EnumType && underlying.def.spelling.split(' ').last() == name)) {
+
+            // special handling for:
+            // typedef struct { ... } name;
+            // typedef enum { ... } name;
+            // FIXME: implement better solution
+            return underlying
+        }
+
+        val declId = getDeclarationId(declCursor)
+        val typedefDef = typedefById.getOrPut(declId) {
+
+            TypedefDef(underlying, name)
+        }
+
+        return Typedef(typedefDef)
+    }
+
     /**
      * Computes [StructDef.hasNaturalLayout] property.
      */
@@ -105,11 +135,12 @@ private class NativeIndexImpl : NativeIndex() {
             CXCursorKind.CXCursor_UnionDecl -> return false
 
             CXCursorKind.CXCursor_StructDecl -> {
-                val hasAttributes = arena.alloc(Int32Box)
+                val hasAttributes = arena.alloc<CInt32Var>()
                 hasAttributes.value = 0
-                clang_visitChildren(structDefCursor, { cursor, parent, clientData ->
+                clang_visitChildren(structDefCursor, staticCFunction { cursor, parent, clientData ->
                     if (clang_isAttribute(cursor.kind.value) != 0) {
-                        clientData.asRef(Int32Box)!!.value = 1
+                        val hasAttributes = clientData!!.reinterpret<CInt32Var>().pointed
+                        hasAttributes.value = 1
                     }
                     CXChildVisitResult.CXChildVisit_Continue
                 }, hasAttributes.ptr)
@@ -151,12 +182,7 @@ private class NativeIndexImpl : NativeIndex() {
             CXType_ULongLong -> UInt64Type
             CXType_LongLong -> Int64Type
 
-            CXType_Typedef -> {
-                val declaration = clang_getTypeDeclaration(type, arena)
-                val underlying = clang_getTypedefDeclUnderlyingType(declaration, arena)
-                assert (underlying.kind.value != CXType_Invalid)
-                convertType(underlying)
-            }
+            CXType_Typedef -> getTypedef(type)
 
             CXType_Record -> RecordType(getStructTypeDecl(type))
             CXType_Enum -> EnumType(getEnumTypeDef(type))
@@ -193,7 +219,7 @@ private class NativeIndexImpl : NativeIndex() {
 
     fun indexDeclaration(info: CXIdxDeclInfo) {
         val cursor = info.cursor
-        val entityInfo = info.entityInfo.value!!
+        val entityInfo = info.entityInfo.pointed!!
         val entityName = entityInfo.name.value?.asCString()?.toString()
         val kind = entityInfo.kind.value
 
@@ -203,7 +229,7 @@ private class NativeIndexImpl : NativeIndex() {
                 val type = convertType(clang_getCursorType(cursor, arena))
                 val offset = clang_Cursor_getOffsetOfField(cursor)
 
-                val container = info.semanticContainer.value!!
+                val container = info.semanticContainer.pointed!!
                 val structDef = getStructDeclAt(container.cursor).def!!
                 structDef.fields.add(Field(name, type, offset))
             }
@@ -211,9 +237,11 @@ private class NativeIndexImpl : NativeIndex() {
             CXIdxEntity_Struct, CXIdxEntity_Union -> {
                 val structDecl = getStructDeclAt(cursor)
                 if (clang_isCursorDefinition(cursor) != 0) {
-                    val size = clang_Type_getSizeOf(clang_getCursorType(cursor, arena))
+                    val type = clang_getCursorType(cursor, arena)
+                    val size = clang_Type_getSizeOf(type)
+                    val align = clang_Type_getAlignOf(clang_getCursorType(cursor, arena)).toInt()
                     val hasNaturalLayout = structHasNaturalLayout(cursor)
-                    structDecl.def = StructDefImpl(size, structDecl, hasNaturalLayout)
+                    structDecl.def = StructDefImpl(size, align, structDecl, hasNaturalLayout)
                 }
             }
 
@@ -236,7 +264,7 @@ private class NativeIndexImpl : NativeIndex() {
             }
 
             CXIdxEntity_EnumConstant -> {
-                val container = info.semanticContainer.value!!
+                val container = info.semanticContainer.pointed!!
                 val name = entityName!!
                 val value = clang_getEnumConstantDeclValue(info.cursor)
 
@@ -265,11 +293,11 @@ fun CXString.convertAndDispose(): String {
 
 fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
     // TODO: dispose all allocated memory and resources
-    val args1 = args.map { CString.fromString(it)!!.asCharPtr() }.toTypedArray()
+    val args1 = args.map { CString.fromString(it, nativeHeap)!!.asCharPtr() }.toTypedArray()
 
     val index = clang_createIndex(0, 0)
     val indexAction = clang_IndexAction_create(index)
-    val callbacks = malloc(IndexerCallbacks.Companion)
+    val callbacks = nativeHeap.alloc<IndexerCallbacks>()
 
     val res = NativeIndexImpl()
     try {
@@ -278,23 +306,23 @@ fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
 
         try {
             with(callbacks) {
-                abortQuery.setStatic(null)
-                diagnostic.setStatic(null)
-                enteredMainFile.setStatic(null)
-                ppIncludedFile.setStatic(null)
-                importedASTFile.setStatic(null)
-                startedTranslationUnit.setStatic(null)
-                indexDeclaration.setStatic { clientData, info ->
+                abortQuery.value = null
+                diagnostic.value = null
+                enteredMainFile.value = null
+                ppIncludedFile.value = null
+                importedASTFile.value = null
+                startedTranslationUnit.value = null
+                indexDeclaration.value = staticCFunction { clientData, info ->
                     val index = StableObjPtr.fromValue(clientData!!).get() as NativeIndexImpl
-                    index.indexDeclaration(info!!)
+                    index.indexDeclaration(info!!.pointed)
                 }
-                indexEntityReference.setStatic(null)
+                indexEntityReference.value = null
             }
 
-            val commandLineArgs = if (args1.size != 0) mallocNativeArrayOf(Int8Box.Companion, *args1)[0] else null
+            val commandLineArgs = if (args1.size != 0) nativeHeap.allocArrayOfPointersTo(*args1)[0].ptr else null
 
-            clang_indexSourceFile(indexAction, clientData, callbacks, IndexerCallbacks.size, 0, headerFile.path,
-                    commandLineArgs, args1.size, null, 0, null, 0)
+            clang_indexSourceFile(indexAction, clientData, callbacks.ptr, IndexerCallbacks.size.toInt(),
+                    0, headerFile.path, commandLineArgs, args1.size, null, 0, null, 0)
 
 
             return res

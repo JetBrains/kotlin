@@ -4,101 +4,101 @@
 #include <ffi.h>
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeVoid
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeVoid(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeVoid(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_void;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeUInt8
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeUInt8(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeUInt8(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_uint8;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeSInt8
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeSInt8(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeSInt8(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_sint8;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeUInt16
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeUInt16(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeUInt16(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_uint16;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeSInt16
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeSInt16(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeSInt16(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_sint16;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeUInt32
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeUInt32(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeUInt32(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_uint32;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeSInt32
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeSInt32(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeSInt32(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_sint32;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeUInt64
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeUInt64(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeUInt64(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_uint64;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeSInt64
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeSInt64(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeSInt64(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_sint64;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypePointer
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypePointer(JNIEnv *env, jclass cls) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypePointer(JNIEnv *env, jclass cls) {
     return (jlong) &ffi_type_pointer;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiTypeStruct0
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeStruct0(JNIEnv *env, jclass cls, jlong elements) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiTypeStruct0(JNIEnv *env, jclass cls, jlong elements) {
     ffi_type* res = malloc(sizeof(ffi_type));
     if (res != NULL) {
         res->size = 0;
@@ -110,11 +110,11 @@ JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiTypeStruct0(J
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiCreateCif0
  * Signature: (IJJ)J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiCreateCif0(JNIEnv *env, jclass cls, jint nArgs, jlong rType, jlong argTypes) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiCreateCif0(JNIEnv *env, jclass cls, jint nArgs, jlong rType, jlong argTypes) {
     ffi_cif* res = malloc(sizeof(ffi_cif));
     if (res != NULL) {
         ffi_status status = ffi_prep_cif(res, FFI_DEFAULT_ABI, nArgs, (ffi_type*)rType, (ffi_type**)argTypes);
@@ -166,7 +166,7 @@ static void ffi_fun(ffi_cif *cif, void *ret, void **args, void *user_data) {
     static jmethodID ffiFunImpl0 = NULL;
     static jclass cls = NULL;
     if (ffiFunImpl0 == NULL) {
-        jclass clsLocal = (*env)->FindClass(env, "kotlin_native/interop/CallbacksKt");
+        jclass clsLocal = (*env)->FindClass(env, "kotlinx/cinterop/JvmCallbacksKt");
         checkException(env);
         assert(clsLocal != NULL);
 
@@ -184,11 +184,11 @@ static void ffi_fun(ffi_cif *cif, void *ret, void **args, void *user_data) {
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    ffiCreateClosure0
  * Signature: (JLjava/lang/Object;)J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiCreateClosure0(JNIEnv *env, jclass cls, jlong ffiCif, jobject userData) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_ffiCreateClosure0(JNIEnv *env, jclass cls, jlong ffiCif, jobject userData) {
     jobject userDataGlobalRef = (*env)->NewGlobalRef(env, userData);
     if (userDataGlobalRef == NULL) {
         return (jlong)0;
@@ -211,29 +211,29 @@ JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_ffiCreateClosure
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    newGlobalRef
  * Signature: (Ljava/lang/Object;)J
  */
-JNIEXPORT jlong JNICALL Java_kotlin_1native_interop_CallbacksKt_newGlobalRef(JNIEnv *env, jclass cls, jobject obj) {
+JNIEXPORT jlong JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_newGlobalRef(JNIEnv *env, jclass cls, jobject obj) {
     jobject res = (*env)->NewGlobalRef(env, obj);
     return (jlong) res;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    derefGlobalRef
  * Signature: (J)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_kotlin_1native_interop_CallbacksKt_derefGlobalRef(JNIEnv *env, jclass cls, jlong ref) {
+JNIEXPORT jobject JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_derefGlobalRef(JNIEnv *env, jclass cls, jlong ref) {
     return (jobject) ref;
 }
 
 /*
- * Class:     kotlin_native_interop_CallbacksKt
+ * Class:     kotlinx_cinterop_JvmCallbacksKt
  * Method:    deleteGlobalRef
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_kotlin_1native_interop_CallbacksKt_deleteGlobalRef(JNIEnv *env, jclass cls, jlong ref) {
+JNIEXPORT void JNICALL Java_kotlinx_cinterop_JvmCallbacksKt_deleteGlobalRef(JNIEnv *env, jclass cls, jlong ref) {
     (*env)->DeleteGlobalRef(env, (jobject) ref);
 }

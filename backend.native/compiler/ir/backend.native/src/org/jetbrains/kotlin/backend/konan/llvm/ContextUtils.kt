@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_native.interop.*
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -22,7 +22,7 @@ internal interface ContextUtils {
     val runtime: Runtime
         get() = context.runtime
 
-    val llvmTargetData: LLVMOpaqueTargetData
+    val llvmTargetData: LLVMTargetDataRef
         get() = runtime.targetData
 
     val staticData: StaticData

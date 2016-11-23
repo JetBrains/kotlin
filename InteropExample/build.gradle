@@ -1,6 +1,9 @@
 buildscript {
    repositories {
-     mavenCentral()
+       mavenCentral()
+       maven {
+           url  "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+       }
    }
 
    dependencies {
@@ -11,10 +14,6 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 apply plugin: 'application'
-
-repositories {
-    mavenCentral()
-}
 
 kotlinNativeInterop {
     llvm {

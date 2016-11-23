@@ -1,32 +1,28 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlin_native.interop.*
+import kotlinx.cinterop.*
 import llvm.*
 
 class Runtime(private val bitcodeFile: String) {
-    val llvmModule: LLVMOpaqueModule
+    val llvmModule: LLVMModuleRef
 
     init {
-        val arena = Arena()
-        try {
+        llvmModule = memScoped {
 
-            val bufRef = arena.alloc(LLVMOpaqueMemoryBuffer.ref)
-            val errorRef = arena.alloc(Int8Box.ref)
-            val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef, errorRef)
+            val bufRef = allocPointerTo<LLVMOpaqueMemoryBuffer>()
+            val errorRef = allocPointerTo<CInt8Var>()
+            val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef.ptr, errorRef.ptr)
             if (res != 0) {
                 throw Error(errorRef.value?.asCString()?.toString())
             }
 
-            val moduleRef = arena.alloc(LLVMOpaqueModule.ref)
-            val parseRes = LLVMParseBitcode2(bufRef.value, moduleRef)
+            val moduleRef = alloc<LLVMModuleRefVar>()
+            val parseRes = LLVMParseBitcode2(bufRef.value, moduleRef.ptr)
             if (parseRes != 0) {
                 throw Error(parseRes.toString())
             }
 
-            llvmModule = moduleRef.value!!
-
-        } finally {
-            arena.clear()
+            moduleRef.value!!
         }
     }
 

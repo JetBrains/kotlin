@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 
-import kotlin_native.interop.*
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -118,9 +118,8 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun call(llvmFunction: LLVMOpaqueValue?, args: List<LLVMOpaqueValue?>, result: String?): LLVMOpaqueValue? {
         if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, llvmFunction, null, 0, result)
         memScoped {
-            val rargs = alloc(array[args.size](Ref to LLVMOpaqueValue))
-            args.forEachIndexed { i, llvmOpaqueValue -> rargs[i].value = args[i] }
-            return LLVMBuildCall(context.llvmBuilder, llvmFunction, rargs[0], args.size, result)
+            val rargs = allocArrayOf(args)
+            return LLVMBuildCall(context.llvmBuilder, llvmFunction, rargs[0].ptr, args.size, result)
         }
     }
 

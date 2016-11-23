@@ -1,7 +1,10 @@
 buildscript {
-   repositories {
-     mavenCentral()
-   }
+    repositories {
+        mavenCentral()
+        maven {
+            url  "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+        }
+    }
 
    dependencies {
      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -32,13 +35,12 @@ model {
 
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
+
+sourceSets.main.kotlin.srcDirs += "src/jvm/kotlin"
 
 
 task nativelibs(type: Copy) {
