@@ -56,6 +56,13 @@
             <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>jdk</groupId>
+            <artifactId>tools</artifactId>
+            <scope>system</scope>
+            <version>1.8</version>
+            <systemPath>${env.JDK_18}/lib/tools.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
@@ -131,9 +138,6 @@
                 <version>${project.version}</version>
                 <configuration>
                     <jdkHome>${env.JDK_18}</jdkHome>
-                    <classpath>
-                        <classpathEntry>${env.JDK_18}/lib/tools.jar</classpathEntry>
-                    </classpath>
                     <annotationPaths>
                         <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
                     </annotationPaths>
