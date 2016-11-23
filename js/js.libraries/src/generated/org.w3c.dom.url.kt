@@ -50,9 +50,8 @@ import org.w3c.xhr.*
     var search: String
         get() = noImpl
         set(value) = noImpl
-    var searchParams: URLSearchParams
+    open val searchParams: URLSearchParams
         get() = noImpl
-        set(value) = noImpl
     var hash: String
         get() = noImpl
         set(value) = noImpl
