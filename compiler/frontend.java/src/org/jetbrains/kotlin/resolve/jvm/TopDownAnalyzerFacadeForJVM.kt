@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
+import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -55,7 +56,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -79,13 +80,31 @@ object TopDownAnalyzerFacadeForJVM {
                 project, files, trace, configuration, packagePartProvider, declarationProviderFactory, sourceModuleSearchScope
         )
 
+        val module = container.get<ModuleDescriptor>()
+        val moduleContext = container.get<ModuleContext>()
+
+        val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
+
+        fun invokeExtensionsOnAnalysisComplete(): AnalysisResult? {
+            for (extension in analysisHandlerExtensions) {
+                val result = extension.analysisCompleted(project, module, trace, files)
+                if (result != null) return result
+            }
+
+            return null
+        }
+
+        for (extension in analysisHandlerExtensions) {
+            val result = extension.doAnalysis(project, module, moduleContext, files, trace, container)
+            if (result != null) {
+                invokeExtensionsOnAnalysisComplete()?.let { return it }
+                return result
+            }
+        }
+
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
-        val module = container.get<ModuleDescriptor>()
-        for (extension in AnalysisCompletedHandlerExtension.getInstances(project)) {
-            val result = extension.analysisCompleted(project, module, trace, files)
-            if (result != null) return result
-        }
+        invokeExtensionsOnAnalysisComplete()?.let { return it }
 
         return AnalysisResult.success(trace.bindingContext, module)
     }

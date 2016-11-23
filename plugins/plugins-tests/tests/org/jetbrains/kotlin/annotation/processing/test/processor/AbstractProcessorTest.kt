@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.java.model.elements.JeVariableElement
 import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -73,7 +73,7 @@ abstract class AbstractProcessorTest : AbstractBytecodeTextTest() {
         val project = environment.project
         
         val apExtension = AnnotationProcessingExtensionForTests(processors)
-        AnalysisCompletedHandlerExtension.registerExtension(project, apExtension)
+        AnalysisHandlerExtension.registerExtension(project, apExtension)
 
         project.registerServiceInstance(JeElementRegistry::class.java, JeElementRegistry())
 

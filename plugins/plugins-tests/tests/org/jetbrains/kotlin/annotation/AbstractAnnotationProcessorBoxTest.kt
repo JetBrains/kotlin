@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
@@ -63,7 +63,7 @@ abstract class AbstractAnnotationProcessorBoxTest : KotlinTestWithEnvironment() 
         if (supportStubs) {
             val stubsDir = KotlinTestUtils.tmpDir("class-stubs")
             val stubProducerExtension = StubProducerExtension(stubsDir, MessageCollector.NONE)
-            AnalysisCompletedHandlerExtension.registerExtension(project, stubProducerExtension)
+            AnalysisHandlerExtension.registerExtension(project, stubProducerExtension)
         }
 
         val testFiles = ktFiles.map { KotlinTestUtils.createFile(it.name, KotlinTestUtils.doLoadFile(it), environment.project) }

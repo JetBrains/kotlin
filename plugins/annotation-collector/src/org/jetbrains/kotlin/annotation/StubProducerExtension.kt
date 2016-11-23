@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.File
 
-class StubProducerExtension(val stubsOutputDir: File, val messageCollector: MessageCollector) : AnalysisCompletedHandlerExtension {
+class StubProducerExtension(val stubsOutputDir: File, val messageCollector: MessageCollector) : AnalysisHandlerExtension {
     override fun analysisCompleted(
             project: Project,
             module: ModuleDescriptor,

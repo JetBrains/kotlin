@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.File
 import java.io.IOException
 import java.io.PrintWriter
@@ -74,7 +74,7 @@ abstract class AbstractAnnotationProcessingExtension(
         val verboseOutput: Boolean,
         val incrementalDataFile: File? = null,
         val sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler? = null
-) : AnalysisCompletedHandlerExtension {
+) : AnalysisHandlerExtension {
     private companion object {
         val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
     }
