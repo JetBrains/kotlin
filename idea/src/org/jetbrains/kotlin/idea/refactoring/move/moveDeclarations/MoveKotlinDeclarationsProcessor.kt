@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.idea.refactoring.move.MoveRenameUsageInfoForExtension
+import org.jetbrains.kotlin.idea.refactoring.move.UnqualifiableMoveRenameUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.move.createMoveUsageInfoIfPossible
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
@@ -177,7 +177,7 @@ class MoveKotlinDeclarationsProcessor(
                     val packageNameInfo = descriptor.delegate.getContainerChangeInfo(it, descriptor.moveTarget)
                     val (usagesToProcessLater, usagesToProcessEarly) = it
                             .getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
-                            .partition { it is MoveRenameUsageInfoForExtension }
+                            .partition { it is UnqualifiableMoveRenameUsageInfo }
                     usages.addAll(usagesToProcessLater)
                     usagesToProcessBeforeMove.addAll(usagesToProcessEarly)
                 }
