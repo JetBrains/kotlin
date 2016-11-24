@@ -25,11 +25,14 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import java.util.*
 
 object CallableReferenceTranslator {
 
     fun translate(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression {
+        val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.callableReference)
+
         val receiver = expression.receiverExpression?.let { r ->
             if (context.bindingContext().getType(r) == null) {
                 null
@@ -41,9 +44,11 @@ object CallableReferenceTranslator {
                 }
                 e
             }
+        } ?: (descriptor as? PropertyImportedFromObject)?.let {
+            ReferenceTranslator.translateAsValueReference(it.containingObject, context)
         }
 
-        val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.callableReference)
+
         return when (descriptor) {
             is PropertyDescriptor ->
                 translateForProperty(descriptor, context, expression, receiver)
@@ -87,9 +92,9 @@ object CallableReferenceTranslator {
             KotlinBuiltIns.isBuiltIn(descriptor) ->
                 reportNotSupported(context, expression)
             isExtension(descriptor) ->
-                translateForExtensionProperty(descriptor, context)
+                translateForExtensionProperty(descriptor, context, receiver)
             isMember(descriptor) ->
-                translateForMemberProperty(descriptor, context)
+                translateForMemberProperty(descriptor, context, receiver)
             else ->
                 translateForTopLevelProperty(descriptor, context)
         }
@@ -157,27 +162,39 @@ object CallableReferenceTranslator {
         return function
     }
 
-    private fun translateForMemberProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
+    private fun translateForMemberProperty(descriptor: PropertyDescriptor, context: TranslationContext, receiver: JsExpression?): JsExpression {
         val jsPropertyName = context.getNameForDescriptor(descriptor)
         val jsPropertyNameAsString = context.program().getStringLiteral(jsPropertyName.toString())
-        return JsInvocation(context.namer().callableRefForMemberPropertyReference(), jsPropertyNameAsString, isVar(descriptor))
+        if (receiver == null) {
+            return JsInvocation(context.namer().callableRefForMemberPropertyReference(), jsPropertyNameAsString, isVar(descriptor))
+        } else {
+            return JsInvocation(context.namer().boundCallableRefForMemberPropertyReference(), receiver, jsPropertyNameAsString, isVar(descriptor))
+        }
     }
 
-    private fun translateForExtensionProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
+    private fun translateForExtensionProperty(descriptor: PropertyDescriptor, context: TranslationContext, receiver: JsExpression?): JsExpression {
         val jsGetterNameRef = ReferenceTranslator.translateAsValueReference(descriptor.getter!!, context)
         val propertyName = descriptor.name
         val jsPropertyNameAsString = context.program().getStringLiteral(propertyName.asString())
-        val argumentList = ArrayList<JsExpression>(3)
+        val argumentList = ArrayList<JsExpression>(4)
+        if (receiver != null) {
+            argumentList.add(receiver)
+        }
         argumentList.add(jsPropertyNameAsString)
         argumentList.add(jsGetterNameRef)
         if (descriptor.isVar) {
             val jsSetterNameRef = ReferenceTranslator.translateAsValueReference(descriptor.setter!!, context)
             argumentList.add(jsSetterNameRef)
         }
-        return if (AnnotationsUtils.isNativeObject(descriptor))
-            translateForMemberProperty(descriptor, context)
-        else
+        return if (AnnotationsUtils.isNativeObject(descriptor)) {
+            translateForMemberProperty(descriptor, context, receiver)
+        }
+        else if (receiver == null) {
             JsInvocation(context.namer().callableRefForExtensionPropertyReference(), argumentList)
+        }
+        else {
+            JsInvocation(context.namer().boundCallableRefForExtensionPropertyReference(), argumentList)
+        }
     }
 
     private fun translateForConstructor(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {

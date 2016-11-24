@@ -85,7 +85,9 @@ public final class Namer {
     private static final String CALLABLE_REF_FOR_CONSTRUCTOR_NAME = "getCallableRefForConstructor";
     private static final String CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY = "getCallableRefForTopLevelProperty";
     private static final String CALLABLE_REF_FOR_MEMBER_PROPERTY = "getCallableRefForMemberProperty";
+    private static final String BOUND_CALLABLE_REF_FOR_MEMBER_PROPERTY = "getBoundCallableRefForMemberProperty";
     private static final String CALLABLE_REF_FOR_EXTENSION_PROPERTY = "getCallableRefForExtensionProperty";
+    private static final String BOUND_CALLABLE_REF_FOR_EXTENSION_PROPERTY = "getBoundCallableRefForExtensionProperty";
 
     private static final String DELEGATE = "$delegate";
 
@@ -210,7 +212,11 @@ public final class Namer {
     @NotNull
     private final JsName callableRefForMemberProperty;
     @NotNull
+    private final JsName boundCallableRefForMemberProperty;
+    @NotNull
     private final JsName callableRefForExtensionProperty;
+    @NotNull
+    private final JsName boundCallableRefForExtensionProperty;
     @NotNull
     private final JsExpression callGetProperty;
     @NotNull
@@ -234,7 +240,9 @@ public final class Namer {
         callableRefForConstructorName = kotlinScope.declareName(CALLABLE_REF_FOR_CONSTRUCTOR_NAME);
         callableRefForTopLevelProperty = kotlinScope.declareName(CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY);
         callableRefForMemberProperty = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_PROPERTY);
+        boundCallableRefForMemberProperty = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_MEMBER_PROPERTY);
         callableRefForExtensionProperty = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_PROPERTY);
+        boundCallableRefForExtensionProperty = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_EXTENSION_PROPERTY);
 
         isTypeName = kotlinScope.declareName("isType");
     }
@@ -296,8 +304,18 @@ public final class Namer {
     }
 
     @NotNull
+    public JsExpression boundCallableRefForMemberPropertyReference() {
+        return kotlin(boundCallableRefForMemberProperty);
+    }
+
+    @NotNull
     public JsExpression callableRefForExtensionPropertyReference() {
         return kotlin(callableRefForExtensionProperty);
+    }
+
+    @NotNull
+    public JsExpression boundCallableRefForExtensionPropertyReference() {
+        return kotlin(boundCallableRefForExtensionProperty);
     }
 
     @NotNull

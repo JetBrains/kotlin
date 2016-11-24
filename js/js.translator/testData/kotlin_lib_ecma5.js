@@ -183,8 +183,22 @@
         return getPropertyRefClass(getFun, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
     };
 
+    Kotlin.getBoundCallableRefForMemberProperty = function(receiver, name, isVar) {
+        var getFun = Function("receiver", "return function " + name + "() { return receiver['" + name + "']; }")(receiver);
+        var setFun = isVar ? function(value) { receiver[name] = value; } : null;
+        return getPropertyRefClass(getFun, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
+    };
+
     Kotlin.getCallableRefForExtensionProperty = function(name, getFun, setFun) {
         var getFunWrapper = Function("getFun", "return function " + name + "(receiver, extensionReceiver) { return getFun(receiver, extensionReceiver) }")(getFun);
+        return getPropertyRefClass(getFunWrapper, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
+    };
+
+    Kotlin.getBoundCallableRefForExtensionProperty = function(receiver, name, getFun, setFun) {
+        var getFunWrapper = Function("receiver", "getFun", "return function " + name + "(extensionReceiver) { return getFun(receiver, extensionReceiver) }")(receiver, getFun);
+        if (setFun) {
+            setFun = setFun.bind(null, receiver);
+        }
         return getPropertyRefClass(getFunWrapper, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
     };
 

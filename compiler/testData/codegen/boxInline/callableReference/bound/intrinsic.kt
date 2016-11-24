@@ -1,3 +1,5 @@
+// Enable when callble references for intrinsics are suported.
+// IGNORE_BACKEND: JS
 // FILE: 1.kt
 
 package test
