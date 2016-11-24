@@ -15,6 +15,10 @@ translator/.gradle/2.9/taskArtifacts
 
 kotstd/kotstd.iml
 
+# test suit products.
+*.bc
+*.kt.S
+*.log
 
 # Ignore Gradle GUI config
 gradle-app.setting
