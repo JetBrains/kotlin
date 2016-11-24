@@ -4300,6 +4300,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("suspendWithCurrentContinuation.kt")
+            public void testSuspendWithCurrentContinuation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendWithCurrentContinuation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("tryCatchLambda.kt")
             public void testTryCatchLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tryCatchLambda.kt");

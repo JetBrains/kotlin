@@ -1,0 +1,16 @@
+package-fragment kotlin.coroutines
+
+@kotlin.SinceKotlin(version = "1.1") public inline suspend fun </*0*/ T> suspendWithCurrentContinuation(/*0*/ body: (kotlin.coroutines.Continuation<T>) -> kotlin.Any?): T
+
+@kotlin.SinceKotlin(version = "1.1") @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class AllowSuspendExtensions : kotlin.Annotation {
+    /*primary*/ public constructor AllowSuspendExtensions()
+}
+
+@kotlin.SinceKotlin(version = "1.1") public interface Continuation</*0*/ in P> {
+    public abstract fun resume(/*0*/ data: P): kotlin.Unit
+    public abstract fun resumeWithException(/*0*/ exception: kotlin.Throwable): kotlin.Unit
+}
+
+@kotlin.SinceKotlin(version = "1.1") public object Suspend {
+    /*primary*/ private constructor Suspend()
+}

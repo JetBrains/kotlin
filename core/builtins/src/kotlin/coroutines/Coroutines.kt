@@ -41,3 +41,11 @@ public interface Continuation<in P> {
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 public annotation class AllowSuspendExtensions
+
+/**
+ * This object can be used as a return value of [kotlin.coroutines.suspendWithCurrentContinuation] lambda-argument to state that
+ * the continuation will be resumed at some moment in the future, that means that suspend-function cannot return a value immediately,
+ * i.e. it's literally suspends continuation, so no stack-unwinding will be performed by the continuation.
+ */
+@SinceKotlin("1.1")
+public object Suspend

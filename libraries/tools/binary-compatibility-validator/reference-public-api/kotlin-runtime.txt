@@ -184,6 +184,10 @@ public abstract interface class kotlin/coroutines/Continuation {
 	public abstract fun resumeWithException (Ljava/lang/Throwable;)V
 }
 
+public final class kotlin/coroutines/Suspend {
+	public static final field INSTANCE Lkotlin/coroutines/Suspend;
+}
+
 public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getAnnotationClass (Ljava/lang/annotation/Annotation;)Lkotlin/reflect/KClass;
 	public static final fun getJavaClass (Ljava/lang/Object;)Ljava/lang/Class;
