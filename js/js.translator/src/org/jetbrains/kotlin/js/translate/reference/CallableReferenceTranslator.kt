@@ -70,7 +70,7 @@ object CallableReferenceTranslator {
             isConstructor(descriptor) ->
                 translateForConstructor(descriptor, context)
             isExtension(descriptor) ->
-                translateForExtensionFunction(descriptor, context)
+                translateForExtensionFunction(descriptor, context, receiver)
             isMember(descriptor) ->
                 translateForMemberFunction(descriptor, context, receiver)
             else ->
@@ -185,22 +185,32 @@ object CallableReferenceTranslator {
         return JsInvocation(context.namer().callableRefForConstructorReference(), jsFunctionRef)
     }
 
-    private fun translateForExtensionFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
+    private fun translateForExtensionFunction(descriptor: FunctionDescriptor,
+                                              context: TranslationContext,
+                                              receiver: JsExpression?): JsExpression {
         val receiverParameterDescriptor = descriptor.extensionReceiverParameter ?:
                                           error("receiverParameter for extension should not be null")
 
         val jsFunctionRef = ReferenceTranslator.translateAsValueReference(descriptor, context)
         if (descriptor.visibility == Visibilities.LOCAL) {
-            return JsInvocation(context.namer().callableRefForLocalExtensionFunctionReference(), jsFunctionRef)
+            if (receiver == null) {
+                return JsInvocation(context.namer().callableRefForLocalExtensionFunctionReference(), jsFunctionRef)
+            } else {
+                return JsInvocation(context.namer().boundCallableRefForLocalExtensionFunctionReference(), jsFunctionRef, receiver)
+            }
         }
 
         else if (AnnotationsUtils.isNativeObject(descriptor)) {
             val jetType = receiverParameterDescriptor.type
             val receiverClassDescriptor = DescriptorUtils.getClassDescriptorForType(jetType)
-            return translateAsMemberFunctionReference(descriptor, receiverClassDescriptor, context, null)
+            return translateAsMemberFunctionReference(descriptor, receiverClassDescriptor, context, receiver)
         }
         else {
-            return JsInvocation(context.namer().callableRefForExtensionFunctionReference(), jsFunctionRef)
+            if (receiver == null) {
+                return JsInvocation(context.namer().callableRefForExtensionFunctionReference(), jsFunctionRef)
+            } else {
+                return JsInvocation(context.namer().boundCallableRefForExtensionFunctionReference(), jsFunctionRef, receiver)
+            }
         }
     }
 
@@ -222,7 +232,7 @@ object CallableReferenceTranslator {
             val jsClassNameRef = ReferenceTranslator.translateAsTypeReference(classDescriptor, context)
             return JsInvocation(context.namer().callableRefForMemberFunctionReference(), jsClassNameRef, funNameAsString)
         } else {
-            return JsAstUtils.invokeBind(receiver, JsArrayAccess(receiver, funNameAsString))
+            return JsInvocation(context.namer().boundCallableRefForMemberFunctionReference(), funNameAsString, receiver)
         }
     }
 }

@@ -138,12 +138,18 @@
         };
     };
 
+    Kotlin.getBoundCallableRefForMemberFunction = function (memberName, instance) {
+        return instance[memberName].bind(instance);
+    };
+
     // TODO Store callable references for extension functions in class
     // extFun expected receiver as the first argument
     Kotlin.getCallableRefForExtensionFunction = function (extFun) {
-        return function () {
-            return extFun.apply(null, arguments);
-        };
+        return extFun.bind(null);
+    };
+
+    Kotlin.getBoundCallableRefForExtensionFunction = function (extFun, instance) {
+        return extFun.bind(null, instance);
     };
 
     Kotlin.getCallableRefForLocalExtensionFunction = function (extFun) {
@@ -152,6 +158,10 @@
             var instance = args.shift();
             return extFun.apply(instance, args);
         };
+    };
+
+    Kotlin.getBoundCallableRefForLocalExtensionFunction = function (extFun, instance) {
+        return extFun.bind(instance);
     };
 
     Kotlin.getCallableRefForConstructor = function (klass) {
