@@ -77,6 +77,7 @@
 - [`KT-11521`](https://youtrack.jetbrains.com/issue/KT-11521) [`KT-12734`](https://youtrack.jetbrains.com/issue/KT-12734) [`KT-12470`](https://youtrack.jetbrains.com/issue/KT-12470) Fix breakpoints in function literals in inline calls
 
 #### Android support
+- [`KT-14826`](https://youtrack.jetbrains.com/issue/KT-14826) Android Lint for Kotlin: exception from destructuring declarations
 - [`KT-12880`](https://youtrack.jetbrains.com/issue/KT-12880) Implement "Create XML resources" quickfix
 - [`KT-12020`](https://youtrack.jetbrains.com/issue/KT-12020) Implement "Suppress" intention
 - [`KT-13243`](https://youtrack.jetbrains.com/issue/KT-13243) Lint: Exception type in a `try..catch` block should be checked
