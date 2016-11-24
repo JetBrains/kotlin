@@ -308,8 +308,8 @@ class CollectionStubMethodGenerator(
     }
 
     private fun createSyntheticSubclass(): Pair<MutableClassDescriptor, List<TypeParameterDescriptor>> {
-        val child = MutableClassDescriptor(descriptor.containingDeclaration, ClassKind.CLASS, false,
-                                           Name.special("<synthetic inheritor of ${descriptor.name}>"), descriptor.source)
+        val child = MutableClassDescriptor(descriptor.containingDeclaration, ClassKind.CLASS, /* isInner = */ false,
+                /* isExternal */ false, Name.special("<synthetic inheritor of ${descriptor.name}>"), descriptor.source)
         child.modality = Modality.FINAL
         child.visibility = Visibilities.PUBLIC
         val typeParameters = descriptor.typeConstructor.parameters

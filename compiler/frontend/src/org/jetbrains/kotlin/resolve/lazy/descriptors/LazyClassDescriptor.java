@@ -111,10 +111,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull final LazyClassContext c,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
-            @NotNull final KtClassLikeInfo classLikeInfo
+            @NotNull final KtClassLikeInfo classLikeInfo,
+            boolean isExternal
     ) {
         super(c.getStorageManager(), containingDeclaration, name,
-              KotlinSourceElementKt.toSourceElement(classLikeInfo.getCorrespondingClassOrObject())
+              KotlinSourceElementKt.toSourceElement(classLikeInfo.getCorrespondingClassOrObject()),
+              isExternal
         );
         this.c = c;
 

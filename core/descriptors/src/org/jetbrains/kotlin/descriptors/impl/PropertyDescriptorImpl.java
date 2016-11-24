@@ -46,6 +46,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final boolean isConst;
     private final boolean isPlatform;
     private final boolean isImpl;
+    private final boolean isExternal;
 
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private ReceiverParameterDescriptor extensionReceiverParameter;
@@ -67,7 +68,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean lateInit,
             boolean isConst,
             boolean isPlatform,
-            boolean isImpl
+            boolean isImpl,
+            boolean isExternal
     ) {
         super(containingDeclaration, annotations, name, null, isVar, source);
         this.modality = modality;
@@ -78,6 +80,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.isConst = isConst;
         this.isPlatform = isPlatform;
         this.isImpl = isImpl;
+        this.isExternal = isExternal;
     }
 
     @NotNull
@@ -93,10 +96,12 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean lateInit,
             boolean isConst,
             boolean isPlatform,
-            boolean isImpl
+            boolean isImpl,
+            boolean isExternal
     ) {
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
-                                          modality, visibility, isVar, name, kind, source, lateInit, isConst, isPlatform, isImpl);
+                                          modality, visibility, isVar, name, kind, source, lateInit, isConst,
+                                          isPlatform, isImpl, isExternal);
     }
 
     public void setType(
@@ -197,6 +202,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     @Override
     public boolean isConst() {
         return isConst;
+    }
+
+    @Override
+    public boolean isExternal() {
+        return isExternal;
     }
 
     @Override
@@ -342,7 +352,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     ) {
         return new PropertyDescriptorImpl(
                 newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, SourceElement.NO_SOURCE,
-                isLateInit(), isConst(), isPlatform(), isImpl()
+                isLateInit(), isConst(), isPlatform(), isImpl(), isExternal()
         );
     }
 

@@ -55,7 +55,8 @@ class LazyJavaClassDescriptor(
         private val jClass: JavaClass,
         private val additionalSupertypeClassDescriptor: ClassDescriptor? = null
 ) : ClassDescriptorBase(outerContext.storageManager, containingDeclaration, jClass.name,
-                        outerContext.components.sourceElementFactory.source(jClass)), JavaClassDescriptor {
+                        outerContext.components.sourceElementFactory.source(jClass),
+                        /* isExternal = */ false), JavaClassDescriptor {
 
     private val c: LazyJavaResolverContext = outerContext.child(this, jClass)
 

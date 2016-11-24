@@ -128,7 +128,8 @@ class SpecialDescriptorsFactory(
                 objectDescriptor,
                 Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, false,
                 Name.identifier("INSTANCE"),
-                CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, false, false, false, false
+                CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false,
+                /* isPlatform = */ false, /* isImpl = */ false, /* isExternal = */ false
         ).initialize(objectDescriptor.defaultType)
 
         return instanceFieldDescriptor

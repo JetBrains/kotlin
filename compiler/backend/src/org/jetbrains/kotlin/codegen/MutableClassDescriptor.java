@@ -47,10 +47,11 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ClassKind kind,
             boolean isInner,
+            boolean isExternal,
             @NotNull Name name,
             @NotNull SourceElement source
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source, isExternal);
         assert kind != ClassKind.OBJECT : "Fix isCompanionObject()";
 
         this.kind = kind;

@@ -37,4 +37,6 @@ class FileClassDescriptorImpl(
     init {
         initialize(emptyList(), supertypes)
     }
+
+    override fun isExternal() = false
 }

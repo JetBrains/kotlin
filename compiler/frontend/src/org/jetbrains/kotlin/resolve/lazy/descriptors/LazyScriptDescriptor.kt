@@ -43,7 +43,8 @@ class LazyScriptDescriptor(
         resolveSession,
         containingDeclaration,
         name,
-        scriptInfo
+        scriptInfo,
+        /* isExternal = */ false
 ) {
     init {
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)

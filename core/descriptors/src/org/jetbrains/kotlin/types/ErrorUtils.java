@@ -286,7 +286,9 @@ public class ErrorUtils {
     private static class ErrorClassDescriptor extends ClassDescriptorImpl {
         public ErrorClassDescriptor(@Nullable String name) {
             super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
-                  Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE);
+                  Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE,
+                  /* isExternal = */ false
+            );
 
             ClassConstructorDescriptorImpl
                     errorConstructor = ClassConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
@@ -367,7 +369,8 @@ public class ErrorUtils {
                 /* lateInit = */ false,
                 /* isConst = */ false,
                 /* isPlatform = */ false,
-                /* isImpl = */ false
+                /* isImpl = */ false,
+                /* isExternal = */ false
         );
         descriptor.setType(ERROR_PROPERTY_TYPE,
                            Collections.<TypeParameterDescriptor>emptyList(),

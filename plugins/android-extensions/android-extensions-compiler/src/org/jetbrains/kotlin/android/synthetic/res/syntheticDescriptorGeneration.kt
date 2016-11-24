@@ -101,7 +101,11 @@ private fun genProperty(
             Name.identifier(id.name),
             CallableMemberDescriptor.Kind.SYNTHESIZED,
             sourceElement,
-            false, false, false, false
+            /* lateinit = */ false,
+            /* isConst = */ false,
+            /* isPlatform = */ false,
+            /* isImpl = */ false,
+            /* isExternal = */ false
     ) {
         override val errorType = errorType
         override val cacheView = cacheView

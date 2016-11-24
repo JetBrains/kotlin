@@ -75,7 +75,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull Annotations annotations,
             @NotNull SourceElement source
     ) {
-        super(storageManager, containingClass, name, source);
+        super(storageManager, containingClass, name, source, /* isExternal = */ false);
         assert containingClass.getKind() == ClassKind.ENUM_CLASS;
 
         this.annotations = annotations;

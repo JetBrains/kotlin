@@ -33,4 +33,6 @@ class DefaultImplsClassDescriptorImpl(
     init {
         initialize(emptyList(), listOf(correspondingInterface.module.builtIns.anyType))
     }
+
+    override fun isExternal() = false
 }

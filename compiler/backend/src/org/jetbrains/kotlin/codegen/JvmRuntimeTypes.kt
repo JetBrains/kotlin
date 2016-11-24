@@ -67,7 +67,8 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
     }
 
     private fun createClass(packageFragment: PackageFragmentDescriptor, name: String): ClassDescriptor =
-            MutableClassDescriptor(packageFragment, ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE).apply {
+            MutableClassDescriptor(packageFragment, ClassKind.CLASS, /* isInner = */ false, /* isExternal = */ false,
+                                   Name.identifier(name), SourceElement.NO_SOURCE).apply {
                 modality = Modality.FINAL
                 visibility = Visibilities.PUBLIC
                 setTypeParameterDescriptors(emptyList())

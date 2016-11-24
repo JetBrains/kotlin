@@ -47,9 +47,10 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull Modality modality,
             @NotNull ClassKind kind,
             @NotNull Collection<KotlinType> supertypes,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean isExternal
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source, isExternal);
         this.modality = modality;
         this.kind = kind;
 

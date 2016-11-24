@@ -33,7 +33,7 @@ class JvmBuiltInClassDescriptorFactory(
         ClassDescriptorImpl(
                 moduleDescriptor.getPackage(KOTLIN_FQ_NAME).fragments.filterIsInstance<BuiltInsPackageFragment>().first(),
                 CLONEABLE_NAME, Modality.ABSTRACT, ClassKind.INTERFACE, listOf(moduleDescriptor.builtIns.anyType),
-                SourceElement.NO_SOURCE
+                SourceElement.NO_SOURCE, /* isExternal = */ false
         ).apply {
             initialize(CloneableClassScope(storageManager, this), emptySet(), null)
         }

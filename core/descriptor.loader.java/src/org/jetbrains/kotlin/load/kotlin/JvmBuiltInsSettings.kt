@@ -87,9 +87,9 @@ open class JvmBuiltInsSettings(
         // - Otherwise error will be reported because of Deprecated annotation with Error level
         val lowPriorityAnnotation =
                 ClassDescriptorImpl(
-                        moduleDescriptor.getPackage(LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.parent()),
-                        LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.shortName(), Modality.FINAL, ClassKind.ANNOTATION_CLASS,
-                        moduleDescriptor.builtIns.anyType.singletonList(), SourceElement.NO_SOURCE
+                        moduleDescriptor.getPackage(LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.parent()), LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.shortName(),
+                        Modality.FINAL, ClassKind.ANNOTATION_CLASS, moduleDescriptor.builtIns.anyType.singletonList(),
+                        SourceElement.NO_SOURCE, /* isExternal = */ false
                 ).run {
                     initialize(MemberScope.Empty, emptySet(), null)
                     AnnotationDescriptorImpl(defaultType, emptyMap(), SourceElement.NO_SOURCE)
@@ -112,7 +112,8 @@ open class JvmBuiltInsSettings(
         val superTypes = listOf(LazyWrappedType(this) { moduleDescriptor.builtIns.anyType })
 
         val mockSerializableClass = ClassDescriptorImpl(
-                mockJavaIoPackageFragment, Name.identifier("Serializable"), Modality.ABSTRACT, ClassKind.INTERFACE, superTypes, SourceElement.NO_SOURCE
+                mockJavaIoPackageFragment, Name.identifier("Serializable"), Modality.ABSTRACT, ClassKind.INTERFACE, superTypes,
+                SourceElement.NO_SOURCE, /* isExternal = */ false
         )
 
         mockSerializableClass.initialize(MemberScope.Empty, emptySet(), null)

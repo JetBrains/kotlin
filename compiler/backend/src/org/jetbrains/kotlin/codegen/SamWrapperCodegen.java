@@ -84,7 +84,8 @@ public class SamWrapperCodegen {
                 Modality.FINAL,
                 ClassKind.CLASS,
                 Collections.singleton(samType.getType()),
-                SourceElement.NO_SOURCE
+                SourceElement.NO_SOURCE,
+                /* isExternal = */ false
         );
         // e.g. compare(T, T)
         SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal().copy(

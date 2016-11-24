@@ -99,7 +99,8 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                 /* lateInit = */ false,
                 /* isConst = */ false,
                 /* isPlatform = */ false,
-                /* isImpl = */ false
+                /* isImpl = */ false,
+                /* isExternal = */ false
         )
         propertyDescriptor.setType(
                 dynamicType,

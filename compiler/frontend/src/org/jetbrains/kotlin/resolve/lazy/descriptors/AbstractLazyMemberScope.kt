@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import com.google.common.collect.Sets
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -53,8 +54,10 @@ protected constructor(
         return declarationProvider.getClassOrObjectDeclarations(name).map {
             if (it is KtScriptInfo)
                 LazyScriptDescriptor(c as ResolveSession, thisDescriptor, name, it)
-            else
-                LazyClassDescriptor(c, thisDescriptor, name, it)
+            else {
+                val isExternal = it.modifierList?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: false
+                LazyClassDescriptor(c, thisDescriptor, name, it, isExternal)
+            }
         }.toReadOnlyList()
     }
 

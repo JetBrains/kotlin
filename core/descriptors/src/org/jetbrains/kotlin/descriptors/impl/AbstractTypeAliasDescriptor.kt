@@ -69,6 +69,8 @@ abstract class AbstractTypeAliasDescriptor(
 
     override fun isImpl(): Boolean = false
 
+    override fun isExternal() = false
+
     override fun getTypeConstructor(): TypeConstructor =
             typeConstructor
 

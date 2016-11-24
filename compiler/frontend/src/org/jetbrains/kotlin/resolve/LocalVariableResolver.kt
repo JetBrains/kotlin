@@ -148,7 +148,8 @@ class LocalVariableResolver(
                     /* lateInit = */ false,
                     /* isConst = */ false,
                     /* isPlatform = */ false,
-                    /* isImpl = */ false
+                    /* isImpl = */ false,
+                    /* isExternal = */ false
             )
             // For a local variable the type must not be deferred
             type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, trace, local = true)

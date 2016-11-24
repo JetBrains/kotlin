@@ -86,7 +86,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             name: Name,
             private val isInner: Boolean,
             numberOfDeclaredTypeParameters: Int
-    ) : ClassDescriptorBase(storageManager, container, name, SourceElement.NO_SOURCE) {
+    ) : ClassDescriptorBase(storageManager, container, name, SourceElement.NO_SOURCE, /* isExternal = */ false) {
         private val typeParameters = createTypeParameters(this, numberOfDeclaredTypeParameters)
 
         private val typeConstructor = ClassTypeConstructorImpl(this, /* isFinal = */ true, typeParameters, setOf(module.builtIns.anyType))
@@ -102,6 +102,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         override fun isData() = false
         override fun isPlatform() = false
         override fun isImpl() = false
+        override fun isExternal() = false
         override val annotations: Annotations get() = Annotations.EMPTY
 
         override fun getUnsubstitutedMemberScope() = MemberScope.Empty

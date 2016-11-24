@@ -75,8 +75,6 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
     boolean isTailrec();
 
-    boolean isExternal();
-
     boolean isHiddenForResolutionEverywhereBesideSupercalls();
 
     boolean isSuspend();

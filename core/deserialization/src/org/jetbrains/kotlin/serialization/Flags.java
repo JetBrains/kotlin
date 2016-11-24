@@ -35,6 +35,7 @@ public class Flags {
     public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
     public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
     public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
+    public static final BooleanFlagField IS_EXTERNAL_CLASS = FlagField.booleanAfter(IS_DATA);
 
     // Constructors
 
@@ -61,6 +62,7 @@ public class Flags {
     public static final BooleanFlagField IS_CONST = FlagField.booleanAfter(HAS_SETTER);
     public static final BooleanFlagField IS_LATEINIT = FlagField.booleanAfter(IS_CONST);
     public static final BooleanFlagField HAS_CONSTANT = FlagField.booleanAfter(IS_LATEINIT);
+    public static final BooleanFlagField IS_EXTERNAL_PROPERTY = FlagField.booleanAfter(HAS_CONSTANT);
 
     // Parameters
 

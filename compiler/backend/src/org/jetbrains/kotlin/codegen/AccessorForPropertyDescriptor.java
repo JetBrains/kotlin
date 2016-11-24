@@ -78,7 +78,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
         super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
               original.isVar(), Name.identifier("access$" + nameSuffix),
               Kind.DECLARATION, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false,
-              /* isPlatform = */ false, /* isImpl = */ false);
+              /* isPlatform = */ false, /* isImpl = */ false, /* isExternal = */ false);
 
         this.calleeDescriptor = original;
         this.superCallTarget = superCallTarget;

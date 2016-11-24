@@ -811,7 +811,8 @@ public class DescriptorResolver {
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.PLATFORM_KEYWORD) ||
                 containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isPlatform(),
-                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD)
+                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
+                modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD)
         );
         wrapper.setDescriptor(propertyDescriptor);
 
@@ -1128,7 +1129,8 @@ public class DescriptorResolver {
                 /* lateInit = */ false,
                 /* isConst = */ false,
                 /* isPlatform = */ false,
-                /* isImpl = */ false
+                /* isImpl = */ false,
+                /* isExternal = */ false
         );
         propertyWrapper.setDescriptor(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),

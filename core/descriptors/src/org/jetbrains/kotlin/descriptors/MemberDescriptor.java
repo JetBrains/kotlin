@@ -29,4 +29,6 @@ public interface MemberDescriptor extends DeclarationDescriptorNonRoot, Declarat
     boolean isPlatform();
 
     boolean isImpl();
+
+    boolean isExternal();
 }

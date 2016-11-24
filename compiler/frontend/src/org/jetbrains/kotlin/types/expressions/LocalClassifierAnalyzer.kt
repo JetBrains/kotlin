@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAnalyzer
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -152,7 +153,8 @@ class LocalClassDescriptorHolder(
                     ,
                     containingDeclaration,
                     classOrObject.getNameAsSafeName(),
-                    KtClassInfoUtil.createClassLikeInfo(classOrObject)
+                    KtClassInfoUtil.createClassLikeInfo(classOrObject),
+                    classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
             )
             writableScope?.addClassifierDescriptor(classDescriptor!!)
         }
