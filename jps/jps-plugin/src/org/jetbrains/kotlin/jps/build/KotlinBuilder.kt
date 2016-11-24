@@ -784,7 +784,7 @@ private fun CompilationResult.doProcessChanges(
     }
 }
 
-private class JpsIncReporter : IncReporter() {
+private class JpsICReporter : ICReporter() {
     override fun report(message: ()->String) {
         if (KotlinBuilder.LOG.isDebugEnabled) {
             KotlinBuilder.LOG.debug(message())
@@ -800,7 +800,7 @@ private fun CompilationResult.doProcessChangesUsingLookups(
 ) {
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
-    val reporter = JpsIncReporter()
+    val reporter = JpsICReporter()
 
     reporter.report { "Start processing changes" }
 
