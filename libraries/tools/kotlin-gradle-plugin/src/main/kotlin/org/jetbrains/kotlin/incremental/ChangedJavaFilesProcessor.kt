@@ -30,8 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.util.*
 
-internal class ChangedJavaFilesProcessor {
-    private val log = Logging.getLogger(this.javaClass.simpleName)
+internal class ChangedJavaFilesProcessor(private val reporter: ICReporter) {
     private val allSymbols = HashSet<LookupSymbol>()
     private val javaLang = JavaLanguage.INSTANCE
     private val psiFileFactory: PsiFileFactory by lazy {
@@ -50,7 +49,7 @@ internal class ChangedJavaFilesProcessor {
         val removedJava = filesDiff.removed.filter(File::isJavaFile)
 
         if (removedJava.any()) {
-            log.kotlinDebug { "Some java files are removed: [${removedJava.joinToString()}]" }
+            reporter.report { "Some java files are removed: [${removedJava.joinToString()}]" }
             return ChangesEither.Unknown()
         }
 
@@ -60,7 +59,7 @@ internal class ChangedJavaFilesProcessor {
 
             val psiFile = javaFile.psiFile()
             if (psiFile !is PsiJavaFile) {
-                log.kotlinDebug { "Expected PsiJavaFile, got ${psiFile?.javaClass}" }
+                reporter.report { "Expected PsiJavaFile, got ${psiFile?.javaClass}" }
                 return ChangesEither.Unknown()
             }
 

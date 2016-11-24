@@ -25,14 +25,17 @@ import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
-internal class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir: File?, target: TargetId) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
+internal class GradleIncrementalCacheImpl(
+        targetDataRoot: File,
+        targetOutputDir: File?,
+        target: TargetId,
+        private val reporter: ICReporter
+) : IncrementalCacheImpl<TargetId>(targetDataRoot, targetOutputDir, target) {
     companion object {
         private val SOURCES_TO_CLASSFILES = "sources-to-classfiles"
         private val GENERATED_SOURCE_SNAPSHOTS = "generated-source-snapshot"
         private val SOURCE_SNAPSHOTS = "source-snapshot"
     }
-
-    private val log = org.gradle.api.logging.Logging.getLogger(this.javaClass)
 
     internal val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(SOURCES_TO_CLASSFILES.storageFile))
     internal val generatedSourceSnapshotMap = registerMap(FileSnapshotMap(GENERATED_SOURCE_SNAPSHOTS.storageFile))
@@ -60,7 +63,7 @@ internal class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir:
             // TODO: do it in the code that uses cache, since cache should not generally delete anything outside of it!
             // but for a moment it is an easiest solution to implement
             get(file).forEach {
-                log.kotlinDebug { "Deleting $it on clearing cache for $file" }
+                reporter.report { "Deleting $it on clearing cache for $file" }
                 it.delete()
             }
             storage.remove(file.absolutePath)

@@ -112,7 +112,7 @@ internal class IncrementalJvmCompilerRunner(
             getChangedFiles: (IncrementalCachesManager)->ChangedFiles
     ): ExitCode {
         val targetId = TargetId(name = args.moduleName, type = "java-production")
-        var caches = IncrementalCachesManager(targetId, cacheDirectory, File(args.destination))
+        var caches = IncrementalCachesManager(targetId, cacheDirectory, File(args.destination), reporter)
 
         fun onError(e: Exception): ExitCode {
             caches.clean()
@@ -121,13 +121,13 @@ internal class IncrementalJvmCompilerRunner(
             // todo: warn?
             reporter.report { "Possible cache corruption. Rebuilding. $e" }
             // try to rebuild
-            val javaFilesProcessor = ChangedJavaFilesProcessor()
-            caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile)
+            val javaFilesProcessor = ChangedJavaFilesProcessor(reporter)
+            caches = IncrementalCachesManager(targetId, cacheDirectory, args.destinationAsFile, reporter)
             return compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, CompilationMode.Rebuild, messageCollector)
         }
 
         return try {
-            val javaFilesProcessor = ChangedJavaFilesProcessor()
+            val javaFilesProcessor = ChangedJavaFilesProcessor(reporter)
             val changedFiles = getChangedFiles(caches)
             val compilationMode = calculateSourcesToCompile(javaFilesProcessor, caches, changedFiles, args)
             compileIncrementally(args, caches, javaFilesProcessor, allKotlinSources, targetId, compilationMode, messageCollector)
