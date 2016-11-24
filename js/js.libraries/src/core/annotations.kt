@@ -20,18 +20,22 @@ import kotlin.annotation.AnnotationTarget.*
 
 @native
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
+@Deprecated("Use `external` modifier instead")
 public annotation class native(@Deprecated public val name: String = "")
 
 @native
 @Target(FUNCTION)
+@Deprecated
 public annotation class nativeGetter
 
 @native
 @Target(FUNCTION)
+@Deprecated
 public annotation class nativeSetter
 
 @native
 @Target(FUNCTION)
+@Deprecated
 public annotation class nativeInvoke
 
 @native
