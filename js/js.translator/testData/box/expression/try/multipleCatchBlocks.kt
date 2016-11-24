@@ -17,9 +17,9 @@ fun bar(e: Exception): String {
         s = "IllegalArgumentException"
         exceptionObject = e
     }
-    catch (e: IllegalStateException) {
+    catch (f: IllegalStateException) {
         s = "IllegalStateException"
-        exceptionObject = e
+        exceptionObject = f
     }
     catch (e: Exception) {
         s = "Exception"
