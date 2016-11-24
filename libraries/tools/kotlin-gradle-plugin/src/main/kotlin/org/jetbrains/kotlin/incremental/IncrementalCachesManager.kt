@@ -22,7 +22,8 @@ import java.io.File
 internal class IncrementalCachesManager (
         private val targetId: TargetId,
         private val cacheDirectory: File,
-        private val outputDir: File
+        private val outputDir: File,
+        private val reporter: ICReporter
 ) {
     private val incrementalCacheDir = File(cacheDirectory, "increCache.${targetId.name}")
     private val lookupCacheDir = File(cacheDirectory, "lookups")
@@ -32,7 +33,8 @@ internal class IncrementalCachesManager (
     val incrementalCache: GradleIncrementalCacheImpl
         get() {
             if (incrementalCacheField == null) {
-                incrementalCacheField = GradleIncrementalCacheImpl(targetDataRoot = incrementalCacheDir.apply { mkdirs() }, targetOutputDir = outputDir, target = targetId)
+                val targetDataRoot = incrementalCacheDir.apply { mkdirs() }
+                incrementalCacheField = GradleIncrementalCacheImpl(targetDataRoot, outputDir, targetId, reporter)
             }
 
             return incrementalCacheField!!
