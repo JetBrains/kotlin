@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -149,26 +151,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    override fun visitConstructor(declaration: IrConstructor) {
-        codegen.function(declaration)
-        val classDescriptor = DescriptorUtils.getContainingClass(declaration.descriptor)
+    override fun visitConstructor(constructorDeclaration: IrConstructor) {
+        codegen.function(constructorDeclaration)
+        val classDescriptor = DescriptorUtils.getContainingClass(constructorDeclaration.descriptor)
         val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
-        val typeOfClass = classDescriptor!!.defaultType
-        val names = typeOfClass.memberScope.getVariableNames()
-        val fields = codegen.fields(classDescriptor).toSet()
-        declaration.descriptor.valueParameters
-                .filter { names.contains(it.name) }                             // selects only parameters that match with declared class variables
-                .map {                                                          // maps parameter to list descriptors
-                    val variables = typeOfClass.memberScope.getContributedVariables(it.name, NoLookupLocation.FROM_BACKEND)
-                    assert(variables.size == 1)
-                    variables.first() }
-                .filter {fields.contains(it)}                                   // filter only fields that contains backing store
-                .forEach {                                                      // store parameters to backing storage
-                    val fieldPtr = fieldPtrOfClass(thisPtr, it)
-                    val variable = codegen.variable(it.name.asString())
-                    val value = codegen.load(variable!!, codegen.newVar())
-                    codegen.store(value, fieldPtr!!)
-                }
+
         /**
          * IR for kotlin.Any is:
          * BLOCK_BODY
@@ -178,11 +165,35 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
          *   to avoid possible recursion we manually reject body generation for Any.
          */
 
-        if (!skipConstructorBodyGeneration(declaration))
-            declaration.acceptChildrenVoid(this)
+        if (!skipConstructorBodyGeneration(constructorDeclaration))
+            constructorDeclaration.acceptChildrenVoid(this)
+
+        if (constructorDeclaration.descriptor.isPrimary) {
+            val irOfCurrentClass = context.moduleIndex.classes[classDescriptor!!.classId]
+            irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitField(fieldDeclaration: IrField) {
+
+                    val fieldDescriptor = fieldDeclaration.descriptor
+                    val fieldPtr = fieldPtrOfClass(thisPtr, fieldDescriptor)
+                    var value:LLVMValueRef? = null
+                    if (constructorDeclaration.descriptor.valueParameters.any{ it.name == fieldDescriptor.name }) {
+                        val variable = codegen.variable(fieldDescriptor.name.asString())
+                        value = codegen.load(variable!!, codegen.newVar())
+                    }
+                    else {
+                        value = evaluateExpression(codegen.newVar(), fieldDeclaration.initializer)
+                    }
+                    codegen.store(value!!, fieldPtr!!)
+                }
+            })
+        }
 
         codegen.ret(thisPtr)
-        logger.log("visitConstructor           : ${ir2string(declaration)}")
+        logger.log("visitConstructor           : ${ir2string(constructorDeclaration)}")
     }
 
 
@@ -328,7 +339,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return
         }
 
-        super.visitField(expression)
+        //super.visitField(expression)
 
     }
 
@@ -397,8 +408,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("evaluateGetValue           : $tmpVariableName = ${ir2string(value)}")
         when (value.descriptor) {
             is LocalVariableDescriptor,
-            is ValueParameterDescriptor,
-            is IrTemporaryVariableDescriptor -> {
+            is IrTemporaryVariableDescriptor,
+            is ValueParameterDescriptor -> {
                 val variable = codegen.variable(value.descriptor.name.asString())
                 return codegen.load(variable!!, tmpVariableName)
             }
