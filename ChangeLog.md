@@ -49,7 +49,6 @@
 - [`KT-12701`](https://youtrack.jetbrains.com/issue/KT-12701) Add a quickfix for `@JvmOverloads` on functions without default parameters, fix corresponding inspection range
 - [`KT-14326`](https://youtrack.jetbrains.com/issue/KT-14326) Implement Intention + Inspection to remove empty secondary constructor body
 - [`KT-14521`](https://youtrack.jetbrains.com/issue/KT-14521) Add Inspection to remove empty primary constructor
-- [`KT-14593`](https://youtrack.jetbrains.com/issue/KT-14593) Add a quickfix which removes a single lambda parameter if it's unused
 - [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) Convert Property to Function Intention: Search occurrences using progress dialog
 - [`KT-14501`](https://youtrack.jetbrains.com/issue/KT-14501) Create from Usage: Support array access expressions/binary expressions with type mismatch errors
 - [`KT-14500`](https://youtrack.jetbrains.com/issue/KT-14500) Create from Usage: Suggest functional type based on the call with lambda argument and unresolved invoke()
