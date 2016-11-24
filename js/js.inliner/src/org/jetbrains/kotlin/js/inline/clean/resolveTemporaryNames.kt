@@ -39,12 +39,14 @@ import com.google.dart.compiler.backend.js.ast.metadata.suspendObjectRef
 import org.jetbrains.kotlin.js.inline.util.collectReferencedTemporaryNames
 
 fun JsNode.resolveTemporaryNames() {
+    val allNames = collectReferencedTemporaryNames(this)
+
     val scopeTree = ScopeCollector().let {
         it.accept(this)
         it.scopeTree
     }
 
-    val renamings = scopeTree.resolveNames()
+    val renamings = scopeTree.resolveNames(allNames)
     accept(object : RecursiveJsVisitor() {
         override fun visitElement(node: JsNode) {
             super.visitElement(node)
@@ -65,10 +67,10 @@ fun JsNode.resolveTemporaryNames() {
     })
 }
 
-private fun Map<JsScope, Set<JsScope>>.resolveNames(): Map<JsName, JsName> {
+private fun Map<JsScope, Set<JsScope>>.resolveNames(knownNames: Set<JsName>): Map<JsName, JsName> {
     val replacements = mutableMapOf<JsName, JsName>()
     fun traverse(scope: JsScope) {
-        for (temporaryName in scope.temporaryNames.sortedBy { it.ordinal }) {
+        for (temporaryName in scope.temporaryNames.filter { it in knownNames }.sortedBy { it.ordinal }) {
             replacements[temporaryName] = scope.declareFreshName(temporaryName.ident).apply { copyMetadataFrom(temporaryName) }
         }
         this[scope]!!.forEach(::traverse)
