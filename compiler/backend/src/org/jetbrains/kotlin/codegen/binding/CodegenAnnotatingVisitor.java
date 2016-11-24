@@ -20,6 +20,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
+import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -431,6 +433,33 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
+
+        if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
+            SimpleFunctionDescriptor jvmSuspendFunctionView =
+                    CoroutineCodegenUtilKt.createJvmSuspendFunctionView(
+                            (SimpleFunctionDescriptor) functionDescriptor
+                    );
+
+            // This is a very subtle place (hack).
+            // When generating bytecode of some suspend function, we replace the original descriptor
+            // with one that reflects how it should look on JVM.
+            // But the problem is that the function may contain resolved calls referencing original parameters, that are recreated
+            // in jvmSuspendFunctionView.
+            // So we remember the relation between the old and the new parameter descriptors and use it when looking for their indices
+            // in ExpressionCodegen.
+            for (Pair<ValueParameterDescriptor, ValueParameterDescriptor> parameterDescriptorPair : CollectionsKt
+                    .zip(functionDescriptor.getValueParameters(), jvmSuspendFunctionView.getValueParameters())) {
+                bindingTrace.record(
+                        CodegenBinding.PARAMETER_SYNONYM, parameterDescriptorPair.getFirst(), parameterDescriptorPair.getSecond()
+                );
+            }
+
+            bindingTrace.record(
+                    CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
+                    (SimpleFunctionDescriptor) functionDescriptor,
+                    jvmSuspendFunctionView
+            );
+        }
 
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
         if (nameForClassOrPackageMember != null) {

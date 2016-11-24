@@ -171,7 +171,7 @@ class CoroutineTransformerMethodVisitor(
                             suspensionCallBegin = beforeSuspensionPointMarker,
                             suspensionCallEnd = methodInsn,
                             fakeReturnValueInsns = fakeReturnValueInsns,
-                            returnType = Type.getType((beforeSuspensionPointMarker.previous as LdcInsnNode).cst as String))
+                            returnType = (beforeSuspensionPointMarker.previous as LdcInsnNode).cst as Type)
                     suspensionPoints.add(suspensionPoint)
 
                     // Drop type info from marker

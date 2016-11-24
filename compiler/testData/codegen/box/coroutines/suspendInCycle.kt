@@ -1,9 +1,9 @@
 class Controller {
     var i = 0
-    suspend fun suspendHere(x: Continuation<Int>) {
+    suspend fun suspendHere(): Int = suspendWithCurrentContinuation { x ->
         x.resume(i++)
     }
-    suspend fun suspendThere(x: Continuation<String>) {
+    suspend fun suspendThere(): String = suspendWithCurrentContinuation { x ->
         x.resume("?")
     }
 

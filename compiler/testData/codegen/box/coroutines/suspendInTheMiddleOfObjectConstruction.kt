@@ -1,13 +1,13 @@
 class Controller {
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("K")
     }
 
-    suspend fun suspendWithArgument(v: String, x: Continuation<String>) {
+    suspend fun suspendWithArgument(v: String): String = suspendWithCurrentContinuation { x ->
         x.resume(v)
     }
 
-    suspend fun suspendWithDouble(v: Double, x: Continuation<Double>) {
+    suspend fun suspendWithDouble(v: Double): Double = suspendWithCurrentContinuation { x ->
         x.resume(v)
     }
 

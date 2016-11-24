@@ -3,13 +3,13 @@ class Controller {
     var exception: Throwable? = null
     val postponedActions = ArrayList<() -> Unit>()
 
-    suspend fun suspendWithValue(v: String, x: Continuation<String>) {
+    suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->
         postponedActions.add {
             x.resume(v)
         }
     }
 
-    suspend fun suspendWithException(e: Exception, x: Continuation<String>) {
+    suspend fun suspendWithException(e: Exception): String = suspendWithCurrentContinuation { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }

@@ -71,6 +71,12 @@ public class CodegenBinding {
     public static final WritableSlice<KtElement, FunctionGenerationStrategy> CUSTOM_STRATEGY_FOR_INLINE_LAMBDA = Slices.createSimpleSlice();
     public static final WritableSlice<KtElement, FunctionDescriptor> CUSTOM_DESCRIPTOR_FOR_INLINE_LAMBDA = Slices.createSimpleSlice();
 
+    public static final WritableSlice<SimpleFunctionDescriptor, SimpleFunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
+            Slices.createSimpleSlice();
+
+    public static final WritableSlice<ValueParameterDescriptor, ValueParameterDescriptor> PARAMETER_SYNONYM =
+            Slices.createSimpleSlice();
+
     static {
         BasicWritableSlice.initSliceDebugNames(CodegenBinding.class);
     }

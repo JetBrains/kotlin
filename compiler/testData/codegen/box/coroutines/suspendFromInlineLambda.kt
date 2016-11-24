@@ -1,5 +1,5 @@
 class Controller {
-    suspend fun suspendHere(v: Int, x: Continuation<Int>) {
+    suspend fun suspendHere(v: Int): Int = suspendWithCurrentContinuation { x ->
         x.resume(v * 2)
     }
 

@@ -8,7 +8,7 @@
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendAndLog(value: T, c: Continuation<T>) {
+    suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { c ->
         result += "suspend($value);"
         c.resume(value)
     }

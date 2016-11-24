@@ -17,13 +17,19 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -32,13 +38,16 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.resolve.coroutine.REPLACED_SUSPENSION_POINT_KEY
-import org.jetbrains.kotlin.resolve.coroutine.SUSPENSION_POINT_KEY
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 // These classes do not actually exist at runtime
 val CONTINUATION_METHOD_ANNOTATION_DESC = "Lkotlin/ContinuationMethod;"
@@ -54,30 +63,26 @@ const val COROUTINE_CONTROLLER_FIELD_NAME = "_controller"
 const val COROUTINE_CONTROLLER_GETTER_NAME = "getController"
 const val COROUTINE_LABEL_FIELD_NAME = "label"
 
-data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeThisExpression: KtExpression)
+data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeContinuationExpression: KtExpression)
 
+@JvmField
+val INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION = object : FunctionDescriptor.UserDataKey<FunctionDescriptor> {}
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
-// See `createCoroutineSuspensionFunctionView` and it's usages for clarification
+// See `createJvmSuspendFunctionView` and it's usages for clarification
 // But for call generation it's convenient to have `machine` (continuation) parameter/argument within resolvedCall.
 // So this function returns resolved call with descriptor looking like `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // and fake `this` expression that used as argument for second parameter
-fun ResolvedCall<*>.replaceSuspensionFunctionViewWithRealDescriptor(
-        project: Project
+fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
+        project: Project,
+        bindingContext: BindingContext
 ): ResolvedCallWithRealDescriptor? {
-    val function = candidateDescriptor as? FunctionDescriptor ?: return null
-    if (!isSuspensionPoint()) return null
-
-    val initialSignatureDescriptor = function.initialSignatureDescriptor ?: return null
-    if (function.getUserData(REPLACED_SUSPENSION_POINT_KEY) == true) return null
+    val function = candidateDescriptor as? SimpleFunctionDescriptor ?: return null
+    if (!function.isSuspend || function.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) return null
 
     val newCandidateDescriptor =
-            initialSignatureDescriptor.createCustomCopy {
-                setPreserveSourceElement()
-                setSignatureChange()
-                putUserData(SUSPENSION_POINT_KEY, true)
-                putUserData(REPLACED_SUSPENSION_POINT_KEY, true)
-            }
+            bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, function)
+            ?: createJvmSuspendFunctionView(function)
 
     val newCall = ResolvedCallImpl(
             call,
@@ -180,13 +185,35 @@ fun createResolvedCallForInterceptResume(
     return InterceptResumeCallContext(resolvedCall, thisExpression)
 }
 
-fun ResolvedCall<*>.isSuspensionPoint() =
-        (candidateDescriptor as? FunctionDescriptor)?.let { it.isSuspend && it.getUserData(SUSPENSION_POINT_KEY) ?: false }
-        ?: false
+fun ResolvedCall<*>.isSuspensionPoint(bindingContext: BindingContext) =
+        bindingContext[BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, call] != null
 
-private fun FunctionDescriptor.createCustomCopy(
-        copySettings: FunctionDescriptor.CopyBuilder<out FunctionDescriptor>.(FunctionDescriptor) -> FunctionDescriptor.CopyBuilder<out FunctionDescriptor>
-): FunctionDescriptor {
+// Suspend functions have irregular signatures on JVM, containing an additional last parameter with type `Continuation<return-type>`,
+// and return type Unit (later it will be replaced with 'Any?')
+// This function returns a function descriptor reflecting how the suspend function looks from point of view of JVM
+fun <D : FunctionDescriptor> createJvmSuspendFunctionView(function: D): D {
+    val continuationParameter = ValueParameterDescriptorImpl(
+            function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("\$continuation"),
+            function.getContinuationParameterTypeOfSuspendFunction(),
+            /* declaresDefaultValue = */ false, /* isCrossinline = */ false,
+            /* isNoinline = */ false, /* isCoroutine = */ false, /* varargElementType = */ null, SourceElement.NO_SOURCE
+    )
+
+    return function.createCustomCopy {
+        setPreserveSourceElement()
+        setReturnType(function.builtIns.unitType)
+        setValueParameters(it.valueParameters + continuationParameter)
+        putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, it)
+    }
+}
+
+typealias FunctionDescriptorCopyBuilderToFunctionDescriptorCopyBuilder =
+    FunctionDescriptor.CopyBuilder<out FunctionDescriptor>.(FunctionDescriptor)
+        -> FunctionDescriptor.CopyBuilder<out FunctionDescriptor>
+
+private fun <D : FunctionDescriptor> D.createCustomCopy(
+        copySettings: FunctionDescriptorCopyBuilderToFunctionDescriptorCopyBuilder
+): D {
 
     val newOriginal =
             if (original !== this)
@@ -198,8 +225,17 @@ private fun FunctionDescriptor.createCustomCopy(
 
     result.overriddenDescriptors = this.overriddenDescriptors.map { it.createCustomCopy(copySettings) }
 
-    return result
+    @Suppress("UNCHECKED_CAST")
+    return result as D
 }
+
+private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction() =
+        KotlinTypeFactory.simpleType(
+                builtIns.continuationClassDescriptor.defaultType,
+                arguments = listOf(returnType!!.asTypeProjection())
+        )
+
+val KotlinBuiltIns.continuationClassDescriptor get() = getBuiltInClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)
 
 fun KotlinType.hasInlineInterceptResume() =
         findOperatorInController(this, OperatorNameConventions.COROUTINE_INTERCEPT_RESUME)?.isInline == true
@@ -209,3 +245,55 @@ fun KotlinType.hasNoinlineInterceptResume() =
 
 fun findOperatorInController(controllerType: KotlinType, name: Name): SimpleFunctionDescriptor? =
         controllerType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).singleOrNull { it.isOperator }
+
+val SUSPEND_WITH_CURRENT_CONTINUATION_NAME = Name.identifier("suspendWithCurrentContinuation")
+
+fun FunctionDescriptor.isBuiltInSuspendWithCurrentContinuation(): Boolean {
+    if (name != SUSPEND_WITH_CURRENT_CONTINUATION_NAME) return false
+
+    val originalDeclaration =
+            builtIns.builtInsPackageFragments.singleOrNull { it.fqName == KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME }
+                    ?.getMemberScope()
+                    ?.getContributedFunctions(SUSPEND_WITH_CURRENT_CONTINUATION_NAME, NoLookupLocation.FROM_BACKEND)
+                    ?.singleOrNull()
+                    ?: return false
+
+    return DescriptorEquivalenceForOverrides.areEquivalent(
+            originalDeclaration, this.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
+    )
+}
+
+fun createMethodNodeForSuspendWithCurrentContinuation(
+        functionDescriptor: FunctionDescriptor,
+        typeMapper: KotlinTypeMapper
+): MethodNode {
+    assert(functionDescriptor.isBuiltInSuspendWithCurrentContinuation()) {
+        "functionDescriptor must be kotlin.coroutines.suspendWithCurrentContinuation"
+    }
+
+    val node =
+            MethodNode(
+                    Opcodes.ASM5,
+                    Opcodes.ACC_STATIC,
+                    "fake",
+                    typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
+            )
+
+    node.visitVarInsn(Opcodes.ALOAD, 0)
+    node.visitVarInsn(Opcodes.ALOAD, 1)
+    node.visitMethodInsn(
+            Opcodes.INVOKEINTERFACE,
+            typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
+            OperatorNameConventions.INVOKE.identifier,
+            "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
+            true
+    )
+    node.visitInsn(Opcodes.POP)
+    node.visitInsn(Opcodes.RETURN)
+    node.visitMaxs(2, 2)
+
+    return node
+}
+
+fun CallableDescriptor?.unwrapInitialDescriptorForSuspendFunction() =
+        (this as? SimpleFunctionDescriptor)?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) ?: this

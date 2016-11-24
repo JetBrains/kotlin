@@ -1,9 +1,7 @@
 class Controller {
-    suspend fun suspendHere(x: Continuation<String>) {
-        suspendThere(x)
-    }
+    suspend fun suspendHere(): String = suspendThere()
 
-    suspend fun suspendThere(x: Continuation<String>) {
+    suspend fun suspendThere(): String = suspendWithCurrentContinuation { x ->
         x.resume("OK")
     }
 

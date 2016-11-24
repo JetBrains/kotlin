@@ -3,7 +3,7 @@
 package lib
 
 class Controller {
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("OK")
     }
 

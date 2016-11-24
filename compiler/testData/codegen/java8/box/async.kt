@@ -53,7 +53,7 @@ class FutureController<T> {
     val future = CompletableFuture<T>()
 
 
-    suspend fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>) {
+    suspend fun <V> await(f: CompletableFuture<V>) = suspendWithCurrentContinuation<V> { machine ->
         f.whenComplete { value, throwable ->
             if (throwable == null)
                 machine.resume(value)

@@ -4,7 +4,7 @@ class Controller {
         result = "OK"
     }
 
-    suspend fun <T> await(t: T, c: Continuation<T>) {
+    suspend fun <T> await(t: T): T = suspendWithCurrentContinuation { c ->
         c.resume(t)
     }
 

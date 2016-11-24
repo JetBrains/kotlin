@@ -1,5 +1,5 @@
 class Controller {
-    suspend fun suspendHere(a: String = "abc", i: Int = 2, x: Continuation<String>) {
+    suspend fun suspendHere(a: String = "abc", i: Int = 2): String = suspendWithCurrentContinuation { x ->
         x.resume(a + "#" + (i + 1))
     }
 

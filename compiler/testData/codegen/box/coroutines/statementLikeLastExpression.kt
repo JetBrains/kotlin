@@ -1,6 +1,6 @@
 var globalResult = ""
 class Controller {
-    suspend fun suspendWithValue(v: String, x: Continuation<String>) {
+    suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->
         x.resume(v)
     }
 

@@ -1,23 +1,17 @@
 @AllowSuspendExtensions
 class Controller {
-    suspend fun String.suspendHere(x: Continuation<String>) {
+    suspend fun String.suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume(this)
     }
 
-    inline suspend fun String.inlineSuspendHere(x: Continuation<String>) {
-        suspendHere(x)
-    }
+    inline suspend fun String.inlineSuspendHere(): String = suspendHere()
 
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-suspend fun Controller.suspendExtension(v: String, x: Continuation<String>) {
-    v.suspendHere(x)
-}
+suspend fun Controller.suspendExtension(v: String): String = v.suspendHere()
 
-inline suspend fun Controller.inlineSuspendExtension(v: String, x: Continuation<String>) {
-    v.inlineSuspendHere(x)
-}
+inline suspend fun Controller.inlineSuspendExtension(v: String): String = v.inlineSuspendHere()
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
     c(Controller()).resume(Unit)

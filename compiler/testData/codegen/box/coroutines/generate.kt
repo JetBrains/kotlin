@@ -43,7 +43,7 @@ class GeneratorController<T>() : AbstractIterator<T>() {
         this.nextStep = step
     }
 
-    suspend fun yield(value: T, c: Continuation<Unit>) {
+    suspend fun yield(value: T): Unit = suspendWithCurrentContinuation { c ->
         setNext(value)
         setNextStep(c)
     }

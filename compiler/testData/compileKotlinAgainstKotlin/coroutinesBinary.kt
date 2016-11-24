@@ -1,7 +1,7 @@
 // FILE: A.kt
 package a
 class Controller {
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere() = suspendWithCurrentContinuation<String> { x ->
         x.resume("OK")
     }
 }

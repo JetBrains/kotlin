@@ -1,6 +1,6 @@
 class Controller {
     var res = 0
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("OK")
     }
 

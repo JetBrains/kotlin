@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 class Controller {
-    suspend fun suspendHere(x: Continuation<Unit>) {
+    suspend fun suspendHere(): Unit = suspendWithCurrentContinuation { x ->
         x.resume(Unit)
     }
 }

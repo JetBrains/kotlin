@@ -1,5 +1,6 @@
+// WITH_RUNTIME
 class Controller {
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("OK")
     }
 
@@ -13,11 +14,11 @@ fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
 fun box(): String {
     var result = "fail"
 
-    val lambda: Controller.() -> Continuation<Unit> = {
+    val lambda: Controller.() -> Continuation<Unit> = l1@{
         object : Continuation<Any?> {
             override fun resume(data: Any?) {
                 if (data == Unit) {
-                    suspendHere(this)
+                    this@l1.javaClass.getMethod("suspendHere", Continuation::class.java).invoke(this@l1, this)
                     return
                 }
 

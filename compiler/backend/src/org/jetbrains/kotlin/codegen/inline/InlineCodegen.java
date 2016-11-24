@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
@@ -245,6 +246,14 @@ public class InlineCodegen extends CallGenerator {
                             codegen.getState().getTypeMapper()
                     );
             return new SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1));
+        }
+        else if (CoroutineCodegenUtilKt.isBuiltInSuspendWithCurrentContinuation(functionDescriptor)) {
+            return new SMAPAndMethodNode(
+                    CoroutineCodegenUtilKt.createMethodNodeForSuspendWithCurrentContinuation(
+                            functionDescriptor, codegen.getState().getTypeMapper()
+                    ),
+                    SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+            );
         }
 
         final GenerationState state = codegen.getState();

@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
@@ -81,9 +82,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isAnnotationOrJvm6Interface;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8Interface;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceMember;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
@@ -126,6 +125,10 @@ public class FunctionCodegen {
         SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
         if (functionDescriptor == null) {
             throw ExceptionLogger.logDescriptorNotFound("No descriptor for function " + function.getName(), function);
+        }
+
+        if (bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor) != null) {
+            functionDescriptor = bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor);
         }
 
         if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {

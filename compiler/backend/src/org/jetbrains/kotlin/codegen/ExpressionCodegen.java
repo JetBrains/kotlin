@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
+import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
@@ -1900,13 +1901,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     public StackValue genCoroutineInstanceValueFromResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
-        ExtensionReceiver controllerReceiver = getControllerReceiverFromResolvedCall(resolvedCall);
-        ClassDescriptor coroutineClassDescriptor =
-                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, controllerReceiver.getDeclarationDescriptor());
-        assert coroutineClassDescriptor != null : "Coroutine class descriptor should not be null";
+        return getCoroutineInstanceValueByReceiver(getControllerReceiverFromResolvedCall(resolvedCall));
+    }
 
-        // second argument for handleResult is always Continuation<T> ('this'-object in current implementation)
+    @NotNull
+    private StackValue getCoroutineInstanceValueByReceiver(
+            @NotNull ExtensionReceiver descriptor
+    ) {
+        ClassDescriptor coroutineClassDescriptor =
+                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, descriptor.getDeclarationDescriptor());
+        assert coroutineClassDescriptor != null : "Coroutine class descriptor should not be null";
         return StackValue.thisOrOuter(this, coroutineClassDescriptor, false, false);
+    }
+
+    @Nullable
+    private StackValue getCoroutineInstanceValueForSuspensionPoint(@NotNull ResolvedCall<?> resolvedCall) {
+        CoroutineReceiverValue coroutineReceiverValue =
+                bindingContext.get(COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, resolvedCall.getCall());
+
+        if (coroutineReceiverValue == null) return null;
+
+        return getCoroutineInstanceValueByReceiver(coroutineReceiverValue);
     }
 
     private static ExtensionReceiver getControllerReceiverFromResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
@@ -2515,7 +2530,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     public int lookupLocalIndex(DeclarationDescriptor descriptor) {
-        return myFrameMap.getIndex(descriptor);
+        return myFrameMap.getIndex(getParameterSynonymOrThis(descriptor));
+    }
+
+    private DeclarationDescriptor getParameterSynonymOrThis(DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof ValueParameterDescriptor)) return descriptor;
+
+        DeclarationDescriptor synonym = bindingContext.get(CodegenBinding.PARAMETER_SYNONYM, (ValueParameterDescriptor) descriptor);
+        return synonym != null ? synonym : descriptor;
     }
 
     @NotNull
@@ -2754,9 +2776,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         ResolvedCallWithRealDescriptor callWithRealDescriptor =
-                CoroutineCodegenUtilKt.replaceSuspensionFunctionViewWithRealDescriptor(resolvedCall, state.getProject());
+                CoroutineCodegenUtilKt.replaceSuspensionFunctionWithRealDescriptor(
+                        resolvedCall, state.getProject(), state.getBindingContext()
+                );
         if (callWithRealDescriptor != null) {
-            tempVariables.put(callWithRealDescriptor.getFakeThisExpression(), genCoroutineInstanceValueFromResolvedCall(resolvedCall));
+            StackValue coroutineInstanceValueForSuspensionPoint = getCoroutineInstanceValueForSuspensionPoint(resolvedCall);
+            StackValue coroutineInstanceValue =
+                    coroutineInstanceValueForSuspensionPoint != null
+                    ? coroutineInstanceValueForSuspensionPoint
+                    : getContinuationParameterFromEnclosingSuspendFunction(resolvedCall);
+            tempVariables.put(callWithRealDescriptor.getFakeContinuationExpression(), coroutineInstanceValue);
+
             return invokeFunction(callWithRealDescriptor.getResolvedCall(), receiver);
         }
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
@@ -2778,12 +2808,31 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         StackValue result = callable.invokeMethodWithArguments(resolvedCall, receiver, this);
 
-        if (CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall)) {
+        if (CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, bindingContext)) {
             // Suspension points should behave like they leave actual values on stack, while real methods return VOID
             return new OperationStackValue(getSuspensionReturnTypeByResolvedCall(resolvedCall), ((OperationStackValue) result).getLambda());
         }
 
         return result;
+    }
+
+    private StackValue getContinuationParameterFromEnclosingSuspendFunction(@NotNull ResolvedCall<?> resolvedCall) {
+        SimpleFunctionDescriptor enclosingSuspendFunction =
+                bindingContext.get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
+
+        assert enclosingSuspendFunction != null
+                : "Suspend functions may be called either as suspension points or from another suspend function";
+
+        SimpleFunctionDescriptor enclosingSuspendFunctionJvmView =
+                bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, enclosingSuspendFunction);
+
+        assert enclosingSuspendFunctionJvmView != null : "No JVM view function found for " + enclosingSuspendFunction;
+
+        ValueParameterDescriptor continuationParameter =
+                enclosingSuspendFunctionJvmView.getValueParameters()
+                        .get(enclosingSuspendFunctionJvmView.getValueParameters().size() - 1);
+
+        return findLocalOrCapturedValue(continuationParameter);
     }
 
     @Nullable
@@ -2838,7 +2887,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
-        boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall);
+        boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, bindingContext);
         if (isSuspensionPoint) {
             // Inline markers are used to spill the stack before coroutine suspension
             addInlineMarker(v, true);
@@ -2876,11 +2925,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (isSuspensionPoint) {
-            v.aconst(getSuspensionReturnTypeByResolvedCall(resolvedCall).getDescriptor());
+            v.tconst(getSuspensionReturnTypeByResolvedCall(resolvedCall));
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,
-                    "(Ljava/lang/String;)V", false);
+                    "(Ljava/lang/Class;)V", false);
         }
 
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
@@ -2905,8 +2954,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert resolvedCall.getResultingDescriptor() instanceof SimpleFunctionDescriptor
                 : "Suspension point resolved call should be built on SimpleFunctionDescriptor";
 
-        KotlinType returnType = org.jetbrains.kotlin.resolve.coroutine.CoroutineUtilKt
-                .getSuspensionPointReturnType((SimpleFunctionDescriptor) resolvedCall.getResultingDescriptor());
+        FunctionDescriptor initialSignature =
+                ((SimpleFunctionDescriptor) resolvedCall.getResultingDescriptor())
+                        .getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION);
+
+        assert initialSignature != null : "Initial signature must be not null for suspension point";
+
+        KotlinType returnType = initialSignature.getReturnType();
 
         assert returnType != null : "Return type of suspension point should not be null";
         return typeMapper.mapType(returnType);

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.coroutines.continuationClassDescriptor
 import org.jetbrains.kotlin.codegen.coroutines.hasNoinlineInterceptResume
 import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
 import org.jetbrains.kotlin.descriptors.*
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.util.createFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
@@ -59,7 +59,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
      * @return `Continuation<Any?>` type
      */
     private fun createNullableAnyContinuation(module: ModuleDescriptor): KotlinType {
-        val classDescriptor = module.builtIns.getBuiltInClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)
+        val classDescriptor = module.builtIns.continuationClassDescriptor
 
         return TypeConstructorSubstitution.createByParametersMap(
                 mapOf(classDescriptor.declaredTypeParameters.single() to TypeProjectionImpl(module.builtIns.nullableAnyType))

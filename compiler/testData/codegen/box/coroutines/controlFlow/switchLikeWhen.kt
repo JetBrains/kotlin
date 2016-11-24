@@ -4,7 +4,7 @@
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendWithResult(value: T, c: Continuation<T>) {
+    suspend fun <T> suspendWithResult(value: T): T = suspendWithCurrentContinuation { c ->
         result += "["
         c.resume(value)
     }

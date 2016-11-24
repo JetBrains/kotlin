@@ -8,17 +8,13 @@ class Controller {
         x.resume(v)
     }
 
-    suspend inline fun suspendInline(v: String, x: Continuation<String>) {
+    suspend inline fun suspendInline(v: String): String = suspendWithCurrentContinuation { x ->
         withValue(v, x)
     }
 
-    suspend inline fun suspendInline(crossinline b: () -> String, x: Continuation<String>) {
-        suspendInline(b(), x)
-    }
+    suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())
 
-    suspend inline fun <reified T : Any> suspendInline(x: Continuation<String>) {
-        suspendInline({ T::class.simpleName!! }, x)
-    }
+    suspend inline fun <reified T : Any> suspendInline(): String = suspendInline({ T::class.simpleName!! })
 
     // INTERCEPT_RESUME_PLACEHOLDER
 }

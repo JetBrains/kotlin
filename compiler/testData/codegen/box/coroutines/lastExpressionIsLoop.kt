@@ -1,7 +1,7 @@
 class Controller {
     var result = ""
     var ok = false
-    suspend fun suspendHere(v: String, x: Continuation<Unit>) {
+    suspend fun suspendHere(v: String): Unit = suspendWithCurrentContinuation { x ->
         result += v
         x.resume(Unit)
     }

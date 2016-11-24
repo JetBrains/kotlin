@@ -2,12 +2,12 @@
 // WITH_REFLECT
 
 class Controller {
-    suspend fun runInstanceOf(x: Continuation<Boolean>) {
+    suspend fun runInstanceOf(): Boolean = suspendWithCurrentContinuation { x ->
         val y: Any = x
         x.resume(x is Continuation<*>)
     }
 
-    suspend fun runCast(x: Continuation<Boolean>) {
+    suspend fun runCast(): Boolean = suspendWithCurrentContinuation { x ->
         val y: Any = x
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
     }

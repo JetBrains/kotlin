@@ -1,8 +1,9 @@
 class Controller {
     var lastSuspension: Continuation<String>? = null
     var result = "fail"
-    suspend fun suspendHere(x: Continuation<String>) {
+    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         lastSuspension = x
+        Unit
     }
 
     fun hasNext() = lastSuspension != null
