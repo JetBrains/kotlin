@@ -1768,6 +1768,14 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaInspection"
+                     displayName="Can be replaced with lambda"
+                     groupName="Kotlin"
+                     enabledByDefault="false"
+                     level="INFO"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveSetterParameterTypeInspection"
                      displayName="Redundant setter parameter type"
                      groupName="Kotlin"
