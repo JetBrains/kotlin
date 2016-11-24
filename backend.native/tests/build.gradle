@@ -51,7 +51,7 @@ abstract class KonanTest extends DefaultTask {
     @TaskAction
     void executeTest() {
         def sourceS = bc2s(kt2bc(source))
-        def exe = new File(sourceS.absolutePath.replace(".kt.S", ""))
+        def exe = new File(sourceS.absolutePath.replace(".kt.S", ".kt.exe"))
         def libraryPath = new File("${runtimeProject.file('src/main/bc').absolutePath}")
         compileTest(sourceS, bc2s(runtimeBc), stdlibKtBc, exe)
         println "execution :${exe.absolutePath}"
