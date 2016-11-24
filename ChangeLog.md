@@ -5,9 +5,32 @@
 
 ## 1.0.6
 
+### Compiler
+- [`KT-12224`](https://youtrack.jetbrains.com/issue/KT-12224) Add a diagnostic message for `@JvmOverloads` on interface methods
+- [`KT-14678`](https://youtrack.jetbrains.com/issue/KT-14678) Internal error with `@JvmOverloads` on constructor of inner class
+- [`KT-12664`](https://youtrack.jetbrains.com/issue/KT-12664) Inner class is not found when a sub-directory with the same name is present in an outer class directory
+- [`KT-14186`](https://youtrack.jetbrains.com/issue/KT-14186) Kotlin vararg parameters are generated as simple array parameters for Java
+- [`KT-14408`](https://youtrack.jetbrains.com/issue/KT-14408) Kotlin should always generate a no-args constructor if all primary constuctor arguments have a default value
+- [`KT-14469`](https://youtrack.jetbrains.com/issue/KT-14469) StackOverflowError at EffectiveVisibilityKt.forVisibility
+- [`KT-14581`](https://youtrack.jetbrains.com/issue/KT-14581) NullPointerException at StackTransformationUtils when inlining extension function to a `do-while` loop condition
+- [`KT-14751`](https://youtrack.jetbrains.com/issue/KT-14751) Kotlin 1.0.5 cannot resolve class (related to annotation on types)
+
+### Stdlib
+- [`KT-14883`](https://youtrack.jetbrains.com/issue/KT-14883) Performance tune: Use byte array buffer directly to read the entire contents of a file.
+
+### JS
+- [`KT-12976`](https://youtrack.jetbrains.com/issue/KT-12976) Print human-friendly error message on wrong modules order
+- [`KT-13792`](https://youtrack.jetbrains.com/issue/KT-13792) Inner class of local class does not capture the enclosing class properly
+- [`KT-13912`](https://youtrack.jetbrains.com/issue/KT-13912) NullPointerException at JsSourceGenerationVisitor when a Lambda with empty if block passed to inline function
+- [`KT-14535`](https://youtrack.jetbrains.com/issue/KT-14535) Broken modification of captured variables defined by a destructuring declaration
+- [`KT-14752`](https://youtrack.jetbrains.com/issue/KT-14752) Exception while typing `@JsName` annotation in editor
+- Update JavaScript platform declarations (DOM, Events, etc) to latest spec
+- Types that exist in runtime are now generated as abstract classes while non-existing types are now interfaces
+
 ### IDE
 - [`KT-14215`](https://youtrack.jetbrains.com/issue/KT-14215) Show members of anonymous objects in File Structure window
 - [`KT-14217`](https://youtrack.jetbrains.com/issue/KT-14217) Support visibility filters in File Structure window
+- Implement Kotlin facet
 
 #### Issues fixed
 - [`KT-6535`](https://youtrack.jetbrains.com/issue/KT-6535) "Go to Symbol" does not include Enum constants
@@ -21,7 +44,6 @@
 - [`KT-14741`](https://youtrack.jetbrains.com/issue/KT-14741) Default JVM target is inferred to 1.8 for module with dependency on JDK 1.7
 - [`KT-13354`](https://youtrack.jetbrains.com/issue/KT-13354) Unstable resolve of value parameter types in IDE tests
 
-
 #### Inspections, Intentions and Quickfixes
 - [`KT-12095`](https://youtrack.jetbrains.com/issue/KT-12095) Implement "Join Declaration and Assignment" intention
 - [`KT-12701`](https://youtrack.jetbrains.com/issue/KT-12701) Add a quickfix for `@JvmOverloads` on functions without default parameters, fix corresponding inspection range
@@ -31,63 +53,47 @@
 - [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) Convert Property to Function Intention: Search occurrences using progress dialog
 - [`KT-14501`](https://youtrack.jetbrains.com/issue/KT-14501) Create from Usage: Support array access expressions/binary expressions with type mismatch errors
 - [`KT-14500`](https://youtrack.jetbrains.com/issue/KT-14500) Create from Usage: Suggest functional type based on the call with lambda argument and unresolved invoke()
+- [`KT-13259`](https://youtrack.jetbrains.com/issue/KT-13259) "Redundant if statement" inspection: report also assignments (as done for Java)
+- [`KT-13393`](https://youtrack.jetbrains.com/issue/KT-13393) Implement intention to convert function reference to lambda
 
 ##### Issues fixed
 - [`KT-14396`](https://youtrack.jetbrains.com/issue/KT-14396) "Remove redundant `.let` call" isn't proposed for binary operations
-- [`KT-14500`](https://youtrack.jetbrains.com/issue/KT-14500) Add new type to "create member/extension function `invoke()`" quickfix
-- [`KT-14501`](https://youtrack.jetbrains.com/issue/KT-14501) Missing create operator member/extension function quickfix if another function with `operator` modifier is present
 - [`KT-14552`](https://youtrack.jetbrains.com/issue/KT-14552) ChangeParameterTypeFix holds a strong reference to PSI
-- [`KT-14569`](https://youtrack.jetbrains.com/issue/KT-14569) ConvertPropertyToFunctionIntention freezes the UI
-- [`KT-14583`](https://youtrack.jetbrains.com/issue/KT-14583) Convert receiver to parameter: when searching for conflicts check proposed function signature, not existent one
 - [`KT-14745`](https://youtrack.jetbrains.com/issue/KT-14745) KotlinNullPointerException in ConvertPrimaryConstructorToSecondary
 - [`KT-14791`](https://youtrack.jetbrains.com/issue/KT-14791) Incorrect "remove redundant .let" inspection for value with smart cast
+- [`KT-14733`](https://youtrack.jetbrains.com/issue/KT-14733) Incorrect intention to add out/in variance with inner classes
 
 #### Refactorings
 
 ##### Issues fixed
 - [`KT-14583`](https://youtrack.jetbrains.com/issue/KT-14583) Change Signature: Use new signature when looking for redeclaration conflicts
 
-#### Debugger
-- [`KT-13485`](https://youtrack.jetbrains.com/issue/KT-13485) Fix: Smart Step Into can't enter function in object
-- [`KT-14374`](https://youtrack.jetbrains.com/issue/KT-14374) Fix bad step-over behaviour for inline calls in Android Studio
-
-
 #### J2K
 - [`KT-14604`](https://youtrack.jetbrains.com/issue/KT-14604) Floating-point literals: "dot" + "exponent" char sequence is processed incorrectly
 
+#### Debugger
+- [`KT-13485`](https://youtrack.jetbrains.com/issue/KT-13485) Fix: Smart Step Into can't enter function in object
+- [`KT-14374`](https://youtrack.jetbrains.com/issue/KT-14374) Fix bad step-over behaviour for inline calls in Android Studio
+- [`KT-12612`](https://youtrack.jetbrains.com/issue/KT-12612) Breakpoint inside crossinlined lambda is never hit
+- [`KT-11521`](https://youtrack.jetbrains.com/issue/KT-11521) [`KT-12734`](https://youtrack.jetbrains.com/issue/KT-12734) [`KT-12470`](https://youtrack.jetbrains.com/issue/KT-12470) Fix breakpoints in function literals in inline calls
 
-#### Android
+#### Android support
 - [`KT-12880`](https://youtrack.jetbrains.com/issue/KT-12880) Implement "Create XML resources" quickfix
 - [`KT-12020`](https://youtrack.jetbrains.com/issue/KT-12020) Implement "Suppress" intention
+- [`KT-13243`](https://youtrack.jetbrains.com/issue/KT-13243) Lint: Exception type in a `try..catch` block should be checked
+- [`KT-14047`](https://youtrack.jetbrains.com/issue/KT-14047) Lint: Fix overloaded method detection in the API detector
+- [`KT-14439`](https://youtrack.jetbrains.com/issue/KT-14439) Lint: Filter only `R` class from the current module in the import quickfix
+- [`KT-14470`](https://youtrack.jetbrains.com/issue/KT-14470) Lint: False positives in `FragmentManager.beginTransaction()` inside SAM constructors
+- [`KT-14610`](https://youtrack.jetbrains.com/issue/KT-14610) Lint: AS Kotlin Plugin shows error "super" not called when it is.
 
-##### Android Lint
-- [`KT-13243`](https://youtrack.jetbrains.com/issue/KT-13243) Exception type in a `try..catch` block should be checked
-- [`KT-14047`](https://youtrack.jetbrains.com/issue/KT-14047) Fix overloaded method detection in the API detector
-- [`KT-14439`](https://youtrack.jetbrains.com/issue/KT-14439) Filter only `R` class from the current module in the import quickfix
-- [`KT-14470`](https://youtrack.jetbrains.com/issue/KT-14470) False positives in `FragmentManager.beginTransaction()` inside SAM constructors
+### Tools
 
-
-### Compiler
-- [`KT-12224`](https://youtrack.jetbrains.com/issue/KT-12224) Add a diagnostic message for `@JvmOverloads` on interface methods
-- [`KT-14678`](https://youtrack.jetbrains.com/issue/KT-14678) Internal error with `@JvmOverloads` on constructor of inner class
-- [`KT-12664`](https://youtrack.jetbrains.com/issue/KT-12664) Inner class is not found when a sub-directory with the same name is present in an outer class directory
-- [`KT-14186`](https://youtrack.jetbrains.com/issue/KT-14186) Kotlin vararg parameters are generated as simple array parameters for Java
-- [`KT-14408`](https://youtrack.jetbrains.com/issue/KT-14408) Kotlin should always generate a no-args constructor if all primary constuctor arguments have a default value
-- [`KT-14469`](https://youtrack.jetbrains.com/issue/KT-14469) StackOverflowError at EffectiveVisibilityKt.forVisibility
-- [`KT-14581`](https://youtrack.jetbrains.com/issue/KT-14581) NullPointerException at StackTransformationUtils when inlining extension function to a `do-while` loop condition
-- [`KT-14751`](https://youtrack.jetbrains.com/issue/KT-14751) Kotlin 1.0.5 cannot resolve class (related to annotation on types)
-
-
-### JS
-- [`KT-12976`](https://youtrack.jetbrains.com/issue/KT-12976) Print human-friendly error message on wrong modules order
-- [`KT-13792`](https://youtrack.jetbrains.com/issue/KT-13792) Inner class of local class does not capture the enclosing class properly
-- [`KT-13912`](https://youtrack.jetbrains.com/issue/KT-13912) NullPointerException at JsSourceGenerationVisitor when a Lambda with empty if block passed to inline function
-- [`KT-14535`](https://youtrack.jetbrains.com/issue/KT-14535) Broken modification of captured variables defined by a destructuring declaration
-- [`KT-14752`](https://youtrack.jetbrains.com/issue/KT-14752) Exception while typing `@JsName` annotation in editor
-
-
-### Tools.Gradle
+#### Gradle
 - [`KT-14724`](https://youtrack.jetbrains.com/issue/KT-14724) Kotlin 1.0.5 javascript does not call main
+
+#### Kapt
+- [`KT-14937`](https://youtrack.jetbrains.com/issue/KT-14937) Use javac annotation processing implementation, generate AST stubs for Kotlin classes (this replaces kapt2 implementation)
+- [`KT-9440`](https://youtrack.jetbrains.com/issue/KT-9440) Execution failed for task: "Unable to delete file" on project with the experimental kapt plugin
 
 
 ## 1.0.5
