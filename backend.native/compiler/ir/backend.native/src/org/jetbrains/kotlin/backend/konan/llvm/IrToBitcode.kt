@@ -395,7 +395,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             var bbNext = bbExit                             // For last clause bbNext coincides with bbExit.
             if (it != expression.branches.last())           // If it is not last clause.
                 bbNext = codegen.basicBlock()               // Create new basic block for next clause.
-            generateWhenCase(isUnit, isNothing, tmpLlvmVariablePtr, it, bbNext, bbExit) // Generate code for current clause.
+            val isUnitBranch = KotlinBuiltIns.isUnit(it.result.type)
+            val isNothingBranch = KotlinBuiltIns.isNothing(it.result.type)
+            generateWhenCase(isUnitBranch, isNothingBranch, tmpLlvmVariablePtr, it, bbNext, bbExit) // Generate code for current clause.
         }
         if  (neitherUnitNorNothing)                                      // If result hasn't Unit type and block doesn't end with return
             return codegen.load(tmpLlvmVariablePtr!!, tmpVariableName)   // load value from variable.
@@ -446,12 +448,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef {
+    private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef? {
         when (value.operator) {
             IrTypeOperator.CAST                      -> return evaluateCast(tmpVariableName, value)
             IrTypeOperator.IMPLICIT_CAST             -> TODO()
             IrTypeOperator.IMPLICIT_NOTNULL          -> TODO()
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> TODO()
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> return evaluateExpression(tmpVariableName, value.argument)
             IrTypeOperator.SAFE_CAST                 -> TODO()
             IrTypeOperator.INSTANCEOF                -> return evaluateInstanceOf(tmpVariableName, value)
             IrTypeOperator.NOT_INSTANCEOF            -> return evaluateNotInstanceOf(tmpVariableName, value)
