@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
-abstract class IncReporter {
+abstract class ICReporter {
     abstract fun report(message: ()->String)
 
     // used in Gradle plugin
