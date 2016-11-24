@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.incremental.multiproject
 
 import org.jetbrains.kotlin.incremental.DirtyData
-import org.jetbrains.kotlin.incremental.IncReporter
+import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 
 internal interface ArtifactDifferenceRegistry {
@@ -36,7 +36,7 @@ internal interface ArtifactDifferenceRegistryProvider {
     ): T?
 
     fun <T> withRegistry(
-            reporter: IncReporter,
+            reporter: ICReporter,
             fn: (ArtifactDifferenceRegistry) -> T
     ): T? {
         return withRegistry({reporter.report {it}}, fn)

@@ -182,7 +182,7 @@ data class DirtyData(
 
 fun <Target> CompilationResult.getDirtyData(
         caches: Iterable<IncrementalCacheImpl<Target>>,
-        reporter: IncReporter
+        reporter: ICReporter
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
@@ -220,7 +220,7 @@ fun <Target> CompilationResult.getDirtyData(
 fun mapLookupSymbolsToFiles(
         lookupStorage: LookupStorage,
         lookupSymbols: Iterable<LookupSymbol>,
-        reporter: IncReporter,
+        reporter: ICReporter,
         excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
@@ -237,7 +237,7 @@ fun mapLookupSymbolsToFiles(
 fun <Target> mapClassesFqNamesToFiles(
         caches: Iterable<IncrementalCacheImpl<Target>>,
         classesFqNames: Iterable<FqName>,
-        reporter: IncReporter,
+        reporter: ICReporter,
         excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()

@@ -20,8 +20,8 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 
-internal class GradleIncReporter(private val projectRootFile: File) : IncReporter() {
-    private val log = Logging.getLogger(GradleIncReporter::class.java)
+internal class GradleICReporter(private val projectRootFile: File) : ICReporter() {
+    private val log = Logging.getLogger(GradleICReporter::class.java)
 
     override fun report(message: ()->String) {
         log.kotlinDebug(message)
