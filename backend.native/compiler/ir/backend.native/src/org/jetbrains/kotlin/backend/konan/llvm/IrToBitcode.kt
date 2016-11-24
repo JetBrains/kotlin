@@ -279,9 +279,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitReturn(expression: IrReturn) {
         logger.log("visitReturn                : ${ir2string(expression)}")
-        val tmpVarName = codegen.newVar()                                   // Generate new tmp name.
-        val value      = evaluateExpression(tmpVarName, expression.value)   //
-        codegen.ret(value)
+        evaluateExpression("", expression)
     }
 
     //-------------------------------------------------------------------------//
@@ -374,7 +372,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val objPointer = evaluateExpression(codegen.newVar(), expression.value)
         val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, objPointer!!, codegen.newVar())
         val args = listOf(objHeaderPtr)                         // Create arg list.
-        return codegen.call(context.throwExceptionFunction, args, "")
+        codegen.call(context.throwExceptionFunction, args, "")
+        return codegen.unreachable()
     }
 
     //-------------------------------------------------------------------------//
@@ -612,6 +611,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateReturn(value: IrReturn): LLVMValueRef? {
         logger.log("evaluateReturn             : ${ir2string(value)}")
         val ret = evaluateExpression(codegen.newVar(), value.value)
+        if (KotlinBuiltIns.isUnit(value.value.type))
+            return ret
         return codegen.ret(ret)
     }
 
