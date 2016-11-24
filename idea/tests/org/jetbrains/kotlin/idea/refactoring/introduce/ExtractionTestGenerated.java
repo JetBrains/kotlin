@@ -874,6 +874,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("companionObjectMemberRef.kt")
+            public void testCompanionObjectMemberRef() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/companionObjectMemberRef.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("convertBinaryExpression.kt")
             public void testConvertBinaryExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/convertBinaryExpression.kt");
