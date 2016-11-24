@@ -29,12 +29,17 @@ internal class Logger(val generator: CodeGenerator, override val context: Contex
 
 //-----------------------------------------------------------------------------//
 
-fun ir2string(ir: IrElement?): String {
+fun ir2string(ir: IrElement?): String = ir2stringWhole(ir).takeWhile { it != '\n' }
+
+//-----------------------------------------------------------------------------//
+
+fun ir2stringWhole(ir: IrElement?): String {
   val strWriter = StringWriter()
 
   ir?.accept(DumpIrTreeVisitor(strWriter), "")
-  return strWriter.toString().takeWhile { it != '\n' }
+  return strWriter.toString()
 }
+
 
 //-----------------------------------------------------------------------------//
 
