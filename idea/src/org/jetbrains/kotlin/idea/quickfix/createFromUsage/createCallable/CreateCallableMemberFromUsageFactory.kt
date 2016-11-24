@@ -69,6 +69,7 @@ abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
 
         if (extensionsSupported) {
             newCallableQuickFix(originalElementPointer, IntentionActionPriority.LOW, quickFixDataFactory) { element, data ->
+                if (data.any { it.isAbstract }) return@newCallableQuickFix null
                 CreateExtensionCallableFromUsageFix(element, data)
             }.let { fixes.add(it) }
         }

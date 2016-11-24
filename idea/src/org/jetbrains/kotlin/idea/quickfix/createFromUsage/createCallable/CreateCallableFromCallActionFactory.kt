@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
+import org.jetbrains.kotlin.idea.util.isAbstract
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -42,6 +43,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.lang.AssertionError
@@ -130,17 +133,24 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
     }
 
     protected fun getAbstractCallableInfo(mainCallable: CallableInfo, originalExpression: KtExpression): CallableInfo? {
-        val containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
-        if (!containingClass.isAbstract()) return null
+        val containingClass: KtClass
+        val receiverType: KotlinType
 
         val receiverTypeInfo = mainCallable.receiverTypeInfo
         if (receiverTypeInfo != TypeInfo.Empty) {
             if (receiverTypeInfo !is TypeInfo.ByType) return null
-            val containingDescriptor = containingClass.resolveToDescriptor() as ClassDescriptor
-            if (receiverTypeInfo.theType.constructor.declarationDescriptor != containingDescriptor) return null
+            receiverType = receiverTypeInfo.theType
+            containingClass = receiverType.constructor.declarationDescriptor?.source?.getPsi() as? KtClass ?: return null
+        }
+        else {
+            containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
+            if (containingClass is KtEnumEntry) return null
+            receiverType = (containingClass.resolveToDescriptor() as ClassDescriptor).defaultType
         }
 
-        return mainCallable.copy(receiverTypeInfo = TypeInfo.Empty, possibleContainers = listOf(containingClass), isAbstract = true)
+        if (!receiverType.isAbstract() && TypeUtils.getAllSupertypes(receiverType).all { !it.isAbstract() }) return null
+
+        return mainCallable.copy(receiverTypeInfo = receiverTypeInfo, possibleContainers = listOf(containingClass), isAbstract = true)
     }
 
     protected fun getCallableWithReceiverInsideExtension(
