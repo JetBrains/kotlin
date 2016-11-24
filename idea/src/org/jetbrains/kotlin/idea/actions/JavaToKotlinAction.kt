@@ -150,7 +150,7 @@ class JavaToKotlinAction : AnAction() {
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        val javaFiles = selectedJavaFiles(e).toList()
+        val javaFiles = selectedJavaFiles(e).filter { it.isWritable }.toList()
         val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
 
         val firstSyntaxError = javaFiles.asSequence().map { PsiTreeUtil.findChildOfType(it, PsiErrorElement::class.java) }.firstOrNull()
@@ -189,7 +189,7 @@ class JavaToKotlinAction : AnAction() {
     private fun isAnyJavaFileSelected(project: Project, files: Array<VirtualFile>): Boolean {
         val manager = PsiManager.getInstance(project)
 
-        if (files.any { manager.findFile(it) is PsiJavaFile }) return true
+        if (files.any { manager.findFile(it) is PsiJavaFile && it.isWritable }) return true
         return files.any { it.isDirectory && isAnyJavaFileSelected(project, it.children) }
     }
 
