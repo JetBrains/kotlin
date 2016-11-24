@@ -23,7 +23,6 @@ import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.RefactoringSettings
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
@@ -59,7 +58,6 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -133,8 +131,9 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
 
         val isCallable = descriptor is CallableDescriptor
         val isExtension = isCallable && declaration.isExtensionDeclaration()
+        val isCallableReference = isCallableReference(refExpr.mainReference)
 
-        if (isCallable) {
+        if (isCallable && !isCallableReference) {
             val containingDescriptor = descriptor.containingDeclaration
             if (isExtension && containingDescriptor is ClassDescriptor) {
                 val implicitClass = (refExpr.getResolvedCall(bindingContext)?.dispatchReceiver as? ImplicitClassReceiver)?.classDescriptor
@@ -143,6 +142,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
                 }
                 return null
             }
+
             if (!isExtension) {
                 if (refExpr.getReceiverExpression() != null) {
                     return fun(refExpr: KtSimpleNameExpression): UsageInfo? {
@@ -177,6 +177,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
             if (isAncestor(declaration, false)) {
                 if (descriptor.importableFqName == null) return null
                 if (isUnqualifiedExtensionReference(refExpr.mainReference, declaration)) return null
+                if (isCallableReference(refExpr.mainReference)) return null
                 if (containerFqName == null || newContainer is ContainerInfo.UnknownPackage) return null
                 return fqName.asString().let {
                     val prefix = containerFqName.asString()
@@ -194,7 +195,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
             return createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
         }
 
-        if (isExtension || containerFqName != null || isImported(descriptor)) return ::doCreateUsageInfo
+        if (isExtension || isCallableReference || containerFqName != null || isImported(descriptor)) return ::doCreateUsageInfo
         return null
     }
 
@@ -210,7 +211,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
 
 class ImplicitCompanionAsDispatchReceiverUsageInfo(callee: KtSimpleNameExpression) : UsageInfo(callee)
 
-class MoveRenameUsageInfoForExtension(
+class UnqualifiableMoveRenameUsageInfo(
         element: PsiElement,
         reference: PsiReference,
         startOffset: Int,
@@ -237,8 +238,8 @@ fun createMoveUsageInfoIfPossible(
     val startOffset = range.startOffset
     val endOffset = range.endOffset
 
-    if (isUnqualifiedExtensionReference(reference, referencedElement)) {
-        return MoveRenameUsageInfoForExtension(
+    if (isUnqualifiedExtensionReference(reference, referencedElement) || isCallableReference(reference)) {
+        return UnqualifiableMoveRenameUsageInfo(
                 element, reference, startOffset, endOffset, referencedElement, element.containingFile!!, addImportToOriginalFile
         )
     }
@@ -249,6 +250,11 @@ private fun isUnqualifiedExtensionReference(reference: PsiReference, referencedE
     return reference is KtReference
            && (referencedElement.namedUnwrappedElement as? KtDeclaration)?.isExtensionDeclaration() ?: false
            && reference.element.getNonStrictParentOfType<KtImportDirective>() == null
+}
+
+private fun isCallableReference(reference: PsiReference): Boolean {
+    return reference is KtSimpleNameReference
+           && reference.element.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null
 }
 
 fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>): String? {
@@ -333,7 +339,7 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
                 usage.reference?.bindToFqName(usage.newFqName, shorteningMode)
             }
 
-            is MoveRenameUsageInfoForExtension -> {
+            is UnqualifiableMoveRenameUsageInfo -> {
                 val file = with(usage) { if (addImportToOriginalFile) originalFile else counterpart(originalFile) } as KtFile
                 val declaration = counterpart(usage.referencedElement!!).unwrapped as KtDeclaration
                 ImportInsertHelper.getInstance(usage.project).importDescriptor(file, declaration.resolveToDescriptor())
