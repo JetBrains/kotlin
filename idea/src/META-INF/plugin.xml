@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
-  <idea-version since-build="145.257" until-build="172.*"/>
+  <idea-version since-build="162.1" until-build="171.*"/>
 
   <depends>com.intellij.modules.java</depends>
 
