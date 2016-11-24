@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
-import org.jetbrains.kotlin.resolve.coroutine.createCoroutineSuspensionFunctionView
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 
@@ -109,14 +109,6 @@ private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: C
                         result.add(
                             candidateFactory.createCandidate(
                                     it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver))
-
-                        if (data.implicitReceiver.receiverValue is CoroutineReceiverValue) {
-                            val newDescriptor = it.descriptor.createCoroutineSuspensionFunctionView() ?: return@forEach
-                            result.add(
-                                candidateFactory.createCandidate(
-                                        it.copy(newDescriptor = newDescriptor),
-                                        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver))
-                        }
                     }
 
                     result

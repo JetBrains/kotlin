@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ImplicitSmartCasts;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
@@ -134,6 +135,9 @@ public interface BindingContext {
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_HAS_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> RETURN_HANDLE_RESULT_RESOLVED_CALL = Slices.createSimpleSlice();
+
+    WritableSlice<Call, CoroutineReceiverValue> COROUTINE_RECEIVER_FOR_SUSPENSION_POINT = Slices.createSimpleSlice();
+    WritableSlice<Call, SimpleFunctionDescriptor> ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL = Slices.createSimpleSlice();
 
     WritableSlice<VariableAccessorDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<VariableAccessorDescriptor, Call> DELEGATED_PROPERTY_CALL = Slices.createSimpleSlice();

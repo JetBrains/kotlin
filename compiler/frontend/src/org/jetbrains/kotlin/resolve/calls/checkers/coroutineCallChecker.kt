@@ -19,22 +19,47 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 
 object CoroutineSuspendCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
-        if (!descriptor.isSuspend || descriptor.initialSignatureDescriptor == null) return
+        val descriptor = resolvedCall.candidateDescriptor as? SimpleFunctionDescriptor ?: return
+        if (!descriptor.isSuspend) return
 
-        val dispatchReceiverOwner = (resolvedCall.dispatchReceiver as? CoroutineReceiverValue)?.declarationDescriptor ?: return
-        val callElement = resolvedCall.call.callElement as KtExpression
+        val closestCoroutineReceiver =
+                context.scope.getImplicitReceiversHierarchy().firstOrNull { it.value is CoroutineReceiverValue }?.value as CoroutineReceiverValue?
 
-        if (!InlineUtil.checkNonLocalReturnUsage(dispatchReceiverOwner, callElement, context.resolutionContext)) {
-            context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
+        val enclosingSuspendFunction =
+                context.scope.parentsWithSelf.filterIsInstance<LexicalScope>().takeWhile {
+                    closestCoroutineReceiver == null || it.implicitReceiver?.value != closestCoroutineReceiver
+                }.firstOrNull {
+                    (it.ownerDescriptor as? FunctionDescriptor)?.isSuspend == true
+                }?.ownerDescriptor as? SimpleFunctionDescriptor
+
+        when {
+            enclosingSuspendFunction != null -> {
+                // TODO: check if tail call
+                context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
+            }
+            closestCoroutineReceiver != null -> {
+
+                val callElement = resolvedCall.call.callElement as KtExpression
+
+                if (!InlineUtil.checkNonLocalReturnUsage(closestCoroutineReceiver.declarationDescriptor, callElement, context.resolutionContext)) {
+                    context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
+                }
+
+                context.trace.record(BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, resolvedCall.call, closestCoroutineReceiver)
+            }
         }
     }
 }

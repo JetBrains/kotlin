@@ -24,14 +24,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
-import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
-import org.jetbrains.kotlin.resolve.coroutine.createCoroutineSuspensionFunctionView
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
@@ -116,13 +117,6 @@ internal class ReceiverScopeTowerLevel(
             scopeTower.dynamicScope.getMembers(null).mapTo(result) {
                 createCandidateDescriptor(it, dispatchReceiver, DynamicDescriptorDiagnostic)
             }
-        }
-
-        if (receiverValue is CoroutineReceiverValue) {
-            result.addAll(result.mapNotNull {
-                val suspensionFunctionView = it.descriptor.createCoroutineSuspensionFunctionView() ?: return@mapNotNull null
-                createCandidateDescriptor(suspensionFunctionView, dispatchReceiver)
-            })
         }
 
         return result

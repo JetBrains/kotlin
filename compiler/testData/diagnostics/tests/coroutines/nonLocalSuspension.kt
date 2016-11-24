@@ -1,11 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Controller<T> {
-    suspend fun suspendHere(x: Continuation<Int>) {
-    }
+    suspend fun suspendHere() = 1
 
-    suspend fun another(a: T, x: Continuation<Int>) {
-    }
+    suspend fun another(a: T) = 1
 }
 
 fun <T> builder(coroutine c: Controller<T>.() -> Continuation<Unit>) { }
@@ -62,7 +60,7 @@ fun foo() {
             suspendHere()
 
             another(1)
-            <!NON_LOCAL_SUSPENSION_POINT!>another<!>("")
+            another("")
         }
     }
 }

@@ -8,9 +8,9 @@ public inline fun runCross(/*0*/ crossinline x: () -> kotlin.Unit): kotlin.Unit
 
 public final class Controller</*0*/ T> {
     public constructor Controller</*0*/ T>()
-    public final suspend fun another(/*0*/ a: T, /*1*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public final suspend fun another(/*0*/ a: T): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final suspend fun suspendHere(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public final suspend fun suspendHere(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

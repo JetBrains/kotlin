@@ -4288,9 +4288,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("suspendExtensionFunctions.kt")
-            public void testSuspendExtensionFunctions() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendExtensionFunctions.kt");
+            @TestMetadata("suspendExternalFunctions.kt")
+            public void testSuspendExternalFunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendExternalFunctions.kt");
                 doTest(fileName);
             }
 

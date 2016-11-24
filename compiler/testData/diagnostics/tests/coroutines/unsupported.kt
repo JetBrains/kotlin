@@ -2,9 +2,7 @@
 // !LANGUAGE: -Coroutines
 
 class Controller {
-    <!UNSUPPORTED_FEATURE!>suspend<!> fun suspendHere(x: Continuation<String>) {
-        x.resume("OK")
-    }
+    <!UNSUPPORTED_FEATURE!>suspend<!> fun suspendHere(): String = "OK"
 
     <!UNSUPPORTED_FEATURE!>operator<!> fun handleResult(x: String, y: Continuation<Nothing>) {}
 

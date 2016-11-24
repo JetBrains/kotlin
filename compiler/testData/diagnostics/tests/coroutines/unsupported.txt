@@ -10,6 +10,6 @@ public final class Controller {
     public final operator fun handleResult(/*0*/ x: kotlin.String, /*1*/ y: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final operator fun interceptResume(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
-    public final suspend fun suspendHere(/*0*/ x: kotlin.coroutines.Continuation<kotlin.String>): kotlin.Unit
+    public final suspend fun suspendHere(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -935,12 +935,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
-        @TestMetadata("suspendApplicability.kt")
-        public void testSuspendApplicability() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/suspendApplicability.kt");
-            doTestWithInfos(fileName);
-        }
-
         @TestMetadata("threeImplicitReceivers.kt")
         public void testThreeImplicitReceivers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/threeImplicitReceivers.kt");

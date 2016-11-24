@@ -1,21 +1,19 @@
 package
 
-public suspend fun notMember(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
-public suspend fun Controller.correctExtension(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
-public suspend fun kotlin.String.wrongExtension(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+public suspend fun notMember(/*0*/ q: kotlin.Double): kotlin.Int
+public suspend fun Controller.controllerReceiver(): kotlin.Int
+public suspend fun kotlin.String.wrongExtension(/*0*/ x: kotlin.Any): kotlin.Int
 
-@kotlin.coroutines.AllowSuspendExtensions public final class Controller {
+public final class Controller {
     public constructor Controller()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final inline suspend fun inlineFun(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
-    public final suspend fun noParams(): kotlin.Unit
-    public final suspend fun returnsNotUnit(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Int
-    public final suspend fun returnsUnit(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
-    public final suspend fun starProjection(/*0*/ x: kotlin.coroutines.Continuation<*>): kotlin.Unit
+    public final inline suspend fun inlineFun(/*0*/ x: kotlin.Int): kotlin.Unit
+    public final suspend fun noParameters(): kotlin.Unit
+    public final suspend fun oldConvention(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public final suspend fun oneParameter(/*0*/ q: kotlin.Any): kotlin.Unit
+    public final suspend fun returnsString(/*0*/ q: kotlin.Any): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final suspend fun valid(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
-    public final suspend fun varargs(/*0*/ vararg x: kotlin.coroutines.Continuation<kotlin.Any> /*kotlin.Array<out kotlin.coroutines.Continuation<kotlin.Any>>*/): kotlin.Unit
-    public final suspend fun wrongParam(/*0*/ x: kotlin.collections.Collection<kotlin.Int>): kotlin.Unit
-    public final suspend fun kotlin.String.memberExtension(/*0*/ x: kotlin.coroutines.Continuation<kotlin.Int>): kotlin.Unit
+    public final suspend fun varargParameter(/*0*/ vararg q: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
+    public final suspend fun kotlin.String.memberExtension(): kotlin.Int
 }

@@ -1,13 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 class Controller {
-    suspend fun suspendHere(a: String, x: Continuation<Int>) {
-    }
+    suspend fun suspendHere(a: String) = 1
 }
 
 class A {
-    suspend fun suspendHere(a: Int, x: Continuation<Int>) {
-    }
+    suspend fun suspendHere(a: Int) = 1
 }
 
 fun builder(coroutine c: Controller.() -> Continuation<Unit>) {}
@@ -18,9 +16,8 @@ fun test() {
 
         with(A()) {
             suspendHere("")
-            // This test checks that suspending functions
-            // that are not from coroutine controller can't be called by suspending convention
-            suspendHere(1<!NO_VALUE_FOR_PARAMETER!>)<!>
+            // With the new convention calling a suspension member with receiver different from the one obtained from the coroutine is OK
+            suspendHere(1)
         }
     }
 }
