@@ -54,7 +54,7 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
                 .map { "${it.name}: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)}" }
                 .joinToString(", ")
 
-        val newParameterList = psiFactory.createFunctionLiteralParameterList(parameterString)
+        val newParameterList = psiFactory.createLambdaParameterList(parameterString)
         val oldParameterList = functionLiteral.valueParameterList
         if (oldParameterList != null) {
             oldParameterList.replace(newParameterList)
