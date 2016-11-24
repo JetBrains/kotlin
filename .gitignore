@@ -18,6 +18,7 @@ kotstd/kotstd.iml
 # test suit products.
 *.bc
 *.kt.S
+*.kt.exe
 *.log
 
 # Ignore Gradle GUI config
