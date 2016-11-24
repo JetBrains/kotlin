@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.translate.context.AliasingContext;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
@@ -70,8 +69,9 @@ public final class FunctionTranslator extends AbstractTranslator {
         this.descriptor = getFunctionDescriptor(context.bindingContext(), functionDeclaration);
         this.functionDeclaration = functionDeclaration;
         this.functionObject = function;
-        assert this.functionObject.getParameters().isEmpty()
-                : message(descriptor, "Function " + functionDeclaration.getText() + " processed for the second time.");
+        if (!this.functionObject.getParameters().isEmpty()) {
+            throw new AssertionError(message(descriptor, "Function " + functionDeclaration.getText() + " processed for the second time."));
+        }
         //NOTE: it's important we compute the context before we start the computation
         this.functionBodyContext = getFunctionBodyContext();
         MetadataProperties.setFunctionDescriptor(functionObject, descriptor);
@@ -88,17 +88,7 @@ public final class FunctionTranslator extends AbstractTranslator {
             aliases.put(expectedReceiverDescriptor, extensionFunctionReceiverName.makeRef());
         }
 
-        LocalFunctionCollector functionCollector = new LocalFunctionCollector(context().bindingContext());
-        functionDeclaration.acceptChildren(functionCollector, null);
-        for (FunctionDescriptor localFunction : functionCollector.getFunctions()) {
-            String localIdent = localFunction.getName().isSpecial() ? "lambda" : localFunction.getName().asString();
-            JsName localName = functionObject.getScope().getParent().declareTemporaryName(localIdent);
-            JsExpression alias = JsAstUtils.pureFqn(localName, null);
-            aliases.put(localFunction, alias);
-        }
-
         AliasingContext aliasingContext = !aliases.isEmpty() ? context().aliasingContext().withDescriptorsAliased(aliases) : null;
-
 
         return context().newFunctionBody(functionObject, aliasingContext, descriptor);
     }

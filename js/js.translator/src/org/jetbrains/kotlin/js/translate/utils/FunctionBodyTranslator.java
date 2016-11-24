@@ -21,10 +21,12 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.expression.LocalFunctionCollector;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
@@ -34,7 +36,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
@@ -43,9 +47,26 @@ import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMuta
 public final class FunctionBodyTranslator extends AbstractTranslator {
 
     @NotNull
-    public static JsBlock translateFunctionBody(@NotNull FunctionDescriptor descriptor,
-                                                @NotNull KtDeclarationWithBody declarationWithBody,
-                                                @NotNull TranslationContext functionBodyContext) {
+    public static JsBlock translateFunctionBody(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull KtDeclarationWithBody declarationWithBody,
+            @NotNull TranslationContext functionBodyContext
+    ) {
+        Map<DeclarationDescriptor, JsExpression> aliases = new HashMap<DeclarationDescriptor, JsExpression>();
+        LocalFunctionCollector functionCollector = new LocalFunctionCollector(functionBodyContext.bindingContext());
+        declarationWithBody.acceptChildren(functionCollector, null);
+
+        for (FunctionDescriptor localFunction : functionCollector.getFunctions()) {
+            String localIdent = localFunction.getName().isSpecial() ? "lambda" : localFunction.getName().asString();
+            JsName localName = functionBodyContext.scope().getParent().declareTemporaryName(localIdent);
+            JsExpression alias = JsAstUtils.pureFqn(localName, null);
+            aliases.put(localFunction, alias);
+        }
+
+        if (!aliases.isEmpty()) {
+            functionBodyContext = functionBodyContext.innerContextWithDescriptorsAliased(aliases);
+        }
+
         return (new FunctionBodyTranslator(descriptor, declarationWithBody, functionBodyContext)).translate();
     }
 
