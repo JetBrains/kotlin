@@ -96,7 +96,8 @@ internal fun ExtractionData.inferParametersInfo(
 
         val twoReceivers = resolvedCall != null && resolvedCall.hasBothReceivers()
         val dispatchReceiverDescriptor = (resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
-        if (twoReceivers
+        if (options.canWrapInWith
+            && twoReceivers
             && resolvedCall!!.extensionReceiver is ExpressionReceiver
             && DescriptorUtils.isObject(dispatchReceiverDescriptor)) {
             info.replacementMap.putValue(refInfo.resolveResult.originalRefExpr,
