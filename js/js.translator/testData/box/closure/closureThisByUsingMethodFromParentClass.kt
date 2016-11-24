@@ -20,7 +20,7 @@ fun box(): String {
     assertEquals("A::foo", f())
     assertEquals("B::boo", g())
 
-    val fs = js("B\$far\$lambda").toString() as String
+    val fs: String = js("B\$far\$lambda").toString()
     val gs = (js("B\$gar\$lambda").toString() as String).replaceAll("boo", "foo").replaceAll("gar", "far")
 
     assertEquals(gs, fs)

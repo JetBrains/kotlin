@@ -5552,6 +5552,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nativeAndTopLevelFunction.kt")
+        public void testNativeAndTopLevelFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/nativeAndTopLevelFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nativeDeclarationAndLocalVar.kt")
+        public void testNativeDeclarationAndLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/nativeDeclarationAndLocalVar.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overloadExtension.kt")
         public void testOverloadExtension() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/overloadExtension.kt");

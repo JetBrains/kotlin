@@ -352,6 +352,10 @@ public final class StaticContext {
         if (DynamicCallsKt.isDynamic(suggested.getDescriptor())) {
             scope = JsDynamicScope.INSTANCE;
         }
+        else if (AnnotationsUtils.isPredefinedObject(suggested.getDescriptor()) &&
+                 DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
+            scope = rootScope;
+        }
 
         List<JsName> names = new ArrayList<JsName>();
         if (suggested.getStable()) {
