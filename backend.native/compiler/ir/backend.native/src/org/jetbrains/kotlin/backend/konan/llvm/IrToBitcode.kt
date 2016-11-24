@@ -106,7 +106,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitLoop(loop: IrLoop) {
-        TODO()
+        TODO("${ir2string(loop)}")
     }
 
     //-------------------------------------------------------------------------//
@@ -361,7 +361,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrThrow           -> return evaluateThrow       (tmpVariableName, value)
             null                 -> return null
             else                 -> {
-                TODO()
+                TODO("${ir2string(value)}")
             }
         }
     }
@@ -418,10 +418,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 if (value.descriptor.name.asString() == "<this>") {
                     return codegen.load(codegen.thisVariable(), tmpVariableName)
                 }
-                TODO()
+                TODO("${ir2string(value)}")
             }
             else -> {
-                TODO()
+                TODO("${ir2string(value)}")
             }
         }
     }
@@ -450,10 +450,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef? {
         when (value.operator) {
             IrTypeOperator.CAST                      -> return evaluateCast(tmpVariableName, value)
-            IrTypeOperator.IMPLICIT_CAST             -> TODO()
-            IrTypeOperator.IMPLICIT_NOTNULL          -> TODO()
+            IrTypeOperator.IMPLICIT_CAST             -> TODO("${ir2string(value)}")
+            IrTypeOperator.IMPLICIT_NOTNULL          -> TODO("${ir2string(value)}")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> return evaluateExpression(tmpVariableName, value.argument)
-            IrTypeOperator.SAFE_CAST                 -> TODO()
+            IrTypeOperator.SAFE_CAST                 -> TODO("${ir2string(value)}")
             IrTypeOperator.INSTANCEOF                -> return evaluateInstanceOf(tmpVariableName, value)
             IrTypeOperator.NOT_INSTANCEOF            -> return evaluateNotInstanceOf(tmpVariableName, value)
         }
@@ -603,7 +603,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrConstKind.Float  -> return LLVMConstRealOfString(LLVMFloatType(), (value.value as Float).toString())
             IrConstKind.Double -> return LLVMConstRealOfString(LLVMDoubleType(), (value.value as Double).toString())
         }
-        TODO()
+        TODO("${ir2string(value)}")
     }
 
     //-------------------------------------------------------------------------//
@@ -642,7 +642,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             value is IrDelegatingConstructorCall -> return superCall(tmpVariableName, value.descriptor, args)
             value.descriptor is FunctionDescriptor -> return evaluateFunctionCall(tmpVariableName, value as IrCall, args)
             else -> {
-                TODO()
+                TODO("${ir2string(value)}")
             }
         }
     }
@@ -801,7 +801,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         assert(arg0Type == arg1Type || arg0Type.isNullableNothing() || arg1Type.isNullableNothing())
 
         return when {
-            KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO()
+            KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO("${ir2string(callee)}")
             else -> codegen.icmpEq(arg0, arg1, tmpVariableName)
         }
     }
