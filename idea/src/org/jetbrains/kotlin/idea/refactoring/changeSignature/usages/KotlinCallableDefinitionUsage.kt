@@ -188,7 +188,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
                 }
             }
             else {
-                newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignatureWithoutParentheses(this))
+                newParameterList = psiFactory.createLambdaParameterList(changeInfo.getNewParametersSignatureWithoutParentheses(this))
                 canReplaceEntireList = true
             }
         }

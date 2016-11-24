@@ -318,7 +318,7 @@ class KtPsiFactory(private val project: Project) {
 
     fun createTypeParameter(text: String) = createTypeParameterList("<$text>").parameters.first()!!
 
-    fun createFunctionLiteralParameterList(text: String) =
+    fun createLambdaParameterList(text: String) =
             createLambdaExpression(text, "0").functionLiteral.valueParameterList!!
 
     fun createLambdaExpression(parameters: String, body: String): KtLambdaExpression =
