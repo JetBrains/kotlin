@@ -193,7 +193,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
 
         logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
-        val reporter = GradleIncReporter(project.rootProject.projectDir)
+        val reporter = GradleICReporter(project.rootProject.projectDir)
         val compiler = IncrementalJvmCompilerRunner(
                 taskBuildDirectory,
                 sourceRoots.javaSourceRoots,

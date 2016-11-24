@@ -48,7 +48,7 @@ internal fun makeIncrementally(
         sourceRoots: Iterable<File>,
         args: K2JVMCompilerArguments,
         messageCollector: MessageCollector = MessageCollector.NONE,
-        reporter: IncReporter = EmptyIncReporter
+        reporter: ICReporter = EmptyICReporter
 ) {
     val versions = listOf(normalCacheVersion(cachesDir),
             experimentalCacheVersion(cachesDir),
@@ -70,7 +70,7 @@ internal fun makeIncrementally(
     }
 }
 
-private object EmptyIncReporter : IncReporter() {
+private object EmptyICReporter : ICReporter() {
     override fun report(message: ()->String) {
     }
 }
@@ -94,7 +94,7 @@ internal class IncrementalJvmCompilerRunner(
         workingDir: File,
         private val javaSourceRoots: Set<File>,
         private val cacheVersions: List<CacheVersion>,
-        private val reporter: IncReporter,
+        private val reporter: ICReporter,
         private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
         private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
         private val artifactFile: File? = null
