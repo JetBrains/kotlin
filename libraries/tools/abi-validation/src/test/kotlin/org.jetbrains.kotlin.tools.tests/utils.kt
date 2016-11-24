@@ -27,7 +27,7 @@ private fun assertEqualsToFile(expectedFile: File, actual: CharSequence) {
         assertEquals(expectedText, actualText, "Actual data differs from file content: ${expectedFile.name}, rewriting")
     }
 
-    assertEquals(expectedText, actualText, "Actual data differs from file content: ${expectedFile.name}")
+    assertEquals(expectedText, actualText, "Actual data differs from file content: ${expectedFile.name}\nTo overwrite the expected API rerun with -Doverwrite.output=true parameter\n")
 }
 
 private fun CharSequence.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
