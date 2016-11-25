@@ -154,7 +154,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitConstructor(constructorDeclaration: IrConstructor) {
         codegen.function(constructorDeclaration)
-        val classDescriptor = DescriptorUtils.getContainingClass(constructorDeclaration.descriptor)
+        val constructorDescriptor = constructorDeclaration.descriptor
+        val classDescriptor = DescriptorUtils.getContainingClass(constructorDescriptor)
         val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
 
         /**
@@ -169,7 +170,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (!skipConstructorBodyGeneration(constructorDeclaration))
             constructorDeclaration.acceptChildrenVoid(this)
 
-        if (constructorDeclaration.descriptor.isPrimary) {
+        if (constructorDescriptor.isPrimary && !DescriptorUtils.isCompanionObject(constructorDescriptor.constructedClass)) {
             val irOfCurrentClass = context.moduleIndex.classes[classDescriptor!!.classId]
             irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
@@ -181,7 +182,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                     val fieldDescriptor = fieldDeclaration.descriptor
                     val fieldPtr = fieldPtrOfClass(thisPtr, fieldDescriptor)
                     var value:LLVMValueRef? = null
-                    if (constructorDeclaration.descriptor.valueParameters.any{ it.name == fieldDescriptor.name }) {
+                    if (constructorDescriptor.valueParameters.any{ it.name == fieldDescriptor.name }) {
                         val variable = codegen.variable(fieldDescriptor.name.asString())
                         value = codegen.load(variable!!, codegen.newVar())
                     }
@@ -190,6 +191,18 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                     }
                     codegen.store(value!!, fieldPtr!!)
                 }
+
+                override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+                    evaluateExpression("", declaration.body)
+                }
+
+                override fun visitClass(declaration: IrClass) {
+                    return
+                }
+
+                override fun visitConstructor(declaration: IrConstructor) {
+                    return
+                }
             })
         }
 
@@ -197,6 +210,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("visitConstructor           : ${ir2string(constructorDeclaration)}")
     }
 
+    //-------------------------------------------------------------------------//
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+        logger.log("visitAnonymousInitializer    : ${ir2string(declaration)}")
+    }
 
     //-------------------------------------------------------------------------//
 
@@ -361,6 +379,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrWhen                -> return evaluateWhen               (tmpVariableName, value)
             is IrThrow               -> return evaluateThrow              (tmpVariableName, value)
             is IrStringConcatenation -> return evaluateStringConcatenation(tmpVariableName, value)
+            is IrBlockBody           -> return evaluateBlock              (                 value as IrStatementContainer)
             null                     -> return null
             else                     -> {
                 TODO("${ir2string(value)}")
@@ -635,8 +654,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateBlock(value: IrBlock): LLVMValueRef? {
-        logger.log("evaluateBlock              : ${ir2string(value)}")
+    private fun evaluateBlock(value: IrStatementContainer): LLVMValueRef? {
+        logger.log("evaluateBlock              : ${value.statements.forEach { ir2string(it) }}")
         value.statements.dropLast(1).forEach {
             evaluateExpression(codegen.newVar(), it)
         }
