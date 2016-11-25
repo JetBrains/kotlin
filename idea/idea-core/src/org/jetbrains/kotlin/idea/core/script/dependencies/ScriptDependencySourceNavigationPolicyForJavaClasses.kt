@@ -56,7 +56,7 @@ class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigation
         val packageName = file.packageName
         val relativePath = if (packageName.isEmpty()) sourceFileName else packageName.replace('.', '/') + '/' + sourceFileName
 
-        for (root in kotlinScriptConfigurationManager.getAllLibrarySources()) {
+        for (root in kotlinScriptConfigurationManager.getAllLibrarySources().filter { it.isValid }) {
             val sourceFile = root.findFileByRelativePath(relativePath)
             if (sourceFile != null && sourceFile.isValid) {
                 val sourcePsi = file.manager.findFile(sourceFile)
