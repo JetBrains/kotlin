@@ -844,64 +844,56 @@ public fun <T> Array<out T>.contentDeepHashCode(): Int {
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun <T> Array<out T>.sort(comparison: (T, T) -> Int): Unit {
+public external fun <T> Array<out T>.sort(comparison: (T, T) -> Int): Unit {
     noImpl
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun ByteArray.sort(comparison: (Byte, Byte) -> Int): Unit {
+public external fun ByteArray.sort(comparison: (Byte, Byte) -> Int): Unit {
     noImpl
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun ShortArray.sort(comparison: (Short, Short) -> Int): Unit {
+public external fun ShortArray.sort(comparison: (Short, Short) -> Int): Unit {
     noImpl
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun IntArray.sort(comparison: (Int, Int) -> Int): Unit {
+public external fun IntArray.sort(comparison: (Int, Int) -> Int): Unit {
     noImpl
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun LongArray.sort(comparison: (Long, Long) -> Int): Unit {
+public external fun LongArray.sort(comparison: (Long, Long) -> Int): Unit {
     noImpl
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun FloatArray.sort(comparison: (Float, Float) -> Int): Unit {
+public external fun FloatArray.sort(comparison: (Float, Float) -> Int): Unit {
     noImpl
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun DoubleArray.sort(comparison: (Double, Double) -> Int): Unit {
+public external fun DoubleArray.sort(comparison: (Double, Double) -> Int): Unit {
     noImpl
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-@native
-public fun CharArray.sort(comparison: (Char, Char) -> Int): Unit {
+public external fun CharArray.sort(comparison: (Char, Char) -> Int): Unit {
     noImpl
 }
 
