@@ -93,7 +93,7 @@ object KotlinCompilerClient {
                 }
             }
         }
-        catch (e: Exception) {
+        catch (e: Throwable) {
             reportingTargets.report(DaemonReportCategory.EXCEPTION, e.toString())
         }
         return null
