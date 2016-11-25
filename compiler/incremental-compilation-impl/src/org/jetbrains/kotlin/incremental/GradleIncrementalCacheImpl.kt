@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
-internal class GradleIncrementalCacheImpl(
+class GradleIncrementalCacheImpl(
         targetDataRoot: File,
         targetOutputDir: File?,
         target: TargetId,

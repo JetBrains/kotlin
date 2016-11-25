@@ -38,12 +38,11 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import java.io.EOFException
 import java.io.File
 import java.io.IOException
 import java.util.*
 
-internal fun makeIncrementally(
+fun makeIncrementally(
         cachesDir: File,
         sourceRoots: Iterable<File>,
         args: K2JVMCompilerArguments,
@@ -90,7 +89,7 @@ private inline fun enableIC(fn: ()->Unit) {
     }
 }
 
-internal class IncrementalJvmCompilerRunner(
+class IncrementalJvmCompilerRunner(
         workingDir: File,
         private val javaSourceRoots: Set<File>,
         private val cacheVersions: List<CacheVersion>,

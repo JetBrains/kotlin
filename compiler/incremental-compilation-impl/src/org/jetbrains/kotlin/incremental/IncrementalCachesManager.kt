@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
-internal class IncrementalCachesManager (
+class IncrementalCachesManager (
         private val targetId: TargetId,
         private val cacheDirectory: File,
         private val outputDir: File,
