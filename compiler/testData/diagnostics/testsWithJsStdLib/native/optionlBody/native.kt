@@ -1,26 +1,18 @@
 // !DIAGNOSTICS: -UNREACHABLE_CODE
 // unreachable code suppressed due to KT-9586
 
-@native
-val baz: Int
-@native
-val boo: Int = noImpl
+external val baz: Int
+external val boo: Int = noImpl
 
-@native
-val Int.baz: Int
+external val Int.baz: Int
 
-@native
-fun foo()
-@native
-fun bar() {}
+external fun foo()
+external fun bar() {}
 
-@native
-fun String.foo(): Int
-@native
-fun String.bar(): Int = noImpl
+external fun String.foo(): Int
+external fun String.bar(): Int = noImpl
 
-@native
-interface T {
+external interface T {
     val baz: Int
 
     fun foo()
@@ -35,8 +27,7 @@ interface T {
     }
 }
 
-@native
-class C {
+external class C {
     val baz: Int
     val boo: Int = noImpl
 
@@ -52,8 +43,7 @@ class C {
     }
 }
 
-@native
-object O {
+external object O {
     val baz: Int
     val boo: Int = noImpl
 
@@ -62,8 +52,7 @@ object O {
 }
 
 fun test() {
-    @native
-    class Local {
+    external class Local {
         val baz: Int
         val boo: Int = noImpl
 

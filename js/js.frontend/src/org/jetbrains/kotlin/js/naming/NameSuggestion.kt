@@ -222,7 +222,7 @@ class NameSuggestion {
                 descriptor
             }
 
-            // If declaration is marked with either @native, @library or @JsName, return its stable name as is.
+            // If declaration is marked with either external, @native, @library or @JsName, return its stable name as is.
             val nativeName = getNameForAnnotatedObject(overriddenDescriptor)
             if (nativeName != null) return NameAndStability(nativeName, true)
 

@@ -6,9 +6,6 @@ fun bar(): Any? {
     return null
 }
 
-@native
-val Exception.message: String get() = noImpl
-
 fun box(): String {
     val a: String? = null
     try {

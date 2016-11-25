@@ -1,8 +1,7 @@
 package kotlin.js
 
 //TODO: declare using number
-@native
-public class MathClass() {
+public external class MathClass() {
     public val PI: Double = noImpl
     public fun random(): Double = noImpl
     public fun abs(value: Double): Double = noImpl
@@ -26,5 +25,4 @@ public class MathClass() {
     public fun ceil(value: Number): Int = noImpl
 }
 
-@native
-public val Math: MathClass = MathClass()
+public external val Math: MathClass = MathClass()

@@ -42,10 +42,6 @@ object JsModuleChecker : SimpleDeclarationChecker {
             diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE.on(declaration))
         }
 
-        if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_TOPLEVEL.on(declaration))
-        }
-
         val isFileModuleOrNonModule = AnnotationsUtils.getFileModuleName(bindingContext, descriptor) != null ||
                                       AnnotationsUtils.isFromNonModuleFile(bindingContext, descriptor)
         if (isFileModuleOrNonModule) {

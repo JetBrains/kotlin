@@ -7,7 +7,7 @@ import org.w3c.dom.Node
 public fun createDocument(): Document = Document()
 
 @Deprecated("use member property outerHTML of Element class instead")
-@native public val Node.outerHTML: String get() = noImpl
+public external val Node.outerHTML: String get() = noImpl
 
 /** Converts the node to an XML String */
 @Deprecated("use outerHTML directly")

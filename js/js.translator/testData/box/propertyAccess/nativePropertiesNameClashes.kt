@@ -3,8 +3,8 @@ package foo
 val PACKAGE = "kotlin.modules.JS_TESTS.foo"
 
 class A
-@native val Any.__proto__: String get() = noImpl
-@native val A.__proto__: String get() = noImpl
+external val Any.__proto__: String get() = noImpl
+external val A.__proto__: String get() = noImpl
 
 fun box(): String {
     val a = A()

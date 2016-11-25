@@ -5,14 +5,14 @@ package foo
 import kotlin.js.*
 
 @JsModule("A")
-@native object A {
+external object A {
     fun f(): Int
 
     val g: Int
 }
 
 @JsNonModule
-@native open class B {
+external open class B {
     fun foo(): Int
 }
 

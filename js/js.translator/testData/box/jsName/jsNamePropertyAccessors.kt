@@ -1,6 +1,6 @@
 package foo
 
-@native class A {
+external class A {
     val xx: Int
         @JsName("getX") get
 
@@ -9,7 +9,7 @@ package foo
         @JsName("setY") set
 }
 
-@native var zz: Int
+external var zz: Int
     @JsName("getZ") get
     @JsName("setZ") set
 

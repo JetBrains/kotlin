@@ -1,10 +1,9 @@
 package foo
 
 
-@native
-val classes: Map<String, Any> = noImpl
-@native
-val classesMutable: HashMap<String, String> = noImpl
+external val classes: Map<String, Any> = noImpl
+
+external val classesMutable: HashMap<String, String> = noImpl
 
 fun box(): String {
     classesMutable.set("why", "?")

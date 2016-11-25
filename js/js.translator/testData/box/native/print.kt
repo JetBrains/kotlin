@@ -22,8 +22,7 @@ val EXPECTED_NEWLINE_FOR_EACH = """Hello
 
 """
 
-@native
-var buffer: String = noImpl
+external var buffer: String = noImpl
 
 fun test(expected: String, initCode: String, getResult: () -> String) {
     buffer = ""

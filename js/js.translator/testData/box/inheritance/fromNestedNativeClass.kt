@@ -2,8 +2,7 @@
 
 package foo
 
-@native
-class A {
+external class A {
     open class B {
         fun foo(): String
     }

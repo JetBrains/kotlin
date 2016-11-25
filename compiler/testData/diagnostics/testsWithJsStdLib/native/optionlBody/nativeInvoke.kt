@@ -1,11 +1,11 @@
+// !DIAGNOSTICS: -DEPRECATION
 @nativeInvoke
 fun String.foo(): Int
 @nativeInvoke
 fun String.bar(): Int = noImpl
 
 
-@native
-object O {
+external object O {
     @nativeInvoke
     fun foo()
     @nativeInvoke

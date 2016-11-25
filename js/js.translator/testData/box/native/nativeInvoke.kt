@@ -1,7 +1,6 @@
 package foo
 
-@native
-class Function(vararg argsAndCode: String) {
+external class Function(vararg argsAndCode: String) {
     @nativeInvoke
     operator fun invoke(a: Any?): Any? = noImpl
 

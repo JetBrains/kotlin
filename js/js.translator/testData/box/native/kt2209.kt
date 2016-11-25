@@ -1,22 +1,18 @@
 package foo
 
-@native
-interface Chrome {
+external interface Chrome {
     val extension: Extension
 }
 
-@native
-interface Extension {
+external interface Extension {
     val lastError: LastError?
 }
 
-@native
-interface LastError {
+external interface LastError {
     val message: String
 }
 
-@native
-val chrome: Chrome = noImpl
+external val chrome: Chrome = noImpl
 
 fun box(): String {
     val lastError = chrome.extension.lastError?.message

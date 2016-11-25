@@ -1,1 +1,1 @@
-@native public fun parseInt(s: String, radix: Int = 10): Int = noImpl
+external public fun parseInt(s: String, radix: Int = 10): Int = noImpl

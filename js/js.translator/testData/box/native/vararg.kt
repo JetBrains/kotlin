@@ -1,13 +1,12 @@
 package foo
 
-@native
-fun paramCount(vararg a: Int): Int = noImpl
+external fun paramCount(vararg a: Int): Int = noImpl
 
-@native("paramCount")
-fun anotherParamCount(vararg a: Int): Int = noImpl
+@JsName("paramCount")
+external fun anotherParamCount(vararg a: Int): Int = noImpl
 
-@native("paramCount")
-fun <T> genericParamCount(vararg a: T): Int = noImpl
+@JsName("paramCount")
+external fun <T> genericParamCount(vararg a: T): Int = noImpl
 
 // test spread operator
 fun count(vararg a: Int) = paramCount(*a)
@@ -15,14 +14,11 @@ fun count(vararg a: Int) = paramCount(*a)
 // test spread operator
 fun anotherCount(vararg a: Int) = anotherParamCount(*a)
 
-@native
-fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = noImpl
+external fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = noImpl
 
-@native
-fun Bar.test2(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
+external fun Bar.test2(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
 
-@native
-class Bar(val size: Int, order: Int = 0) {
+external class Bar(val size: Int, order: Int = 0) {
     fun test(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
     companion object {
         fun startNewTest(): Boolean = noImpl
@@ -30,8 +26,7 @@ class Bar(val size: Int, order: Int = 0) {
     }
 }
 
-@native
-object obj {
+external object obj {
     fun test(size: Int, vararg args: Int): Boolean = noImpl
 }
 
@@ -43,8 +38,7 @@ fun spreadInMethodCallWithReceiver(size: Int, vararg args: Int) = Bar(size).test
 
 fun spreadInPackageMethodCall(size: Int, vararg args: Int) = test3(Bar(size), 1, *args)
 
-@native
-fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = noImpl
+external fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = noImpl
 
 fun testSpreadOperatorWithSafeCall(a: Bar?, expected: Boolean?, vararg args: Int): Boolean {
     return a?.test(0, 1, *args) == expected
@@ -59,14 +53,11 @@ fun testCallOrder(vararg args: Int) =
         Bar(args.size, 0).test(1, 1, *args) && Bar(args.size, 2).test(3, 1, *args) &&
         !Bar.hasOrderProblem
 
-@native
-fun sumOfParameters(x: Int, y: Int, vararg a: Int): Int = noImpl
+external fun sumOfParameters(x: Int, y: Int, vararg a: Int): Int = noImpl
 
-@native
-fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int = noImpl
+external fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int = noImpl
 
-@native
-fun <T> idArrayVarArg(vararg a: Array<T>): Array<T> = noImpl
+external fun <T> idArrayVarArg(vararg a: Array<T>): Array<T> = noImpl
 
 fun box(): String {
     if (paramCount() != 0)

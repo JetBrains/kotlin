@@ -1,6 +1,6 @@
 package foo
 
-@native class A(x: Int) {
+external class A(x: Int) {
     var x: Int
         get() = noImpl
         set(value) = noImpl

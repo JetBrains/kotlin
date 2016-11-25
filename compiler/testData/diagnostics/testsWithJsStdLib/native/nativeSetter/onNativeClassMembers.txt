@@ -1,6 +1,6 @@
 package
 
-@kotlin.js.native public final class A {
+public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.js.nativeSetter public final fun foo(/*0*/ a: kotlin.Int, /*1*/ v: kotlin.String): kotlin.Unit
@@ -24,7 +24,7 @@ package
     }
 }
 
-@kotlin.js.native public final class B {
+public final class B {
     public constructor B()
     @kotlin.js.nativeSetter public final val foo: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -54,7 +54,7 @@ package
     }
 }
 
-@kotlin.js.native public final class C {
+public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.js.nativeSetter public final fun foo(/*0*/ a: kotlin.Number, /*1*/ v: kotlin.String = ...): kotlin.String

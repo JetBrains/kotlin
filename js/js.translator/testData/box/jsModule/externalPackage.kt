@@ -2,21 +2,21 @@
 @file:JsModule("lib")
 package foo
 
-@native class A(@native val x: Int = noImpl) {
-    @native fun foo(y: Int): Int = noImpl
+external class A(@native val x: Int = noImpl) {
+    fun foo(y: Int): Int = noImpl
 }
 
-@native object B {
-    @native val x: Int = noImpl
+external object B {
+    val x: Int = noImpl
 
-    @native fun foo(y: Int): Int = noImpl
+    fun foo(y: Int): Int = noImpl
 }
 
-@native fun foo(y: Int): Int = noImpl
+external fun foo(y: Int): Int = noImpl
 
-@native val bar: Int = noImpl
+external val bar: Int = noImpl
 
-@native var mbar: Int = noImpl
+external var mbar: Int = noImpl
 
 fun box(): String {
     val a = A(23)

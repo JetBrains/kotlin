@@ -16,6 +16,5 @@
 
 package kotlin.js.internal
 
-@native
 @JsName("Error")
-public open class JsError(message: String?)
+public external open class JsError(message: String?)

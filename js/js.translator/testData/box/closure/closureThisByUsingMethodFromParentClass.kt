@@ -2,15 +2,14 @@ package foo
 
 // HACKS
 
-@native
-const val PATH_TO_F_CREATOR = "B\$far\$lambda"
-@native
-const val PATH_TO_G_CREATOR = "B\$gar\$lambda"
+external const val PATH_TO_F_CREATOR = "B\$far\$lambda"
+external const val PATH_TO_G_CREATOR = "B\$gar\$lambda"
 
-@native("$PATH_TO_F_CREATOR")
-val F_CREATOR: Any = noImpl
-@native("$PATH_TO_G_CREATOR")
-val G_CREATOR: Any = noImpl
+@JsName("$PATH_TO_F_CREATOR")
+external val F_CREATOR: Any = noImpl
+
+@JsName("$PATH_TO_G_CREATOR")
+external val G_CREATOR: Any = noImpl
 
 
 // Test
@@ -46,10 +45,8 @@ fun box(): String {
 
 // Helpers
 
-@native
-fun String.replace(regexp: RegExp, replacement: String): String = noImpl
+external fun String.replace(regexp: RegExp, replacement: String): String = noImpl
 
 fun String.replaceAll(regexp: String, replacement: String): String = replace(RegExp(regexp, "g"), replacement)
 
-@native
-class RegExp(regexp: String, flags: String)
+external class RegExp(regexp: String, flags: String)

@@ -17,7 +17,7 @@
 package kotlin.text.js
 
 
-@native public class RegExp(pattern: String, flags: String? = null) {
+public external class RegExp(pattern: String, flags: String? = null) {
 
     public fun test(str: String): Boolean = noImpl
 
@@ -40,7 +40,7 @@ public fun RegExp.reset() {
 }
 
 // TODO: Inherit from array or introduce asArray() extension
-@native public interface RegExpMatch {
+public external interface RegExpMatch {
     public val index: Int
     public val input: String
     public val length: Int

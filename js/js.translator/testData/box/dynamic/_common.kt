@@ -1,13 +1,10 @@
 package foo
 
-@native
-var bar: dynamic = noImpl
+external var bar: dynamic = noImpl
 
-@native
-var arr: dynamic = noImpl
+external var arr: dynamic = noImpl
 
-@native
-var baz: dynamic = noImpl
+external var baz: dynamic = noImpl
 
 object t {
     override fun toString() = "object t {}"

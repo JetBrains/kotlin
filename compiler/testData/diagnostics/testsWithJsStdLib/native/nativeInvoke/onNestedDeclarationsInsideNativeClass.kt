@@ -1,7 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER, -DEPRECATION
 
-@native
-class A {
+external class A {
     class B {
         class C {
             @nativeInvoke

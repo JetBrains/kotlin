@@ -1,7 +1,7 @@
 class A {
-    <!NATIVE_INNER_CLASS_PROHIBITED!>@native inner class B<!>
+    <!NATIVE_INNER_CLASS_PROHIBITED!>external inner class B<!>
 }
 
-@native class C {
-    @native inner class D
+external class C {
+    inner external  class D
 }

@@ -28,9 +28,9 @@ package foo
 
 // CHECK_NOT_CALLED: moveTo
 
-@native fun Array<Int>.push(element: Int): Unit = noImpl
+external fun Array<Int>.push(element: Int): Unit = noImpl
 
-@native fun Array<Int>.splice(index: Int, howMany: Int): Unit = noImpl
+external fun Array<Int>.splice(index: Int, howMany: Int): Unit = noImpl
 
 data class PairArray<T, R>(val fst: Array<T>, val snd: Array<R>)
 

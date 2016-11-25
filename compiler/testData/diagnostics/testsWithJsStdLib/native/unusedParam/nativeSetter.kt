@@ -1,14 +1,13 @@
+// !DIAGNOSTICS: -DEPRECATION
 @nativeSetter
 fun Int.foo(a: String, v: Int): Int = noImpl
 
-@native
-class Bar(b: Int, c: Char) {
+external class Bar(b: Int, c: Char) {
     @nativeSetter
     fun baz(d: Int, v: Int) {}
 }
 
-@native
-object Obj {
+external object Obj {
     @nativeSetter
     fun test1(e: String, v: Any) {}
 

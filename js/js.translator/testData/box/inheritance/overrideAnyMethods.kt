@@ -1,7 +1,6 @@
 package foo
 
-@native
-fun String.charCodeAt(i: Int): Int = noImpl
+external fun String.charCodeAt(i: Int): Int = noImpl
 
 // Because String in JS doesn't have hashCode method
 fun String.myHashCode(): Int {

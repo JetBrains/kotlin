@@ -1,6 +1,6 @@
 package foo
 
-@native interface HasName {
+external interface HasName {
     val name: String
 }
 

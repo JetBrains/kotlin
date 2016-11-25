@@ -20,8 +20,8 @@ import kotlin.annotation.AnnotationTarget.*
 
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
-@native internal annotation class JsName(val name: String)
+internal external annotation class JsName(val name: String)
 
-@native internal annotation class native
+internal external annotation class native
 
-@native internal fun js(code: String): dynamic
+internal external fun js(code: String): dynamic

@@ -19,7 +19,7 @@ package kotlin
 
 // Note:
 // Right now we don't want to have neither 'volatile' nor 'synchronized' at runtime,
-// so they annotated as 'native' to avoid warnings/errors from some minifiers.
+// so they annotated as `external` to avoid warnings/errors from some minifiers.
 // They was reserved word in ECMAScript 2, but is not since ECMAScript 5.
 
 // Additional note:
@@ -29,10 +29,10 @@ package kotlin
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class Volatile
+public external annotation class Volatile
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class Synchronized
+public external annotation class Synchronized
 
-public inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()
+public external inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()

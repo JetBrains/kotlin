@@ -2,8 +2,7 @@ package jquery
 
 import org.w3c.dom.Element
 
-@native
-public class JQuery() {
+public external class JQuery() {
     public fun addClass(className: String): JQuery = noImpl;
     public fun addClass(f: Element.(Int, String) -> String): JQuery = noImpl;
 
@@ -43,8 +42,7 @@ public class JQuery() {
     public fun `val`(): String? = noImpl
 }
 
-@native
-open public class MouseEvent() {
+open public external class MouseEvent() {
     public val pageX: Double = 0.0;
     public val pageY: Double = 0.0;
     public fun preventDefault() {
@@ -52,20 +50,19 @@ open public class MouseEvent() {
     public fun isDefaultPrevented(): Boolean = true;
 }
 
-@native
-public class MouseClickEvent() : MouseEvent() {
+public external class MouseClickEvent() : MouseEvent() {
     public val which: Int = 0;
 }
 
-@native("$")
-public fun jq(selector: String): JQuery = JQuery();
-@native("$")
-public fun jq(selector: String, context: Element): JQuery = JQuery();
-@native("$")
-public fun jq(callback: () -> Unit): JQuery = JQuery();
-@native("$")
-public fun jq(obj: JQuery): JQuery = JQuery();
-@native("$")
-public fun jq(el: Element): JQuery = JQuery();
-@native("$")
-public fun jq(): JQuery = JQuery();
+@JsName("$")
+public external fun jq(selector: String): JQuery = JQuery();
+@JsName("$")
+public external fun jq(selector: String, context: Element): JQuery = JQuery();
+@JsName("$")
+public external fun jq(callback: () -> Unit): JQuery = JQuery();
+@JsName("$")
+public external fun jq(obj: JQuery): JQuery = JQuery();
+@JsName("$")
+public external fun jq(el: Element): JQuery = JQuery();
+@JsName("$")
+public external fun jq(): JQuery = JQuery();

@@ -5,19 +5,19 @@ package foo
 import kotlin.js.*
 
 @JsNonModule
-@native object A {
+external object A {
     fun f(): Int
 
     val g: Int
 }
 
 @JsNonModule
-@native open class B {
+external open class B {
     fun foo(): Int
 }
 
 @JsNonModule
-@native fun bar(): Unit
+external fun bar(): Unit
 
 // MODULE: m2(m1)
 // MODULE_KIND: AMD
@@ -33,4 +33,4 @@ fun box() {
     <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>bar<!>()
 }
 
-@native class DerivedB : <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B<!>()
+external class DerivedB : <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B<!>()

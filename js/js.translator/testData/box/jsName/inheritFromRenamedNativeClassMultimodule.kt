@@ -3,9 +3,8 @@
 
 package foo
 
-@native
 @JsName("A")
-open class B(val foo: String)
+external open class B(val foo: String)
 
 // MODULE: main(module1)
 // FILE: main.kt

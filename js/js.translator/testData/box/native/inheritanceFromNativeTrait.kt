@@ -1,11 +1,10 @@
 package foo
 
-@native
-interface NativeTrait {
+external interface NativeTrait {
     val foo: String
     fun bar(a: Int): Any
 
-    @native("boo")
+    @JsName("boo")
     fun baz(): String
 }
 

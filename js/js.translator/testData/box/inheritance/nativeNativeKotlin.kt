@@ -2,13 +2,11 @@
 
 package foo
 
-@native
-open class A {
+external open class A {
     fun foo(): String
 }
 
-@native
-open class B : A() {
+external open class B : A() {
     fun bar(): String
 }
 

@@ -1,13 +1,12 @@
 package foo
 
-@native
-internal open class A(val a: Int) {
+internal external open class A(val a: Int) {
     fun g(): Int = noImpl
     fun m(): Int = noImpl
 
     public open fun foo(i: Int): String = noImpl
     public fun boo(i: Int): String = noImpl
-    @native("bar")
+    @JsName("bar")
     open fun baz(i: Int): String = noImpl
 }
 

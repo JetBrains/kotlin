@@ -329,12 +329,6 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
-        @TestMetadata("nonTopLevelProhibited.kt")
-        public void testNonTopLevelProhibited() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/nonTopLevelProhibited.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("prohibitedOnNonNative.kt")
         public void testProhibitedOnNonNative() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/prohibitedOnNonNative.kt");

@@ -1,14 +1,13 @@
+// !DIAGNOSTICS: -DEPRECATION
 @nativeInvoke
 fun Int.foo(a: String): Int = noImpl
 
-@native
-class Bar(b: Int, c: Char) {
+external class Bar(b: Int, c: Char) {
     @nativeInvoke
     fun baz(d: Int) {}
 }
 
-@native
-object Obj {
+external object Obj {
     @nativeInvoke
     fun test1(e: String) {}
 

@@ -1,11 +1,9 @@
 // FILE: enumerable.kt
 package foo
 
-@native
-fun <T> _enumerate(o: T): T = noImpl
+external fun <T> _enumerate(o: T): T = noImpl
 
-@native
-fun <T> _findFirst(o: Any): T = noImpl
+external fun <T> _findFirst(o: Any): T = noImpl
 
 class Test() {
     val a: Int = 100

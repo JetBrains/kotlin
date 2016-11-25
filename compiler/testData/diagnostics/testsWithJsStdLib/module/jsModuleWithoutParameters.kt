@@ -2,6 +2,8 @@
 // This should not crash
 package foo
 
-@JsModule @native fun foo(x: Int): Int
+@JsModule
+external fun foo(x: Int): Int
 
-@JsModule(23) @native fun bar(x: Int): Int
+@JsModule(23)
+external fun bar(x: Int): Int

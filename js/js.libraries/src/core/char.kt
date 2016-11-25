@@ -19,9 +19,9 @@ package kotlin.text
 // actually \s is enough to match all whitespace, but \xA0 added because of different regexp behavior of Rhino used in Selenium tests
 public fun Char.isWhitespace(): Boolean = toString().matches("[\\s\\xA0]")
 
-@native public fun Char.toLowerCase(): Char = noImpl
+public external fun Char.toLowerCase(): Char = noImpl
 
-@native public fun Char.toUpperCase(): Char = noImpl
+public external fun Char.toUpperCase(): Char = noImpl
 
 /**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).

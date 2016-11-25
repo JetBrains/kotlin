@@ -4,9 +4,9 @@ inline fun <reified T> foo(x: T) {
     println(x)
 }
 
-@native interface I
+external interface I
 
-@native class C : I
+external class C : I
 
 operator inline fun <reified T> C.plus(other: T) = this
 

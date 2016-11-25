@@ -1,8 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo() {
-    @native
-    class A {
+    external class A {
         @nativeInvoke
         fun foo() {}
 

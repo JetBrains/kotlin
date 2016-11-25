@@ -85,14 +85,13 @@ fun box(): String {
     return "OK";
 }
 
-@native
-object Object {
+external object Object {
     object Object {
         val a: String = noImpl
         var b: String = noImpl
         fun test(): Int = noImpl
 
-        @native("AnotherClass")
+        @JsName("AnotherClass")
         class Class(val a: String) {
             var b: String = noImpl
             fun test(): Int = noImpl
@@ -133,8 +132,8 @@ object Object {
     fun test(): Int = noImpl
 }
 
-@native("SomeClass")
-class Class {
+@JsName("SomeClass")
+external class Class {
     object Object {
         val a: String = noImpl
         var b: String = noImpl
@@ -170,16 +169,15 @@ class Class {
     }
 
     companion object {
-        @native("aaa")
+        @JsName("aaa")
         val a: Trait = noImpl
         var b: String = noImpl
         fun test(): Int = noImpl
     }
 }
 
-@native
-interface Trait {
-    @native("SomeObject")
+external interface Trait {
+    @JsName("SomeObject")
     object Object {
         val a: String = noImpl
         var b: String = noImpl
@@ -197,7 +195,7 @@ interface Trait {
         }
     }
 
-    @native("SomeTrait")
+    @JsName("SomeTrait")
     interface Trait {
         val a: String
         var b: String

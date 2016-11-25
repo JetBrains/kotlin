@@ -1,14 +1,12 @@
 package q
 
-@native
-class Foo {
+external class Foo {
     // RUN:
     fun foo(s: Array<String>) = noImpl
 }
 
 
 // RUN:
-@native
-fun main(s: Array<String>) {
+external fun main(s: Array<String>) {
     println("Top-level")
 }

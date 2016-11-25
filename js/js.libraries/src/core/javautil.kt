@@ -21,8 +21,7 @@ package java.util
 // typealias Date = kotlin.js.Date
 
 @Deprecated("Use kotlin.js.Date instead", ReplaceWith("kotlin.js.Date"))
-@native
-public class Date() {
+public external class Date() {
     public fun getTime(): Int = noImpl
 }
 

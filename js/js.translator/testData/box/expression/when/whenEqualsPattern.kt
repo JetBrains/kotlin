@@ -2,7 +2,7 @@ package foo
 
 data class A(val bar: Int)
 
-@native class B
+external class B
 
 fun makeB(): B = js("new Object();")
 

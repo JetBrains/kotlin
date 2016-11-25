@@ -1,7 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER, -DEPRECATION
 
-@native
-class A {
+external class A {
     @nativeGetter
     fun get(a: String): Any? = null
 
@@ -23,8 +22,7 @@ class A {
     }
 }
 
-@native
-class B {
+external class B {
     <!WRONG_ANNOTATION_TARGET!>@nativeGetter<!>
     val foo = 0
 
@@ -40,8 +38,7 @@ class B {
     }
 }
 
-@native
-class C {
+external class C {
     <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeGetter
     fun Int.get(a: String): Int?<!> = 1
 

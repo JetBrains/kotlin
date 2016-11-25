@@ -1,7 +1,6 @@
 package foo
 
-@native
-val c: Any? = noImpl
+external val c: Any? = noImpl
 
 fun box(): String {
     if (c != null) return "fail1"

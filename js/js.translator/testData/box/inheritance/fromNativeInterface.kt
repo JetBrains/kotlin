@@ -1,7 +1,6 @@
 package foo
 
-@native
-interface A {
+external interface A {
     val bar: Int get() = noImpl
     fun foo(): String = noImpl
 }

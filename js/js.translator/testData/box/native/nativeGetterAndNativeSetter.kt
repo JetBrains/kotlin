@@ -1,7 +1,7 @@
 package foo
 
-@native("Object")
-class JsObject {
+@JsName("Object")
+external class JsObject {
     @nativeGetter
     operator fun get(a: String): Any? = noImpl
 
@@ -30,8 +30,7 @@ fun JsObject.put(a: String, v: Any?): Unit = noImpl
 
 object t{}
 
-@native
-fun getTestObject(): JsObject = noImpl
+external fun getTestObject(): JsObject = noImpl
 
 fun test(obj: JsObject, key: String, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj[key])

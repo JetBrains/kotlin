@@ -1,22 +1,30 @@
 package foo
 
-@JsName("bar") @native fun foo(): Int = noImpl
+@JsName("bar")
+external fun foo(): Int = noImpl
 
-@JsName("baz") @native val prop: Int get() = noImpl
+@JsName("baz")
+external val prop: Int get() = noImpl
 
-@JsName("B") @native class A {
-    @JsName("g") fun f(): Int = noImpl
+@JsName("B")
+external class A {
+    @JsName("g")
+    fun f(): Int = noImpl
 
-    @JsName("q") val p: Int get() = noImpl
+    @JsName("q")
+    val p: Int get() = noImpl
 
     companion object {
-        @JsName("g") fun f(): Int = noImpl
+        @JsName("g")
+        fun f(): Int = noImpl
 
-        @JsName("q") val p: Int get() = noImpl
+        @JsName("q")
+        val p: Int get() = noImpl
     }
 }
 
-@JsName("P") @native object O {
+@JsName("P")
+external object O {
     fun f(): Int = noImpl
 }
 

@@ -2,8 +2,8 @@
 package foo
 
 @JsModule("lib")
-@native class A(@native val x: Int = noImpl) {
-    @native fun foo(y: Int): Int = noImpl
+external class A(val x: Int = noImpl) {
+    fun foo(y: Int): Int = noImpl
 }
 
 fun box(): String {

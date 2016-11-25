@@ -1,7 +1,6 @@
 package foo
 
-@native
-class A(b: Int) {
+external class A(b: Int) {
     fun g(): Int = noImpl
     fun m(): Int = noImpl
 }

@@ -9,7 +9,7 @@ public interface B : A {
     }
 }
 
-@native class Function(vararg args: String)
+external class Function(vararg args: String)
 
 val hasProp = Function("obj, prop", "return obj[prop] !== undefined") as ((Any, String) -> Boolean)
 

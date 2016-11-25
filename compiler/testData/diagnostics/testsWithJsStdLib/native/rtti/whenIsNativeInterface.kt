@@ -1,6 +1,6 @@
-@native interface I
+external interface I
 
-@native interface J
+external interface J
 
 fun box(a: Any) = when (a) {
     <!CANNOT_CHECK_FOR_NATIVE_INTERFACE!>is I<!> -> 0

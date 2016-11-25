@@ -1,6 +1,6 @@
 package kotlin.js
 
-@native public class Json() {
+public external class Json() {
     operator fun get(propertyName: String): Any? = noImpl
     operator fun set(propertyName: String, value: Any?): Unit = noImpl
 }
@@ -16,8 +16,7 @@ public fun json(vararg pairs: Pair<String, Any?>): Json {
 @library("jsonAddProperties")
 public fun Json.add(other: Json): Json = noImpl
 
-@native
-public interface JsonClass {
+public external interface JsonClass {
     public fun stringify(o: Any): String
     public fun stringify(o: Any, replacer: (key: String, value: Any?) -> Any?): String
     public fun stringify(o: Any, replacer: (key: String, value: Any?) -> Any?, space: Int): String
@@ -30,5 +29,4 @@ public interface JsonClass {
     public fun <T> parse(text: String, reviver: ((key: String, value: Any?) -> Any?)): T
 }
 
-@native
-public val JSON: JsonClass = noImpl
+public external val JSON: JsonClass = noImpl

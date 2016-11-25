@@ -7,9 +7,9 @@ val foo = 23
 val boo: Int
     get() = 42
 
-@native val bar: Int = noImpl
+external val bar: Int = noImpl
 
-@native val far: Int
+external val far: Int
     get() = noImpl
 
 // TODO: annotations like this are not serialized properly. Uncomment after KT-14529 gets fixed
@@ -20,7 +20,8 @@ val fuzz: Int
 
 inline fun fetchFoo() = foo
 
-@JsName("fee") val tee = 2525
+@JsName("fee")
+val tee = 2525
 
 // FILE: lib.js
 

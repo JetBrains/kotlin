@@ -50,7 +50,7 @@ private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribu
     indent(commented, level)
 
     if (arg.name in keywords) {
-        append("@native(\"${arg.name}\") ")
+        append("@JsName(\"${arg.name}\") ")
     }
 
     renderAttributeDeclaration(arg, modality, omitDefaults)
@@ -104,7 +104,7 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     }
 
     if (f.name in keywords) {
-        append("@native(\"${f.name}\") ")
+        append("@JsName(\"${f.name}\") ")
     }
     append("fun ${f.name.replaceKeywords()}")
     renderArgumentsDeclaration(f.arguments, override)
@@ -120,7 +120,7 @@ private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, function
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 
 fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
-    append("@native public ")
+    append("public external ")
     if (markerAnnotation) {
         append("@marker ")
     }

@@ -1,14 +1,13 @@
+// !DIAGNOSTICS: -DEPRECATION
 @nativeGetter
 fun Int.foo(a: String): Int? = noImpl
 
-@native
-class Bar(b: Int, c: Char) {
+external class Bar(b: Int, c: Char) {
     @nativeGetter
     fun baz(d: Int): Any? = noImpl
 }
 
-@native
-object Obj {
+external object Obj {
     @nativeGetter
     fun test1(e: String): String? = noImpl
 

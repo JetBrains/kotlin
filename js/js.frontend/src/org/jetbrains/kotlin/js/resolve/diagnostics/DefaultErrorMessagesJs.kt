@@ -50,9 +50,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for @native declaration with explicit name")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR, "@JsModule and @JsNonModule annotations prohibited for 'var' declarations. " +
                                                   "Use 'val' instead.")
-        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule and @JsNonModule annotations prohibited for non-@native declarations.")
-        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_TOPLEVEL, "@JsModule and @JsNonModule annotations are only allowed to appear " +
-                                                           "on packages and top-level declarations")
+        put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule and @JsNonModule annotations prohibited for non-external declarations.")
         put(ErrorsJs.NESTED_JS_MODULE_PROHIBITED, "@JsModule and @JsNonModule can't appear on here since the file is already " +
                                                   "marked by either @JsModule or @JsNonModule")
         put(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM, "Can't access declaration marked with @JsModule annotation " +

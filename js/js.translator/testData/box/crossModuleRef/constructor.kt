@@ -6,7 +6,7 @@ class A(val x: Int) {
     constructor(a: Int, b: Int) : this(a + b)
 }
 
-@native class B(x: Int) {
+external class B(x: Int) {
     constructor(a: Int, b: Int) : this(0) {}
 
     val x: Int

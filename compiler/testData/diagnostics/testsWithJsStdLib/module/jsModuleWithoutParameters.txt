@@ -1,6 +1,6 @@
 package
 
 package foo {
-    @kotlin.js.JsModule(import = 23) @kotlin.js.native public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
-    @kotlin.js.JsModule @kotlin.js.native public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+    @kotlin.js.JsModule(import = 23) public external fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    @kotlin.js.JsModule public external fun foo(/*0*/ x: kotlin.Int): kotlin.Int
 }

@@ -6,7 +6,7 @@ package bar {
 
 package foo {
 
-    @kotlin.js.JsModule(import = "A") @kotlin.js.native public object A {
+    @kotlin.js.JsModule(import = "A") public external object A {
         private constructor A()
         public final val g: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -15,7 +15,7 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.js.JsNonModule @kotlin.js.native public open class B {
+    @kotlin.js.JsNonModule public external open class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final fun foo(): kotlin.Int

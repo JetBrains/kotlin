@@ -1,7 +1,6 @@
 package foo
 
-@native
-class A {
+external class A {
     constructor()
     constructor(s: String)
     constructor(i: Int)

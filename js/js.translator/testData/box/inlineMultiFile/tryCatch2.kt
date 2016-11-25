@@ -136,7 +136,7 @@ inline fun <T, R> T.performWithFail2(job: (T)-> R, failJob: (e: RuntimeException
     }
 }
 
-@native object Number {
+external object Number {
     fun parseInt(str: String): Int = noImpl
 }
 

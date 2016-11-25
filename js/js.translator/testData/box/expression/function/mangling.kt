@@ -5,35 +5,35 @@ private var log = ""
 public fun public_baz(i: Int) {
     log = "public_baz"
 }
-@native public fun public_baz(a: String) {
+external public fun public_baz(a: String) {
 }
 
 internal fun internal_baz(i: Int) {
 }
-internal @native fun internal_baz(a: String) {
+internal external fun internal_baz(a: String) {
 }
 
 private fun getCurrentPackage(): dynamic = js("_").foo
 
 private fun private_baz(i: Int) {
 }
-@native private fun private_baz(a: String) {
+private external fun private_baz(a: String) {
 }
 
 public class PublicClass {
     public fun public_baz(i: Int) {
     }
-    @native public fun public_baz(a: String) {
+    public external fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    @native internal fun internal_baz(a: String) {
+    internal external fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    @native private fun private_baz(a: String) {
+    private external fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -43,17 +43,17 @@ public class PublicClass {
 internal class InternalClass {
     public fun public_baz(i: Int) {
     }
-    @native public fun public_baz(a: String) {
+    public external fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    @native internal fun internal_baz(a: String) {
+    internal external fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    @native private fun private_baz(a: String) {
+    private external fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -63,17 +63,17 @@ internal class InternalClass {
 private class PrivateClass {
     public fun public_baz(i: Int) {
     }
-    @native public fun public_baz(a: String) {
+    public external fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    @native internal fun internal_baz(a: String) {
+    internal external fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    @native private fun private_baz(a: String) {
+    private external fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -83,17 +83,17 @@ private class PrivateClass {
 open public class OpenPublicClass {
     public fun public_baz(i: Int) {
     }
-    @native public fun public_baz(a: String) {
+    public external fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    @native internal fun internal_baz(a: String) {
+    internal external fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    @native private fun private_baz(a: String) {
+    private external fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -103,17 +103,17 @@ open public class OpenPublicClass {
 internal open class OpenInternalClass {
     public fun public_baz(i: Int) {
     }
-    @native public fun public_baz(a: String) {
+    public external fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    @native internal fun internal_baz(a: String) {
+    internal external fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    @native private fun private_baz(a: String) {
+    private external fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -123,17 +123,17 @@ internal open class OpenInternalClass {
 open private class OpenPrivateClass {
     public fun public_baz(i: Int) {
     }
-    @native public fun public_baz(a: String) {
+    public external fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    @native internal fun internal_baz(a: String) {
+    internal external fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    @native private fun private_baz(a: String) {
+    private external fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }

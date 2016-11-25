@@ -1,10 +1,8 @@
 package foo
 
-@native
-class A(val v: String)
+external class A(val v: String)
 
-@native
-fun bar(a: A, extLambda: A.(Int, String) -> String): String = noImpl
+external fun bar(a: A, extLambda: A.(Int, String) -> String): String = noImpl
 
 fun box(): String {
     val a = A("test")

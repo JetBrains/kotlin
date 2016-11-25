@@ -1,9 +1,7 @@
 package foo
 
-@native
-class A(val c: Int) {
-    @native
-    companion object {
+external class A(val c: Int) {
+    external companion object {
         val g: Int = noImpl
         val c: String = noImpl
     }

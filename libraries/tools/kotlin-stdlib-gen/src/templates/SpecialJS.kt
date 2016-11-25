@@ -255,7 +255,7 @@ fun specialJS(): List<GenericFunction> {
     templates add f("sort(comparison: (T, T) -> Int)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
-        annotations("@native")
+        external(true)
         returns("Unit")
         doc { "Sorts the array in-place according to the order specified by the given [comparison] function." }
         body { "noImpl" }

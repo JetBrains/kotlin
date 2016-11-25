@@ -3,7 +3,7 @@ package
 package bar {
     public fun box(): kotlin.Unit
 
-    @kotlin.js.native public final class DerivedB : foo.B {
+    public external final class DerivedB : foo.B {
         public constructor DerivedB()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
@@ -13,9 +13,9 @@ package bar {
 }
 
 package foo {
-    @kotlin.js.JsNonModule @kotlin.js.native public fun bar(): kotlin.Unit
+    @kotlin.js.JsNonModule public external fun bar(): kotlin.Unit
 
-    @kotlin.js.JsNonModule @kotlin.js.native public object A {
+    @kotlin.js.JsNonModule public external object A {
         private constructor A()
         public final val g: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -24,7 +24,7 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.js.JsNonModule @kotlin.js.native public open class B {
+    @kotlin.js.JsNonModule public external open class B {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final fun foo(): kotlin.Int
