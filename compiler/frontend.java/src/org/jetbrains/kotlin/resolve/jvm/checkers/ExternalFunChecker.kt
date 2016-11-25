@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
@@ -34,7 +36,17 @@ class ExternalFunChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor !is FunctionDescriptor || !descriptor.isExternal) return
+        if (descriptor !is MemberDescriptor || !descriptor.isExternal) return
+
+        if (descriptor !is FunctionDescriptor) {
+            val target = when (descriptor) {
+                is PropertyDescriptor -> "property"
+                is ClassDescriptor -> "class"
+                else -> "non-function declaration"
+            }
+            diagnosticHolder.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, target))
+            return
+        }
 
         if (DescriptorUtils.isInterface(descriptor.containingDeclaration)) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))

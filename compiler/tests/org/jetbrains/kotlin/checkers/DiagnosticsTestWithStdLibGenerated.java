@@ -950,6 +950,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("nonFunction.kt")
+        public void testNonFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/nonFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("override.kt")
         public void testOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/override.kt");
