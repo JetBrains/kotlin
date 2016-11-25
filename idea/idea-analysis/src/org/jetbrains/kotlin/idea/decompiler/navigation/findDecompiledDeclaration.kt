@@ -150,8 +150,10 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
 
         val descriptorKey = original.toStringKey()
 
-        if (!file.isContentsLoaded) {
-            if (original is MemberDescriptor && file.hasDeclarationWithKey(this, descriptorKey)) {
+        if (!file.isContentsLoaded && original is MemberDescriptor) {
+            val hasDeclarationByKey = file.hasDeclarationWithKey(this, descriptorKey) ||
+                                      (getBuiltinsDescriptorKey(descriptor)?.let { file.hasDeclarationWithKey(this, it) } ?: false)
+            if (hasDeclarationByKey) {
                 val declarationContainer: KtDeclarationContainer? = when {
                     DescriptorUtils.isTopLevelDeclaration(original) -> file
                     original.containingDeclaration is ClassDescriptor ->
@@ -170,16 +172,19 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         }
 
         return file.getDeclaration(this, descriptorKey) ?: run {
-            if (descriptor !is ClassDescriptor) return null
-
-            val classFqName = descriptor.fqNameUnsafe
-            if (JvmBuiltInsSettings.isSerializableInJava(classFqName)) {
-                val builtInDescriptor =
-                        DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName.toSafe(), NoLookupLocation.FROM_IDE)
-                return builtInDescriptor?.let { file.getDeclaration(this, it.toStringKey()) }
-            }
-            return null
+            return getBuiltinsDescriptorKey(descriptor)?.let { file.getDeclaration(this, it) }
         }
+    }
+
+    fun getBuiltinsDescriptorKey(descriptor: DeclarationDescriptor): String? {
+        if (descriptor !is ClassDescriptor) return null
+
+        val classFqName = descriptor.fqNameUnsafe
+        if (!JvmBuiltInsSettings.isSerializableInJava(classFqName)) return null
+
+        val builtInDescriptor =
+                DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName.toSafe(), NoLookupLocation.FROM_IDE)
+        return builtInDescriptor?.toStringKey()
     }
 
     private fun DeclarationDescriptor.toStringKey(): String {
