@@ -103,9 +103,7 @@ class CompileServiceImpl(
         }
     }
 
-    private val sessionsIdCounter = AtomicInteger(0)
     private val compilationsCounter = AtomicInteger(0)
-    private val internalRng = Random()
 
     private val classpathWatcher = LazyClasspathWatcher(compilerId.compilerClasspath)
 
@@ -114,11 +112,59 @@ class CompileServiceImpl(
         Dying, LastSession, Alive
     }
 
+    private class SessionsContainer {
+
+        private val lock = ReentrantReadWriteLock()
+        private val sessions: MutableMap<Int, ClientOrSessionProxy<Any>> = hashMapOf()
+        private val sessionsIdCounter = AtomicInteger(0)
+        private val internalRng = Random()
+
+        fun<T: Any> leaseSession(session: ClientOrSessionProxy<T>): Int {
+            // fighting hypothetical integer wrapping
+            var newId = sessionsIdCounter.incrementAndGet()
+            for (attempt in 1..100) {
+                if (newId != CompileService.NO_SESSION) {
+                    lock.write {
+                        if (!sessions.containsKey(newId)) {
+                            sessions.put(newId, session)
+                            return newId
+                        }
+                    }
+                }
+                // assuming wrap, jumping to random number to reduce probability of further clashes
+                newId = sessionsIdCounter.addAndGet(internalRng.nextInt())
+            }
+            throw IllegalStateException("Invalid state or algorithm error")
+        }
+
+        fun isEmpty(): Boolean = lock.read { sessions.isEmpty() }
+
+        operator fun get(sessionId: Int) = lock.read { sessions[sessionId] }
+
+        fun remove(sessionId: Int): Boolean = lock.write {
+            sessions.remove(sessionId)?.apply { dispose() } != null
+        }
+
+        fun cleanDead(): Boolean {
+            var anyDead = false
+            lock.read {
+                val toRemove = sessions.filterValues { !it.isAlive }
+                if (toRemove.isNotEmpty()) {
+                    anyDead = true
+                    lock.write {
+                        toRemove.forEach { sessions.remove(it.key)?.dispose() }
+                    }
+                }
+            }
+            return anyDead
+        }
+    }
+
     // TODO: encapsulate operations on state here
     private val state = object {
 
         val clientProxies: MutableSet<ClientOrSessionProxy<Any>> = hashSetOf()
-        val sessions: MutableMap<Int, ClientOrSessionProxy<Any>> = hashMapOf()
+        val sessions = SessionsContainer()
 
         val delayedShutdownQueued = AtomicBoolean(false)
 
@@ -175,38 +221,20 @@ class CompileServiceImpl(
     // TODO: consider tying a session to a client and use this info to cleanup
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         CompileService.CallResult.Good(
-                leaseSessionImpl(ClientOrSessionProxy<Any>(aliveFlagPath)).apply {
+                state.sessions.leaseSession(ClientOrSessionProxy<Any>(aliveFlagPath)).apply {
                     log.info("leased a new session $this, client alive file: $aliveFlagPath")
                 })
     }
 
-    private fun<T: Any> leaseSessionImpl(session: ClientOrSessionProxy<T>): Int {
-        // fighting hypothetical integer wrapping
-        var newId = sessionsIdCounter.incrementAndGet()
-        for (attempt in 1..100) {
-            if (newId != CompileService.NO_SESSION) {
-                synchronized(state.sessions) {
-                    if (!state.sessions.containsKey(newId)) {
-                        state.sessions.put(newId, session)
-                        return newId
-                    }
-                }
-            }
-            // assuming wrap, jumping to random number to reduce probability of further clashes
-            newId = sessionsIdCounter.addAndGet(internalRng.nextInt())
-        }
-        throw IllegalStateException("Invalid state or algorithm error")
-    }
 
     override fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = Aliveness.LastSession) {
-        synchronized(state.sessions) {
-            state.sessions[sessionId]?.dispose()
-            state.sessions.remove(sessionId)
-            log.info("cleaning after session $sessionId")
+        state.sessions.remove(sessionId)
+        log.info("cleaning after session $sessionId")
+        rwlock.write {
             clearJarCache()
-            if (state.sessions.isEmpty()) {
-                // TODO: and some goes here
-            }
+        }
+        if (state.sessions.isEmpty()) {
+            // TODO: and some goes here
         }
         timer.schedule(0) {
             periodicAndAfterSessionCheck()
@@ -297,7 +325,7 @@ class CompileServiceImpl(
         else {
             val disposable = Disposer.newDisposable()
             val repl = KotlinJvmReplService(disposable, templateClasspath, templateClassName, scriptArgs, scriptArgsTypes, compilerMessagesOutputStream, evalOutputStream, evalErrorStream, evalInputStream, operationsTracer)
-            val sessionId = leaseSessionImpl(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
+            val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
 
             CompileService.CallResult.Good(sessionId)
         }
@@ -385,20 +413,12 @@ class CompileServiceImpl(
                 shutdown()
             }
             else {
-                var anyDead = false
+                var anyDead = state.sessions.cleanDead()
                 var shuttingDown = false
 
-                synchronized(state.sessions) {
-                    // 2. check if any session hanged - clean
-                    state.sessions.filterValues { !it.isAlive }.forEach {
-                        it.value.dispose()
-                        state.sessions.remove(it.key)
-                        anyDead = true
-                    }
-                }
 
                 // 3. check if in graceful shutdown state and all sessions are closed
-                if (shutdownCondition({ state.alive.get() == Aliveness.LastSession.ordinal && state.sessions.none()}, "All sessions finished, shutting down")) {
+                if (shutdownCondition({ state.alive.get() == Aliveness.LastSession.ordinal && state.sessions.isEmpty() }, "All sessions finished, shutting down")) {
                     shutdown()
                     shuttingDown = true
                 }
