@@ -57,7 +57,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getClassFlags(
                 hasAnnotations(classDescriptor), classDescriptor.visibility, classDescriptor.modality, classDescriptor.kind,
-                classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData
+                classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData, classDescriptor.isExternal
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -170,7 +170,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getPropertyFlags(
                 hasAnnotations, descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isVar,
-                hasGetter, hasSetter, hasConstant, isConst, lateInit
+                hasGetter, hasSetter, hasConstant, isConst, lateInit, descriptor.isExternal
         )
         if (flags != builder.flags) {
             builder.flags = flags

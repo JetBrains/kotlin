@@ -86,7 +86,8 @@ public class Flags {
             ClassKind kind,
             boolean inner,
             boolean isCompanionObject,
-            boolean isData
+            boolean isData,
+            boolean isExternal
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -94,6 +95,7 @@ public class Flags {
                | CLASS_KIND.toFlags(classKind(kind, isCompanionObject))
                | IS_INNER.toFlags(inner)
                | IS_DATA.toFlags(isData)
+               | IS_EXTERNAL_CLASS.toFlags(isExternal)
                ;
     }
 
@@ -163,7 +165,8 @@ public class Flags {
             boolean hasSetter,
             boolean hasConstant,
             boolean isConst,
-            boolean lateInit
+            boolean lateInit,
+            boolean isExternal
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -175,6 +178,7 @@ public class Flags {
                | IS_CONST.toFlags(isConst)
                | IS_LATEINIT.toFlags(lateInit)
                | HAS_CONSTANT.toFlags(hasConstant)
+               | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
                 ;
     }
 
