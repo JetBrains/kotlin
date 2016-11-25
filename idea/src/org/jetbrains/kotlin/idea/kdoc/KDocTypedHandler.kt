@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-class KDocTypedHandler(): TypedHandlerDelegate() {
+class KDocTypedHandler : TypedHandlerDelegate() {
     override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result {
         if (overwriteClosingBracket(c, editor, file)) {
             EditorModificationUtil.moveCaretRelatively(editor, 1)

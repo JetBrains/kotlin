@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTool {
+class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
     // required to simplify the inspection registration in tests
     override fun getDisplayName(): String = "Usage of redundant or deprecated syntax or deprecated symbols"
 

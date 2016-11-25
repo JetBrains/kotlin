@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 /**
  * Parses the contents of a Markdown link in KDoc. Uses the standard Kotlin lexer.
  */
-class KDocLinkParser(): PsiParser {
+class KDocLinkParser : PsiParser {
     companion object {
         @JvmStatic fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
             val parentElement = chameleon.treeParent.psi

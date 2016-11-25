@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 
-abstract class InstructionVisitorWithResult<out R>() {
+abstract class InstructionVisitorWithResult<out R> {
     abstract fun visitInstruction(instruction: Instruction): R
 
     open fun visitAccessInstruction(instruction: AccessValueInstruction): R {

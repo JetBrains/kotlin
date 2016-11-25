@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ReplaceCallWithComparisonInspection() : IntentionBasedInspection<KtDotQualifiedExpression>(
+class ReplaceCallWithComparisonInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
         ReplaceCallWithBinaryOperatorIntention::class,
         { qualifiedExpression ->
             val calleeExpression = qualifiedExpression.callExpression?.calleeExpression as? KtSimpleNameExpression

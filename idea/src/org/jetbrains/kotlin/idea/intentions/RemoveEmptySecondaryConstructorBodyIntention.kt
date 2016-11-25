@@ -28,7 +28,7 @@ class RemoveEmptySecondaryConstructorBodyInspection : IntentionBasedInspection<K
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveEmptySecondaryConstructorBodyIntention() : SelfTargetingOffsetIndependentIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove empty constructor body") {
+class RemoveEmptySecondaryConstructorBodyIntention : SelfTargetingOffsetIndependentIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove empty constructor body") {
 
     override fun applyTo(element: KtBlockExpression, editor: Editor?) = element.delete()
 

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
+class KotlinCoverageExtension : JavaCoverageEngineExtension() {
     private val LOG = Logger.getInstance(KotlinCoverageExtension::class.java)
 
     override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is JetRunConfiguration
