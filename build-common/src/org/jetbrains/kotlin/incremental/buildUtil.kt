@@ -255,8 +255,6 @@ fun <Target> mapClassesFqNamesToFiles(
     return dirtyFiles
 }
 
-private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
-
 private fun findSrcDirRoot(file: File, roots: Iterable<File>): File? =
         roots.firstOrNull { FileUtil.isAncestor(it, file, false) }
 
