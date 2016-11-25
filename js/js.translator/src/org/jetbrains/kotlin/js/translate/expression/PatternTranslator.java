@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelF
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -151,7 +152,7 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
         ClassifierDescriptor targetDescriptor = type.getConstructor().getDeclarationDescriptor();
         if (targetDescriptor != null && AnnotationsUtils.isNativeInterface(targetDescriptor)) {
-            return type.isMarkedNullable() ? null : namer().isAny();
+            return type.isMarkedNullable() ? null : namer().isInstanceOf(JsAstUtils.pureFqn("Object", null));
         }
 
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
