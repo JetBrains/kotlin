@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public interface WebGLContextAttributes {
+public external interface WebGLContextAttributes {
     var alpha: Boolean? /* = true */
     var depth: Boolean? /* = true */
     var stencil: Boolean? /* = false */
@@ -47,31 +47,31 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
     return o
 }
 
-@native public abstract class WebGLObject {
+public external abstract class WebGLObject {
 }
 
-@native public abstract class WebGLBuffer : WebGLObject() {
+public external abstract class WebGLBuffer : WebGLObject() {
 }
 
-@native public abstract class WebGLFramebuffer : WebGLObject() {
+public external abstract class WebGLFramebuffer : WebGLObject() {
 }
 
-@native public abstract class WebGLProgram : WebGLObject() {
+public external abstract class WebGLProgram : WebGLObject() {
 }
 
-@native public abstract class WebGLRenderbuffer : WebGLObject() {
+public external abstract class WebGLRenderbuffer : WebGLObject() {
 }
 
-@native public abstract class WebGLShader : WebGLObject() {
+public external abstract class WebGLShader : WebGLObject() {
 }
 
-@native public abstract class WebGLTexture : WebGLObject() {
+public external abstract class WebGLTexture : WebGLObject() {
 }
 
-@native public abstract class WebGLUniformLocation {
+public external abstract class WebGLUniformLocation {
 }
 
-@native public abstract class WebGLActiveInfo {
+public external abstract class WebGLActiveInfo {
     open val size: Int
         get() = noImpl
     open val type: Int
@@ -80,7 +80,7 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
         get() = noImpl
 }
 
-@native public abstract class WebGLShaderPrecisionFormat {
+public external abstract class WebGLShaderPrecisionFormat {
     open val rangeMin: Int
         get() = noImpl
     open val rangeMax: Int
@@ -89,7 +89,7 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
         get() = noImpl
 }
 
-@native public interface WebGLRenderingContextBase {
+public external interface WebGLRenderingContextBase {
     val canvas: HTMLCanvasElement
         get() = noImpl
     val drawingBufferWidth: Int
@@ -548,7 +548,7 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
     }
 }
 
-@native public abstract class WebGLRenderingContext : WebGLRenderingContextBase, RenderingContext {
+public external abstract class WebGLRenderingContext : WebGLRenderingContextBase, RenderingContext {
 
     companion object {
         val DEPTH_BUFFER_BIT: Int = 0x00000100
@@ -851,12 +851,12 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
     }
 }
 
-@native public open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event(type, noImpl) {
+public external open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event(type, noImpl) {
     open val statusMessage: String
         get() = noImpl
 }
 
-@native public interface WebGLContextEventInit : EventInit {
+public external interface WebGLContextEventInit : EventInit {
     var statusMessage: String? /* = "" */
 }
 
@@ -872,7 +872,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     return o
 }
 
-@native public open class ArrayBuffer(length: Int) : BufferDataSource {
+public external open class ArrayBuffer(length: Int) : BufferDataSource {
     open val byteLength: Int
         get() = noImpl
     fun slice(begin: Int, end: Int = noImpl): ArrayBuffer = noImpl
@@ -882,7 +882,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public interface ArrayBufferView : BufferDataSource {
+public external interface ArrayBufferView : BufferDataSource {
     val buffer: ArrayBuffer
         get() = noImpl
     val byteOffset: Int
@@ -891,7 +891,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
         get() = noImpl
 }
 
-@native public open class Int8Array : ArrayBufferView {
+public external open class Int8Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Int8Array)
     constructor(array: Array<Byte>)
@@ -912,7 +912,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Uint8Array : ArrayBufferView {
+public external open class Uint8Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint8Array)
     constructor(array: Array<Byte>)
@@ -933,7 +933,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Uint8ClampedArray : ArrayBufferView {
+public external open class Uint8ClampedArray : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint8ClampedArray)
     constructor(array: Array<Byte>)
@@ -954,7 +954,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Int16Array : ArrayBufferView {
+public external open class Int16Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Int16Array)
     constructor(array: Array<Short>)
@@ -975,7 +975,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Uint16Array : ArrayBufferView {
+public external open class Uint16Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint16Array)
     constructor(array: Array<Short>)
@@ -996,7 +996,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Int32Array : ArrayBufferView {
+public external open class Int32Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Int32Array)
     constructor(array: Array<Int>)
@@ -1017,7 +1017,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Uint32Array : ArrayBufferView {
+public external open class Uint32Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Uint32Array)
     constructor(array: Array<Int>)
@@ -1038,7 +1038,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Float32Array : ArrayBufferView {
+public external open class Float32Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Float32Array)
     constructor(array: Array<Float>)
@@ -1059,7 +1059,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class Float64Array : ArrayBufferView {
+public external open class Float64Array : ArrayBufferView {
     constructor(length: Int)
     constructor(array: Float64Array)
     constructor(array: Array<Double>)
@@ -1080,7 +1080,7 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     }
 }
 
-@native public open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) : ArrayBufferView {
+public external open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) : ArrayBufferView {
     fun getInt8(byteOffset: Int): Byte = noImpl
     fun getUint8(byteOffset: Int): Byte = noImpl
     fun getInt16(byteOffset: Int, littleEndian: Boolean = noImpl): Short = noImpl
@@ -1099,9 +1099,9 @@ public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Bo
     fun setFloat64(byteOffset: Int, value: Double, littleEndian: Boolean = noImpl): Unit = noImpl
 }
 
-@native public @marker interface BufferDataSource {
+public external @marker interface BufferDataSource {
 }
 
-@native public @marker interface TexImageSource {
+public external @marker interface TexImageSource {
 }
 

@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 
-@native public abstract class XMLHttpRequestEventTarget : EventTarget() {
+public external abstract class XMLHttpRequestEventTarget : EventTarget() {
     open var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -44,10 +44,10 @@ import org.w3c.workers.*
         set(value) = noImpl
 }
 
-@native public abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget() {
+public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget() {
 }
 
-@native public open class XMLHttpRequest : XMLHttpRequestEventTarget() {
+public external open class XMLHttpRequest : XMLHttpRequestEventTarget() {
     var onreadystatechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -94,7 +94,7 @@ import org.w3c.workers.*
     }
 }
 
-@native public open class FormData(form: HTMLFormElement = noImpl) {
+public external open class FormData(form: HTMLFormElement = noImpl) {
     fun append(name: String, value: String): Unit = noImpl
     fun append(name: String, value: Blob, filename: String = noImpl): Unit = noImpl
     fun delete(name: String): Unit = noImpl
@@ -105,7 +105,7 @@ import org.w3c.workers.*
     fun set(name: String, value: Blob, filename: String = noImpl): Unit = noImpl
 }
 
-@native public open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
     open val lengthComputable: Boolean
         get() = noImpl
     open val loaded: Int
@@ -114,7 +114,7 @@ import org.w3c.workers.*
         get() = noImpl
 }
 
-@native public interface ProgressEventInit : EventInit {
+public external interface ProgressEventInit : EventInit {
     var lengthComputable: Boolean? /* = false */
     var loaded: Int? /* = 0 */
     var total: Int? /* = 0 */

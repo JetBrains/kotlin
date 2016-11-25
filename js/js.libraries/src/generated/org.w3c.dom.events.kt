@@ -20,14 +20,14 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class UIEvent(type: String, eventInitDict: UIEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class UIEvent(type: String, eventInitDict: UIEventInit = noImpl) : Event(type, eventInitDict) {
     open val view: Window?
         get() = noImpl
     open val detail: Int
         get() = noImpl
 }
 
-@native public interface UIEventInit : EventInit {
+public external interface UIEventInit : EventInit {
     var view: Window? /* = null */
     var detail: Int? /* = 0 */
 }
@@ -45,12 +45,12 @@ public inline fun UIEventInit(view: Window? = null, detail: Int? = 0, bubbles: B
     return o
 }
 
-@native public open class FocusEvent(type: String, eventInitDict: FocusEventInit = noImpl) : UIEvent(type, eventInitDict) {
+public external open class FocusEvent(type: String, eventInitDict: FocusEventInit = noImpl) : UIEvent(type, eventInitDict) {
     open val relatedTarget: EventTarget?
         get() = noImpl
 }
 
-@native public interface FocusEventInit : UIEventInit {
+public external interface FocusEventInit : UIEventInit {
     var relatedTarget: EventTarget? /* = null */
 }
 
@@ -68,7 +68,7 @@ public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Windo
     return o
 }
 
-@native public open class MouseEvent(type: String, eventInitDict: MouseEventInit = noImpl) : UIEvent(type, eventInitDict), UnionElementOrMouseEvent {
+public external open class MouseEvent(type: String, eventInitDict: MouseEventInit = noImpl) : UIEvent(type, eventInitDict), UnionElementOrMouseEvent {
     open val region: String?
         get() = noImpl
     open val screenX: Int
@@ -104,7 +104,7 @@ public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Windo
     fun getModifierState(keyArg: String): Boolean = noImpl
 }
 
-@native public interface MouseEventInit : EventModifierInit {
+public external interface MouseEventInit : EventModifierInit {
     var screenX: Int? /* = 0 */
     var screenY: Int? /* = 0 */
     var clientX: Int? /* = 0 */
@@ -148,7 +148,7 @@ public inline fun MouseEventInit(screenX: Int? = 0, screenY: Int? = 0, clientX: 
     return o
 }
 
-@native public interface EventModifierInit : UIEventInit {
+public external interface EventModifierInit : UIEventInit {
     var ctrlKey: Boolean? /* = false */
     var shiftKey: Boolean? /* = false */
     var altKey: Boolean? /* = false */
@@ -192,7 +192,7 @@ public inline fun EventModifierInit(ctrlKey: Boolean? = false, shiftKey: Boolean
     return o
 }
 
-@native public open class WheelEvent(type: String, eventInitDict: WheelEventInit = noImpl) : MouseEvent(type, eventInitDict) {
+public external open class WheelEvent(type: String, eventInitDict: WheelEventInit = noImpl) : MouseEvent(type, eventInitDict) {
     open val deltaX: Double
         get() = noImpl
     open val deltaY: Double
@@ -209,7 +209,7 @@ public inline fun EventModifierInit(ctrlKey: Boolean? = false, shiftKey: Boolean
     }
 }
 
-@native public interface WheelEventInit : MouseEventInit {
+public external interface WheelEventInit : MouseEventInit {
     var deltaX: Double? /* = 0.0 */
     var deltaY: Double? /* = 0.0 */
     var deltaZ: Double? /* = 0.0 */
@@ -254,14 +254,14 @@ public inline fun WheelEventInit(deltaX: Double? = 0.0, deltaY: Double? = 0.0, d
     return o
 }
 
-@native public open class InputEvent(type: String, eventInitDict: InputEventInit = noImpl) : UIEvent(type, eventInitDict) {
+public external open class InputEvent(type: String, eventInitDict: InputEventInit = noImpl) : UIEvent(type, eventInitDict) {
     open val data: String
         get() = noImpl
     open val isComposing: Boolean
         get() = noImpl
 }
 
-@native public interface InputEventInit : UIEventInit {
+public external interface InputEventInit : UIEventInit {
     var data: String? /* = "" */
     var isComposing: Boolean? /* = false */
 }
@@ -281,7 +281,7 @@ public inline fun InputEventInit(data: String? = "", isComposing: Boolean? = fal
     return o
 }
 
-@native public open class KeyboardEvent(type: String, eventInitDict: KeyboardEventInit = noImpl) : UIEvent(type, eventInitDict) {
+public external open class KeyboardEvent(type: String, eventInitDict: KeyboardEventInit = noImpl) : UIEvent(type, eventInitDict) {
     open val key: String
         get() = noImpl
     open val code: String
@@ -316,7 +316,7 @@ public inline fun InputEventInit(data: String? = "", isComposing: Boolean? = fal
     }
 }
 
-@native public interface KeyboardEventInit : EventModifierInit {
+public external interface KeyboardEventInit : EventModifierInit {
     var key: String? /* = "" */
     var code: String? /* = "" */
     var location: Int? /* = 0 */
@@ -356,12 +356,12 @@ public inline fun KeyboardEventInit(key: String? = "", code: String? = "", locat
     return o
 }
 
-@native public open class CompositionEvent(type: String, eventInitDict: CompositionEventInit = noImpl) : UIEvent(type, eventInitDict) {
+public external open class CompositionEvent(type: String, eventInitDict: CompositionEventInit = noImpl) : UIEvent(type, eventInitDict) {
     open val data: String
         get() = noImpl
 }
 
-@native public interface CompositionEventInit : UIEventInit {
+public external interface CompositionEventInit : UIEventInit {
     var data: String? /* = "" */
 }
 
@@ -379,7 +379,7 @@ public inline fun CompositionEventInit(data: String? = "", view: Window? = null,
     return o
 }
 
-@native public open class Event(type: String, eventInitDict: EventInit = noImpl) {
+public external open class Event(type: String, eventInitDict: EventInit = noImpl) {
     open val type: String
         get() = noImpl
     open val target: EventTarget?
@@ -414,7 +414,7 @@ public inline fun CompositionEventInit(data: String? = "", view: Window? = null,
     }
 }
 
-@native public abstract class EventTarget {
+public external abstract class EventTarget {
     fun addEventListener(type: String, callback: EventListener?, options: dynamic = noImpl): Unit = noImpl
     fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: dynamic = noImpl): Unit = noImpl
     fun removeEventListener(type: String, callback: EventListener?, options: dynamic = noImpl): Unit = noImpl
@@ -422,7 +422,7 @@ public inline fun CompositionEventInit(data: String? = "", view: Window? = null,
     fun dispatchEvent(event: Event): Boolean = noImpl
 }
 
-@native public interface EventListener {
+public external interface EventListener {
     fun handleEvent(event: Event): Unit = noImpl
 }
 

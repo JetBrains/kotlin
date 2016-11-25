@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class URL(url: String, base: String = noImpl) {
+public external open class URL(url: String, base: String = noImpl) {
     var href: String
         get() = noImpl
         set(value) = noImpl
@@ -65,7 +65,7 @@ import org.w3c.xhr.*
     }
 }
 
-@native public open class URLSearchParams(init: dynamic = "") {
+public external open class URLSearchParams(init: dynamic = "") {
     fun append(name: String, value: String): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): String? = noImpl

@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class Blob(blobParts: Array<dynamic> = noImpl, options: BlobPropertyBag = noImpl) {
+public external open class Blob(blobParts: Array<dynamic> = noImpl, options: BlobPropertyBag = noImpl) {
     open val size: Int
         get() = noImpl
     open val type: String
@@ -31,7 +31,7 @@ import org.w3c.xhr.*
     fun close(): Unit = noImpl
 }
 
-@native public interface BlobPropertyBag {
+public external interface BlobPropertyBag {
     var type: String? /* = "" */
 }
 
@@ -44,14 +44,14 @@ public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     return o
 }
 
-@native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob(noImpl, options) {
+public external open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob(noImpl, options) {
     open val name: String
         get() = noImpl
     open val lastModified: Int
         get() = noImpl
 }
 
-@native public interface FilePropertyBag : BlobPropertyBag {
+public external interface FilePropertyBag : BlobPropertyBag {
     var lastModified: Int?
 }
 
@@ -65,7 +65,7 @@ public inline fun FilePropertyBag(lastModified: Int?, type: String? = ""): FileP
     return o
 }
 
-@native public abstract class FileList {
+public external abstract class FileList {
     open val length: Int
         get() = noImpl
     fun item(index: Int): File? = noImpl
@@ -73,7 +73,7 @@ public inline fun FilePropertyBag(lastModified: Int?, type: String? = ""): FileP
     operator fun get(index: Int): File? = noImpl
 }
 
-@native public open class FileReader : EventTarget() {
+public external open class FileReader : EventTarget() {
     open val readyState: Short
         get() = noImpl
     open val result: dynamic
@@ -111,7 +111,7 @@ public inline fun FilePropertyBag(lastModified: Int?, type: String? = ""): FileP
     }
 }
 
-@native public open class FileReaderSync {
+public external open class FileReaderSync {
     fun readAsArrayBuffer(blob: Blob): ArrayBuffer = noImpl
     fun readAsBinaryString(blob: Blob): String = noImpl
     fun readAsText(blob: Blob, label: String = noImpl): String = noImpl

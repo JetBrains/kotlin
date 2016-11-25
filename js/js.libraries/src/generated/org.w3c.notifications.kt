@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget() {
+public external open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget() {
     var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -45,7 +45,7 @@ import org.w3c.xhr.*
         get() = noImpl
     open val sound: String
         get() = noImpl
-    open val vibrate: dynamic
+    open val attribute: dynamic
         get() = noImpl
     open val timestamp: Number
         get() = noImpl
@@ -61,8 +61,9 @@ import org.w3c.xhr.*
         get() = noImpl
     open val data: Any?
         get() = noImpl
-    open val actions: dynamic
+    open val NotificationAction: dynamic
         get() = noImpl
+    fun vibrate(): dynamic = noImpl
     fun close(): Unit = noImpl
 
     companion object {
@@ -76,7 +77,7 @@ import org.w3c.xhr.*
     }
 }
 
-@native public interface NotificationOptions {
+public external interface NotificationOptions {
     var dir: String? /* = "auto" */
     var lang: String? /* = "" */
     var body: String? /* = "" */
@@ -121,7 +122,7 @@ public inline fun NotificationOptions(dir: String? = "auto", lang: String? = "",
     return o
 }
 
-@native public interface NotificationAction {
+public external interface NotificationAction {
     var action: String?
     var title: String?
     var icon: String?
@@ -138,7 +139,7 @@ public inline fun NotificationAction(action: String?, title: String?, icon: Stri
     return o
 }
 
-@native public interface GetNotificationOptions {
+public external interface GetNotificationOptions {
     var tag: String? /* = "" */
 }
 
@@ -151,14 +152,14 @@ public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOpti
     return o
 }
 
-@native public open class NotificationEvent(type: String, eventInitDict: NotificationEventInit) : ExtendableEvent(type, eventInitDict) {
+public external open class NotificationEvent(type: String, eventInitDict: NotificationEventInit) : ExtendableEvent(type, eventInitDict) {
     open val notification: Notification
         get() = noImpl
     open val action: String
         get() = noImpl
 }
 
-@native public interface NotificationEventInit : ExtendableEventInit {
+public external interface NotificationEventInit : ExtendableEventInit {
     var notification: Notification?
     var action: String? /* = "" */
 }

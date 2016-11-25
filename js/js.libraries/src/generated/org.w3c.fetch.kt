@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public open class Headers(init: dynamic = noImpl) {
+public external open class Headers(init: dynamic = noImpl) {
     fun append(name: String, value: String): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): String? = noImpl
@@ -28,7 +28,7 @@ import org.w3c.xhr.*
     fun set(name: String, value: String): Unit = noImpl
 }
 
-@native public interface Body {
+public external interface Body {
     val bodyUsed: Boolean
         get() = noImpl
     fun arrayBuffer(): dynamic = noImpl
@@ -38,7 +38,7 @@ import org.w3c.xhr.*
     fun text(): dynamic = noImpl
 }
 
-@native public open class Request(input: dynamic, init: RequestInit = noImpl) : Body {
+public external open class Request(input: dynamic, init: RequestInit = noImpl) : Body {
     open val method: String
         get() = noImpl
     open val url: String
@@ -68,7 +68,7 @@ import org.w3c.xhr.*
     fun clone(): Request = noImpl
 }
 
-@native public interface RequestInit {
+public external interface RequestInit {
     var method: String?
     var headers: dynamic
     var body: dynamic
@@ -103,7 +103,7 @@ public inline fun RequestInit(method: String?, headers: dynamic, body: dynamic, 
     return o
 }
 
-@native public open class Response(body: dynamic = null, init: ResponseInit = noImpl) : Body {
+public external open class Response(body: dynamic = null, init: ResponseInit = noImpl) : Body {
     open val type: String
         get() = noImpl
     open val url: String
@@ -130,7 +130,7 @@ public inline fun RequestInit(method: String?, headers: dynamic, body: dynamic, 
     }
 }
 
-@native public interface ResponseInit {
+public external interface ResponseInit {
     var status: Short? /* = 200 */
     var statusText: String? /* = "OK" */
     var headers: dynamic

@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public abstract class Performance : EventTarget() {
+public external abstract class Performance : EventTarget() {
     open val timing: PerformanceTiming
         get() = noImpl
     open val navigation: PerformanceNavigation
@@ -28,12 +28,12 @@ import org.w3c.xhr.*
     fun now(): Double = noImpl
 }
 
-@native public interface GlobalPerformance {
+public external interface GlobalPerformance {
     val performance: Performance
         get() = noImpl
 }
 
-@native public abstract class PerformanceTiming {
+public external abstract class PerformanceTiming {
     open val navigationStart: Int
         get() = noImpl
     open val unloadEventStart: Int
@@ -78,7 +78,7 @@ import org.w3c.xhr.*
         get() = noImpl
 }
 
-@native public abstract class PerformanceNavigation {
+public external abstract class PerformanceNavigation {
     open val type: Short
         get() = noImpl
     open val redirectCount: Short

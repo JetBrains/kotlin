@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-@native public abstract class CSSStyleDeclaration {
+public external abstract class CSSStyleDeclaration {
     open var cssText: String
         get() = noImpl
         set(value) = noImpl
@@ -720,7 +720,7 @@ import org.w3c.xhr.*
     fun removeProperty(property: String): String = noImpl
 }
 
-@native public abstract class MediaList {
+public external abstract class MediaList {
     open var mediaText: String
         get() = noImpl
         set(value) = noImpl
@@ -733,7 +733,7 @@ import org.w3c.xhr.*
     fun deleteMedium(medium: String): Unit = noImpl
 }
 
-@native public abstract class StyleSheet {
+public external abstract class StyleSheet {
     open val type: String
         get() = noImpl
     open val href: String?
@@ -751,7 +751,7 @@ import org.w3c.xhr.*
         set(value) = noImpl
 }
 
-@native public abstract class CSSStyleSheet : StyleSheet() {
+public external abstract class CSSStyleSheet : StyleSheet() {
     open val ownerRule: CSSRule?
         get() = noImpl
     open val cssRules: CSSRuleList
@@ -760,7 +760,7 @@ import org.w3c.xhr.*
     fun deleteRule(index: Int): Unit = noImpl
 }
 
-@native public abstract class StyleSheetList {
+public external abstract class StyleSheetList {
     open val length: Int
         get() = noImpl
     fun item(index: Int): StyleSheet? = noImpl
@@ -768,12 +768,12 @@ import org.w3c.xhr.*
     operator fun get(index: Int): StyleSheet? = noImpl
 }
 
-@native public interface LinkStyle {
+public external interface LinkStyle {
     val sheet: StyleSheet?
         get() = noImpl
 }
 
-@native public abstract class CSSRuleList {
+public external abstract class CSSRuleList {
     open val length: Int
         get() = noImpl
     fun item(index: Int): CSSRule? = noImpl
@@ -781,7 +781,7 @@ import org.w3c.xhr.*
     operator fun get(index: Int): CSSRule? = noImpl
 }
 
-@native public abstract class CSSRule {
+public external abstract class CSSRule {
     open val type: Short
         get() = noImpl
     open var cssText: String
@@ -804,7 +804,7 @@ import org.w3c.xhr.*
     }
 }
 
-@native public abstract class CSSStyleRule : CSSRule() {
+public external abstract class CSSStyleRule : CSSRule() {
     open var selectorText: String
         get() = noImpl
         set(value) = noImpl
@@ -812,7 +812,7 @@ import org.w3c.xhr.*
         get() = noImpl
 }
 
-@native public abstract class CSSImportRule : CSSRule() {
+public external abstract class CSSImportRule : CSSRule() {
     open val href: String
         get() = noImpl
     open val media: MediaList
@@ -821,19 +821,19 @@ import org.w3c.xhr.*
         get() = noImpl
 }
 
-@native public abstract class CSSGroupingRule : CSSRule() {
+public external abstract class CSSGroupingRule : CSSRule() {
     open val cssRules: CSSRuleList
         get() = noImpl
     fun insertRule(rule: String, index: Int): Int = noImpl
     fun deleteRule(index: Int): Unit = noImpl
 }
 
-@native public abstract class CSSMediaRule : CSSGroupingRule() {
+public external abstract class CSSMediaRule : CSSGroupingRule() {
     open val media: MediaList
         get() = noImpl
 }
 
-@native public abstract class CSSPageRule : CSSGroupingRule() {
+public external abstract class CSSPageRule : CSSGroupingRule() {
     open var selectorText: String
         get() = noImpl
         set(value) = noImpl
@@ -841,26 +841,26 @@ import org.w3c.xhr.*
         get() = noImpl
 }
 
-@native public abstract class CSSMarginRule : CSSRule() {
+public external abstract class CSSMarginRule : CSSRule() {
     open val name: String
         get() = noImpl
     open val style: CSSStyleDeclaration
         get() = noImpl
 }
 
-@native public abstract class CSSNamespaceRule : CSSRule() {
+public external abstract class CSSNamespaceRule : CSSRule() {
     open val namespaceURI: String
         get() = noImpl
     open val prefix: String
         get() = noImpl
 }
 
-@native public interface ElementCSSInlineStyle {
+public external interface ElementCSSInlineStyle {
     val style: CSSStyleDeclaration
         get() = noImpl
 }
 
-@native public abstract class CSS {
+public external abstract class CSS {
 
     companion object {
         fun escape(ident: String): String = noImpl
