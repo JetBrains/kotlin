@@ -233,7 +233,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitFunction(declaration: IrFunction) {
         logger.log("visitFunction                  : ${ir2string(declaration)}")
-        if (declaration.descriptor.modality == Modality.ABSTRACT)
+        if (declaration.descriptor.modality == Modality.ABSTRACT || declaration.body == null)
             return
         codegen.function(declaration)
         metadator.function(declaration)
@@ -414,7 +414,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val variable = codegen.variable(value.descriptor.name.asString())
                 return codegen.load(variable!!, tmpVariableName)
             }
-            is LazyClassReceiverParameterDescriptor -> {
+            is LazyClassReceiverParameterDescriptor,
+            is ReceiverParameterDescriptor -> {
                 if (value.descriptor.name.asString() == "<this>") {
                     return codegen.load(codegen.thisVariable(), tmpVariableName)
                 }
@@ -450,7 +451,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateTypeOperator(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef? {
         when (value.operator) {
             IrTypeOperator.CAST                      -> return evaluateCast(tmpVariableName, value)
-            IrTypeOperator.IMPLICIT_CAST             -> TODO("${ir2string(value)}")
+            IrTypeOperator.IMPLICIT_CAST             -> return evaluateExpression(tmpVariableName, value.argument)
             IrTypeOperator.IMPLICIT_NOTNULL          -> TODO("${ir2string(value)}")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> return evaluateExpression(tmpVariableName, value.argument)
             IrTypeOperator.SAFE_CAST                 -> TODO("${ir2string(value)}")

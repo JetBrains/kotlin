@@ -15,16 +15,16 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     var currentFunction:FunctionDescriptor? = null
 
     fun function(declaration: IrFunction) {
-        if (declaration.body == null) {
-            // Abstract and external methods.
-            return
-        }
+        assert(declaration.body != null)
 
-        if (currentFunction == declaration.descriptor) return
+        val descriptor = declaration.descriptor
+        if (currentFunction == descriptor) return
         val fn = prolog(declaration)
 
         var indexOffset = 0
-        if (declaration.descriptor is ClassConstructorDescriptor || declaration.descriptor.dispatchReceiverParameter != null) {
+        if (descriptor is ClassConstructorDescriptor
+            || descriptor.dispatchReceiverParameter != null
+            || descriptor.extensionReceiverParameter != null) {
             val name = "this"
             val type = pointerType(LLVMInt8Type());
             val v = alloca(type, name)
@@ -33,7 +33,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
             indexOffset = 1;
         }
 
-        declaration.descriptor.valueParameters.forEachIndexed { i, descriptor ->
+        descriptor.valueParameters.forEachIndexed { i, descriptor ->
             val name = descriptor.name.asString()
             val type = descriptor.type
             val v = alloca(type, name)
