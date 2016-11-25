@@ -160,7 +160,7 @@ private fun castPrimitiveValue(type: PsiType, value: Any?): Any = when (type) {
 private fun byteValue(value: Any?): Byte = (value as? Number)?.toByte() ?: 0
 private fun intValue(value: Any?): Int = (value as? Number)?.toInt() ?: 0
 private fun shortValue(value: Any?): Short = (value as? Number)?.toShort() ?: 0
-private fun booleanValue(value: Any?): Boolean = if (value == true) true else false
+private fun booleanValue(value: Any?): Boolean = value == true
 private fun charValue(value: Any?): Char = value as? Char ?: 0.toChar()
 
 private fun longValue(value: Any?): Long = (value as? Number)?.toLong() ?: 0
