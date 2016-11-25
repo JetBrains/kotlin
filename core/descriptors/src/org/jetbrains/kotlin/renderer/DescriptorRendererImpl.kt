@@ -515,6 +515,12 @@ internal class DescriptorRendererImpl(
         }
     }
 
+    private fun renderExternal(memberDescriptor: MemberDescriptor, builder: StringBuilder) {
+        if (memberDescriptor.isExternal) {
+            builder.append("external ")
+        }
+    }
+
     private fun renderLateInit(propertyDescriptor: PropertyDescriptor, builder: StringBuilder) {
         if (propertyDescriptor.isLateInit) {
             builder.append("lateinit ")
@@ -528,9 +534,7 @@ internal class DescriptorRendererImpl(
         if (functionDescriptor.isInfix && (functionDescriptor.overriddenDescriptors.none { it.isInfix } || alwaysRenderModifiers)) {
             builder.append("infix ")
         }
-        if (functionDescriptor.isExternal) {
-            builder.append("external ")
-        }
+        renderExternal(functionDescriptor, builder)
         if (functionDescriptor.isInline) {
             builder.append("inline ")
         }
@@ -839,6 +843,7 @@ internal class DescriptorRendererImpl(
                 builder.append("const ")
             }
 
+            renderExternal(property, builder)
             renderModalityForCallable(property, builder)
             renderOverride(property, builder)
             renderLateInit(property, builder)
@@ -984,9 +989,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAccessorModifiers(descriptor: PropertyAccessorDescriptor, builder: StringBuilder) {
-        if (descriptor.isExternal) {
-            builder.append("external ")
-        }
+        renderExternal(descriptor, builder)
     }
 
     /* STUPID DISPATCH-ONLY VISITOR */

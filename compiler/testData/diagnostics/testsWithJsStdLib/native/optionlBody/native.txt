@@ -1,8 +1,8 @@
 package
 
-public val baz: kotlin.Int
-public val boo: kotlin.Int
-public val kotlin.Int.baz: kotlin.Int
+public external val baz: kotlin.Int
+public external val boo: kotlin.Int
+public external val kotlin.Int.baz: kotlin.Int
 public external fun bar(): kotlin.Unit
 public external fun foo(): kotlin.Unit
 public external fun kotlin.String.bar(): kotlin.Int
