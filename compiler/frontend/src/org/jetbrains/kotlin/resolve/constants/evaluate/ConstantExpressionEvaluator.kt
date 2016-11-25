@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.constants.evaluate
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.text.LiteralFormatUtil
-import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -131,6 +131,17 @@ class ConstantExpressionEvaluator(
             if (constant.usesNonConstValAsConstant) {
                 trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(argumentExpression))
             }
+
+            if (argumentExpression is KtClassLiteralExpression) {
+                val lhsExpression = argumentExpression.receiverExpression
+                if (lhsExpression != null) {
+                    val doubleColonLhs = trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, lhsExpression)
+                    if (doubleColonLhs is DoubleColonLHS.Expression && !doubleColonLhs.isObject) {
+                        trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
+                    }
+                }
+            }
+
             return
         }
 

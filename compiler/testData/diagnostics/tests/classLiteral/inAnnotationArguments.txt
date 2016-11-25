@@ -1,0 +1,47 @@
+package
+
+public fun foo(): kotlin.String
+@Ann(k = kotlin.String::class) public fun test1(): kotlin.Unit
+@Ann(k = kotlin.String::class) public fun test2(): kotlin.Unit
+@Ann(k = AnObject::class) public fun test4(): kotlin.Unit
+@Ann(k = C::class) public fun test5(): kotlin.Unit
+@Ann(k = C.Companion::class) public fun test6(): kotlin.Unit
+@Ann(k = kotlin.String::class) public fun test7(): kotlin.Unit
+@AnnArray(kk = {kotlin.String::class, kotlin.String::class, AnObject::class}) public fun test8(): kotlin.Unit
+
+public object AnObject {
+    private constructor AnObject()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ k: kotlin.reflect.KClass<*>)
+    public final val k: kotlin.reflect.KClass<*>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AnnArray : kotlin.Annotation {
+    public constructor AnnArray(/*0*/ kk: kotlin.Array<kotlin.reflect.KClass<*>>)
+    public final val kk: kotlin.Array<kotlin.reflect.KClass<*>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
