@@ -148,8 +148,10 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             return classOrObject?.getPrimaryConstructor() ?: classOrObject
         }
 
+        val descriptorKey = original.toStringKey()
+
         if (!file.isContentsLoaded) {
-            if (original is MemberDescriptor) {
+            if (original is MemberDescriptor && file.hasDeclarationWithKey(this, descriptorKey)) {
                 val declarationContainer: KtDeclarationContainer? = when {
                     DescriptorUtils.isTopLevelDeclaration(original) -> file
                     original.containingDeclaration is ClassDescriptor ->
@@ -167,7 +169,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             }
         }
 
-        return file.getDeclaration(this, original.toStringKey()) ?: run {
+        return file.getDeclaration(this, descriptorKey) ?: run {
             if (descriptor !is ClassDescriptor) return null
 
             val classFqName = descriptor.fqNameUnsafe
