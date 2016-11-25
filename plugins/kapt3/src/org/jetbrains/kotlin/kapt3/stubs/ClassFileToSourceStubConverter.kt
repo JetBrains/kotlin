@@ -23,10 +23,7 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
@@ -151,7 +148,14 @@ class ClassFileToSourceStubConverter(
             return null
         }
 
-        val simpleName = treeMaker.name(if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString())
+        val simpleName = when (descriptor) {
+            is PackageFragmentDescriptor -> {
+                val className = clazz.name.drop(packageFqName.length + 1)
+                if (className.isEmpty()) throw IllegalStateException("Invalid package facade class name: ${clazz.name}")
+                className
+            }
+            else -> if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString()
+        }
 
         val interfaces = mapJList(clazz.interfaces) {
             if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapJList null
@@ -180,7 +184,7 @@ class ClassFileToSourceStubConverter(
 
         return treeMaker.ClassDef(
                 modifiers,
-                simpleName,
+                treeMaker.name(simpleName),
                 genericType.typeParameters,
                 if (hasSuperClass) genericType.superClass else null,
                 genericType.interfaces,

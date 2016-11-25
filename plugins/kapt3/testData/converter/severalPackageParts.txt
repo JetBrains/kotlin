@@ -1,0 +1,25 @@
+package test;
+
+public final class AKt {
+
+    public AKt() {
+        super();
+    }
+
+    public static final void foo() {
+    }
+}
+
+////////////////////
+
+package test;
+
+public final class BKt {
+
+    public BKt() {
+        super();
+    }
+
+    public static final void bar() {
+    }
+}

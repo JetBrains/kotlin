@@ -72,6 +72,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("fileFacadeJvmName.kt")
+    public void testFileFacadeJvmName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/fileFacadeJvmName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("functions.kt")
     public void testFunctions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/functions.kt");
@@ -114,6 +120,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("multifileClass.kt")
+    public void testMultifileClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/multifileClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/nestedClasses.kt");
@@ -129,6 +141,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("primitiveTypes.kt")
     public void testPrimitiveTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/primitiveTypes.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("severalPackageParts.kt")
+    public void testSeveralPackageParts() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/severalPackageParts.kt");
         doTest(fileName);
     }
 

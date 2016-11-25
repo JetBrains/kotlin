@@ -1,0 +1,28 @@
+package test;
+
+public final class M1 {
+
+    public M1() {
+        super();
+    }
+
+    public static final void bar() {
+    }
+
+    public static final void foo() {
+    }
+}
+
+////////////////////
+
+package test;
+
+public final class M2 {
+
+    public M2() {
+        super();
+    }
+
+    public static final void baz() {
+    }
+}

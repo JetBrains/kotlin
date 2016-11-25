@@ -60,9 +60,9 @@ public enum Enum {
 
 package test;
 
-public final class test {
+public final class AnnotationsTest {
 
-    public test() {
+    public AnnotationsTest() {
         super();
     }
 
