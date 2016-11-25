@@ -40,6 +40,7 @@ import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
+import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -243,7 +244,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
-        return !ReferencesSearch.search(declaration, useScope).forEach(fun (ref: PsiReference): Boolean {
+
+        fun checkReference(ref: PsiReference): Boolean {
             if (declaration.isAncestor(ref.element)) return true // usages inside element's declaration are not counted
 
             if (ref.element.parent is KtValueArgumentName) return true // usage of parameter in form of named argument is not counted
@@ -273,7 +275,16 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
 
             return false
-        })
+        }
+
+        if (declaration is KtCallableDeclaration) {
+            val lightMethods = declaration.toLightMethods()
+            for (method in lightMethods) {
+                if (!MethodReferencesSearch.search(method).forEach(::checkReference)) return true
+            }
+        }
+
+        return !ReferencesSearch.search(declaration, useScope).forEach(::checkReference)
     }
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
@@ -347,7 +358,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 }
 
 class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
-    private val name =
+    private val name: String =
             if (declaration is KtConstructor<*>) "Safe delete constructor"
             else QuickFixBundle.message("safe.delete.text", declaration.name)
 

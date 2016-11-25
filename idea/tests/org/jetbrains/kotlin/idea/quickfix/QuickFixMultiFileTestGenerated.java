@@ -1831,6 +1831,18 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("secondaryConstructorFromJava.before.Main.kt")
+        public void testSecondaryConstructorFromJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/secondaryConstructorFromJava.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorFromJavaDelegate.before.Main.kt")
+        public void testSecondaryConstructorFromJavaDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/secondaryConstructorFromJavaDelegate.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("usedObjectAsAliasMulti.before.Main.kt")
         public void testUsedObjectAsAliasMulti() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/usedObjectAsAliasMulti.before.Main.kt");
