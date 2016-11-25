@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import com.intellij.lang.java.JavaLanguage
@@ -26,7 +25,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.util.*
 
