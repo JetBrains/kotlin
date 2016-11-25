@@ -75,8 +75,7 @@ open class DelegatingBindingTrace(private val parentContext: BindingContext,
                 filter: BindingTraceFilter = BindingTraceFilter.ACCEPT_ALL)
         : this(parentContext,
                AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage),
-               filter = filter) {
-    }
+               filter = filter)
 
     override fun getBindingContext(): BindingContext = bindingContext
 
