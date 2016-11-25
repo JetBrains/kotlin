@@ -16,7 +16,7 @@
 
 // Adapted from JS compiler, but everyhing has been switched off for now.
 
-package org.jetbrains.kotlin.cli.bc
+package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
@@ -42,7 +42,7 @@ object KonanPlatformConfigurator : PlatformConfigurator(
         overloadFilter = OverloadFilter.DEFAULT,
         platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY
 ) {
-    override fun configureModuleComponents(container: StorageComponentContainer) { 
+    override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(SyntheticConstructorsProvider.Empty)
         container.useInstance(TypeSpecificityComparator.NONE)

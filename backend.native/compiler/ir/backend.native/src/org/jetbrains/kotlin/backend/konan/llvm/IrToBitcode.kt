@@ -4,6 +4,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -345,26 +346,41 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateExpression(tmpVariableName: String, value: IrElement?): LLVMValueRef? {
         when (value) {
-            is IrSetterCallImpl  -> return evaluateSetterCall  (tmpVariableName, value)
-            is IrTypeOperatorCall-> return evaluateTypeOperator(tmpVariableName, value)
-            is IrCall            -> return evaluateCall        (tmpVariableName, value)
-            is IrGetValue        -> return evaluateGetValue    (tmpVariableName, value)
-            is IrSetVariable     -> return evaluateSetVariable (                 value)
-            is IrVariable        -> return evaluateVariable    (                 value)
-            is IrGetField        -> return evaluateGetField    (                 value)
-            is IrSetField        -> return evaluateSetField    (                 value)
-            is IrConst<*>        -> return evaluateConst       (                 value)
-            is IrReturn          -> return evaluateReturn      (                 value)
-            is IrBlock           -> return evaluateBlock       (                 value)
-            is IrExpressionBody  -> return evaluateExpression  (tmpVariableName, value.expression)
-            is IrWhen            -> return evaluateWhen        (tmpVariableName, value)
-            is IrThrow           -> return evaluateThrow       (tmpVariableName, value)
-            null                 -> return null
-            else                 -> {
+            is IrSetterCallImpl      -> return evaluateSetterCall         (tmpVariableName, value)
+            is IrTypeOperatorCall    -> return evaluateTypeOperator       (tmpVariableName, value)
+            is IrCall                -> return evaluateCall               (tmpVariableName, value)
+            is IrGetValue            -> return evaluateGetValue           (tmpVariableName, value)
+            is IrSetVariable         -> return evaluateSetVariable        (                 value)
+            is IrVariable            -> return evaluateVariable           (                 value)
+            is IrGetField            -> return evaluateGetField           (                 value)
+            is IrSetField            -> return evaluateSetField           (                 value)
+            is IrConst<*>            -> return evaluateConst              (                 value)
+            is IrReturn              -> return evaluateReturn             (                 value)
+            is IrBlock               -> return evaluateBlock              (                 value)
+            is IrExpressionBody      -> return evaluateExpression         (tmpVariableName, value.expression)
+            is IrWhen                -> return evaluateWhen               (tmpVariableName, value)
+            is IrThrow               -> return evaluateThrow              (tmpVariableName, value)
+            is IrStringConcatenation -> return evaluateStringConcatenation(tmpVariableName, value)
+            null                     -> return null
+            else                     -> {
                 TODO("${ir2string(value)}")
             }
         }
     }
+
+    private fun evaluateStringConcatenation(tmpVariableName: String, value: IrStringConcatenation): LLVMValueRef? {
+        val stringPlus = KonanPlatform.builtIns.stringType.memberScope.getContributedFunctions(Name.identifier("plus"), NoLookupLocation.FROM_BACKEND).first()
+        var res:LLVMValueRef? = null
+        val strings:List<LLVMValueRef?> = value.arguments.map {
+            val descriptor = getToString(it.type)
+
+            val args = listOf(evaluateExpression(codegen.newVar(), it))
+            return@map evaluateSimpleFunctionCall(codegen.newVar(), descriptor, args)!!
+        }
+        val concatResult = strings.take(1).fold(strings.first()) {res, it -> evaluateSimpleFunctionCall(codegen.newVar(), stringPlus, listOf(res, it))}
+        return concatResult
+    }
+
 
     //-------------------------------------------------------------------------//
 
@@ -742,6 +758,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
         assert(descriptors.size == 1)
         val descriptor = descriptors.first()
+        return descriptor
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun getToString(type: KotlinType): SimpleFunctionDescriptor {
+        val name = Name.identifier("toString")
+        val descriptor = type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).first()
         return descriptor
     }
 

@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl

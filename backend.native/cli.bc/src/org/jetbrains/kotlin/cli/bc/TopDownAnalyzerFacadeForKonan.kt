@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.cli.bc
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.ContextForNewModule

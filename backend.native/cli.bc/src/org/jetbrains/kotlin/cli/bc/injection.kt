@@ -15,6 +15,7 @@
  */
 package org.jetbrains.kotlin.cli.bc
 
+import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
