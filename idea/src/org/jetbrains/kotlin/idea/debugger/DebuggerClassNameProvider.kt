@@ -97,13 +97,17 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
             isInLibrary: Boolean,
             withInlines: Boolean
     ): KotlinDebuggerCaches.ComputedClassNames {
-        val parent = element.readAction { getElementToCalculateClassName(it.parent) }
+        val elementOfClassName = element.readAction { getElementToCalculateClassName(it.parent) }
         when (element) {
             is KtClassOrObject -> return CachedClassNames(getClassNameForClass(element, typeMapper))
+            is KtSecondaryConstructor -> {
+                val klass = element.readAction { it.getContainingClassOrObject() }
+                return CachedClassNames(getClassNameForClass(klass, typeMapper))
+            }
             is KtFunction -> {
                 val descriptor = element.readAction { InlineUtil.getInlineArgumentDescriptor(it, typeMapper.bindingContext) }
                 if (descriptor != null) {
-                    val classNamesForParent = classNamesForPosition(parent, withInlines)
+                    val classNamesForParent = classNamesForPosition(elementOfClassName, withInlines)
                     if (descriptor.isCrossinline) {
                         return CachedClassNames(classNamesForParent + findCrossInlineArguments(element, descriptor, typeMapper.bindingContext))
                     }
@@ -129,10 +133,10 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
             }
             element is KtAnonymousInitializer -> {
                 // Class-object initializer
-                if (parent is KtObjectDeclaration && parent.isCompanion()) {
-                    return CachedClassNames(classNamesForPosition(parent.parent, withInlines))
+                if (elementOfClassName is KtObjectDeclaration && elementOfClassName.isCompanion()) {
+                    return CachedClassNames(classNamesForPosition(elementOfClassName.parent, withInlines))
                 }
-                return CachedClassNames(classNamesForPosition(parent, withInlines))
+                return CachedClassNames(classNamesForPosition(elementOfClassName, withInlines))
             }
             element is KtPropertyAccessor && (!element.readAction { it.property.isTopLevel } || !isInLibrary) -> {
                 val classOrObject = element.readAction { PsiTreeUtil.getParentOfType(it, KtClassOrObject::class.java) }
@@ -143,16 +147,16 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
             element is KtProperty && (!element.readAction { it.isTopLevel } || !isInLibrary) -> {
                 val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
                 if (descriptor !is PropertyDescriptor) {
-                    return CachedClassNames(classNamesForPosition(parent, withInlines))
+                    return CachedClassNames(classNamesForPosition(elementOfClassName, withInlines))
                 }
 
                 return CachedClassNames(getJvmInternalNameForPropertyOwner(typeMapper, descriptor))
             }
             element is KtNamedFunction -> {
-                val parentInternalName = if (parent is KtClassOrObject) {
-                    getClassNameForClass(parent, typeMapper)
+                val parentInternalName = if (elementOfClassName is KtClassOrObject) {
+                    getClassNameForClass(elementOfClassName, typeMapper)
                 }
-                else if (parent != null) {
+                else if (elementOfClassName != null) {
                     val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
                     asmType.internalName
                 }
@@ -165,7 +169,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                 val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
                 if (parentInternalName == null) return CachedClassNames(inlinedCalls)
 
-                val inlineCallPatterns = if (parent != null) inlineCallClassPatterns(typeMapper, parent) else emptyList()
+                val inlineCallPatterns = inlineCallClassPatterns(typeMapper, element)
 
                 return CachedClassNames((listOf(parentInternalName) + inlinedCalls + inlineCallPatterns).filterNotNull())
             }
