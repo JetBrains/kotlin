@@ -575,4 +575,16 @@ public class DescriptorUtils {
     public static Collection<DeclarationDescriptor> getAllDescriptors(@NotNull MemberScope scope) {
         return scope.getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
     }
+
+    public static boolean isEffectivelyExternal(@NotNull MemberDescriptor descriptor) {
+        if (descriptor.isExternal()) return true;
+
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyDescriptor variableDescriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
+            if (isEffectivelyExternal(variableDescriptor)) return true;
+        }
+
+        ClassDescriptor containingClass = getContainingClass(descriptor);
+        return containingClass != null && isEffectivelyExternal(containingClass);
+    }
 }

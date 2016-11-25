@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
@@ -724,7 +725,8 @@ class DeclarationsChecker(
         }
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
-            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && !isPlatform && isUninitialized) {
+            val isExternal = DescriptorUtils.isEffectivelyExternal(propertyDescriptor)
+            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && !isPlatform && isUninitialized && !isExternal) {
                 if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
                     trace.report(MUST_BE_INITIALIZED.on(property))
                 }
@@ -760,7 +762,7 @@ class DeclarationsChecker(
 
         val containingDescriptor = functionDescriptor.containingDeclaration
         val hasAbstractModifier = function.hasModifier(KtTokens.ABSTRACT_KEYWORD)
-        val hasExternalModifier = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        val hasExternalModifier = DescriptorUtils.isEffectivelyExternal(functionDescriptor)
 
         if (containingDescriptor is ClassDescriptor) {
             val inInterface = containingDescriptor.kind == ClassKind.INTERFACE

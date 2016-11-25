@@ -133,10 +133,7 @@ public final class AnnotationsUtils {
     }
 
     private static boolean isEffectivelyExternal(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof MemberDescriptor && ((MemberDescriptor) descriptor).isExternal()) return true;
-
-        ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
-        return containingClass != null && isEffectivelyExternal(containingClass);
+        return descriptor instanceof MemberDescriptor && DescriptorUtils.isEffectivelyExternal((MemberDescriptor) descriptor);
     }
 
     public static boolean isLibraryObject(@NotNull DeclarationDescriptor descriptor) {
