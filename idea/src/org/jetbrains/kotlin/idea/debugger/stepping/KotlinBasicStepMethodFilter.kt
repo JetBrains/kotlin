@@ -34,14 +34,10 @@ class KotlinBasicStepMethodFilter(
         val descriptor: CallableDescriptor,
         val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
-    private val myTargetMethodName: String
-
-    init {
-        myTargetMethodName = when (descriptor) {
-            is ClassDescriptor, is ConstructorDescriptor -> "<init>"
-            is PropertyAccessorDescriptor -> JvmAbi.getterName(descriptor.correspondingProperty.name.asString())
-            else -> descriptor.name.asString()
-        }
+    private val myTargetMethodName = when (descriptor) {
+        is ClassDescriptor, is ConstructorDescriptor -> "<init>"
+        is PropertyAccessorDescriptor -> JvmAbi.getterName(descriptor.correspondingProperty.name.asString())
+        else -> descriptor.name.asString()
     }
 
     override fun getCallingExpressionLines() = myCallingExpressionLines
