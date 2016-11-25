@@ -71,7 +71,7 @@ class ControlFlowInformationProvider private constructor(
     }
 
     constructor(declaration: KtElement, trace: BindingTrace)
-    : this(declaration, trace, ControlFlowProcessor(trace).generatePseudocode(declaration)) {}
+    : this(declaration, trace, ControlFlowProcessor(trace).generatePseudocode(declaration))
 
     fun checkForLocalClassOrObjectMode() {
         // Local classes and objects are analyzed twice: when TopDownAnalyzer processes it and as a part of its container.

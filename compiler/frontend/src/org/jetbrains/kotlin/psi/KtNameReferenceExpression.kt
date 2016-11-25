@@ -27,11 +27,9 @@ import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression {
-    constructor(node: ASTNode) : super(node) {
-    }
+    constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinNameReferenceExpressionStub) : super(stub, KtStubElementTypes.REFERENCE_EXPRESSION) {
-    }
+    constructor(stub: KotlinNameReferenceExpressionStub) : super(stub, KtStubElementTypes.REFERENCE_EXPRESSION)
 
     override fun getReferencedName(): String {
         val stub = stub
