@@ -20,16 +20,16 @@ import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 
-internal interface ArtifactDifferenceRegistry {
+interface ArtifactDifferenceRegistry {
     operator fun get(artifact: File): Iterable<ArtifactDifference>?
     fun add(artifact: File, difference: ArtifactDifference)
     fun remove(artifact: File)
     fun flush(memoryCachesOnly: Boolean)
 }
 
-internal class ArtifactDifference(val buildTS: Long, val dirtyData: DirtyData)
+class ArtifactDifference(val buildTS: Long, val dirtyData: DirtyData)
 
-internal interface ArtifactDifferenceRegistryProvider {
+interface ArtifactDifferenceRegistryProvider {
     fun <T> withRegistry(
             report: (String) -> Unit,
             fn: (ArtifactDifferenceRegistry) -> T
