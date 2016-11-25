@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-sealed class ContainerInfo() {
+sealed class ContainerInfo {
     abstract val fqName: FqName?
     abstract fun matches(descriptor: DeclarationDescriptor): Boolean
 

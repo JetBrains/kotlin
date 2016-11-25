@@ -166,7 +166,7 @@ class ValueWhenEntrySelector(val expression: Expression) : WhenEntrySelector() {
     }
 }
 
-class ElseWhenEntrySelector() : WhenEntrySelector() {
+class ElseWhenEntrySelector : WhenEntrySelector() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("else")
     }

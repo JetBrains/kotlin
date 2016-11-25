@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-class ConvertLambdaToReferenceInspection() : IntentionBasedInspection<KtLambdaExpression>(
+class ConvertLambdaToReferenceInspection : IntentionBasedInspection<KtLambdaExpression>(
         ConvertLambdaToReferenceIntention::class,
         { it -> ConvertLambdaToReferenceIntention.shouldSuggestToConvert(it) }
 ) {

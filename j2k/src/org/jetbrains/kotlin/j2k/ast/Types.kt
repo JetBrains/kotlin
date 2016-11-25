@@ -52,12 +52,12 @@ abstract class MayBeNullableType(nullability: Nullability, val settings: Convert
         get() = if (isNullable) "?" else ""
 }
 
-abstract class NotNullType() : Type() {
+abstract class NotNullType : Type() {
     override val isNullable: Boolean
         get() = false
 }
 
-abstract class Type() : Element() {
+abstract class Type : Element() {
     abstract val isNullable: Boolean
 
     open fun toNotNullType(): Type = this
@@ -132,7 +132,7 @@ class OutProjectionType(val bound: Type) : NotNullType() {
     }
 }
 
-class StarProjectionType() : NotNullType() {
+class StarProjectionType : NotNullType() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("*")
     }

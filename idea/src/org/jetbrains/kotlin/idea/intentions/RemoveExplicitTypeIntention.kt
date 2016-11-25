@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class RemoveSetterParameterTypeInspection()
-: IntentionBasedInspection<KtCallableDeclaration>(
+class RemoveSetterParameterTypeInspection : IntentionBasedInspection<KtCallableDeclaration>(
         RemoveExplicitTypeIntention::class,
         { it -> RemoveExplicitTypeIntention.isSetterParameter(it) }
 ) {

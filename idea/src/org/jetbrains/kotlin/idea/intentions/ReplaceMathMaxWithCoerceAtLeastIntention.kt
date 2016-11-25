@@ -16,5 +16,5 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-class ReplaceMathMaxWithCoerceAtLeastIntention() :
+class ReplaceMathMaxWithCoerceAtLeastIntention :
         ReplaceMathMethodsWithKotlinNativeMethodsIntention("Replace Math.max with coerceAtLeast", "coerceAtLeast", "max")

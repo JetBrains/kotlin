@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Introduce backing property") {
+class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Introduce backing property") {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         if (!canIntroduceBackingProperty(element)) return false
         return element.nameIdentifier?.textRange?.containsOffset(caretOffset) == true
