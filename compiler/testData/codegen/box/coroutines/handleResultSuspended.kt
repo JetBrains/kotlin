@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 class Controller {
     var log = ""
 

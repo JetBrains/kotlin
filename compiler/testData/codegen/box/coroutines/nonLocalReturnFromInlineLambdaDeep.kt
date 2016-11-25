@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 
 class Controller {

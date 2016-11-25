@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 class Controller {
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resumeWithException(RuntimeException("OK"))

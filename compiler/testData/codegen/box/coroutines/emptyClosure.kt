@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 var result = 0
 
 class Controller {

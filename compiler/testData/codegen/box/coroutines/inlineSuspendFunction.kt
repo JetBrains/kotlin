@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 // WITH_REFLECT
 // CHECK_NOT_CALLED: suspendInline_die06n$

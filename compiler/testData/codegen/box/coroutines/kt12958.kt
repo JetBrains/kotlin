@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 class Controller {
     var result = "fail"
     suspend fun <V> suspendHere(v: V): V = suspendWithCurrentContinuation { x ->
