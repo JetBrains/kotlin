@@ -89,34 +89,34 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
 
-        val script = BasicScriptContents(file, getAnnotations = {
-            val classLoader = (template as Any).javaClass.classLoader
-            getAnnotationEntries(file, project)
-                    .mapNotNull { psiAnn ->
-                        // TODO: consider advanced matching using semantic similar to actual resolving
-                        acceptedAnnotations.find { ann ->
-                            psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                        }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
-                    }
-                    .map { it.getProxy(classLoader) }
-        })
-
         fun logClassloadingError(ex: Throwable) {
             logScriptDefMessage(ScriptDependenciesResolver.ReportSeverity.WARNING, ex.message ?: "Invalid script template: ${template.qualifiedName}", null)
         }
+
+        val script = BasicScriptContents(file, getAnnotations = {
+            val classLoader = (template as Any).javaClass.classLoader
+            try {
+                getAnnotationEntries(file, project)
+                        .mapNotNull { psiAnn ->
+                            // TODO: consider advanced matching using semantic similar to actual resolving
+                            acceptedAnnotations.find { ann ->
+                                psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
+                            }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                        }
+                        .map { it.getProxy(classLoader) }
+            }
+            catch (ex: Throwable) {
+                logClassloadingError(ex)
+                emptyList()
+            }
+        })
 
         try {
             val fileDeps = resolver?.resolve(script, environment, ::logScriptDefMessage, previousDependencies)
             // TODO: use it as a Future
             return fileDeps?.get()
         }
-        catch (ex: ClassNotFoundException) {
-            logClassloadingError(ex)
-        }
-        catch (ex: NoClassDefFoundError) {
-            logClassloadingError(ex)
-        }
-        catch (ex: ClassCastException) {
+        catch (ex: Throwable) {
             logClassloadingError(ex)
         }
         return null
