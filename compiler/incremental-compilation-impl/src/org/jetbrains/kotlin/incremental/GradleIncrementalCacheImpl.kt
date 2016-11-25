@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor

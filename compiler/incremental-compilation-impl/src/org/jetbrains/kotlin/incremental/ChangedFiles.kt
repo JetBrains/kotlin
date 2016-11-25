@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import java.io.File
-import java.util.*
 
 internal sealed class ChangedFiles {
     class Known(val modified: List<File>, val removed: List<File>) : ChangedFiles()
