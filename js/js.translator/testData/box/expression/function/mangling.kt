@@ -23,17 +23,22 @@ private external fun private_baz(a: String) {
 public class PublicClass {
     public fun public_baz(i: Int) {
     }
-    public external fun public_baz(a: String) {
+    @JsName("public_baz")
+    public fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    internal external fun internal_baz(a: String) {
+
+    @JsName("internal_baz")
+    internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    private external fun private_baz(a: String) {
+
+    @JsName("private_baz")
+    private fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -43,17 +48,23 @@ public class PublicClass {
 internal class InternalClass {
     public fun public_baz(i: Int) {
     }
-    public external fun public_baz(a: String) {
+
+    @JsName("public_baz")
+    public fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    internal external fun internal_baz(a: String) {
+
+    @JsName("internal_baz")
+    internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    private external fun private_baz(a: String) {
+
+    @JsName("private_baz")
+    private fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -63,17 +74,21 @@ internal class InternalClass {
 private class PrivateClass {
     public fun public_baz(i: Int) {
     }
-    public external fun public_baz(a: String) {
+
+    @JsName("public_baz")
+    public fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    internal external fun internal_baz(a: String) {
+    @JsName("internal_baz")
+    internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    private external fun private_baz(a: String) {
+    @JsName("private_baz")
+    private fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -83,17 +98,20 @@ private class PrivateClass {
 open public class OpenPublicClass {
     public fun public_baz(i: Int) {
     }
-    public external fun public_baz(a: String) {
+    @JsName("public_baz")
+    public fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    internal external fun internal_baz(a: String) {
+    @JsName("internal_baz")
+    internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    private external fun private_baz(a: String) {
+    @JsName("private_baz")
+    private fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -103,17 +121,20 @@ open public class OpenPublicClass {
 internal open class OpenInternalClass {
     public fun public_baz(i: Int) {
     }
-    public external fun public_baz(a: String) {
+    @JsName("public_baz")
+    public fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    internal external fun internal_baz(a: String) {
+    @JsName("internal_baz")
+    internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    private external fun private_baz(a: String) {
+    @JsName("private_baz")
+    private fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }
@@ -123,17 +144,20 @@ internal open class OpenInternalClass {
 open private class OpenPrivateClass {
     public fun public_baz(i: Int) {
     }
-    public external fun public_baz(a: String) {
+    @JsName("public_baz")
+    public fun public_baz(a: String) {
     }
 
     internal fun internal_baz(i: Int) {
     }
-    internal external fun internal_baz(a: String) {
+    @JsName("internal_baz")
+    internal fun internal_baz(a: String) {
     }
 
     private fun private_baz(i: Int) {
     }
-    private external fun private_baz(a: String) {
+    @JsName("private_baz")
+    private fun private_baz(a: String) {
     }
 
     val call_private_baz = { private_baz(0) }

@@ -1,3 +1,3 @@
 package org.junit
 
-public external annotation class Test(val name: String = "")
+public annotation class Test(val name: String = "")

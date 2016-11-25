@@ -33,9 +33,10 @@ import org.jetbrains.kotlin.types.DynamicTypesAllowed
 object JsPlatformConfigurator : PlatformConfigurator(
         DynamicTypesAllowed(),
         additionalDeclarationCheckers = listOf(
-                NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), NativeInnerClassChecker(),
+                NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
                 JsNameChecker, JsModuleChecker,
-                PlatformImplDeclarationChecker()
+                PlatformImplDeclarationChecker(),
+                JsExternalChecker()
         ),
         additionalCallCheckers = listOf(ReifiedTypeParameterSubstitutionChecker(), JsModuleCallChecker),
         additionalTypeCheckers = listOf(),

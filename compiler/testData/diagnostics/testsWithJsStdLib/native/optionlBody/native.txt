@@ -5,7 +5,6 @@ public val boo: kotlin.Int
 public val kotlin.Int.baz: kotlin.Int
 public external fun bar(): kotlin.Unit
 public external fun foo(): kotlin.Unit
-public fun test(): kotlin.Unit
 public external fun kotlin.String.bar(): kotlin.Int
 public external fun kotlin.String.foo(): kotlin.Int
 

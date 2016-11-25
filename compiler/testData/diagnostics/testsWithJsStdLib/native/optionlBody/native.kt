@@ -51,13 +51,4 @@ external object O {
     fun bar(s: String): String = noImpl
 }
 
-fun test() {
-    external class Local {
-        val baz: Int
-        val boo: Int = noImpl
-
-        fun foo()
-        fun bar() {}
-    }
-}
 

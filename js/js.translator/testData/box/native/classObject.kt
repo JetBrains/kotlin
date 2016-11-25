@@ -1,8 +1,8 @@
 package foo
 
 external class A(val c: Int) {
-    external companion object {
-        val g: Int = noImpl
+    companion object {
+        val g: Int
         val c: String = noImpl
     }
 }

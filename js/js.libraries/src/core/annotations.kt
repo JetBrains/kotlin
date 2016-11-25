@@ -20,28 +20,28 @@ import kotlin.annotation.AnnotationTarget.*
 
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
 @Deprecated("Use `external` modifier instead")
-public external annotation class native(@Deprecated public val name: String = "")
+public annotation class native(@Deprecated public val name: String = "")
 
 @Target(FUNCTION)
 @Deprecated("Use inline extension function with body using dynamic")
-public external annotation class nativeGetter
+public annotation class nativeGetter
 
 @Target(FUNCTION)
 @Deprecated("Use inline extension function with body using dynamic")
-public external annotation class nativeSetter
+public annotation class nativeSetter
 
 @Target(FUNCTION)
 @Deprecated("Use inline extension function with body using dynamic")
-public external annotation class nativeInvoke
+public annotation class nativeInvoke
 
 @Target(CLASS, FUNCTION, PROPERTY)
-internal external annotation class library(public val name: String = "")
+internal annotation class library(public val name: String = "")
 
 @Target(PROPERTY)
-public external annotation class enumerable()
+public annotation class enumerable()
 
 @Target(CLASS)
-internal external annotation class marker
+internal annotation class marker
 
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)

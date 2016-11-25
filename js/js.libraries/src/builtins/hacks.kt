@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:Suppress("WRONG_MODIFIER_TARGET")
 package kotlin.js
 
 import kotlin.annotation.AnnotationTarget.*

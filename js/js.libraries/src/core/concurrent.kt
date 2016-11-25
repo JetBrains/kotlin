@@ -29,10 +29,10 @@ package kotlin
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-public external annotation class Volatile
+public annotation class Volatile
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
-public external annotation class Synchronized
+public annotation class Synchronized
 
 public external inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()
