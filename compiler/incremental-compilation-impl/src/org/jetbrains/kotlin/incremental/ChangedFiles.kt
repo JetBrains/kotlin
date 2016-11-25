@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import java.io.File
 
-internal sealed class ChangedFiles {
+sealed class ChangedFiles {
     class Known(val modified: List<File>, val removed: List<File>) : ChangedFiles()
     class Unknown : ChangedFiles()
 }
