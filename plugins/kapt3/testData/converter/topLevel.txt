@@ -9,9 +9,9 @@ public abstract @interface Anno {
 
 package test.another;
 
-public final class another {
+public final class TopLevelKt {
 
-    public another() {
+    public TopLevelKt() {
         super();
     }
     private static final int topLevelProperty = 2;
