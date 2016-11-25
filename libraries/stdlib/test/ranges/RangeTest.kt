@@ -197,14 +197,18 @@ public class RangeTest {
         assertTrue(1.toLong() in range)
         assertTrue(1.toFloat() in range)
 
-        val specialRange = 0.0..-0.0
-        assertFalse(specialRange.isEmpty())
-        assertTrue(-0.0 in specialRange)
-        val normalSpecialRange = -0.0..0.0
-        assertEquals(specialRange, normalSpecialRange)
-        assertEquals(specialRange.hashCode(), normalSpecialRange.hashCode())
+        val zeroRange = 0.0..-0.0
+        assertFalse(zeroRange.isEmpty())
+        assertTrue(-0.0 in zeroRange)
+        assertTrue(-0.0F in zeroRange)
+        val normalZeroRange = -0.0..0.0
+        assertEquals(zeroRange, normalZeroRange)
+        assertEquals(zeroRange.hashCode(), normalZeroRange.hashCode())
+
         val nanRange = 0.0..Double.NaN
+        assertFalse(1.0 in nanRange)
         assertFalse(Double.NaN in nanRange)
+        assertFalse(Float.NaN in nanRange)
         assertTrue(nanRange.isEmpty())
 
         val halfInfRange = 0.0..Double.POSITIVE_INFINITY
@@ -241,13 +245,15 @@ public class RangeTest {
 
         assertFalse(Double.MAX_VALUE in range)
 
-        val specialRange = 0.0F..-0.0F
-        assertFalse(specialRange.isEmpty())
-        assertTrue(-0.0F in specialRange)
-        val normalSpecialRange = -0.0F..0.0F
-        assertEquals(specialRange, normalSpecialRange)
-        assertEquals(specialRange.hashCode(), normalSpecialRange.hashCode())
+        val zeroRange = 0.0F..-0.0F
+        assertFalse(zeroRange.isEmpty())
+        assertTrue(-0.0F in zeroRange)
+        val normalZeroRange = -0.0F..0.0F
+        assertEquals(zeroRange, normalZeroRange)
+        assertEquals(zeroRange.hashCode(), normalZeroRange.hashCode())
+
         val nanRange = 0.0F..Float.NaN
+        assertFalse(1.0F in nanRange)
         assertFalse(Float.NaN in nanRange)
         assertTrue(nanRange.isEmpty())
 

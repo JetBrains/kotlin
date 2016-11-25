@@ -1865,6 +1865,17 @@ public abstract interface class kotlin/properties/ReadWriteProperty {
 	public abstract fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }
 
+public abstract interface class kotlin/ranges/ClosedComparableRange : kotlin/ranges/ClosedRange {
+	public abstract fun contains (Ljava/lang/Comparable;)Z
+	public abstract fun isEmpty ()Z
+	public abstract fun lessThanOrEquals (Ljava/lang/Comparable;Ljava/lang/Comparable;)Z
+}
+
+public final class kotlin/ranges/ClosedComparableRange$DefaultImpls {
+	public static fun contains (Lkotlin/ranges/ClosedComparableRange;Ljava/lang/Comparable;)Z
+	public static fun isEmpty (Lkotlin/ranges/ClosedComparableRange;)Z
+}
+
 public final class kotlin/ranges/RangesKt {
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;D)Z
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;F)Z
@@ -1932,8 +1943,8 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;S)Z
-	public static final fun rangeTo (DD)Lkotlin/ranges/ClosedRange;
-	public static final fun rangeTo (FF)Lkotlin/ranges/ClosedRange;
+	public static final fun rangeTo (DD)Lkotlin/ranges/ClosedComparableRange;
+	public static final fun rangeTo (FF)Lkotlin/ranges/ClosedComparableRange;
 	public static final fun rangeTo (Ljava/lang/Comparable;Ljava/lang/Comparable;)Lkotlin/ranges/ClosedRange;
 	public static final fun reversed (Lkotlin/ranges/CharProgression;)Lkotlin/ranges/CharProgression;
 	public static final fun reversed (Lkotlin/ranges/IntProgression;)Lkotlin/ranges/IntProgression;

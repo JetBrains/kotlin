@@ -84,6 +84,8 @@ class CoercionTest {
 
         assertFails { 1.0.coerceIn(1.0, 0.0) }
         assertFails { 1.0.coerceIn(1.0..0.0) }
+        assertTrue(0.0 == 0.0.coerceIn(0.0, -0.0))
+        assertTrue(0.0 == 0.0.coerceIn(0.0..-0.0))
     }
 
     @Test
