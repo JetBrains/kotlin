@@ -7404,6 +7404,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unusedDelegatedConstructor.kt")
+        public void testUnusedDelegatedConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/unusedDelegatedConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unusedDelegatedConstructorSuper.kt")
+        public void testUnusedDelegatedConstructorSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/unusedDelegatedConstructorSuper.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedFunction.kt")
         public void testUnusedFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnused/unusedFunction.kt");
