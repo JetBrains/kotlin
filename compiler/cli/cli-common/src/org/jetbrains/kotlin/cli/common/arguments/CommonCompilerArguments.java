@@ -67,6 +67,9 @@ public abstract class CommonCompilerArguments {
     @Argument(value = "Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
     public boolean multiPlatform;
 
+    @Argument(value = "Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
+    public boolean noCheckImpl;
+
     @Argument(value = "P", description = "Pass an option to a plugin")
     @ValueDescription(PLUGIN_OPTION_FORMAT)
     public String[] pluginOptions;

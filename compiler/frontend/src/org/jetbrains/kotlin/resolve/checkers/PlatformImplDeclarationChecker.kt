@@ -56,7 +56,8 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
         if (descriptor !is MemberDescriptor) return
 
         if (descriptor.isPlatform && declaration.hasModifier(KtTokens.PLATFORM_KEYWORD)) {
-            checkPlatformDeclarationHasDefinition(declaration, descriptor, diagnosticHolder)
+            val checkImpl = !languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformDoNotCheckImpl)
+            checkPlatformDeclarationHasDefinition(declaration, descriptor, diagnosticHolder, checkImpl)
         }
         else if (descriptor.isImpl && declaration.hasModifier(KtTokens.IMPL_KEYWORD)) {
             checkImplementationHasPlatformDeclaration(declaration, descriptor, diagnosticHolder)
@@ -64,7 +65,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
     }
 
     private fun checkPlatformDeclarationHasDefinition(
-            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink
+            reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkImpl: Boolean
     ) {
         val compatibility = when (descriptor) {
             is CallableMemberDescriptor -> {
@@ -73,7 +74,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
                     // TODO: support non-source definitions (e.g. from Java)
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
-                    areCompatibleCallables(descriptor, impl)
+                    areCompatibleCallables(descriptor, impl, checkImpl)
                 }
             }
             is ClassDescriptor -> {
@@ -81,7 +82,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
                     descriptor != impl &&
                     DescriptorToSourceUtils.getSourceFromDescriptor(impl) is KtElement
                 }.groupBy { impl ->
-                    areCompatibleClassifiers(descriptor, impl)
+                    areCompatibleClassifiers(descriptor, impl, checkImpl)
                 }
             }
             else -> null
@@ -102,7 +103,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
                 findClassifiersFromTheSameModule().firstOrNull { declaration ->
                     this != declaration &&
                     declaration is ClassDescriptor && declaration.isPlatform &&
-                    areCompatibleClassifiers(declaration, this) == Compatible
+                    areCompatibleClassifiers(declaration, this, checkImpl = false) == Compatible
                 } as? ClassDescriptor
 
         val hasDeclaration = when (descriptor) {
@@ -116,7 +117,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
                 candidates.any { declaration ->
                     descriptor != declaration &&
                     declaration.isPlatform &&
-                    areCompatibleCallables(declaration, descriptor) == Compatible
+                    areCompatibleCallables(declaration, descriptor, checkImpl = false) == Compatible
                 }
             }
             is ClassifierDescriptor -> descriptor.findDeclarationForClass() != null
@@ -202,6 +203,8 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
             object TypeParameterVariance : Incompatible("declaration-site variances of type parameters are different")
             object TypeParameterReified : Incompatible("some type parameter is reified in one declaration and non-reified in the other")
 
+            object NoImpl : Incompatible("the implementation is not marked with the 'impl' modifier (-Xno-check-impl)")
+
             object Unknown : Incompatible(null)
         }
 
@@ -209,7 +212,12 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
     }
 
     // a is the declaration in common code, b is the definition in the platform-specific code
-    private fun areCompatibleCallables(a: CallableMemberDescriptor, b: CallableMemberDescriptor, parentSubstitutor: Substitutor? = null): Compatibility {
+    private fun areCompatibleCallables(
+            a: CallableMemberDescriptor,
+            b: CallableMemberDescriptor,
+            checkImpl: Boolean,
+            parentSubstitutor: Substitutor? = null
+    ): Compatibility {
         assert(a.name == b.name) { "This function should be invoked only for declarations with the same name: $a, $b" }
         assert(a.containingDeclaration is ClassDescriptor == b.containingDeclaration is ClassDescriptor) {
             "This function should be invoked only for declarations in the same kind of container (both members or both top level): $a, $b"
@@ -250,7 +258,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
             else -> throw AssertionError("Unsupported declarations: $a, $b")
         }
 
-        // TODO: check 'impl' modifier
+        if (checkImpl && !b.isImpl) return Incompatible.NoImpl
 
         return Compatible
     }
@@ -278,15 +286,17 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
         return Compatible
     }
 
-    private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): Compatibility {
+    private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor, checkImpl: Boolean): Compatibility {
         assert(a.fqNameUnsafe == other.fqNameUnsafe) { "This function should be invoked only for declarations with the same name: $a, $other" }
 
         var parentSubstitutor: Substitutor? = null
+        var implTypealias = false
 
         val b = when (other) {
             is ClassDescriptor -> other
             is TypeAliasDescriptor -> {
                 val classDescriptor = other.classDescriptor ?: return Compatible // do not report extra error on erroneous typealias
+                implTypealias = true
                 // If a platform class test.C is implemented by a typealias test.C = test.CImpl, we must now state that any occurrence
                 // of the type "test.C" in the platform class scope should be replaced with "test.CImpl".
                 // Otherwise the types would not be equal and e.g. test.C's constructor is not going to be found in test.CImpl's scope.
@@ -317,20 +327,29 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
 
         if (!b.typeConstructor.supertypes.containsAll(a.typeConstructor.supertypes.map(substitutor))) return Incompatible.Supertypes
 
-        areCompatibleClassScopes(a, b, substitutor).let { if (it != Compatible) return it }
+        areCompatibleClassScopes(a, b, checkImpl && !implTypealias, substitutor).let { if (it != Compatible) return it }
 
-        // TODO: check 'impl' modifier
+        if (checkImpl && !b.isImpl && !implTypealias) return Incompatible.NoImpl
 
         return Compatible
     }
 
-    private fun areCompatibleClassScopes(a: ClassDescriptor, b: ClassDescriptor, substitutor: Substitutor): Compatibility {
+    private fun areCompatibleClassScopes(
+            a: ClassDescriptor,
+            b: ClassDescriptor,
+            checkImpl: Boolean,
+            substitutor: Substitutor
+    ): Compatibility {
         val unimplemented = arrayListOf<Pair<CallableMemberDescriptor, Map<Incompatible, MutableCollection<CallableMemberDescriptor>>>>()
 
         val bMembersByName = b.getMembers().groupBy { it.name }
 
         outer@ for (aMember in a.getMembers()) {
-            val mapping = bMembersByName[aMember.name].orEmpty().keysToMap { bMember -> areCompatibleCallables(aMember, bMember, substitutor) }
+            if (!aMember.kind.isReal) continue
+
+            val mapping = bMembersByName[aMember.name].orEmpty().keysToMap { bMember ->
+                areCompatibleCallables(aMember, bMember, checkImpl, substitutor)
+            }
             if (mapping.values.any { it == Compatible }) continue
 
             val incompatibilityMap = mutableMapOf<Incompatible, MutableCollection<CallableMemberDescriptor>>()

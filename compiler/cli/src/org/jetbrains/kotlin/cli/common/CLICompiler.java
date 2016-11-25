@@ -281,6 +281,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         if (arguments.multiPlatform) {
             extraLanguageFeatures.add(LanguageFeature.MultiPlatformProjects);
         }
+        if (arguments.noCheckImpl) {
+            extraLanguageFeatures.add(LanguageFeature.MultiPlatformDoNotCheckImpl);
+        }
 
         configuration.put(
                 CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,

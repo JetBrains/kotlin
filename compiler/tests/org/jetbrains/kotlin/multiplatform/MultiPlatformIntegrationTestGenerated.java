@@ -98,6 +98,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             doTest(fileName);
         }
 
+        @TestMetadata("fakeOverrides")
+        public void testFakeOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/fakeOverrides/");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionIncorrectSignature")
         public void testFunctionIncorrectSignature() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/functionIncorrectSignature/");
