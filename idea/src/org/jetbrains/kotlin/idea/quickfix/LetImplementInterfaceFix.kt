@@ -47,7 +47,11 @@ class LetImplementInterfaceFix(
 
     private val prefix: String
 
-    private val validExpectedType: Boolean
+    private val validExpectedType = with (expectedType) {
+        isInterface() &&
+        !containsStarProjections() &&
+        constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
+    }
 
     init {
         val expectedTypeNotNullable = TypeUtils.makeNotNullable(expectedType)
@@ -58,11 +62,6 @@ class LetImplementInterfaceFix(
         val typeDescription = if (element.isObjectLiteral()) "the anonymous object" else "'${expressionType.renderShort()}'"
         prefix = "Let $typeDescription $verb"
 
-        validExpectedType = with (expectedType) {
-            isInterface() &&
-            !containsStarProjections() &&
-            constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
-        }
     }
 
     override fun getFamilyName() = "Let type implement interface"

@@ -21,11 +21,7 @@ import java.text.MessageFormat
 
 
 abstract class AbstractDiagnosticWithParametersRenderer<D : Diagnostic> protected constructor(message: String) : DiagnosticRenderer<D> {
-    private val messageFormat: MessageFormat
-
-    init {
-        messageFormat = MessageFormat(message)
-    }
+    private val messageFormat = MessageFormat(message)
 
     override fun render(obj: D): String {
         return messageFormat.format(renderParameters(obj))
