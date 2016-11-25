@@ -38,14 +38,10 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
                     com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.toCanonicalPath(project.basePath!!),
                     org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID)
         }
-        catch (e: NoClassDefFoundError) {
+        catch (e: Throwable) {
             // TODO: consider displaying the warning to the user
             Logger.getInstance(GradleScriptTemplatesProvider::class.java).warn("[kts] Cannot get gradle execution settings", e)
             null
-        }
-        catch (e: ClassNotFoundException) {
-            Logger.getInstance(GradleScriptTemplatesProvider::class.java).warn("[kts] Cannot get gradle execution settings", e)
-            null // see todo above
         }
     }
 
