@@ -192,6 +192,7 @@ KInt    Kotlin_Int_unaryPlus        (KInt a           ) { return  +a; }
 KInt    Kotlin_Int_unaryMinus       (KInt a           ) { return  -a; }
 
 KByte   Kotlin_Int_toByte           (KInt a           ) { return a; }
+KChar   Kotlin_Int_toChar           (KInt a           ) { return a; }
 KShort  Kotlin_Int_toShort          (KInt a           ) { return a; }
 KInt    Kotlin_Int_toInt            (KInt a           ) { return a; }
 KLong   Kotlin_Int_toLong           (KInt a           ) { return a; }
@@ -246,6 +247,9 @@ KLong   Kotlin_Long_inc              (KLong a           ) { return ++a; }
 KLong   Kotlin_Long_dec              (KLong a           ) { return --a; }
 KLong   Kotlin_Long_unaryPlus        (KLong a           ) { return  +a; }
 KLong   Kotlin_Long_unaryMinus       (KLong a           ) { return  -a; }
+
+KLong   Kotlin_Long_xor_Long         (KLong a, KLong   b) { return a^b; }
+KLong   Kotlin_Long_ushr_Long        (KLong a, KLong   b) { return a >> b; }
 
 KByte   Kotlin_Long_toByte           (KLong a           ) { return a; }
 KShort  Kotlin_Long_toShort          (KLong a           ) { return a; }
