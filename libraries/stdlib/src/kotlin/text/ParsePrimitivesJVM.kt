@@ -128,8 +128,7 @@ public fun String.toIntOrNull(): Int? = toIntOrNull(radix = 10)
  * or `null` if the string is not a valid representation of a number.
  */
 public fun String.toIntOrNull(radix: Int): Int? {
-    if (radix < Character.MIN_RADIX) throw NumberFormatException("radix $radix less than Character.MIN_RADIX")
-    if (radix > Character.MAX_RADIX) throw NumberFormatException("radix $radix greater than Character.MAX_RADIX")
+    checkRadix(radix)
 
     val length = this.length
     if (length == 0) return null
@@ -162,7 +161,7 @@ public fun String.toIntOrNull(radix: Int): Int? {
     val limitBeforeMul = limit / radix
     var result = 0
     for (i in start..(length - 1)) {
-        val digit = Character.digit(this[i], radix)
+        val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null
         if (result < limitBeforeMul) return null
@@ -188,8 +187,7 @@ public fun String.toLongOrNull(): Long? = toLongOrNull(radix = 10)
  * or `null` if the string is not a valid representation of a number.
  */
 public fun String.toLongOrNull(radix: Int): Long? {
-    if (radix < Character.MIN_RADIX) throw NumberFormatException("radix $radix less than Character.MIN_RADIX")
-    if (radix > Character.MAX_RADIX) throw NumberFormatException("radix $radix greater than Character.MAX_RADIX")
+    checkRadix(radix)
 
     val length = this.length
     if (length == 0) return null
@@ -222,7 +220,7 @@ public fun String.toLongOrNull(radix: Int): Long? {
     val limitBeforeMul = limit / radix
     var result = 0L
     for (i in start..(length - 1)) {
-        val digit = Character.digit(this[i], radix)
+        val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null
         if (result < limitBeforeMul) return null
@@ -282,3 +280,9 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
     }
 }
 
+internal fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
+internal fun checkRadix(radix: Int) {
+    if(radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
+        throw NumberFormatException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
+    }
+}
