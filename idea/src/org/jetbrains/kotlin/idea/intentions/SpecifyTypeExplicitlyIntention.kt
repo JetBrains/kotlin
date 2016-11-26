@@ -40,9 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class SpecifyTypeExplicitlyIntention :
@@ -115,7 +113,15 @@ class SpecifyTypeExplicitlyIntention :
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-            val types = exprType.getResolvableApproximations(scope, true).toList().ifEmpty { return null }
+            val types = with (exprType.getResolvableApproximations(scope, true).toList()) {
+                when {
+                    exprType.isNullabilityFlexible() -> flatMap {
+                        listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))
+                    }
+                    else -> this
+                }
+            }.ifEmpty { return null }
+
             return object : ChooseValueExpression<KotlinType>(types, types.first()) {
                 override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
                 override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
