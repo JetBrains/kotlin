@@ -39,6 +39,11 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     module.acceptVoid(RTTIGeneratorVisitor(context))
     println("\n--- Generate bitcode ------------------------------------------------------\n")
     module.acceptVoid(CodeGeneratorVisitor(context))
+    verifyModule(llvmModule)
+    LLVMWriteBitcodeToFile(llvmModule, outFile)
+}
+
+private fun verifyModule(llvmModule: LLVMModuleRef) {
     memScoped {
         val errorRef = allocPointerTo<CInt8Var>()
         // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
@@ -48,7 +53,6 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
             throw Error("Invalid module");
         }
     }
-    LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
 
 internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
@@ -207,13 +211,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         codegen.ret(thisPtr)
-        logger.log("visitConstructor           : ${ir2string(constructorDeclaration)}")
+        logger.log("visitConstructor            : ${ir2string(constructorDeclaration)}")
     }
 
     //-------------------------------------------------------------------------//
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-        logger.log("visitAnonymousInitializer    : ${ir2string(declaration)}")
+        logger.log("visitAnonymousInitializer  : ${ir2string(declaration)}")
     }
 
     //-------------------------------------------------------------------------//
@@ -257,6 +261,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         codegen.function(declaration)
         metadator.function(declaration)
         declaration.acceptChildrenVoid(this)
+        verifyModule(context.llvmModule)
     }
 
     //-------------------------------------------------------------------------//
@@ -751,7 +756,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
 
     private fun evaluateOperatorCall(tmpVariableName: String, callee: IrCall, args: List<LLVMValueRef?>): LLVMValueRef {
-        logger.log("evaluateCall $tmpVariableName origin:$callee")
+        logger.log("evaluateCall               : $tmpVariableName origin:${ir2string(callee)}")
         val descriptor = callee.descriptor
         when (descriptor.name) {
             kEqeq    -> return evaluateOperatorEqeq  (callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
