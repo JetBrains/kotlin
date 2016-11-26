@@ -2,18 +2,18 @@
 package test.text
 
 import kotlin.test.*
-import org.junit.Test as test
+import org.junit.Test
 
 class ParsePrimitivesJVMTest {
 
-    @test fun toBoolean() {
+    @Test fun toBoolean() {
         assertEquals(true, "true".toBoolean())
         assertEquals(true, "True".toBoolean())
         assertEquals(false, "false".toBoolean())
         assertEquals(false, "not so true".toBoolean())
     }
 
-    @test fun toByte() {
+    @Test fun toByte() {
         CompareBehaviorContext({it.toByte()}, {it.toByteOrNull()}).apply {
             assertProduce("+77", 77.toByte())
             assertProduce("-128", Byte.MIN_VALUE)
@@ -26,7 +26,7 @@ class ParsePrimitivesJVMTest {
         }
     }
 
-    @test fun toShort() {
+    @Test fun toShort() {
         CompareBehaviorContext({it.toShort()}, {it.toShortOrNull()}).apply {
             assertProduce("77", 77.toShort())
             assertProduce("-32768", Short.MIN_VALUE)
@@ -39,7 +39,7 @@ class ParsePrimitivesJVMTest {
         }
     }
 
-    @test fun toInt() {
+    @Test fun toInt() {
         CompareBehaviorContext({it.toInt()}, {it.toIntOrNull()}).apply {
             assertProduce("77", 77)
             assertProduce("+2147483647", Int.MAX_VALUE)
@@ -71,7 +71,7 @@ class ParsePrimitivesJVMTest {
         assertFailsWith<NumberFormatException>("Expected to fail with radix 37") { "37".toIntOrNull(radix = 37) }
     }
 
-    @test fun toLong() {
+    @Test fun toLong() {
         CompareBehaviorContext({it.toLong()}, {it.toLongOrNull()}).apply {
             assertProduce("77", 77.toLong())
             assertProduce("+9223372036854775807", Long.MAX_VALUE)
@@ -103,7 +103,7 @@ class ParsePrimitivesJVMTest {
         assertFailsWith<NumberFormatException>("Expected to fail with radix 1") { "1".toLongOrNull(radix = 1) }
     }
 
-    @test fun toFloat() {
+    @Test fun toFloat() {
         CompareBehaviorContext({it.toFloat()}, {it.toFloatOrNull()}).apply {
             assertProduce("77.0", 77.0f)
             assertProduce("-1e39", Float.NEGATIVE_INFINITY)
@@ -112,7 +112,7 @@ class ParsePrimitivesJVMTest {
         }
     }
 
-    @test fun toDouble() {
+    @Test fun toDouble() {
         CompareBehaviorContext({it.toDouble()}, {it.toDoubleOrNull()}).apply {
             assertProduce("-77", -77.0)
             assertProduce("77.", 77.0)
