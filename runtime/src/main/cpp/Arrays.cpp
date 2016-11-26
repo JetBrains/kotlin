@@ -40,6 +40,28 @@ KInt Kotlin_Array_getArrayLength(const ArrayHeader* array) {
   return array->count_;
 }
 
+void Kotlin_Array_fillImpl(ArrayHeader* array, KInt fromIndex,
+    KInt toIndex, ObjHeader* value) {
+    if (fromIndex < 0 || toIndex < fromIndex || toIndex >= array->count_) {
+        ThrowArrayIndexOutOfBoundsException();
+    }
+    // TODO: refcounting!
+    for (KInt index = fromIndex; index < toIndex; ++index) {
+        *ArrayAddressOfElementAt(array, index) = value;
+    }
+}
+
+void Kotlin_Array_copyImpl(const ArrayHeader* array, KInt fromIndex,
+                           ArrayHeader* destination, KInt toIndex, KInt count) {
+    if (fromIndex < 0 || fromIndex + count > array->count_ ||
+        toIndex < 0 || toIndex + count > destination->count_) {
+        ThrowArrayIndexOutOfBoundsException();
+    }
+    // TODO: refcounting!
+    memcpy(ArrayAddressOfElementAt(destination, toIndex),
+        ArrayAddressOfElementAt(array, fromIndex), count * sizeof(KRef));
+}
+
 // Arrays.kt
 KByte Kotlin_ByteArray_get(const ArrayHeader* obj, KInt index) {
   if (static_cast<uint32_t>(index) >= obj->count_) {

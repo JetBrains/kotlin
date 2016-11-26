@@ -19,6 +19,22 @@ public final class Array<T> : Cloneable {
     @SymbolName("Kotlin_Array_set")
     external public operator fun set(index: Int, value: T): Unit
 
+    public operator fun iterator(): kotlin.collections.Iterator<T> {
+        return IteratorImpl(this)
+    }
+
     @SymbolName("Kotlin_Array_getArrayLength")
     external private fun getArrayLength(): Int
+}
+
+private class IteratorImpl<T>(val collection: Array<T>) : Iterator<T> {
+    var index : Int = 0
+
+    public override fun next(): T {
+        return collection[index++]
+    }
+
+    public override operator fun hasNext(): Boolean {
+        return index < collection.size
+    }
 }

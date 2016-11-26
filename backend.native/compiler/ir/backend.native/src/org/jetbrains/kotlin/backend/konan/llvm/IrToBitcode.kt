@@ -193,7 +193,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                     else {
                         value = evaluateExpression(codegen.newVar(), fieldDeclaration.initializer)
                     }
-                    codegen.store(value!!, fieldPtr!!)
+                    if (value != null)
+                        codegen.store(value!!, fieldPtr!!)
                 }
 
                 override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
@@ -224,7 +225,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitBlockBody(body: IrBlockBody) {
         super.visitBlockBody(body)
-        if (KotlinBuiltIns.isUnit(codegen.currentFunction!!.returnType!!)) {
+        if (KotlinBuiltIns.isUnit(codegen.currentFunction!!.returnType!!)
+            && body.statements.lastOrNull() !is IrThrow) {                      // Don't try generate return at the end of the throwing block.
             codegen.ret(null)
         }
         logger.log("visitBlockBody             : ${ir2string(body)}")
@@ -385,6 +387,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrThrow               -> return evaluateThrow              (tmpVariableName, value)
             is IrStringConcatenation -> return evaluateStringConcatenation(tmpVariableName, value)
             is IrBlockBody           -> return evaluateBlock              (                 value as IrStatementContainer)
+            is IrWhileLoop           -> return evaluateWhileLoop          (                 value)
             null                     -> return null
             else                     -> {
                 TODO("${ir2string(value)}")
@@ -440,6 +443,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
         if  (neitherUnitNorNothing)                                      // If result hasn't Unit type and block doesn't end with return
             return codegen.load(tmpLlvmVariablePtr!!, tmpVariableName)   // load value from variable.
+        return null
+    }
+
+    private fun evaluateWhileLoop(loop: IrWhileLoop): LLVMValueRef? {
+        visitWhileLoop(loop)
+        // TODO: incorrect!
         return null
     }
 
@@ -846,8 +855,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         val arg0Type = callee.argument0.type
         val arg1Type = callee.argument1.type
-
-        assert(arg0Type == arg1Type || arg0Type.isNullableNothing() || arg1Type.isNullableNothing())
 
         return when {
             KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO("${ir2string(callee)}")
