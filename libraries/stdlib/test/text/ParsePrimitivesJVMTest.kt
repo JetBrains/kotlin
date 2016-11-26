@@ -139,7 +139,7 @@ class ParsePrimitivesJVMTest {
 private class CompareBehaviorContext<T: Any>(val convertOrFail: (String) -> T,
                                              val convertOrNull: (String) -> T?) {
     fun assertProduce(input: String, output: T) {
-        assertEquals(output, convertOrFail(input))
+        assertEquals(output, convertOrFail(input.removeLeadingPlusOnJava6()))
         assertEquals(output, convertOrNull(input))
     }
 
@@ -152,7 +152,7 @@ private class CompareBehaviorContext<T: Any>(val convertOrFail: (String) -> T,
 private class CompareBehaviorWithRadixContext<T: Any>(val convertOrFail: String.(Int) -> T,
                                                       val convertOrNull: String.(Int) -> T?) {
     fun assertProduce(radix: Int, input: String, output: T) {
-        assertEquals(output, input.convertOrFail(radix))
+        assertEquals(output, input.removeLeadingPlusOnJava6().convertOrFail(radix))
         assertEquals(output, input.convertOrNull(radix))
     }
 
@@ -163,3 +163,8 @@ private class CompareBehaviorWithRadixContext<T: Any>(val convertOrFail: String.
         assertNull (input.convertOrNull(radix), message = "On input \"$input\" with radix $radix")
     }
 }
+
+private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
+
+private fun String.removeLeadingPlusOnJava6(): String =
+        if (isJava6) removePrefix("+") else this
