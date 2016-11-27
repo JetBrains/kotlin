@@ -20,8 +20,11 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveEmptyClassBodyInspection : IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class), CleanupLocalInspectionTool {
@@ -36,6 +39,11 @@ class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<Kt
         element.getStrictParentOfType<KtObjectDeclaration>()?.let {
             if (it.isObjectLiteral()) return false
         }
+
+        element.getStrictParentOfType<KtClass>()?.let {
+            if (!it.isTopLevel() && it.getNextSiblingIgnoringWhitespaceAndComments() is KtSecondaryConstructor) return false
+        }
+
         return element.text.replace("{", "").replace("}", "").isBlank()
     }
 }

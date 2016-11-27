@@ -10936,6 +10936,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nestedClassFollowedByFunction.kt")
+        public void testNestedClassFollowedByFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/nestedClassFollowedByFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedClassFollowedByMember.kt")
+        public void testNestedClassFollowedByMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/nestedClassFollowedByMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedClassFollowedBySecondaryConstructor.kt")
+        public void testNestedClassFollowedBySecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/nestedClassFollowedBySecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedClassFollowedBySecondaryConstructor2.kt")
+        public void testNestedClassFollowedBySecondaryConstructor2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/nestedClassFollowedBySecondaryConstructor2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noneEmptyClass.kt")
         public void testNoneEmptyClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeEmptyClassBody/noneEmptyClass.kt");
