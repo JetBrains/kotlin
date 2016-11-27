@@ -398,6 +398,11 @@ task throw0(type: RunKonanTest) {
     source = "runtime/basic/throw0.kt"
 }
 
+task statements0(type: RunKonanTest) {
+    goldValue = "239\n238\n30\n29\n"
+    source = "runtime/basic/statements0.kt"
+}
+
 /*
 task boxing0(type: RunKonanTest) {
     goldValue = "17\n"
