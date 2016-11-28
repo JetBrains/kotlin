@@ -5681,6 +5681,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("overrideNativeOverloadedFunction.kt")
+        public void testOverrideNativeOverloadedFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/overrideNativeOverloadedFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("passExtLambdaFromNative.kt")
         public void testPassExtLambdaFromNative() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/passExtLambdaFromNative.kt");

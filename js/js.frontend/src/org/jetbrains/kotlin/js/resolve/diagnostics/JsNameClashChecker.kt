@@ -73,8 +73,8 @@ class JsNameClashChecker : SimpleDeclarationChecker {
                 val overrideFqn = nameSuggestion.suggest(override)!!
                 val scope = getScope(overrideFqn.scope)
                 val name = overrideFqn.names.last()
-                val existing = scope[name]
-                if (existing != null && existing != overrideFqn.descriptor) {
+                val existing = scope[name] as? CallableMemberDescriptor
+                if (existing != null && existing != overrideFqn.descriptor && !isFakeOverridingNative(existing)) {
                     diagnosticHolder.report(ErrorsJs.JS_FAKE_NAME_CLASH.on(declaration, name, override, existing))
                     break
                 }
@@ -87,6 +87,11 @@ class JsNameClashChecker : SimpleDeclarationChecker {
                 }
             }
         }
+    }
+
+    private fun isFakeOverridingNative(descriptor: CallableMemberDescriptor): Boolean {
+        return descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+               descriptor.overriddenDescriptors.all { !presentsInGeneratedCode(it) }
     }
 
     private fun getScope(descriptor: DeclarationDescriptor) = scopes.getOrPut(descriptor) {
