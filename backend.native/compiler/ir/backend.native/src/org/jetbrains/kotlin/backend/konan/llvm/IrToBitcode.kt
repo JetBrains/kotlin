@@ -376,12 +376,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrSetField            -> return evaluateSetField           (                 value)
             is IrConst<*>            -> return evaluateConst              (                 value)
             is IrReturn              -> return evaluateReturn             (                 value)
-            is IrBlock               -> return evaluateBlock              (                 value)
+            is IrBlock               -> return evaluateBlock              (tmpVariableName, value)
             is IrExpressionBody      -> return evaluateExpression         (tmpVariableName, value.expression)
             is IrWhen                -> return evaluateWhen               (tmpVariableName, value)
             is IrThrow               -> return evaluateThrow              (tmpVariableName, value)
             is IrStringConcatenation -> return evaluateStringConcatenation(tmpVariableName, value)
-            is IrBlockBody           -> return evaluateBlock              (                 value as IrStatementContainer)
+            is IrBlockBody           -> return evaluateBlock              (tmpVariableName, value as IrStatementContainer)
             is IrWhileLoop           -> return evaluateWhileLoop          (                 value)
             null                     -> return null
             else                     -> {
@@ -664,12 +664,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateBlock(value: IrStatementContainer): LLVMValueRef? {
+    private fun evaluateBlock(tmpVariableName: String, value: IrStatementContainer): LLVMValueRef? {
         logger.log("evaluateBlock              : ${value.statements.forEach { ir2string(it) }}")
         value.statements.dropLast(1).forEach {
             evaluateExpression(codegen.newVar(), it)
         }
-        return evaluateExpression(codegen.newVar(), value.statements.lastOrNull())
+        return evaluateExpression(tmpVariableName, value.statements.lastOrNull())
     }
 
     //-------------------------------------------------------------------------//
