@@ -1,43 +1,17 @@
 package kotlin.collections
 
-class ArrayList<E> : MutableList<E> {
+class ArrayList<E> private constructor(
+        private var array: Array<E>,
+        private var offset: Int,
+        private var length: Int,
+        private val backing: ArrayList<E>?
+) : MutableList<E> {
 
-    private var array: Array<E>
-    private var offset: Int
-    private var length: Int
-    private val backing: ArrayList<E>?
+    constructor() : this(10)
 
-    private constructor(
-            array: Array<E>,
-            offset: Int,
-            length: Int,
-            backing: ArrayList<E>?) {
-        this.array = array
-        this.offset = offset
-        this.length = length
-        this.backing = backing
-    }
+    constructor(initialCapacity: Int) : this(arrayOfLateInitElements(initialCapacity), 0, 0, null)
 
-
-    constructor() {
-        this.array = arrayOfLateInitElements(10)
-        this.offset = 0
-        this.length = 0
-        this.backing = null
-    }
-
-    constructor(initialCapacity: Int) {
-        this.array = arrayOfLateInitElements(initialCapacity)
-        this.offset = 0
-        this.length = 0
-        this.backing = null
-    }
-
-    constructor(c: Collection<E>) {
-        this.array = arrayOfLateInitElements(c.size)
-        this.offset = 0
-        this.length = 0
-        this.backing = null
+    constructor(c: Collection<E>) : this(c.size) {
         addAll(c)
     }
 
