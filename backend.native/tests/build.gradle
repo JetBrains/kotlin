@@ -419,4 +419,10 @@ task array_list1(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "runtime/collections/array_list1.kt"
 }
+/*
+task moderately_large_array(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "runtime/collections/moderately_large_array.kt"
+}
+*/
 
