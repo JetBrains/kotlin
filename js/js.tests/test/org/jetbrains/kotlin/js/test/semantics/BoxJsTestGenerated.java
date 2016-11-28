@@ -5639,12 +5639,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt1519.kt")
-        public void testKt1519() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/kt1519.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt2209.kt")
         public void testKt2209() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/kt2209.kt");
@@ -5669,12 +5663,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("nativeExtensionLikeMember.kt")
-        public void testNativeExtensionLikeMember() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/nativeExtensionLikeMember.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("nativeGetterAndNativeSetter.kt")
         public void testNativeGetterAndNativeSetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/nativeGetterAndNativeSetter.kt");
@@ -5684,12 +5672,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("nativeInvoke.kt")
         public void testNativeInvoke() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/nativeInvoke.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nativePropertyWithCustomName.kt")
-        public void testNativePropertyWithCustomName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/nativePropertyWithCustomName.kt");
             doTest(fileName);
         }
 
@@ -6311,12 +6293,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("initValInConstructor.kt")
         public void testInitValInConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/initValInConstructor.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nativePropertiesNameClashes.kt")
-        public void testNativePropertiesNameClashes() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/propertyAccess/nativePropertiesNameClashes.kt");
             doTest(fileName);
         }
 

@@ -1,7 +1,6 @@
 package
 
 public external fun foo(/*0*/ a: kotlin.String): kotlin.Int
-public external fun kotlin.Int.foo(/*0*/ a: kotlin.String): kotlin.Int
 
 public external final class Bar {
     public constructor Bar(/*0*/ b: kotlin.Int, /*1*/ c: kotlin.Char)

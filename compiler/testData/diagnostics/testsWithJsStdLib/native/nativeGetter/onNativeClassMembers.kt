@@ -39,15 +39,6 @@ external class B {
 }
 
 external class C {
-    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeGetter
-    fun Int.get(a: String): Int?<!> = 1
-
-    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeGetter
-    fun Int.get2(a: Number): String?<!> = "OK"
-
-    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeGetter
-    fun Int.get3(a: Int): String?<!> = "OK"
-
     <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeGetter
     fun get(): Any?<!> = null
 
@@ -62,16 +53,5 @@ external class C {
 
     @nativeGetter
     fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
-
-    companion object {
-        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeGetter
-        fun Int.get(a: String): Int?<!> = 1
-
-        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeGetter
-        fun Int.get2(a: Number): String?<!> = "OK"
-
-        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeGetter
-        fun Int.get3(a: Int): String?<!> = "OK"
-    }
 
 }

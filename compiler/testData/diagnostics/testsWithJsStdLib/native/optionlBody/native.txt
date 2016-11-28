@@ -2,11 +2,8 @@ package
 
 public external val baz: kotlin.Int
 public external val boo: kotlin.Int
-public external val kotlin.Int.baz: kotlin.Int
 public external fun bar(): kotlin.Unit
 public external fun foo(): kotlin.Unit
-public external fun kotlin.String.bar(): kotlin.Int
-public external fun kotlin.String.foo(): kotlin.Int
 
 public external final class C {
     public constructor C()

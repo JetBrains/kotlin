@@ -4,13 +4,8 @@
 external val baz: Int
 external val boo: Int = noImpl
 
-external val Int.baz: Int
-
 external fun foo()
 external fun bar() {}
-
-external fun String.foo(): Int
-external fun String.bar(): Int = noImpl
 
 external interface T {
     val baz: Int

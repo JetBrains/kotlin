@@ -1,6 +1,6 @@
 package foo
 
-external fun String.charCodeAt(i: Int): Int = noImpl
+inline fun String.charCodeAt(i: Int): Int = asDynamic().charCodeAt(i)
 
 // Because String in JS doesn't have hashCode method
 fun String.myHashCode(): Int {

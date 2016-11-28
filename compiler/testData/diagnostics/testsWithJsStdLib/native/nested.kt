@@ -17,8 +17,6 @@ class TopLevel {
     <!NESTED_EXTERNAL_DECLARATION!>external val y: String<!>
 
     val O.u: String get() = "O.u"
-
-    <!NESTED_EXTERNAL_DECLARATION!>external val O.v: String<!> get() = noImpl
 }
 
 external class TopLevelNative {
@@ -33,10 +31,6 @@ external class TopLevelNative {
     val x = "a"
 
     <!NESTED_EXTERNAL_DECLARATION!>external val y: String<!>
-
-    val O.u: String get() = "O.u"
-
-    <!NESTED_EXTERNAL_DECLARATION!>external val O.v: String<!> get() = noImpl
 }
 
 fun topLevelFun() {
