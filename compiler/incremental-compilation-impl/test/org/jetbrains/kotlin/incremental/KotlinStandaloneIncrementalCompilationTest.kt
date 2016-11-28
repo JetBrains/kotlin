@@ -22,15 +22,14 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.com.intellij.util.containers.HashMap
-import org.jetbrains.kotlin.gradle.incremental.parseTestBuildLog
+import com.intellij.util.containers.HashMap
+import org.junit.Assert.assertEquals
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
 import java.util.*
-import kotlin.test.assertEquals
 
 @RunWith(Parameterized::class)
 class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
@@ -104,7 +103,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
 
             val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
             val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
-            assertEquals(rebuildExpectedToSucceed, rebuildSucceeded, "Rebuild exit code differs from incremental exit code")
+            assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
 
             if (rebuildSucceeded) {
                 assertEqualDirectories(outDir, rebuildOutDir, forgiveExtraFiles = rebuildSucceeded)
@@ -185,7 +184,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
     }
 
     companion object {
-        private val jpsResourcesPath = File("../../../jps-plugin/testData/incremental")
+        private val jpsResourcesPath = File("jps-plugin/testData/incremental")
         private val ignoredDirs = setOf(File(jpsResourcesPath, "cacheVersionChanged"),
                                         File(jpsResourcesPath, "changeIncrementalOption"),
                                         File(jpsResourcesPath, "custom"),

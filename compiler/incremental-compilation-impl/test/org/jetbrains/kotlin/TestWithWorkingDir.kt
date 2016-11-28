@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.incremental.snapshots
+package org.jetbrains.kotlin
 
+import com.intellij.openapi.util.io.FileUtil
+import org.junit.After
+import org.junit.Before
 import java.io.File
+import kotlin.properties.Delegates
 
-interface FileSnapshotProvider {
-    operator fun get(file: File): FileSnapshot
-}
+abstract class TestWithWorkingDir {
+    protected var workingDir: File by Delegates.notNull()
+        private set
 
-class SimpleFileSnapshotProviderImpl : FileSnapshotProvider {
-    override fun get(file: File): FileSnapshot {
-        val length = file.length()
-        val hash = file.md5
-        return FileSnapshot(file, length, hash)
+    @Before
+    open fun setUp() {
+        workingDir = FileUtil.createTempDirectory(this.javaClass.simpleName, null)
+    }
+
+    @After
+    open fun tearDown() {
+        workingDir.deleteRecursively()
     }
 }

@@ -1,0 +1,7 @@
+================ Step #1 =================
+
+Compiling files:
+src/usage.kt
+src/JavaClass.java
+End of files
+------------------------------------------
