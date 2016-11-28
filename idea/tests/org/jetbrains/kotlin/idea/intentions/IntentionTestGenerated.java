@@ -417,6 +417,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addNamesToCallArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddNamesToCallArguments extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddNamesToCallArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addNamesToCallArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("allNamed.kt")
+        public void testAllNamed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/allNamed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ambiguousCall.kt")
+        public void testAmbiguousCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/ambiguousCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incompleteCall.kt")
+        public void testIncompleteCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/incompleteCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaMethod.kt")
+        public void testJavaMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/javaMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOnCallee.kt")
+        public void testNotOnCallee() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/notOnCallee.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notResolved.kt")
+        public void testNotResolved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/notResolved.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superClassConstructor.kt")
+        public void testSuperClassConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/superClassConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargMultiple.kt")
+        public void testVarargMultiple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/varargMultiple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargSingle.kt")
+        public void testVarargSingle() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/varargSingle.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("varargSingleWithSpread.kt")
+        public void testVarargSingleWithSpread() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/varargSingleWithSpread.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addOperatorModifier")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
