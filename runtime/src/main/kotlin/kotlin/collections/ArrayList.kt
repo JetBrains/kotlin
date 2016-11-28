@@ -216,8 +216,7 @@ class ArrayList<E> private constructor(
         if (backing != null) {
             backing.addAtInternal(i, element)
             array = backing.array
-            // length++ kills translation
-            length = length + 1
+            length++
         } else {
             insertAtInternal(i, 1)
             array[i] = element
@@ -276,8 +275,7 @@ class ArrayList<E> private constructor(
                 if (elements.contains(array[rangeOffset + i])) {
                     array[rangeOffset + j++] = array[rangeOffset + i++]
                 } else {
-                    // TODO: i++ kills translation.
-                    i = i + 1
+                    i++
                 }
             }
             val removed = rangeLength - j
