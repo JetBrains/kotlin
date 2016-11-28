@@ -35,6 +35,13 @@ fun <TF> getFilePath(file: TF): String = when (file) {
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
+fun <TF> isValidFile(file: TF): Boolean = when (file) {
+    is PsiFile -> file.isValid
+    is VirtualFile -> file.isValid
+    is File -> file.exists() && file.isFile
+    else -> throw IllegalArgumentException("Unsupported file type $file")
+}
+
 fun <TF> getFile(file: TF): File? = when (file) {
     is PsiFile -> file.originalFile.run { File(virtualFile?.path) }
     is VirtualFile -> File(file.path)

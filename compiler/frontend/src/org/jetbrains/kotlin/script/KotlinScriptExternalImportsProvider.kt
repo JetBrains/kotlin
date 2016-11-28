@@ -60,7 +60,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         val uncached = hashSetOf<String>()
         files.forEach { file ->
             val path = getFilePath(file)
-            if (!cache.containsKey(path) && !cacheOfNulls.contains(path) && !uncached.contains(path)) {
+            if (isValidFile(file) && !cache.containsKey(path) && !cacheOfNulls.contains(path) && !uncached.contains(path)) {
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
                 if (scriptDef != null) {
                     val deps = scriptDef.getDependenciesFor(file, project, null)
@@ -83,34 +83,43 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
     fun <TF: Any> updateExternalImportsCache(files: Iterable<TF>): Iterable<TF> = cacheLock.write {
         files.mapNotNull { file ->
             val path = getFilePath(file)
-            val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
-            if (scriptDef != null) {
-                val oldDeps = cache[path]
-                val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
-                when {
-                    deps != null && (oldDeps == null ||
-                                     !deps.classpath.isSamePathListAs(oldDeps.classpath) || !deps.sources.isSamePathListAs(oldDeps.sources)) -> {
-                        // changed or new
-                        log.info("[kts] updated/new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
-                        cache.put(path, deps)
-                        cacheOfNulls.remove(path)
-                        file
-                    }
-                    deps != null -> {
-                        // same as before
-                        log.info("[kts] unchanged deps for $path")
-                        null
-                    }
-                    else -> {
-                        if (cache.remove(path) != null || cacheOfNulls.remove(path)) {
-                            log.info("[kts] removed deps for $path")
+            if (!isValidFile(file)) {
+                if (cache.remove(path) != null || cacheOfNulls.remove(path)) {
+                    log.info("[kts] removed deps for invalid file $path")
+                    file
+                } // cleared
+                else null // unknown
+            }
+            else {
+                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+                if (scriptDef != null) {
+                    val oldDeps = cache[path]
+                    val deps = scriptDef.getDependenciesFor(file, project, oldDeps)
+                    when {
+                        deps != null && (oldDeps == null ||
+                                         !deps.classpath.isSamePathListAs(oldDeps.classpath) || !deps.sources.isSamePathListAs(oldDeps.sources)) -> {
+                            // changed or new
+                            log.info("[kts] updated/new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
+                            cache.put(path, deps)
+                            cacheOfNulls.remove(path)
                             file
-                        } // cleared
-                        else null // same as before
+                        }
+                        deps != null -> {
+                            // same as before
+                            log.info("[kts] unchanged deps for $path")
+                            null
+                        }
+                        else -> {
+                            if (cache.remove(path) != null || cacheOfNulls.remove(path)) {
+                                log.info("[kts] removed deps for $path")
+                                file
+                            } // cleared
+                            else null // same as before
+                        }
                     }
                 }
+                else null // not a script
             }
-            else null // not a script
         }
     }
 
