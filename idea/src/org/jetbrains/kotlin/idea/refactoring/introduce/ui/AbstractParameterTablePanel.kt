@@ -150,6 +150,8 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
 
     }
 
+    protected open fun isCheckMarkColumnEditable() = true
+
     protected open inner class TableModelBase : AbstractTableModel(), EditableModel {
         override fun addRow() = throw IllegalAccessError("Not implemented")
 
@@ -209,7 +211,7 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
         override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
             val info = parameterInfos[rowIndex]
             return when (columnIndex) {
-                CHECKMARK_COLUMN -> isEnabled
+                CHECKMARK_COLUMN -> isEnabled && isCheckMarkColumnEditable()
                 PARAMETER_NAME_COLUMN -> isEnabled && info.isEnabled
                 else -> false
             }
