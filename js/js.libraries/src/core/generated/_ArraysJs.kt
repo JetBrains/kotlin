@@ -844,57 +844,57 @@ public fun <T> Array<out T>.contentDeepHashCode(): Int {
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun <T> Array<out T>.sort(comparison: (T, T) -> Int): Unit {
-    noImpl
+public inline fun <T> Array<out T>.sort(noinline comparison: (T, T) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun ByteArray.sort(comparison: (Byte, Byte) -> Int): Unit {
-    noImpl
+public inline fun ByteArray.sort(noinline comparison: (Byte, Byte) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun ShortArray.sort(comparison: (Short, Short) -> Int): Unit {
-    noImpl
+public inline fun ShortArray.sort(noinline comparison: (Short, Short) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun IntArray.sort(comparison: (Int, Int) -> Int): Unit {
-    noImpl
+public inline fun IntArray.sort(noinline comparison: (Int, Int) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun LongArray.sort(comparison: (Long, Long) -> Int): Unit {
-    noImpl
+public inline fun LongArray.sort(noinline comparison: (Long, Long) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun FloatArray.sort(comparison: (Float, Float) -> Int): Unit {
-    noImpl
+public inline fun FloatArray.sort(noinline comparison: (Float, Float) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun DoubleArray.sort(comparison: (Double, Double) -> Int): Unit {
-    noImpl
+public inline fun DoubleArray.sort(noinline comparison: (Double, Double) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
-public external fun CharArray.sort(comparison: (Char, Char) -> Int): Unit {
-    noImpl
+public inline fun CharArray.sort(noinline comparison: (Char, Char) -> Int): Unit {
+    asDynamic().sort(comparison)
 }
 
 /**

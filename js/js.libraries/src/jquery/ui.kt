@@ -4,22 +4,22 @@ package jquery.ui
 //jquery UI
 import jquery.JQuery
 
-public external fun JQuery.buttonset()  : JQuery = noImpl;
+public inline fun JQuery.buttonset(): JQuery = asDynamic().buttonset()
 
-public external fun JQuery.dialog() : JQuery = noImpl;
+public inline fun JQuery.dialog(): JQuery = asDynamic().dialog()
 
-public external fun JQuery.dialog(params : Json) : JQuery = noImpl
+public inline fun JQuery.dialog(params: Json): JQuery = asDynamic().dialog(params)
 
-public external fun JQuery.dialog(mode : String, param : String) : Any? = noImpl
+public inline fun JQuery.dialog(mode: String, param: String): Any? = asDynamic().dialog(mode, param)
 
-public external fun JQuery.dialog(mode : String) : JQuery = noImpl
+public inline fun JQuery.dialog(mode: String): JQuery = asDynamic().dialog(mode)
 
-public external fun JQuery.dialog(mode : String, param : String, value : Any?) : JQuery = noImpl
+public inline fun JQuery.dialog(mode: String, param: String, value: Any?): JQuery = asDynamic().dialog(mode, param, value)
 
-public external fun JQuery.button() : JQuery = noImpl;
+public inline fun JQuery.button(): JQuery = asDynamic().button()
 
-public external fun JQuery.accordion() : JQuery = noImpl
+public inline fun JQuery.accordion(): JQuery = asDynamic().accordion()
 
-public external fun JQuery.draggable(params : Json) : JQuery = noImpl
+public inline fun JQuery.draggable(params: Json): JQuery = asDynamic().draggable(params)
 
-public external fun JQuery.selectable() : JQuery = noImpl
+public inline fun JQuery.selectable(): JQuery = asDynamic().selectable()

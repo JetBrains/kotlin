@@ -252,13 +252,13 @@ fun specialJS(): List<GenericFunction> {
     }
 
 
-    templates add f("sort(comparison: (T, T) -> Int)") {
+    templates add f("sort(noinline comparison: (T, T) -> Int)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
-        external(true)
+        inline(true)
         returns("Unit")
         doc { "Sorts the array in-place according to the order specified by the given [comparison] function." }
-        body { "noImpl" }
+        body { "asDynamic().sort(comparison)" }
     }
 
     templates add f("sortWith(comparator: Comparator<in T>)") {
