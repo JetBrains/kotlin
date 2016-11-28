@@ -280,11 +280,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return
         }
 
-        if (declaration.descriptor.isInterface) {
-            // Do not generate any code for interfaces.
-            return
-        }
-
         super.visitClass(declaration)
     }
 
