@@ -42,7 +42,7 @@ import java.net.URLClassLoader
 private var MOCK_LIBRARY_JAR: File? = null
 private val MOCK_LIBRARY_SOURCES = PluginTestCaseBase.getTestDataPathBase() + "/debugger/mockLibraryForExceptionFilter"
 
-abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
+abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
     override fun getTestDataPath() = ""
 
     protected fun doTest(path: String) {
@@ -101,7 +101,22 @@ abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
 
         val filter = KotlinExceptionFilterFactory().create(GlobalSearchScope.allScope(project))
         val prefix = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PREFIX: ") ?: "at"
-        val result = filter.applyFilter("$prefix $stackTraceElement", 0) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
+        val stackTraceString = stackTraceElement.toString()
+        var result = filter.applyFilter("$prefix $stackTraceString", 0) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
+
+        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "SMAP_APPLIED")) {
+            val fileHyperlinkInfo = result.firstHyperlinkInfo as FileHyperlinkInfo
+            val descriptor = fileHyperlinkInfo.descriptor!!
+
+            val file = descriptor.file
+            val line = descriptor.line + 1
+
+            val newStackString = stackTraceString
+                    .replace(mainFile.name, file.name)
+                    .replace(Regex("\\:\\d+\\)"), ":$line)")
+
+            result = filter.applyFilter("$prefix $newStackString", 0) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
+        }
 
         val info = result.firstHyperlinkInfo as FileHyperlinkInfo
         val descriptor = info.descriptor!!
