@@ -422,7 +422,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (!KotlinBuiltIns.isNothing(expression.type))     // If "when" has "exit".
             bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
 
-        val isUnit                = KotlinBuiltIns.isUnit(expression.type)
+        val isForceUnit           = tmpVariableName.isEmpty()
+        val isUnit                = KotlinBuiltIns.isUnit(expression.type) || isForceUnit
         val isNothing             = KotlinBuiltIns.isNothing(expression.type)
         val neitherUnitNorNothing = !isNothing && !isUnit
         val tmpVariable           = if (!isUnit) codegen.newVar() else null
@@ -432,7 +433,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             var bbNext = bbExit                             // For last clause bbNext coincides with bbExit.
             if (it != expression.branches.last())           // If it is not last clause.
                 bbNext = codegen.basicBlock()               // Create new basic block for next clause.
-            val isUnitBranch = KotlinBuiltIns.isUnit(it.result.type)
+            val isUnitBranch = KotlinBuiltIns.isUnit(it.result.type) || isForceUnit
             val isNothingBranch = KotlinBuiltIns.isNothing(it.result.type)
             generateWhenCase(isUnitBranch, isNothingBranch, tmpLlvmVariablePtr, it, bbNext, bbExit) // Generate code for current clause.
         }
@@ -497,7 +498,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrTypeOperator.CAST                      -> return evaluateCast(tmpVariableName, value)
             IrTypeOperator.IMPLICIT_CAST             -> return evaluateExpression(tmpVariableName, value.argument)
             IrTypeOperator.IMPLICIT_NOTNULL          -> TODO("${ir2string(value)}")
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> return evaluateExpression(tmpVariableName, value.argument)
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> return evaluateExpression("", value.argument)
             IrTypeOperator.SAFE_CAST                 -> TODO("${ir2string(value)}")
             IrTypeOperator.INSTANCEOF                -> return evaluateInstanceOf(tmpVariableName, value)
             IrTypeOperator.NOT_INSTANCEOF            -> return evaluateNotInstanceOf(tmpVariableName, value)
@@ -861,8 +862,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun generateWhenCase(isUnit:Boolean, isNothing:Boolean, resultPtr: LLVMValueRef?, branch: IrBranch, bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
         val neitherUnitNorNothing = !isNothing && !isUnit                            // If branches doesn't end with 'return' either result hasn't got 'unit' type.
+        val branchResult = branch.result
         if (isUnconditional(branch)) {                                               // It is the "else" clause.
-            val brResult = evaluateExpression(codegen.newVar(), branch.result)       // Generate clause body.
+            val brResult = evaluateExpression(codegen.newVar(), branchResult)       // Generate clause body.
             if (neitherUnitNorNothing)                                               // If nor unit neither result ends with return
                 codegen.store(brResult!!, resultPtr!!)                               // we store result to temporal variable.
             if (bbExit == null) return                                               // If 'bbExit' isn't defined just return
