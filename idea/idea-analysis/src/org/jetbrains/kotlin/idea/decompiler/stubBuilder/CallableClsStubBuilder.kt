@@ -193,7 +193,7 @@ private class PropertyClsStubBuilder(
 
         val modifierListStubImpl = createModifierListStubForDeclaration(
                 callableStub, propertyProto.flags,
-                listOf(VISIBILITY, LATEINIT) + constModifier + modalityModifier
+                listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY) + constModifier + modalityModifier
         )
 
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
