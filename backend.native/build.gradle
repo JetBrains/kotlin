@@ -18,7 +18,6 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
-String kotlinCompilerModule = 'org.jetbrains.kotlin:kotlin-compiler:1.1-20161201.112229-281'
 
 
 // (gets applied to this project and all its subprojects)
