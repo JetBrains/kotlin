@@ -499,11 +499,36 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrTypeOperator.IMPLICIT_CAST             -> return evaluateExpression(tmpVariableName, value.argument)
             IrTypeOperator.IMPLICIT_NOTNULL          -> TODO("${ir2string(value)}")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> return evaluateExpression("", value.argument)
-            IrTypeOperator.SAFE_CAST                 -> TODO("${ir2string(value)}")
+            IrTypeOperator.SAFE_CAST                 -> return evaluateSafeCast(tmpVariableName, value)
             IrTypeOperator.INSTANCEOF                -> return evaluateInstanceOf(tmpVariableName, value)
             IrTypeOperator.NOT_INSTANCEOF            -> return evaluateNotInstanceOf(tmpVariableName, value)
         }
 
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateSafeCast(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef? {
+        val bbTrue  = codegen.basicBlock()!!
+        val bbFalse = codegen.basicBlock()!!
+        val bbExit  = codegen.basicBlock()!!
+        val result  = codegen.alloca(getLLVMType(value.type), codegen.newVar())
+
+        val condition = evaluateInstanceOf(codegen.newVar(), value)
+        codegen.condBr(condition, bbTrue, bbFalse)
+
+        codegen.positionAtEnd(bbTrue)
+        val castResult = evaluateExpression(codegen.newVar(), value.argument)
+        codegen.store(castResult!!, result)
+        codegen.br(bbExit)
+
+        codegen.positionAtEnd(bbFalse)
+        val nullResult = kNullPtr
+        codegen.store(nullResult, result)
+        codegen.br(bbExit)
+
+        codegen.positionAtEnd(bbExit)
+        return codegen.load(result, tmpVariableName)
     }
 
     //-------------------------------------------------------------------------//
