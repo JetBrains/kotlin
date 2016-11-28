@@ -409,12 +409,12 @@ task boxing0(type: RunKonanTest) {
     source = "runtime/basic/boxing0.kt"
 }
 */
-/*
+
 task interface0(type: RunKonanTest) {
-    goldValue = "PASS\n"
+    goldValue = "PASSED\n"
     source = "runtime/basic/interface0.kt"
 }
-*/
+
 task array_list1(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "runtime/collections/array_list1.kt"
