@@ -283,6 +283,6 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
 internal fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
 internal fun checkRadix(radix: Int) {
     if(radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
-        throw NumberFormatException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
+        throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
     }
 }

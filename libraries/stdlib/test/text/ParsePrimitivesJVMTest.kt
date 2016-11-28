@@ -73,8 +73,8 @@ class ParsePrimitivesJVMTest {
             assertFailsOrNull(10, "Kona")
         }
 
-        assertFailsWith<NumberFormatException>("Expected to fail with radix 1") { "1".toInt(radix = 1) }
-        assertFailsWith<NumberFormatException>("Expected to fail with radix 37") { "37".toIntOrNull(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { "1".toInt(radix = 1) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { "37".toIntOrNull(radix = 37) }
     }
 
     @JvmVersion
@@ -114,8 +114,8 @@ class ParsePrimitivesJVMTest {
             assertFailsOrNull(10, "Hazelnut")
         }
 
-        assertFailsWith<NumberFormatException>("Expected to fail with radix 37") { "37".toLong(radix = 37) }
-        assertFailsWith<NumberFormatException>("Expected to fail with radix 1") { "1".toLongOrNull(radix = 1) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { "37".toLong(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { "1".toLongOrNull(radix = 1) }
     }
 
     @JvmVersion
