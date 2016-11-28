@@ -66,6 +66,12 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
         doTest(fileName);
     }
 
+    @TestMetadata("inlineFunctionAnotherFileWithSmapApplied")
+    public void testInlineFunctionAnotherFileWithSmapApplied() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionAnotherFileWithSmapApplied/");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineFunctionInnerClass")
     public void testInlineFunctionInnerClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionInnerClass/");

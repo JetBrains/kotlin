@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -39,9 +40,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import java.util.*
 
 object DebuggerUtils {
-
-    private val KOTLIN_EXTENSIONS = Sets.newHashSet("kt", "kts")
-
     fun findSourceFileForClassIncludeLibrarySources(
             project: Project,
             scope: GlobalSearchScope,
@@ -62,7 +60,7 @@ object DebuggerUtils {
             className: JvmClassName,
             fileName: String): KtFile? {
         val extension = FileUtilRt.getExtension(fileName)
-        if (!KOTLIN_EXTENSIONS.contains(extension)) return null
+        if (extension !in KotlinFileTypeFactory.KOTLIN_EXTENSIONS) return null
         if (DumbService.getInstance(project).isDumb) return null
 
         val filesWithExactName = scopes.findFirstNotEmpty { findFilesByNameInPackage(className, fileName, project, it) } ?: return null
