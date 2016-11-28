@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.incremental.makeModuleFile
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.net.URL
 import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
@@ -200,12 +199,3 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     }
 }
 
-internal class GradleCompilerEnvironment(
-        val compilerJar: File
-) : CompilerEnvironment(Services.EMPTY) {
-    val compilerClasspath: List<File>
-        get() = listOf(compilerJar).filterNotNull()
-
-    val compilerClasspathURLs: List<URL>
-        get() = compilerClasspath.map { it.toURI().toURL() }
-}
