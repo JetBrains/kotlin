@@ -91,10 +91,13 @@ internal fun constValue(value: LLVMValueRef?) = object : ConstValue {
     override fun getLlvmValue() = value
 }
 
-internal val int8Type = LLVMInt8Type()
-internal val int32Type = LLVMInt32Type()
+internal val int8Type = LLVMInt8Type()!!
+internal val int32Type = LLVMInt32Type()!!
+internal val int8TypePtr = pointerType(int8Type)
 
-internal fun pointerType(pointeeType: LLVMTypeRef?) = LLVMPointerType(pointeeType, 0)
+internal val voidType = LLVMVoidType()
+
+internal fun pointerType(pointeeType: LLVMTypeRef?) = LLVMPointerType(pointeeType, 0)!!
 
 internal fun structType(vararg types: LLVMTypeRef?): LLVMTypeRef = memScoped {
     LLVMStructType(allocArrayOf(*types)[0].ptr, types.size, 0)!!
@@ -127,6 +130,35 @@ internal fun CArray<CInt8Var>.getBytes(size: Long) =
         (0 .. size-1).map { this[it].value }.toByteArray()
 
 internal fun getFunctionType(ptrToFunction: LLVMValueRef?): LLVMTypeRef {
-    val typeOfPtrToFunction = LLVMTypeOf(ptrToFunction)
-    return LLVMGetElementType(typeOfPtrToFunction)!!
+    return getGlobalType(ptrToFunction)
 }
+
+internal fun getGlobalType(ptrToGlobal: LLVMValueRef?): LLVMTypeRef {
+    return LLVMGetElementType(LLVMTypeOf(ptrToGlobal))!!
+}
+
+internal fun ContextUtils.externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
+    val found = LLVMGetNamedFunction(context.llvmModule, name)
+    if (found != null) {
+        assert (getFunctionType(found) == type)
+        return found
+    } else {
+        return LLVMAddFunction(context.llvmModule, name, type)!!
+    }
+}
+
+internal fun ContextUtils.externalGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
+    val found = LLVMGetNamedGlobal(context.llvmModule, name)
+    if (found != null) {
+        assert (getGlobalType(found) == type)
+        return found
+    } else {
+        return LLVMAddGlobal(context.llvmModule, type, name)!!
+    }
+}
+
+internal fun functionType(returnType: LLVMTypeRef?, isVarArg: Boolean = false, vararg paramTypes: LLVMTypeRef?) =
+        memScoped {
+            val paramTypesPtr = if (paramTypes.size != 0) allocArrayOf(*paramTypes)[0].ptr else null
+            LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, if (isVarArg) 1 else 0)!!
+        }

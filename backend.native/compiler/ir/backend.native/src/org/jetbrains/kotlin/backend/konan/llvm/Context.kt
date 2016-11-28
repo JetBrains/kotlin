@@ -7,8 +7,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val llvmModule: LLVMModuleRef) {
     val moduleIndex = ModuleIndex(irModule)
 
-    val llvmBuilder = LLVMCreateBuilder()
-
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
         if (LLVMGetNamedFunction(llvmModule, name) != null) {
             throw IllegalArgumentException("function $name already exists")
@@ -31,8 +29,4 @@ internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val
     val isInstanceFunction = importRtFunction("IsInstance")
     val checkInstanceFunction = importRtFunction("CheckInstance")
     val throwExceptionFunction = importRtFunction("ThrowException")
-
-    fun dispose() {
-        LLVMDisposeBuilder(llvmBuilder)
-    }
 }
