@@ -1,4 +1,4 @@
-<idea-plugin version="2" url="http://kotlinlang.org" xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" version="2" url="http://kotlinlang.org" allow-bundled-update="true">
     <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
@@ -1448,6 +1448,11 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertTryFinallyToUseCallIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddNamesToCallArgumentsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
