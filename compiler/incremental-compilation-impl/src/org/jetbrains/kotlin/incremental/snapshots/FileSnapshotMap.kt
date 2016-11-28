@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
 import java.io.File
 import java.util.*
 
-internal class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer) {
+class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer) {
     override fun dumpValue(value: FileSnapshot): String =
             value.toString()
 

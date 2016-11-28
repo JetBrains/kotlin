@@ -21,7 +21,7 @@ import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 
-internal object FileSnapshotExternalizer : DataExternalizer<FileSnapshot> {
+object FileSnapshotExternalizer : DataExternalizer<FileSnapshot> {
     override fun save(out: DataOutput, value: FileSnapshot) {
         out.writeUTF(value.file.canonicalPath)
         out.writeLong(value.length)

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental.snapshots
 import java.io.File
 import java.util.*
 
-internal class FileSnapshot(
+class FileSnapshot(
         val file: File,
         val length: Long,
         val hash: ByteArray
