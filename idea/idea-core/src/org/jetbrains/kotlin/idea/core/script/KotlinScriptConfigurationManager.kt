@@ -56,7 +56,7 @@ class KotlinScriptConfigurationManager(
     init {
         reloadScriptDefinitions()
 
-        StartupManager.getInstance(project).registerPostStartupActivity {
+        StartupManager.getInstance(project).runWhenProjectIsInitialized {
             cacheAllScriptsExtraImports()
             invalidateLocalCaches()
             notifyRootsChanged()
