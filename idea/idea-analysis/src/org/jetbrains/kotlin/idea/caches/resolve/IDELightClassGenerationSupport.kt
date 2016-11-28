@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -152,7 +152,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                     return SourceNavigationHelper.getOriginalClass(classOrObject) as? KtLightClass
             }
         }
-        if (classOrObject.getContainingKtFile().analysisContext != null) {
+        if ((classOrObject.containingFile as? KtFile)?.analysisContext != null) {
             // explicit request to create light class from dummy.kt
             return KtLightClassForSourceDeclaration.create(classOrObject)
         }
@@ -299,11 +299,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         if (decompiledClassOrObject is KtEnumEntry) {
             return null
         }
-        val containingJetFile = decompiledClassOrObject.getContainingKtFile()
-        if (containingJetFile !is KtClsFile) {
-            return null
-        }
-        val rootLightClassForDecompiledFile = createLightClassForDecompiledKotlinFile(containingJetFile) ?: return null
+        val containingKtFile = decompiledClassOrObject.containingFile as? KtClsFile ?: return null
+        val rootLightClassForDecompiledFile = createLightClassForDecompiledKotlinFile(containingKtFile) ?: return null
 
         return findCorrespondingLightClass(decompiledClassOrObject, rootLightClassForDecompiledFile)
     }
