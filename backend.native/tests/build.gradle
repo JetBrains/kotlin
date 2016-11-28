@@ -241,6 +241,12 @@ task check_type(type: UnitKonanTest) {
     source = "codegen/basics/check_type.kt"
 }
 
+task safe_cast(type: RunKonanTest) {
+    goldValue = "safe_cast_positive: true\n" +
+            "safe_cast_negative: true\n"
+    source = "codegen/basics/safe_cast.kt"
+}
+
 task aritmetic(type: UnitKonanTest) {
     source = "codegen/function/arithmetic.kt"
 }
