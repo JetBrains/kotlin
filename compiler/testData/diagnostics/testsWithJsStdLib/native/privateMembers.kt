@@ -1,16 +1,21 @@
 // !DIAGNOSTICS: -NOTHING_TO_INLINE
 // TODO: should we disable NOTHING_TO_INLINE in JS backend?
+// TODO: uncomment declarations in case we decide to implement KT-14031
 
 external class C {
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private fun a(): Int<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private fun a(): Int<!>
 
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private val b: String<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private val b: String<!>
 
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private var c: Float<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private var c: Float<!>
 
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private var d: Float<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private var d: Float<!>
         get
         set
+
+    var e: Float
+        get
+        <!WRONG_EXTERNAL_DECLARATION!>private set<!>
 
     private inline fun inline_a(): Int = 23
 
@@ -19,13 +24,13 @@ external class C {
 }
 
 external object O {
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private fun a(): Int<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private fun a(): Int<!>
 
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private val b: String<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private val b: String<!>
 
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private var c: Float<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private var c: Float<!>
 
-    <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private var d: Float<!>
+    <!WRONG_EXTERNAL_DECLARATION!>private var d: Float<!>
         get
         set
 
@@ -37,13 +42,13 @@ external object O {
 
 external class Outer {
     class Inner {
-        <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private fun a(): Int<!>
+        <!WRONG_EXTERNAL_DECLARATION!>private fun a(): Int<!>
 
-        <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private val b: String<!>
+        <!WRONG_EXTERNAL_DECLARATION!>private val b: String<!>
 
-        <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private var c: Float<!>
+        <!WRONG_EXTERNAL_DECLARATION!>private var c: Float<!>
 
-        <!EXTERNAL_CLASS_PRIVATE_MEMBER!>private var d: Float<!>
+        <!WRONG_EXTERNAL_DECLARATION!>private var d: Float<!>
             get
             set
 
@@ -52,4 +57,6 @@ external class Outer {
         private inline val inline_prop: Int
             get() = 42
     }
+
+    private class <!WRONG_EXTERNAL_DECLARATION!>PrivateInner<!>
 }

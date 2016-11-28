@@ -44,11 +44,6 @@ fun box(): String {
     assertEquals("Class.Class.b", Class.Class.b)
     assertEquals(88, Class.Class.test())
 
-    //TODO inner class
-//    assertEquals("Class.InnerClass().a", Class().InnerClass("Class.InnerClass().a").a)
-//    assertEquals("Class.InnerClass().b", Class().InnerClass("something").b)
-//    assertEquals(66, Class().InnerClass("something").test())
-
     assertEquals("Class.Trait.a", Class.Trait.a)
     assertEquals("Class.Trait.b", Class.Trait.b)
     assertEquals(55, Class.Trait.test())
@@ -59,7 +54,7 @@ fun box(): String {
     assertEquals("Class.b", Class.b)
     assertEquals(77, Class.test())
 
-    // in trit
+    // in trait
 
     assertEquals("Trait.Object.a", Trait.Object.a)
     assertEquals("Trait.Object.b", Trait.Object.b)
@@ -149,11 +144,6 @@ external class Class {
             var b: String = noImpl
             fun test(): Int = noImpl
         }
-    }
-
-    inner class InnerClass(val a: String) {
-        var b: String = noImpl
-        fun test(): Int = noImpl
     }
 
     interface Trait {

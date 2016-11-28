@@ -41,13 +41,16 @@ class JsExternalChecker : SimpleDeclarationChecker {
         }
 
         if (DescriptorUtils.isAnnotationClass(descriptor)) {
-            diagnosticHolder.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, "annotation class"))
+            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "annotation class"))
         }
         else if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
-            diagnosticHolder.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, "property accessor"))
+            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "property accessor"))
+        }
+        else if (descriptor is ClassDescriptor && descriptor.isInner) {
+            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "inner class"))
         }
         else if (isPrivateNonInlineMemberOfExternalClass(descriptor)) {
-            diagnosticHolder.report(ErrorsJs.EXTERNAL_CLASS_PRIVATE_MEMBER.on(declaration))
+            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
         }
 
         if (descriptor !is PropertyAccessorDescriptor && descriptor.isExtension) {
@@ -56,7 +59,7 @@ class JsExternalChecker : SimpleDeclarationChecker {
                 is PropertyDescriptor -> "extension property"
                 else -> "extension member"
             }
-            diagnosticHolder.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, target))
+            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, target))
         }
     }
 
@@ -68,7 +71,7 @@ class JsExternalChecker : SimpleDeclarationChecker {
     }
 
     private fun isPrivateNonInlineMemberOfExternalClass(descriptor: DeclarationDescriptor): Boolean {
-        if (descriptor is PropertyAccessorDescriptor) return false
+        if (descriptor is PropertyAccessorDescriptor && descriptor.visibility == descriptor.correspondingProperty.visibility) return false
         if (descriptor !is MemberDescriptor || descriptor.visibility != Visibilities.PRIVATE) return false
         if (descriptor is FunctionDescriptor && descriptor.isInline) return false
         if (descriptor is PropertyDescriptor && descriptor.accessors.all { it.isInline }) return false
