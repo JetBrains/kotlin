@@ -539,6 +539,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("privateMembers.kt")
+        public void testPrivateMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/privateMembers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("wrongTarget.kt")
         public void testWrongTarget() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/wrongTarget.kt");

@@ -38,6 +38,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED, "Callable references for builtin members are not supported yet: ''{0}''", RenderFirstLineOfElementText)
         put(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED, "Argument must be non-empty JavaScript code")
         put(ErrorsJs.NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
+        put(ErrorsJs.EXTERNAL_CLASS_PRIVATE_MEMBER, "Private non-inline members of external classes are prohibited")
         put(ErrorsJs.JS_NAME_CLASH, "JavaScript name ({0}) generated for this declaration clashes with another declaration: {1}",
             Renderers.STRING, Renderers.COMPACT)
         put(ErrorsJs.JS_FAKE_NAME_CLASH, "JavaScript name {0} is generated for different inherited members: {1} and {2}",

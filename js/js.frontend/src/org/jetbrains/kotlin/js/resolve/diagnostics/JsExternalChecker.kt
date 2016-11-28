@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.js.PredefinedAnnotation
@@ -49,6 +46,9 @@ class JsExternalChecker : SimpleDeclarationChecker {
         else if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
             diagnosticHolder.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, "property accessor"))
         }
+        else if (isPrivateNonInlineMemberOfExternalClass(descriptor)) {
+            diagnosticHolder.report(ErrorsJs.EXTERNAL_CLASS_PRIVATE_MEMBER.on(declaration))
+        }
 
         if (descriptor !is PropertyAccessorDescriptor && descriptor.isExtension) {
             val target = when (descriptor) {
@@ -65,5 +65,15 @@ class JsExternalChecker : SimpleDeclarationChecker {
 
         return declaration.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
                AnnotationsUtils.hasAnnotation(descriptor, PredefinedAnnotation.NATIVE)
+    }
+
+    private fun isPrivateNonInlineMemberOfExternalClass(descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor is PropertyAccessorDescriptor) return false
+        if (descriptor !is MemberDescriptor || descriptor.visibility != Visibilities.PRIVATE) return false
+        if (descriptor is FunctionDescriptor && descriptor.isInline) return false
+        if (descriptor is PropertyDescriptor && descriptor.accessors.all { it.isInline }) return false
+
+        val containingDeclaration = descriptor.containingDeclaration as? ClassDescriptor ?: return false
+        return AnnotationsUtils.isNativeObject(containingDeclaration)
     }
 }
