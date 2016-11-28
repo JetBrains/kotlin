@@ -7,6 +7,7 @@ fun simple() {
 }
 
 class Foo() {
+    val j = 2
     var i = 29
 
     fun more() {
