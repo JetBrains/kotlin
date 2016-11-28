@@ -1,0 +1,7 @@
+package
+
+package test {
+    public val test1: kotlin.reflect.KFunction0<kotlin.Unit>
+    public fun nullableFun(): kotlin.Int?
+    public fun kotlin.Int.foo(): kotlin.Unit
+}

@@ -170,14 +170,61 @@ class DoubleColonExpressionResolver(
         }
     }
 
+    private fun shouldTryResolveLHSAsReservedExpression(expression: KtDoubleColonExpression): Boolean {
+        val lhs = expression.receiverExpression ?: return false
+        return (expression.hasQuestionMarks && lhs.canBeConsideredProperExpression()) ||
+               (lhs is KtCallExpression && lhs.canBeReservedGenericPropertyCall())
+    }
+
+    private fun KtCallExpression.canBeReservedGenericPropertyCall(): Boolean =
+            // This condition captures 'name<T>::...'
+            // TODO 'expr.name<T>', 'expr<T>.name' - discuss
+            calleeExpression is KtNameReferenceExpression &&
+            valueArguments.isEmpty() &&
+            typeArguments.isNotEmpty()
+
+    private fun resolveReservedExpressionOnLHS(expression: KtExpression, c: ExpressionTypingContext): DoubleColonLHS.Expression? {
+        val doubleColonExpression = expression.parent as? KtDoubleColonExpression ?:
+                                    return null // should assert here?
+
+        if (expression is KtCallExpression && expression.typeArguments.isNotEmpty()) {
+            val callee = expression.calleeExpression ?: return null
+            val calleeAsDoubleColonLHS = resolveExpressionOnLHS(callee, c) ?: return null
+
+            for (typeArgument in expression.typeArguments) {
+                val typeReference = typeArgument.typeReference ?: continue
+                typeResolver.resolveType(c.scope, typeReference, c.trace, true)
+            }
+
+            return calleeAsDoubleColonLHS
+        }
+        else if (doubleColonExpression.hasQuestionMarks) {
+            return resolveExpressionOnLHS(expression, c)
+        }
+        else {
+            return null
+        }
+    }
+
     private fun resolveDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext): DoubleColonLHS? {
         val resultForExpr = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
         if (resultForExpr != null) {
-            val lhs = resultForExpr.lhs as DoubleColonLHS.Expression?
+            val lhs = resultForExpr.lhs
             // If expression result is an object, we remember this and skip it here, because there are valid situations where
             // another type (representing another classifier) should win
             if (lhs != null && !lhs.isObject) {
                 return resultForExpr.commit()
+            }
+        }
+
+        val resultForReservedExpr = tryResolveLHS(doubleColonExpression, c,
+                                                  this::shouldTryResolveLHSAsReservedExpression,
+                                                  this::resolveReservedExpressionOnLHS)
+        if (resultForReservedExpr != null) {
+            val lhs = resultForReservedExpr.lhs
+            if (lhs != null) {
+                c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedExpr.expression))
+                return resultForReservedExpr.commit()
             }
         }
 
@@ -205,12 +252,12 @@ class DoubleColonExpressionResolver(
         return null
     }
 
-    private class LHSResolutionResult(
-            val lhs: DoubleColonLHS?,
+    private class LHSResolutionResult<out T : DoubleColonLHS>(
+            val lhs: T?,
             val expression: KtExpression,
             val traceAndCache: TemporaryTraceAndCache
     ) {
-        fun commit(): DoubleColonLHS? {
+        fun commit(): T? {
             if (lhs != null) {
                 traceAndCache.trace.record(BindingContext.DOUBLE_COLON_LHS, expression, lhs)
             }
@@ -223,12 +270,12 @@ class DoubleColonExpressionResolver(
      * Returns null if the LHS is definitely not an expression. Returns a non-null result if a resolution was attempted and led to
      * either a successful result or not.
      */
-    private fun tryResolveLHS(
+    private fun <T : DoubleColonLHS> tryResolveLHS(
             doubleColonExpression: KtDoubleColonExpression,
             context: ExpressionTypingContext,
             criterion: (KtDoubleColonExpression) -> Boolean,
-            resolve: (KtExpression, ExpressionTypingContext) -> DoubleColonLHS?
-    ): LHSResolutionResult? {
+            resolve: (KtExpression, ExpressionTypingContext) -> T?
+    ): LHSResolutionResult<T>? {
         val expression = doubleColonExpression.receiverExpression ?: return null
 
         if (!criterion(doubleColonExpression)) return null

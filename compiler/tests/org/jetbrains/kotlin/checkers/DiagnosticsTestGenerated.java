@@ -1848,6 +1848,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("reservedExpressionSyntax.kt")
+                public void testReservedExpressionSyntax() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/reservedExpressionSyntax.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("reservedExpressionSyntax2.kt")
+                public void testReservedExpressionSyntax2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/reservedExpressionSyntax2.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("syntheticExtensionOnLHS.kt")
                 public void testSyntheticExtensionOnLHS() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/syntheticExtensionOnLHS.kt");
