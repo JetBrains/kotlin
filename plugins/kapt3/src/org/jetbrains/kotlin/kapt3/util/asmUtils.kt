@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.kapt3.util
 
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -31,3 +33,17 @@ internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) != 0
 internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) != 0
 
 internal fun <T> List<T>?.isNullOrEmpty() = this == null || this.isEmpty()
+
+internal fun MethodNode.isJvmOverloadsGenerated(): Boolean {
+    return (invisibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
+           || (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
+}
+
+// Constant from DefaultParameterValueSubstitutor can't be used in Maven build because of ProGuard
+// rename this as well
+private val ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS: String =
+        Type.getObjectType("synthetic/kotlin/jvm/GeneratedByJvmOverloads").descriptor
+
+private fun AnnotationNode.isJvmOverloadsGenerated(): Boolean {
+    return this.desc == ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS
+}
