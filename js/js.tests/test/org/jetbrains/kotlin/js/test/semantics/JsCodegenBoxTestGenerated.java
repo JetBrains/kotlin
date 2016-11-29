@@ -12546,6 +12546,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("operatorSetLambda.kt")
+        public void testOperatorSetLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/operatorSetLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overloadedSet.kt")
         public void testOverloadedSet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/overloadedSet.kt");

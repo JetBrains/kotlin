@@ -207,7 +207,8 @@ class CallArgumentTranslator private constructor(
             assert(actualArgument is ExpressionValueArgument)
             assert(valueArguments.size == 1)
 
-            val argumentExpression = KtPsiUtil.deparenthesize(valueArguments[0].getArgumentExpression())!!
+            val parenthesizedArgumentExpression = valueArguments[0].getArgumentExpression()!!
+            val argumentExpression = KtPsiUtil.deparenthesize(parenthesizedArgumentExpression)
 
             result += if (parameterDescriptor.isCoroutine && argumentExpression is KtLambdaExpression) {
                 val continuationType = parameterDescriptor.type.arguments.last().type
@@ -218,7 +219,7 @@ class CallArgumentTranslator private constructor(
                         argumentExpression.functionLiteral, continuationDescriptor, controllerDescriptor)
             }
             else {
-                Translation.translateAsExpression(argumentExpression, context)
+                Translation.translateAsExpression(parenthesizedArgumentExpression, context)
             }
         }
 
@@ -330,7 +331,7 @@ class CallArgumentTranslator private constructor(
 
 }
 
-public fun Map<TypeParameterDescriptor, KotlinType>.buildReifiedTypeArgs(
+fun Map<TypeParameterDescriptor, KotlinType>.buildReifiedTypeArgs(
         context: TranslationContext
 ): List<JsExpression> {
 

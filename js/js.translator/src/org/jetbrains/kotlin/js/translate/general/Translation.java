@@ -104,6 +104,15 @@ public final class Translation {
             return aliasForExpression;
         }
 
+        CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
+        if (compileTimeValue != null) {
+            KotlinType type = context.bindingContext().getType(expression);
+            if (type != null && KotlinBuiltIns.isLong(type)) {
+                JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
+                if (constantResult != null) return constantResult;
+            }
+        }
+
         TranslationContext innerContext = context.innerBlock();
         JsNode result = doTranslateExpression(expression, innerContext);
         context.moveVarsFrom(innerContext);
@@ -175,15 +184,6 @@ public final class Translation {
             @NotNull TranslationContext context,
             @NotNull JsBlock block
     ) {
-        CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
-        if (compileTimeValue != null) {
-            KotlinType type = context.bindingContext().getType(expression);
-            if (type != null && KotlinBuiltIns.isLong(type)) {
-                JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
-                if (constantResult != null) return constantResult;
-            }
-        }
-
         JsNode jsNode = translateExpression(expression, context, block);
         if (jsNode instanceof  JsExpression) {
             return (JsExpression) jsNode;
