@@ -14,12 +14,19 @@ import org.jetbrains.kotlin.types.KotlinType
 internal class CodeGenerator(override val context: Context) : ContextUtils {
     var currentFunction:FunctionDescriptor? = null
 
-    fun function(declaration: IrFunction) {
+    fun prologue(declaration: IrFunction) {
         assert(declaration.body != null)
 
         val descriptor = declaration.descriptor
         if (currentFunction == descriptor) return
-        val fn = prolog(declaration)
+        variableIndex = 0
+        currentFunction = declaration.descriptor
+        val fn = declaration.descriptor.llvmFunction.getLlvmValue()
+        prologueBb = LLVMAppendBasicBlock(fn, "prologue")
+        entryBb = LLVMAppendBasicBlock(fn, "entry")
+        positionAtEnd(entryBb!!)
+
+        function2variables.put(declaration.descriptor, mutableMapOf())
 
         var indexOffset = 0
         if (descriptor is ClassConstructorDescriptor
@@ -43,17 +50,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
     }
 
-    fun  fields(descriptor: ClassDescriptor):List<PropertyDescriptor> = descriptor.fields
 
-    private fun prolog(declaration: IrFunction): LLVMValueRef? {
-        variableIndex = 0
-        currentFunction = declaration.descriptor
-        val fn = declaration.descriptor.llvmFunction.getLlvmValue()
-        val block = LLVMAppendBasicBlock(fn, "entry")!!
-        positionAtEnd(block)
-        function2variables.put(declaration.descriptor, mutableMapOf())
-        return fn
+    fun epilogue(declaration: IrFunction) {
+        appendingTo(prologueBb!!) {
+            br(entryBb!!)
+        }
     }
+
+    fun fields(descriptor: ClassDescriptor):List<PropertyDescriptor> = descriptor.fields
 
     fun newVar():String = currentFunction!!.tmpVariable()
 
@@ -71,6 +75,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     val function2variables = mutableMapOf<FunctionDescriptor, MutableMap<String, LLVMValueRef?>>()
 
+    private var prologueBb: LLVMBasicBlockRef? = null
+    private var entryBb: LLVMBasicBlockRef? = null
 
     val FunctionDescriptor.variables: MutableMap<String, LLVMValueRef?>
         get() = this@CodeGenerator.function2variables[this]!!
@@ -102,7 +108,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, result: String) = LLVMBuildBitCast(builder, value, type, result)!!
 
     fun alloca(type: KotlinType, varName: String): LLVMValueRef = alloca( getLLVMType(type), varName)
-    fun alloca(type: LLVMTypeRef?, varName: String): LLVMValueRef = LLVMBuildAlloca(builder, type, varName)!!
+    fun alloca(type: LLVMTypeRef?, varName: String): LLVMValueRef {
+        appendingTo(prologueBb!!) {
+            return LLVMBuildAlloca(builder, type, varName)!!
+        }
+    }
     fun load(value: LLVMValueRef, varName: String): LLVMValueRef = LLVMBuildLoad(builder, value, varName)!!
     fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(builder, value, ptr)!!
 

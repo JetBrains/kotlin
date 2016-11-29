@@ -224,7 +224,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitConstructor(constructorDeclaration: IrConstructor) {
-        codegen.function(constructorDeclaration)
+        codegen.prologue(constructorDeclaration)
         val constructorDescriptor = constructorDeclaration.descriptor
         val classDescriptor = DescriptorUtils.getContainingClass(constructorDescriptor)
         val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
@@ -281,6 +281,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         codegen.ret(thisPtr)
+        codegen.epilogue(constructorDeclaration)
         logger.log("visitConstructor            : ${ir2string(constructorDeclaration)}")
     }
 
@@ -364,12 +365,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (declaration.descriptor.modality == Modality.ABSTRACT || declaration.body == null)
             return
 
-        codegen.function(declaration)
+        codegen.prologue(declaration)
         metadator.function(declaration)
 
         using(FunctionScope(declaration)) {
             declaration.acceptChildrenVoid(this)
         }
+        codegen.epilogue(declaration)
 
         verifyModule(context.llvmModule)
     }
