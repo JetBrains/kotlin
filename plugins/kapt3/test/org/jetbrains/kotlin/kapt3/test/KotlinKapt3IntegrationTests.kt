@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.kapt3.test
 
 import org.junit.Test
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 
 class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
     @Test
@@ -35,5 +37,31 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
         val options = env.options
         assertEquals("firstValue", options["firstKey"])
         assertTrue("secondKey" in options)
+    }
+
+    @Test
+    fun testOverloads() = test("Overloads", "test.MyAnnotation") { set, roundEnv, env ->
+        assertEquals(1, set.size)
+        val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
+        assertEquals(1, annotatedElements.size)
+        val constructors = annotatedElements
+                .first()
+                .enclosedElements
+                .filter { it.kind == ElementKind.CONSTRUCTOR }
+                .map { it as ExecutableElement }
+                .sortedBy { it.parameters.size }
+        assertEquals(2, constructors.size)
+        assertEquals(2, constructors[0].parameters.size)
+        assertEquals(3, constructors[1].parameters.size)
+        assertEquals("int", constructors[0].parameters[0].asType().toString())
+        assertEquals("long", constructors[0].parameters[1].asType().toString())
+        assertEquals("int", constructors[1].parameters[0].asType().toString())
+        assertEquals("long", constructors[1].parameters[1].asType().toString())
+        assertEquals("java.lang.String", constructors[1].parameters[2].asType().toString())
+        assertEquals("someInt", constructors[0].parameters[0].simpleName.toString())
+        assertEquals("someLong", constructors[0].parameters[1].simpleName.toString())
+        assertEquals("someInt", constructors[1].parameters[0].simpleName.toString())
+        assertEquals("someLong", constructors[1].parameters[1].simpleName.toString())
+        assertEquals("someString", constructors[1].parameters[2].simpleName.toString())
     }
 }

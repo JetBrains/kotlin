@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 /**
@@ -36,6 +37,12 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
  * parameter values substituted.
  */
 class DefaultParameterValueSubstitutor(val state: GenerationState) {
+    private companion object {
+        // rename -> JvmOverloads
+        private val ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS: String =
+                Type.getObjectType("synthetic/kotlin/jvm/GeneratedByJvmOverloads").descriptor
+    }
+
     /**
      * If all of the parameters of the specified constructor declare default values,
      * generates a no-argument constructor that passes default values for all arguments.
@@ -130,6 +137,10 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
                                         FunctionCodegen.getThrownExceptions(functionDescriptor, typeMapper))
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, signature.returnType)
+
+        if (state.classBuilderMode == ClassBuilderMode.KAPT3) {
+            mv.visitAnnotation(ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS, /* visible = */ false)
+        }
 
         remainingParameters.withIndex().forEach {
             val annotationCodegen = AnnotationCodegen.forParameter(it.index, mv, typeMapper)

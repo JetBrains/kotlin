@@ -1,0 +1,64 @@
+public final class State {
+    private final int someInt = 0;
+    private final long someLong = 0L;
+    private final java.lang.String someString = null;
+
+    public final int getSomeInt() {
+        return 0;
+    }
+
+    public final long getSomeLong() {
+        return 0L;
+    }
+
+    public final java.lang.String getSomeString() {
+        return null;
+    }
+
+    public State(int someInt, long someLong, java.lang.String someString) {
+        super();
+    }
+
+    public State(int someInt, long someLong) {
+        super();
+    }
+}
+
+////////////////////
+
+
+public final class State2 {
+    public final int someInt = 0;
+    public final long someLong = 0L;
+    public final java.lang.String someString = null;
+
+    public final int test(int someInt, long someLong, java.lang.String someString) {
+        return 0;
+    }
+
+    public final int test(int someInt, long someLong) {
+        return 0;
+    }
+
+    public final int test(int someInt) {
+        return 0;
+    }
+
+    public final void someMethod(java.lang.String str) {
+    }
+
+    public final void methodWithoutArgs() {
+    }
+
+    public State2(int someInt, long someLong, java.lang.String someString) {
+        super();
+    }
+
+    public State2(int someInt, long someLong) {
+        super();
+    }
+
+    public State2(int someInt) {
+        super();
+    }
+}
