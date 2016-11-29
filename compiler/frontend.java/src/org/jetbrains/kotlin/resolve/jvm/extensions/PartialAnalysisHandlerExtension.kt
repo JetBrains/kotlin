@@ -92,6 +92,12 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                         }
                     }
                 }
+                is FunctionDescriptor -> {
+                    // is body expression (not unit)
+                    if (declaration is KtFunction && !declaration.hasDeclaredReturnType() && !declaration.hasBlockBody()) {
+                        ForceResolveUtil.forceResolveAllContents(descriptor)
+                    }
+                }
             }
         }
 
