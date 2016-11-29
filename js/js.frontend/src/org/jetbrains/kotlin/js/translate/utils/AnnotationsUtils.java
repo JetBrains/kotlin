@@ -213,7 +213,10 @@ public final class AnnotationsUtils {
             DeclarationDescriptor annotationType = annotation.getType().getConstructor().getDeclarationDescriptor();
             if (annotationType == null) continue;
 
-            FqNameUnsafe fqName = DescriptorUtils.getFqName(annotation.getType().getConstructor().getDeclarationDescriptor());
+            DeclarationDescriptor annotationTypeDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
+            assert annotationTypeDescriptor != null : "Annotation type should have descriptor: " + annotation.getType();
+
+            FqNameUnsafe fqName = DescriptorUtils.getFqName(annotationTypeDescriptor);
             if (fqName.equals(JS_NON_MODULE_ANNOTATION.toUnsafe())) {
                 return true;
             }
@@ -222,10 +225,14 @@ public final class AnnotationsUtils {
         return false;
     }
 
-    @NotNull
+    @Nullable
     private static String extractJsModuleName(@NotNull AnnotationDescriptor annotation) {
+        if (annotation.getAllValueArguments().isEmpty()) return null;
+
         ConstantValue<?> importValue = annotation.getAllValueArguments().values().iterator().next();
-        assert importValue != null : "JsModule annotation should have at least one argument";
+        if (importValue == null) return null;
+
+        if (!(importValue.getValue() instanceof String)) return null;
         return (String) importValue.getValue();
     }
 

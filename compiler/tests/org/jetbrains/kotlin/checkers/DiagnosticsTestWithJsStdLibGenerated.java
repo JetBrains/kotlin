@@ -311,6 +311,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("jsModuleWithoutParameters.kt")
+        public void testJsModuleWithoutParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/jsModuleWithoutParameters.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsVarProhibited.kt")
         public void testJsVarProhibited() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/jsVarProhibited.kt");
