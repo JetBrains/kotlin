@@ -4142,12 +4142,6 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceTypeAliasTest(fileName);
         }
 
-        @TestMetadata("localTypeAlias.kt")
-        public void testLocalTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/localTypeAlias.kt");
-            doIntroduceTypeAliasTest(fileName);
-        }
-
         @TestMetadata("localTypeExtracted.kt")
         public void testLocalTypeExtracted() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/localTypeExtracted.kt");
@@ -4157,12 +4151,6 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("localWithVisibility.kt")
         public void testLocalWithVisibility() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/localWithVisibility.kt");
-            doIntroduceTypeAliasTest(fileName);
-        }
-
-        @TestMetadata("memberTypeAlias.kt")
-        public void testMemberTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceTypeAlias/memberTypeAlias.kt");
             doIntroduceTypeAliasTest(fileName);
         }
 

@@ -27,8 +27,6 @@ import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_ELEMENT
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
-import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
-import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicates
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.ui.KotlinIntroduceTypeAliasDialog
@@ -53,7 +51,7 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
                 file,
                 "Select target code block",
                 listOf(TYPE_ELEMENT, TYPE_CONSTRUCTOR),
-                { elements, parent -> parent.getExtractionContainers(strict = true, includeAll = true) },
+                { elements, parent -> listOf(parent.containingFile) },
                 continuation
         )
     }
@@ -115,23 +113,7 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
 
         val refExpression = file.findElementAt(offset)?.getNonStrictParentOfType<KtSimpleNameExpression>()
         if (refExpression != null && isDoubleColonReceiver(refExpression)) {
-            val containers = refExpression.getExtractionContainers(strict = true, includeAll = true)
-
-            chooseContainerElementIfNecessary(
-                    containers,
-                    editor,
-                    if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
-                    true,
-                    { it },
-                    {
-                        val targetSibling = refExpression.getOutermostParentContainedIn(it)
-                        if (targetSibling != null) {
-                            doInvoke(project, editor, listOf(refExpression), targetSibling)
-                        }
-                    }
-            )
-
-            return
+            return doInvoke(project, editor, listOf(refExpression), refExpression.getOutermostParentContainedIn(file)!!)
         }
 
         selectElements(editor, file) { elements, targetSibling -> doInvoke(project, editor, elements, targetSibling) }
