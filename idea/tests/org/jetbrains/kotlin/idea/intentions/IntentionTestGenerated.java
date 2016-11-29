@@ -5994,6 +5994,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("implicitReceiver.kt")
+        public void testImplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/implicitReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notClose.kt")
         public void testNotClose() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/notClose.kt");
@@ -6006,9 +6012,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("parameter.kt")
+        public void testParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/parameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/safeCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("this.kt")
+        public void testThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/this.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisLabeled.kt")
+        public void testThisLabeled() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/thisLabeled.kt");
             doTest(fileName);
         }
 

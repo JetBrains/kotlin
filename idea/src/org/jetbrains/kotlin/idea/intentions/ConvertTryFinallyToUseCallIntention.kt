@@ -17,19 +17,17 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 class ConvertTryFinallyToUseCallInspection : IntentionBasedInspection<KtTryExpression>(ConvertTryFinallyToUseCallIntention::class) {
@@ -41,17 +39,24 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntent
 ) {
     override fun applyTo(element: KtTryExpression, editor: Editor?) {
         val finallySection = element.finallyBlock!!
-        val finallyDotCall = finallySection.finalExpression.statements.singleOrNull() as KtDotQualifiedExpression
-        val resourceReference = finallyDotCall.receiverExpression as KtNameReferenceExpression
+        val finallyExpression = finallySection.finalExpression.statements.single()
+        val finallyExpressionReceiver = (finallyExpression as? KtDotQualifiedExpression)?.receiverExpression
+        val resourceReference = finallyExpressionReceiver as? KtNameReferenceExpression
+        val resourceName = resourceReference?.getReferencedNameAsName()
 
         val factory = KtPsiFactory(element)
 
         val useCallExpression = factory.buildExpression {
-            appendName(resourceReference.getReferencedNameAsName())
-            appendFixedText(".use {")
+            if (resourceName != null) {
+                appendName(resourceName)
+                appendFixedText(".")
+            }
+            appendFixedText("use {")
 
-            appendName(resourceReference.getReferencedNameAsName())
-            appendFixedText("->")
+            if (resourceName != null) {
+                appendName(resourceName)
+                appendFixedText("->")
+            }
 
             appendChildRange(element.tryBlock.contentRange())
             appendFixedText("}")
@@ -63,21 +68,33 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntent
     override fun isApplicableTo(element: KtTryExpression): Boolean {
         // Single statement in finally, no catch blocks
         val finallySection = element.finallyBlock ?: return false
-        val finallyDotCall = finallySection.finalExpression.statements.singleOrNull() as? KtDotQualifiedExpression ?: return false
+        val finallyExpression = finallySection.finalExpression.statements.singleOrNull() ?: return false
         if (element.catchClauses.isNotEmpty()) return false
 
-        // Like resource.close()
-        val resourceReference = finallyDotCall.receiverExpression as? KtNameReferenceExpression ?: return false
-        val resourceCall = finallyDotCall.selectorExpression as? KtCallExpression ?: return false
-        if (resourceCall.calleeExpression?.text != "close") return false
-
-        // resource is Closeable immutable local variable
-        val resourceDescriptor =
-                element.analyze().get(BindingContext.REFERENCE_TARGET, resourceReference) as? VariableDescriptor ?: return false
-        return !resourceDescriptor.isVar && resourceDescriptor.type.supertypes().any {
+        val context = element.analyze()
+        val resolvedCall = finallyExpression.getResolvedCall(context) ?: return false
+        if (resolvedCall.call.isSafeCall()) return false
+        if (resolvedCall.candidateDescriptor.name.asString() != "close") return false
+        val receiver = resolvedCall.dispatchReceiver ?: return false
+        if (receiver.type.supertypes().all {
             it.constructor.declarationDescriptor?.fqNameSafe?.asString().let {
-                it == "java.io.Closeable" || it == "java.lang.AutoCloseable"
+                it != "java.io.Closeable" && it != "java.lang.AutoCloseable"
             }
+        }) return false
+
+        return when (receiver) {
+            is ExpressionReceiver -> {
+                val expression = receiver.expression
+                if (expression is KtThisExpression) true
+                else {
+                    val resourceReference = expression as? KtReferenceExpression ?: return false
+                    val resourceDescriptor =
+                            context[BindingContext.REFERENCE_TARGET, resourceReference] as? VariableDescriptor ?: return false
+                    !resourceDescriptor.isVar
+                }
+            }
+            is ImplicitReceiver -> true
+            else -> false
         }
     }
 }
