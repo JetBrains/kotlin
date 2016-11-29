@@ -150,7 +150,7 @@ class ClassFileToSourceStubConverter(
 
         val simpleName = when (descriptor) {
             is PackageFragmentDescriptor -> {
-                val className = clazz.name.drop(packageFqName.length + 1)
+                val className = if (packageFqName.isEmpty()) clazz.name else clazz.name.drop(packageFqName.length + 1)
                 if (className.isEmpty()) throw IllegalStateException("Invalid package facade class name: ${clazz.name}")
                 className
             }
