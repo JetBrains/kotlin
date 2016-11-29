@@ -69,7 +69,7 @@ public class IntellijLintIssueRegistry extends BuiltinIssueRegistry {
         EnumSet<Scope> scope = implementation.getScope();
         Class<? extends Detector> detectorClass = implementation.getDetectorClass();
         if (detectorClass == ApiDetector.class) {
-          issue.setImplementation(IntellijApiDetector.IMPLEMENTATION);
+          //issue.setImplementation(IntellijApiDetector.IMPLEMENTATION);
         } else if (detectorClass == ViewTypeDetector.class) {
           issue.setImplementation(IntellijViewTypeDetector.IMPLEMENTATION);
         }
