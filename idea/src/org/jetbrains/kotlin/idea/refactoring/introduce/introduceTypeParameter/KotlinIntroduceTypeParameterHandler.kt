@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterByRefActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterByUnresolvedRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterFromUsageFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.getPossibleTypeParameterContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
@@ -98,12 +98,12 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
         val originalType = typeElementToExtract.getType(context)
 
         val createTypeParameterData =
-                CreateTypeParameterByRefActionFactory.extractFixData(typeElementToExtract, defaultName)
-                        ?.copy(upperBoundType = originalType, declaration = targetOwner)
-                ?: return showErrorHint(project, editor, "Refactoring is not applicable in the current context", REFACTORING_NAME)
+                CreateTypeParameterByUnresolvedRefActionFactory.extractFixData(typeElementToExtract, defaultName)?.let {
+                    it.copy(typeParameters = listOf(it.typeParameters.single().copy(upperBoundType = originalType)), declaration = targetOwner)
+                } ?: return showErrorHint(project, editor, "Refactoring is not applicable in the current context", REFACTORING_NAME)
 
         project.executeCommand(REFACTORING_NAME) {
-            val newTypeParameter = CreateTypeParameterFromUsageFix(typeElementToExtract, createTypeParameterData).doInvoke()
+            val newTypeParameter = CreateTypeParameterFromUsageFix(typeElementToExtract, createTypeParameterData, false).doInvoke().singleOrNull()
                                    ?: return@executeCommand
             val newTypeParameterPointer = newTypeParameter.createSmartPointer()
 

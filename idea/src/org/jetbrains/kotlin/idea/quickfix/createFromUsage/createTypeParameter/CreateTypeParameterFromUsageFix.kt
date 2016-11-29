@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageViewTypeLocation
@@ -42,11 +43,17 @@ import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.utils.SmartList
 
 class CreateTypeParameterFromUsageFix(
-        originalElement: KtTypeElement,
-        private val data: CreateTypeParameterData
-) : CreateFromUsageFixBase<KtTypeElement>(originalElement) {
-    override fun getText() = "Create type parameter '${data.name}' in " +
-                             ElementDescriptionUtil.getElementDescription(data.declaration, UsageViewTypeLocation.INSTANCE) + " '${data.declaration.name}'"
+        originalElement: KtElement,
+        private val data: CreateTypeParameterData,
+        private val presentTypeParameterNames: Boolean
+) : CreateFromUsageFixBase<KtElement>(originalElement) {
+    override fun getText(): String {
+        val prefix = "type parameter".let { if (data.typeParameters.size > 1) StringUtil.pluralize(it) else it }
+        val typeParametersText = if (presentTypeParameterNames) data.typeParameters.joinToString(prefix = " ") { "'${it.name}'" } else ""
+        val containerText = ElementDescriptionUtil.getElementDescription(data.declaration, UsageViewTypeLocation.INSTANCE) +
+                            " '${data.declaration.name}'"
+        return "Create $prefix$typeParametersText in $containerText"
+    }
 
     override fun startInWriteAction() = false
 
@@ -54,92 +61,105 @@ class CreateTypeParameterFromUsageFix(
         doInvoke()
     }
 
-    fun doInvoke(): KtTypeParameter? {
+    fun doInvoke(): List<KtTypeParameter> {
         val declaration = data.declaration
         val project = declaration.project
         val usages = project.runSynchronouslyWithProgress("Searching ${declaration.name}...", true) {
             runReadAction {
+                val expectedTypeArgumentCount = declaration.typeParameters.size + data.typeParameters.size
                 ReferencesSearch
                         .search(declaration)
                         .mapNotNull {
                             it.element.getParentOfTypeAndBranch<KtUserType> { referenceExpression } ?:
                             it.element.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
                         }
+                        .filter {
+                            val arguments = when (it) {
+                                is KtUserType -> it.typeArguments
+                                is KtCallElement -> it.typeArguments
+                                else -> return@filter false
+                            }
+                            arguments.size != expectedTypeArgumentCount
+                        }
                         .toSet()
             }
-        } ?: return null
+        } ?: return emptyList()
 
         return runWriteAction {
             val psiFactory = KtPsiFactory(project)
 
             val elementsToShorten = SmartList<KtElement>()
 
-            val upperBoundType = data.upperBoundType
-            val upperBoundText = if (upperBoundType != null && !upperBoundType.isNullableAny()) {
-                IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBoundType)
-            }
-            else null
-            val upperBound = upperBoundText?.let { psiFactory.createType(it) }
-            val newTypeParameterText = if (upperBound != null) "${data.name} : ${upperBound.text}" else data.name
-            val newTypeParameter = declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))!!
-            elementsToShorten += newTypeParameter
+            val newTypeParameters = data.typeParameters.map { typeParameter ->
+                val upperBoundType = typeParameter.upperBoundType
+                val upperBoundText = if (upperBoundType != null && !upperBoundType.isNullableAny()) {
+                    IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBoundType)
+                }
+                else null
+                val upperBound = upperBoundText?.let { psiFactory.createType(it) }
+                val newTypeParameterText = if (upperBound != null) "${typeParameter.name} : ${upperBound.text}" else typeParameter.name
+                val newTypeParameter = declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))!!
+                elementsToShorten += newTypeParameter
 
-            val anonymizedTypeParameter = createFakeTypeParameterDescriptor(data.fakeTypeParameter.containingDeclaration, "_")
-            val anonymizedUpperBoundText = upperBoundType?.let {
-                TypeSubstitutor
-                        .create(mapOf(data.fakeTypeParameter.typeConstructor to TypeProjectionImpl(anonymizedTypeParameter.defaultType)))
-                        .substitute(upperBoundType, Variance.INVARIANT)
-            }?.let {
-                IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
-            }
+                val anonymizedTypeParameter = createFakeTypeParameterDescriptor(typeParameter.fakeTypeParameter.containingDeclaration, "_")
+                val anonymizedUpperBoundText = upperBoundType?.let {
+                    TypeSubstitutor
+                            .create(mapOf(typeParameter.fakeTypeParameter.typeConstructor to TypeProjectionImpl(anonymizedTypeParameter.defaultType)))
+                            .substitute(upperBoundType, Variance.INVARIANT)
+                }?.let {
+                    IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
+                }
 
-            val anonymizedUpperBoundAsTypeArg = psiFactory.createTypeArgument(anonymizedUpperBoundText ?: "kotlin.Any?")
+                val anonymizedUpperBoundAsTypeArg = psiFactory.createTypeArgument(anonymizedUpperBoundText ?: "kotlin.Any?")
 
-            val callsToExplicateArguments = SmartList<KtCallElement>()
-            usages.forEach {
-                when (it) {
-                    is KtUserType -> {
-                        val typeArgumentList = it.typeArgumentList
-                        elementsToShorten += if (typeArgumentList != null) {
-                            typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
+                val callsToExplicateArguments = SmartList<KtCallElement>()
+                usages.forEach {
+                    when (it) {
+                        is KtUserType -> {
+                            val typeArgumentList = it.typeArgumentList
+                            elementsToShorten += if (typeArgumentList != null) {
+                                typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
+                            }
+                            else {
+                                it.addAfter(
+                                        psiFactory.createTypeArguments("<${anonymizedUpperBoundAsTypeArg.text}>"),
+                                        it.referenceExpression!!
+                                ) as KtTypeArgumentList
+                            }
                         }
-                        else {
-                            it.addAfter(
-                                    psiFactory.createTypeArguments("<${anonymizedUpperBoundAsTypeArg.text}>"),
-                                    it.referenceExpression!!
-                            ) as KtTypeArgumentList
-                        }
-                    }
-                    is KtCallElement -> {
-                        if (it.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS).diagnostics.forElement(it.calleeExpression!!).any {
-                            it.factory in Errors.TYPE_INFERENCE_ERRORS
-                        }) {
-                            callsToExplicateArguments += it
+                        is KtCallElement -> {
+                            if (it.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS).diagnostics.forElement(it.calleeExpression!!).any {
+                                it.factory in Errors.TYPE_INFERENCE_ERRORS
+                            }) {
+                                callsToExplicateArguments += it
+                            }
                         }
                     }
                 }
-            }
 
-            callsToExplicateArguments.forEach {
-                val typeArgumentList = it.typeArgumentList
-                if (typeArgumentList == null) {
-                    InsertExplicitTypeArgumentsIntention.applyTo(it, shortenReferences = false)
+                callsToExplicateArguments.forEach {
+                    val typeArgumentList = it.typeArgumentList
+                    if (typeArgumentList == null) {
+                        InsertExplicitTypeArgumentsIntention.applyTo(it, shortenReferences = false)
 
-                    val newTypeArgument = it.typeArguments.lastOrNull()
-                    if (anonymizedUpperBoundText != null && newTypeArgument != null && newTypeArgument.text == "kotlin.Any") {
-                        newTypeArgument.replaced(anonymizedUpperBoundAsTypeArg)
+                        val newTypeArgument = it.typeArguments.lastOrNull()
+                        if (anonymizedUpperBoundText != null && newTypeArgument != null && newTypeArgument.text == "kotlin.Any") {
+                            newTypeArgument.replaced(anonymizedUpperBoundAsTypeArg)
+                        }
+
+                        elementsToShorten += it.typeArgumentList
                     }
+                    else {
+                        elementsToShorten += typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
+                    }
+                }
 
-                    elementsToShorten += it.typeArgumentList
-                }
-                else {
-                    elementsToShorten += typeArgumentList.addArgument(anonymizedUpperBoundAsTypeArg)
-                }
+                newTypeParameter
             }
 
             ShortenReferences.DEFAULT.process(elementsToShorten)
 
-            newTypeParameter
+            newTypeParameters
         }
     }
 }
