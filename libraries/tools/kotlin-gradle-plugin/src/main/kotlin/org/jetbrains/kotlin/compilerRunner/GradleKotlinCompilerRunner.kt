@@ -55,13 +55,11 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             sourcesToCompile: List<File>,
             javaSourceRoots: Iterable<File>,
             args: K2JVMCompilerArguments,
-            messageCollector: MessageCollector,
-            outputItemsCollector: OutputItemsCollector,
-            kotlinCompilerJar: File
+            environment: GradleCompilerEnvironment
     ): ExitCode {
         val outputDir = args.destinationAsFile
         log.debug("Removing all kotlin classes in $outputDir")
-        log.info("Using kotlin compiler jar: $kotlinCompilerJar")
+        log.info("Using kotlin compiler jar: ${environment.compilerJar}")
 
         // we're free to delete all classes since only we know about that directory
         outputDir.deleteRecursively()
@@ -79,7 +77,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val additionalArguments = ""
 
         try {
-            return runCompiler(K2JVM_COMPILER, args, additionalArguments, messageCollector, outputItemsCollector, GradleCompilerEnvironment(kotlinCompilerJar))
+            return runCompiler(K2JVM_COMPILER, args, additionalArguments, environment)
         }
         finally {
             moduleFile.delete()
@@ -89,15 +87,13 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     fun runJsCompiler(
             kotlinSources: List<File>,
             args: K2JSCompilerArguments,
-            messageCollector: MessageCollector,
-            outputItemsCollector: OutputItemsCollector,
-            kotlinCompilerJar: File
+            environment: GradleCompilerEnvironment
     ): ExitCode {
         val additionalArguments = kotlinSources.joinToString(separator = " ") { it.absolutePath }
-        return runCompiler(K2JS_COMPILER, args, additionalArguments, messageCollector, outputItemsCollector, GradleCompilerEnvironment(kotlinCompilerJar))
+        return runCompiler(K2JS_COMPILER, args, additionalArguments, environment)
     }
 
-    override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, messageCollector: MessageCollector, collector: OutputItemsCollector): ExitCode {
+    override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment): ExitCode {
         with (project.logger) {
             kotlinDebug { "Kotlin compiler class: $compilerClassName" }
             kotlinDebug { "Kotlin compiler jar: ${environment.compilerJar}" }
@@ -106,7 +102,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val executionStrategy = System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
         if (executionStrategy == DAEMON_EXECUTION_STRATEGY) {
-            val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)
+            val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment)
 
             if (daemonExitCode != null) {
                 return daemonExitCode
@@ -118,15 +114,15 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val isGradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean)
         return if (executionStrategy == IN_PROCESS_EXECUTION_STRATEGY || isGradleDaemonUsed == false) {
-            compileInProcess(argsArray, collector, compilerClassName, environment, messageCollector)
+            compileInProcess(argsArray, compilerClassName, environment)
         }
         else {
             compileOutOfProcess(argsArray, compilerClassName, environment)
         }
     }
 
-    override fun compileWithDaemon(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, messageCollector: MessageCollector, collector: OutputItemsCollector, retryOnConnectionError: Boolean): ExitCode? {
-        val exitCode = super.compileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector, retryOnConnectionError)
+    override fun compileWithDaemon(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, retryOnConnectionError: Boolean): ExitCode? {
+        val exitCode = super.compileWithDaemon(compilerClassName, argsArray, environment, retryOnConnectionError)
         exitCode?.let {
             logFinish(DAEMON_EXECUTION_STRATEGY)
         }
@@ -162,10 +158,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
     private fun compileInProcess(
             argsArray: Array<String>,
-            collector: OutputItemsCollector,
             compilerClassName: String,
-            environment: GradleCompilerEnvironment,
-            messageCollector: MessageCollector
+            environment: GradleCompilerEnvironment
     ): ExitCode {
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)
@@ -184,7 +178,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val res = exec.invoke(compiler.newInstance(), out, emptyServices, argsArray)
         val exitCode = ExitCode.valueOf(res.toString())
-        processCompilerOutput(messageCollector, collector, stream, exitCode)
+        processCompilerOutput(environment, stream, exitCode)
         logFinish(IN_PROCESS_EXECUTION_STRATEGY)
         return exitCode
     }
@@ -194,8 +188,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     }
 
     @Synchronized
-    override fun getDaemonConnection(environment: GradleCompilerEnvironment, messageCollector: MessageCollector): DaemonConnection {
-        return newDaemonConnection(environment.compilerJar, messageCollector, flagFile)
+    override fun getDaemonConnection(environment: GradleCompilerEnvironment): DaemonConnection {
+        return newDaemonConnection(environment.compilerJar, flagFile, environment)
     }
 }
 

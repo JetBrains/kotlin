@@ -74,10 +74,9 @@ public class CompilerRunnerUtil {
             @NotNull String compilerClassName,
             @NotNull String[] arguments,
             @NotNull JpsCompilerEnvironment environment,
-            @NotNull MessageCollector messageCollector,
             @NotNull PrintStream out
     ) throws Exception {
-        File libPath = getLibPath(environment.getKotlinPaths(), messageCollector);
+        File libPath = getLibPath(environment.getKotlinPaths(), environment.getMessageCollector());
         if (libPath == null) return null;
 
         ClassLoader classLoader = getOrCreateClassLoader(environment, libPath);
