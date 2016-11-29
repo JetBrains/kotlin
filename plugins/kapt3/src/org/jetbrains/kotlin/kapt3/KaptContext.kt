@@ -21,6 +21,7 @@ import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Options
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaCompiler
+import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -39,6 +40,7 @@ class KaptContext(
     val options: Options
 
     init {
+        KaptJavaLog.preRegister(context)
         JavacFileManager.preRegister(context)
         KaptTreeMaker.preRegister(context)
         KaptJavaCompiler.preRegister(context)
