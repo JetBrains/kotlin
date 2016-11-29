@@ -36,10 +36,25 @@ void ThrowClassCastException() {
   RuntimeAssert(false, "Throwing is unsupported");
 }
 
+class KotlinException {
+ public:
+
+  KRef exception_;
+
+  KotlinException(KRef exception) : exception_(exception) {
+      ::AddRef(exception_->container());
+  };
+
+  ~KotlinException() {
+      ::Release(exception_->container());
+  };
+};
+
 void ThrowException(KRef exception) {
   RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
                 "Throwing something non-throwable");
-  RuntimeAssert(false, "Throwing is unsupported");
+
+  throw KotlinException(exception);
 }
 
 

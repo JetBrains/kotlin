@@ -122,8 +122,8 @@ class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
-            commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${stdlibKtBc.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), linkM(), rdynamic()
+            commandLine "clang++", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc', testC, mainC
         }
     }
 }
@@ -131,8 +131,8 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File libraryPath, File exe) {
         project.execClang {
-            commandLine "clang", "-DRUN_TEST", "${runtimeS.absolutePath}", "${stdlibKtBc.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), linkM(), rdynamic()
+            commandLine "clang++", "-DRUN_TEST", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc', mainC
         }
     }
 }
@@ -186,8 +186,8 @@ class LinkKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
-            commandLine "clang", "${testC}", "${runtimeS.absolutePath}", "${stdlibKtBc.absolutePath}", "${sourceS.absolutePath}", "${mainC}",
-                    "-o", "${exe.absolutePath}", linkDl(), rdynamic()
+            commandLine "clang++", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, linkDl(), rdynamic(), '-xc', testC, mainC
         }
     }
 
@@ -432,3 +432,123 @@ task moderately_large_array(type: RunKonanTest) {
 }
 */
 
+task catch1(type: RunKonanTest) {
+    goldValue = "Before\nCaught Throwable\nDone\n"
+    source = "runtime/exceptions/catch1.kt"
+}
+
+task catch2(type: RunKonanTest) {
+    goldValue = "Before\nCaught Error\nDone\n"
+    source = "runtime/exceptions/catch2.kt"
+}
+
+task catch7(type: RunKonanTest) {
+    goldValue = "Error happens\n"
+    source = "runtime/exceptions/catch7.kt"
+}
+
+task catch3(type: RunKonanTest) {
+    goldValue = "Before\nCaught Throwable\nDone\n"
+    source = "codegen/try/catch3.kt"
+}
+
+task catch4(type: RunKonanTest) {
+    goldValue = "Before\nCaught Error\nDone\n"
+    source = "codegen/try/catch4.kt"
+}
+
+task catch5(type: RunKonanTest) {
+    goldValue = "Before\nCaught Error\nDone\n"
+    source = "codegen/try/catch5.kt"
+}
+
+task catch6(type: RunKonanTest) {
+    goldValue = "Before\nCaught Error\nDone\n"
+    source = "codegen/try/catch6.kt"
+}
+
+task catch8(type: RunKonanTest) {
+    goldValue = "Error happens\n"
+    source = "codegen/try/catch8.kt"
+}
+
+task finally1(type: RunKonanTest) {
+    goldValue = "Try\nFinally\nDone\n"
+    source = "codegen/try/finally1.kt"
+}
+
+task finally2(type: RunKonanTest) {
+    goldValue = "Try\nCaught Error\nFinally\nDone\n"
+    source = "codegen/try/finally2.kt"
+}
+
+task finally3(type: RunKonanTest) {
+    goldValue = "Try\nFinally\nCaught Error\nDone\n"
+    source = "codegen/try/finally3.kt"
+}
+
+task finally4(type: RunKonanTest) {
+    goldValue = "Try\nCatch\nFinally\nCaught Exception\nDone\n"
+    source = "codegen/try/finally4.kt"
+}
+
+task finally5(type: RunKonanTest) {
+    goldValue = "Done\nFinally\n0\n"
+    source = "codegen/try/finally5.kt"
+}
+
+task finally6(type: RunKonanTest) {
+    goldValue = "Done\nFinally\n1\n"
+    source = "codegen/try/finally6.kt"
+}
+
+task finally7(type: RunKonanTest) {
+    goldValue = "Done\nFinally\n1\n"
+    source = "codegen/try/finally7.kt"
+}
+
+task finally8(type: RunKonanTest) {
+    goldValue = "Finally 1\nFinally 2\n42\n"
+    source = "codegen/try/finally8.kt"
+}
+
+/*
+TODO: enable after implementing break and continue
+task finally9(type: RunKonanTest) {
+    goldValue = "Finally 1\nFinally 2\nAfter\n"
+    source = "codegen/try/finally9.kt"
+}
+*/
+
+/*
+TODO: enable after improving LLVM variable naming
+task scope1(type: RunKonanTest) {
+    goldValue = "1\n"
+    source = "codegen/dataflow/scope1.kt"
+}
+*/
+
+task try1(type: RunKonanTest) {
+    goldValue = "5\n"
+    source = "codegen/try/try1.kt"
+}
+
+task try2(type: RunKonanTest) {
+    goldValue = "6\n"
+    source = "codegen/try/try2.kt"
+}
+
+task try3(type: RunKonanTest) {
+    goldValue = "6\n"
+    source = "codegen/try/try3.kt"
+}
+
+task try4(type: RunKonanTest) {
+    goldValue = "Try\n5\n"
+    source = "codegen/try/try4.kt"
+}
+
+task unreachable1(type: RunKonanTest) {
+    goldValue = "1\n"
+    source = "codegen/controlflow/unreachable1.kt"
+}

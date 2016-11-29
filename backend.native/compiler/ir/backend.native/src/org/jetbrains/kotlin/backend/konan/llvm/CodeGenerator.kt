@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.types.KotlinType
 
-internal class CodeGenerator(override val context:Context) : ContextUtils {
+internal class CodeGenerator(override val context: Context) : ContextUtils {
     var currentFunction:FunctionDescriptor? = null
 
     fun function(declaration: IrFunction) {
@@ -47,11 +47,10 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
 
     private fun prolog(declaration: IrFunction): LLVMValueRef? {
         variableIndex = 0
-        labelIndex = 0
         currentFunction = declaration.descriptor
         val fn = declaration.descriptor.llvmFunction.getLlvmValue()
-        val block = LLVMAppendBasicBlock(fn, "entry")
-        LLVMPositionBuilderAtEnd(context.llvmBuilder, block)
+        val block = LLVMAppendBasicBlock(fn, "entry")!!
+        positionAtEnd(block)
         function2variables.put(declaration.descriptor, mutableMapOf())
         return fn
     }
@@ -66,13 +65,7 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
         get() = variableIndex
         set(i:Int) { variableIndex = i}
 
-    private var labelIndex:Int = 0
-    private var FunctionDescriptor.bbLabelIndex: Int
-        get() = labelIndex
-        set(i:Int) { labelIndex = i}
-
     fun FunctionDescriptor.tmpVariable():String = "tmp_${tmpVariableIndex++}"
-    fun FunctionDescriptor.bbLabel():String = "label_${bbLabelIndex++}"
 
     fun registerVariable(varName: String, value: LLVMValueRef) = currentFunction!!.registerVariable(varName, value)
 
@@ -89,59 +82,78 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun FunctionDescriptor.registerVariable(varName: String, value: LLVMValueRef?) = variables.put(varName, value)
     private fun FunctionDescriptor.variable(varName: String): LLVMValueRef? = variables[varName]
 
-    fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildAdd (context.llvmBuilder, arg0, arg1, result)!!
-    fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildMul (context.llvmBuilder, arg0, arg1, result)!!
-    fun minus (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSub (context.llvmBuilder, arg0, arg1, result)!!
-    fun div   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSDiv(context.llvmBuilder, arg0, arg1, result)!!
-    fun srem  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSRem(context.llvmBuilder, arg0, arg1, result)!!
+    fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildAdd (builder, arg0, arg1, result)!!
+    fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildMul (builder, arg0, arg1, result)!!
+    fun minus (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSub (builder, arg0, arg1, result)!!
+    fun div   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSDiv(builder, arg0, arg1, result)!!
+    fun srem  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSRem(builder, arg0, arg1, result)!!
 
     /* integers comparisons */
-    fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, result)!!
-    fun icmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, result)!!
-    fun icmpGe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSGE, arg0, arg1, result)!!
-    fun icmpLt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, result)!!
-    fun icmpLe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, result)!!
-    fun icmpNe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(context.llvmBuilder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, result)!!
+    fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, result)!!
+    fun icmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, result)!!
+    fun icmpGe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGE, arg0, arg1, result)!!
+    fun icmpLt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, result)!!
+    fun icmpLe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, result)!!
+    fun icmpNe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, result)!!
 
     /* floating-point comparisons */
-    fun fcmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildFCmp(context.llvmBuilder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
+    fun fcmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildFCmp(builder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
 
-    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, result: String) = LLVMBuildBitCast(context.llvmBuilder, value, type, result)
+    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, result: String) = LLVMBuildBitCast(builder, value, type, result)!!
 
     fun alloca(type: KotlinType, varName: String): LLVMValueRef = alloca( getLLVMType(type), varName)
-    fun alloca(type: LLVMTypeRef?, varName: String): LLVMValueRef = LLVMBuildAlloca(context.llvmBuilder, type, varName)!!
-    fun load(value: LLVMValueRef, varName: String): LLVMValueRef = LLVMBuildLoad(context.llvmBuilder, value, varName)!!
-    fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(context.llvmBuilder, value, ptr)!!
+    fun alloca(type: LLVMTypeRef?, varName: String): LLVMValueRef = LLVMBuildAlloca(builder, type, varName)!!
+    fun load(value: LLVMValueRef, varName: String): LLVMValueRef = LLVMBuildLoad(builder, value, varName)!!
+    fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(builder, value, ptr)!!
 
     //-------------------------------------------------------------------------//
 
-    fun call(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>, result: String?): LLVMValueRef? {
-        if (args.size == 0) return LLVMBuildCall(context.llvmBuilder, llvmFunction, null, 0, result)
+    fun invoke(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>,
+               then: LLVMBasicBlockRef, landingpad: LLVMBasicBlockRef,
+               result: String?): LLVMValueRef {
+
         memScoped {
-            val rargs = allocArrayOf(args)
-            return LLVMBuildCall(context.llvmBuilder, llvmFunction, rargs[0].ptr, args.size, result)
+            val rargs = if (args.size != 0) allocArrayOf(args)[0].ptr else null
+            return LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, then, landingpad, result)!!
+        }
+
+    }
+
+    fun call(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>, result: String?): LLVMValueRef {
+        memScoped {
+            val rargs = if (args.size != 0) allocArrayOf(args)[0].ptr else null
+            return LLVMBuildCall(builder, llvmFunction, rargs, args.size, result)!!
         }
     }
 
     //-------------------------------------------------------------------------//
 
-    fun trap() {
-        // LLVM doesn't seem to provide API to get intrinsics;
-        // workaround this by declaring the intrinsic explicitly:
-        val trapFun = LLVMGetNamedFunction(context.llvmModule, "llvm.trap") ?:
-                LLVMAddFunction(context.llvmModule, "llvm.trap", LLVMFunctionType(LLVMVoidType(), null, 0, 0))!!
-
-        LLVMBuildCall(context.llvmBuilder, trapFun, null, 0, "")
-
-        // LLVM seems to require an explicit return instruction even after noreturn intrinsic:
-        val returnType = LLVMGetReturnType(getFunctionType(currentFunction!!.llvmFunction.getLlvmValue()))
-        LLVMBuildRet(context.llvmBuilder, LLVMConstNull(returnType))
+    fun phi(type: LLVMTypeRef, result: String): LLVMValueRef {
+        return LLVMBuildPhi(builder, type, result)!!
     }
+
+    fun addPhiIncoming(phi: LLVMValueRef, vararg incoming: Pair<LLVMBasicBlockRef, LLVMValueRef>) {
+        memScoped {
+            val incomingValues = allocArrayOf(incoming.map { it.second })
+            val incomingBlocks = allocArrayOf(incoming.map { it.first })
+
+            LLVMAddIncoming(phi, incomingValues[0].ptr, incomingBlocks[0].ptr, incoming.size)
+        }
+    }
+
+    fun assignPhis(vararg phiToValue: Pair<LLVMValueRef, LLVMValueRef>) {
+        val currentBlock = this.currentBlock
+        phiToValue.forEach {
+            addPhiIncoming(it.first, currentBlock to it.second)
+        }
+    }
+
+    //-------------------------------------------------------------------------//
 
     /* to class descriptor */
     fun classType(descriptor: ClassDescriptor): LLVMTypeRef = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
-    fun typeInfoType(descriptor: ClassDescriptor): LLVMTypeRef? = descriptor.llvmTypeInfoPtr.getLlvmType()
-    fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef? = descriptor.llvmTypeInfoPtr.getLlvmValue()
+    fun typeInfoType(descriptor: ClassDescriptor): LLVMTypeRef = descriptor.llvmTypeInfoPtr.getLlvmType()
+    fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr.getLlvmValue()!!
 
     fun thisVariable() = variable("this")!!
     fun param(fn: FunctionDescriptor?, i: Int): LLVMValueRef? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
@@ -149,21 +161,124 @@ internal class CodeGenerator(override val context:Context) : ContextUtils {
     fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
 
 
-    fun basicBlock(): LLVMBasicBlockRef? = LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), currentFunction!!.bbLabel())
+    fun basicBlock(name: String = "label_"): LLVMBasicBlockRef =
+            LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), name)!!
+
+    fun basicBlock(name: String, code: () -> Unit) = basicBlock(name).apply {
+        appendingTo(this) {
+            code()
+        }
+    }
+
     fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction.getLlvmValue())
 
-    fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction.getLlvmValue()
-    fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef? = descriptor.functionName.localHash.getLlvmValue()
+    fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction.getLlvmValue()!!
+    fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.getLlvmValue()!!
 
-    fun  br(bbLabel: LLVMBasicBlockRef) = LLVMBuildBr(context.llvmBuilder, bbLabel)
-    fun condBr(condition: LLVMValueRef?, bbTrue: LLVMBasicBlockRef?, bbFalse: LLVMBasicBlockRef?)
-        = LLVMBuildCondBr(context.llvmBuilder, condition, bbTrue, bbFalse)
+    fun br(bbLabel: LLVMBasicBlockRef): LLVMValueRef {
+        val res = LLVMBuildBr(builder, bbLabel)!!
+        currentPositionHolder.setAfterTerminator()
+        return res
+    }
 
-    fun positionAtEnd(bbLabel: LLVMBasicBlockRef)
-        = LLVMPositionBuilderAtEnd(context.llvmBuilder, bbLabel)
+    fun condBr(condition: LLVMValueRef?, bbTrue: LLVMBasicBlockRef?, bbFalse: LLVMBasicBlockRef?): LLVMValueRef? {
+        val res = LLVMBuildCondBr(builder, condition, bbTrue, bbFalse)
+        currentPositionHolder.setAfterTerminator()
+        return res
+    }
 
-    fun ret(value: LLVMValueRef?) = LLVMBuildRet(context.llvmBuilder, value)
-    fun  unreachable(): LLVMValueRef? = LLVMBuildUnreachable(context.llvmBuilder)
+    fun ret(value: LLVMValueRef?): LLVMValueRef {
+        val res = LLVMBuildRet(builder, value)!!
+        currentPositionHolder.setAfterTerminator()
+        return res
+    }
+
+    fun  unreachable(): LLVMValueRef? {
+        val res = LLVMBuildUnreachable(builder)
+        currentPositionHolder.setAfterTerminator()
+        return res
+    }
+
+    //-------------------------------------------------------------------------//
+
+    /**
+     * Represents the mutable position of instructions being inserted.
+     *
+     * This class is introduced to workaround unreachable code handling.
+     */
+    inner class PositionHolder {
+        private val builder: LLVMBuilderRef = LLVMCreateBuilder()!!
+
+        fun getBuilder(): LLVMBuilderRef {
+            if (isAfterTerminator) {
+                positionAtEnd(basicBlock("unreachable"))
+            }
+
+            return builder
+        }
+
+        /**
+         * Should be `true` iff the position is located after terminator instruction.
+         */
+        var isAfterTerminator: Boolean = false
+            private set
+
+        fun setAfterTerminator() {
+            isAfterTerminator = true
+        }
+
+        val currentBlock: LLVMBasicBlockRef
+            get() = LLVMGetInsertBlock(builder)!!
+
+        fun positionAtEnd(block: LLVMBasicBlockRef) {
+            LLVMPositionBuilderAtEnd(builder, block)
+            val lastInstr = LLVMGetLastInstruction(block)
+            isAfterTerminator = lastInstr != null && (LLVMIsATerminatorInst(lastInstr) != null)
+        }
+
+        fun dispose() {
+            LLVMDisposeBuilder(builder)
+        }
+    }
+
+    private var currentPositionHolder: PositionHolder = PositionHolder()
+
+    /**
+     * Returns `true` iff the current code generation position is located after terminator instruction.
+     */
+    fun isAfterTerminator() = currentPositionHolder.isAfterTerminator
+
+    val currentBlock: LLVMBasicBlockRef
+        get() = currentPositionHolder.currentBlock
+
+    /**
+     * The builder representing the current code generation position.
+     *
+     * Note that it shouldn't be positioned directly using LLVM API due to some hacks.
+     * Use e.g. [positionAtEnd] instead. See [PositionHolder] for details.
+     */
+    val builder: LLVMBuilderRef
+        get() = currentPositionHolder.getBuilder()
+
+    fun positionAtEnd(bbLabel: LLVMBasicBlockRef) = currentPositionHolder.positionAtEnd(bbLabel)
+
+    inline fun <R> preservingPosition(code: () -> R): R {
+        val oldPositionHolder = currentPositionHolder
+        val newPositionHolder = PositionHolder()
+        currentPositionHolder = newPositionHolder
+        try {
+            return code()
+        } finally {
+            currentPositionHolder = oldPositionHolder
+            newPositionHolder.dispose()
+        }
+    }
+
+    inline fun <R> appendingTo(block: LLVMBasicBlockRef, code: CodeGenerator.() -> R) = preservingPosition {
+        positionAtEnd(block)
+        code()
+    }
+
 }
 
 
