@@ -263,8 +263,8 @@ extern "C" {
 #endif
 
 void InitMemory();
-void* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
-void* AllocArrayInstance(
+ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
+ArrayHeader* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
 #ifdef __cplusplus
 }

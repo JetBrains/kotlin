@@ -76,12 +76,12 @@ void InitMemory() {
 }
 
 // Now we ignore all placement hints and always allocate heap space for new object.
-void* AllocInstance(const TypeInfo* type_info, PlacementHint hint) {
+ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
   return ObjectContainer(type_info).GetPlace();
 }
 
-void* AllocArrayInstance(
+ArrayHeader* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
   return ArrayContainer(type_info, elements).GetPlace();
