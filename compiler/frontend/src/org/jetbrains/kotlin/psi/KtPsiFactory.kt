@@ -106,6 +106,10 @@ class KtPsiFactory(private val project: Project) {
         return if (typeReference?.text == type) typeReference else null
     }
 
+    fun createFunctionTypeReceiver(typeReference: KtTypeReference): KtFunctionTypeReceiver {
+        return (createType("A.() -> B").typeElement as KtFunctionType).receiver!!.apply { this.typeReference.replace(typeReference) }
+    }
+
     fun createStar(): PsiElement {
         return createType("List<*>").findElementAt(5)!!
     }

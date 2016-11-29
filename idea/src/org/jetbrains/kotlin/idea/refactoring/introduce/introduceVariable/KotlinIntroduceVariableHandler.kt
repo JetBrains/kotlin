@@ -517,7 +517,12 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                                     || expression.shouldReplaceOccurrence(bindingContext, container)
                                     || allReplaces.size > 1
 
-            val commonParent = PsiTreeUtil.findCommonParent(allReplaces.map { it.substringContextOrThis }) as KtElement
+            val commonParent = if (allReplaces.isNotEmpty()) {
+                PsiTreeUtil.findCommonParent(allReplaces.map { it.substringContextOrThis }) as KtElement
+            }
+            else {
+                expression.parent as KtElement
+            }
             var commonContainer = commonParent.getContainer()!!
             if (commonContainer != container && container.isAncestor(commonContainer, true)) {
                 commonContainer = container

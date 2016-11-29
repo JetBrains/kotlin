@@ -1,0 +1,43 @@
+open class Foo {
+    constructor(f: Boolean.(Int<caret>) -> String){
+        false.f(1)
+        bar { i, b -> b.f(i) }
+    }
+
+    constructor(a: Int, f: (Int, Boolean) -> String) : this({ i -> f(i, this) })
+    constructor(a: Int) : this({ i -> (::g)(i, this) })
+    constructor(a: Int, b: Int, c: Int) : this({ i -> "${i + 1} ${this}" })
+}
+
+fun bar(f: (Int, Boolean) -> String) {
+
+}
+
+fun lambda(): (Int, Boolean) -> String = { i, b -> "$i $b"}
+
+fun g(i: Int, b: Boolean) = ""
+
+fun baz(f: (Int, Boolean) -> String) {
+    Foo { i -> f(i, this) }
+
+    Foo { i -> (::g)(i, this) }
+
+    val f1 = lambda()
+    Foo { i -> f1(i, this) }
+
+    Foo { i -> "${i + 1} ${this}" }
+}
+
+class Baz1(f: (Int, Boolean) -> String) : Foo({ i -> f(i, this) })
+class Baz2 : Foo({ i -> (::g)(i, this) })
+
+val f = lambda()
+
+class Baz3 : Foo({ i -> f(i, this) })
+class Baz4 : Foo({ i -> "${i + 1} ${this}" })
+
+class Baz5 : Foo {
+    constructor(f: (Int, Boolean) -> String) : super({ i -> f(i, this) })
+    constructor(a: Int) : super({ i -> (::g)(i, this) })
+    constructor(a: Int, b: Int, c: Int) : super({ i -> "${i + 1} ${this}" })
+}

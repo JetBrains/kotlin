@@ -20,10 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtFunctionType
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -56,18 +54,21 @@ fun setTypeReference(declaration: KtCallableDeclaration, addAfter: PsiElement?, 
     }
 }
 
-fun KtCallableDeclaration.setReceiverTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+private inline fun <T : KtElement> T.doSetReceiverTypeReference(
+        typeRef: KtTypeReference?,
+        getReceiverTypeReference: T.() -> KtTypeReference?,
+        addReceiverTypeReference: T.(typeRef: KtTypeReference) -> KtTypeReference
+): KtTypeReference? {
     val needParentheses = typeRef != null && typeRef.typeElement is KtFunctionType && !typeRef.hasParentheses()
-    val oldTypeRef = receiverTypeReference
+    val oldTypeRef = getReceiverTypeReference()
     if (typeRef != null) {
         val newTypeRef =
                 if (oldTypeRef != null) {
                     oldTypeRef.replace(typeRef) as KtTypeReference
                 }
                 else {
-                    val anchor = nameIdentifier ?: valueParameterList
-                    val newTypeRef = addBefore(typeRef, anchor) as KtTypeReference
-                    addAfter(KtPsiFactory(project).createDot(), newTypeRef)
+                    val newTypeRef = addReceiverTypeReference(typeRef)
+                    addAfter(KtPsiFactory(project).createDot(), newTypeRef.parentsWithSelf.first { it.parent == this })
                     newTypeRef
                 }
         if (needParentheses) {
@@ -79,9 +80,27 @@ fun KtCallableDeclaration.setReceiverTypeReference(typeRef: KtTypeReference?): K
     }
     else {
         if (oldTypeRef != null) {
-            val dot = oldTypeRef.siblings(forward = true).firstOrNull { it.node.elementType == KtTokens.DOT }
-            deleteChildRange(oldTypeRef, dot ?: oldTypeRef)
+            val dotSibling = oldTypeRef.parent as? KtFunctionTypeReceiver ?: oldTypeRef
+            val dot = dotSibling.siblings(forward = true).firstOrNull { it.node.elementType == KtTokens.DOT }
+            deleteChildRange(dotSibling, dot ?: dotSibling)
         }
         return null
     }
 }
+
+fun KtCallableDeclaration.setReceiverTypeReference(typeRef: KtTypeReference?) =
+        doSetReceiverTypeReference(
+                typeRef,
+                { receiverTypeReference },
+                { this.addBefore(it, nameIdentifier ?: valueParameterList) as KtTypeReference }
+        )
+
+fun KtFunctionType.setReceiverTypeReference(typeRef: KtTypeReference?) =
+        doSetReceiverTypeReference(
+                typeRef,
+                { receiverTypeReference },
+                {
+                    (addBefore(KtPsiFactory(project).createFunctionTypeReceiver(it),
+                               parameterList ?: firstChild) as KtFunctionTypeReceiver).typeReference
+                }
+        )

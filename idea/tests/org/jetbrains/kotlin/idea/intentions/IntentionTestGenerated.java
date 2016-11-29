@@ -3957,6 +3957,111 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertFunctionTypeParameterToReceiver extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertFunctionTypeParameterToReceiver() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertFunctionTypeParameterToReceiver"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("alreadyHasReceiver.kt")
+        public void testAlreadyHasReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/alreadyHasReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("cantReplaceWithThis.kt")
+        public void testCantReplaceWithThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/cantReplaceWithThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("firstParameter.kt")
+        public void testFirstParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/firstParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("firstParameterPrimaryConstructor.kt")
+        public void testFirstParameterPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/firstParameterPrimaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("firstParameterSecondaryConstructor.kt")
+        public void testFirstParameterSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/firstParameterSecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("firstParameterWithJavaUsages.kt")
+        public void testFirstParameterWithJavaUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/firstParameterWithJavaUsages.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonFirstParameter.kt")
+        public void testNonFirstParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/nonFirstParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonFirstParameterCallableReferenceUsage.kt")
+        public void testNonFirstParameterCallableReferenceUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/nonFirstParameterCallableReferenceUsage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonFirstParameterPrimaryConstructor.kt")
+        public void testNonFirstParameterPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/nonFirstParameterPrimaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonFirstParameterSecondaryConstructor.kt")
+        public void testNonFirstParameterSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/nonFirstParameterSecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonFirstParameterSuperDelegationCall.kt")
+        public void testNonFirstParameterSuperDelegationCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/nonFirstParameterSuperDelegationCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonFirstParameterThisDelegationCall.kt")
+        public void testNonFirstParameterThisDelegationCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/nonFirstParameterThisDelegationCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonFirstParameterWithJavaUsages.kt")
+        public void testNonFirstParameterWithJavaUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/nonFirstParameterWithJavaUsages.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInFunctionParameter.kt")
+        public void testNotInFunctionParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/notInFunctionParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOnFunctionTypeParameter.kt")
+        public void testNotOnFunctionTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/notOnFunctionTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrides.kt")
+        public void testOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeParameterToReceiver/overrides.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertIfWithThrowToAssert")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

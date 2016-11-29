@@ -64,6 +64,10 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
         EditCommaSeparatedListHelper.INSTANCE.removeItem(parameter);
     }
 
+    public void removeParameter(int index) {
+        removeParameter(getParameters().get(index));
+    }
+
     public KtFunction getOwnerFunction() {
         PsiElement parent = getParentByStub();
         if (!(parent instanceof KtFunction)) return null;
