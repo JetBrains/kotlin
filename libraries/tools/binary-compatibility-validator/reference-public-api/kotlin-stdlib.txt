@@ -1904,6 +1904,7 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun coerceIn (JJJ)J
 	public static final fun coerceIn (JLkotlin/ranges/ClosedRange;)J
 	public static final fun coerceIn (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedComparableRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (SSS)S
 	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;B)Z

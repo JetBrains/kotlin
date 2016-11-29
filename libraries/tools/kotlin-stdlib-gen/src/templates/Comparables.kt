@@ -56,13 +56,57 @@ fun comparables(): List<GenericFunction> {
             """
             Ensures that this value lies in the specified [range].
 
-            @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
+            @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
             """
         }
-        body {
+        body(Generic) {
+            """
+            if (range is ClosedComparableRange) {
+                return this.coerceIn<T>(range)
+            }
+            if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")
+            return when {
+                this < range.start -> range.start
+                this > range.endInclusive -> range.endInclusive
+                else -> this
+            }
+            """
+        }
+        body(Primitives) {
+            """
+            if (range is ClosedComparableRange) {
+                return this.coerceIn<T>(range)
+            }
+            if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")
+            return when {
+                this < range.start -> range.start
+                this > range.endInclusive -> range.endInclusive
+                else -> this
+            }
+            """
+        }
+    }
+
+    templates add f("coerceIn(range: ClosedComparableRange<T>)") {
+        sourceFile(SourceFile.Ranges)
+        only(Generic)
+        returns("SELF")
+        typeParam("T: Comparable<T>")
+        doc {
+            """
+            Ensures that this value lies in the specified [range].
+
+            @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
+            """
+        }
+        body(Generic) {
             """
             if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")
-            return if (this < range.start) range.start else if (this > range.endInclusive) range.endInclusive else this
+            return when {
+                !range.lessThanOrEquals(range.start, this) -> range.start
+                !range.lessThanOrEquals(this, range.endInclusive) -> range.endInclusive
+                else -> this
+            }
             """
         }
     }
