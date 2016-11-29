@@ -53,10 +53,10 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
 
     class DaemonConnection(val daemon: CompileService?, val sessionId: Int = CompileService.NO_SESSION)
 
-    protected abstract fun getDaemonConnection(environment: Env, messageCollector: MessageCollector): DaemonConnection
+    protected abstract fun getDaemonConnection(environment: Env): DaemonConnection
 
     @Synchronized
-    protected fun newDaemonConnection(compilerPath: File, messageCollector: MessageCollector, flagFile: File): DaemonConnection {
+    protected fun newDaemonConnection(compilerPath: File, flagFile: File, environment: Env): DaemonConnection {
         val compilerId = CompilerId.makeCompilerId(compilerPath)
         val daemonOptions = configureDaemonOptions()
         val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
@@ -71,9 +71,9 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
         }
 
         for (msg in daemonReportMessages) {
-            messageCollector.report(CompilerMessageSeverity.INFO,
+            environment.messageCollector.report(CompilerMessageSeverity.INFO,
                                     (if (msg.category == DaemonReportCategory.EXCEPTION && connection.daemon == null) "Falling  back to compilation without daemon due to error: " else "") + msg.message,
-                                    CompilerMessageLocation.NO_LOCATION)
+                                                CompilerMessageLocation.NO_LOCATION)
         }
 
         fun reportTotalAndThreadPerf(message: String, daemonOptions: DaemonOptions, messageCollector: MessageCollector, profiler: Profiler) {
@@ -86,21 +86,20 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
             }
         }
 
-        reportTotalAndThreadPerf("Daemon connect", daemonOptions, messageCollector, profiler)
+        reportTotalAndThreadPerf("Daemon connect", daemonOptions, environment.messageCollector, profiler)
         return connection
     }
 
     protected fun processCompilerOutput(
-            messageCollector: MessageCollector,
-            collector: OutputItemsCollector,
+            environment: Env,
             stream: ByteArrayOutputStream,
             exitCode: ExitCode
     ) {
         val reader = BufferedReader(StringReader(stream.toString()))
-        CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, collector)
+        CompilerOutputParser.parseCompilerMessagesFromReader(environment.messageCollector, reader, environment.outputItemsCollector)
 
         if (ExitCode.INTERNAL_ERROR == exitCode) {
-            reportInternalCompilerError(messageCollector)
+            reportInternalCompilerError(environment.messageCollector)
         }
     }
 
@@ -113,28 +112,24 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
             compilerClassName: String,
             arguments: CommonCompilerArguments,
             additionalArguments: String,
-            messageCollector: MessageCollector,
-            collector: OutputItemsCollector,
             environment: Env): ExitCode {
         return try {
             val argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments)
             argumentsList.addAll(additionalArguments.split(" "))
 
             val argsArray = argumentsList.toTypedArray()
-            doRunCompiler(compilerClassName, argsArray, environment, messageCollector, collector)
+            doRunCompiler(compilerClassName, argsArray, environment)
         }
         catch (e: Throwable) {
-            MessageCollectorUtil.reportException(messageCollector, e)
-            reportInternalCompilerError(messageCollector)
+            MessageCollectorUtil.reportException(environment.messageCollector, e)
+            reportInternalCompilerError(environment.messageCollector)
         }
     }
 
     protected abstract fun doRunCompiler(
             compilerClassName: String,
             argsArray: Array<String>,
-            environment: Env,
-            messageCollector: MessageCollector,
-            collector: OutputItemsCollector
+            environment: Env
     ): ExitCode
 
     /**
@@ -144,12 +139,10 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
             compilerClassName: String,
             argsArray: Array<String>,
             environment: Env,
-            messageCollector: MessageCollector,
-            collector: OutputItemsCollector,
             retryOnConnectionError: Boolean = true
     ): ExitCode? {
             log.debug("Try to connect to daemon")
-            val connection = getDaemonConnection(environment, messageCollector)
+            val connection = getDaemonConnection(environment)
 
             if (connection.daemon != null) {
                 log.info("Connected to daemon")
@@ -170,7 +163,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
                 fun retryOrFalse(e: Exception): ExitCode? {
                     if (retryOnConnectionError) {
                         log.debug("retrying once on daemon connection error: ${e.message}")
-                        return compileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector, retryOnConnectionError = false)
+                        return compileWithDaemon(compilerClassName, argsArray, environment, retryOnConnectionError = false)
                     }
                     log.info("daemon connection error: ${e.message}")
                     return null
@@ -187,9 +180,9 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
                 }
 
                 val exitCode = exitCodeFromProcessExitCode(res)
-                processCompilerOutput(messageCollector, collector, compilerOut, exitCode)
+                processCompilerOutput(environment, compilerOut, exitCode)
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {
-                    messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
+                    environment.messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
                 }
                 return exitCode
             }

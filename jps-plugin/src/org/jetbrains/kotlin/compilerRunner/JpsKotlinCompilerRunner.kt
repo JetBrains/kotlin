@@ -44,24 +44,20 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             commonArguments: CommonCompilerArguments,
             k2jvmArguments: K2JVMCompilerArguments,
             compilerSettings: CompilerSettings,
-            messageCollector: MessageCollector,
             environment: JpsCompilerEnvironment,
-            moduleFile: File,
-            collector: OutputItemsCollector
+            moduleFile: File
     ) {
         val arguments = mergeBeans(commonArguments, k2jvmArguments)
         setupK2JvmArguments(moduleFile, arguments)
 
-        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.additionalArguments, messageCollector, collector, environment)
+        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.additionalArguments, environment)
     }
 
     fun runK2JsCompiler(
             commonArguments: CommonCompilerArguments,
             k2jsArguments: K2JSCompilerArguments,
             compilerSettings: CompilerSettings,
-            messageCollector: MessageCollector,
             environment: JpsCompilerEnvironment,
-            collector: OutputItemsCollector,
             sourceFiles: Collection<File>,
             libraryFiles: List<String>,
             outputFile: File
@@ -69,27 +65,25 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         val arguments = mergeBeans(commonArguments, k2jsArguments)
         setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments)
 
-        runCompiler(K2JS_COMPILER, arguments, compilerSettings.additionalArguments, messageCollector, collector, environment)
+        runCompiler(K2JS_COMPILER, arguments, compilerSettings.additionalArguments, environment)
     }
 
-    override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: JpsCompilerEnvironment, messageCollector: MessageCollector, collector: OutputItemsCollector): ExitCode {
-        messageCollector.report(CompilerMessageSeverity.INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
+    override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: JpsCompilerEnvironment): ExitCode {
+        environment.messageCollector.report(CompilerMessageSeverity.INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
 
         return if (isDaemonEnabled()) {
-            val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)
-            daemonExitCode ?: fallbackCompileStrategy(argsArray, collector, compilerClassName, environment, messageCollector)
+            val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment)
+            daemonExitCode ?: fallbackCompileStrategy(argsArray, compilerClassName, environment)
         }
         else {
-            fallbackCompileStrategy(argsArray, collector, compilerClassName, environment, messageCollector)
+            fallbackCompileStrategy(argsArray, compilerClassName, environment)
         }
     }
 
     private fun fallbackCompileStrategy(
             argsArray: Array<String>,
-            collector: OutputItemsCollector,
             compilerClassName: String,
-            environment: JpsCompilerEnvironment,
-            messageCollector: MessageCollector
+            environment: JpsCompilerEnvironment
     ): ExitCode {
         // otherwise fallback to in-process
         log.info("Compile in-process")
@@ -103,12 +97,12 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         if (System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false").toBoolean())
             System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
-        val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, messageCollector, out)
+        val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, out)
 
         // exec() returns an ExitCode object, class of which is loaded with a different class loader,
         // so we take it's contents through reflection
         val exitCode = ExitCode.valueOf(getReturnCodeFromObject(rc))
-        processCompilerOutput(messageCollector, collector, stream, exitCode)
+        processCompilerOutput(environment, stream, exitCode)
         return exitCode
     }
 
@@ -140,14 +134,14 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     }
 
     @Synchronized
-    override fun getDaemonConnection(environment: JpsCompilerEnvironment, messageCollector: MessageCollector): DaemonConnection {
+    override fun getDaemonConnection(environment: JpsCompilerEnvironment): DaemonConnection {
         if (jpsDaemonConnection == null) {
-            val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
+            val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
             val compilerPath = File(libPath, "kotlin-compiler.jar")
             val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running").apply {
                 deleteOnExit()
             }
-            newDaemonConnection(compilerPath, messageCollector, flagFile)
+            newDaemonConnection(compilerPath, flagFile, environment)
         }
         return jpsDaemonConnection!!
     }

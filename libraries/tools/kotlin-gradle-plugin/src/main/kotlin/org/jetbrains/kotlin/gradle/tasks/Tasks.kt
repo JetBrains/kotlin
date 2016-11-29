@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -186,8 +187,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         if (!incremental) {
             anyClassesCompiled = true
             val compilerRunner = GradleCompilerRunner(project)
-            val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, messageCollector,
-                    outputItemCollector, compilerJar)
+            val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
+            val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
             processCompilerExitCode(exitCode)
             return
         }
@@ -354,7 +355,8 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val outputItemCollector = OutputItemsCollectorImpl()
 
         val compilerRunner = GradleCompilerRunner(project)
-        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, messageCollector, outputItemCollector, compilerJar)
+        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
+        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
 
         when (exitCode) {
             ExitCode.OK -> {
