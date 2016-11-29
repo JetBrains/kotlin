@@ -546,7 +546,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     /**
-     * Creates new [ContinuationBlock] and generates [code] starting from its' beginning.
+     * Creates new [ContinuationBlock] and generates [code] starting from its beginning.
      */
     private inline fun continuationBlock(type: LLVMTypeRef, code: (LLVMValueRef) -> Unit): ContinuationBlock {
         val entry = codegen.basicBlock()
@@ -559,7 +559,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     /**
-     * Creates new [ContinuationBlock] that don't receive the value and generates [code] starting from its' beginning.
+     * Creates new [ContinuationBlock] that don't receive the value and generates [code] starting from its beginning.
      */
     private inline fun continuationBlock(code: () -> Unit): ContinuationBlock {
         val block = codegen.basicBlock()
@@ -573,7 +573,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     /**
      * Creates new [ContinuationBlock] that receives the value of type corresponding to given Kotlin type
-     * and generates [code] starting from its' beginning.
+     * and generates [code] starting from its beginning.
      */
     private fun continuationBlock(type: KotlinType, code: (LLVMValueRef?) -> Unit = {}): ContinuationBlock {
         return if (type.isUnitOrNothing()) {
@@ -618,7 +618,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         /**
          * The LLVM `landingpad` such that if invoked function throws an exception,
-         * then this exception is passed to [catch].
+         * then this exception is passed to [handler].
          */
         private val landingpad: LLVMBasicBlockRef by lazy {
             using(outerContext) {
@@ -630,9 +630,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         /**
          * The Kotlin exception handler, i.e. the [ContinuationBlock] which gets started
-         * when the exception is caught, receiving this exception as its' value.
+         * when the exception is caught, receiving this exception as its value.
          */
-        private val catch by lazy {
+        private val handler by lazy {
             using(outerContext) {
                 continuationBlock(kInt8Ptr) { exception ->
                     genHandler(exception)
@@ -641,34 +641,55 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         private fun jumpToHandler(exception: LLVMValueRef) {
-            val catch = this.catch
-            jump(catch, exception)
+            jump(this.handler, exception)
         }
 
         /**
          * Generates the LLVM `landingpad` that catches C++ exception with type `KotlinException`,
-         * unwraps the Kotlin exception object and jumps to [catch].
+         * unwraps the Kotlin exception object and jumps to [handler].
+         *
+         * This method generates nearly the same code as `clang++` does for the following:
+         * ```
+         * catch (KotlinException& e) {
+         *     KRef exception = e.exception_;
+         *     return exception;
+         * }
+         * ```
+         * except that our code doesn't check exception `typeid`.
+         *
+         * TODO: why does `clang++` check `typeid` even if there is only one catch clause?
          */
         private fun genLandingpad() {
             with(codegen) {
-                val lpType = structType(int8TypePtr, int32Type)
-                val persFn = externalFunction("__gxx_personality_v0", functionType(int32Type, true))
-                val persFnRaw = LLVMConstBitCast(persFn, int8TypePtr)!!
+                // Type of `landingpad` instruction result (depends on personality function):
+                val landingpadType = structType(int8TypePtr, int32Type)
 
-                val lp = LLVMBuildLandingPad(codegen.builder, lpType, persFnRaw, 1, "lp")
-                LLVMAddClause(lp, externalGlobal("_ZTI15KotlinException", int8Type))
+                val personalityFunction = externalFunction("__gxx_personality_v0", functionType(int32Type, true))
+                val personalityFunctionRaw = LLVMConstBitCast(personalityFunction, int8TypePtr)!!
+
+                val numClauses = 1
+                val landingpadResult =
+                        LLVMBuildLandingPad(codegen.builder, landingpadType, personalityFunctionRaw, numClauses, "lp")
+
+                // Configure landingpad to catch C++ exception with type `KotlinException`:
+                LLVMAddClause(landingpadResult, externalGlobal("_ZTI15KotlinException", int8Type))
 
                 // FIXME: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
                 // bypassing the finally block.
 
-                val exceptionRecord = LLVMBuildExtractValue(codegen.builder, lp, 0, "er")
+                val exceptionRecord = LLVMBuildExtractValue(codegen.builder, landingpadResult, 0, "er")
 
+                // __cxa_begin_catch returns pointer to C++ exception object.
                 val beginCatch = externalFunction("__cxa_begin_catch", functionType(int8TypePtr, false, int8TypePtr))
                 val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord), "")
 
+                // Pointer to KotlinException instance:
                 val exceptionPtr = bitcast(pointerType(int8TypePtr), exceptionRawPtr, "")
+
+                // Pointer to Kotlin exception object:
                 val exception = load(exceptionPtr, "exception")
 
+                // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
                 val endCatch = externalFunction("__cxa_end_catch", functionType(voidType, false))
                 call(endCatch, listOf(), "")
 
@@ -695,7 +716,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      * The [CatchingScope] that handles exceptions using Kotlin `catch` clauses.
      *
      * @param success the block to be used when the exception is successfully handled;
-     * expects `catch` expression result as its' value.
+     * expects `catch` expression result as its value.
      */
     private inner class CatchScope(private val catches: List<IrCatch>,
                                    private val success: ContinuationBlock) : CatchingScope() {
@@ -728,7 +749,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         /**
          * The [ContinuationBlock] to be used for `return` from the function.
-         * Expects return value as its' value.
+         * Expects return value as its value.
          */
         private val returnFromCurrent: ContinuationBlock by lazy {
             using(outerContext) {
@@ -765,7 +786,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      * Generates the code which gets "finalized" exactly once when completed either normally or abnormally.
      *
      * @param code generates the code to be post-dominated by cleanup.
-     * It must jump to given [ContinuationBlock] with its' result when completed normally.
+     * It must jump to given [ContinuationBlock] with its result when completed normally.
      *
      * @param finalize generates the cleanup code that must be executed when code generated by [code] is completed.
      *
@@ -815,9 +836,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         return genFinalizedBy(expression.finallyExpression, expression.type) { continuation ->
 
-            val catch = if (expression.catches.isEmpty()) null else CatchScope(expression.catches, continuation)
+            val catchScope = if (expression.catches.isEmpty()) null else CatchScope(expression.catches, continuation)
 
-            using(catch) {
+            using(catchScope) {
                 evaluateExpressionAndJump(expression.tryResult, continuation)
             }
         }
