@@ -40,9 +40,12 @@ private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, nul
 val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
     val JLObject = javaLang("Object")
     val JFPredicate = javaFunction("Predicate")
+    val JFFunction = javaFunction("Function")
     val JFConsumer = javaFunction("Consumer")
     val JFBiFunction = javaFunction("BiFunction")
-    val JFFunction = javaFunction("Function")
+    val JFBiConsumer = javaFunction("BiConsumer")
+    val JFUnaryOperator = javaFunction("UnaryOperator")
+    val JUStream = javaUtil("stream/Stream")
     val JUOptional = javaUtil("Optional")
 
     enhancement {
@@ -51,42 +54,74 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
                 parameter(JFConsumer, NOT_PLATFORM, NOT_PLATFORM)
             }
         }
+        forClass(javaLang("Iterable")) {
+            function("spliterator") {
+                returns(javaUtil("Spliterator"), NOT_PLATFORM, NOT_PLATFORM)
+            }
+        }
         forClass(javaUtil("Collection")) {
             function("removeIf") {
                 parameter(JFPredicate, NOT_PLATFORM, NOT_PLATFORM)
                 returns(BOOLEAN)
             }
+            function("stream") {
+                returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
+            }
+            function("parallelStream") {
+                returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
+            }
+        }
+        forClass(javaUtil("List")) {
+            function("replaceAll") {
+                parameter(JFUnaryOperator, NOT_PLATFORM, NOT_PLATFORM)
+            }
         }
         forClass(javaUtil("Map")) {
+            function("forEach") {
+                parameter(JFBiConsumer, NOT_PLATFORM, NOT_PLATFORM, NOT_PLATFORM)
+            }
+            function("putIfAbsent") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(JLObject, NULLABLE)
+            }
+            function("replace") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(JLObject, NULLABLE)
+
+            }
+            function("replace") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(BOOLEAN)
+            }
+            function("replaceAll") {
+                parameter(JFBiFunction, NOT_PLATFORM, NOT_PLATFORM, NOT_PLATFORM, NOT_PLATFORM)
+            }
+            function("compute") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JFBiFunction, NOT_PLATFORM, NOT_PLATFORM, NULLABLE, NULLABLE)
+                returns(JLObject, NULLABLE)
+            }
+            // while it is possible to return nullable value from lambda in computeIfAbsent,
+            // we deliberately make it just NOT_PLATFORM V in order to have the return type V and not V?
+            function("computeIfAbsent") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JFFunction, NOT_PLATFORM, NOT_PLATFORM, NOT_PLATFORM)
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("computeIfPresent") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JFBiFunction, NOT_PLATFORM, NOT_PLATFORM, NOT_NULLABLE, NULLABLE)
+                returns(JLObject, NULLABLE)
+            }
             function("merge") {
                 parameter(JLObject, NOT_PLATFORM)
                 parameter(JLObject, NOT_NULLABLE)
                 parameter(JFBiFunction, NOT_PLATFORM, NOT_NULLABLE, NOT_NULLABLE, NULLABLE)
                 returns(JLObject, NULLABLE)
-            }
-        }
-        forClass(JFConsumer) {
-            function("accept") {
-                parameter(JLObject, NOT_PLATFORM)
-            }
-        }
-        forClass(JFPredicate) {
-            function("test") {
-                parameter(JLObject, NOT_PLATFORM)
-                returns(BOOLEAN)
-            }
-        }
-        forClass(JFFunction) {
-            function("apply") {
-                parameter(JLObject, NOT_PLATFORM)
-                returns(JLObject, NOT_PLATFORM)
-            }
-        }
-        forClass(JFBiFunction) {
-            function("apply") {
-                parameter(JLObject, NOT_PLATFORM)
-                parameter(JLObject, NOT_PLATFORM)
-                returns(JLObject, NOT_PLATFORM)
             }
         }
         forClass(JUOptional) {
@@ -106,6 +141,49 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
             }
             function("ifPresent") {
                 parameter(JFConsumer, NOT_PLATFORM, NOT_NULLABLE)
+            }
+        }
+
+        forClass(JFPredicate) {
+            function("test") {
+                parameter(JLObject, NOT_PLATFORM)
+                returns(BOOLEAN)
+            }
+        }
+        forClass(javaFunction("BiPredicate")) {
+            function("test") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(BOOLEAN)
+            }
+        }
+        forClass(JFConsumer) {
+            function("accept") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+        }
+        forClass(JFBiConsumer) {
+            function("accept") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+            }
+        }
+        forClass(JFFunction) {
+            function("apply") {
+                parameter(JLObject, NOT_PLATFORM)
+                returns(JLObject, NOT_PLATFORM)
+            }
+        }
+        forClass(JFBiFunction) {
+            function("apply") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(JLObject, NOT_PLATFORM)
+            }
+        }
+        forClass(javaFunction("Supplier")) {
+            function("get") {
+                returns(JLObject, NOT_PLATFORM)
             }
         }
     }
