@@ -23,6 +23,7 @@ public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseByte(this, radix)
 
@@ -38,6 +39,7 @@ public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toShort(radix: Int): Short = java.lang.Short.parseShort(this, radix)
 
@@ -52,6 +54,7 @@ public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toInt(radix: Int): Int = java.lang.Integer.parseInt(this, radix)
 
@@ -66,6 +69,7 @@ public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toLong(radix: Int): Long = java.lang.Long.parseLong(this, radix)
 
@@ -89,12 +93,14 @@ public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
  * Parses the string as a signed [Byte] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toByteOrNull(): Byte? = toByteOrNull(radix = 10)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toByteOrNull(radix: Int): Byte? {
     val int = this.toIntOrNull(radix) ?: return null
     if (int < Byte.MIN_VALUE || int > Byte.MAX_VALUE) return null
@@ -105,12 +111,14 @@ public fun String.toByteOrNull(radix: Int): Byte? {
  * Parses the string as a [Short] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toShortOrNull(): Short? = toShortOrNull(radix = 10)
 
 /**
  * Parses the string as a [Short] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toShortOrNull(radix: Int): Short? {
     val int = this.toIntOrNull(radix) ?: return null
     if (int < Short.MIN_VALUE || int > Short.MAX_VALUE) return null
@@ -121,12 +129,14 @@ public fun String.toShortOrNull(radix: Int): Short? {
  * Parses the string as an [Int] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toIntOrNull(): Int? = toIntOrNull(radix = 10)
 
 /**
  * Parses the string as an [Int] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toIntOrNull(radix: Int): Int? {
     checkRadix(radix)
 
@@ -180,12 +190,14 @@ public fun String.toIntOrNull(radix: Int): Int? {
  * Parses the string as a [Long] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toLongOrNull(): Long? = toLongOrNull(radix = 10)
 
 /**
  * Parses the string as a [Long] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toLongOrNull(radix: Int): Long? {
     checkRadix(radix)
 
@@ -239,12 +251,14 @@ public fun String.toLongOrNull(radix: Int): Long? {
  * Parses the string as a [Float] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toFloatOrNull(): Float? = screenFloatValue(this, java.lang.Float::parseFloat)
 
 /**
  * Parses the string as a [Double] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
+@SinceKotlin("1.1")
 public fun String.toDoubleOrNull(): Double? = screenFloatValue(this, java.lang.Double::parseDouble)
 
 /**
