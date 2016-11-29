@@ -3,7 +3,7 @@ package
 public val x: kotlin.Int
 public val B.x: kotlin.Int
 
-public final annotation class A : kotlin.Annotation {
+public external final annotation class A : kotlin.Annotation {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

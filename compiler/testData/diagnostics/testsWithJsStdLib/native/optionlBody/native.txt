@@ -8,7 +8,7 @@ public external fun foo(): kotlin.Unit
 public external fun kotlin.String.bar(): kotlin.Int
 public external fun kotlin.String.foo(): kotlin.Int
 
-public final class C {
+public external final class C {
     public constructor C()
     public final val baz: kotlin.Int
     public final val boo: kotlin.Int
@@ -30,7 +30,7 @@ public final class C {
     }
 }
 
-public object O {
+public external object O {
     private constructor O()
     public final val baz: kotlin.Int
     public final val boo: kotlin.Int
@@ -41,7 +41,7 @@ public object O {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface T {
+public external interface T {
     public abstract val baz: kotlin.Int
     public open fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

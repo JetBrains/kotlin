@@ -903,6 +903,7 @@ internal class DescriptorRendererImpl(
             if (!isEnumEntry) {
                 renderVisibility(klass.visibility, builder)
             }
+            renderExternal(klass, builder)
             if (!(klass.kind == ClassKind.INTERFACE && klass.modality == Modality.ABSTRACT ||
                   klass.kind.isSingleton && klass.modality == Modality.FINAL)) {
                 renderModality(klass.modality, builder)

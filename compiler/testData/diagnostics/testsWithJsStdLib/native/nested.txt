@@ -22,7 +22,7 @@ public final class TopLevel {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final class A {
+    public external final class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -37,7 +37,7 @@ public final class TopLevel {
     }
 }
 
-public final class TopLevelNative {
+public external final class TopLevelNative {
     public constructor TopLevelNative()
     public final val x: kotlin.String = "a"
     public external final val y: kotlin.String
@@ -49,7 +49,7 @@ public final class TopLevelNative {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final class A {
+    public external final class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

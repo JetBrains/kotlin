@@ -1,6 +1,6 @@
 package
 
-public final class A {
+public external final class A {
     public constructor A()
     @kotlin.js.nativeInvoke public final val foo: kotlin.Int = 0
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
