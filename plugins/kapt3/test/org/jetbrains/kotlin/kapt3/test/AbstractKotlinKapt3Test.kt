@@ -100,7 +100,8 @@ abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
             kaptRunner.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),
-                                              classpath = listOf(), sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
+                                              compileClasspath = emptyList(), annotationProcessingClasspath = emptyList(),
+                                              sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
                                               additionalSources = compilationUnits)
 
             val javaFiles = sourceOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }

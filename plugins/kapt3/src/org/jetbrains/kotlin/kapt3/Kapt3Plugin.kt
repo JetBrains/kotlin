@@ -138,7 +138,6 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val contentRoots = configuration[JVMConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
 
         val compileClasspath = contentRoots.filterIsInstance<JvmContentRoot>().map { it.file }
-        val classpath = apClasspath + compileClasspath
 
         val javaSourceRoots = contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file }
 
@@ -155,13 +154,14 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Source output directory: $sourcesOutputDir")
             logger.info("Classes output directory: $classFilesOutputDir")
             logger.info("Stubs output directory: $stubsOutputDir")
-            logger.info("Annotation processing classpath: " + classpath.joinToString())
+            logger.info("Compile classpath: " + compileClasspath.joinToString())
+            logger.info("Annotation processing classpath: " + apClasspath.joinToString())
             logger.info("Java source roots: " + javaSourceRoots.joinToString())
             logger.info("Options: $apOptions")
         }
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
-                classpath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
+                compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
                 isAptOnly, useLightAnalysis, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }

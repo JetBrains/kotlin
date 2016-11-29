@@ -33,14 +33,16 @@ import com.sun.tools.javac.util.List as JavacList
 fun KaptContext.doAnnotationProcessing(
         javaSourceFiles: List<File>,
         processors: List<Processor>,
-        classpath: List<File>,
+        compileClasspath: List<File>,
+        annotationProcessingClasspath: List<File>,
         sourcesOutputDir: File,
         classesOutputDir: File,
         additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
 ) {
     with (options) {
         put(Option.PROC, "only") // Only process annotations
-        put(Option.CLASSPATH, classpath.joinToString(File.pathSeparator) { it.canonicalPath })
+        put(Option.CLASSPATH, compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+        put(Option.PROCESSORPATH, annotationProcessingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
         put(Option.S, sourcesOutputDir.canonicalPath)
         put(Option.D, classesOutputDir.canonicalPath)
     }

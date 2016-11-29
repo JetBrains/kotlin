@@ -40,7 +40,8 @@ import javax.annotation.processing.Processor
 import com.sun.tools.javac.util.List as JavacList
 
 class ClasspathBasedKapt3Extension(
-        val annotationProcessingClasspath: List<File>,
+        compileClasspath: List<File>,
+        annotationProcessingClasspath: List<File>,
         javaSourceRoots: List<File>,
         sourcesOutputDir: File,
         classFilesOutputDir: File,
@@ -50,7 +51,7 @@ class ClasspathBasedKapt3Extension(
         val useLightAnalysis: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger
-) : AbstractKapt3Extension(annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
+) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
                            classFilesOutputDir, options, aptOnly, pluginInitializedTime, logger) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
@@ -71,7 +72,8 @@ class ClasspathBasedKapt3Extension(
     }
 
     override fun loadProcessors(): List<Processor> {
-        val classLoader = URLClassLoader(annotationProcessingClasspath.map { it.toURI().toURL() }.toTypedArray())
+        val classpath = annotationProcessingClasspath + compileClasspath
+        val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
         this.annotationProcessingClassLoader = classLoader
         val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
 
@@ -98,7 +100,8 @@ class ClasspathBasedKapt3Extension(
 }
 
 abstract class AbstractKapt3Extension(
-        val classpath: List<File>,
+        val compileClasspath: List<File>,
+        val annotationProcessingClasspath: List<File>,
         val javaSourceRoots: List<File>,
         val sourcesOutputDir: File,
         val classFilesOutputDir: File,
@@ -145,8 +148,8 @@ abstract class AbstractKapt3Extension(
 
             val (annotationProcessingTime) = measureTimeMillis {
                 kaptContext.doAnnotationProcessing(
-                        javaSourceFiles, processors,
-                        classpath, sourcesOutputDir, classFilesOutputDir, kotlinSourceStubs)
+                        javaSourceFiles, processors, compileClasspath, annotationProcessingClasspath,
+                        sourcesOutputDir, classFilesOutputDir, kotlinSourceStubs)
             }
 
             logger.info { "Annotation processing took $annotationProcessingTime ms" }
