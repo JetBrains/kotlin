@@ -78,7 +78,7 @@ class KotlinIndicesHelper(
         declarations.addTopLevelNonExtensionCallablesByName(KotlinFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(KotlinPropertyShortNameIndex.getInstance(), name)
         return declarations
-                .flatMap { it.resolveToDescriptorsWithHack<CallableDescriptor>() }
+                .flatMap { it.resolveToDescriptors<CallableDescriptor>() }
                 .filter { descriptorFilter(it) }
     }
 
@@ -92,7 +92,7 @@ class KotlinIndicesHelper(
     fun getTopLevelExtensionOperatorsByName(name: String): Collection<FunctionDescriptor> {
         return KotlinFunctionShortNameIndex.getInstance().get(name, project, scope)
                 .filter { it.parent is KtFile && it.receiverTypeReference != null && it.hasModifier(KtTokens.OPERATOR_KEYWORD) }
-                .flatMap { it.resolveToDescriptorsWithHack<FunctionDescriptor>() }
+                .flatMap { it.resolveToDescriptors<FunctionDescriptor>() }
                 .filter { descriptorFilter(it) && it.extensionReceiverParameter != null }
                 .distinct()
     }
@@ -100,7 +100,7 @@ class KotlinIndicesHelper(
     fun getMemberOperatorsByName(name: String): Collection<FunctionDescriptor> {
         return KotlinFunctionShortNameIndex.getInstance().get(name, project, scope)
                 .filter { it.parent is KtClassBody && it.receiverTypeReference == null && it.hasModifier(KtTokens.OPERATOR_KEYWORD) }
-                .flatMap { it.resolveToDescriptorsWithHack<FunctionDescriptor>() }
+                .flatMap { it.resolveToDescriptors<FunctionDescriptor>() }
                 .filter { descriptorFilter(it) && it.extensionReceiverParameter == null }
                 .distinct()
     }
@@ -115,7 +115,7 @@ class KotlinIndicesHelper(
                     if (declaration.receiverTypeReference != null) continue
                     if (filterOutPrivate && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
 
-                    for (descriptor in declaration.resolveToDescriptorsWithHack<CallableDescriptor>()) {
+                    for (descriptor in declaration.resolveToDescriptors<CallableDescriptor>()) {
                         if (descriptorFilter(descriptor)) {
                             processor(descriptor)
                         }
@@ -195,7 +195,7 @@ class KotlinIndicesHelper(
             }
         }
 
-        declarations.forEach { it.resolveToDescriptorsWithHack<CallableDescriptor>().forEach(::processDescriptor) }
+        declarations.forEach { it.resolveToDescriptors<CallableDescriptor>().forEach(::processDescriptor) }
 
         return result
     }
@@ -204,6 +204,14 @@ class KotlinIndicesHelper(
         return PsiShortNamesCache.getInstance(project).getClassesByName(name, scope)
                 .filter { it in scope }
                 .mapNotNull { it.resolveToDescriptor(resolutionFacade) }
+                .filter(descriptorFilter)
+                .toSet()
+    }
+
+    fun getKotlinEnumsByName(name: String): Collection<DeclarationDescriptor> {
+        return KotlinClassShortNameIndex.getInstance()[name, project, scope]
+                .filter { it is KtEnumEntry && it in scope }
+                .mapNotNull { it.resolveToDescriptor() }
                 .filter(descriptorFilter)
                 .toSet()
     }
@@ -245,18 +253,21 @@ class KotlinIndicesHelper(
         }
     }
 
-    fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
+    fun getKotlinClasses(
+            nameFilter: (String) -> Boolean,
+            psiFilter: (KtDeclaration) -> Boolean = { true },
+            kindFilter: (ClassKind) -> Boolean = { true }): Collection<ClassDescriptor> {
         val index = KotlinFullClassNameIndex.getInstance()
         return index.getAllKeys(project).asSequence()
-                .filter {
+                .filter { fqName ->
                     ProgressManager.checkCanceled()
-                    nameFilter(it.substringAfterLast('.'))
+                    nameFilter(fqName.substringAfterLast('.'))
                 }
                 .toList()
                 .flatMap { fqName ->
-                    index[fqName, project, scope]
-                            .flatMap { it.resolveToDescriptorsWithHack<ClassDescriptor>() }
-
+                    index[fqName, project, scope].flatMap { classOrObject ->
+                        classOrObject.resolveToDescriptorsWithHack(psiFilter).filterIsInstance<ClassDescriptor>()
+                    }
                 }
                 .filter { kindFilter(it.kind) && descriptorFilter(it) }
     }
@@ -271,7 +282,7 @@ class KotlinIndicesHelper(
                 .toList()
                 .flatMap { fqName ->
                     index[fqName, project, scope]
-                            .flatMap { it.resolveToDescriptorsWithHack<TypeAliasDescriptor>() }
+                            .flatMap { it.resolveToDescriptors<TypeAliasDescriptor>() }
 
                 }
                 .filter(descriptorFilter)
@@ -293,7 +304,7 @@ class KotlinIndicesHelper(
                     if (objectDeclaration.isObjectLiteral()) continue
                     if (filterOutPrivate && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
                     if (!filter(declaration, objectDeclaration)) continue
-                    for (descriptor in declaration.resolveToDescriptorsWithHack<CallableDescriptor>()) {
+                    for (descriptor in declaration.resolveToDescriptors<CallableDescriptor>()) {
                         if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                             processor(descriptor)
                         }
@@ -362,13 +373,20 @@ class KotlinIndicesHelper(
         return JavaProjectCodeInsightSettings.getSettings(project).isExcluded(fqName)
     }
 
-    private inline fun <reified TDescriptor : Any> KtNamedDeclaration.resolveToDescriptorsWithHack(): Collection<TDescriptor> {
+    private inline fun <reified TDescriptor : Any> KtNamedDeclaration.resolveToDescriptors(): Collection<TDescriptor> {
+        return resolveToDescriptorsWithHack({ true }).filterIsInstance<TDescriptor>()
+    }
+
+    private fun KtNamedDeclaration.resolveToDescriptorsWithHack(
+            psiFilter: (KtDeclaration) -> Boolean): Collection<DeclarationDescriptor> {
         if (getContainingKtFile().isCompiled) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
-            return resolutionFacade.resolveImportReference(moduleDescriptor, fqName!!).filterIsInstance<TDescriptor>()
+            return resolutionFacade.resolveImportReference(moduleDescriptor, fqName!!).filterIsInstance<DeclarationDescriptor>()
         }
         else {
             val translatedDeclaration = declarationTranslator(this) ?: return emptyList()
-            return (resolutionFacade.resolveToDescriptor(translatedDeclaration) as? TDescriptor).singletonOrEmptyList()
+            if (!psiFilter(translatedDeclaration)) return emptyList()
+
+            return (resolutionFacade.resolveToDescriptor(translatedDeclaration)).singletonOrEmptyList()
         }
     }
 }

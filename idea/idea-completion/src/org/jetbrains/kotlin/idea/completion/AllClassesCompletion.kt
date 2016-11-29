@@ -59,7 +59,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
         }
 
         kotlinIndicesHelper
-                .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter)
+                .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter = kindFilter)
                 .forEach { classifierDescriptorCollector(it) }
 
         if (includeTypeAliases) {
