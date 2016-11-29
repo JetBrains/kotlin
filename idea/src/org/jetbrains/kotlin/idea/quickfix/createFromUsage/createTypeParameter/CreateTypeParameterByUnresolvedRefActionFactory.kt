@@ -37,14 +37,18 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.containsError
 
-data class CreateTypeParameterData(
+data class TypeParameterInfo(
         val name: String,
-        val declaration: KtTypeParameterListOwner,
         val upperBoundType: KotlinType?,
         val fakeTypeParameter: TypeParameterDescriptor
 )
 
-object CreateTypeParameterByRefActionFactory : KotlinIntentionActionFactoryWithDelegate<KtUserType, CreateTypeParameterData>() {
+data class CreateTypeParameterData(
+        val declaration: KtTypeParameterListOwner,
+        val typeParameters: List<TypeParameterInfo>
+)
+
+object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFactoryWithDelegate<KtUserType, CreateTypeParameterData>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtUserType? {
         val ktUserType = diagnostic.psiElement.getParentOfTypeAndBranch<KtUserType> { referenceExpression } ?: return null
         if (ktUserType.qualifier != null) return null
@@ -63,7 +67,7 @@ object CreateTypeParameterByRefActionFactory : KotlinIntentionActionFactoryWithD
             it.performSubstitution(it.typeParameter.typeConstructor to TypeProjectionImpl(fakeTypeParameter.defaultType))?.upperBound
         }
         if (upperBoundType != null && upperBoundType.containsError()) return null
-        return CreateTypeParameterData(newName, declaration, upperBoundType, fakeTypeParameter)
+        return CreateTypeParameterData(declaration, listOf(TypeParameterInfo(newName, upperBoundType, fakeTypeParameter)))
     }
 
     override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): CreateTypeParameterData? {
@@ -84,7 +88,7 @@ object CreateTypeParameterByRefActionFactory : KotlinIntentionActionFactoryWithD
                     QuickFixWithDelegateFactory factory@ {
                         val originalElement = originalElementPointer.element ?: return@factory null
                         val data = quickFixDataFactory()?.copy(declaration = it) ?: return@factory null
-                        CreateTypeParameterFromUsageFix(originalElement, data)
+                        CreateTypeParameterFromUsageFix(originalElement, data, presentTypeParameterNames = true)
                     }
                 }
     }

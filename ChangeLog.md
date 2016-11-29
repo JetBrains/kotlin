@@ -341,6 +341,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ##### New features
 
 - [`KT-14729`](https://youtrack.jetbrains.com/issue/KT-14729) Implement "Add names to call arguments" intention
+- [`KT-11760`](https://youtrack.jetbrains.com/issue/KT-11760) Create from Usage: Support adding type parameters to the referenced type
 
 #### Refactorings
 
