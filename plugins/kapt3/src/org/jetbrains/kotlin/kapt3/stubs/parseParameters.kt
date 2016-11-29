@@ -34,7 +34,6 @@ internal class ParameterInfo(
 internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<ParameterInfo> {
     val localVariables = this.localVariables ?: emptyList()
     val parameters = this.parameters ?: emptyList()
-    val isStatic = isStatic(access)
 
     // First and second parameters in enum constructors are synthetic, we should ignore them
     val isEnumConstructor = (name == "<init>") && containingClass.isEnum()
@@ -46,7 +45,7 @@ internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<Para
     for (index in startParameterIndex..parameterTypes.lastIndex) {
         val type = parameterTypes[index]
         var name = parameters.getOrNull(index - startParameterIndex)?.name
-                   ?: localVariables.getOrNull(index + (if (isStatic) 0 else 1))?.name
+                   ?: localVariables.getOrNull(index)?.name
                    ?: "p${index - startParameterIndex}"
 
         // Property setters has bad parameter names
