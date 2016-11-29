@@ -47,10 +47,10 @@ private fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
 
 
     val predefinedEnhancementInfo =
-        if (this is JavaMethodDescriptor)
-            PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[
-                    SignatureBuildingComponents.signature(this.containingDeclaration as ClassDescriptor, this.computeJvmDescriptor())]
-        else null
+            (this as? JavaMethodDescriptor)
+                ?.run { SignatureBuildingComponents.signature(this.containingDeclaration as ClassDescriptor, this.computeJvmDescriptor()) }
+                ?.let { signature -> PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature] }
+
 
     predefinedEnhancementInfo?.let {
         assert(it.parametersInfo.size == valueParameters.size) {
