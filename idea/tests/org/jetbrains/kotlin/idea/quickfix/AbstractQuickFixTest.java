@@ -172,7 +172,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                         e.printStackTrace();
                         fail(testName);
                     }
-                } finally {
+                }
+                finally {
                     for (String fixtureClass : fixtureClasses) {
                         TestFixtureExtension.Companion.unloadFixture(fixtureClass);
                     }
@@ -182,7 +183,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         }, "", "");
     }
 
-    private static void applyAction(String contents, QuickFixTestCase quickFixTestCase, String testName, String testFullPath) throws Exception {
+    private static void applyAction(String contents, QuickFixTestCase quickFixTestCase, String testName, String testFullPath)
+            throws Exception {
         Pair<String, Boolean> pair = quickFixTestCase.parseActionHintImpl(quickFixTestCase.getFile(), contents);
 
         String fileName = StringsKt.substringAfterLast(testFullPath, "/", "");
@@ -230,6 +232,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                  InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(new File(beforeFileName)), "WITH_RUNTIME")) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), getFullJavaJDK());
         }
+        else if (beforeFileName.contains("Runtime") || beforeFileName.contains("JsRuntime")) {
+            Assert.fail("Runtime marker is used in test name, but not in test file end. " +
+                        "This can lead to false-positive absent of actions");
+        }
     }
 
     private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) throws IOException {
@@ -263,7 +269,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                 final Class<?> aClass = Class.forName(className);
                 assert IntentionAction.class.isAssignableFrom(aClass) : className + " should be inheritor of IntentionAction";
 
-                final Set<String> validActions = new HashSet<String>(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ACTION:"));
+                final Set<String> validActions =
+                        new HashSet<String>(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ACTION:"));
 
                 CollectionsKt.removeAll(actions, new Function1<IntentionAction, Boolean>() {
                     @Override
