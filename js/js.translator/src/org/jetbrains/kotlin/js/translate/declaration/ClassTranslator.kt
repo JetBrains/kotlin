@@ -376,7 +376,12 @@ class ClassTranslator private constructor(
         if (supertypes.size == 1) {
             val type = supertypes[0]
             val supertypeDescriptor = getClassDescriptorForType(type)
-            return listOf(ReferenceTranslator.translateAsTypeReference(supertypeDescriptor, context()))
+            return if (!AnnotationsUtils.isNativeObject(supertypeDescriptor)) {
+                listOf(ReferenceTranslator.translateAsTypeReference(supertypeDescriptor, context()))
+            }
+            else {
+                listOf()
+            }
         }
 
         val supertypeConstructors = mutableSetOf<TypeConstructor>()
@@ -392,7 +397,9 @@ class ClassTranslator private constructor(
         for (typeConstructor in sortedAllSuperTypes) {
             if (supertypeConstructors.contains(typeConstructor)) {
                 val supertypeDescriptor = getClassDescriptorForTypeConstructor(typeConstructor)
-                supertypesRefs += ReferenceTranslator.translateAsTypeReference(supertypeDescriptor, context())
+                if (!AnnotationsUtils.isNativeObject(supertypeDescriptor)) {
+                    supertypesRefs += ReferenceTranslator.translateAsTypeReference(supertypeDescriptor, context())
+                }
             }
         }
         return supertypesRefs
