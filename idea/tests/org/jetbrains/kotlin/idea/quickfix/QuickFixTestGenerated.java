@@ -755,6 +755,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/enumEntries.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumEntriesImportAbsentJsRuntime.kt")
+        public void testEnumEntriesImportAbsentJsRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/enumEntriesImportAbsentJsRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumEntriesJsRuntime.kt")
+        public void testEnumEntriesJsRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/enumEntriesJsRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("infixCallAndObject.kt")
         public void testInfixCallAndObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/infixCallAndObject.kt");

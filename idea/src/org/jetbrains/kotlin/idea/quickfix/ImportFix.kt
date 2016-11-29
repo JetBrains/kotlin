@@ -30,6 +30,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiModifier
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -240,7 +241,9 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
                 val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
                 if (ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
-                    indicesHelper.getKotlinClasses({ it == name }, { true }).filterTo(result, filterByCallType)
+                    indicesHelper
+                            .getKotlinClasses({ it == name }, psiFilter = { classOrObject -> classOrObject !is KtEnumEntry })
+                            .filterTo(result, filterByCallType)
                 }
                 else {
                     indicesHelper.getJvmClassesByName(name).filterTo(result, filterByCallType)
@@ -387,7 +390,6 @@ internal class ComponentsImportFix(
 }
 
 internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
-
     override fun getText() = "Import member"
 
     override fun fillCandidates(
@@ -397,31 +399,34 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
             indicesHelper: KotlinIndicesHelper
     ): List<DeclarationDescriptor> {
         val element = element ?: return emptyList()
+        if (element.isImportDirectiveExpression() || isSelectorInQualified(element)) return emptyList()
 
         val result = ArrayList<DeclarationDescriptor>()
-        if (!element.isImportDirectiveExpression() && !isSelectorInQualified(element)) {
-            val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
-            val processor = { descriptor: CallableDescriptor ->
-                if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
-                    result.add(descriptor)
-                }
-            }
+        val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
 
-            indicesHelper.processKotlinCallablesByName(
-                    name,
-                    filter = { declaration -> (declaration.parent as? KtClassBody)?.parent is KtObjectDeclaration },
-                    processor = processor
-            )
+        indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
 
-            if (!ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())) {
-                indicesHelper.processJvmCallablesByName(
-                        name,
-                        filter = { it.hasModifierProperty(PsiModifier.STATIC) },
-                        processor = processor
-                )
+        val processor = { descriptor: CallableDescriptor ->
+            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
+                result.add(descriptor)
             }
         }
+
+        indicesHelper.processKotlinCallablesByName(
+                name,
+                filter = { declaration -> (declaration.parent as? KtClassBody)?.parent is KtObjectDeclaration },
+                processor = processor
+        )
+
+        if (!ProjectStructureUtil.isJsKotlinModule(element.getContainingKtFile())) {
+            indicesHelper.processJvmCallablesByName(
+                    name,
+                    filter = { it.hasModifierProperty(PsiModifier.STATIC) },
+                    processor = processor
+            )
+        }
+
         return result
     }
 

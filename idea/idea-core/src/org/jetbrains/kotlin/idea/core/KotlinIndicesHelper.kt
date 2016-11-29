@@ -208,6 +208,14 @@ class KotlinIndicesHelper(
                 .toSet()
     }
 
+    fun getKotlinEnumsByName(name: String): Collection<DeclarationDescriptor> {
+        return KotlinClassShortNameIndex.getInstance()[name, project, scope]
+                .filter { it is KtEnumEntry && it in scope }
+                .mapNotNull { it.resolveToDescriptor() }
+                .filter(descriptorFilter)
+                .toSet()
+    }
+
     fun processJvmCallablesByName(
             name: String,
             filter: (PsiMember) -> Boolean,
@@ -245,19 +253,24 @@ class KotlinIndicesHelper(
         }
     }
 
-    fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
+    fun getKotlinClasses(
+            nameFilter: (String) -> Boolean,
+            psiFilter: (KtClassOrObject) -> Boolean = { true },
+            kindFilter: (ClassKind) -> Boolean = { true }): Collection<ClassDescriptor> {
         return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
                 .map { FqName(it) }
-                .filter {
+                .filter { fqName ->
                     ProgressManager.checkCanceled()
-                    nameFilter(it.shortName().asString())
+                    nameFilter(fqName.shortName().asString())
                 }
                 .toList()
-                .flatMap { getClassDescriptorsByFQName(it, kindFilter) }
+                .flatMap { getClassDescriptorsByFQName(it, psiFilter, kindFilter) }
     }
 
-    private fun getClassDescriptorsByFQName(classFQName: FqName, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
-        val declarations = KotlinFullClassNameIndex.getInstance()[classFQName.asString(), project, scope]
+    private fun getClassDescriptorsByFQName(classFQName: FqName,
+                                            psiFilter: (KtClassOrObject) -> Boolean,
+                                            kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
+        val declarations = KotlinFullClassNameIndex.getInstance()[classFQName.asString(), project, scope].filter(psiFilter)
 
         if (declarations.isEmpty()) {
             // This fqn is absent in caches, dead or not in scope
