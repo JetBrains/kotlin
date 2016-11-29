@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
+import org.jetbrains.kotlin.kapt3.util.isAbstract
 import org.jetbrains.kotlin.kapt3.util.isEnum
 import org.jetbrains.kotlin.kapt3.util.isStatic
 import org.jetbrains.org.objectweb.asm.Type
@@ -45,8 +46,14 @@ internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<Para
     val parameterInfos = ArrayList<ParameterInfo>(parameterTypes.size - startParameterIndex)
     for (index in startParameterIndex..parameterTypes.lastIndex) {
         val type = parameterTypes[index]
-        var name = parameters.getOrNull(index - startParameterIndex)?.name
-                   ?: localVariables.getOrNull(index + (if (isStatic) 0 else 1))?.name
+
+        // Use parameters only in case of the abstract methods (it hasn't local variables table)
+        var name: String? = if (isAbstract(this.access) && this.name != "<init>")
+            parameters.getOrNull(index - startParameterIndex)?.name
+        else
+            null
+
+        name = name ?: localVariables.getOrNull(index + (if (isStatic) 0 else 1))?.name
                    ?: "p${index - startParameterIndex}"
 
         // Property setters has bad parameter names
