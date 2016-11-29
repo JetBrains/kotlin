@@ -354,6 +354,9 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-14197`](https://youtrack.jetbrains.com/issue/KT-14197) Move: Fix callable reference processing when moving to another package
 - [`KT-13781`](https://youtrack.jetbrains.com/issue/KT-13781) Extract Function: Do not wrap companion member references inside of the `with` call
 
+##### New features
+- [`KT-14792`](https://youtrack.jetbrains.com/issue/KT-14792) Rename: Suggest respective parameter name for the local variable passed to function
+
 ## 1.0.5
 
 ### IDE

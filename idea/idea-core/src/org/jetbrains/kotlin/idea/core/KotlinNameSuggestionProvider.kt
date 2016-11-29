@@ -20,15 +20,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiVariable
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.codeStyle.SuggestedNameInfo
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.statistics.JavaStatisticsManager
 import com.intellij.refactoring.rename.NameSuggestionProvider
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
@@ -58,6 +61,17 @@ class KotlinNameSuggestionProvider : NameSuggestionProvider {
                 }
             }
             result += names
+
+            if (element is KtProperty && element.isLocal) {
+                for (ref in ReferencesSearch.search(element, LocalSearchScope(element.parent))) {
+                    val refExpr = ref.element as? KtSimpleNameExpression ?: continue
+                    val argument = refExpr.parent as? KtValueArgument ?: continue
+                    val callElement = (argument.parent as? KtValueArgumentList)?.parent as? KtCallElement ?: continue
+                    val resolvedCall = callElement.getResolvedCall(callElement.analyze(BodyResolveMode.PARTIAL)) ?: continue
+                    val parameterName = (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter?.name ?: continue
+                    result += parameterName.asString()
+                }
+            }
 
             return object : SuggestedNameInfo(names.toTypedArray()) {
                 override fun nameChosen(name: String?) {

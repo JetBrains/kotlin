@@ -157,6 +157,7 @@ import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
+import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -916,6 +917,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractScriptConfigurationNavigationTest> {
             model("script/definition/navigation", extension = null, recursive = false)
+        }
+
+        testClass<AbstractNameSuggestionProviderTest> {
+            model("refactoring/nameSuggestionProvider")
         }
     }
 
