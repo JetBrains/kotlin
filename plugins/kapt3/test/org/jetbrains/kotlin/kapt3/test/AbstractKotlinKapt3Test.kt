@@ -102,7 +102,7 @@ abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
             kaptRunner.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),
                                               compileClasspath = emptyList(), annotationProcessingClasspath = emptyList(),
                                               sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
-                                              additionalSources = compilationUnits)
+                                              additionalSources = compilationUnits, withJdk = true)
 
             val javaFiles = sourceOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
             val actualRaw = javaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }

@@ -85,7 +85,8 @@ class JavaKaptContextTest {
                 emptyList(), // compile classpath
                 emptyList(), // annotation processing classpath
                 outputDir,
-                outputDir)
+                outputDir,
+                withJdk = true)
     }
 
     @Test

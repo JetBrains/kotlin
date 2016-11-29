@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Files
 import javax.annotation.processing.Completion
@@ -139,7 +140,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             javaSourceRoots: List<File>,
             outputDir: File,
             options: Map<String, String>
-    ) : AbstractKapt3Extension(emptyList(), emptyList(), javaSourceRoots, outputDir, outputDir,
+    ) : AbstractKapt3Extension(PathUtil.getJdkClassesRoots(), emptyList(), javaSourceRoots, outputDir, outputDir,
                                options, true, System.currentTimeMillis(), KaptLogger(true)
     ) {
         internal var savedStubs: String? = null
