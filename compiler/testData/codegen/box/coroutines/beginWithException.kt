@@ -7,7 +7,7 @@ class Controller {
         exception = t
     }
 
-    suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x ->}
+    suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x -> }
 
     // INTERCEPT_RESUME_PLACEHOLDER
 }

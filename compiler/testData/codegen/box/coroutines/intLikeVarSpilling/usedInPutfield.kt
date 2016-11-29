@@ -4,6 +4,7 @@
 class Controller {
     suspend fun suspendHere(): Unit = suspendWithCurrentContinuation { x ->
         x.resume(Unit)
+        Suspend
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER

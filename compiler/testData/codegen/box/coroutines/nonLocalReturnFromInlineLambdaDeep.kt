@@ -5,6 +5,7 @@ class Controller {
     var cResult = 0
     suspend fun suspendHere(v: Int): Int = suspendWithCurrentContinuation { x ->
         x.resume(v * 2)
+        Suspend
     }
 
     operator fun handleResult(x: Int, y: Continuation<Nothing>) {

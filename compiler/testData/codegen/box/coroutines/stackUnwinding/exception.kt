@@ -1,9 +1,5 @@
-// IGNORE_BACKEND: JS
 class Controller {
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
-        x.resume("OK")
-        Suspend
-    }
+    suspend fun suspendHere(): String = throw RuntimeException("OK")
 
     // INTERCEPT_RESUME_PLACEHOLDER
 }
@@ -16,7 +12,7 @@ fun box(): String {
     var result = ""
 
     builder {
-        result = suspendHere()
+        result = try { suspendHere() } catch (e: RuntimeException) { e.message!! }
     }
 
     return result

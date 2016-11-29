@@ -5,6 +5,7 @@ class Controller {
     suspend fun suspendHere(v: String): Unit = suspendWithCurrentContinuation { x ->
         this.v = v
         x.resume(Unit)
+        Suspend
     }
 
     operator fun handleResult(u: Unit, v: Continuation<Nothing>) {

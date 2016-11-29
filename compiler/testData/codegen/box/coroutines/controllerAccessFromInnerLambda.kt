@@ -3,6 +3,7 @@ class Controller {
     var result = false
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("OK")
+        Suspend
     }
 
     fun foo() {

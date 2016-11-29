@@ -8,12 +8,16 @@ class Controller {
         postponedActions.add {
             x.resume(v)
         }
+
+        Suspend
     }
 
     suspend fun suspendWithException(e: Exception): String = suspendWithCurrentContinuation { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }
+
+        Suspend
     }
 
     operator fun handleException(t: Throwable, c: Continuation<Nothing>) {

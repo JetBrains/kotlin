@@ -3,6 +3,7 @@ class Controller {
     var i = 0
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume((i++).toString())
+        Suspend
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER

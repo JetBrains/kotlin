@@ -3,6 +3,7 @@ class Controller {
     var wasHandleResultCalled = false
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("OK")
+        Suspend
     }
 
     operator fun handleResult(x: Unit, y: Continuation<Nothing>) {

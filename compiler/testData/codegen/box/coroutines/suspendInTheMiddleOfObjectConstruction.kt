@@ -2,14 +2,17 @@
 class Controller {
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("K")
+        Suspend
     }
 
     suspend fun suspendWithArgument(v: String): String = suspendWithCurrentContinuation { x ->
         x.resume(v)
+        Suspend
     }
 
     suspend fun suspendWithDouble(v: Double): Double = suspendWithCurrentContinuation { x ->
         x.resume(v)
+        Suspend
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER

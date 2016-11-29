@@ -2,6 +2,7 @@
 class Controller {
     suspend fun suspendHere(v: Int): Int = suspendWithCurrentContinuation { x ->
         x.resume(v * 2)
+        Suspend
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER

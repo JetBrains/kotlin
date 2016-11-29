@@ -60,6 +60,8 @@ class FutureController<T> {
             else
                 machine.resumeWithException(throwable)
         }
+
+        Suspend
     }
 
     operator fun handleResult(value: T, c: Continuation<Nothing>) {

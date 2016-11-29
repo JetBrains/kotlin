@@ -7,6 +7,7 @@ package lib
 class Controller {
     suspend fun String.suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume(this)
+        Suspend
     }
 
     inline suspend fun String.inlineSuspendHere(): String = suspendHere()

@@ -7,6 +7,7 @@ class Controller {
 
     suspend fun <T> await(t: T): T = suspendWithCurrentContinuation { c ->
         c.resume(t)
+        Suspend
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER

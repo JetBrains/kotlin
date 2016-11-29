@@ -19,4 +19,5 @@ fun box(): String {
 }
 
 // 1 GETSTATIC kotlin/Unit.INSTANCE : Lkotlin/Unit;
-// 1 GETSTATIC
+// 1 GETSTATIC kotlin/coroutines/Suspend.INSTANCE
+// 2 GETSTATIC

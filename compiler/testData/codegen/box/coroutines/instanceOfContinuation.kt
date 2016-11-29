@@ -6,11 +6,13 @@ class Controller {
     suspend fun runInstanceOf(): Boolean = suspendWithCurrentContinuation { x ->
         val y: Any = x
         x.resume(x is Continuation<*>)
+        Suspend
     }
 
     suspend fun runCast(): Boolean = suspendWithCurrentContinuation { x ->
         val y: Any = x
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
+        Suspend
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER

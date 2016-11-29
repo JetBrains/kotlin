@@ -2,6 +2,7 @@
 class Controller {
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resumeWithException(RuntimeException("OK"))
+        Suspend
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER

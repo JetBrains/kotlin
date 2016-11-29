@@ -2810,7 +2810,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, bindingContext)) {
             // Suspension points should behave like they leave actual values on stack, while real methods return VOID
-            return new OperationStackValue(getSuspensionReturnTypeByResolvedCall(resolvedCall), ((OperationStackValue) result).getLambda());
+            return new OperationStackValue(getSuspensionBoxedReturnTypeByResolvedCall(resolvedCall), ((OperationStackValue) result).getLambda());
         }
 
         return result;
@@ -2925,7 +2925,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (isSuspensionPoint) {
-            v.tconst(getSuspensionReturnTypeByResolvedCall(resolvedCall));
+            v.tconst(getSuspensionBoxedReturnTypeByResolvedCall(resolvedCall));
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,
@@ -2935,7 +2935,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspensionPoint) {
-            AsmUtil.pushDefaultValueOnStack(getSuspensionReturnTypeByResolvedCall(resolvedCall), v);
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.AFTER_SUSPENSION_POINT_MARKER_NAME, "()V", false);
@@ -2950,7 +2949,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private Type getSuspensionReturnTypeByResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
+    private Type getSuspensionBoxedReturnTypeByResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
         assert resolvedCall.getResultingDescriptor() instanceof SimpleFunctionDescriptor
                 : "Suspension point resolved call should be built on SimpleFunctionDescriptor";
 
@@ -2963,7 +2962,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         KotlinType returnType = initialSignature.getReturnType();
 
         assert returnType != null : "Return type of suspension point should not be null";
-        return typeMapper.mapType(returnType);
+        return typeMapper.mapType(TypeUtils.makeNullable(returnType));
     }
 
     @NotNull

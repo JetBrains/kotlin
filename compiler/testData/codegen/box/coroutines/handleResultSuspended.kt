@@ -5,6 +5,7 @@ class Controller {
     suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { x ->
         log += "suspend($value);"
         x.resume(value)
+        Suspend
     }
 
     operator fun handleResult(value: String, y: Continuation<Nothing>) {

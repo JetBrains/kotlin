@@ -4,7 +4,7 @@ class Controller {
     var result = "fail"
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         lastSuspension = x
-        Unit
+        Suspend
     }
 
     fun hasNext() = lastSuspension != null

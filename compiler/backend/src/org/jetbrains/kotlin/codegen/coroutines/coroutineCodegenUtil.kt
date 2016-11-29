@@ -189,7 +189,7 @@ fun ResolvedCall<*>.isSuspensionPoint(bindingContext: BindingContext) =
         bindingContext[BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, call] != null
 
 // Suspend functions have irregular signatures on JVM, containing an additional last parameter with type `Continuation<return-type>`,
-// and return type Unit (later it will be replaced with 'Any?')
+// and return type Any?
 // This function returns a function descriptor reflecting how the suspend function looks from point of view of JVM
 fun <D : FunctionDescriptor> createJvmSuspendFunctionView(function: D): D {
     val continuationParameter = ValueParameterDescriptorImpl(
@@ -201,7 +201,7 @@ fun <D : FunctionDescriptor> createJvmSuspendFunctionView(function: D): D {
 
     return function.createCustomCopy {
         setPreserveSourceElement()
-        setReturnType(function.builtIns.unitType)
+        setReturnType(function.builtIns.nullableAnyType)
         setValueParameters(it.valueParameters + continuationParameter)
         putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, it)
     }
@@ -288,8 +288,7 @@ fun createMethodNodeForSuspendWithCurrentContinuation(
             "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
             true
     )
-    node.visitInsn(Opcodes.POP)
-    node.visitInsn(Opcodes.RETURN)
+    node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(2, 2)
 
     return node

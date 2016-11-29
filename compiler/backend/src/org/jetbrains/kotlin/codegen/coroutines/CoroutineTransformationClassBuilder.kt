@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.analyzeLiveness
 import org.jetbrains.kotlin.codegen.optimization.common.insnListOf
 import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.sure
@@ -95,8 +96,10 @@ class CoroutineTransformerMethodVisitor(
 
         spillVariables(suspensionPoints, methodNode)
 
+        val suspendMarkerVarIndex = methodNode.maxLocals++
+
         val suspensionPointLabels = suspensionPoints.withIndex().map {
-            transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode)
+            transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode, suspendMarkerVarIndex)
         }
 
         methodNode.instructions.apply {
@@ -116,6 +119,13 @@ class CoroutineTransformerMethodVisitor(
             // tableswitch(this.label)
             insertBefore(firstToInsertBefore,
                          insnListOf(
+                                 FieldInsnNode(
+                                         Opcodes.GETSTATIC,
+                                         AsmTypes.COROUTINES_SUSPEND.internalName,
+                                         JvmAbi.INSTANCE_FIELD,
+                                         AsmTypes.COROUTINES_SUSPEND.descriptor
+                                 ),
+                                 VarInsnNode(Opcodes.ASTORE, suspendMarkerVarIndex),
                                  VarInsnNode(Opcodes.ALOAD, 0),
                                  FieldInsnNode(
                                          Opcodes.GETFIELD,
@@ -178,20 +188,16 @@ class CoroutineTransformerMethodVisitor(
                     methodNode.instructions.remove(beforeSuspensionPointMarker.previous)
                     beforeSuspensionPointMarker.desc = "()V"
 
-                    if (suspensionPoint.returnType != Type.VOID_TYPE) {
-                        val previous = suspensionPoint.suspensionCallEnd.previous
-                        assert(previous.opcode in DEFAULT_VALUE_OPCODES) {
-                            "Expected on of default value bytecodes, but ${previous.opcode} was found"
-                        }
-                        fakeReturnValueInsns.add(previous)
+                    assert(suspensionPoint.returnType != Type.VOID_TYPE) { "Suspension point can't be VOID" }
 
-                        if (previous.opcode == Opcodes.ACONST_NULL) {
-                            // Checkcast is needed to tell analyzer what type exactly should be returned from suspension point
-                            val checkCast = TypeInsnNode(Opcodes.CHECKCAST, suspensionPoint.returnType.internalName)
-                            methodNode.instructions.insert(previous, checkCast)
-                            fakeReturnValueInsns.add(checkCast)
-                        }
-                    }
+                    // Checkcast only is needed to tell analyzer what type exactly should be returned from suspension point
+                    // This type is used when for restoring spilled variables into fields
+                    val checkCast = TypeInsnNode(Opcodes.CHECKCAST, suspensionPoint.returnType.internalName)
+                    methodNode.instructions.insertBefore(
+                            suspensionPoint.suspensionCallEnd, checkCast
+                    )
+
+                    fakeReturnValueInsns.add(checkCast)
                 }
             }
         }
@@ -317,8 +323,14 @@ class CoroutineTransformerMethodVisitor(
             return suspensionCallEnd.next as LabelNode
         }
 
-    private fun transformCallAndReturnContinuationLabel(id: Int, suspension: SuspensionPoint, methodNode: MethodNode): LabelNode {
+    private fun transformCallAndReturnContinuationLabel(
+            id: Int,
+            suspension: SuspensionPoint,
+            methodNode: MethodNode,
+            suspendMarkerVarIndex: Int
+    ): LabelNode {
         val continuationLabel = LabelNode()
+        val continuationLabelAfterLoadedResult = LabelNode()
         with(methodNode.instructions) {
             // Save state
             insertBefore(suspension.suspensionCallBegin,
@@ -336,6 +348,10 @@ class CoroutineTransformerMethodVisitor(
             suspension.fakeReturnValueInsns.forEach { methodNode.instructions.remove(it) }
 
             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                dup()
+                load(suspendMarkerVarIndex, AsmTypes.COROUTINES_SUSPEND)
+                ifacmpne(continuationLabelAfterLoadedResult.label)
+
                 // Exit
                 areturn(Type.VOID_TYPE)
                 // Mark place for continuation
@@ -358,6 +374,8 @@ class CoroutineTransformerMethodVisitor(
 
                 // Load continuation argument just like suspending function returns it
                 load(1, AsmTypes.OBJECT_TYPE)
+
+                visitLabel(continuationLabelAfterLoadedResult.label)
                 StackValue.coerce(AsmTypes.OBJECT_TYPE, suspension.returnType, this)
             })
         }
@@ -371,8 +389,7 @@ class CoroutineTransformerMethodVisitor(
     // How suspension point area will look like after all transformations:
     // <spill variables>
     // INVOKESTATIC beforeSuspensionMarker
-    // INVOKEVIRTUAL suspensionMethod()V
-    // ACONST_NULL -- default value
+    // INVOKEVIRTUAL suspensionMethod()Ljava/lang/Object;
     // CHECKCAST SomeType
     // INVOKESTATIC afterSuspensionMarker
     // L1: -- end of all TCB's that are containing the suspension point (inserted by this method)
@@ -480,8 +497,7 @@ private fun Type.normalize() =
 /**
  * Suspension call may consists of several instructions:
  * INVOKESTATIC beforeSuspensionMarker
- * INVOKEVIRTUAL suspensionMethod()V // actually it could be some inline method instead of plain call
- * ACONST_NULL // It's only needed when the suspension point returns something beside VOID
+ * INVOKEVIRTUAL suspensionMethod()Ljava/lang/Object; // actually it could be some inline method instead of plain call
  * CHECKCAST Type
  * INVOKESTATIC afterSuspensionMarker
  */

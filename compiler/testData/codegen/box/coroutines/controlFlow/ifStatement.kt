@@ -7,6 +7,7 @@ class Controller {
 
     suspend fun <T> suspendWithResult(value: T): T = suspendWithCurrentContinuation { c ->
         c.resume(value)
+        Suspend
     }
 }
 

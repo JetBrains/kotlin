@@ -8,6 +8,7 @@ class Controller {
     suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { c ->
         result += "suspend($value);"
         c.resume(value)
+        Suspend
     }
 
     operator fun handleException(exception: Throwable, c: Continuation<Nothing>) {

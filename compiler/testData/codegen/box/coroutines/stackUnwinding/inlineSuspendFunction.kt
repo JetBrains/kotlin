@@ -1,18 +1,10 @@
-// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 // WITH_REFLECT
 // CHECK_NOT_CALLED: suspendInline_die06n$
 // CHECK_NOT_CALLED: suspendInline_nesahw$
 // CHECK_NOT_CALLED: suspendInline_grpnnl$
 class Controller {
-    fun withValue(v: String, x: Continuation<String>) {
-        x.resume(v)
-    }
-
-    suspend inline fun suspendInline(v: String): String = suspendWithCurrentContinuation { x ->
-        withValue(v, x)
-        Suspend
-    }
+    suspend inline fun suspendInline(v: String): String = v
 
     suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())
 

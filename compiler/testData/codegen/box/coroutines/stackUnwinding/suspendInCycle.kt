@@ -1,13 +1,10 @@
 // IGNORE_BACKEND: JS
 class Controller {
-    var i = 0
     suspend fun suspendHere(): Int = suspendWithCurrentContinuation { x ->
-        x.resume(i++)
-        Suspend
+        1
     }
     suspend fun suspendThere(): String = suspendWithCurrentContinuation { x ->
-        x.resume("?")
-        Suspend
+        "?"
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER
@@ -22,7 +19,7 @@ fun box(): String {
 
     builder {
         result += "-"
-        for (i in 0..5) {
+        for (i in 0..10000) {
             if (i % 2 == 0) {
                 result += suspendHere().toString()
             }
@@ -33,7 +30,18 @@ fun box(): String {
         result += "+"
     }
 
-    if (result != "-01?2+") return "fail: $result"
+    var mustBe = "-"
+    for (i in 0..10000) {
+        if (i % 2 == 0) {
+            mustBe += "1"
+        }
+        else if (i == 3) {
+            mustBe += "?"
+        }
+    }
+    mustBe += "+"
+
+    if (result != mustBe) return "fail: $result/$mustBe"
 
     return "OK"
 }
