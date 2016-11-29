@@ -108,6 +108,10 @@ class KtPsiFactory(private val project: Project) {
         return if (typeReference?.text == type) typeReference else null
     }
 
+    fun createFunctionTypeReceiver(typeReference: KtTypeReference): KtFunctionTypeReceiver {
+        return (createType("A.() -> B").typeElement as KtFunctionType).receiver!!.apply { this.typeReference.replace(typeReference) }
+    }
+
     fun createTypeAlias(name: String, typeParameters: List<String>, typeElement: KtTypeElement): KtTypeAlias {
         return createTypeAlias(name, typeParameters, "X").apply { getTypeReference()!!.replace(createType(typeElement)) }
     }

@@ -76,8 +76,13 @@ public class KtFunctionType extends KtElementImplStub<KotlinPlaceHolderStub<KtFu
     }
 
     @Nullable
+    public KtFunctionTypeReceiver getReceiver() {
+        return getStubOrPsiChild(KtStubElementTypes.FUNCTION_TYPE_RECEIVER);
+    }
+
+    @Nullable
     public KtTypeReference getReceiverTypeReference() {
-        KtFunctionTypeReceiver receiverDeclaration = getStubOrPsiChild(KtStubElementTypes.FUNCTION_TYPE_RECEIVER);
+        KtFunctionTypeReceiver receiverDeclaration = getReceiver();
         if (receiverDeclaration == null) {
             return null;
         }

@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.resolve.calls.resolvedCallUtil
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -112,3 +112,9 @@ fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver != null && extensionRe
 
 fun ResolvedCall<*>.getDispatchReceiverWithSmartCast(): ReceiverValue?
         = getReceiverValueWithSmartCast(dispatchReceiver, smartCastDispatchReceiverType)
+
+fun KtCallElement.getArgumentByParameterIndex(index: Int, context: BindingContext): List<ValueArgument> {
+    val resolvedCall = getResolvedCall(context) ?: return emptyList()
+    val parameterToProcess = resolvedCall.resultingDescriptor.valueParameters.getOrNull(index) ?: return emptyList()
+    return resolvedCall.valueArguments[parameterToProcess]?.arguments ?: emptyList()
+}
