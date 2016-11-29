@@ -37,10 +37,16 @@ fun KaptContext.doAnnotationProcessing(
         annotationProcessingClasspath: List<File>,
         sourcesOutputDir: File,
         classesOutputDir: File,
-        additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
+        additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
+        withJdk: Boolean = false
 ) {
     with (options) {
         put(Option.PROC, "only") // Only process annotations
+
+        if (!withJdk) {
+            put(Option.BOOTCLASSPATH, "") // No boot classpath
+        }
+
         put(Option.CLASSPATH, compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
         put(Option.PROCESSORPATH, annotationProcessingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
         put(Option.S, sourcesOutputDir.canonicalPath)

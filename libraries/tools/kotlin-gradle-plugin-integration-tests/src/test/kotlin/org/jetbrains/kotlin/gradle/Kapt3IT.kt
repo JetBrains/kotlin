@@ -160,6 +160,17 @@ class Kapt3IT : BaseGradleIT() {
     }
 
     @Test
+    fun testKt15001() {
+        val project = Project("kt15001", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val options = androidBuildOptions()
+
+        project.build("compileReleaseSources", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+    }
+
+    @Test
     fun testDbFlow() {
         val project = Project("android-dbflow", GRADLE_VERSION, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
