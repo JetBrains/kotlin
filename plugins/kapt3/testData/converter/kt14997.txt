@@ -1,0 +1,30 @@
+public class CrashMe {
+    private final java.lang.Runnable notReally = null;
+
+    public CrashMe() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})
+public final class Kt14997Kt {
+
+    public Kt14997Kt() {
+        super();
+    }
+
+    public static final java.lang.Runnable a() {
+        return null;
+    }
+
+    public static final java.lang.Runnable b() {
+        return null;
+    }
+
+    public static final CrashMe c() {
+        return null;
+    }
+}
