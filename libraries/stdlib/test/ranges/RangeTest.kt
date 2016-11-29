@@ -206,6 +206,12 @@ public class RangeTest {
         val nanRange = 0.0..Double.NaN
         assertFalse(Double.NaN in nanRange)
         assertTrue(nanRange.isEmpty())
+
+        val halfInfRange = 0.0..Double.POSITIVE_INFINITY
+        assertTrue(Double.POSITIVE_INFINITY in halfInfRange)
+        assertFalse(Double.NEGATIVE_INFINITY in halfInfRange)
+        assertFalse(Double.NaN in halfInfRange)
+        assertTrue(Float.POSITIVE_INFINITY in halfInfRange)
     }
 
     @Test fun floatRange() {
@@ -244,6 +250,13 @@ public class RangeTest {
         val nanRange = 0.0F..Float.NaN
         assertFalse(Float.NaN in nanRange)
         assertTrue(nanRange.isEmpty())
+
+        val halfInfRange = 0.0F..Float.POSITIVE_INFINITY
+        assertTrue(Float.POSITIVE_INFINITY in halfInfRange)
+        assertFalse(Float.NEGATIVE_INFINITY in halfInfRange)
+        assertFalse(Float.NaN in halfInfRange)
+        assertTrue(Double.POSITIVE_INFINITY in halfInfRange)
+        assertTrue(Double.MAX_VALUE in halfInfRange)
     }
 
     @Test fun isEmpty() {

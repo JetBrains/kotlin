@@ -15,7 +15,7 @@ import kotlin.comparisons.*
  */
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun ClosedRange<Int>.contains(value: Byte): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toInt())
 }
 
 /**
@@ -23,7 +23,7 @@ public operator fun ClosedRange<Int>.contains(value: Byte): Boolean {
  */
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun ClosedRange<Long>.contains(value: Byte): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toLong())
 }
 
 /**
@@ -31,7 +31,7 @@ public operator fun ClosedRange<Long>.contains(value: Byte): Boolean {
  */
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun ClosedRange<Short>.contains(value: Byte): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toShort())
 }
 
 /**
@@ -39,7 +39,7 @@ public operator fun ClosedRange<Short>.contains(value: Byte): Boolean {
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Byte): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toDouble())
 }
 
 /**
@@ -47,7 +47,7 @@ public operator fun ClosedRange<Double>.contains(value: Byte): Boolean {
  */
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Byte): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toFloat())
 }
 
 /**
@@ -55,7 +55,7 @@ public operator fun ClosedRange<Float>.contains(value: Byte): Boolean {
  */
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun ClosedRange<Int>.contains(value: Double): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toIntExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -63,7 +63,7 @@ public operator fun ClosedRange<Int>.contains(value: Double): Boolean {
  */
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun ClosedRange<Long>.contains(value: Double): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toLongExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -71,7 +71,7 @@ public operator fun ClosedRange<Long>.contains(value: Double): Boolean {
  */
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun ClosedRange<Byte>.contains(value: Double): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -79,7 +79,7 @@ public operator fun ClosedRange<Byte>.contains(value: Double): Boolean {
  */
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun ClosedRange<Short>.contains(value: Double): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -87,7 +87,7 @@ public operator fun ClosedRange<Short>.contains(value: Double): Boolean {
  */
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Double): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toFloat())
 }
 
 /**
@@ -95,7 +95,7 @@ public operator fun ClosedRange<Float>.contains(value: Double): Boolean {
  */
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun ClosedRange<Int>.contains(value: Float): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toIntExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -103,7 +103,7 @@ public operator fun ClosedRange<Int>.contains(value: Float): Boolean {
  */
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun ClosedRange<Long>.contains(value: Float): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toLongExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -111,7 +111,7 @@ public operator fun ClosedRange<Long>.contains(value: Float): Boolean {
  */
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun ClosedRange<Byte>.contains(value: Float): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -119,7 +119,7 @@ public operator fun ClosedRange<Byte>.contains(value: Float): Boolean {
  */
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun ClosedRange<Short>.contains(value: Float): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -127,7 +127,7 @@ public operator fun ClosedRange<Short>.contains(value: Float): Boolean {
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Float): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toDouble())
 }
 
 /**
@@ -135,7 +135,7 @@ public operator fun ClosedRange<Double>.contains(value: Float): Boolean {
  */
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun ClosedRange<Long>.contains(value: Int): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toLong())
 }
 
 /**
@@ -143,7 +143,7 @@ public operator fun ClosedRange<Long>.contains(value: Int): Boolean {
  */
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun ClosedRange<Byte>.contains(value: Int): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -151,7 +151,7 @@ public operator fun ClosedRange<Byte>.contains(value: Int): Boolean {
  */
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun ClosedRange<Short>.contains(value: Int): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -159,7 +159,7 @@ public operator fun ClosedRange<Short>.contains(value: Int): Boolean {
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Int): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toDouble())
 }
 
 /**
@@ -167,7 +167,7 @@ public operator fun ClosedRange<Double>.contains(value: Int): Boolean {
  */
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Int): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toFloat())
 }
 
 /**
@@ -175,7 +175,7 @@ public operator fun ClosedRange<Float>.contains(value: Int): Boolean {
  */
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun ClosedRange<Int>.contains(value: Long): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toIntExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -183,7 +183,7 @@ public operator fun ClosedRange<Int>.contains(value: Long): Boolean {
  */
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun ClosedRange<Byte>.contains(value: Long): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -191,7 +191,7 @@ public operator fun ClosedRange<Byte>.contains(value: Long): Boolean {
  */
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun ClosedRange<Short>.contains(value: Long): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -199,7 +199,7 @@ public operator fun ClosedRange<Short>.contains(value: Long): Boolean {
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Long): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toDouble())
 }
 
 /**
@@ -207,7 +207,7 @@ public operator fun ClosedRange<Double>.contains(value: Long): Boolean {
  */
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Long): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toFloat())
 }
 
 /**
@@ -215,7 +215,7 @@ public operator fun ClosedRange<Float>.contains(value: Long): Boolean {
  */
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun ClosedRange<Int>.contains(value: Short): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toInt())
 }
 
 /**
@@ -223,7 +223,7 @@ public operator fun ClosedRange<Int>.contains(value: Short): Boolean {
  */
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun ClosedRange<Long>.contains(value: Short): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toLong())
 }
 
 /**
@@ -231,7 +231,7 @@ public operator fun ClosedRange<Long>.contains(value: Short): Boolean {
  */
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun ClosedRange<Byte>.contains(value: Short): Boolean {
-    return start <= value && value <= endInclusive
+    return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }
 
 /**
@@ -239,7 +239,7 @@ public operator fun ClosedRange<Byte>.contains(value: Short): Boolean {
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Short): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toDouble())
 }
 
 /**
@@ -247,7 +247,7 @@ public operator fun ClosedRange<Double>.contains(value: Short): Boolean {
  */
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Short): Boolean {
-    return start <= value && value <= endInclusive
+    return contains(value.toFloat())
 }
 
 /**
@@ -446,6 +446,62 @@ public infix fun LongProgression.step(step: Long): LongProgression {
 public infix fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
     return CharProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
+}
+
+internal fun Int.toByteExactOrNull(): Byte? {
+    return if (this in Byte.MIN_VALUE.toInt()..Byte.MAX_VALUE.toInt()) this.toByte() else null
+}
+
+internal fun Long.toByteExactOrNull(): Byte? {
+    return if (this in Byte.MIN_VALUE.toLong()..Byte.MAX_VALUE.toLong()) this.toByte() else null
+}
+
+internal fun Short.toByteExactOrNull(): Byte? {
+    return if (this in Byte.MIN_VALUE.toShort()..Byte.MAX_VALUE.toShort()) this.toByte() else null
+}
+
+internal fun Double.toByteExactOrNull(): Byte? {
+    return if (this in Byte.MIN_VALUE.toDouble()..Byte.MAX_VALUE.toDouble()) this.toByte() else null
+}
+
+internal fun Float.toByteExactOrNull(): Byte? {
+    return if (this in Byte.MIN_VALUE.toFloat()..Byte.MAX_VALUE.toFloat()) this.toByte() else null
+}
+
+internal fun Long.toIntExactOrNull(): Int? {
+    return if (this in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) this.toInt() else null
+}
+
+internal fun Double.toIntExactOrNull(): Int? {
+    return if (this in Int.MIN_VALUE.toDouble()..Int.MAX_VALUE.toDouble()) this.toInt() else null
+}
+
+internal fun Float.toIntExactOrNull(): Int? {
+    return if (this in Int.MIN_VALUE.toFloat()..Int.MAX_VALUE.toFloat()) this.toInt() else null
+}
+
+internal fun Double.toLongExactOrNull(): Long? {
+    return if (this in Long.MIN_VALUE.toDouble()..Long.MAX_VALUE.toDouble()) this.toLong() else null
+}
+
+internal fun Float.toLongExactOrNull(): Long? {
+    return if (this in Long.MIN_VALUE.toFloat()..Long.MAX_VALUE.toFloat()) this.toLong() else null
+}
+
+internal fun Int.toShortExactOrNull(): Short? {
+    return if (this in Short.MIN_VALUE.toInt()..Short.MAX_VALUE.toInt()) this.toShort() else null
+}
+
+internal fun Long.toShortExactOrNull(): Short? {
+    return if (this in Short.MIN_VALUE.toLong()..Short.MAX_VALUE.toLong()) this.toShort() else null
+}
+
+internal fun Double.toShortExactOrNull(): Short? {
+    return if (this in Short.MIN_VALUE.toDouble()..Short.MAX_VALUE.toDouble()) this.toShort() else null
+}
+
+internal fun Float.toShortExactOrNull(): Short? {
+    return if (this in Short.MIN_VALUE.toFloat()..Short.MAX_VALUE.toFloat()) this.toShort() else null
 }
 
 /**
