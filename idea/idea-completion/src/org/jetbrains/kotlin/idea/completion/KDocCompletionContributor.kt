@@ -146,7 +146,7 @@ class KDocNameCompletionSession(
 
     fun collectDescriptorsForLinkCompletion(declarationDescriptor: DeclarationDescriptor, kDocLink: KDocLink): Sequence<DeclarationDescriptor> {
         val qualifiedLink = kDocLink.getLinkText().split('.').dropLast(1)
-        val nameFilter = descriptorNameFilter.toNameFilter()
+        val nameFilter = descriptorNameFilter
         if (qualifiedLink.isNotEmpty()) {
             val parentDescriptors = resolveKDocLink(bindingContext, resolutionFacade, declarationDescriptor, null, qualifiedLink)
             val childDescriptorsOfPartialLink = parentDescriptors.asSequence().flatMap {
