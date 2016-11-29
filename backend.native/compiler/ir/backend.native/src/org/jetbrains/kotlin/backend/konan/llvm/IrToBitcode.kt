@@ -748,26 +748,25 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private abstract inner class FinalizingScope() : CatchingScope() {
 
         /**
-         * The [ContinuationBlock] to be used for `return` from the function.
-         * Expects return value as its value.
+         * Cache for [genReturn].
+         *
+         * `returnBlocks[func]` contains the [ContinuationBlock] to be used for `return` from `func`;
+         * the block expects return value as its value.
          */
-        private val returnFromCurrent: ContinuationBlock by lazy {
-            using(outerContext) {
-                val target = codegen.currentFunction!!
-                continuationBlock(target.returnType!!) { returnValue ->
-                    genFinalize()
-                    outerContext.genReturn(target, returnValue)
-                }
-            }
-        }
+        private val returnBlocks = mutableMapOf<CallableDescriptor, ContinuationBlock>()
 
         // Jump to finalize-and-return instead of simply returning.
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (target != codegen.currentFunction) {
-                TODO()
+            val block = returnBlocks.getOrPut(target) {
+                using(outerContext) {
+                    continuationBlock(target.returnType!!) { returnValue ->
+                        genFinalize()
+                        outerContext.genReturn(target, returnValue)
+                    }
+                }
             }
 
-            jump(returnFromCurrent, value)
+            jump(block, value)
         }
 
         override fun genBreak(loop: IrLoop) = TODO()
