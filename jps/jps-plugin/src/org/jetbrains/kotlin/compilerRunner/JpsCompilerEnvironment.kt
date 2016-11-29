@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.utils.PathUtil
 class JpsCompilerEnvironment(
         val kotlinPaths: KotlinPaths,
         services: Services,
-        val classesToLoadByParent: ClassCondition
-) : CompilerEnvironment(services) {
+        val classesToLoadByParent: ClassCondition,
+        messageCollector: MessageCollector,
+        override val outputItemsCollector: OutputItemsCollectorImpl
+) : CompilerEnvironment(services, messageCollector, outputItemsCollector) {
     fun success(): Boolean {
         return kotlinPaths.homePath.exists()
     }
