@@ -46,6 +46,8 @@ enum class PrimitiveType {
     Boolean,
     Char;
 
+    val capacity by lazy { descendingByDomainCapacity.indexOf(this).let { if (it < 0) it else descendingByDomainCapacity.size - it } }
+
     companion object {
         val defaultPrimitives = PrimitiveType.values().toSet()
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
@@ -145,6 +147,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val since = FamilyProperty<String>()
     val typeParams = ArrayList<String>()
     val returns = FamilyProperty<String>()
+    val visibility = FamilyProperty<String>()
     val operator = FamilyProperty<Boolean>()
     val infix = FamilyProperty<Boolean>()
     val external = FamilyProperty<Boolean>()
@@ -410,7 +413,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             builder.append("@kotlin.internal.InlineOnly").append('\n')
         }
 
-        builder.append("public ")
+        builder.append(visibility[f] ?: "public").append(' ')
         if (external[f] == true)
             builder.append("external ")
         if (inline[f]?.isInline() == true)
