@@ -1,0 +1,58 @@
+package test;
+
+@MyAnnotation()
+public final class State {
+    private final int someInt = 0;
+    private final long someLong = 0L;
+    private final java.lang.String someString = null;
+
+    public final int overloadedMethod(int someInt, long someLong, java.lang.String someString) {
+        return 0;
+    }
+
+    public final int overloadedMethod(int someInt, long someLong) {
+        return 0;
+    }
+
+    public static final int staticMethod(int someInt, long someLong, java.lang.String someString) {
+        return 0;
+    }
+
+    public static final int staticMethod(int someInt, long someLong) {
+        return 0;
+    }
+
+    public final int getSomeInt() {
+        return 0;
+    }
+
+    public final long getSomeLong() {
+        return 0L;
+    }
+
+    public final java.lang.String getSomeString() {
+        return null;
+    }
+
+    public State(int someInt, long someLong, java.lang.String someString) {
+        super();
+    }
+
+    public State(int someInt, long someLong) {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
+}
