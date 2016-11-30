@@ -113,7 +113,7 @@ class ControlFlowInformationProvider private constructor(
 
         checkDefiniteReturn(expectedReturnType ?: NO_EXPECTED_TYPE, unreachableCode)
 
-        markTailCalls()
+        markAndCheckTailCalls()
     }
 
     private fun collectReturnExpressions(returnedExpressions: MutableCollection<KtElement>) {
@@ -798,19 +798,45 @@ class ControlFlowInformationProvider private constructor(
     ////////////////////////////////////////////////////////////////////////////////
     // Tail calls
 
-    private fun markTailCalls() {
+    private fun markAndCheckTailCalls() {
         val subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine) as? FunctionDescriptor ?: return
+
+        markAndCheckRecursiveTailCalls(subroutineDescriptor)
+        checkSuspendCalls(subroutineDescriptor)
+    }
+
+    private fun checkSuspendCalls(currentFunction: FunctionDescriptor) {
+
+        if (!currentFunction.isSuspend) return
+
+        traverseCalls { instruction, resolvedCall ->
+            val calleeDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return@traverseCalls
+            if (!calleeDescriptor.isSuspend) return@traverseCalls
+
+            // Suspend functions are allowed to be called only within coroutines (may be non-tail calls of course)
+            // or another suspend function (here they must be called only in tail position)
+            val enclosingSuspendFunction =
+                    trace.get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call)
+                    ?.let(DescriptorToSourceUtils::descriptorToDeclaration) as? KtElement
+                    ?: return@traverseCalls
+
+            val element = instruction.element
+            val isUsedAsExpression = instruction.owner.getUsages(instruction.outputValue).isNotEmpty()
+
+            if (!isUsedAsExpression || !instruction.isTailCall(enclosingSuspendFunction) || isInsideTry(element)) {
+                trace.report(Errors.SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE.on(element))
+            }
+        }
+    }
+
+    private fun markAndCheckRecursiveTailCalls(subroutineDescriptor: FunctionDescriptor) {
         if (!subroutineDescriptor.isTailrec) return
 
         // finally blocks are copied which leads to multiple diagnostics reported on one instruction
         class KindAndCall(var kind: TailRecursionKind, internal val call: ResolvedCall<*>)
 
         val calls = HashMap<KtElement, KindAndCall>()
-        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
-
-            if (instruction !is CallInstruction) return@traverse
-            val resolvedCall = instruction.element.getResolvedCall(trace.bindingContext) ?: return@traverse
-
+        traverseCalls traverse@{ instruction, resolvedCall ->
             // is this a recursive call?
             val functionDescriptor = resolvedCall.resultingDescriptor
             if (functionDescriptor.original != subroutineDescriptor) return@traverse
@@ -821,24 +847,13 @@ class ControlFlowInformationProvider private constructor(
 
             val element = instruction.element
             //noinspection unchecked
-            val parent = PsiTreeUtil.getParentOfType(
-                    element,
-                    KtTryExpression::class.java, KtFunction::class.java, KtAnonymousInitializer::class.java
-            )
 
-            if (parent is KtTryExpression) {
+            if (isInsideTry(element)) {
                 // We do not support tail calls Collections.singletonMap() try-catch-finally, for simplicity of the mental model
                 // very few cases there would be real tail-calls, and it's often not so easy for the user to see why
                 calls.put(element, KindAndCall(IN_TRY, resolvedCall))
                 return@traverse
             }
-
-            val isTail = traverseFollowingInstructions(
-                    instruction,
-                    HashSet<Instruction>(),
-                    TraversalOrder.FORWARD,
-                    TailRecursionDetector(subroutine, instruction)
-            )
 
             // A tail call is not allowed to change dispatch receiver
             //   class C {
@@ -848,7 +863,7 @@ class ControlFlowInformationProvider private constructor(
             //   }
             val sameDispatchReceiver = resolvedCall.hasThisOrNoDispatchReceiver(trace.bindingContext)
 
-            val kind = if (isTail && sameDispatchReceiver) TAIL_CALL else NON_TAIL
+            val kind = if (sameDispatchReceiver && instruction.isTailCall()) TAIL_CALL else NON_TAIL
 
             val kindAndCall = calls[element]
             calls.put(element, KindAndCall(combineKinds(kind, kindAndCall?.kind), resolvedCall))
@@ -868,6 +883,29 @@ class ControlFlowInformationProvider private constructor(
 
         if (!hasTailCalls && subroutine is KtNamedFunction) {
             trace.report(Errors.NO_TAIL_CALLS_FOUND.on(subroutine))
+        }
+    }
+
+    private fun isInsideTry(element: KtElement) =
+            PsiTreeUtil.getParentOfType(
+                    element,
+                    KtTryExpression::class.java, KtFunction::class.java, KtAnonymousInitializer::class.java
+            ) is KtTryExpression
+
+    private fun CallInstruction.isTailCall(subroutine: KtElement = this@ControlFlowInformationProvider.subroutine) =
+        traverseFollowingInstructions(
+            this,
+            HashSet<Instruction>(),
+            TraversalOrder.FORWARD,
+            TailCallDetector(subroutine, this)
+        )
+
+    private inline fun traverseCalls(crossinline onCall: (instruction: CallInstruction, resolvedCall: ResolvedCall<*>) -> Unit) {
+        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+            if (instruction !is CallInstruction) return@traverse
+            val resolvedCall = instruction.element.getResolvedCall(trace.bindingContext) ?: return@traverse
+
+            onCall(instruction, resolvedCall)
         }
     }
 

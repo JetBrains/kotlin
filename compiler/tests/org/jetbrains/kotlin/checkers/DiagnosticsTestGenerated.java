@@ -4335,6 +4335,51 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/wrongHandleResult.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TailCalls extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInTailCalls() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/tailCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("forbidden.kt")
+                public void testForbidden() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls/forbidden.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localFunctions.kt")
+                public void testLocalFunctions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls/localFunctions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nothingTypedSuspendFunction.kt")
+                public void testNothingTypedSuspendFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls/nothingTypedSuspendFunction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursive.kt")
+                public void testRecursive() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls/recursive.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tryCatch.kt")
+                public void testTryCatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls/tryCatch.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("valid.kt")
+                public void testValid() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls/valid.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")

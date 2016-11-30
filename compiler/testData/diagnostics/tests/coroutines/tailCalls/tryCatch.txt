@@ -1,0 +1,8 @@
+package
+
+public suspend fun baz(): kotlin.Int
+public fun nonSuspend(): kotlin.Unit
+public suspend fun returnInFinally(): kotlin.Int
+public suspend fun tryCatch(): kotlin.Int
+public suspend fun tryCatchFinally(): kotlin.Int
+public suspend fun tryFinally(): kotlin.Int

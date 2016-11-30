@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkIn
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult;
 import org.jetbrains.kotlin.psi.KtElement;
 
-public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, TraverseInstructionResult> {
+public class TailCallDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, TraverseInstructionResult> {
     private final KtElement subroutine;
     private final Instruction start;
 
-    public TailRecursionDetector(@NotNull KtElement subroutine, @NotNull Instruction start) {
+    public TailCallDetector(@NotNull KtElement subroutine, @NotNull Instruction start) {
         this.subroutine = subroutine;
         this.start = start;
     }

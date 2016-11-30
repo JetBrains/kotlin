@@ -11,7 +11,8 @@ class Controller {
         Suspend
     }
 
-    suspend fun suspendLogAndThrow(exception: Throwable): Nothing = suspendWithCurrentContinuation { c ->
+    // Tail calls are not allowed to be Nothing typed. See KT-15051
+    suspend fun suspendLogAndThrow(exception: Throwable): Any? = suspendWithCurrentContinuation { c ->
         result += "throw(${exception.message});"
         c.resumeWithException(exception)
         Suspend
