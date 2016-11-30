@@ -259,27 +259,22 @@ fun testSubListLastIndexOf() {
 fun testIteratorRemove() {
     val a = makeList12345()
     val it = a.iterator()
-    var i = 1
-    while (it.hasNext()) {
-        if (i++ % 2 == 0) {
+    while (it.hasNext())
+        if (it.next()[0].toInt() % 2 == 0)
             it.remove()
-        }
-        it.next()
-    }
-
     assertEquals(makeList135(), a)
 }
 
 fun testIteratorAdd() {
     val a = makeList12345()
     val it = a.listIterator()
-    var i = 0
+    var i = 1
     while (it.hasNext()) {
         val next = it.next()
         if (i++ % 2 == 0)
             it.add("-" + next)
     }
-    //assertEquals(listOf("1", "2", "-2", "3", "4", "-4", "5"), a)
+    assertEquals("[1, 2, -2, 3, 4, -4, 5]", a.toString())
 }
 
 
@@ -299,7 +294,7 @@ fun main(args : Array<String>) {
     testSubListContains()
     testSubListIndexOf()
     testSubListLastIndexOf()
-//    testIteratorAdd()  runtime assert: Throwing is unsupported
-//    testIteratorRemove() assertEquals fails
+    testIteratorAdd()
+    testIteratorRemove()
     println("OK")
 }
