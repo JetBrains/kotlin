@@ -224,6 +224,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitConstructor(constructorDeclaration: IrConstructor) {
+        if (constructorDeclaration.descriptor.containingDeclaration.isIntrinsic) {
+            // Do not generate any ctors for intrinsic classes.
+            return
+        }
+
         codegen.prologue(constructorDeclaration)
         val constructorDescriptor = constructorDeclaration.descriptor
         val classDescriptor = DescriptorUtils.getContainingClass(constructorDescriptor)
@@ -389,8 +394,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return
         }
 
-        if (declaration.descriptor.isIntrinsic) {
-            // do not generate any code for intrinsic classes as they require special handling
+        if (KotlinBuiltIns.isUnit(declaration.descriptor.defaultType)) {
+            // Do not generate any code for Unit.
+            // TODO: Unit has toString() operation, which we may want to support.
             return
         }
 

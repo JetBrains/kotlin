@@ -574,3 +574,8 @@ task unreachable1(type: RunKonanTest) {
     goldValue = "1\n"
     source = "codegen/controlflow/unreachable1.kt"
 }
+
+task range0(type: RunKonanTest) {
+    goldValue = "123\nabcd\n"
+    source = "runtime/collections/range0.kt"
+}
