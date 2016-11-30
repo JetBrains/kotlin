@@ -385,6 +385,19 @@ task strdedup1(type: RunKonanTest) {
     source = "datagen/literals/strdedup1.kt"
 }
 
+/*
+TODO: enable after supporting Unit object
+task strdedup2(type: RunKonanTest) {
+    goldValue = "true\ntrue\n"
+    source = "datagen/literals/strdedup2.kt"
+}
+*/
+
+task empty_string(type: RunKonanTest) {
+    goldValue = "\n"
+    source = "datagen/literals/empty_string.kt"
+}
+
 task intrinsic(type: UnitKonanTest) {
     source = "codegen/function/intrinsic.kt"
 }
