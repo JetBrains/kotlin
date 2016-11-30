@@ -128,7 +128,7 @@ val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
 val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
 
 
-const val inlineExposedAnnotationName = "kotlin/internal/InlineExposed"
+const val inlineExposedAnnotationName = "kotlin/PublishedApi"
 fun ClassNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
 fun MethodNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
 fun FieldNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
