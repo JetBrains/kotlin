@@ -35,8 +35,8 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String,
             val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
             val memberSignatures = (
-                    fields.map { with(it) { FieldBinarySignature(name, desc, isInlineExposed(), AccessFlags(access)) } } +
-                    methods.map { with(it) { MethodBinarySignature(name, desc, isInlineExposed(), AccessFlags(access)) } }
+                    fields.map { with(it) { FieldBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } } +
+                    methods.map { with(it) { MethodBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } }
             ).filter {
                 it.isEffectivelyPublic(classAccess, classVisibility)
             }

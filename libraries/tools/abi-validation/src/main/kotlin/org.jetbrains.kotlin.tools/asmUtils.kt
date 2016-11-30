@@ -35,11 +35,11 @@ interface MemberBinarySignature {
     val name: String
     val desc: String
     val access: AccessFlags
-    val isInlineExposed: Boolean
+    val isPublishedApi: Boolean
 
     fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
             = access.isPublic && !(access.isProtected && classAccess.isFinal)
-            && (findMemberVisibility(classVisibility)?.isPublic(isInlineExposed) ?: true)
+            && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi) ?: true)
 
     fun findMemberVisibility(classVisibility: ClassVisibility?)
             = classVisibility?.members?.get(MemberSignature(name, desc))
@@ -50,7 +50,7 @@ interface MemberBinarySignature {
 data class MethodBinarySignature(
         override val name: String,
         override val desc: String,
-        override val isInlineExposed: Boolean,
+        override val isPublishedApi: Boolean,
         override val access: AccessFlags) : MemberBinarySignature {
     override val signature: String
         get() = "${access.getModifierString()} fun $name $desc"
@@ -65,7 +65,7 @@ data class MethodBinarySignature(
 data class FieldBinarySignature(
         override val name: String,
         override val desc: String,
-        override val isInlineExposed: Boolean,
+        override val isPublishedApi: Boolean,
         override val access: AccessFlags) : MemberBinarySignature {
     override val signature: String
         get() = "${access.getModifierString()} field $name $desc"
@@ -116,7 +116,7 @@ fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
         isPublic(access)
                 && !isLocal()
                 && !isWhenMappings()
-                && (classVisibility?.isPublic(isInlineExposed()) ?: true)
+                && (classVisibility?.isPublic(isPublishedApi()) ?: true)
 
 
 val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull { it.name == name }
@@ -128,10 +128,10 @@ val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
 val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
 
 
-const val inlineExposedAnnotationName = "kotlin/PublishedApi"
-fun ClassNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
-fun MethodNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
-fun FieldNode.isInlineExposed() = findAnnotation(inlineExposedAnnotationName, includeInvisible = true) != null
+const val publishedApiAnnotationName = "kotlin/PublishedApi"
+fun ClassNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
+fun MethodNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
+fun FieldNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
 
 
 private object KotlinClassKind {
