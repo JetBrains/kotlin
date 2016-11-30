@@ -8,9 +8,9 @@ data class ClassVisibility(val name: String, val visibility: String?, val member
 data class MemberVisibility(val member: MemberSignature, val declaration: String?, val visibility: String?)
 data class MemberSignature(val name: String, val desc: String)
 
-private fun isPublic(visibility: String?, isInlineExposed: Boolean) = visibility == null || visibility == "public" || visibility == "protected"  || (isInlineExposed && visibility == "internal")
-fun ClassVisibility.isPublic(isInlineExposed: Boolean) = isPublic(visibility, isInlineExposed)
-fun MemberVisibility.isPublic(isInlineExposed: Boolean) = isPublic(visibility, isInlineExposed)
+private fun isPublic(visibility: String?, isPublishedApi: Boolean) = visibility == null || visibility == "public" || visibility == "protected"  || (isPublishedApi && visibility == "internal")
+fun ClassVisibility.isPublic(isPublishedApi: Boolean) = isPublic(visibility, isPublishedApi)
+fun MemberVisibility.isPublic(isPublishedApi: Boolean) = isPublic(visibility, isPublishedApi)
 
 fun MemberVisibility.isLateInit() = declaration != null && "lateinit var " in declaration
 
