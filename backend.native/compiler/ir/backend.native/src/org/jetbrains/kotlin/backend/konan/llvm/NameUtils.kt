@@ -7,16 +7,35 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+
 
 private val symbolNameAnnotation = FqName("kotlin.SymbolName")
 
+fun typeToHashString(type: KotlinType): String {
+    if (TypeUtils.isTypeParameter(type)) return "GENERIC"
+
+    var hashString = type.constructor.toString()
+    if (!type.arguments.isEmpty()) {
+        hashString += "<${type.arguments.map {
+            typeToHashString(it.type)
+        }.joinToString(",")}>"
+    }
+    
+    if (type.isMarkedNullable) hashString += "?"
+    return hashString
+}
+
 private val FunctionDescriptor.signature: String
     get() {
-        // TODO: KotlinType.toString seems to use unqualified names
-
         val extensionReceiverPart = this.extensionReceiverParameter?.let { "${it.type}." } ?: ""
+        val actualDescriptor = this.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: this
 
-        val argsPart = this.valueParameters.map { it.type }.joinToString(";")
+        val argsPart = actualDescriptor.valueParameters.map {
+            typeToHashString(it.type)
+        }.joinToString(";")
 
         // TODO: add return type
         // (it is not simple because return type can be changed when overriding)

@@ -268,6 +268,10 @@ task local_variable(type: UnitKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
 
+task canonical_name(type: RunKonanTest) {
+    goldValue = "A:foo\nA:qux\n"
+    source = "codegen/basics/canonical_name.kt"
+}
 
 task cast_simple(type: UnitKonanTest) {
     source = "codegen/basics/cast_simple.kt"
