@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
@@ -36,7 +37,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
                 JsNameChecker,
                 PlatformImplDeclarationChecker()
         ),
-        additionalCallCheckers = listOf(),
+        additionalCallCheckers = listOf(ReifiedTypeParameterSubstitutionChecker()),
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),

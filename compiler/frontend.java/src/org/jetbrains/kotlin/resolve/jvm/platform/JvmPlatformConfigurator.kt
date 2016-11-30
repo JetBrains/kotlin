@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmOverloadFilter
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
@@ -56,7 +57,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 UnsupportedSyntheticCallableReferenceChecker(),
                 SuperCallWithDefaultArgumentsChecker(),
                 MissingDependencyClassChecker(),
-                ProtectedSyntheticExtensionCallChecker
+                ProtectedSyntheticExtensionCallChecker,
+                ReifiedTypeParameterSubstitutionChecker()
         ),
 
         additionalTypeCheckers = listOf(

@@ -70,7 +70,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
-        CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker(), SafeCallChecker(),
+        CapturingInClosureChecker(), InlineCheckerWrapper(), SafeCallChecker(),
         DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
         ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
         CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker
