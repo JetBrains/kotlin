@@ -227,7 +227,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         codegen.prologue(constructorDeclaration)
         val constructorDescriptor = constructorDeclaration.descriptor
         val classDescriptor = DescriptorUtils.getContainingClass(constructorDescriptor)
-        val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
 
         using(FunctionScope(constructorDeclaration)) {
 
@@ -253,7 +252,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                     override fun visitField(fieldDeclaration: IrField) {
 
                         val fieldDescriptor = fieldDeclaration.descriptor
-                        val fieldPtr = fieldPtrOfClass(thisPtr, fieldDescriptor)
+                        val fieldPtr = fieldPtrOfClass(codegen.thisVariable(), fieldDescriptor)
                         var value: LLVMValueRef? = null
                         if (constructorDescriptor.valueParameters.any { it.name == fieldDescriptor.name }) {
                             val variable = codegen.variable(fieldDescriptor.name.asString())
@@ -280,7 +279,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         }
 
-        codegen.ret(thisPtr)
+        if (KotlinBuiltIns.isArray(constructorDescriptor.returnType)) {
+            val arrayPtr = codegen.bitcast(codegen.kArrayHeaderPtr, codegen.thisVariable(), codegen.newVar())
+            codegen.ret(arrayPtr)
+        } else {
+            codegen.ret(codegen.thisVariable())
+        }
         codegen.epilogue(constructorDeclaration)
         logger.log("visitConstructor            : ${ir2string(constructorDeclaration)}")
     }
@@ -353,7 +357,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 = codegen.call(function, args, result)
 
         override fun genThrow(exception: LLVMValueRef) {
-            val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, exception, codegen.newVar())
+            val objHeaderPtr = codegen.bitcast(codegen.kObjHeaderPtr, exception, codegen.newVar())
             val args = listOf(objHeaderPtr)
             codegen.call(context.throwExceptionFunction, args, "")
             codegen.unreachable()
@@ -474,7 +478,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("visitField                 : ${ir2string(expression)}")
         val descriptor = expression.descriptor
         if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
-            val globalProperty = LLVMAddGlobal(context.llvmModule, getLLVMType(descriptor.type), descriptor.symbolName)
+            val globalProperty = LLVMAddGlobal(context.llvmModule, codegen.getLLVMType(descriptor.type), descriptor.symbolName)
             LLVMSetInitializer(globalProperty, evaluateExpression("", expression.initializer))
             return
         }
@@ -583,7 +587,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 code(null)
             }
         } else {
-            continuationBlock(getLLVMType(type), code)
+            continuationBlock(codegen.getLLVMType(type), code)
         }
     }
 
@@ -636,7 +640,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
          */
         private val handler by lazy {
             using(outerContext) {
-                continuationBlock(kInt8Ptr) { exception ->
+                continuationBlock(codegen.kObjHeaderPtr) { exception ->
                     genHandler(exception)
                 }
             }
@@ -686,16 +690,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord), "")
 
                 // Pointer to KotlinException instance:
-                val exceptionPtr = bitcast(pointerType(int8TypePtr), exceptionRawPtr, "")
+                val exceptionPtrPtr = bitcast(codegen.kObjHeaderPtrPtr, exceptionRawPtr, "")
 
                 // Pointer to Kotlin exception object:
-                val exception = load(exceptionPtr, "exception")
+                val exceptionPtr = load(exceptionPtrPtr, "exception")
 
                 // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
                 val endCatch = externalFunction("__cxa_end_catch", functionType(voidType, false))
                 call(endCatch, listOf(), "")
 
-                jumpToHandler(exception)
+                jumpToHandler(exceptionPtr)
             }
         }
 
@@ -893,7 +897,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is LazyClassReceiverParameterDescriptor,
             is ReceiverParameterDescriptor -> {
                 if (value.descriptor.name.asString() == "<this>") {
-                    return codegen.load(codegen.thisVariable(), tmpVariableName)
+                    return codegen.thisVariable()
                 }
                 TODO("${ir2string(value)}")
             }
@@ -943,7 +947,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val bbTrue  = codegen.basicBlock()!!
         val bbFalse = codegen.basicBlock()!!
         val bbExit  = codegen.basicBlock()!!
-        val result  = codegen.alloca(getLLVMType(value.type), codegen.newVar())
+        val result  = codegen.alloca(codegen.getLLVMType(value.type), codegen.newVar())
 
         val condition = evaluateInstanceOf(codegen.newVar(), value)
         codegen.condBr(condition, bbTrue, bbFalse)
@@ -954,7 +958,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         codegen.br(bbExit)
 
         codegen.positionAtEnd(bbFalse)
-        val nullResult = kNullPtr
+        val nullResult = if (KotlinBuiltIns.isArray(value.type)) codegen.kNullArrayHeaderPtr
+                         else codegen.kNullObjHeaderPtr
         codegen.store(nullResult, result)
         codegen.br(bbExit)
 
@@ -982,7 +987,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val dstDescriptor = TypeUtils.getClassDescriptor(value.type)                   // Get class descriptor for dst type.
         val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
         val srcArg        = evaluateExpression(codegen.newVar(), value.argument)!!     // Evaluate src expression.
-        val srcObjInfoPtr = codegen.bitcast(kObjHeaderPtr, srcArg, codegen.newVar())   // Cast src to ObjInfoPtr.
+        val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, srcArg, codegen.newVar())   // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
         currentCodeContext.genCall(context.checkInstanceFunction, args, "")            // Check if dst is subclass of src.
         return srcArg
@@ -1002,7 +1007,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun genInstanceOf(tmpVariableName: String, obj: LLVMValueRef, type: KotlinType): LLVMValueRef {
         val dstDescriptor = TypeUtils.getClassDescriptor(type)                         // Get class descriptor for dst type.
         val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
-        val srcObjInfoPtr = codegen.bitcast(kObjHeaderPtr, obj, codegen.newVar())      // Cast src to ObjInfoPtr.
+        val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, obj, codegen.newVar())   // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
 
         val result = currentCodeContext.genCall(                                       // Check if dst is subclass of src.
@@ -1023,7 +1028,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateGetField(value: IrGetField): LLVMValueRef {
         logger.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
-            val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
+            val thisPtr = codegen.thisVariable()
             return codegen.load(fieldPtrOfClass(thisPtr, value.descriptor)!!, codegen.newVar())
         }
         else {
@@ -1038,7 +1043,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("evaluateSetField           : ${ir2string(value)}")
         val valueToAssign = evaluateExpression(codegen.newVar(), value.value)!!
         if (value.descriptor.dispatchReceiverParameter != null) {
-            val thisPtr = codegen.load(codegen.thisVariable(), codegen.newVar())
+            val thisPtr = codegen.thisVariable()
             return codegen.store(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor)!!)
         }
         else {
@@ -1082,7 +1087,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     */
     private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: PropertyDescriptor): LLVMValueRef? {
-        val objHeaderPtr = codegen.bitcast(kObjHeaderPtr, thisPtr, codegen.newVar())
+        val objHeaderPtr = codegen.bitcast(codegen.kObjHeaderPtr, thisPtr, codegen.newVar())
         val typePtr = pointerType(codegen.classType(value.containingDeclaration as ClassDescriptor))
         memScoped {
             val args = allocArrayOf(kImmOne)
@@ -1098,7 +1103,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateConst(value: IrConst<*>): LLVMValueRef? {
         logger.log("evaluateConst              : ${ir2string(value)}")
         when (value.kind) {
-            IrConstKind.Null    -> return kNullPtr
+            IrConstKind.Null    -> return codegen.kNullObjHeaderPtr
             IrConstKind.Boolean -> when (value.value) {
                 true  -> return kTrue
                 false -> return kFalse
@@ -1212,7 +1217,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val allocHint = Int32(1).getLlvmValue()!!
             val thisValue = if (containingClass.isArray) {
                 assert(args.size == 1 && LLVMTypeOf(args[0]) == LLVMInt32Type())
-                currentCodeContext.genCall(context.allocArrayFunction, listOf(typeInfo, allocHint, args[0]), variableName)
+                val allocArrayInstanceArgs = listOf(typeInfo, allocHint, args[0])
+                val ptr = currentCodeContext.genCall(context.allocArrayFunction, allocArrayInstanceArgs, variableName)
+                codegen.bitcast(codegen.kObjHeaderPtr, ptr, codegen.newVar())
             } else {
                 currentCodeContext.genCall(context.allocInstanceFunction, listOf(typeInfo, allocHint), variableName)
             }
@@ -1298,9 +1305,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val bbEq2  = codegen.basicBlock()                                   // Block to process "eqeq".
             val bbEq3  = codegen.basicBlock()                                   // Block to process "eqeqeq".
             val bbExit = codegen.basicBlock()                                   // Exit block for feather generation.
-            val result = codegen.alloca(getLLVMType(callee.type), codegen.newVar())
+            val result = codegen.alloca(codegen.getLLVMType(callee.type), codegen.newVar())
 
-            val condition = codegen.icmpEq(arg0, kNullPtr, codegen.newVar())    // Compare arg0 with "null".
+            val condition = codegen.icmpEq(arg0, codegen.kNullObjHeaderPtr, codegen.newVar())    // Compare arg0 with "null".
             codegen.condBr(condition, bbEq3, bbEq2)                             // If (arg0 == null) bbEq3 else bbEq2.
 
             codegen.positionAtEnd(bbEq3)                                        // Get generation to bbEq3.
@@ -1378,22 +1385,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    /* Runtime constant */
-    private val kTypeInfo     = LLVMGetTypeByName(context.llvmModule, "struct.TypeInfo")!!
-    private val kObjHeader    = LLVMGetTypeByName(context.llvmModule, "struct.ObjHeader")!!
-    private val kObjHeaderPtr = pointerType(kObjHeader)!!
-    private val kTypeInfoPtr  = pointerType(kTypeInfo)
-    private val kInt1         = LLVMInt1Type()
-    private val kInt8Ptr      = pointerType(LLVMInt8Type())
-    private val kInt8PtrPtr   = pointerType(kInt8Ptr)
-    private val kNullPtr      = LLVMConstNull(kInt8Ptr)!!
-
-    //-------------------------------------------------------------------------//
-
     fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef>, result: String?): LLVMValueRef {
         val thisI8PtrPtr    = codegen.bitcast(kInt8PtrPtr, args[0], codegen.newVar())          // Cast "this (i8*)" to i8**.
         val typeInfoI8Ptr   = codegen.load(thisI8PtrPtr, codegen.newVar())                     // Load TypeInfo address.
-        val typeInfoPtr     = codegen.bitcast(kTypeInfoPtr, typeInfoI8Ptr, codegen.newVar())   // Cast TypeInfo (i8*) to TypeInfo*.
+        val typeInfoPtr     = codegen.bitcast(codegen.kTypeInfoPtr, typeInfoI8Ptr, codegen.newVar())   // Cast TypeInfo (i8*) to TypeInfo*.
         val methodHash      = codegen.functionHash(descriptor)                                 // Calculate hash of the method to be invoked
         val lookupArgs      = listOf(typeInfoPtr, methodHash)                                  // Prepare args for lookup
         val llvmMethod      = currentCodeContext.genCall(
@@ -1401,7 +1396,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                               lookupArgs,
                               codegen.newVar())                                                 // Get method ptr to be invoked
 
-        val functionPtrType = pointerType(getLlvmFunctionType(descriptor))                      // Construct type of the method to be invoked
+        val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))              // Construct type of the method to be invoked
         val function        = codegen.bitcast(functionPtrType, llvmMethod, codegen.newVar())    // Cast method address to the type
         return call(descriptor, function, args, result)                                         // Invoke the method
     }
@@ -1416,8 +1411,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     fun  superCall(result:String, descriptor:ClassConstructorDescriptor, args:List<LLVMValueRef> ): LLVMValueRef {
-        val tmp = codegen.load(codegen.thisVariable(), codegen.newVar())
-        val rargs = listOf(tmp, *args.toTypedArray())
+        val rargs = listOf(codegen.thisVariable(), *args.toTypedArray())
         return callDirect(descriptor, rargs, result)
     }
 

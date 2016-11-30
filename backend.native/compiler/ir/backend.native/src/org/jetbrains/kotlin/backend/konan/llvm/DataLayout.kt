@@ -4,7 +4,7 @@ import llvm.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
 
-internal fun getLLVMType(type: KotlinType): LLVMTypeRef {
+internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
     return when {
         KotlinBuiltIns.isBoolean(type) -> LLVMInt1Type()
         KotlinBuiltIns.isByte(type) -> LLVMInt8Type()
@@ -14,7 +14,8 @@ internal fun getLLVMType(type: KotlinType): LLVMTypeRef {
         KotlinBuiltIns.isUnit(type) -> LLVMVoidType() // TODO: handle Unit parameter case
         KotlinBuiltIns.isFloat(type) -> LLVMFloatType()
         KotlinBuiltIns.isDouble(type) -> LLVMDoubleType()
-        !KotlinBuiltIns.isPrimitiveType(type) -> LLVMPointerType(LLVMInt8Type(), 0)
+        KotlinBuiltIns.isArray(type) -> this.kArrayHeaderPtr
+        !KotlinBuiltIns.isPrimitiveType(type) -> this.kObjHeaderPtr
         else -> throw NotImplementedError(type.toString() + " is not supported")
     }!!
 }

@@ -97,13 +97,36 @@ internal val int8TypePtr = pointerType(int8Type)
 
 internal val voidType = LLVMVoidType()
 
+internal val ContextUtils.kTypeInfo: LLVMTypeRef
+    get() = LLVMGetTypeByName(context.llvmModule, "struct.TypeInfo")!!
+internal val ContextUtils.kObjHeader: LLVMTypeRef
+    get() = LLVMGetTypeByName(context.llvmModule, "struct.ObjHeader")!!
+internal val ContextUtils.kObjHeaderPtr: LLVMTypeRef
+    get() = pointerType(kObjHeader)
+internal val ContextUtils.kObjHeaderPtrPtr: LLVMTypeRef
+    get() = pointerType(kObjHeaderPtr)
+internal val ContextUtils.kArrayHeader: LLVMTypeRef
+    get() = LLVMGetTypeByName(context.llvmModule, "struct.ArrayHeader")!!
+internal val ContextUtils.kArrayHeaderPtr: LLVMTypeRef
+    get() = pointerType(kArrayHeader)
+internal val ContextUtils.kTypeInfoPtr: LLVMTypeRef
+    get() = pointerType(kTypeInfo)
+internal val kInt1         = LLVMInt1Type()
+internal val kInt8Ptr      = pointerType(LLVMInt8Type())
+internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
+internal val ContextUtils.kNullObjHeaderPtr: LLVMValueRef
+    get() = LLVMConstNull(this.kObjHeaderPtr)!!
+internal val ContextUtils.kNullArrayHeaderPtr: LLVMValueRef
+    get() = LLVMConstNull(this.kArrayHeaderPtr)!!
+
+
 internal fun pointerType(pointeeType: LLVMTypeRef?) = LLVMPointerType(pointeeType, 0)!!
 
 internal fun structType(vararg types: LLVMTypeRef?): LLVMTypeRef = memScoped {
     LLVMStructType(allocArrayOf(*types)[0].ptr, types.size, 0)!!
 }
 
-internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef? {
+internal fun ContextUtils.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef? {
     val returnType = getLLVMType(function.returnType!!)
     val params = function.dispatchReceiverParameter.singletonOrEmptyList() +
             function.extensionReceiverParameter.singletonOrEmptyList() +
@@ -111,7 +134,7 @@ internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef? {
 
     var extraParam = listOf<LLVMTypeRef?>()
     if (function is ClassConstructorDescriptor) {
-        extraParam += pointerType(LLVMInt8Type())
+        extraParam += kObjHeaderPtr
     }
     val paramTypes:List<LLVMTypeRef?> = params.map { getLLVMType(it.type) }
     extraParam += paramTypes

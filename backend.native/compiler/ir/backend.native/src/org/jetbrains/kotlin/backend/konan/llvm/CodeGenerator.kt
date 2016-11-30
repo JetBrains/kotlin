@@ -32,11 +32,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         if (descriptor is ClassConstructorDescriptor
             || descriptor.dispatchReceiverParameter != null
             || descriptor.extensionReceiverParameter != null) {
-            val name = "this"
-            val type = pointerType(LLVMInt8Type());
-            val v = alloca(type, name)
-            store(LLVMGetParam(fn, 0)!!, v)
-            currentFunction!!.registerVariable(name, v)
             indexOffset = 1;
         }
 
@@ -80,9 +75,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     val FunctionDescriptor.variables: MutableMap<String, LLVMValueRef?>
         get() = this@CodeGenerator.function2variables[this]!!
-
-    val ClassConstructorDescriptor.thisValue: LLVMValueRef?
-    get() = thisValue
 
 
     fun FunctionDescriptor.registerVariable(varName: String, value: LLVMValueRef?) = variables.put(varName, value)
@@ -165,7 +157,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun typeInfoType(descriptor: ClassDescriptor): LLVMTypeRef = descriptor.llvmTypeInfoPtr.getLlvmType()
     fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr.getLlvmValue()!!
 
-    fun thisVariable() = variable("this")!!
+    fun thisVariable() = LLVMGetParam(currentFunction!!.llvmFunction.getLlvmValue(), 0)!!
+
     fun param(fn: FunctionDescriptor?, i: Int): LLVMValueRef? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
 
     fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
