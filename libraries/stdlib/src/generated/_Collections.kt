@@ -961,7 +961,6 @@ public fun Collection<Short>.toShortArray(): ShortArray {
  * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -975,7 +974,6 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
  * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
 }
@@ -988,7 +986,6 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * The returned map preserves the entry iteration order of the original collection.
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -1885,7 +1882,6 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
  */
 public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
     val arraySize = other.size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in this) {
@@ -1908,7 +1904,6 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))

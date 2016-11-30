@@ -3,9 +3,9 @@
 @file:kotlin.jvm.JvmName("PreconditionsKt")
 package kotlin
 
-@kotlin.internal.InlineExposed
+@PublishedApi
 internal object _Assertions {
-    @JvmField
+    @JvmField @PublishedApi
     internal val ENABLED: Boolean = javaClass.desiredAssertionStatus()
 }
 
@@ -24,7 +24,6 @@ public inline fun assert(value: Boolean) {
  */
 @kotlin.internal.InlineOnly
 public inline fun assert(value: Boolean, lazyMessage: () -> Any) {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     if (_Assertions.ENABLED) {
         if (!value) {
             val message = lazyMessage()

@@ -38,13 +38,13 @@ internal class IndexingIterable<out T>(private val iteratorFactory: () -> Iterat
 /**
  * Returns the size of this iterable if it is known, or `null` otherwise.
  */
-@kotlin.internal.InlineExposed
+@PublishedApi
 internal fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) this.size else null
 
 /**
  * Returns the size of this iterable if it is known, or the specified [default] value otherwise.
  */
-@kotlin.internal.InlineExposed
+@PublishedApi
 internal fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
 
 /** Returns true when it's safe to convert this collection to a set without changing contains method behavior. */

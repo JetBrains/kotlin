@@ -20,7 +20,6 @@ public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
         return block(this)
     } catch (e: Throwable) {
         closed = true
-        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
         this?.closeSuppressed(e)
         throw e
     } finally {
@@ -35,8 +34,7 @@ public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
  * The suppressed exception is added to the list of suppressed exceptions of [cause] exception.
  */
 @SinceKotlin("1.1")
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineExposed
+@PublishedApi
 internal fun AutoCloseable.closeSuppressed(cause: Throwable) {
     try {
         close()

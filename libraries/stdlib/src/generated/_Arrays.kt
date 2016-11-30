@@ -5808,7 +5808,6 @@ public fun Array<out Short>.toShortArray(): ShortArray {
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5822,7 +5821,6 @@ public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>)
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5836,7 +5834,6 @@ public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): M
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5850,7 +5847,6 @@ public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>):
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5864,7 +5860,6 @@ public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5878,7 +5873,6 @@ public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): M
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5892,7 +5886,6 @@ public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>):
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5906,7 +5899,6 @@ public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5920,7 +5912,6 @@ public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, 
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -5934,7 +5925,6 @@ public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): M
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
 }
@@ -5948,7 +5938,6 @@ public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K,
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Byte>(capacity), keySelector)
 }
@@ -5962,7 +5951,6 @@ public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, By
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Short>(capacity), keySelector)
 }
@@ -5976,7 +5964,6 @@ public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, 
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Int>(capacity), keySelector)
 }
@@ -5990,7 +5977,6 @@ public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int>
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Long>(capacity), keySelector)
 }
@@ -6004,7 +5990,6 @@ public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Lo
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Float>(capacity), keySelector)
 }
@@ -6018,7 +6003,6 @@ public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, 
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Double>(capacity), keySelector)
 }
@@ -6032,7 +6016,6 @@ public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Boolean>(capacity), keySelector)
 }
@@ -6046,7 +6029,6 @@ public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
@@ -6059,7 +6041,6 @@ public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Ch
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6072,7 +6053,6 @@ public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valu
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6085,7 +6065,6 @@ public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTr
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6098,7 +6077,6 @@ public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, value
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6111,7 +6089,6 @@ public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTran
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6124,7 +6101,6 @@ public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTr
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6137,7 +6113,6 @@ public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, value
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6150,7 +6125,6 @@ public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, val
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -6163,7 +6137,6 @@ public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, v
  * The returned map preserves the entry iteration order of the original array.
  */
 public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
@@ -11912,7 +11885,6 @@ public infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
  */
 public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -11927,7 +11899,6 @@ public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, 
  */
 public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -11942,7 +11913,6 @@ public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) 
  */
 public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -11957,7 +11927,6 @@ public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R
  */
 public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -11972,7 +11941,6 @@ public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) ->
  */
 public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -11987,7 +11955,6 @@ public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) 
  */
 public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -12002,7 +11969,6 @@ public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R
  */
 public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -12017,7 +11983,6 @@ public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double,
  */
 public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -12032,7 +11997,6 @@ public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolea
  */
 public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
     val arraySize = size
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {

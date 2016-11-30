@@ -94,7 +94,7 @@ public data class MatchGroup(public val value: String, public val range: IntRang
  * For pattern syntax reference see [Pattern]
  */
 public class Regex
-@kotlin.internal.InlineExposed
+@PublishedApi
 internal constructor(private val nativePattern: Pattern) {
 
 

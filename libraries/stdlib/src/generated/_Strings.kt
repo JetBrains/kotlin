@@ -505,7 +505,6 @@ public inline fun String.reversed(): String {
  * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -519,7 +518,6 @@ public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>)
  * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
@@ -532,7 +530,6 @@ public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K,
  * The returned map preserves the entry iteration order of the original char sequence.
  */
 public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }

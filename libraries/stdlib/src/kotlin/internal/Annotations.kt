@@ -58,10 +58,3 @@ internal annotation class OnlyInputTypes
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class InlineOnly
-
-/**
- * Specifies that this part of internal API is effectively public exposed by using in public inline function
- */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class InlineExposed

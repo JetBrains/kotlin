@@ -11,7 +11,7 @@ package kotlin.collections
  * @throws NoSuchElementException when the map doesn't contain a value for the specified key and no implicit default was provided for that map.
  */
 @kotlin.jvm.JvmName("getOrImplicitDefaultNullable")
-@kotlin.internal.InlineExposed
+@PublishedApi
 internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)

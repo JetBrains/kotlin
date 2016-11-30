@@ -93,7 +93,7 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V>
  * to the Collection constructor for HashSet, (c.size()/.75f) + 1, but provides further optimisations for very small or
  * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
  */
-@kotlin.internal.InlineExposed
+@PublishedApi
 internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
@@ -562,7 +562,7 @@ public inline operator fun <K, V> MutableMap<in K, in V>.plusAssign(map: Map<K, 
 }
 
 
-// do not expose for now @kotlin.internal.InlineExposed
+// do not expose for now @PublishedApi
 internal fun <K, V> Map<K, V>.optimizeReadOnlyMap() = when (size) {
     0 -> emptyMap()
     1 -> toSingletonMapOrSelf()

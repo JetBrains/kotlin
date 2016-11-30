@@ -127,3 +127,13 @@ public annotation class SinceKotlin(val version: String)
 @MustBeDocumented
 @SinceKotlin("1.1")
 public annotation class DslMarker
+
+
+/**
+ * Specifies that this part of internal API is effectively public exposed by using in public inline function
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("1.1")
+public annotation class PublishedApi

@@ -157,7 +157,6 @@ public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
         return block(this)
     } catch (e: Throwable) {
         closed = true
-        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
         if (this != null) platformCloseSuppressed(this, e)
         throw e
     } finally {

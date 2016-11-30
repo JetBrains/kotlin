@@ -181,7 +181,6 @@ fun snapshots(): List<GenericFunction> {
         }
         body {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
             return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
@@ -193,14 +192,12 @@ fun snapshots(): List<GenericFunction> {
         }
         body(CharSequences) {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(length).coerceAtLeast(16)
             return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(size).coerceAtLeast(16)
             return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
@@ -255,7 +252,6 @@ fun snapshots(): List<GenericFunction> {
 
         body {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
@@ -267,14 +263,12 @@ fun snapshots(): List<GenericFunction> {
         }
         body(CharSequences) {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(length).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(size).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
@@ -329,7 +323,6 @@ fun snapshots(): List<GenericFunction> {
 
         body {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
@@ -341,14 +334,12 @@ fun snapshots(): List<GenericFunction> {
         }
         body(CharSequences) {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(length).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val capacity = mapCapacity(size).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
