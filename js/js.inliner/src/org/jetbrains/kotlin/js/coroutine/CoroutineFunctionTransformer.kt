@@ -48,7 +48,7 @@ class CoroutineFunctionTransformer(
             function.scope.declareName(throwId)
         }
 
-        val context = CoroutineTransformationContext(function.scope)
+        val context = CoroutineTransformationContext(function.scope, function.suspendObjectRef != null)
         val bodyTransformer = CoroutineBodyTransformer(program, context, throwName)
         bodyTransformer.preProcess(body)
         body.statements.forEach { it.accept(bodyTransformer) }
@@ -87,15 +87,15 @@ class CoroutineFunctionTransformer(
         val parameterNames = (function.parameters.map { it.name } + innerFunction?.parameters?.map { it.name }.orEmpty()).toSet()
 
         constructor.body.statements.run {
-            assign(context.stateFieldName, program.getNumberLiteral(0))
-            assign(context.exceptionStateName, program.getNumberLiteral(globalCatchBlockIndex))
+            assignToField(context.stateFieldName, program.getNumberLiteral(0))
+            assignToField(context.exceptionStateName, program.getNumberLiteral(globalCatchBlockIndex))
             if (hasFinallyBlocks) {
-                assign(context.finallyPathFieldName, JsLiteral.NULL)
+                assignToField(context.finallyPathFieldName, JsLiteral.NULL)
             }
-            assign(context.controllerFieldName, controllerName.makeRef())
+            assignToField(context.controllerFieldName, controllerName.makeRef())
             for (localVariable in localVariables) {
                 val value = if (localVariable !in parameterNames) JsLiteral.NULL else localVariable.makeRef()
-                assign(function.scope.getFieldName(localVariable), value)
+                assignToField(function.scope.getFieldName(localVariable), value)
             }
         }
 
@@ -161,7 +161,12 @@ class CoroutineFunctionTransformer(
         functionWithBody.body.statements.clear()
 
         resumeFunction.body.statements.apply {
-            assign(context.resultFieldName, resumeParameter.makeRef())
+            assignToField(context.resultFieldName, resumeParameter.makeRef())
+            if (context.suspendObjectVar != null) {
+                add(JsAstUtils.newVar(context.suspendObjectVar!!, function.suspendObjectRef!!.deepCopy()).apply {
+                    synthetic = true
+                })
+            }
             this += coroutineBody
         }
 
@@ -249,7 +254,7 @@ class CoroutineFunctionTransformer(
         return functions.mapNotNull { it as? FunctionDescriptor }.firstOrNull { it.kind.isReal }
     }
 
-    private fun MutableList<JsStatement>.assign(fieldName: JsName, value: JsExpression) {
+    private fun MutableList<JsStatement>.assignToField(fieldName: JsName, value: JsExpression) {
         this += JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), value).makeStmt()
     }
 

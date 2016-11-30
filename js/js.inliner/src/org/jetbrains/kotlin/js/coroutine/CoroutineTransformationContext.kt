@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.coroutine
 
 import com.google.dart.compiler.backend.js.ast.JsScope
 
-class CoroutineTransformationContext(private val scope: JsScope) {
+class CoroutineTransformationContext(private val scope: JsScope, private val stackUnwinding: Boolean) {
     val entryBlock = CoroutineBlock()
     val globalCatchBlock = CoroutineBlock()
     val resultFieldName by lazy { scope.declareFreshName("\$result") }
@@ -27,4 +27,5 @@ class CoroutineTransformationContext(private val scope: JsScope) {
     val controllerFieldName by lazy { scope.declareFreshName("\$controller") }
     val exceptionStateName by lazy { scope.declareFreshName("\$exceptionState") }
     val finallyPathFieldName by lazy { scope.declareFreshName("\$finallyPath") }
+    val suspendObjectVar by lazy { if (stackUnwinding) scope.declareFreshName("\$suspendObject") else null }
 }

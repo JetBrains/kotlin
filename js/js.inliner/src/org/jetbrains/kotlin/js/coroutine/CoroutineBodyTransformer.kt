@@ -361,7 +361,18 @@ class CoroutineBodyTransformer(
 
     private fun handleSuspend(invocation: JsInvocation) {
         val invokeExpression = if (invocation.isFakeSuspend) invocation.arguments.getOrNull(0) else invocation
-        currentStatements += JsReturn(invokeExpression)
+        val suspendObjectVar = context.suspendObjectVar
+        val statements = if (invokeExpression == null || suspendObjectVar == null) {
+            listOf(JsReturn(invokeExpression))
+        }
+        else {
+            val resultRef = JsNameRef(context.resultFieldName, JsLiteral.THIS).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE }
+            val invocationStatement = JsAstUtils.assignment(resultRef, invokeExpression).makeStmt()
+            val suspendCondition = JsAstUtils.equality(resultRef.deepCopy(), JsAstUtils.pureFqn(suspendObjectVar, null))
+            val suspendIfNeeded = JsIf(suspendCondition, JsReturn())
+            listOf(invocationStatement, suspendIfNeeded, JsBreak())
+        }
+        currentStatements += statements
         currentBlock = suspendTarget!!
     }
 

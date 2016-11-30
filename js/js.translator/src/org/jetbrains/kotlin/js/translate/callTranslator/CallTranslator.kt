@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsNameRef
+import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.backend.common.getBuiltInSuspendWithCurrentContinuation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.setInlineCallMetadata
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -160,12 +157,13 @@ private fun translateFunctionCall(
     return callExpression
 }
 
-private fun translateCallWithContinuation(context: TranslationContext,resolvedCall: ResolvedCall<out FunctionDescriptor>): JsExpression {
+private fun translateCallWithContinuation(context: TranslationContext, resolvedCall: ResolvedCall<out FunctionDescriptor>): JsExpression {
     val arguments = CallArgumentTranslator.translate(resolvedCall, null, context)
     val coroutineArgument = TranslationUtils.getEnclosingContinuationParameter(context)
     val invocation = JsInvocation(arguments.valueArguments[0], ReferenceTranslator.translateAsValueReference(coroutineArgument, context))
     invocation.inlineStrategy = InlineStrategy.IN_PLACE
-    return invocation
+    context.currentBlock.statements += JsReturn(invocation)
+    return JsLiteral.NULL
 }
 
 fun computeExplicitReceiversForInvoke(

@@ -103,6 +103,8 @@ var JsNameRef.coroutineResult by MetadataProperty(default = false)
  */
 var JsNameRef.coroutineController by MetadataProperty(default = false)
 
+var JsFunction.suspendObjectRef: JsExpression? by MetadataProperty(default = null)
+
 var JsFunction.continuationInterfaceRef: JsExpression? by MetadataProperty(default = null)
 
 var JsName.imported by MetadataProperty(default = false)

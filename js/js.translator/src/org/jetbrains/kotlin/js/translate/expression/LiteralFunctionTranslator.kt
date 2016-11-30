@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
@@ -42,6 +43,10 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
+    companion object {
+        private val SUSPEND_FQ_NAME = "kotlin.coroutines.Suspend"
+    }
+
     fun translate(
             declaration: KtDeclarationWithBody,
             continuationType: ClassDescriptor? = null,
@@ -83,6 +88,14 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             invokingContext.getInnerNameForDescriptor(descriptor)
         }
 
+        val suspendObjectRef = if (descriptor.isCoroutineLambda && KotlinBuiltIns.isUnit(descriptor.returnType!!)) {
+            val suspendObjectDescriptor = context().currentModule.builtIns.getBuiltInClassByFqName(FqName(SUSPEND_FQ_NAME))
+            ReferenceTranslator.translateAsValueReference(suspendObjectDescriptor, context())
+        }
+        else {
+            null
+        }
+
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
             lambdaCreator.name = invokingContext.getInnerNameForDescriptor(descriptor)
@@ -94,6 +107,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             }
             lambdaCreator.name.staticRef = lambdaCreator
             lambdaCreator.continuationInterfaceRef = invokingContext.getContinuationInterfaceReference()
+            lambdaCreator.suspendObjectRef = suspendObjectRef
             return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
                                                         invokingContext)
         }
@@ -105,6 +119,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         invokingContext.addDeclarationStatement(lambda.makeStmt())
         lambda.name.staticRef = lambda
         lambda.continuationInterfaceRef = invokingContext.getContinuationInterfaceReference()
+        lambda.suspendObjectRef = suspendObjectRef
         return getReferenceToLambda(invokingContext, descriptor, lambda.name)
     }
 

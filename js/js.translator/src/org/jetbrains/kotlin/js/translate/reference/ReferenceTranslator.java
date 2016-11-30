@@ -112,7 +112,7 @@ public final class ReferenceTranslator {
     private static JsExpression getLazyReferenceToObject(@NotNull ClassDescriptor descriptor, @NotNull TranslationContext context) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         JsExpression qualifier = context.getInnerReference(container);
-        return JsAstUtils.pureFqn(context.getNameForDescriptor(descriptor), qualifier);
+        return new JsNameRef(context.getNameForDescriptor(descriptor), qualifier);
     }
 
     private static boolean shouldTranslateAsFQN(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
