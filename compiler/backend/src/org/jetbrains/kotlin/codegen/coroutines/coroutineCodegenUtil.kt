@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.SUSPEND_WITH_CURRENT_CONTINUATION_NAME
+import org.jetbrains.kotlin.backend.common.findInterceptResume
+import org.jetbrains.kotlin.backend.common.getBuiltInSuspendWithCurrentContinuation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -246,17 +249,10 @@ fun KotlinType.hasNoinlineInterceptResume() =
 fun findOperatorInController(controllerType: KotlinType, name: Name): SimpleFunctionDescriptor? =
         controllerType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).singleOrNull { it.isOperator }
 
-val SUSPEND_WITH_CURRENT_CONTINUATION_NAME = Name.identifier("suspendWithCurrentContinuation")
-
 fun FunctionDescriptor.isBuiltInSuspendWithCurrentContinuation(): Boolean {
     if (name != SUSPEND_WITH_CURRENT_CONTINUATION_NAME) return false
 
-    val originalDeclaration =
-            builtIns.builtInsPackageFragments.singleOrNull { it.fqName == KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME }
-                    ?.getMemberScope()
-                    ?.getContributedFunctions(SUSPEND_WITH_CURRENT_CONTINUATION_NAME, NoLookupLocation.FROM_BACKEND)
-                    ?.singleOrNull()
-                    ?: return false
+    val originalDeclaration = getBuiltInSuspendWithCurrentContinuation() ?: return false
 
     return DescriptorEquivalenceForOverrides.areEquivalent(
             originalDeclaration, this.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)

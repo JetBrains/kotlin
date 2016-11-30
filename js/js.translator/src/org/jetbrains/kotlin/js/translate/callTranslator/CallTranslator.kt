@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.metadata.*
+import org.jetbrains.kotlin.backend.common.getBuiltInSuspendWithCurrentContinuation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -28,17 +28,21 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.setInlineCallMetadata
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
@@ -123,11 +127,18 @@ private fun translateCall(context: TranslationContext,
     return translateFunctionCall(context, resolvedCall, resolvedCall, explicitReceivers)
 }
 
-private fun translateFunctionCall(context: TranslationContext,
-                                  resolvedCall: ResolvedCall<out FunctionDescriptor>,
-                                  inlineResolvedCall: ResolvedCall<out CallableDescriptor>,
-                                  explicitReceivers: ExplicitReceivers
+private fun translateFunctionCall(
+        context: TranslationContext,
+        resolvedCall: ResolvedCall<out FunctionDescriptor>,
+        inlineResolvedCall: ResolvedCall<out CallableDescriptor>,
+        explicitReceivers: ExplicitReceivers
 ): JsExpression {
+    val descriptorToCall = resolvedCall.resultingDescriptor
+    if (descriptorToCall is FunctionDescriptor && DescriptorEquivalenceForOverrides.areEquivalent(
+            descriptorToCall.getBuiltInSuspendWithCurrentContinuation(), descriptorToCall.original)) {
+        return translateCallWithContinuation(context, resolvedCall)
+    }
+
     val callExpression = context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
 
     if (CallExpressionTranslator.shouldBeInlined(inlineResolvedCall.resultingDescriptor, context)) {
@@ -135,19 +146,26 @@ private fun translateFunctionCall(context: TranslationContext,
                               inlineResolvedCall.resultingDescriptor, context)
     }
 
-    if (resolvedCall.resultingDescriptor.isSuspend && resolvedCall.resultingDescriptor.initialSignatureDescriptor != null) {
+    if (resolvedCall.resultingDescriptor.isSuspend && !context.isInSuspendFunction) {
         context.currentBlock.statements += JsAstUtils.asSyntheticStatement((callExpression as JsInvocation).apply {
             isSuspend = true
             isPreSuspend = true
         })
-        val coroutineDescriptor = resolvedCall.getImplicitReceiverValue()!!.declarationDescriptor
-        val coroutineRef = context.getAliasForDescriptor(coroutineDescriptor) ?: JsLiteral.THIS
+        val coroutineRef = TranslationUtils.translateContinuationArgument(context, resolvedCall)
         return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
             sideEffects = SideEffectKind.DEPENDS_ON_STATE
             coroutineResult = true
         })
     }
     return callExpression
+}
+
+private fun translateCallWithContinuation(context: TranslationContext,resolvedCall: ResolvedCall<out FunctionDescriptor>): JsExpression {
+    val arguments = CallArgumentTranslator.translate(resolvedCall, null, context)
+    val coroutineArgument = TranslationUtils.getEnclosingContinuationParameter(context)
+    val invocation = JsInvocation(arguments.valueArguments[0], ReferenceTranslator.translateAsValueReference(coroutineArgument, context))
+    invocation.inlineStrategy = InlineStrategy.IN_PLACE
+    return invocation
 }
 
 fun computeExplicitReceiversForInvoke(

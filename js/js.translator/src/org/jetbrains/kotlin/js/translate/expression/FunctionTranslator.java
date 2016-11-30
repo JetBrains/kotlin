@@ -116,7 +116,15 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private void generateFunctionObject() {
-        setParameters(functionObject, translateParameters());
+        List<JsParameter> parameters = translateParameters();
+
+        VariableDescriptor continuationDescriptor = functionBodyContext.getContinuationParameterDescriptor();
+        if (continuationDescriptor != null) {
+            JsParameter jsParameter = new JsParameter(functionBodyContext.getNameForDescriptor(continuationDescriptor));
+            parameters.add(jsParameter);
+        }
+
+        setParameters(functionObject, parameters);
         translateBody();
     }
 
@@ -154,6 +162,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
         mayBeAddThisParameterForExtensionFunction(jsParameters);
         addParameters(jsParameters, descriptor, context());
+
         return jsParameters;
     }
 

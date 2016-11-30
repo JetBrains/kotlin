@@ -31,12 +31,14 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -351,5 +353,32 @@ public final class TranslationUtils {
         MetadataProperties.setHandleResult(handleResultInvocation, true);
 
         return handleResultInvocation;
+    }
+
+    @NotNull
+    public static JsExpression translateContinuationArgument(@NotNull TranslationContext context, @NotNull ResolvedCall<?> resolvedCall) {
+        CoroutineReceiverValue coroutineReceiver = context.bindingContext().get(
+                BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT,
+                resolvedCall.getCall());
+
+        CallableDescriptor continuationDescriptor = null;
+        if (coroutineReceiver != null) {
+            continuationDescriptor = coroutineReceiver.getDeclarationDescriptor();
+        }
+        if (continuationDescriptor == null) {
+            continuationDescriptor = getEnclosingContinuationParameter(context);
+        }
+
+        return ReferenceTranslator.translateAsValueReference(continuationDescriptor, context);
+    }
+
+    @NotNull
+    public static VariableDescriptor getEnclosingContinuationParameter(@NotNull TranslationContext context) {
+        VariableDescriptor result = context.getContinuationParameterDescriptor();
+        if (result == null) {
+            assert context.getParent() != null;
+            result = getEnclosingContinuationParameter(context.getParent());
+        }
+        return result;
     }
 }

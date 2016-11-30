@@ -51,7 +51,15 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         val descriptor = getFunctionDescriptor(invokingContext.bindingContext(), declaration)
 
         val lambda = invokingContext.getFunctionObject(descriptor)
-        val functionContext = invokingContext.newFunctionBodyWithUsageTracker(lambda, descriptor)
+
+        val aliases = mutableMapOf<DeclarationDescriptor, JsExpression>()
+        if (descriptor.isCoroutineLambda) {
+            aliases.put(descriptor, JsLiteral.THIS)
+        }
+
+        val functionContext = invokingContext
+                .newFunctionBodyWithUsageTracker(lambda, descriptor)
+                .innerContextWithDescriptorsAliased(aliases)
         FunctionTranslator.addParameters(lambda.parameters, descriptor, functionContext)
 
         descriptor.valueParameters.forEach {
