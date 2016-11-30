@@ -64,12 +64,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val fieldTypes = fields.map { getLLVMType(it.returnType!!) }.toTypedArray()
 
         memScoped {
-            val fieldTypesNativeArrayPtr = if (fieldTypes.size > 0) {
-                allocArrayOf(*fieldTypes)[0].ptr
-            } else {
-                null
-            }
-
+            val fieldTypesNativeArrayPtr = allocArrayOf(*fieldTypes)[0].ptr
             LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
         }
         return classType

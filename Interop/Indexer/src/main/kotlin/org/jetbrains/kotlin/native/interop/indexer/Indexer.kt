@@ -319,7 +319,7 @@ fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
                 indexEntityReference.value = null
             }
 
-            val commandLineArgs = if (args1.size != 0) nativeHeap.allocArrayOfPointersTo(*args1)[0].ptr else null
+            val commandLineArgs = nativeHeap.allocArrayOfPointersTo(*args1)[0].ptr
 
             clang_indexSourceFile(indexAction, clientData, callbacks.ptr, IndexerCallbacks.size.toInt(),
                     0, headerFile.path, commandLineArgs, args1.size, null, 0, null, 0)

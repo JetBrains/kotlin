@@ -116,7 +116,6 @@ internal fun getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef? {
     val paramTypes:List<LLVMTypeRef?> = params.map { getLLVMType(it.type) }
     extraParam += paramTypes
 
-    if (extraParam.size == 0) return LLVMFunctionType(returnType, null, 0, 0)
     memScoped {
         val paramTypesPtr = allocArrayOf(extraParam)[0].ptr
         return LLVMFunctionType(returnType, paramTypesPtr, extraParam.size, 0)
@@ -159,6 +158,6 @@ internal fun ContextUtils.externalGlobal(name: String, type: LLVMTypeRef): LLVMV
 
 internal fun functionType(returnType: LLVMTypeRef?, isVarArg: Boolean = false, vararg paramTypes: LLVMTypeRef?) =
         memScoped {
-            val paramTypesPtr = if (paramTypes.size != 0) allocArrayOf(*paramTypes)[0].ptr else null
+            val paramTypesPtr = allocArrayOf(*paramTypes)[0].ptr
             LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, if (isVarArg) 1 else 0)!!
         }

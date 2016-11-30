@@ -123,7 +123,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                result: String?): LLVMValueRef {
 
         memScoped {
-            val rargs = if (args.size != 0) allocArrayOf(args)[0].ptr else null
+            val rargs = allocArrayOf(args)[0].ptr
             return LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, then, landingpad, result)!!
         }
 
@@ -131,7 +131,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun call(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>, result: String?): LLVMValueRef {
         memScoped {
-            val rargs = if (args.size != 0) allocArrayOf(args)[0].ptr else null
+            val rargs = allocArrayOf(args)[0].ptr
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, result)!!
         }
     }
