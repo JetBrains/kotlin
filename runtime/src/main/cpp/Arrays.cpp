@@ -115,6 +115,17 @@ ArrayHeader* Kotlin_CharArray_clone(const ArrayHeader* array) {
   return result;
 }
 
+ArrayHeader* Kotlin_CharArray_copyOf(const ArrayHeader* array, KInt newSize) {
+  ArrayHeader* result = ArrayContainer(
+      theCharArrayTypeInfo, newSize).GetPlace();
+  KInt toCopy = array->count_ < newSize ?  array->count_ : newSize;
+  memcpy(
+      PrimitiveArrayAddressOfElementAt<KChar>(result, 0),
+      PrimitiveArrayAddressOfElementAt<KChar>(array, 0),
+      toCopy * sizeof(KChar));
+  return result;
+}
+
 KInt Kotlin_CharArray_getArrayLength(const ArrayHeader* array) {
   return array->count_;
 }

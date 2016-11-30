@@ -66,6 +66,9 @@ public final class CharArray : Cloneable {
     @SymbolName("Kotlin_CharArray_clone")
     external public override fun clone(): Any
 
+    @SymbolName("Kotlin_CharArray_copyOf")
+    external public fun copyOf(newSize: Int): CharArray
+
     @SymbolName("Kotlin_CharArray_getArrayLength")
     external private fun getArrayLength(): Int
 

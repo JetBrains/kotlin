@@ -167,15 +167,16 @@ class ArrayList<E> private constructor(
     }
 
     override fun toString(): String {
-        var result = "["
+        val sb = StringBuilder(2 + length * 3)
+        sb.append("[")
         var i = 0
         while (i < length) {
-            if (i > 0) result += ", "
-            result += array[offset + i].toString()
+            if (i > 0) sb.append(", ")
+            sb.append(array[offset + i])
             i++
         }
-        result += "]"
-        return result
+        sb.append("]")
+        return sb.toString()
     }
 
     // ---------------------------- private ----------------------------

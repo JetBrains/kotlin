@@ -182,6 +182,12 @@ fun testToString() {
     assertTrue(a.toString() == makeList123().toString())
 }
 
+fun testToString2() {
+    val a = makeList123()
+    assertEquals(a.toString(), "[1, 2, 3]")
+}
+
+
 fun testSubList() {
     val a0 = makeList01234()
     val a = a0.subList(1, 4)
@@ -271,10 +277,11 @@ fun testIteratorAdd() {
         val next = it.next()
         if (i++ % 2 == 0)
             it.add("-" + next)
-        it.next()
     }
     //assertEquals(listOf("1", "2", "-2", "3", "4", "-4", "5"), a)
 }
+
+
 
 fun main(args : Array<String>) {
     testBasic()
@@ -286,6 +293,7 @@ fun main(args : Array<String>) {
     testEquals()
     testHashCode()
     testToString()
+    testToString2()
     testSubList()
     testResize()
     testSubListContains()
