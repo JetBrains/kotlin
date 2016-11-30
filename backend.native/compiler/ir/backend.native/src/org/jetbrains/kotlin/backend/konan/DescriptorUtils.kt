@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 
@@ -64,3 +61,19 @@ internal val ClassDescriptor.isArray: Boolean
 
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
+
+internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
+    get() {
+        val constructorReceiver = if (this is ConstructorDescriptor) {
+            this.constructedClass.thisAsReceiverParameter
+        } else {
+            null
+        }
+
+        val receivers = listOf(
+                constructorReceiver,
+                this.dispatchReceiverParameter,
+                this.extensionReceiverParameter).filterNotNull()
+
+        return receivers + this.valueParameters
+    }

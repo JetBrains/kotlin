@@ -14,7 +14,7 @@ internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
         KotlinBuiltIns.isUnit(type) -> LLVMVoidType() // TODO: handle Unit parameter case
         KotlinBuiltIns.isFloat(type) -> LLVMFloatType()
         KotlinBuiltIns.isDouble(type) -> LLVMDoubleType()
-        KotlinBuiltIns.isArray(type) -> this.kArrayHeaderPtr
+        KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)-> this.kArrayHeaderPtr
         !KotlinBuiltIns.isPrimitiveType(type) -> this.kObjHeaderPtr
         else -> throw NotImplementedError(type.toString() + " is not supported")
     }!!

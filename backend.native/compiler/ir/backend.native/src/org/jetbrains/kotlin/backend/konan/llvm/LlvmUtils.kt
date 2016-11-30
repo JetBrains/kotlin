@@ -2,9 +2,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.backend.konan.allValueParameters
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 /**
  * Represents the value which can be emitted as bitcode const value
@@ -128,20 +127,12 @@ internal fun structType(vararg types: LLVMTypeRef?): LLVMTypeRef = memScoped {
 
 internal fun ContextUtils.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef? {
     val returnType = getLLVMType(function.returnType!!)
-    val params = function.dispatchReceiverParameter.singletonOrEmptyList() +
-            function.extensionReceiverParameter.singletonOrEmptyList() +
-            function.valueParameters
-
-    var extraParam = listOf<LLVMTypeRef?>()
-    if (function is ClassConstructorDescriptor) {
-        extraParam += kObjHeaderPtr
-    }
-    val paramTypes:List<LLVMTypeRef?> = params.map { getLLVMType(it.type) }
-    extraParam += paramTypes
+    val params = function.allValueParameters
+    val paramTypes = params.map { getLLVMType(it.type) }
 
     memScoped {
-        val paramTypesPtr = allocArrayOf(extraParam)[0].ptr
-        return LLVMFunctionType(returnType, paramTypesPtr, extraParam.size, 0)
+        val paramTypesPtr = allocArrayOf(paramTypes)[0].ptr
+        return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)
     }
 }
 

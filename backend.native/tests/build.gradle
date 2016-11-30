@@ -546,13 +546,10 @@ task finally9(type: RunKonanTest) {
 }
 */
 
-/*
-TODO: enable after improving LLVM variable naming
 task scope1(type: RunKonanTest) {
     goldValue = "1\n"
     source = "codegen/dataflow/scope1.kt"
 }
-*/
 
 task try1(type: RunKonanTest) {
     goldValue = "5\n"

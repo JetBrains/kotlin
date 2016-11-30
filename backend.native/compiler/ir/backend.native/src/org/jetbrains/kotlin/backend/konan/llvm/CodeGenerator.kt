@@ -25,28 +25,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         prologueBb = LLVMAppendBasicBlock(fn, "prologue")
         entryBb = LLVMAppendBasicBlock(fn, "entry")
         positionAtEnd(entryBb!!)
-
-        function2variables.put(declaration.descriptor, mutableMapOf())
-
-        var indexOffset = 0
-        if (descriptor is ClassConstructorDescriptor
-            || descriptor.dispatchReceiverParameter != null
-            || descriptor.extensionReceiverParameter != null) {
-            indexOffset = 1;
-        }
-
-        descriptor.valueParameters.forEachIndexed { i, descriptor ->
-            val name = descriptor.name.asString()
-            val type = descriptor.type
-            val v = alloca(type, name)
-            store(LLVMGetParam(fn, indexOffset + i)!!, v)
-
-            currentFunction!!.registerVariable(name, v)
-        }
-
-        if (descriptor.usedAnnotation) {
-            context.usedFunctions.add(fn!!)
-        }
     }
 
 
@@ -60,9 +38,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun newVar():String = currentFunction!!.tmpVariable()
 
-    val variablesGlobal = mapOf<String, LLVMValueRef?>()
-    fun variable(varName:String): LLVMValueRef? = currentFunction!!.variable(varName)
-
     private var variableIndex:Int = 0
     private var FunctionDescriptor.tmpVariableIndex: Int
         get() = variableIndex
@@ -70,19 +45,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun FunctionDescriptor.tmpVariable():String = "tmp_${tmpVariableIndex++}"
 
-    fun registerVariable(varName: String, value: LLVMValueRef) = currentFunction!!.registerVariable(varName, value)
-
-    val function2variables = mutableMapOf<FunctionDescriptor, MutableMap<String, LLVMValueRef?>>()
-
     private var prologueBb: LLVMBasicBlockRef? = null
     private var entryBb: LLVMBasicBlockRef? = null
-
-    val FunctionDescriptor.variables: MutableMap<String, LLVMValueRef?>
-        get() = this@CodeGenerator.function2variables[this]!!
-
-
-    fun FunctionDescriptor.registerVariable(varName: String, value: LLVMValueRef?) = variables.put(varName, value)
-    private fun FunctionDescriptor.variable(varName: String): LLVMValueRef? = variables[varName]
 
     fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildAdd (builder, arg0, arg1, result)!!
     fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildMul (builder, arg0, arg1, result)!!
@@ -161,9 +125,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun typeInfoType(descriptor: ClassDescriptor): LLVMTypeRef = descriptor.llvmTypeInfoPtr.getLlvmType()
     fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr.getLlvmValue()!!
 
-    fun thisVariable() = LLVMGetParam(currentFunction!!.llvmFunction.getLlvmValue(), 0)!!
-
-    fun param(fn: FunctionDescriptor?, i: Int): LLVMValueRef? = LLVMGetParam(fn!!.llvmFunction.getLlvmValue(), i)
+    fun param(fn: FunctionDescriptor, i: Int): LLVMValueRef {
+        assert (i >= 0 && i < countParams(fn))
+        return LLVMGetParam(fn.llvmFunction.getLlvmValue(), i)!!
+    }
+    fun countParams(fn: FunctionDescriptor) = LLVMCountParams(fn.llvmFunction.getLlvmValue())
 
     fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
 
