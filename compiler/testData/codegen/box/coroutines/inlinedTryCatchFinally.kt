@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 var globalResult = ""
 var wasCalled = false

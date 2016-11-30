@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 class Controller {
     suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x ->}

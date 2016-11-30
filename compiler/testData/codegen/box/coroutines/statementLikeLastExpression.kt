@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 var globalResult = ""
 class Controller {
     suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->

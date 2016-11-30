@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 @AllowSuspendExtensions
 class Controller {
     suspend fun String.suspendHere(): String = suspendWithCurrentContinuation { x ->

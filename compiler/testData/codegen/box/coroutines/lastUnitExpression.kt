@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 class Controller {
     var ok = false
     var v  = "fail"

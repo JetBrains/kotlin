@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 class Controller {

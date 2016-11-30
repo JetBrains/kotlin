@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // MODULE: controller
 // FILE: controller.kt
 package lib
