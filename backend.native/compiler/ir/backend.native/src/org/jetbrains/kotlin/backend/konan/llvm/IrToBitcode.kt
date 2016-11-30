@@ -165,6 +165,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     override fun visitModuleFragment(module: IrModuleFragment) {
         logger.log("visitModule                  : ${ir2string(module)}")
         module.acceptChildrenVoid(this)
+
+        appendLlvmUsed(context.usedFunctions) 
+
         metadator.endModule(module)
     }
 
@@ -1435,5 +1438,21 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         })
         return skipBody
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun appendLlvmUsed(args: List<LLVMValueRef>) {
+        if (args.isEmpty()) return
+
+        memScoped {
+            val arrayLength = args.size
+            val argsCasted = args.map{it -> constPointer(LLVMConstBitCast(it, int8TypePtr)) }
+            val llvmUsedGlobal = 
+                context.staticData.placeGlobalArray("llvm.used", int8TypePtr, argsCasted)
+
+            LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage);
+            LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata");
+        }
     }
 }

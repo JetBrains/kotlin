@@ -12,10 +12,16 @@
 extern int run_test();
 
 void * resolve_symbol(char *name) {
-  /* here we can add here some magic to resolve symbols in kotlin native*/
-  return dlsym(RTLD_DEFAULT, name);
+    /* here we can add here some magic to resolve symbols in kotlin native*/
+    void* symbol = dlsym(RTLD_DEFAULT, name);
+
+    if (!symbol) {
+        printf("Could not find kotlin symbol '%s': %s\n", name, dlerror());
+        exit(1);
+    }
+
+    return symbol;
 }
-    
 
 int
 kotlinNativeMain() {
@@ -28,20 +34,3 @@ kotlinNativeMain() {
 #endif
 }
 
-int ktype_kotlin_any asm("_ktype:kotlin.Any");
-
-#define DEFINE(name, symbol) int name() asm(#symbol);
-#define DECLARE(name) \
-int \
-name() { \
-  abort(); \
-  return 1; \
-}
-
-#define DEFINE_AND_DECLARE(name, sym) \
-  DEFINE(name, sym) \
-  DECLARE(name)
-
-DEFINE_AND_DECLARE(kfun_kotlin_any_to_string,_kfun:kotlin.Any.toString)
-DEFINE_AND_DECLARE(kfun_kotlin_any_hash_code,_kfun:kotlin.Any.hashCode)
-DEFINE_AND_DECLARE(kfun_kotlin_any_equals,_kfun:kotlin.Any.equals)

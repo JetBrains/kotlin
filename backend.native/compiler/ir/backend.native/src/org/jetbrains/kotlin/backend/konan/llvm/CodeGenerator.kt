@@ -43,6 +43,10 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
             currentFunction!!.registerVariable(name, v)
         }
+
+        if (descriptor.usedAnnotation) {
+            context.usedFunctions.add(fn!!)
+        }
     }
 
 

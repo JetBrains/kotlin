@@ -29,4 +29,6 @@ internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val
     val isInstanceFunction = importRtFunction("IsInstance")
     val checkInstanceFunction = importRtFunction("CheckInstance")
     val throwExceptionFunction = importRtFunction("ThrowException")
+
+    val usedFunctions = mutableListOf<LLVMValueRef>()
 }

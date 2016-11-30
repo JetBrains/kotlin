@@ -35,3 +35,9 @@ public annotation class Suppress(vararg val names: String)
 //@Retention(SOURCE)
 //@MustBeDocumented
 public annotation class UnsafeVariance
+
+/**
+ * Preserve the function entry point during global optimizations
+ */
+public annotation class Used
+
