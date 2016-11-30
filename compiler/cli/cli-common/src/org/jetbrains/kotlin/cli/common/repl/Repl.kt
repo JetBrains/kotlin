@@ -20,12 +20,15 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import java.io.File
 import java.io.Serializable
 import java.util.*
+import kotlin.reflect.KClass
 
 data class ReplCodeLine(val no: Int, val code: String) : Serializable {
     companion object {
         private val serialVersionUID: Long = 8228357578L
     }
 }
+
+// TODO: consider storing code hash where source is not needed
 
 data class CompiledClassData(val path: String, val bytes: ByteArray) : Serializable {
     override fun equals(other: Any?): Boolean = (other as? CompiledClassData)?.let { path == it.path && Arrays.equals(bytes, it.bytes) } ?: false
@@ -70,6 +73,22 @@ sealed class ReplCompileResult(val updatedHistory: List<ReplCodeLine>) : Seriali
     }
 }
 
+sealed class ReplInvokeResult : Serializable {
+    class ValueResult(val value: Any?) : ReplInvokeResult() {
+        override fun toString(): String = "Result: $value"
+    }
+    object UnitResult : ReplInvokeResult()
+    sealed class Error(val message: String) : ReplInvokeResult() {
+        class Runtime(message: String, val cause: Exception? = null) : Error(message)
+        class NoSuchEntity(message: String) : Error(message)
+        class CompileTime(message: String, val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(message)
+        override fun toString(): String = "${this::class.simpleName}Error(message = \"$message\""
+    }
+    companion object {
+        private val serialVersionUID: Long = 8228357578L
+    }
+}
+
 sealed class ReplEvalResult(val updatedHistory: List<ReplCodeLine>) : Serializable {
     class ValueResult(updatedHistory: List<ReplCodeLine>, val value: Any?) : ReplEvalResult(updatedHistory) {
         override fun toString(): String = "Result: $value"
@@ -78,7 +97,7 @@ sealed class ReplEvalResult(val updatedHistory: List<ReplCodeLine>) : Serializab
     class Incomplete(updatedHistory: List<ReplCodeLine>) : ReplEvalResult(updatedHistory)
     class HistoryMismatch(updatedHistory: List<ReplCodeLine>, val lineNo: Int): ReplEvalResult(updatedHistory)
     sealed class Error(updatedHistory: List<ReplCodeLine>, val message: String) : ReplEvalResult(updatedHistory) {
-        class Runtime(updatedHistory: List<ReplCodeLine>, message: String) : Error(updatedHistory, message)
+        class Runtime(updatedHistory: List<ReplCodeLine>, message: String, val cause: Exception? = null) : Error(updatedHistory, message)
         class CompileTime(updatedHistory: List<ReplCodeLine>,
                           message: String,
                           val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION
@@ -96,6 +115,13 @@ interface ReplChecker {
 
 interface ReplCompiler : ReplChecker {
     fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult
+}
+
+interface ReplInvoker {
+    fun <T: Any> getInterface(clasz: KClass<T>): ReplInvokeResult
+    fun <T: Any> getInterface(receiver: Any, clasz: KClass<T>): ReplInvokeResult
+    fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplInvokeResult
+    fun invokeFunction(name: String, vararg args: Any?): ReplInvokeResult
 }
 
 interface ReplCompiledEvaluator {

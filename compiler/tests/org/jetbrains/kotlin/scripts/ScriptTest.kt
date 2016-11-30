@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.tryConstructScriptClass
+import org.jetbrains.kotlin.cli.common.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
@@ -44,7 +44,7 @@ class ScriptTest : KtUsefulTestCase() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructScriptClass(aClass!!, listOf("4", "comment"))
+            val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "comment"))
             Assert.assertNotNull(anObj)
         }
         assertEqualsTrimmed(NUM_4_LINE + " (comment)" + FIB_SCRIPT_OUTPUT_TAIL, out)
@@ -55,7 +55,7 @@ class ScriptTest : KtUsefulTestCase() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
         Assert.assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructScriptClass(aClass!!, emptyList())
+            val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
             Assert.assertNotNull(anObj)
         }
         assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out)
@@ -68,7 +68,7 @@ class ScriptTest : KtUsefulTestCase() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition, saveClassesDir = tmpdir)
         Assert.assertNotNull(aClass)
         val out1 = captureOut {
-            val anObj = tryConstructScriptClass(aClass!!, emptyList())
+            val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
             Assert.assertNotNull(anObj)
         }
         assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out1)
@@ -76,7 +76,7 @@ class ScriptTest : KtUsefulTestCase() {
         val aClassSaved = savedClassLoader.loadClass(aClass.name)
         Assert.assertNotNull(aClassSaved)
         val out2 = captureOut {
-            val anObjSaved = tryConstructScriptClass(aClassSaved!!, emptyList())
+            val anObjSaved = tryConstructClassFromStringArgs(aClassSaved!!, emptyList())
             Assert.assertNotNull(anObjSaved)
         }
         assertEqualsTrimmed(NUM_4_LINE + " (none)" + FIB_SCRIPT_OUTPUT_TAIL, out2)

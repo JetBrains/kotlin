@@ -16,24 +16,33 @@
 
 package org.jetbrains.kotlin.cli.common.repl
 
+import org.jetbrains.kotlin.cli.common.tryCreateCallableMapping
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
+import kotlin.reflect.*
+import kotlin.reflect.jvm.javaType
 
-open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClassloader: ClassLoader?, val scriptArgs: Array<Any?>? = null, val scriptArgsTypes: Array<Class<*>>? = null) : ReplCompiledEvaluator {
+open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
+                                        baseClassloader: ClassLoader?,
+                                        val scriptArgs: Array<Any?>? = null,
+                                        val scriptArgsTypes: Array<Class<*>>? = null
+) : ReplCompiledEvaluator, ReplInvoker {
 
     private var classLoader: org.jetbrains.kotlin.cli.common.repl.ReplClassLoader = makeReplClassLoader(baseClassloader, baseClasspath)
     private val classLoaderLock = ReentrantReadWriteLock()
 
-    private class ClassWithInstance(val klass: Class<*>, val instance: Any)
+    // TODO: consider to expose it as a part of (evaluator, invoker) interface
+    private val evalStateLock = ReentrantReadWriteLock()
+
+    private data class ClassWithInstance(val klass: Class<*>, val instance: Any)
 
     private val compiledLoadedClassesHistory = ReplHistory<ClassWithInstance>()
 
-    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, classpathAddendum: List<File>): ReplEvalResult {
-
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, classpathAddendum: List<File>): ReplEvalResult /*= evalStateLock.write*/ {
         checkAndUpdateReplHistoryCollection(compiledLoadedClassesHistory, history)?.let {
             return@eval ReplEvalResult.HistoryMismatch(compiledLoadedClassesHistory.lines, it)
         }
@@ -62,8 +71,9 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
             try {
                 classLoader.loadClass(mainLineClassName!!)
             }
-            catch (e: Exception) {
-                throw Exception("Error loading class $mainLineClassName: known classes: ${compiledClasses.map { classNameFromPath(it.path).fqNameForClassNameWithoutDollars.asString() }}", e)
+            catch (e: Throwable) {
+                return ReplEvalResult.Error.Runtime(compiledLoadedClassesHistory.lines, "Error loading class $mainLineClassName: known classes: ${compiledClasses.map { classNameFromPath(it.path).fqNameForClassNameWithoutDollars.asString() }}",
+                                                    e as? Exception)
             }
         }
 
@@ -80,7 +90,7 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
                 }
                 catch (e: Throwable) {
                     // ignore everything in the stack trace until this constructor call
-                    return ReplEvalResult.Error.Runtime(compiledLoadedClassesHistory.lines, renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"))
+                    return ReplEvalResult.Error.Runtime(compiledLoadedClassesHistory.lines, renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"), e as? Exception)
                 }
 
         compiledLoadedClassesHistory.add(codeLine, ClassWithInstance(scriptClass, scriptInstance))
@@ -91,6 +101,38 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
         return if (hasResult) ReplEvalResult.ValueResult(compiledLoadedClassesHistory.lines, rv) else ReplEvalResult.UnitResult(compiledLoadedClassesHistory.lines)
     }
 
+    override fun <T: Any> getInterface(klass: KClass<T>): ReplInvokeResult = evalStateLock.read {
+        val (_, instance) = compiledLoadedClassesHistory.values.lastOrNull() ?: return ReplInvokeResult.Error.NoSuchEntity("no script ")
+        return getInterface(instance, klass)
+    }
+
+    override fun <T: Any> getInterface(receiver: Any, klass: KClass<T>): ReplInvokeResult = evalStateLock.read {
+        return ReplInvokeResult.ValueResult(klass.safeCast(receiver))
+    }
+
+    override fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplInvokeResult = evalStateLock.read {
+        return invokeImpl(receiver.javaClass.kotlin, receiver, name, args)
+    }
+
+    override fun invokeFunction(name: String, vararg args: Any?): ReplInvokeResult = evalStateLock.read {
+        val (klass, instance) = compiledLoadedClassesHistory.values.lastOrNull() ?: return ReplInvokeResult.Error.NoSuchEntity("no script ")
+        return invokeImpl(klass.kotlin, instance, name, args)
+    }
+
+    private fun invokeImpl(receiverClass: KClass<*>, receiverInstance: Any, name: String, args: Array<out Any?>): ReplInvokeResult {
+        val (fn, mapping) = receiverClass.functions.filter { it.name == name }.findMapping(args.toList()) ?:
+                            receiverClass.memberExtensionFunctions.filter { it.name == name }.findMapping(listOf<Any?>(receiverInstance) + args) ?:
+                            return ReplInvokeResult.Error.NoSuchEntity("no suitable function '$name' found")
+        val res = try {
+            evalWithIO { fn.callBy(mapping) }
+        }
+        catch (e: Throwable) {
+            // ignore everything in the stack trace until this constructor call
+            return ReplInvokeResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${fn.name}"), e as? Exception)
+        }
+        return if (fn.returnType.classifier == Unit::class) ReplInvokeResult.UnitResult else ReplInvokeResult.ValueResult(res)
+    }
+
     companion object {
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
     }
@@ -98,3 +140,11 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>, baseClass
 
 private fun makeReplClassLoader(baseClassloader: ClassLoader?, baseClasspath: Iterable<File>) =
         ReplClassLoader(URLClassLoader(baseClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassloader))
+
+private fun Iterable<KFunction<*>>.findMapping(args: List<Any?>): Pair<KFunction<*>, Map<KParameter, Any?>>? {
+    for (fn in this) {
+        val mapping = tryCreateCallableMapping(fn, args)
+        if (mapping != null) return fn to mapping
+    }
+    return null
+}

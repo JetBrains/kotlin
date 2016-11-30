@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.tryConstructScriptClass
+import org.jetbrains.kotlin.cli.common.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
@@ -214,7 +214,7 @@ class ScriptTemplateTest {
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class)
         Assert.assertNotNull(aClass)
         captureOut {
-            val anObj =  tryConstructScriptClass(aClass!!, listOf("4"))
+            val anObj =  tryConstructClassFromStringArgs(aClass!!, listOf("4"))
             Assert.assertNotNull(anObj)
         }.let {
             assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, it)
@@ -227,7 +227,7 @@ class ScriptTemplateTest {
         Assert.assertNotNull(aClass)
         var exceptionThrown = false
         try {
-            tryConstructScriptClass(aClass!!, emptyList())
+            tryConstructClassFromStringArgs(aClass!!, emptyList())
         }
         catch (e: InvocationTargetException) {
             Assert.assertTrue(e.cause is IllegalStateException)

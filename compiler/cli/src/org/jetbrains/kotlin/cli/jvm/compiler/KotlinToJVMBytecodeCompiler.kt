@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
-import org.jetbrains.kotlin.cli.common.tryConstructScriptClass
+import org.jetbrains.kotlin.cli.common.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -227,7 +227,7 @@ object KotlinToJVMBytecodeCompiler {
 
         try {
             try {
-                tryConstructScriptClass(scriptClass, scriptArgs)
+                tryConstructClassFromStringArgs(scriptClass, scriptArgs)
                 ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
             }
             finally {

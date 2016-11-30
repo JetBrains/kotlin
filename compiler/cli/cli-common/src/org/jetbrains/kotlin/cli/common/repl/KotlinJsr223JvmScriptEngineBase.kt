@@ -23,7 +23,7 @@ import javax.script.*
 //
 //val Bindings.kotlinScriptHistory:
 
-abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable, Invocable {
+abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
     protected var lineCount = 0
 
     protected val history = arrayListOf<ReplCodeLine>()

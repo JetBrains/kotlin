@@ -202,7 +202,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             try {
                 Class<?> klass = classLoader.loadClass(nameForScript.asString());
                 ExecuteKotlinScriptMojo.INSTANCE = this;
-                if (ReflectionUtilKt.tryConstructScriptClass(klass, scriptArguments) == null)
+                if (ReflectionUtilKt.tryConstructClassFromStringArgs(klass, scriptArguments) == null)
                     throw new ScriptExecutionException(scriptFile, "unable to construct script");
             } catch (ClassNotFoundException e) {
                 throw new ScriptExecutionException(scriptFile, "internal error", e);
