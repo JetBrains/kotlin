@@ -111,7 +111,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
-        val annot = classDesc.annotations.findAnnotation(FqName("kotlin.ExportTypeInfo"))
+        val annot = classDesc.annotations.findAnnotation(FqName("konan.ExportTypeInfo"))
         if (annot != null) {
             val nameValue = annot.allValueArguments.values.single() as StringValue
             // TODO: use LLVMAddAlias?

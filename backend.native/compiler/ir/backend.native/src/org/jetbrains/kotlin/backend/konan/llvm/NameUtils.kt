@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 
-private val symbolNameAnnotation = FqName("kotlin.SymbolName")
+private val symbolNameAnnotation = FqName("konan.SymbolName")
 
 fun typeToHashString(type: KotlinType): String {
     if (TypeUtils.isTypeParameter(type)) return "GENERIC"

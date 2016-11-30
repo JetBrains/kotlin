@@ -1,6 +1,6 @@
 package kotlin.io
 
-@kotlin.SymbolName("Kotlin_io_Console_print")
+@SymbolName("Kotlin_io_Console_print")
 external public fun print(message: String)
 
 /* TODO: use something like that.
@@ -39,7 +39,7 @@ public fun print(message: Boolean) {
     print(message.toString())
 }
 
-@kotlin.SymbolName("Kotlin_io_Console_println")
+@SymbolName("Kotlin_io_Console_println")
 external public fun println(message: String)
 
 // TODO: enable, once override by name is implemented.
@@ -79,8 +79,8 @@ public fun<T> println(message: T) {
     print(message.toString())
 } */
 
-@kotlin.SymbolName("Kotlin_io_Console_println0")
+@SymbolName("Kotlin_io_Console_println0")
 external public fun println()
 
-@kotlin.SymbolName("Kotlin_io_Console_readLine")
+@SymbolName("Kotlin_io_Console_readLine")
 external public fun readLine(): String
