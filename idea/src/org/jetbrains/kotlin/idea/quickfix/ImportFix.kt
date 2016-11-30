@@ -30,12 +30,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiModifier
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -77,7 +73,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -242,7 +237,10 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
 
                 if (ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
                     indicesHelper
-                            .getKotlinClasses({ it == name }, psiFilter = { classOrObject -> classOrObject !is KtEnumEntry })
+                            .getKotlinClasses(
+                                    { it == name },
+                                    psiFilter = { classOrObject -> classOrObject !is KtEnumEntry },
+                                    kindFilter = { kind -> kind != ClassKind.ENUM_ENTRY })
                             .filterTo(result, filterByCallType)
                 }
                 else {
