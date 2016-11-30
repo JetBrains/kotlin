@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.name.FqName
 
-private val annotationName = FqName("kotlin.Used")
+private val annotationName = FqName("konan.Used")
 
 internal val FunctionDescriptor.usedAnnotation: Boolean 
     get() {
