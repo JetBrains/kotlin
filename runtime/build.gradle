@@ -8,8 +8,16 @@ task build(type: CompileCppToBitcode) {
     srcRoot file('src/main')
 
     dependsOn ':common:compileHash'
+    dependsOn 'launcher'
     compilerArgs '-I' + project.file('../common/src/hash/headers') // TODO: copy-pasted from 'common'
     linkerArgs project.file('../common/build/hash.bc').path
+}
+
+task launcher(type: CompileCppToBitcode) {
+    name 'launcher'
+    srcRoot file('src/launcher')
+    compilerArgs '-I' + project.file('../common/src/hash/headers') // TODO: copy-pasted from 'common'
+    compilerArgs '-I' + project.file('src/main/cpp')
 }
 
 task clean << {

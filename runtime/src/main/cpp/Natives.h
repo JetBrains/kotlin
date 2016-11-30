@@ -39,6 +39,8 @@ extern "C" {
 
 KString TheEmptyString();
 
+KString makeString(const char* cstring);
+
 // Any.kt
 KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other);
 KInt Kotlin_Any_hashCode(KConstRef thiz);

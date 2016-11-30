@@ -180,4 +180,15 @@ KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex) 
   return result;
 }
 
+KString makeString(const char* cstring) {
+  uint32_t length = strlen(cstring);
+  ArrayHeader* result = ArrayContainer(
+      theStringTypeInfo, length).GetPlace();
+  memcpy(
+      ByteArrayAddressOfElementAt(result, 0),
+      cstring,
+      length);
+  return result;
+}
+
 }  // extern "C"

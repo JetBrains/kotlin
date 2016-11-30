@@ -4,10 +4,6 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <stdio.h>
-/**
- * > llc-mp-3.8 b.out -o b.S
- * > /opt/local/libexec/llvm-3.8/bin/clang main.c b.S -o sum-test
- */
 
 extern int run_test();
 
@@ -24,13 +20,6 @@ void * resolve_symbol(char *name) {
 }
 
 int
-kotlinNativeMain() {
-#ifdef RUN_TEST
-  void (*main)(void *) = resolve_symbol("kfun:main(Array<String>)");
-  main((void *)0);
-  return 0;
-#else
+main() {
   exit(run_test());
-#endif
 }
-

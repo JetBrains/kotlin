@@ -12,10 +12,12 @@ abstract class KonanTest extends DefaultTask {
     def runtimeProject = project.project(":runtime")
     def llvmLlc = llvmTool("llc")
     def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
+    def launcherBc = new File("${runtimeProject.buildDir.canonicalPath}/launcher.bc")
     def stdlibKtBc = new File("${runtimeProject.buildDir.canonicalPath}/stdlib.kt.bc")
     def mainC = 'main.c'
     String goldValue = null
     String testData = null
+    List<String> arguments = null
 
     public KonanTest(){
         dependsOn([project.project(":runtime").tasks['build'],
@@ -59,6 +61,9 @@ abstract class KonanTest extends DefaultTask {
         def out = null
         project.exec {
             commandLine "${exe.absolutePath}"
+            if (arguments != null) {
+                args arguments
+            }
             if (testData != null) {
                 standardInput = new ByteArrayInputStream(testData.bytes)
             }
@@ -131,8 +136,8 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File libraryPath, File exe) {
         project.execClang {
-            commandLine "clang++", "-DRUN_TEST", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
-                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc', mainC
+            commandLine "clang++", launcherBc.absolutePath, runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc'
         }
     }
 }
@@ -599,3 +604,10 @@ task range0(type: RunKonanTest) {
     goldValue = "123\nabcd\n"
     source = "runtime/collections/range0.kt"
 }
+
+task args0(type: RunKonanTest) {
+    arguments = ["AAA", "BB", "C"]
+    goldValue = "AAA\nBB\nC\n"
+    source = "runtime/basic/args0.kt"
+}
+
