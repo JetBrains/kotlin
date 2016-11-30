@@ -4252,6 +4252,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("illegalSuspendCalls.kt")
+            public void testIllegalSuspendCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/illegalSuspendCalls.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("interceptResume.kt")
             public void testInterceptResume() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/interceptResume.kt");

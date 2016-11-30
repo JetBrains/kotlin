@@ -47,11 +47,11 @@ object CoroutineSuspendCallChecker : CallChecker {
 
         when {
             enclosingSuspendFunction != null -> {
-                // TODO: check if tail call
+                // Tail calls checks happen during control flow analysis
+                // Here we only record enclosing function mapping (for backends purposes)
                 context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
             }
             closestCoroutineReceiver != null -> {
-
                 val callElement = resolvedCall.call.callElement as KtExpression
 
                 if (!InlineUtil.checkNonLocalReturnUsage(closestCoroutineReceiver.declarationDescriptor, callElement, context.resolutionContext)) {
@@ -59,6 +59,9 @@ object CoroutineSuspendCallChecker : CallChecker {
                 }
 
                 context.trace.record(BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, resolvedCall.call, closestCoroutineReceiver)
+            }
+            else -> {
+                context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn))
             }
         }
     }
