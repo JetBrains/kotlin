@@ -49,11 +49,12 @@ enum class LanguageVersion(val versionString: String) : DescriptionAware {
 interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean
 
+    val languageVersion: LanguageVersion
     val apiVersion: ApiVersion
 }
 
 class LanguageVersionSettingsImpl(
-        private val languageVersion: LanguageVersion,
+        override val languageVersion: LanguageVersion,
         override val apiVersion: ApiVersion
 ) : LanguageVersionSettings {
     override fun supportsFeature(feature: LanguageFeature): Boolean {

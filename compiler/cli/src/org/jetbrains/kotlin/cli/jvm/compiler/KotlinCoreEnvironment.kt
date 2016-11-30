@@ -69,16 +69,14 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.kotlinSourceRoots
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -102,8 +100,8 @@ import java.lang.IllegalStateException
 import java.util.*
 
 class KotlinCoreEnvironment private constructor(
-        parentDisposable: Disposable, 
-        applicationEnvironment: JavaCoreApplicationEnvironment, 
+        parentDisposable: Disposable,
+        applicationEnvironment: JavaCoreApplicationEnvironment,
         configuration: CompilerConfiguration
 ) {
 
@@ -129,7 +127,7 @@ class KotlinCoreEnvironment private constructor(
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
 
-        fillClasspath(configuration)
+        val javaClasspathRoots = fillClasspath(configuration)
         val index = initJvmDependenciesIndex()
 
         sourceFiles.addAll(CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration, {
@@ -147,6 +145,13 @@ class KotlinCoreEnvironment private constructor(
         )
 
         project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(index))
+
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        if (messageCollector != null) {
+            val languageVersionSettings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+            val classpathJars = javaClasspathRoots.mapNotNull { if (it.type == JavaRoot.RootType.BINARY) it.file else null }
+            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(messageCollector, languageVersionSettings, classpathJars)
+        }
 
         ExpressionCodegenExtension.registerExtensionPoint(project)
         ClassBuilderInterceptorExtension.registerExtensionPoint(project)
@@ -185,7 +190,7 @@ class KotlinCoreEnvironment private constructor(
     init {
         project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, appendJavaSourceRootsHandler)
     }
-    
+
     fun addJavaSourceRoots(newRoots: List<JavaSourceRoot>) {
         newRoots.forEach { addJavaRoot(it) }
         initJvmDependenciesIndex()
@@ -196,16 +201,18 @@ class KotlinCoreEnvironment private constructor(
                 val text = it.text
                 StringUtil.getLineBreakCount(it.text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
-    
-    private fun fillClasspath(configuration: CompilerConfiguration) {
+
+    private fun fillClasspath(configuration: CompilerConfiguration): List<JavaRoot> {
+        val javaRoots = ArrayList<JavaRoot>()
         for (root in configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)) {
             val javaRoot = root as? JvmContentRoot ?: continue
-            addJavaRoot(javaRoot)
+            addJavaRoot(javaRoot)?.let { javaRoots.add(it) }
         }
+        return javaRoots
     }
 
-    private fun addJavaRoot(javaRoot: JvmContentRoot) {
-        val virtualFile = contentRootToVirtualFile(javaRoot) ?: return
+    private fun addJavaRoot(javaRoot: JvmContentRoot): JavaRoot? {
+        val virtualFile = contentRootToVirtualFile(javaRoot) ?: return null
 
         projectEnvironment.addSourcesToClasspath(virtualFile)
 
@@ -225,7 +232,10 @@ class KotlinCoreEnvironment private constructor(
             else -> throw IllegalStateException()
         }
 
-        javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
+        val javaRoot1 = JavaRoot(virtualFile, rootType, prefixPackageFqName)
+        javaRoots.add(javaRoot1)
+
+        return javaRoot1
     }
 
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {

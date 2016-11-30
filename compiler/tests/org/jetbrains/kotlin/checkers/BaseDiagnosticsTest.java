@@ -34,10 +34,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
-import org.jetbrains.kotlin.config.ApiVersion;
-import org.jetbrains.kotlin.config.LanguageFeature;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer;
@@ -310,6 +307,13 @@ public abstract class BaseDiagnosticsTest
         public boolean supportsFeature(@NotNull LanguageFeature feature) {
             Boolean enabled = languageFeatures.get(feature);
             return enabled != null ? enabled : LanguageVersionSettingsImpl.DEFAULT.supportsFeature(feature);
+        }
+
+        @NotNull
+        @Override
+        public LanguageVersion getLanguageVersion() {
+            // TODO provide base language version
+            throw new UnsupportedOperationException("This instance of LanguageVersionSettings should be used for tests only");
         }
 
         @NotNull
