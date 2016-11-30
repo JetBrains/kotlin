@@ -77,11 +77,12 @@ enum class LanguageVersion(val versionString: String) : DescriptionAware {
 interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean
 
+    val languageVersion: LanguageVersion
     val apiVersion: ApiVersion
 }
 
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
-        private val languageVersion: LanguageVersion,
+        override val languageVersion: LanguageVersion,
         override val apiVersion: ApiVersion,
         additionalFeatures: Collection<LanguageFeature> = emptySet()
 ) : LanguageVersionSettings {

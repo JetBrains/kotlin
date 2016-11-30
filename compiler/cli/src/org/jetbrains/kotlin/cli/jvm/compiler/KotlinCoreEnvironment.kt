@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
@@ -153,6 +154,13 @@ class KotlinCoreEnvironment private constructor(
         }
 
         val initialRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).classpathRoots()
+
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        if (messageCollector != null) {
+            val languageVersionSettings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
+            val classpathJars = initialRoots.mapNotNull { if (it.type == JavaRoot.RootType.BINARY) it.file else null }
+            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(messageCollector, languageVersionSettings, classpathJars)
+        }
 
         // REPL and kapt2 update classpath dynamically
         val indexFactory = JvmUpdateableDependenciesIndexFactory()
