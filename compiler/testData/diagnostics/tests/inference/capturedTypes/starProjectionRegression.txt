@@ -1,0 +1,16 @@
+package
+
+public val </*0*/ T : kotlin.Any> KClass1<T>.primaryConstructor: KFunction1<T>?
+public fun f(/*0*/ type: KClass1<*>): KFunction1<kotlin.Any>?
+
+public interface KClass1</*0*/ F : kotlin.Any> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KFunction1</*0*/ out R> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

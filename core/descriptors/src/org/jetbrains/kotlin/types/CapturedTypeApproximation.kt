@@ -86,7 +86,11 @@ fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?, approxi
 private fun substituteCapturedTypesWithProjections(typeProjection: TypeProjection): TypeProjection? {
     val typeSubstitutor = TypeSubstitutor.create(object : TypeConstructorSubstitution() {
         override fun get(key: TypeConstructor): TypeProjection? {
-            return (key as? CapturedTypeConstructor)?.typeProjection
+            val capturedTypeConstructor = key as? CapturedTypeConstructor ?: return null
+            if (capturedTypeConstructor.typeProjection.isStarProjection) {
+                return TypeProjectionImpl(Variance.OUT_VARIANCE, capturedTypeConstructor.typeProjection.type)
+            }
+            return capturedTypeConstructor.typeProjection
         }
     })
     return typeSubstitutor.substituteWithoutApproximation(typeProjection)

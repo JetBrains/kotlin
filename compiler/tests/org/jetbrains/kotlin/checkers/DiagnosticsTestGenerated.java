@@ -9740,6 +9740,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/overApproximationForOutCaptured.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("starProjectionRegression.kt")
+                public void testStarProjectionRegression() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/starProjectionRegression.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/commonSystem")
