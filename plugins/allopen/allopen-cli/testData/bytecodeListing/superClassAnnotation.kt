@@ -20,9 +20,9 @@ interface Intf {
 }
 
 open class IntfImpl : Intf {
-    fun intfImplMethod_ShouldBeFinal() {}
+    fun intfImplMethod_ShouldBeOpen() {}
 }
 
-class IntfImpl2_ShouldBeFinalBecauseIntfIsAnInterface : IntfImpl() {
-    fun intfImpl2Method_ShouldBeFinal() {}
+class IntfImpl2_ShouldBeOpen : IntfImpl() {
+    fun intfImpl2Method_ShouldBeOpen() {}
 }

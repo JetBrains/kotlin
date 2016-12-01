@@ -53,6 +53,7 @@
           <element id="module-output" name="formatter" />
           <element id="module-output" name="idea-maven" />
           <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/protobuf-2.6.1.jar" path-in-jar="/" />
+          <element id="module-output" name="annotation-based-compiler-plugins-ide-support" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
@@ -71,6 +72,12 @@
           <element id="module-output" name="lint-api" />
         </element>
         <element id="library" level="project" name="uast-kotlin" />
+        <element id="archive" name="allopen-ide-plugin.jar">
+          <element id="module-output" name="allopen-ide" />
+        </element>
+        <element id="archive" name="allopen-compiler-plugin.jar">
+          <element id="module-output" name="allopen-cli" />
+        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

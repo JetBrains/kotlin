@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.allopen
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -28,10 +27,14 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeUtils
 
-class AllOpenDeclarationAttributeAltererExtension(val allOpenAnnotationFqNames: List<String>) : DeclarationAttributeAltererExtension {
-    private companion object {
-        private val INHERITED_FQNAME = "java.lang.annotation.Inherited"
-    }
+class CliAllOpenDeclarationAttributeAltererExtension(
+        private val allOpenAnnotationFqNames: List<String>
+) : AbstractAllOpenDeclarationAttributeAltererExtension() {
+    override fun getAllOpenAnnotationFqNames(modifierListOwner: KtModifierListOwner) = allOpenAnnotationFqNames
+}
+
+abstract class AbstractAllOpenDeclarationAttributeAltererExtension : DeclarationAttributeAltererExtension {
+    abstract fun getAllOpenAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String>
 
     override fun refineDeclarationModality(
             modifierListOwner: KtModifierListOwner,
@@ -40,10 +43,8 @@ class AllOpenDeclarationAttributeAltererExtension(val allOpenAnnotationFqNames: 
             currentModality: Modality,
             bindingContext: BindingContext
     ): Modality? {
-        // We alter only 'final' modality
-        when (currentModality) {
-            Modality.OPEN, Modality.ABSTRACT, Modality.SEALED -> return null
-            else -> {}
+        if (currentModality != Modality.FINAL) {
+            return null
         }
 
         // Explicit final
@@ -52,31 +53,34 @@ class AllOpenDeclarationAttributeAltererExtension(val allOpenAnnotationFqNames: 
         }
 
         val descriptor = declaration ?: containingDeclaration ?: return null
-        if (descriptor.hasAllOpenAnnotation()) return Modality.OPEN
+        if (descriptor.hasAllOpenAnnotation(modifierListOwner)) return Modality.OPEN
 
         return null
     }
 
-    private fun DeclarationDescriptor.hasAllOpenAnnotation(): Boolean {
-        if (annotations.any { it.isAllOpenAnnotation() }) return true
+    private fun DeclarationDescriptor.hasAllOpenAnnotation(modifierListOwner: KtModifierListOwner): Boolean {
+        if (annotations.any { it.isAllOpenAnnotation(modifierListOwner) }) return true
 
         if (this is ClassDescriptor) {
             for (superType in TypeUtils.getAllSupertypes(defaultType)) {
                 val superTypeDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
-                if (superTypeDescriptor.annotations.any { it.isAllOpenAnnotation() }) return true
+                if (superTypeDescriptor.annotations.any { it.isAllOpenAnnotation(modifierListOwner) }) return true
             }
         }
 
         return false
     }
 
-    private fun AnnotationDescriptor.isAllOpenAnnotation(allowMetaAnnotations: Boolean = true): Boolean {
+    private fun AnnotationDescriptor.isAllOpenAnnotation(
+            modifierListOwner: KtModifierListOwner,
+            allowMetaAnnotations: Boolean = true
+    ): Boolean {
         val annotationType = type.constructor.declarationDescriptor ?: return false
-        if (annotationType.fqNameSafe.asString() in allOpenAnnotationFqNames) return true
+        if (annotationType.fqNameSafe.asString() in getAllOpenAnnotationFqNames(modifierListOwner)) return true
 
         if (allowMetaAnnotations) {
             for (metaAnnotation in annotationType.annotations) {
-                if (metaAnnotation.isAllOpenAnnotation(allowMetaAnnotations = false)) {
+                if (metaAnnotation.isAllOpenAnnotation(modifierListOwner, allowMetaAnnotations = false)) {
                     return true
                 }
             }

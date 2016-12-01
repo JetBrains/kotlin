@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.version>3.0.4</maven.version>
-        <allopen.src>${basedir}/../../../plugins/allopen/src</allopen.src>
+        <allopen.src>${basedir}/../../../plugins/allopen/allopen-cli/src</allopen.src>
         <allopen.gradle.plugin.src>${basedir}/src/main/kotlin</allopen.gradle.plugin.src>
         <allopen.gradle.plugin.resources>${basedir}/src/main/resources</allopen.gradle.plugin.resources>
         <allopen.target-src>${basedir}/target/src/main/kotlin</allopen.target-src>

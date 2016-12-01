@@ -13,9 +13,12 @@ public final class Test1 {
 public class Test2 {
     private final @org.jetbrains.annotations.NotNull field prop1: java.lang.String
     private final @org.jetbrains.annotations.NotNull field prop2: java.lang.String
+    private @org.jetbrains.annotations.NotNull field prop3: java.lang.String
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getProp1(): java.lang.String
-    public @org.jetbrains.annotations.NotNull method getProp2(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getProp2(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getProp3(): java.lang.String
     public method method1(): void
     public final method method2(): void
+    public final method setProp3(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }

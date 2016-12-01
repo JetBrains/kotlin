@@ -39,12 +39,12 @@ public interface Intf {
 @kotlin.Metadata
 public class IntfImpl {
     public method <init>(): void
-    public final method intfImplMethod_ShouldBeFinal(): void
+    public method intfImplMethod_ShouldBeOpen(): void
     public method intfMethod(): void
 }
 
 @kotlin.Metadata
-public final class IntfImpl2_ShouldBeFinalBecauseIntfIsAnInterface {
+public class IntfImpl2_ShouldBeOpen {
     public method <init>(): void
-    public final method intfImpl2Method_ShouldBeFinal(): void
+    public method intfImpl2Method_ShouldBeOpen(): void
 }

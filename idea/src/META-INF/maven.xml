@@ -2,9 +2,10 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator"/>
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator"/>
-
     <versionInfoProvider implementation="org.jetbrains.kotlin.idea.maven.facet.MavenKotlinVersionInfoProvider"/>
+    <mavenProjectImportHandler implementation="org.jetbrains.kotlin.allopen.ide.AllOpenMavenProjectImportHandler"/>
   </extensions>
+
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">
     <importer implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenImporter" />
     <archetypesProvider implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenArchetypesProvider" />
@@ -21,6 +22,12 @@
       <param name="script" language="kotlin" />
     </pluginDescriptor>
   </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.mavenProjectImportHandler" area="IDEA_PROJECT"
+                    interface="org.jetbrains.kotlin.idea.maven.MavenProjectImportHandler"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection"
                      displayName="Kotlin Maven Plugin misconfigured"

@@ -38,6 +38,6 @@
     <orderEntry type="module" module-name="jps-tests" scope="TEST" />
     <orderEntry type="module" module-name="lint-checks" scope="TEST" />
     <orderEntry type="module" module-name="kapt3" scope="TEST" />
-    <orderEntry type="module" module-name="allopen" scope="TEST" />
+    <orderEntry type="module" module-name="allopen-cli" scope="TEST" />
   </component>
 </module>

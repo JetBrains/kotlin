@@ -34,9 +34,11 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
     companion object {
         val ANNOTATION_OPTION = CliOption("annotation", "<fqname>", "Annotation qualified names",
                                           required = false, allowMultipleOccurrences = true)
+
+        val PLUGIN_ID = "org.jetbrains.kotlin.allopen"
     }
 
-    override val pluginId = "org.jetbrains.kotlin.allopen"
+    override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(ANNOTATION_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -54,6 +56,6 @@ class AllOpenComponentRegistrar : ComponentRegistrar {
         val annotations = configuration.get(AllOpenConfigurationKeys.ANNOTATION) ?: return
         if (annotations.isEmpty()) return
 
-        DeclarationAttributeAltererExtension.registerExtension(project, AllOpenDeclarationAttributeAltererExtension(annotations))
+        DeclarationAttributeAltererExtension.registerExtension(project, CliAllOpenDeclarationAttributeAltererExtension(annotations))
     }
 }

@@ -765,7 +765,7 @@
             </withKotlin>
             <skip pattern="kotlin/Metadata"/>
             <src>
-                <pathelement path="plugins/allopen/src"/>
+                <pathelement path="plugins/allopen/allopen-cli/src"/>
             </src>
             <classpath>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
@@ -776,7 +776,7 @@
         <jar destfile="${kotlin-home}/lib/allopen-compiler-plugin.jar">
             <fileset dir="${output}/classes/allopen-compiler-plugin"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <fileset dir="${basedir}/plugins/allopen/src" includes="META-INF/services/**"/>
+            <fileset dir="${basedir}/plugins/allopen/allopen-cli/src" includes="META-INF/services/**"/>
         </jar>
     </target>
     
