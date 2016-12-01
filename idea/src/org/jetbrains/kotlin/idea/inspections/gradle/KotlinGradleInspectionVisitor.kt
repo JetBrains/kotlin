@@ -37,7 +37,6 @@ import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
 
 val KOTLIN_PLUGIN_CLASSPATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}:${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}:"
-val KOTLIN_PLUGIN_PATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
 
 abstract class KotlinGradleInspectionVisitor : BaseInspectionVisitor() {
     override fun visitFile(file: GroovyFileBase?) {
@@ -72,14 +71,27 @@ fun getResolvedKotlinGradleVersion(module: Module): String? {
     return null
 }
 
+// Gradle path (example): ~/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-runtime/<version>
+private val KOTLIN_PLUGIN_PATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
+
+// Maven local repo path (example): ~/.m2/repository/org/jetbrains/kotlin/kotlin-runtime/<version>
+private val KOTLIN_PLUGIN_PATH_MARKER_FOR_MAVEN_LOCAL_REPO =
+        "${KotlinWithGradleConfigurator.GROUP_ID.replace('.', '/')}/${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}/"
+
 internal fun findKotlinPluginVersion(classpathData: BuildScriptClasspathData): String? {
     for (classPathEntry in classpathData.classpathEntries) {
         for (path in classPathEntry.classesFile) {
             val uniformedPath = path.replace('\\', '/')
+            // check / for local maven repo, and '.' for gradle
             if (uniformedPath.contains(KOTLIN_PLUGIN_PATH_MARKER)) {
                 val versionSubstring = uniformedPath.substringAfter(KOTLIN_PLUGIN_PATH_MARKER).substringBefore('/', "<error>")
                 if (versionSubstring != "<error>") {
-                    return versionSubstring;
+                    return versionSubstring
+                }
+            } else if (uniformedPath.contains(KOTLIN_PLUGIN_PATH_MARKER_FOR_MAVEN_LOCAL_REPO)) {
+                val versionSubstring = uniformedPath.substringAfter(KOTLIN_PLUGIN_PATH_MARKER_FOR_MAVEN_LOCAL_REPO).substringBefore('/', "<error>")
+                if (versionSubstring != "<error>") {
+                    return versionSubstring
                 }
             }
         }

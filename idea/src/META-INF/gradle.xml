@@ -1,13 +1,14 @@
 <idea-plugin>
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
-
-        <versionInfoProvider implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinVersionInfoProvider"/>
-    </extensions>
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
     </extensions>
+
+    <extensionPoints>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleProjectImportHandler" area="IDEA_PROJECT"
+                        interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"/>
+    </extensionPoints>
+
     <extensions defaultExtensionNs="com.intellij">
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectDataService"/>
 
@@ -19,9 +20,7 @@
             language="Groovy"
             hasStaticDescription="true"
             level="WARNING"/>
-    </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
         <localInspection
             implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
             displayName="Kotlin library and Gradle plugin versions are different"
@@ -33,5 +32,11 @@
 
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestClassGradleConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestMethodGradleConfigurationProducer"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.allopen.ide.AllOpenGradleProjectImportHandler"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
+        <versionInfoProvider implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinVersionInfoProvider"/>
     </extensions>
 </idea-plugin>

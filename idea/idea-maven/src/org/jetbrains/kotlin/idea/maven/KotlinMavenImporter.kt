@@ -33,21 +33,31 @@ import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.*
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
-import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
-import org.jetbrains.kotlin.idea.facet.mavenLibraryId
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.io.File
 import java.util.*
 
-private val KotlinPluginGroupId = "org.jetbrains.kotlin"
-private val KotlinPluginArtifactId = "kotlin-maven-plugin"
-private val KotlinPluginSourceDirsConfig = "sourceDirs"
+interface MavenProjectImportHandler {
+    companion object : ProjectExtensionDescriptor<MavenProjectImportHandler>(
+            "org.jetbrains.kotlin.mavenProjectImportHandler",
+            MavenProjectImportHandler::class.java
+    )
 
-class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtifactId) {
+    operator fun invoke(facet: KotlinFacet, mavenProject: MavenProject)
+}
+
+class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_ARTIFACT_ID) {
+    companion object {
+        val KOTLIN_PLUGIN_GROUP_ID = "org.jetbrains.kotlin"
+        val KOTLIN_PLUGIN_ARTIFACT_ID = "kotlin-maven-plugin"
+
+        val KOTLIN_PLUGIN_SOURCE_DIRS_CONFIG = "sourceDirs"
+    }
+
     override fun preProcess(module: Module, mavenProject: MavenProject, changes: MavenProjectChanges, modifiableModelsProvider: IdeModifiableModelsProvider) {
     }
 
@@ -70,7 +80,7 @@ class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtif
 
         if (changes.dependencies) {
             // TODO: here we have to process all kotlin libraries but for now we only handle standard libraries
-            val artifacts = mavenProject.dependencyArtifactIndex.data[KotlinPluginGroupId]?.values?.flatMap { it.filter { it.isResolved } } ?: emptyList()
+            val artifacts = mavenProject.dependencyArtifactIndex.data[KOTLIN_PLUGIN_GROUP_ID]?.values?.flatMap { it.filter { it.isResolved } } ?: emptyList()
 
             val librariesWithNoSources = ArrayList<Library>()
             OrderEnumerator.orderEntries(module).forEachLibrary { library ->
@@ -93,7 +103,9 @@ class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtif
     private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
         val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version
                               ?: return
-        module.getOrCreateFacet(modifiableModelsProvider).configureFacet(compilerVersion, modifiableModelsProvider)
+        val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider)
+        kotlinFacet.configureFacet(compilerVersion, modifiableModelsProvider)
+        MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
 
     // TODO in theory it should work like this but it doesn't as it couldn't unmark source roots that are not roots anymore.
@@ -143,8 +155,8 @@ class KotlinMavenImporter : MavenImporter(KotlinPluginGroupId, KotlinPluginArtif
             }.distinct()
 }
 
-private fun MavenPlugin.isKotlinPlugin() = groupId == KotlinPluginGroupId && artifactId == KotlinPluginArtifactId
-private fun Element?.sourceDirectories(): List<String> = this?.getChildren(KotlinPluginSourceDirsConfig)?.flatMap { it.children ?: emptyList() }?.map { it.textTrim } ?: emptyList()
+private fun MavenPlugin.isKotlinPlugin() = groupId == KotlinMavenImporter.KOTLIN_PLUGIN_GROUP_ID && artifactId == KotlinMavenImporter.KOTLIN_PLUGIN_ARTIFACT_ID
+private fun Element?.sourceDirectories(): List<String> = this?.getChildren(KotlinMavenImporter.KOTLIN_PLUGIN_SOURCE_DIRS_CONFIG)?.flatMap { it.children ?: emptyList() }?.map { it.textTrim } ?: emptyList()
 private fun MavenPlugin.Execution.sourceType() =
         goals.map { if (isTestGoalName(it)) SourceType.TEST else SourceType.PROD }
                 .distinct()

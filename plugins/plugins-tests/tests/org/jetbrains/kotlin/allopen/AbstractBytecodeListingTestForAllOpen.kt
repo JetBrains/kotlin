@@ -25,8 +25,8 @@ abstract class AbstractBytecodeListingTestForAllOpen : AbstractBytecodeListingTe
         val ALLOPEN_ANNOTATIONS = listOf("AllOpen", "AllOpen2", "test.AllOpen")
     }
 
-    override fun setUpEnvironment(environment: KotlinCoreEnvironment) {
+    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         DeclarationAttributeAltererExtension.registerExtension(
-                environment.project, AllOpenDeclarationAttributeAltererExtension(ALLOPEN_ANNOTATIONS))
+                environment.project, CliAllOpenDeclarationAttributeAltererExtension(ALLOPEN_ANNOTATIONS))
     }
 }

@@ -1,90 +1,97 @@
 <component name="ArtifactManager">
-  <artifact name="KotlinPlugin">
-    <output-path>$PROJECT_DIR$/out/artifacts/Kotlin</output-path>
-    <properties id="ant-postprocessing">
-      <options enabled="true">
-        <file>file://$PROJECT_DIR$/idea-runner/runner.xml</file>
-        <target>copy-runtime-for-idea-plugin</target>
-      </options>
-    </properties>
-    <root id="root">
-      <element id="directory" name="lib">
-        <element id="archive" name="kotlin-plugin.jar">
-          <element id="module-output" name="backend" />
-          <element id="module-output" name="frontend" />
-          <element id="module-output" name="descriptors" />
-          <element id="module-output" name="frontend.java" />
-          <element id="module-output" name="descriptor.loader.java" />
-          <element id="module-output" name="idea" />
-          <element id="module-output" name="light-classes" />
-          <element id="module-output" name="util" />
-          <element id="module-output" name="util.runtime" />
-          <element id="module-output" name="j2k" />
-          <element id="module-output" name="js.frontend" />
-          <element id="module-output" name="js.parser" />
-          <element id="module-output" name="cli-common" />
-          <element id="module-output" name="idea-jps-common" />
-          <element id="module-output" name="preloader" />
-          <element id="module-output" name="deserialization" />
-          <element id="module-output" name="backend-common" />
-          <element id="library" level="project" name="builtins" />
-          <element id="module-output" name="js.dart-ast" />
-          <element id="directory" name="kotlin">
-            <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/native/kotlin" />
-            <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/src/kotlin" />
-          </element>
-          <element id="module-output" name="eval4j" />
-          <element id="module-output" name="idea-analysis" />
-          <element id="module-output" name="ide-common" />
-          <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
-          <element id="module-output" name="idea-android" />
-          <element id="module-output" name="idea-android-output-parser" />
-          <element id="module-output" name="js.serializer" />
-          <element id="module-output" name="serialization" />
-          <element id="module-output" name="idea-completion" />
-          <element id="module-output" name="idea-core" />
-          <element id="module-output" name="container" />
-          <element id="module-output" name="daemon-common" />
-          <element id="module-output" name="idea-repl" />
-          <element id="module-output" name="idea-live-templates" />
-          <element id="module-output" name="resolution" />
-          <element id="module-output" name="plugin-api" />
-          <element id="module-output" name="idea-ultimate" />
-          <element id="module-output" name="formatter" />
-          <element id="module-output" name="idea-maven" />
-          <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/protobuf-2.6.1.jar" path-in-jar="/" />
-          <element id="module-output" name="backend.common" />
-          <element id="module-output" name="ir.tree" />
-          <element id="module-output" name="backend.jvm" />
-          <element id="module-output" name="ir.psi2ir" />
-        </element>
-        <element id="library" level="project" name="javax.inject" />
-        <element id="directory" name="jps">
-          <element id="artifact" artifact-name="KotlinJpsPlugin" />
-        </element>
-        <element id="library" level="project" name="markdown" />
-        <element id="archive" name="kotlin-android-extensions-plugin.jar">
-          <element id="module-output" name="android-extensions-idea" />
-        </element>
-        <element id="archive" name="kotlin-android-extensions-compiler-plugin.jar">
-          <element id="module-output" name="android-extensions-compiler" />
-        </element>
-        <element id="archive" name="android-lint.jar">
-          <element id="module-output" name="uast-kotlin" />
-          <element id="module-output" name="lint-idea" />
-          <element id="module-output" name="uast-java" />
-          <element id="module-output" name="uast-common" />
-          <element id="module-output" name="lint-checks" />
-          <element id="library" level="project" name="guava" />
-          <element id="module-output" name="lint-api" />
-          <element id="module-output" name="uast-android" />
-        </element>
-        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-daemon-client.jar" />
-        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-script-runtime.jar" />
-      </element>
-      <element id="directory" name="kotlinc">
-        <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
-      </element>
-    </root>
-  </artifact>
+    <artifact name="KotlinPlugin">
+        <output-path>$PROJECT_DIR$/out/artifacts/Kotlin</output-path>
+        <properties id="ant-postprocessing">
+            <options enabled="true">
+                <file>file://$PROJECT_DIR$/idea-runner/runner.xml</file>
+                <target>copy-runtime-for-idea-plugin</target>
+            </options>
+        </properties>
+        <root id="root">
+            <element id="directory" name="lib">
+                <element id="archive" name="kotlin-plugin.jar">
+                    <element id="module-output" name="backend" />
+                    <element id="module-output" name="frontend" />
+                    <element id="module-output" name="descriptors" />
+                    <element id="module-output" name="frontend.java" />
+                    <element id="module-output" name="descriptor.loader.java" />
+                    <element id="module-output" name="idea" />
+                    <element id="module-output" name="light-classes" />
+                    <element id="module-output" name="util" />
+                    <element id="module-output" name="util.runtime" />
+                    <element id="module-output" name="j2k" />
+                    <element id="module-output" name="js.frontend" />
+                    <element id="module-output" name="js.parser" />
+                    <element id="module-output" name="cli-common" />
+                    <element id="module-output" name="idea-jps-common" />
+                    <element id="module-output" name="preloader" />
+                    <element id="module-output" name="deserialization" />
+                    <element id="module-output" name="backend-common" />
+                    <element id="library" level="project" name="builtins" />
+                    <element id="module-output" name="js.dart-ast" />
+                    <element id="directory" name="kotlin">
+                        <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/native/kotlin" />
+                        <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/src/kotlin" />
+                    </element>
+                    <element id="module-output" name="eval4j" />
+                    <element id="module-output" name="idea-analysis" />
+                    <element id="module-output" name="ide-common" />
+                    <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
+                    <element id="module-output" name="idea-android" />
+                    <element id="module-output" name="idea-android-output-parser" />
+                    <element id="module-output" name="js.serializer" />
+                    <element id="module-output" name="serialization" />
+                    <element id="module-output" name="idea-completion" />
+                    <element id="module-output" name="idea-core" />
+                    <element id="module-output" name="container" />
+                    <element id="module-output" name="daemon-common" />
+                    <element id="module-output" name="idea-repl" />
+                    <element id="module-output" name="idea-live-templates" />
+                    <element id="module-output" name="resolution" />
+                    <element id="module-output" name="plugin-api" />
+                    <element id="module-output" name="idea-ultimate" />
+                    <element id="module-output" name="formatter" />
+                    <element id="module-output" name="idea-maven" />
+                    <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/protobuf-2.6.1.jar" path-in-jar="/" />
+                    <element id="module-output" name="backend.common" />
+                    <element id="module-output" name="ir.tree" />
+                    <element id="module-output" name="backend.jvm" />
+                    <element id="module-output" name="ir.psi2ir" />
+                    <element id="module-output" name="annotation-based-compiler-plugins-ide-support" />
+                </element>
+                <element id="library" level="project" name="javax.inject" />
+                <element id="directory" name="jps">
+                    <element id="artifact" artifact-name="KotlinJpsPlugin" />
+                </element>
+                <element id="library" level="project" name="markdown" />
+                <element id="archive" name="kotlin-android-extensions-plugin.jar">
+                    <element id="module-output" name="android-extensions-idea" />
+                </element>
+                <element id="archive" name="kotlin-android-extensions-compiler-plugin.jar">
+                    <element id="module-output" name="android-extensions-compiler" />
+                </element>
+                <element id="archive" name="android-lint.jar">
+                    <element id="module-output" name="uast-kotlin" />
+                    <element id="module-output" name="lint-idea" />
+                    <element id="module-output" name="uast-java" />
+                    <element id="module-output" name="uast-common" />
+                    <element id="module-output" name="lint-checks" />
+                    <element id="library" level="project" name="guava" />
+                    <element id="module-output" name="lint-api" />
+                    <element id="module-output" name="uast-android" />
+                </element>
+                <element id="archive" name="allopen-ide-plugin.jar">
+                    <element id="module-output" name="allopen-ide" />
+                </element>
+                <element id="archive" name="allopen-compiler-plugin.jar">
+                    <element id="module-output" name="allopen-cli" />
+                </element>
+                <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-daemon-client.jar" />
+                <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-script-runtime.jar" />
+            </element>
+            <element id="directory" name="kotlinc">
+                <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
+            </element>
+        </root>
+    </artifact>
 </component>

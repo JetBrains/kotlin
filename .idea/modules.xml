@@ -3,13 +3,15 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Kotlin.iml" filepath="$PROJECT_DIR$/Kotlin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/allopen/allopen.iml" filepath="$PROJECT_DIR$/plugins/allopen/allopen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/allopen/allopen-cli/allopen-cli.iml" filepath="$PROJECT_DIR$/plugins/allopen/allopen-cli/allopen-cli.iml" group="plugins/allopen" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/allopen/allopen-ide/allopen-ide.iml" filepath="$PROJECT_DIR$/plugins/allopen/allopen-ide/allopen-ide.iml" group="plugins/allopen" />
       <module fileurl="file://$PROJECT_DIR$/plugins/lint/android-annotations/android-annotations.iml" filepath="$PROJECT_DIR$/plugins/lint/android-annotations/android-annotations.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-jps/android-extensions-jps.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-jps/android-extensions-jps.iml" group="plugins/android-extensions" />
       <module fileurl="file://$PROJECT_DIR$/android-studio/android-studio.iml" filepath="$PROJECT_DIR$/android-studio/android-studio.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/android-tests/android-tests.iml" filepath="$PROJECT_DIR$/compiler/android-tests/android-tests.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/annotation-based-compiler-plugins-ide-support/annotation-based-compiler-plugins-ide-support.iml" filepath="$PROJECT_DIR$/plugins/annotation-based-compiler-plugins-ide-support/annotation-based-compiler-plugins-ide-support.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/plugins/annotation-collector/annotation-collector.iml" filepath="$PROJECT_DIR$/plugins/annotation-collector/annotation-collector.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/plugins/annotation-processing/annotation-processing.iml" filepath="$PROJECT_DIR$/plugins/annotation-processing/annotation-processing.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/ant/ant.iml" filepath="$PROJECT_DIR$/ant/ant.iml" />

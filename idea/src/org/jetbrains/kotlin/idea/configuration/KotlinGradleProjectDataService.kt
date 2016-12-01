@@ -23,12 +23,23 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
+
+interface GradleProjectImportHandler {
+    companion object : ProjectExtensionDescriptor<GradleProjectImportHandler>(
+            "org.jetbrains.kotlin.gradleProjectImportHandler",
+            GradleProjectImportHandler::class.java
+    )
+
+    operator fun invoke(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>)
+}
 
 class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSetData, Void>() {
     override fun getTargetDataKey() = GradleSourceSetData.KEY
@@ -47,7 +58,9 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSe
             val compilerVersion = moduleNode?.findAll(BuildScriptClasspathData.KEY)?.firstOrNull()?.data?.let(::findKotlinPluginVersion)
                                   ?: continue
 
-            ideModule.getOrCreateFacet(modelsProvider).configureFacet(compilerVersion, modelsProvider)
+            val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider)
+            kotlinFacet.configureFacet(compilerVersion, modelsProvider)
+            GradleProjectImportHandler.getInstances(project).forEach { it(kotlinFacet, sourceSetNode) }
         }
     }
 }

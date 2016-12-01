@@ -2,6 +2,10 @@
     <extensionPoints>
         <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
         <extensionPoint name="projectConfigurator" interface="org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator"/>
+
+        <extensionPoint name="declarationAttributeAltererExtension"
+                        interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
