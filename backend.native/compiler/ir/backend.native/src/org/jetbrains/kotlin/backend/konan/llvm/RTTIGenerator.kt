@@ -149,9 +149,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val size = getInstanceSize(classType, className)
 
-        val superTypeOrNull = classDesc.getSuperClassNotAny()
-        val superType = if (superTypeOrNull != null) superTypeOrNull.llvmTypeInfoPtr
-                else NullPointer(runtime.typeInfoType)
+        val superTypeOrAny = classDesc.getSuperClassOrAny()
+        val superType = if (KotlinBuiltIns.isAny(classDesc)) NullPointer(runtime.typeInfoType)
+                else superTypeOrAny.llvmTypeInfoPtr
 
         val interfaces = classDesc.implementedInterfaces.map { it.llvmTypeInfoPtr }
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
