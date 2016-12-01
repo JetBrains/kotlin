@@ -566,6 +566,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("publishedApi.kt")
+        public void testPublishedApi() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/publishedApi.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("QualifiedExpressions.kt")
         public void testQualifiedExpressions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/QualifiedExpressions.kt");

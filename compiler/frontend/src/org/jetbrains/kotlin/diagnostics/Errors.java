@@ -865,6 +865,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, CallableDescriptor> INLINE_CALL_CYCLE = DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory0<PsiElement> NON_LOCAL_RETURN_IN_DISABLED_INLINE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtDeclaration> INLINE_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtAnnotationEntry> NON_INTERNAL_PUBLISHED_API = DiagnosticFactory0.create(ERROR);
 
 
     DiagnosticFactory0<PsiElement> NON_LOCAL_SUSPENSION_POINT = DiagnosticFactory0.create(ERROR);
