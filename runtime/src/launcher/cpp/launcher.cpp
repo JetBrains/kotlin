@@ -22,14 +22,14 @@ ArrayHeader* setupArgs(int argc, char** argv) {
     return args;
 }
         
-extern "C" void konanMain(void*) asm("_kfun:main(Array<String>)");
+extern "C" void konanStart(void*) asm("_kfun:start(Array<String>)");
 
 int main(int argc, char** argv) {
 
     InitMemory();
 
     ArrayHeader* args = setupArgs(argc, argv);
-    konanMain(args);
+    konanStart(args);
 
     // Yes, we have to follow Java convention and return zero.
     return 0;

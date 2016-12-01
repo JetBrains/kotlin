@@ -13,6 +13,7 @@ abstract class KonanTest extends DefaultTask {
     def llvmLlc = llvmTool("llc")
     def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
     def launcherBc = new File("${runtimeProject.buildDir.canonicalPath}/launcher.bc")
+    def startKtBc = new File("${runtimeProject.buildDir.canonicalPath}/start.kt.bc")
     def stdlibKtBc = new File("${runtimeProject.buildDir.canonicalPath}/stdlib.kt.bc")
     def mainC = 'main.c'
     String goldValue = null
@@ -136,7 +137,7 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File libraryPath, File exe) {
         project.execClang {
-            commandLine "clang++", launcherBc.absolutePath, runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+            commandLine "clang++", launcherBc.absolutePath, startKtBc.absolutePath, runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
                     "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc'
         }
     }
@@ -609,5 +610,10 @@ task args0(type: RunKonanTest) {
     arguments = ["AAA", "BB", "C"]
     goldValue = "AAA\nBB\nC\n"
     source = "runtime/basic/args0.kt"
+}
+
+task main_exception(type: RunKonanTest) {
+    goldValue = "Uncaught exception from kotlin main: Throwable\n"
+    source = "runtime/basic/main_exception.kt"
 }
 

@@ -162,7 +162,6 @@ dependencies {
 
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 
-
 task stdlib(type: JavaExec) {
     main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
     classpath configurations.cli_bc
@@ -175,6 +174,27 @@ task stdlib(type: JavaExec) {
 
     dependsOn ':runtime:build'
     outputs.file(project(':runtime').file('build/stdlib.kt.bc'))
+
+    doFirst {
+    args '-runtime', project(':runtime').build.outputs.files.singleFile
+    }
+    environment 'LD_LIBRARY_PATH' : "${llvmDir}/lib:${project.buildDir}/nativelibs"
+}
+
+task start(type: JavaExec) {
+    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+    classpath configurations.cli_bc
+
+    args project(':runtime').file('src/launcher/kotlin')
+
+    args '-library', project(':runtime').file('build/stdlib.kt.bc')
+
+    args '-output', project(':runtime').file('build/start.kt.bc')
+
+    jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
+
+    dependsOn 'stdlib'
+    outputs.file(project(':runtime').file('build/start.kt.bc'))
 
     doFirst {
     args '-runtime', project(':runtime').build.outputs.files.singleFile
