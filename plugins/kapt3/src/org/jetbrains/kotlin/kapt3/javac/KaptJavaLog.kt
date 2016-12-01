@@ -34,7 +34,8 @@ class KaptJavaLog(context: Context?) : Log(context) {
                 "compiler.err.name.clash.same.erasure",
                 "compiler.err.name.clash.same.erasure.no.override",
                 "compiler.err.name.clash.same.erasure.no.override.1",
-                "compiler.err.name.clash.same.erasure.no.hide")
+                "compiler.err.name.clash.same.erasure.no.hide",
+                "compiler.err.already.defined")
 
         internal fun preRegister(context: Context) {
             context.put(Log.logKey, Context.Factory<Log>(::KaptJavaLog))
