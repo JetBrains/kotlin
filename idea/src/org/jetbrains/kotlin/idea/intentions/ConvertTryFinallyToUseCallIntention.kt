@@ -69,7 +69,15 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExp
             appendFixedText("\n}")
         }
 
-        element.replace(useCallExpression)
+        val result = element.replace(useCallExpression) as KtExpression
+        val call = when (result) {
+            is KtQualifiedExpression -> result.selectorExpression as? KtCallExpression ?: return
+            is KtCallExpression -> result
+            else -> return
+        }
+        val lambda = call.lambdaArguments.firstOrNull() ?: return
+        val lambdaParameter = lambda.getLambdaExpression().valueParameters.firstOrNull() ?: return
+        editor?.selectionModel?.setSelection(lambdaParameter.startOffset, lambdaParameter.endOffset)
     }
 
     override fun applicabilityRange(element: KtTryExpression): TextRange? {
