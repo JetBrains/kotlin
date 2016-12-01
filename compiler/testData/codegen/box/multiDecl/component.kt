@@ -1,4 +1,4 @@
-// WITH_LIBRARY
+// WITH_RUNTIME
 class S(val a: String, val b: String) {
   operator fun component1() : String = a
   operator fun component2() : String = b
