@@ -37,7 +37,7 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngine(
         getScriptArgs: (ScriptContext) -> Array<Any?>?,
         scriptArgsTypes: Array<Class<*>>?,
         compilerOut: OutputStream = System.err
-) : KotlinJsr223JvmScriptEngineBase(factory) {
+) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
     private val daemon by lazy { connectToCompileService(compilerJar) }
 
@@ -56,6 +56,9 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngine(
 
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
     val localEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
+
+    override val replScriptInvoker: ReplScriptInvoker
+        get() = localEvaluator
 
     override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult {
 

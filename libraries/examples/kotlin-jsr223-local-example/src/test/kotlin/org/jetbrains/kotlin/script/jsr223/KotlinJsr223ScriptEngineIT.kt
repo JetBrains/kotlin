@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.script.jsr223
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.junit.Assert
 import org.junit.Test
+import javax.script.Invocable
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.SimpleBindings
@@ -64,5 +65,42 @@ class KotlinJsr223ScriptEngineIT {
         Assert.assertNull(res1)
         val res2 = engine.eval("x + 2")
         Assert.assertEquals(5, res2)
+    }
+
+    @Test
+    fun testInvocable() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        val res1 = engine.eval("""
+fun fn(x: Int) = x + 2
+val obj = object {
+    fun fn1(x: Int) = x + 3
+}
+obj
+""")
+        Assert.assertNotNull(res1)
+        val invocator = engine as? Invocable
+        Assert.assertNotNull(invocator)
+        assertThrows(NoSuchMethodException::class.java) {
+            invocator!!.invokeFunction("fn1", 3)
+        }
+        val res2 = invocator!!.invokeFunction("fn", 3)
+        Assert.assertEquals(5, res2)
+        assertThrows(NoSuchMethodException::class.java) {
+            invocator!!.invokeMethod(res1, "fn", 3)
+        }
+        val res3 = invocator!!.invokeMethod(res1, "fn1", 3)
+        Assert.assertEquals(6, res3)
+    }
+}
+
+fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {
+    try {
+        body()
+        Assert.fail("Expecting an exception of type ${exceptionClass.name}")
+    }
+    catch (e: Throwable) {
+        if (!exceptionClass.isAssignableFrom(e.javaClass)) {
+            Assert.fail("Expecting an exception of type ${exceptionClass.name} but got ${e.javaClass.name}")
+        }
     }
 }

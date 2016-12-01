@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase
-import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericRepl
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -44,7 +42,7 @@ class KotlinJsr223JvmLocalScriptEngine(
         templateClassName: String,
         getScriptArgs: (ScriptContext) -> Array<Any?>?,
         scriptArgsTypes: Array<Class<*>>?
-) : KotlinJsr223JvmScriptEngineBase(factory) {
+) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
     data class MessageCollectorReport(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation)
 
@@ -104,6 +102,10 @@ class KotlinJsr223JvmLocalScriptEngine(
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
     }
+
+    override val replScriptInvoker: ReplScriptInvoker
+        get() = repl.scriptInvoker
+
 
     override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult {
         val evalResult = repl.eval(codeLine, history)

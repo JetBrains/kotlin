@@ -60,23 +60,48 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun invokeMethod(p0: Any?, p1: String?, vararg p2: Any?): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <T : Any?> getInterface(p0: Class<T>?): T {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <T : Any?> getInterface(p0: Any?, p1: Class<T>?): T {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun invokeFunction(p0: String?, vararg p1: Any?): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun createBindings(): Bindings = SimpleBindings()
 
     override fun getFactory(): ScriptEngineFactory = myFactory
+}
+
+
+@Suppress("unused") // used externally (kotlin.script.utils)
+interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
+
+    val replScriptInvoker: ReplScriptInvoker
+
+    override fun invokeFunction(name: String?, vararg args: Any?): Any? {
+        if (name == null) throw java.lang.NullPointerException("function name cannot be null")
+        return processInvokeResult(replScriptInvoker.invokeFunction(name, *args), isMethod = true)
+    }
+
+    override fun invokeMethod(thiz: Any?, name: String?, vararg args: Any?): Any? {
+        if (name == null) throw java.lang.NullPointerException("method name cannot be null")
+        if (thiz == null) throw IllegalArgumentException("cannot invoke method on the null object")
+        return processInvokeResult(replScriptInvoker.invokeMethod(thiz, name, *args), isMethod = true)
+    }
+
+    override fun <T : Any> getInterface(clasz: Class<T>?): T? {
+        if (clasz == null) throw IllegalArgumentException("class object cannot be null")
+        if (!clasz.isInterface) throw IllegalArgumentException("expecting interface")
+        return processInvokeResult(replScriptInvoker.getInterface(clasz.kotlin), isMethod = false) as? T
+    }
+
+    override fun <T : Any> getInterface(thiz: Any?, clasz: Class<T>?): T? {
+        if (thiz == null) throw IllegalArgumentException("object cannot be null")
+        if (clasz == null) throw IllegalArgumentException("class object cannot be null")
+        if (!clasz.isInterface) throw IllegalArgumentException("expecting interface")
+        return processInvokeResult(replScriptInvoker.getInterface(thiz, clasz.kotlin), isMethod = false) as? T
+    }
+
+    private fun processInvokeResult(res: ReplScriptInvokeResult, isMethod: Boolean): Any? =
+            when (res) {
+                is ReplScriptInvokeResult.Error.NoSuchEntity -> throw if (isMethod) NoSuchMethodException(res.message) else IllegalArgumentException(res.message)
+                is ReplScriptInvokeResult.Error.CompileTime -> throw IllegalArgumentException(res.message) // should not happen in the current code, so leaving it here despite the contradiction with Invocable's specs
+                is ReplScriptInvokeResult.Error.Runtime -> throw ScriptException(res.message)
+                is ReplScriptInvokeResult.Error -> throw ScriptException(res.message)
+                is ReplScriptInvokeResult.UnitResult -> Unit // TODO: check if it is suitable replacement for java's Void
+                is ReplScriptInvokeResult.ValueResult -> res.value
+            }
 }

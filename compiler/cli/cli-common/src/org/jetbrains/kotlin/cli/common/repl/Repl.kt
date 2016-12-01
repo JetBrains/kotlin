@@ -73,12 +73,12 @@ sealed class ReplCompileResult(val updatedHistory: List<ReplCodeLine>) : Seriali
     }
 }
 
-sealed class ReplInvokeResult : Serializable {
-    class ValueResult(val value: Any?) : ReplInvokeResult() {
+sealed class ReplScriptInvokeResult : Serializable {
+    class ValueResult(val value: Any?) : ReplScriptInvokeResult() {
         override fun toString(): String = "Result: $value"
     }
-    object UnitResult : ReplInvokeResult()
-    sealed class Error(val message: String) : ReplInvokeResult() {
+    object UnitResult : ReplScriptInvokeResult()
+    sealed class Error(val message: String) : ReplScriptInvokeResult() {
         class Runtime(message: String, val cause: Exception? = null) : Error(message)
         class NoSuchEntity(message: String) : Error(message)
         class CompileTime(message: String, val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(message)
@@ -117,11 +117,16 @@ interface ReplCompiler : ReplChecker {
     fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult
 }
 
-interface ReplInvoker {
-    fun <T: Any> getInterface(clasz: KClass<T>): ReplInvokeResult
-    fun <T: Any> getInterface(receiver: Any, clasz: KClass<T>): ReplInvokeResult
-    fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplInvokeResult
-    fun invokeFunction(name: String, vararg args: Any?): ReplInvokeResult
+interface ReplScriptInvoker {
+    fun <T: Any> getInterface(clasz: KClass<T>): ReplScriptInvokeResult
+    fun <T: Any> getInterface(receiver: Any, clasz: KClass<T>): ReplScriptInvokeResult
+    fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplScriptInvokeResult
+    fun invokeFunction(name: String, vararg args: Any?): ReplScriptInvokeResult
+}
+
+// TODO this is a bit cumbersome, consider some other ways to access an invoker
+interface ReplScriptInvokerProxy {
+    val scriptInvoker: ReplScriptInvoker
 }
 
 interface ReplCompiledEvaluator {

@@ -24,13 +24,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.reflect.*
-import kotlin.reflect.jvm.javaType
 
 open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
                                         baseClassloader: ClassLoader?,
                                         val scriptArgs: Array<Any?>? = null,
                                         val scriptArgsTypes: Array<Class<*>>? = null
-) : ReplCompiledEvaluator, ReplInvoker {
+) : ReplCompiledEvaluator, ReplScriptInvoker {
 
     private var classLoader: org.jetbrains.kotlin.cli.common.repl.ReplClassLoader = makeReplClassLoader(baseClassloader, baseClasspath)
     private val classLoaderLock = ReentrantReadWriteLock()
@@ -101,36 +100,39 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
         return if (hasResult) ReplEvalResult.ValueResult(compiledLoadedClassesHistory.lines, rv) else ReplEvalResult.UnitResult(compiledLoadedClassesHistory.lines)
     }
 
-    override fun <T: Any> getInterface(klass: KClass<T>): ReplInvokeResult = evalStateLock.read {
-        val (_, instance) = compiledLoadedClassesHistory.values.lastOrNull() ?: return ReplInvokeResult.Error.NoSuchEntity("no script ")
+    override fun <T: Any> getInterface(klass: KClass<T>): ReplScriptInvokeResult = evalStateLock.read {
+        val (_, instance) = compiledLoadedClassesHistory.values.lastOrNull() ?: return ReplScriptInvokeResult.Error.NoSuchEntity("no script ")
         return getInterface(instance, klass)
     }
 
-    override fun <T: Any> getInterface(receiver: Any, klass: KClass<T>): ReplInvokeResult = evalStateLock.read {
-        return ReplInvokeResult.ValueResult(klass.safeCast(receiver))
+    override fun <T: Any> getInterface(receiver: Any, klass: KClass<T>): ReplScriptInvokeResult = evalStateLock.read {
+        return ReplScriptInvokeResult.ValueResult(klass.safeCast(receiver))
     }
 
-    override fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplInvokeResult = evalStateLock.read {
+    override fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplScriptInvokeResult = evalStateLock.read {
         return invokeImpl(receiver.javaClass.kotlin, receiver, name, args)
     }
 
-    override fun invokeFunction(name: String, vararg args: Any?): ReplInvokeResult = evalStateLock.read {
-        val (klass, instance) = compiledLoadedClassesHistory.values.lastOrNull() ?: return ReplInvokeResult.Error.NoSuchEntity("no script ")
+    override fun invokeFunction(name: String, vararg args: Any?): ReplScriptInvokeResult = evalStateLock.read {
+        val (klass, instance) = compiledLoadedClassesHistory.values.lastOrNull() ?: return ReplScriptInvokeResult.Error.NoSuchEntity("no script ")
         return invokeImpl(klass.kotlin, instance, name, args)
     }
 
-    private fun invokeImpl(receiverClass: KClass<*>, receiverInstance: Any, name: String, args: Array<out Any?>): ReplInvokeResult {
-        val (fn, mapping) = receiverClass.functions.filter { it.name == name }.findMapping(args.toList()) ?:
-                            receiverClass.memberExtensionFunctions.filter { it.name == name }.findMapping(listOf<Any?>(receiverInstance) + args) ?:
-                            return ReplInvokeResult.Error.NoSuchEntity("no suitable function '$name' found")
+    private fun invokeImpl(receiverClass: KClass<*>, receiverInstance: Any, name: String, args: Array<out Any?>): ReplScriptInvokeResult {
+
+        val candidates = receiverClass.memberFunctions.filter { it.name == name } +
+                         receiverClass.memberExtensionFunctions.filter { it.name == name }
+        val (fn, mapping) = candidates.findMapping(args.toList()) ?:
+                            candidates.findMapping(listOf<Any?>(receiverInstance) + args) ?:
+                            return ReplScriptInvokeResult.Error.NoSuchEntity("no suitable function '$name' found")
         val res = try {
             evalWithIO { fn.callBy(mapping) }
         }
         catch (e: Throwable) {
             // ignore everything in the stack trace until this constructor call
-            return ReplInvokeResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${fn.name}"), e as? Exception)
+            return ReplScriptInvokeResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${fn.name}"), e as? Exception)
         }
-        return if (fn.returnType.classifier == Unit::class) ReplInvokeResult.UnitResult else ReplInvokeResult.ValueResult(res)
+        return if (fn.returnType.classifier == Unit::class) ReplScriptInvokeResult.UnitResult else ReplScriptInvokeResult.ValueResult(res)
     }
 
     companion object {

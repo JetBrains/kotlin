@@ -181,9 +181,11 @@ open class GenericRepl(
         baseClassloader: ClassLoader?,
         scriptArgs: Array<Any?>? = null,
         scriptArgsTypes: Array<Class<*>>? = null
-) : ReplEvaluator, GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector) {
+) : ReplEvaluator, ReplScriptInvokerProxy, GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector) {
 
     private val compiledEvaluator = GenericReplCompiledEvaluator(compilerConfiguration.jvmClasspathRoots, baseClassloader, scriptArgs, scriptArgsTypes)
+
+    override val scriptInvoker: ReplScriptInvoker get() = compiledEvaluator
 
     @Synchronized
     override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult =
