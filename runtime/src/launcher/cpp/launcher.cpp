@@ -14,8 +14,12 @@ ArrayHeader* setupArgs(int argc, char** argv) {
 
     return args;
 }
-        
+
+#ifdef __linux__
+extern "C" void konanStart(void*) asm("kfun:start(Array<String>)");
+#else
 extern "C" void konanStart(void*) asm("_kfun:start(Array<String>)");
+#endif
 
 int main(int argc, char** argv) {
 
