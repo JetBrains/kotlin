@@ -71,6 +71,6 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(root, "output.txt"), result)
+        KotlinTestUtils.assertEqualsToFile(File(root, "output.txt"), result.replace('\\', '/'))
     }
 }
