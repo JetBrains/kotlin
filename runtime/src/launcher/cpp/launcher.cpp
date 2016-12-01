@@ -9,7 +9,7 @@ ArrayHeader* setupArgs(int argc, char** argv) {
     ArrayHeader* args = AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, argc-1);
 
     for (int i = 0; i < argc-1; i++) {
-        Kotlin_Array_set(args, i, AllocStringInstance( argv[i+1] ));
+        Kotlin_Array_set(args, i, AllocStringInstance( argv[i+1], strlen(argv[i+1]) ));
     }
 
     return args;

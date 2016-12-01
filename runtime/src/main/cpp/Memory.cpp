@@ -89,12 +89,11 @@ ArrayHeader* AllocArrayInstance(
   return ArrayContainer(type_info, elements).GetPlace();
 }
 
-ArrayHeader* AllocStringInstance(const char* cstring) {
-  uint32_t length = strlen(cstring);
+ArrayHeader* AllocStringInstance(const char* data, uint32_t length) {
   ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
   memcpy(
       ByteArrayAddressOfElementAt(result, 0),
-      cstring,
+      data,
       length);
   return result;
 }
