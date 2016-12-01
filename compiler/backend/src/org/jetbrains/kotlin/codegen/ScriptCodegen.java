@@ -146,6 +146,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             Type classType = typeMapper.mapType(scriptDescriptor);
 
             ClassDescriptor superclass = DescriptorUtilsKt.getSuperClassNotAny(scriptDescriptor);
+            // TODO: throw if class is not found)
 
             if (superclass == null) {
                 iv.load(0, classType);
@@ -153,7 +154,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
             }
             else {
                 ConstructorDescriptor ctorDesc = superclass.getUnsubstitutedPrimaryConstructor();
-                assert ctorDesc != null;
+                if (ctorDesc == null) throw new RuntimeException("Primary constructor not found for script template " + superclass.toString());
 
                 iv.load(0, classType);
 
