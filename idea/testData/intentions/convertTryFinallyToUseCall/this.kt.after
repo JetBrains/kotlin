@@ -3,5 +3,5 @@ import java.io.File
 import java.io.BufferedReader
 
 fun BufferedReader.foo() {
-    use { this.readLine() }
+    this.use { this.readLine() }
 }

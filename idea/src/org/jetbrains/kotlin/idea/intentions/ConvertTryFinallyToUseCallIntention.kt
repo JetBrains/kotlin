@@ -51,6 +51,10 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntent
                 appendName(resourceName)
                 appendFixedText(".")
             }
+            else if (finallyExpressionReceiver is KtThisExpression) {
+                appendFixedText(finallyExpressionReceiver.text)
+                appendFixedText(".")
+            }
             appendFixedText("use {")
 
             if (resourceName != null) {
