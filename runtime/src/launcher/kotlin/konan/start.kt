@@ -1,7 +1,9 @@
+import konan.internal.ExportForCppRuntime
 
 external fun main(args: Array<String>)
 
-fun start(args: Array<String>) {
+@ExportForCppRuntime
+private fun Kotlin_start(args: Array<String>) {
     try {
 
         // This is kotlin program main entry point

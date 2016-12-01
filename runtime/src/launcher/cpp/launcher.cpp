@@ -15,18 +15,14 @@ ArrayHeader* setupArgs(int argc, char** argv) {
     return args;
 }
 
-#ifdef __linux__
-extern "C" void konanStart(void*) asm("kfun:start(Array<String>)");
-#else
-extern "C" void konanStart(void*) asm("_kfun:start(Array<String>)");
-#endif
+extern "C" void Kotlin_start(ArrayHeader* );
 
 int main(int argc, char** argv) {
 
     InitMemory();
 
     ArrayHeader* args = setupArgs(argc, argv);
-    konanStart(args);
+    Kotlin_start(args);
 
     // Yes, we have to follow Java convention and return zero.
     return 0;
