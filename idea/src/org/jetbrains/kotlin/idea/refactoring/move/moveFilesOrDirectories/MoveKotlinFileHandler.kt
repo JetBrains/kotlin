@@ -69,6 +69,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
     fun initMoveProcessor(psiFile: PsiFile, newParent: PsiDirectory?): MoveKotlinDeclarationsProcessor? {
         if (psiFile !is KtFile) return null
+        if (newParent == null) return null
         val packageNameInfo = psiFile.getPackageNameInfo(newParent, false) ?: return null
 
         val project = psiFile.project
