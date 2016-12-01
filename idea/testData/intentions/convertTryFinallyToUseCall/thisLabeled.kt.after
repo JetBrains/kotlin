@@ -8,6 +8,8 @@ class MyCloseable : Closeable {
     fun process(x: Int) = x
 
     fun Int.foo() {
-        this@MyCloseable.use { this@MyCloseable.process(this) }
+        this@MyCloseable.use {
+            this@MyCloseable.process(this)
+        }
     }
 }
