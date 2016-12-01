@@ -610,6 +610,11 @@ task unreachable1(type: RunKonanTest) {
     source = "codegen/controlflow/unreachable1.kt"
 }
 
+task break_continue(type: RunKonanTest) {
+    goldValue = "while 2\nwhile 4\nwhile 6\nwhile 2\nwhile 4\nwhile 6\nwhile 1\nwhile 3\nwhile 5\n"
+    source = "codegen/controlflow/break.kt"
+}
+
 task range0(type: RunKonanTest) {
     goldValue = "123\nabcd\n"
     source = "runtime/collections/range0.kt"
