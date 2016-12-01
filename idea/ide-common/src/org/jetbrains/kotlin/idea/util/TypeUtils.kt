@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.typeUtil.substitute
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
@@ -117,7 +120,7 @@ fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
 }
 
 fun KotlinType.getResolvableApproximations(scope: LexicalScope?, checkTypeParameters: Boolean): Sequence<KotlinType> {
-    return (singletonList() + TypeUtils.getAllSupertypes(this))
+    val sequence = (singletonList() + TypeUtils.getAllSupertypes(this))
             .asSequence()
             .filter { it.isResolvableInScope(scope, checkTypeParameters) }
             .mapNotNull mapArgs@ {
@@ -141,4 +144,9 @@ fun KotlinType.getResolvableApproximations(scope: LexicalScope?, checkTypeParame
 
                 it.replace(newArguments)
             }
+
+    return when {
+        !isNullabilityFlexible() -> sequence
+        else -> sequence.flatMap { sequenceOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it)) }
+    }
 }
