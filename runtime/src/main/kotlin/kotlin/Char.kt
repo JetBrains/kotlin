@@ -94,5 +94,9 @@ public final class Char : Comparable<Char> {
     // Konan-specific.
     @SymbolName("Kotlin_Char_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+        return this.toInt();
+    }
 }
 

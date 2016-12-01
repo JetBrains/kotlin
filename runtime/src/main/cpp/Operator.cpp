@@ -248,8 +248,13 @@ KLong   Kotlin_Long_dec              (KLong a           ) { return --a; }
 KLong   Kotlin_Long_unaryPlus        (KLong a           ) { return  +a; }
 KLong   Kotlin_Long_unaryMinus       (KLong a           ) { return  -a; }
 
-KLong   Kotlin_Long_xor_Long         (KLong a, KLong   b) { return a^b; }
-KLong   Kotlin_Long_ushr_Long        (KLong a, KLong   b) { return a >> b; }
+KLong   Kotlin_Long_xor_Long         (KLong a, KLong   b) { return a ^ b; }
+KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) {
+  return a >> b;
+}
+KLong   Kotlin_Long_ushr_Int         (KLong a, KInt    b) {
+  return static_cast<uint64_t>(a) >> b;
+}
 
 KByte   Kotlin_Long_toByte           (KLong a           ) { return a; }
 KShort  Kotlin_Long_toShort          (KLong a           ) { return a; }
@@ -314,6 +319,15 @@ KLong   Kotlin_Float_toLong           (KFloat a           ) { return a; }
 KFloat  Kotlin_Float_toFloat          (KFloat a           ) { return a; }
 KDouble Kotlin_Float_toDouble         (KFloat a           ) { return a; }
 
+KInt   Kotlin_Float_bits              (KFloat a) {
+  union {
+    KFloat f;
+    KInt i;
+  } alias;
+  alias.f = a;
+  return alias.i;
+}
+
 //--- Double ------------------------------------------------------------------//
 
 KInt    Kotlin_Double_compareTo_Byte   (KDouble a, KByte   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
@@ -369,4 +383,14 @@ KInt    Kotlin_Double_toInt            (KDouble a           ) { return a; }
 KLong   Kotlin_Double_toLong           (KDouble a           ) { return a; }
 KFloat  Kotlin_Double_toFloat          (KDouble a           ) { return a; }
 KDouble Kotlin_Double_toDouble         (KDouble a           ) { return a; }
+
+KLong   Kotlin_Double_bits             (KDouble a) {
+  union {
+    KDouble d;
+    KLong l;
+  } alias;
+  alias.d = a;
+  return alias.l;
+}
+
 }  // extern "C"

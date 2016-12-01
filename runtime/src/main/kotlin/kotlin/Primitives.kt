@@ -203,6 +203,10 @@ public final class Byte : Number(), Comparable<Byte> {
     // Konan-specific.
     @SymbolName("Kotlin_Byte_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+        return this.toInt()
+    }
 }
 
 /**
@@ -408,6 +412,10 @@ public final class Short : Number(), Comparable<Short> {
     // Konan-specific.
     @SymbolName("Kotlin_Short_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+        return this.toInt()
+    }
 }
 
 /**
@@ -635,6 +643,10 @@ public final class Int : Number(), Comparable<Int> {
     // Konan-specific.
     @SymbolName("Kotlin_Int_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+        return this
+    }
 }
 
 /**
@@ -826,10 +838,10 @@ public final class Long : Number(), Comparable<Long> {
     @SymbolName("Kotlin_Long_shl_Long")
     external public infix fun shl(bitCount: Int): Long
     /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
-    @SymbolName("Kotlin_Long_shr_Long")
+    @SymbolName("Kotlin_Long_shr_Int")
     external public infix fun shr(bitCount: Int): Long
     /** Shifts this value right by [bits], filling the leftmost bits with zeros. */
-    @SymbolName("Kotlin_Long_ushr_Long")
+    @SymbolName("Kotlin_Long_ushr_Int")
     external public infix fun ushr(bitCount: Int): Long
     /** Performs a bitwise AND operation between the two values. */
     @SymbolName("Kotlin_Long_and_Long")
@@ -862,6 +874,10 @@ public final class Long : Number(), Comparable<Long> {
     // Konan-specific.
     @SymbolName("Kotlin_Long_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+       return ((this ushr 32) xor this).toInt()
+    }
 }
 
 /**
@@ -1047,7 +1063,6 @@ public final class Float : Number(), Comparable<Float> {
     @SymbolName("Kotlin_Float_unaryMinus")
     external public operator fun unaryMinus(): Float
 
-
     @SymbolName("Kotlin_Float_toByte")
     external public override fun toByte(): Byte
     @SymbolName("Kotlin_Float_toChar")
@@ -1066,6 +1081,13 @@ public final class Float : Number(), Comparable<Float> {
     // Konan-specific.
     @SymbolName("Kotlin_Float_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+        return bits()
+    }
+
+    @SymbolName("Kotlin_Float_bits")
+    external public fun bits(): Int
 }
 
 /**
@@ -1270,4 +1292,11 @@ public final class Double : Number(), Comparable<Double> {
     // Konan-specific.
     @SymbolName("Kotlin_Double_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+        return bits().hashCode()
+    }
+
+    @SymbolName("Kotlin_Double_bits")
+    external public fun bits(): Long
 }

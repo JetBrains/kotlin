@@ -35,4 +35,8 @@ public final class Boolean : Comparable<Boolean> {
     // Konan-specific.
     @SymbolName("Kotlin_Boolean_toString")
     external public override fun toString(): String
+
+    public override fun hashCode(): Int {
+        return if (this) 1 else 0;
+    }
 }

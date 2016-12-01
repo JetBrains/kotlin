@@ -443,6 +443,11 @@ task interface0(type: RunKonanTest) {
     source = "runtime/basic/interface0.kt"
 }
 
+task hash0(type: RunKonanTest) {
+    goldValue = "239\n0\n97\n1065353216\n1072693248\n1\n0\ntrue\ntrue\n"
+    source = "runtime/basic/hash0.kt"
+}
+
 task array_list1(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "runtime/collections/array_list1.kt"
