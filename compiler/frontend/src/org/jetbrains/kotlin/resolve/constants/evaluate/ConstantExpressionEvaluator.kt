@@ -455,7 +455,10 @@ private class ConstantExpressionEvaluatorVisitor(
             if (isDivisionByZero(resultingDescriptorName.asString(), argumentForParameter.value)) {
                 val parentExpression: KtExpression = PsiTreeUtil.getParentOfType(receiverExpression, KtExpression::class.java)!!
                 trace.report(Errors.DIVISION_BY_ZERO.on(parentExpression))
-                return factory.createErrorValue("Division by zero").wrap()
+
+                if (isIntegerType(argumentForReceiver.value) && isIntegerType(argumentForParameter.value)) {
+                    return factory.createErrorValue("Division by zero").wrap()
+                }
             }
 
             val result = evaluateBinaryAndCheck(argumentForReceiver, argumentForParameter, resultingDescriptorName.asString(), callExpression) ?: return null

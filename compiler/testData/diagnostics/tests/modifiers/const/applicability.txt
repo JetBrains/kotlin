@@ -1,12 +1,26 @@
 package
 
+public const val constInitializer1: kotlin.Double = Infinity.toDouble()
+public const val constInitializer2: kotlin.Double = Infinity.toDouble()
+public const val constInitializer3: kotlin.Double = Infinity.toDouble()
+public const val constInitializer4: kotlin.Double = -Infinity.toDouble()
+public const val constInitializer5: kotlin.Double = NaN.toDouble()
+public const val constInitializer6: kotlin.Double = Infinity.toDouble()
+public const val constInitializer7: kotlin.Double = -Infinity.toDouble()
+public const val constInitializer8: kotlin.Double = NaN.toDouble()
+public const val constInitializer9: kotlin.Double = NaN.toDouble()
 public const val defaultGetter: kotlin.Int = 19
 public const val delegated: kotlin.Int
 public const val nonConstInitializer1: kotlin.Int
+public const val nonConstInitializer10: kotlin.Int
 public const val nonConstInitializer2: kotlin.String
 public const val nonConstInitializer3: kotlin.String
 public const val nonConstInitializer4: kotlin.Double
 public const val nonConstInitializer5: kotlin.Int
+public const val nonConstInitializer6: kotlin.Int
+public const val nonConstInitializer7: kotlin.Int
+public const val nonConstInitializer8: kotlin.Int
+public const val nonConstInitializer9: kotlin.Double
 private val privateTopLevel: kotlin.Int = 3
 public const var topLeveLVar: kotlin.Int
 public const val topLevel: kotlin.Int = 0

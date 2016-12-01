@@ -1,4 +1,4 @@
-// !DIAGNOSTICS:-UNUSED_VARIABLE,-CAST_NEVER_SUCCEEDS
+// !DIAGNOSTICS:-UNUSED_VARIABLE,-CAST_NEVER_SUCCEEDS,-DIVISION_BY_ZERO
 
 import kotlin.reflect.KProperty
 
@@ -75,6 +75,21 @@ const val nonConstInitializer2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as St
 const val nonConstInitializer3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0 as String<!>
 const val nonConstInitializer4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as Double<!>
 const val nonConstInitializer5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"2" as Int<!>
+const val nonConstInitializer6 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1/0<!>
+const val nonConstInitializer7 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>-1/0<!>
+const val nonConstInitializer8 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1/0 - 1/0<!>
+const val nonConstInitializer9 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0/0.0 - 1/0<!>
+const val nonConstInitializer10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0/0<!>
+
+const val constInitializer1 = 1.0/0
+const val constInitializer2 = 1/0.0
+const val constInitializer3 = 1.0/0.0
+const val constInitializer4 = -1.0/0
+const val constInitializer5 = 0.0/0
+const val constInitializer6 = 42 + 1.0/0
+const val constInitializer7 = 42 - 1.0/0
+const val constInitializer8 = 1.0/0 - 1.0/0
+const val constInitializer9 = 0.0/0 + 1.0/0
 
 // ------------------
 class Delegate {
