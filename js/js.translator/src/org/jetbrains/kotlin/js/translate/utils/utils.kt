@@ -89,6 +89,8 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
         is TypeParameterDescriptor -> {
             assert(classifierDescriptor.isReified)
 
+            context.usageTracker()?.used(classifierDescriptor)
+
             context.getNameForDescriptor(classifierDescriptor).makeRef()
         }
         else -> {

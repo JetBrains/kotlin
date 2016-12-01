@@ -6464,6 +6464,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("jsClassOnReifiedTypeInLambda.kt")
+        public void testJsClassOnReifiedTypeInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/jsClassOnReifiedTypeInLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsClassSimpleName.kt")
         public void testJsClassSimpleName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/jsClassSimpleName.kt");
@@ -6485,6 +6491,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("kClassOnReifiedType.kt")
         public void testKClassOnReifiedType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassOnReifiedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassOnReifiedTypeInLambda.kt")
+        public void testKClassOnReifiedTypeInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassOnReifiedTypeInLambda.kt");
             doTest(fileName);
         }
 

@@ -141,6 +141,12 @@ fun JsFunction.withCapturedParameters(
         var additionalArgs = listOf(capturedRef)
         var additionalParams = listOf(JsParameter(name))
 
+        if (capturedDescriptor is TypeParameterDescriptor && capturedDescriptor.isReified) {
+            // Preserve the usual order
+            additionalArgs = listOf(invokingContext.getNameForDescriptor(capturedDescriptor).makeRef()) + additionalArgs
+            additionalParams = listOf(JsParameter(context.getNameForDescriptor(capturedDescriptor))) + additionalParams
+        }
+
         if (capturedDescriptor is CallableDescriptor && isLocalInlineDeclaration(capturedDescriptor)) {
             val aliasRef = capturedRef as? JsNameRef
             val localFunAlias = aliasRef?.getStaticRef() as? JsExpression
