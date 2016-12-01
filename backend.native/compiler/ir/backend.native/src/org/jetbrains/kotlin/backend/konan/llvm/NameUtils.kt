@@ -4,15 +4,19 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 
 private val symbolNameAnnotation = FqName("konan.SymbolName")
+
+private val exportForCppRuntimeAnnotation = FqName("konan.internal.ExportForCppRuntime")
 
 fun typeToHashString(type: KotlinType): String {
     if (TypeUtils.isTypeParameter(type)) return "GENERIC"
@@ -52,17 +56,31 @@ internal val FunctionDescriptor.symbolName: String
     get() {
         this.annotations.findAnnotation(symbolNameAnnotation)?.let {
             if (this.isExternal) {
-                val nameValue = it.allValueArguments.values.single() as StringValue
-                return nameValue.value
+                return getStringValue(it)!!
             } else {
                 // ignore; TODO: report compile error
             }
         }
+
+        this.annotations.findAnnotation(exportForCppRuntimeAnnotation)?.let {
+            val name = getStringValue(it) ?: this.name.asString()
+            return name // no wrapping currently required
+        }
+
         val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
             if (it.isRoot) "" else "$it."
         }
         return "kfun:$containingDeclarationPart$functionName"
     }
+
+private fun getStringValue(annotation: AnnotationDescriptor): String? {
+    annotation.allValueArguments.values.ifNotEmpty {
+        val stringValue = this.single() as StringValue
+        return stringValue.value
+    }
+
+    return null
+}
 
 internal val ClassDescriptor.symbolName: String
     get() = when (this.kind) {

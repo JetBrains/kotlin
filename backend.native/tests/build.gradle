@@ -323,6 +323,11 @@ task tostring2(type: RunKonanTest) {
     source = "runtime/basic/tostring2.kt"
 }
 
+task empty_substring(type: RunKonanTest) {
+    goldValue = "\n"
+    source = "runtime/basic/empty_substring.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/basic/array0.kt"
@@ -395,7 +400,9 @@ task strdedup1(type: RunKonanTest) {
 }
 
 /*
-TODO: enable after supporting Unit object
+TODO: string deduplication across several components seems to require
+linking them as bitcode modules before translating to machine code.
+
 task strdedup2(type: RunKonanTest) {
     goldValue = "true\ntrue\n"
     source = "datagen/literals/strdedup2.kt"

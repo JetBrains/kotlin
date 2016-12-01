@@ -6,6 +6,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Throws arbitrary exception.
+void ThrowException(KRef exception);
+
+// The functions below are implemented in Kotlin (at package konan.internal).
+
 // Throws null pointer exception. Context is evaluated from caller's address.
 void ThrowNullPointerException();
 // Throws array index out of bounds exception.
@@ -13,8 +19,6 @@ void ThrowNullPointerException();
 void ThrowArrayIndexOutOfBoundsException();
 // Throws class cast exception.
 void ThrowClassCastException();
-// Throws arbitrary exception.
-void ThrowException(KRef exception);
 
 #ifdef __cplusplus
 } // extern "C"

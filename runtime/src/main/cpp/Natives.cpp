@@ -11,9 +11,6 @@
 
 extern "C" {
 
-// TODO: remove, once can generate empty string constant in compile time.
-KString theEmptyString = nullptr;
-
 // Any.kt
 KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other) {
   return thiz == other;
@@ -82,9 +79,14 @@ KInt Kotlin_String_getStringLength(KString thiz) {
 KString Kotlin_String_fromUtf8Array(
     const ArrayHeader* array, KInt start, KInt size) {
   RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
-  if (start < 0 || start + size > array->count_) {
+  if (start < 0 || size < 0 || start + size > array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
+
+  if (size == 0) {
+    return TheEmptyString();
+  }
+
   // TODO: support full UTF-8.
   ArrayHeader* result = ArrayContainer(theStringTypeInfo, size).GetPlace();
   memcpy(
@@ -97,9 +99,14 @@ KString Kotlin_String_fromUtf8Array(
 KString Kotlin_String_fromCharArray(
     const ArrayHeader* array, KInt start, KInt size) {
   RuntimeAssert(array->type_info() == theCharArrayTypeInfo, "Must use a byte array");
-  if (start < 0 || start + size > array->count_) {
+  if (start < 0 || size < 0 || start + size > array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
+
+  if (size == 0) {
+    return TheEmptyString();
+  }
+
   // TODO: support full UTF-8.
   ArrayHeader* result = ArrayContainer(theStringTypeInfo, size).GetPlace();
   for (KInt index = 0; index < size; ++index) {
@@ -162,7 +169,7 @@ KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex) 
     ThrowArrayIndexOutOfBoundsException();
   }
   if (startIndex == endIndex) {
-    return theEmptyString;
+    return TheEmptyString();
   }
   // TODO: support UTF-8.
   KInt length = endIndex - startIndex;
