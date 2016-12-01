@@ -114,12 +114,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
          * Declares the variable.
          * @return pointer to the declared variable.
          */
-        fun genDeclareVariable(descriptor: ValueDescriptor): LLVMValueRef
+        fun genDeclareVariable(descriptor: VariableDescriptor): LLVMValueRef
 
         /**
          * @return pointer to the variable declared before, or `null` if no such variable has been declared yet.
          */
-        fun getDeclaredVariable(descriptor: ValueDescriptor): LLVMValueRef?
+        fun getDeclaredVariable(descriptor: VariableDescriptor): LLVMValueRef?
 
         /**
          * Generates the code to obtain a value available in this context.
@@ -132,7 +132,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     /**
      * Fake [CodeContext] that doesn't support any operation.
      *
-     * During function code generation [FunctionScope] should be set up. See [generatingFunctionCode].
+     * During function code generation [FunctionScope] should be set up.
      */
     private object TopLevelCodeContext : CodeContext {
 
@@ -148,9 +148,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         override fun genThrow(exception: LLVMValueRef) = unsupported()
 
-        override fun genDeclareVariable(descriptor: ValueDescriptor) = unsupported(descriptor)
+        override fun genDeclareVariable(descriptor: VariableDescriptor) = unsupported(descriptor)
 
-        override fun getDeclaredVariable(descriptor: ValueDescriptor) = null
+        override fun getDeclaredVariable(descriptor: VariableDescriptor) = null
 
         override fun genGetValue(descriptor: ValueDescriptor, result: String) = unsupported(descriptor)
     }
@@ -261,7 +261,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val constructorDescriptor = constructorDeclaration.descriptor
         val classDescriptor = constructorDescriptor.constructedClass
 
-        generatingFunctionCode(constructorDeclaration) {
+        using(FunctionScope(constructorDeclaration)) {
 
             val thisPtr = currentCodeContext.genGetValue(classDescriptor.thisAsReceiverParameter, "this")
 
@@ -324,13 +324,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitBlockBody(body: IrBlockBody) {
-        super.visitBlockBody(body)
-        val function = codegen.currentFunction!!
-        if (function !is ConstructorDescriptor && !codegen.isAfterTerminator()) {
-            if (function.returnType!!.isUnit()) {
-                codegen.ret(null)
-            } else {
-                codegen.unreachable()
+        using(VariableScope()) {
+            super.visitBlockBody(body)
+            val function = codegen.currentFunction!!
+            if (function !is ConstructorDescriptor && !codegen.isAfterTerminator()) {
+                if (function.returnType!!.isUnit()) {
+                    codegen.ret(null)
+                } else {
+                    codegen.unreachable()
+                }
             }
         }
         logger.log("visitBlockBody             : ${ir2string(body)}")
@@ -370,11 +372,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     /**
      * The scope of variable visibility.
      */
-    private open inner class VariableScope : InnerScopeImpl() {
+    private inner class VariableScope : InnerScopeImpl() {
 
         private val variables = mutableMapOf<ValueDescriptor, LLVMValueRef>()
 
-        override fun genDeclareVariable(descriptor: ValueDescriptor): LLVMValueRef {
+        override fun genDeclareVariable(descriptor: VariableDescriptor): LLVMValueRef {
             // Check that the variable is not declared yet:
             assert (this.getDeclaredVariable(descriptor) == null)
 
@@ -386,12 +388,37 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return res
         }
 
-        override fun getDeclaredVariable(descriptor: ValueDescriptor): LLVMValueRef? {
+        override fun getDeclaredVariable(descriptor: VariableDescriptor): LLVMValueRef? {
             return variables[descriptor] ?: super.getDeclaredVariable(descriptor)
         }
 
         override fun genGetValue(descriptor: ValueDescriptor, result: String): LLVMValueRef {
-            val variable = getDeclaredVariable(descriptor)
+            val variable = variables[descriptor]
+            if (variable != null) {
+                return codegen.load(variable, result)
+            } else {
+                return super.genGetValue(descriptor, result)
+            }
+        }
+    }
+
+    /**
+     * The scope of parameter visibility.
+     */
+    private open inner class ParameterScope(
+            private val parameters: Map<ParameterDescriptor, LLVMValueRef>): InnerScopeImpl() {
+
+        // Note: it is possible to generate access to a parameter without any variables,
+        // however variables are named and thus the resulting bitcode can be more readable.
+
+        private val parameterVars = parameters.map { (descriptor, value) ->
+            val variable = codegen.alloca(descriptor.type, descriptor.name.asString())
+            codegen.store(value, variable)
+            descriptor to variable
+        }.toMap()
+
+        override fun genGetValue(descriptor: ValueDescriptor, result: String): LLVMValueRef {
+            val variable = parameterVars[descriptor]
             if (variable != null) {
                 return codegen.load(variable, result)
             } else {
@@ -402,13 +429,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     /**
      * The [CodeContext] enclosing the entire function body.
-     *
-     * Note: the function in Kotlin may be declared without having any variable scope,
-     * i.e. [FunctionScope] probably shouldn't be a [VariableScope].
-     * However, function parameters are currently handled as variables,
-     * which need to be declared at function scope.
      */
-    private inner class FunctionScope(val declaration: IrFunction) : VariableScope() {
+    private inner class FunctionScope(val declaration: IrFunction) :
+            ParameterScope(bindParameters(declaration.descriptor)) {
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
             if (target == declaration.descriptor) {
@@ -430,31 +453,18 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     /**
-     * Registers function parameters as variables in current [CodeContext].
-     *
-     * Note: it is possible to generate access to a function parameter without any variables,
-     * however variables are named and thus the resulting bitcode can be more readable.
+     * Binds LLVM function parameters to IR parameter descriptors.
      */
-    private fun registerParameters(descriptor: FunctionDescriptor) {
+    private fun bindParameters(descriptor: FunctionDescriptor): Map<ParameterDescriptor, LLVMValueRef> {
         val paramDescriptors = descriptor.allValueParameters
 
         assert(paramDescriptors.size == codegen.countParams(descriptor))
 
-        paramDescriptors.forEachIndexed { i, paramDescriptor ->
+        return paramDescriptors.mapIndexed { i, paramDescriptor ->
             val param = codegen.param(descriptor, i)
             assert(codegen.getLLVMType(paramDescriptor.type) == LLVMTypeOf(param))
-            createVariable(paramDescriptor, param)
-        }
-    }
-
-    /**
-     * Executes [block] supposed to generate function body code having [currentCodeContext] set up correctly.
-     */
-    private inline fun <R> generatingFunctionCode(declaration: IrFunction, block: () -> R): R {
-        using(FunctionScope(declaration)) {
-            registerParameters(declaration.descriptor)
-            return block()
-        }
+            paramDescriptor to param
+        }.toMap()
     }
 
     override fun visitFunction(declaration: IrFunction) {
@@ -465,7 +475,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         codegen.prologue(declaration)
         metadator.function(declaration)
 
-        generatingFunctionCode(declaration) {
+        using(FunctionScope(declaration)) {
             declaration.acceptChildrenVoid(this)
         }
         codegen.epilogue(declaration)
@@ -813,8 +823,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 codegen.condBr(isInstance, body, nextCheck)
 
                 codegen.appendingTo(body) {
-                    createVariable(it.parameter, exception)
-                    evaluateExpressionAndJump(it.result, success)
+                    using(VariableScope()) {
+                        createVariable(it.parameter, exception)
+                        evaluateExpressionAndJump(it.result, success)
+                    }
                 }
 
                 codegen.positionAtEnd(nextCheck)
@@ -984,12 +996,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateVariable(value: IrVariable): LLVMValueRef? {
         logger.log("evaluateVariable           : ${ir2string(value)}")
-        val ret = evaluateExpression(codegen.newVar(), value.initializer)
+        val ret = value.initializer?.let { evaluateExpression(codegen.newVar(), it)!! }
         createVariable(value.descriptor, ret)
         return null
     }
 
-    private fun createVariable(descriptor: ValueDescriptor, value: LLVMValueRef? = null): LLVMValueRef {
+    private fun createVariable(descriptor: VariableDescriptor, value: LLVMValueRef? = null): LLVMValueRef {
 
         val newVariable = currentCodeContext.genDeclareVariable(descriptor)
 
@@ -1254,7 +1266,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression): LLVMValueRef {
         logger.log("evaluateCall               : $tmpVariableName = ${ir2string(value)}")
 
-        val args = evaluateExplicitParams(value)
+        val args = evaluateExplicitArgs(value)
 
         when {
             value is IrDelegatingConstructorCall ->
@@ -1268,10 +1280,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     /**
-     * Binds the parameters of [expression] explicitly represented in the IR to the parameters of accessed function.
-     * The parameters should be further evaluated in the same order as they appear in the resulting list.
+     * Binds the arguments of [expression] explicitly represented in the IR to the parameters of accessed function.
+     * The arguments should be further evaluated in the same order as they appear in the resulting list.
      */
-    private fun bindExplicitParams(expression: IrMemberAccessExpression): List<Pair<ParameterDescriptor, IrExpression>> {
+    private fun bindExplicitArgs(expression: IrMemberAccessExpression): List<Pair<ParameterDescriptor, IrExpression>> {
         val res = mutableListOf<Pair<ParameterDescriptor, IrExpression>>()
         val descriptor = expression.descriptor
 
@@ -1293,19 +1305,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     /**
-     * Evaluates all parameters of [expression] that are explicitly represented in the IR.
-     * Returns results in the same order as LLVM function expects, assuming that all explicit parameters
+     * Evaluates all arguments of [expression] that are explicitly represented in the IR.
+     * Returns results in the same order as LLVM function expects, assuming that all explicit arguments
      * exactly correspond to a tail of LLVM parameters.
      */
-    private fun evaluateExplicitParams(expression: IrMemberAccessExpression): List<LLVMValueRef> {
-        val evaluatedParams = bindExplicitParams(expression).map { (param, paramExpr) ->
-            param to evaluateExpression("arg", paramExpr)!!
+    private fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> {
+        val evaluatedArgs = bindExplicitArgs(expression).map { (param, argExpr) ->
+            param to evaluateExpression("arg", argExpr)!!
         }.toMap()
 
         val allValueParameters = expression.descriptor.allValueParameters
 
-        return allValueParameters.dropWhile { it !in evaluatedParams }.map {
-            evaluatedParams[it]!!
+        return allValueParameters.dropWhile { it !in evaluatedArgs }.map {
+            evaluatedArgs[it]!!
         }
     }
 
