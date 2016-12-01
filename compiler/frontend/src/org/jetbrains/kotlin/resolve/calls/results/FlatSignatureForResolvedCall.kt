@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.argumentValueType
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.extensionReceiverTypeOrEmpty
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -50,14 +48,7 @@ fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
         }
     }
 
-    return FlatSignature(this,
-                         originalDescriptor.typeParameters,
-                         valueParameterTypes = originalDescriptor.extensionReceiverTypeOrEmpty() +
-                                               call.valueArguments.map { valueArgumentToParameterType[it] },
-                         hasExtensionReceiver = originalDescriptor.extensionReceiverParameter != null,
-                         hasVarargs = originalDescriptor.valueParameters.any { it.varargElementType != null },
-                         numDefaults = numDefaults,
-                         isPlatform = originalDescriptor is MemberDescriptor && originalDescriptor.isPlatform)
+    return FlatSignature.create(this, originalDescriptor, numDefaults, call.valueArguments.map { valueArgumentToParameterType[it] })
 }
 
 fun createOverloadingConflictResolver(
