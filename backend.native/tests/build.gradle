@@ -663,3 +663,18 @@ task main_exception(type: RunKonanTest) {
     source = "runtime/basic/main_exception.kt"
 }
 
+
+task initializers0(type: RunKonanTest) {
+    goldValue = "main\n" +
+            "B::constructor(1)\n" +
+            "A::companion\n" +
+            "A::companion::foo\n" +
+            "A::companion::foo\n" +
+            "B::constructor(0)\n" +
+            "B::constructor()\n" +
+            "A::Obj\n" +
+            "A::AObj::foo\n" +
+            "A::AObj::foo\n"
+    source = "runtime/basic/initializers0.kt"
+}
+
