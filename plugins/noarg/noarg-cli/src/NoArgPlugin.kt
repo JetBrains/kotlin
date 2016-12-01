@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.noarg
 
 import com.intellij.mock.MockProject
+import com.intellij.openapi.extensions.Extensions
+import org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -24,6 +26,13 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.noarg.diagnostic.CliNoArgDeclarationChecker
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 object NoArgConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
@@ -38,7 +47,7 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
                                           required = false, allowMultipleOccurrences = true)
     }
 
-    override val pluginId = "org.jetbrains.kotlin.noarg"
+    override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(ANNOTATION_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -56,6 +65,17 @@ class NoArgComponentRegistrar : ComponentRegistrar {
         val annotations = configuration.get(NoArgConfigurationKeys.ANNOTATION) ?: return
         if (annotations.isEmpty()) return
 
-        ClassBuilderInterceptorExtension.registerExtension(project, CliNoArgClassBuilderInterceptorExtension(annotations))
+        Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesNoArg())
+        StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations))
+
+        ClassBuilderInterceptorExtension.registerExtension(project, NoArgClassBuilderInterceptorExtension())
+    }
+}
+
+class CliNoArgComponentContainerContributor(val annotations: List<String>) : StorageComponentContainerContributor {
+    override fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform) {
+        if (platform is JvmPlatform) {
+            container.useInstance(CliNoArgDeclarationChecker(annotations))
+        }
     }
 }

@@ -24,21 +24,13 @@ import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-class CliNoArgClassBuilderInterceptorExtension(
-        private val noArgAnnotationFqNames: List<String>
-) : AbstractNoArgClassBuilderInterceptorExtension() {
-    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner) = noArgAnnotationFqNames
-}
-
-abstract class AbstractNoArgClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension, AnnotationBasedExtension {
+class NoArgClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
             interceptedFactory: ClassBuilderFactory,
             bindingContext: BindingContext,
@@ -96,11 +88,13 @@ abstract class AbstractNoArgClassBuilderInterceptorExtension : ClassBuilderInter
 
             if (origin is KtClass) {
                 val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, origin] as? ClassDescriptor
-                if (descriptor != null && descriptor.kind == ClassKind.CLASS && descriptor.hasSpecialAnnotation (origin)) {
+                if (descriptor != null && descriptor.kind == ClassKind.CLASS && origin.isNoArgClass()) {
                     hasSpecialAnnotation = true
                 }
             }
         }
+
+        private fun KtClass.isNoArgClass() = this.getUserData(NO_ARG_CLASS_KEY) ?: false
 
         override fun newMethod(
                 origin: JvmDeclarationOrigin,
