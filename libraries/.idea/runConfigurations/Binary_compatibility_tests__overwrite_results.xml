@@ -18,6 +18,9 @@
     </option>
     <envs />
     <patterns />
-    <method />
+    <method>
+      <option name="Make" enabled="false" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package -pl :kotlin-runtime,:kotlin-stdlib,:binary-compatibility-validator -DskipTests" />
+    </method>
   </configuration>
 </component>
