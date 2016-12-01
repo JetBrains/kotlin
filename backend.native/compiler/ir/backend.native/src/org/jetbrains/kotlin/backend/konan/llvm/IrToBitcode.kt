@@ -941,7 +941,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun genFinalizedBy(finalize: IrExpression?, type: KotlinType,
                                    code: (ContinuationBlock) -> Unit): LLVMValueRef? {
 
-        return genFinalizedBy({ evaluateExpression("", finalize) }, type, code)
+        val finalizeFun: (() -> Unit)? = if (finalize == null) {
+            null
+        } else {
+            { evaluateExpression("", finalize) }
+        }
+
+        return genFinalizedBy(finalizeFun, type, code)
     }
 
     private fun KotlinType.isUnitOrNothing() = isUnit() || isNothing()
