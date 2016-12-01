@@ -596,6 +596,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrStringConcatenation -> return evaluateStringConcatenation(tmpVariableName, value)
             is IrBlockBody           -> return evaluateBlock              (tmpVariableName, value as IrStatementContainer)
             is IrWhileLoop           -> return evaluateWhileLoop          (                 value)
+            is IrVararg              -> return evaluateVararg             (tmpVariableName, value)
             null                     -> return null
             else                     -> {
                 TODO("${ir2string(value)}")
@@ -678,6 +679,20 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
     }
 
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateVararg(tmpVariableName: String, value: IrVararg): LLVMValueRef? {
+        val arrayCreationArgs = listOf(codegen.kTheArrayTypeInfo!!, kImmInt32One!!, Int32(value.elements.size).getLlvmValue()!!)
+        val array = currentCodeContext.genCall(context.allocArrayFunction, arrayCreationArgs, tmpVariableName)
+        value.elements.forEachIndexed { i, it ->
+            val elementValueRaw = evaluateExpression(codegen.newVar(), it)
+            currentCodeContext.genCall(context.setArrayFunction, listOf(array!!, Int32(i).getLlvmValue()!!, elementValueRaw!!), "")
+            return@forEachIndexed
+        }
+        return array
+    }
+
     //-------------------------------------------------------------------------//
 
     private fun evaluateStringConcatenation(tmpVariableName: String, value: IrStringConcatenation): LLVMValueRef? {
@@ -692,7 +707,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val concatResult = strings.take(1).fold(strings.first()) {res, it -> evaluateSimpleFunctionCall(codegen.newVar(), stringPlus, listOf(res, it))}
         return concatResult
     }
-
 
     //-------------------------------------------------------------------------//
 

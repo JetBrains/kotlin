@@ -453,10 +453,17 @@ task array_list1(type: RunKonanTest) {
     source = "runtime/collections/array_list1.kt"
 }
 
+task listof0(type: RunKonanTest) {
+    goldValue = "abc\n"
+    source = "runtime/collections/listof0.kt"
+}
+
+
 task moderately_large_array(type: RunKonanTest) {
     goldValue = "0\n"
     source = "runtime/collections/moderately_large_array.kt"
 }
+
 
 task string_builder0(type: RunKonanTest) {
     goldValue = "OK\n"

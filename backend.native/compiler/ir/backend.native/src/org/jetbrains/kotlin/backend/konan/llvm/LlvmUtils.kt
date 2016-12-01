@@ -96,6 +96,10 @@ internal val int8TypePtr = pointerType(int8Type)
 
 internal val voidType = LLVMVoidType()
 
+internal val ContextUtils.kTheAnyTypeInfo: LLVMValueRef?
+    get() = KonanPlatform.builtIns.any.llvmTypeInfoPtr.getLlvmValue()
+internal val ContextUtils.kTheArrayTypeInfo: LLVMValueRef?
+    get() = KonanPlatform.builtIns.array.llvmTypeInfoPtr.getLlvmValue()
 internal val ContextUtils.kTypeInfo: LLVMTypeRef
     get() = LLVMGetTypeByName(context.llvmModule, "struct.TypeInfo")!!
 internal val ContextUtils.kObjHeader: LLVMTypeRef
@@ -113,6 +117,7 @@ internal val ContextUtils.kTypeInfoPtr: LLVMTypeRef
 internal val kInt1         = LLVMInt1Type()
 internal val kInt8Ptr      = pointerType(LLVMInt8Type())
 internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
+internal val kImmInt32One  = Int32(1).getLlvmValue()
 internal val ContextUtils.kNullObjHeaderPtr: LLVMValueRef
     get() = LLVMConstNull(this.kObjHeaderPtr)!!
 internal val ContextUtils.kNullArrayHeaderPtr: LLVMValueRef

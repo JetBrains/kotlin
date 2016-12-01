@@ -6,7 +6,7 @@ package kotlin.collections
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 fun <E> arrayOfLateInitElements(size: Int): Array<E> {
-   // TODO: maybe use an empoty array.
+   // TODO: maybe use an empty array, fix array creation.
    // return (if (size == 0) emptyArray else Array<Any>(size)) as Array<E>
    return Array<Any>(size) as Array<E>
 }

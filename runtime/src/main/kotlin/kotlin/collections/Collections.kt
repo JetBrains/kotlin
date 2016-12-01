@@ -22,3 +22,21 @@ public interface MutableIterable<out T> : Iterable<T> {
      */
     override fun iterator(): MutableIterator<T>
 }
+
+public fun <T> arrayListOf(vararg args: T): MutableList<T> {
+    // TODO: fix me!
+    val result = ArrayList<Any>(args.size) as ArrayList<T>
+    for (arg in args) {
+        result.add(arg)
+    }
+    return result
+}
+
+/*
+ * FIXME: Suggested code from @olonho is following
+ *
+ * public fun <T> listOf(element: T): List<T> = arrayListOf(element)
+ *
+ * but in Big Kotlin this function is following: (see libraries/stdlib/src/kotlin/collections/Collections.kt)
+ * public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
+ */
