@@ -615,7 +615,7 @@ task args0(type: RunKonanTest) {
 }
 
 task main_exception(type: RunKonanTest) {
-    goldValue = "Uncaught exception from kotlin main: Throwable\n"
+    goldValue = "Uncaught exception from Kotlin's main: Throwable\n"
     source = "runtime/basic/main_exception.kt"
 }
 

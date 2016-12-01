@@ -15,14 +15,14 @@ ArrayHeader* setupArgs(int argc, char** argv) {
     return args;
 }
 
-extern "C" void Kotlin_start(ArrayHeader* );
+extern "C" void Konan_start(ArrayHeader* );
 
 int main(int argc, char** argv) {
 
     InitMemory();
 
     ArrayHeader* args = setupArgs(argc, argv);
-    Kotlin_start(args);
+    Konan_start(args);
 
     // Yes, we have to follow Java convention and return zero.
     return 0;
