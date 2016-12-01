@@ -5,13 +5,13 @@ import java.io.IOException
 
 fun main(args: Array<String>) {
     val reader = File("hello-world.txt").bufferedReader()
-    try {
+    <caret>try {
         reader.readLine()
     }
     catch (e: IOException) {
 
     }
-    <caret>finally {
+    finally {
         reader.close()
     }
 }

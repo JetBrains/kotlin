@@ -8,10 +8,10 @@ class MyCloseable : Closeable {
     fun process(x: Int) = x
 
     fun Int.foo() {
-        try {
+        <caret>try {
             this@MyCloseable.process(this)
         }
-        <caret>finally {
+        finally {
             this@MyCloseable.close()
         }
     }

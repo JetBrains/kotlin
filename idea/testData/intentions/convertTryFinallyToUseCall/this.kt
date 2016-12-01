@@ -3,10 +3,10 @@ import java.io.File
 import java.io.BufferedReader
 
 fun BufferedReader.foo() {
-    try {
+    <caret>try {
         this.readLine()
     }
-    <caret>finally {
+    finally {
         this.close()
     }
 }

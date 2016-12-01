@@ -5,11 +5,11 @@ import java.io.BufferedReader
 fun bar() {}
 
 fun foo(reader: BufferedReader?) {
-    try {
+    <caret>try {
         reader?.readLine()
         bar()
     }
-    <caret>finally {
+    finally {
         reader?.close()
     }
 }

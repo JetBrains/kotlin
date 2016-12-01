@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -33,7 +36,7 @@ class ConvertTryFinallyToUseCallInspection : IntentionBasedInspection<KtTryExpre
     override fun inspectionTarget(element: KtTryExpression) = element.tryKeyword ?: element.tryBlock
 }
 
-class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntention<KtTryExpression>(
+class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExpression>(
         KtTryExpression::class.java, "Convert try-finally to .use()"
 ) {
     override fun applyTo(element: KtTryExpression, editor: Editor?) {
@@ -69,36 +72,37 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntent
         element.replace(useCallExpression)
     }
 
-    override fun isApplicableTo(element: KtTryExpression): Boolean {
+    override fun applicabilityRange(element: KtTryExpression): TextRange? {
         // Single statement in finally, no catch blocks
-        val finallySection = element.finallyBlock ?: return false
-        val finallyExpression = finallySection.finalExpression.statements.singleOrNull() ?: return false
-        if (element.catchClauses.isNotEmpty()) return false
+        val finallySection = element.finallyBlock ?: return null
+        val finallyExpression = finallySection.finalExpression.statements.singleOrNull() ?: return null
+        if (element.catchClauses.isNotEmpty()) return null
 
         val context = element.analyze()
-        val resolvedCall = finallyExpression.getResolvedCall(context) ?: return false
-        if (resolvedCall.candidateDescriptor.name.asString() != "close") return false
-        if (resolvedCall.extensionReceiver != null) return false
-        val receiver = resolvedCall.dispatchReceiver ?: return false
+        val resolvedCall = finallyExpression.getResolvedCall(context) ?: return null
+        if (resolvedCall.candidateDescriptor.name.asString() != "close") return null
+        if (resolvedCall.extensionReceiver != null) return null
+        val receiver = resolvedCall.dispatchReceiver ?: return null
         if (receiver.type.supertypes().all {
             it.constructor.declarationDescriptor?.fqNameSafe?.asString().let {
                 it != "java.io.Closeable" && it != "java.lang.AutoCloseable"
             }
-        }) return false
+        }) return null
 
-        return when (receiver) {
+        when (receiver) {
             is ExpressionReceiver -> {
                 val expression = receiver.expression
-                if (expression is KtThisExpression) true
-                else {
-                    val resourceReference = expression as? KtReferenceExpression ?: return false
+                if (expression !is KtThisExpression) {
+                    val resourceReference = expression as? KtReferenceExpression ?: return null
                     val resourceDescriptor =
-                            context[BindingContext.REFERENCE_TARGET, resourceReference] as? VariableDescriptor ?: return false
-                    !resourceDescriptor.isVar
+                            context[BindingContext.REFERENCE_TARGET, resourceReference] as? VariableDescriptor ?: return null
+                    if (resourceDescriptor.isVar) return null
                 }
             }
-            is ImplicitReceiver -> true
-            else -> false
+            is ImplicitReceiver -> {}
+            else -> return null
         }
+
+        return TextRange(element.startOffset, element.tryBlock.lBrace?.endOffset ?: element.endOffset)
     }
 }

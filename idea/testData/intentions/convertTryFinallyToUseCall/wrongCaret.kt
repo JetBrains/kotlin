@@ -1,12 +1,13 @@
+// IS_APPLICABLE: false
 // WITH_RUNTIME
 import java.io.File
 
 fun main(args: Array<String>) {
     val reader = File("hello-world.txt").bufferedReader()
-    <caret>try {
-        // do stuff with reader
+    try {
+        reader.readLine()
     }
     finally {
-        reader.close()
+        <caret>reader.close()
     }
 }
