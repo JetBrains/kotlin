@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -40,7 +39,7 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntent
     override fun applyTo(element: KtTryExpression, editor: Editor?) {
         val finallySection = element.finallyBlock!!
         val finallyExpression = finallySection.finalExpression.statements.single()
-        val finallyExpressionReceiver = (finallyExpression as? KtDotQualifiedExpression)?.receiverExpression
+        val finallyExpressionReceiver = (finallyExpression as? KtQualifiedExpression)?.receiverExpression
         val resourceReference = finallyExpressionReceiver as? KtNameReferenceExpression
         val resourceName = resourceReference?.getReferencedNameAsName()
 
@@ -61,9 +60,10 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntent
                 appendName(resourceName)
                 appendFixedText("->")
             }
+            appendFixedText("\n")
 
             appendChildRange(element.tryBlock.contentRange())
-            appendFixedText("}")
+            appendFixedText("\n}")
         }
 
         element.replace(useCallExpression)
@@ -77,8 +77,8 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingOffsetIndependentIntent
 
         val context = element.analyze()
         val resolvedCall = finallyExpression.getResolvedCall(context) ?: return false
-        if (resolvedCall.call.isSafeCall()) return false
         if (resolvedCall.candidateDescriptor.name.asString() != "close") return false
+        if (resolvedCall.extensionReceiver != null) return false
         val receiver = resolvedCall.dispatchReceiver ?: return false
         if (receiver.type.supertypes().all {
             it.constructor.declarationDescriptor?.fqNameSafe?.asString().let {
