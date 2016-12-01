@@ -1860,6 +1860,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("reservedExpressionSyntax3.kt")
+                public void testReservedExpressionSyntax3() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/reservedExpressionSyntax3.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("syntheticExtensionOnLHS.kt")
                 public void testSyntheticExtensionOnLHS() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/syntheticExtensionOnLHS.kt");

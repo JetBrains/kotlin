@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import java.lang.UnsupportedOperationException
+import java.util.*
 import javax.inject.Inject
 
 sealed class DoubleColonLHS(val type: KotlinType) {
@@ -176,12 +178,55 @@ class DoubleColonExpressionResolver(
                (lhs is KtCallExpression && lhs.canBeReservedGenericPropertyCall())
     }
 
-    private fun KtCallExpression.canBeReservedGenericPropertyCall(): Boolean =
-            // This condition captures 'name<T>::...'
-            // TODO 'expr.name<T>', 'expr<T>.name' - discuss
-            calleeExpression is KtNameReferenceExpression &&
-            valueArguments.isEmpty() &&
-            typeArguments.isNotEmpty()
+    private fun KtExpression.getQualifierChainParts(): List<KtExpression>? {
+        if (this !is KtQualifiedExpression) return listOf(this)
+
+        val result = ArrayDeque<KtExpression>()
+        var finger: KtQualifiedExpression = this
+        while (true) {
+            if (finger.operationSign != KtTokens.DOT) return null
+
+            finger.selectorExpression?.let { result.push(it) }
+
+            val receiver = finger.receiverExpression
+            if (receiver is KtQualifiedExpression) {
+                finger = receiver
+            }
+            else {
+                result.push(receiver)
+                return result.toList()
+            }
+        }
+    }
+
+    private fun shouldTryResolveLHSAsReservedCallChain(expression: KtDoubleColonExpression): Boolean {
+        val lhs = (expression.receiverExpression as? KtQualifiedExpression) ?: return false
+        val parts = lhs.getQualifierChainParts() ?: return false
+        return parts.all { it.canBeReservedGenericPropertyCall() } &&
+               parts.any { it is KtCallExpression && it.typeArguments.isNotEmpty() }
+    }
+
+    private fun KtExpression?.canBeReservedGenericPropertyCall(): Boolean =
+            getQualifiedNameStringPart() != null
+
+    private fun KtExpression?.getQualifiedNameStringPart(): String? =
+            when (this) {
+                is KtNameReferenceExpression ->
+                    text
+                is KtCallExpression ->
+                    if (valueArguments.isEmpty() && typeArguments.isNotEmpty())
+                        (calleeExpression as? KtNameReferenceExpression)?.text
+                    else
+                        null
+                else ->
+                    null
+            }
+
+    private fun KtQualifiedExpression.buildNewExpressionForReservedGenericPropertyCallChainResolution(): KtExpression? {
+        val parts = this.getQualifierChainParts()?.map { it.getQualifiedNameStringPart() ?: return null } ?: return null
+        val qualifiedExpressionText = parts.joinToString(separator = ".")
+        return KtPsiFactory(this).createExpression(qualifiedExpressionText)
+    }
 
     private fun resolveReservedExpressionOnLHS(expression: KtExpression, c: ExpressionTypingContext): DoubleColonLHS.Expression? {
         val doubleColonExpression = expression.parent as? KtDoubleColonExpression ?:
@@ -206,6 +251,48 @@ class DoubleColonExpressionResolver(
         }
     }
 
+    private fun resolveReservedCallChainOnLHS(expression: KtExpression, c: ExpressionTypingContext): DoubleColonLHS.Expression? {
+        if (expression !is KtQualifiedExpression) return null
+
+        val newExpression = expression.buildNewExpressionForReservedGenericPropertyCallChainResolution() ?: return null
+
+        val temporaryTraceAndCache = TemporaryTraceAndCache.create(c, "resolve reserved generic property call chain in '::' LHS", newExpression)
+        val contextForCallChainResolution =
+                c.replaceTraceAndCache(temporaryTraceAndCache)
+                        .replaceExpectedType(NO_EXPECTED_TYPE)
+                        .replaceContextDependency(ContextDependency.INDEPENDENT)
+
+        return resolveExpressionOnLHS(expression, contextForCallChainResolution)
+    }
+
+    private fun resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext):
+            Pair<Boolean, DoubleColonLHS?> {
+        val resultForReservedExpr = tryResolveLHS(doubleColonExpression, c,
+                                                  this::shouldTryResolveLHSAsReservedExpression,
+                                                  this::resolveReservedExpressionOnLHS)
+        if (resultForReservedExpr != null) {
+            val lhs = resultForReservedExpr.lhs
+            if (lhs != null) {
+                c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedExpr.expression))
+                return Pair(true, resultForReservedExpr.commit())
+            }
+        }
+
+        val resultForReservedCallChain = tryResolveLHS(doubleColonExpression, c,
+                                                       this::shouldTryResolveLHSAsReservedCallChain,
+                                                       this::resolveReservedCallChainOnLHS)
+        if (resultForReservedCallChain != null) {
+            val lhs = resultForReservedCallChain.lhs
+            if (lhs != null) {
+                c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedCallChain.expression))
+                // DO NOT commit trace from resultForReservedCallChain here
+                return Pair(true, null)
+            }
+        }
+
+        return Pair(false, null)
+    }
+
     private fun resolveDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext): DoubleColonLHS? {
         val resultForExpr = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
         if (resultForExpr != null) {
@@ -217,16 +304,8 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        val resultForReservedExpr = tryResolveLHS(doubleColonExpression, c,
-                                                  this::shouldTryResolveLHSAsReservedExpression,
-                                                  this::resolveReservedExpressionOnLHS)
-        if (resultForReservedExpr != null) {
-            val lhs = resultForReservedExpr.lhs
-            if (lhs != null) {
-                c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedExpr.expression))
-                return resultForReservedExpr.commit()
-            }
-        }
+        val (isReservedExpressionSyntax, doubleColonLHS) = resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+        if (isReservedExpressionSyntax) return doubleColonLHS
 
         val resultForType = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsType) { expression, context ->
             resolveTypeOnLHS(expression, doubleColonExpression, context)
