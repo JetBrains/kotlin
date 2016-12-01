@@ -3,6 +3,18 @@
 
 #include "Types.h"
 
+inline void* AddressOfElementAt(ArrayHeader* obj, int32_t index) {
+  // Instance size is negative.
+  return reinterpret_cast<uint8_t*>(obj + 1) -
+      obj->type_info()->instanceSize_ * index;
+}
+
+inline const void* AddressOfElementAt(const ArrayHeader* obj, int32_t index) {
+  // Instance size is negative.
+  return reinterpret_cast<const uint8_t*>(obj + 1) -
+      obj->type_info()->instanceSize_ * index;
+}
+
 // Optimized versions not accessing type info.
 inline KByte* ByteArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
   return reinterpret_cast<KByte*>(obj + 1) + index;
@@ -38,8 +50,6 @@ extern "C" {
 #endif
 
 KString TheEmptyString();
-
-KString makeString(const char* cstring);
 
 // Any.kt
 KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other);

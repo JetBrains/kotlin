@@ -7,6 +7,21 @@
 #include "Natives.h"
 #include "Types.h"
 
+namespace {
+
+KString makeString(const char* cstring) {
+  uint32_t length = strlen(cstring);
+  ArrayHeader* result = ArrayContainer(
+      theStringTypeInfo, length).GetPlace();
+  memcpy(
+      ByteArrayAddressOfElementAt(result, 0),
+      cstring,
+      length);
+  return result;
+}
+
+} // namespace
+
 extern "C" {
 
 KString Kotlin_Byte_toString(KByte value) {

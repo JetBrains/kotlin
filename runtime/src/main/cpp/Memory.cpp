@@ -1,8 +1,10 @@
+#include <string.h>
 #include <stdlib.h>
 
 #include "Assert.h"
 #include "Exceptions.h"
 #include "Memory.h"
+#include "Natives.h"
 
 void FreeObject(ContainerHeader* header) {
   header->ref_count_ = CONTAINER_TAG_INVALID;
@@ -87,6 +89,15 @@ ArrayHeader* AllocArrayInstance(
   return ArrayContainer(type_info, elements).GetPlace();
 }
 
+ArrayHeader* AllocStringInstance(const char* cstring) {
+  uint32_t length = strlen(cstring);
+  ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
+  memcpy(
+      ByteArrayAddressOfElementAt(result, 0),
+      cstring,
+      length);
+  return result;
+}
 #ifdef __cplusplus
 }
 #endif

@@ -79,18 +79,6 @@ struct ArenaContainerHeader : public ContainerHeader {
   uint8_t* end_;
 };
 
-inline void* AddressOfElementAt(ArrayHeader* obj, int32_t index) {
-  // Instance size is negative.
-  return reinterpret_cast<uint8_t*>(obj + 1) -
-      obj->type_info()->instanceSize_ * index;
-}
-
-inline const void* AddressOfElementAt(const ArrayHeader* obj, int32_t index) {
-  // Instance size is negative.
-  return reinterpret_cast<const uint8_t*>(obj + 1) -
-      obj->type_info()->instanceSize_ * index;
-}
-
 inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
   // Instance size is negative.
   return -obj->type_info()->instanceSize_ * obj->count_;
@@ -266,6 +254,8 @@ void InitMemory();
 ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
 ArrayHeader* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
+ArrayHeader* AllocStringInstance(const char* cstring);
+
 #ifdef __cplusplus
 }
 #endif

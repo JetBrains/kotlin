@@ -23,7 +23,9 @@ abstract class KonanTest extends DefaultTask {
     public KonanTest(){
         dependsOn([project.project(":runtime").tasks['build'],
                    project.parent.tasks['build'],
-                   project.project(":backend.native").tasks['stdlib']])
+                   project.project(":backend.native").tasks['stdlib'],
+                   project.project(":backend.native").tasks['start']
+        ])
     }
 
 
