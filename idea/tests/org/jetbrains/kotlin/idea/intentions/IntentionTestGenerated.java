@@ -6161,6 +6161,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/triple.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("wrongCaret.kt")
+        public void testWrongCaret() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/wrongCaret.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/copyConcatenatedStringToClipboard")
