@@ -49,11 +49,14 @@ internal abstract class AbstractSimpleScopeTowerProcessor<D : CallableDescriptor
     override fun process(data: TowerData): List<Collection<C>> = listOfNotNull(simpleProcess(data).check { it.isNotEmpty() })
 }
 
+private typealias CandidatesCollector<D> =
+    ScopeTowerLevel.(extensionReceiver: ReceiverValueWithSmartCastInfo?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+
 internal class ExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
         val scopeTower: ImplicitScopeTower,
         context: CandidateFactory<D, C>,
         val explicitReceiver: ReceiverValueWithSmartCastInfo,
-        val collectCandidates: ScopeTowerLevel.(extensionReceiver: ReceiverValueWithSmartCastInfo?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+        val collectCandidates: CandidatesCollector<D>
 ): AbstractSimpleScopeTowerProcessor<D, C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
         return when (data) {
@@ -79,7 +82,7 @@ private class QualifierScopeTowerProcessor<D : CallableDescriptor, C: Candidate<
         val scopeTower: ImplicitScopeTower,
         context: CandidateFactory<D, C>,
         val qualifier: QualifierReceiver,
-        val collectCandidates: ScopeTowerLevel.(extensionReceiver: ReceiverValueWithSmartCastInfo?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+        val collectCandidates: CandidatesCollector<D>
 ): AbstractSimpleScopeTowerProcessor<D, C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
         if (data != TowerData.Empty) return emptyList()
@@ -93,7 +96,7 @@ private class QualifierScopeTowerProcessor<D : CallableDescriptor, C: Candidate<
 
 private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Candidate<D>>(
         context: CandidateFactory<D, C>,
-        val collectCandidates: ScopeTowerLevel.(extensionReceiver: ReceiverValueWithSmartCastInfo?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+        val collectCandidates: CandidatesCollector<D>
 ) : AbstractSimpleScopeTowerProcessor<D, C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C>
             = when(data) {
@@ -122,7 +125,7 @@ private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
         context: CandidateFactory<D, C>,
         explicitReceiver: DetailedReceiver?,
         classValueReceiver: Boolean,
-        collectCandidates: ScopeTowerLevel.(extensionReceiver: ReceiverValueWithSmartCastInfo?) -> Collection<CandidateWithBoundDispatchReceiver<D>>
+        collectCandidates: CandidatesCollector<D>
 ) : ScopeTowerProcessor<C> {
     if (explicitReceiver is ReceiverValueWithSmartCastInfo) {
         return ExplicitReceiverScopeTowerProcessor(scopeTower, context, explicitReceiver, collectCandidates)
