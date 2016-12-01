@@ -1956,6 +1956,10 @@
     <quickFixContributor implementation="org.jetbrains.kotlin.idea.quickfix.QuickFixRegistrar"/>
 
     <declarationAttributeAltererExtension implementation="org.jetbrains.kotlin.allopen.ide.IdeAllOpenDeclarationAttributeAltererExtension"/>
+
+    <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.noarg.NoArgClassBuilderInterceptorExtension"/>
+    <storageComponentContainerContributor implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgComponentContainerContributor"/>
+    <defaultErrorMessages implementation="org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg"/>
   </extensions>
 
 </idea-plugin>

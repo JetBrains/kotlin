@@ -4,6 +4,7 @@
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator"/>
     <versionInfoProvider implementation="org.jetbrains.kotlin.idea.maven.facet.MavenKotlinVersionInfoProvider"/>
     <mavenProjectImportHandler implementation="org.jetbrains.kotlin.allopen.ide.AllOpenMavenProjectImportHandler"/>
+    <mavenProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgMavenProjectImportHandler"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">

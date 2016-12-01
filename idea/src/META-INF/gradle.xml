@@ -36,6 +36,8 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.allopen.ide.AllOpenGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgGradleProjectImportHandler"/>
+
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
         <versionInfoProvider implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinVersionInfoProvider"/>
     </extensions>
