@@ -43,6 +43,16 @@
 - [`KT-14585`](https://youtrack.jetbrains.com/issue/KT-14585) ConvertJavaCopyPasteProcessor showed a dialog under write action
 - [`KT-14741`](https://youtrack.jetbrains.com/issue/KT-14741) Default JVM target was inferred to 1.8 for module with dependency on JDK 1.7
 - [`KT-13354`](https://youtrack.jetbrains.com/issue/KT-13354) Fix unstable resolve of value parameter types in IDE tests
+- [`KT-13400`](https://youtrack.jetbrains.com/issue/KT-13400) KDoc: Fully-qualified names were resolved incorrectly
+- [`KT-13197`](https://youtrack.jetbrains.com/issue/KT-13197) KDoc: Code completion should suggest relevant identifiers for reference-value tags
+- [`KT-10665`](https://youtrack.jetbrains.com/issue/KT-10665) KDoc: Do not show full KDoc popup on ctrl-hovering over declarations
+- [`KT-13038`](https://youtrack.jetbrains.com/issue/KT-13038) Quick doc: HTML entities in code blocks should be escaped
+- [`KT-13389`](https://youtrack.jetbrains.com/issue/KT-13389) Quick Doc: Hyperlinks to properties and functions did nothing
+- [`KT-7739`](https://youtrack.jetbrains.com/issue/KT-7739) Quick Doc: Type names in should be navigable
+- [`KT-7995`](https://youtrack.jetbrains.com/issue/KT-7995) Quick Doc: ReplaceWith value should be shown for deprecated elements
+- [`KT-13197`](https://youtrack.jetbrains.com/issue/KT-13197)　Quick Doc: Markdown indented code blocks were not recognized
+- [`KT-11032`](https://youtrack.jetbrains.com/issue/KT-11032) Quick Doc: `@sample` was ignored
+- [`KT-13699`](https://youtrack.jetbrains.com/issue/KT-13699) Quick documentation should show supertype docs for overridden Java methods
 
 #### Inspections, Intentions and Quickfixes
 - [`KT-12095`](https://youtrack.jetbrains.com/issue/KT-12095) Implement "Join Declaration and Assignment" intention
@@ -54,6 +64,7 @@
 - [`KT-14500`](https://youtrack.jetbrains.com/issue/KT-14500) Create from Usage: Suggest functional type based on the call with lambda argument and unresolved invoke()
 - [`KT-13259`](https://youtrack.jetbrains.com/issue/KT-13259) "Redundant if statement" inspection: report also assignments (as done for Java)
 - [`KT-13393`](https://youtrack.jetbrains.com/issue/KT-13393) Implement intention to convert function reference to lambda
+- [`KT-12100`](https://youtrack.jetbrains.com/issue/KT-12100) Add "Convert `try-finally` to `use`" intention
 
 ##### Issues fixed
 - [`KT-14396`](https://youtrack.jetbrains.com/issue/KT-14396) "Remove redundant `.let` call" was not proposed for binary operations
@@ -61,6 +72,10 @@
 - [`KT-14745`](https://youtrack.jetbrains.com/issue/KT-14745) Fix KotlinNullPointerException in ConvertPrimaryConstructorToSecondary
 - [`KT-14791`](https://youtrack.jetbrains.com/issue/KT-14791) Fix incorrect "remove redundant `.let`" inspection for value with smart cast
 - [`KT-14733`](https://youtrack.jetbrains.com/issue/KT-14733) Fix incorrect intention to add `out`/`in` variance with inner classes
+- [`KT-13777`](https://youtrack.jetbrains.com/issue/KT-13777) Simplify condition intention should work in case `booleanCond == true`
+- [`KT-14890`](https://youtrack.jetbrains.com/issue/KT-14890) Inspection to remove curly braces from class definition shouldn't trigger for nested classes followed by a secondary constructor
+- [`KT-12633`](https://youtrack.jetbrains.com/issue/KT-12633) Intention "Specify type explicitly" should offer all bounds for platform types
+- [`KT-14100`](https://youtrack.jetbrains.com/issue/KT-14100) Auto-import should suggest Enum constants
 
 #### Refactorings
 
@@ -75,6 +90,9 @@
 - [`KT-14374`](https://youtrack.jetbrains.com/issue/KT-14374) Fix bad step-over behaviour for inline calls in Android Studio
 - [`KT-12612`](https://youtrack.jetbrains.com/issue/KT-12612) Breakpoint inside cross-inlined lambda did never hit
 - [`KT-11521`](https://youtrack.jetbrains.com/issue/KT-11521) [`KT-12734`](https://youtrack.jetbrains.com/issue/KT-12734) [`KT-12470`](https://youtrack.jetbrains.com/issue/KT-12470) Fix breakpoints in function literals in inline calls
+- [`KT-14822`](https://youtrack.jetbrains.com/issue/KT-14822) Can't call member extension in an object in Evaluate Expression
+- [`KT-14916`](https://youtrack.jetbrains.com/issue/KT-14916) Navigation to inline functions doesn't work for thread dump captured using "Get thread dump" button in debugger
+- [`KT-14615`](https://youtrack.jetbrains.com/issue/KT-14615) Now able to set breakpoint to lambda in return statement
 
 #### Android support
 - [`KT-12880`](https://youtrack.jetbrains.com/issue/KT-12880) Implement "Create XML resources" quickfix
@@ -405,7 +423,7 @@ Pull Up: Show member dependencies in the refactoring dialog
 - [`KT-12322`](https://youtrack.jetbrains.com/issue/KT-12322) Overload resolution ambiguity with constructor reference when class has a companion object
 - [`KT-11440`](https://youtrack.jetbrains.com/issue/KT-11440) Overload resolution ambiguity on specialized Map.put implementation from Java
 - [`KT-11389`](https://youtrack.jetbrains.com/issue/KT-11389) Runtime exception when calling Java primitive overloadings
-- [`KT-8200`](https://youtrack.jetbrains.com/issue/KT-8200) Exception when using non-generic interface with generic arguments
+- [`KT-820****0`](https://youtrack.jetbrains.com/issue/KT-8200) Exception when using non-generic interface with generic arguments
 - [`KT-10237`](https://youtrack.jetbrains.com/issue/KT-10237) Exception on an unresolved symbol in a type parameter bound in the 'where' clause
 - [`KT-11821`](https://youtrack.jetbrains.com/issue/KT-11821) Exception on incorrect number of generic arguments in a type parameter bound in the 'where' clause
 - [`KT-12482`](https://youtrack.jetbrains.com/issue/KT-12482) Exception: Implementation doesn't have the most specific type, but none of the other overridden methods does either
