@@ -91,7 +91,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private fun isCorrectModuleInfo(moduleInfo: M) = moduleInfo in allModules
 
     override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule {
-        val computation = resolverByModuleDescriptor[descriptor] ?: return delegateResolver.resolverForModuleDescriptor(descriptor)
+        val computation = resolverByModuleDescriptor[descriptor] ?: run {
+            if (delegateResolver is EmptyResolverForProject<*>) {
+                throw IllegalStateException("$descriptor is not contained in resolver $name")
+            }
+            return delegateResolver.resolverForModuleDescriptor(descriptor)
+        }
         return computation()
     }
 
