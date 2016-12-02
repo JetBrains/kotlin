@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
+import java.io.File
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -130,8 +131,10 @@ open class GenericReplCompiler(
         }
 
         val newDependencies = scriptDefinition.getDependenciesFor(psiFile, environment.project, lastDependencies)
+        var classpathAddendum: List<File>? = null
         if (lastDependencies != newDependencies) {
             lastDependencies = newDependencies
+            classpathAddendum = newDependencies?.let { environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) }
         }
 
         val analysisResult = analyzerEngine.analyzeReplLine(psiFile, codeLine.no)
@@ -164,7 +167,7 @@ open class GenericReplCompiler(
         return ReplCompileResult.CompiledClasses(descriptorsHistory.lines,
                                                  state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
                                                  state.replSpecific.hasResult,
-                                                 newDependencies?.let { environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) } ?: emptyList())
+                                                 classpathAddendum ?: emptyList())
     }
 
     companion object {
