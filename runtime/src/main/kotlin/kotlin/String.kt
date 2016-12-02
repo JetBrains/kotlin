@@ -10,8 +10,7 @@ public final class String : Comparable<String>, CharSequence {
     @SymbolName("Kotlin_String_hashCode")
     external public override fun hashCode(): Int
 
-    // TODO: make it Any?
-    public operator fun plus(other: Any): String {
+    public operator fun plus(other: Any?): String {
         return plusImpl(other.toString())
     }
 

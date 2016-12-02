@@ -6,9 +6,9 @@ package kotlin.collections
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 fun <E> arrayOfLateInitElements(size: Int): Array<E> {
-   // TODO: maybe use an empty array, fix array creation.
+   // TODO: maybe use an empty array.
    // return (if (size == 0) emptyArray else Array<Any>(size)) as Array<E>
-   return Array<Any>(size) as Array<E>
+   return Array<E>(size)
 }
 
 /**
@@ -17,7 +17,7 @@ fun <E> arrayOfLateInitElements(size: Int): Array<E> {
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 fun <E> Array<E>.copyOfLateInitElements(newSize: Int): Array<E> {
-    val result = Array<Any>(newSize) as Array<E>
+    val result = Array<E>(newSize)
     this.copyRangeTo(result, 0, if (newSize > this.size) this.size else newSize, 0)
     return result
 }

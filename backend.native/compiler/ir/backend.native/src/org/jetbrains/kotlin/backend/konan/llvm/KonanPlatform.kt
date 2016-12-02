@@ -36,6 +36,7 @@ class KonanBuiltIns: KotlinBuiltIns {
 object KonanPlatform : TargetPlatform("Konan") {
     override val defaultImports: List<ImportPath> = Default.defaultImports + listOf(
             ImportPath("kotlin.*"),
+            ImportPath("kotlin.collections.*"),
             ImportPath("kotlin.io.*"),
             ImportPath("konan.*")
     )

@@ -478,7 +478,7 @@ task array_list1(type: RunKonanTest) {
 }
 
 task listof0(type: RunKonanTest) {
-    goldValue = "abc\n"
+    goldValue = "abc\n[a, b, c, d]\n[n, s, a]\n"
     source = "runtime/collections/listof0.kt"
 }
 

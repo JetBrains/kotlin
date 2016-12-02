@@ -149,7 +149,6 @@ class ArrayList<E> private constructor(
     }
 
     override fun equals(other: Any?): Boolean {
-        //TODO: rethink instance checks, shall it be other is List<*>?
         return other === this ||
                 (other is List<*>) && contentEquals(other)
     }
