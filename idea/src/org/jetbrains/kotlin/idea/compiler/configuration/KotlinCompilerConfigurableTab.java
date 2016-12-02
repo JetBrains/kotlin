@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
-import org.jetbrains.kotlin.config.CompilerSettings;
-import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.JSPlatform;
-import org.jetbrains.kotlin.config.TargetPlatformKind;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
 
@@ -172,7 +169,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @SuppressWarnings("unchecked")
     private void fillJvmVersionList() {
-        for (TargetPlatformKind.Jvm jvm : TargetPlatformKind.Jvm.Companion.getJVM_PLATFORMS()) {
+        for (JVMPlatform jvm : JVMPlatform.Companion.getJVM_PLATFORMS()) {
             jvmVersionComboBox.addItem(jvm.getVersion().getDescription());
         }
     }

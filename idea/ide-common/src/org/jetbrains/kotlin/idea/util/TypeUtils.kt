@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
-import org.jetbrains.kotlin.types.typeUtil.substitute
-import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
