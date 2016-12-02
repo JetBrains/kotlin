@@ -37,6 +37,7 @@ public annotation class nativeInvoke
 @Target(CLASS, FUNCTION, PROPERTY)
 internal annotation class library(public val name: String = "")
 
+@Deprecated("It is no longer has any effect and will be dropped in a future version")
 @Target(PROPERTY)
 public annotation class enumerable()
 
