@@ -611,7 +611,7 @@ task unreachable1(type: RunKonanTest) {
 }
 
 task break_continue(type: RunKonanTest) {
-    goldValue = "while 2\nwhile 4\nwhile 6\nwhile 2\nwhile 4\nwhile 6\nwhile 1\nwhile 3\nwhile 5\n"
+    goldValue = "foo@l1\nfoo@l2\nfoo@l2\nfoo@l2\nbar@l1\nbar@l2\nbar@l2\nbar@l2\nqux@t1\nqux@l2\nqux@l2\nqux@l2\n"
     source = "codegen/controlflow/break.kt"
 }
 
