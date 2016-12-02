@@ -20,6 +20,12 @@ abstract class KonanTest extends DefaultTask {
     String testData = null
     List<String> arguments = null
 
+    boolean enabled = true
+
+    public void setDisabled(boolean value) {
+        this.enabled = !value
+    }
+
     public KonanTest(){
         dependsOn([project.project(":runtime").tasks['build'],
                    project.parent.tasks['build'],
@@ -211,7 +217,7 @@ class LinkKonanTest extends KonanTest {
 }
 
 task run() {
-    dependsOn(tasks.withType(KonanTest))
+    dependsOn(tasks.withType(KonanTest).matching { it.enabled })
 }
 
 task sum (type:UnitKonanTest) {
@@ -239,11 +245,10 @@ task objectInitialization(type: UnitKonanTest) {
     source = "codegen/object/initialization.kt"
 }
 
-/* field initialization test
 task objectBasic(type: UnitKonanTest) {
-    source = "$codegen/klass/basic.kt"
+    disabled = true
+    source = "codegen/klass/basic.kt"
 }
-*/
 
 task check_type(type: UnitKonanTest) {
     source = "codegen/basics/check_type.kt"
@@ -412,15 +417,14 @@ task strdedup1(type: RunKonanTest) {
     source = "datagen/literals/strdedup1.kt"
 }
 
-/*
-TODO: string deduplication across several components seems to require
-linking them as bitcode modules before translating to machine code.
-
 task strdedup2(type: RunKonanTest) {
+    // TODO: string deduplication across several components seems to require
+    // linking them as bitcode modules before translating to machine code.
+    disabled = true
+
     goldValue = "true\ntrue\n"
     source = "datagen/literals/strdedup2.kt"
 }
-*/
 
 task empty_string(type: RunKonanTest) {
     goldValue = "\n"
@@ -451,12 +455,11 @@ task statements0(type: RunKonanTest) {
     source = "runtime/basic/statements0.kt"
 }
 
-/*
 task boxing0(type: RunKonanTest) {
+    disabled = true
     goldValue = "17\n"
     source = "runtime/basic/boxing0.kt"
 }
-*/
 
 task interface0(type: RunKonanTest) {
     goldValue = "PASSED\n"
@@ -570,13 +573,11 @@ task finally8(type: RunKonanTest) {
     source = "codegen/try/finally8.kt"
 }
 
-/*
-TODO: enable after implementing break and continue
 task finally9(type: RunKonanTest) {
+    disabled = true
     goldValue = "Finally 1\nFinally 2\nAfter\n"
     source = "codegen/try/finally9.kt"
 }
-*/
 
 task scope1(type: RunKonanTest) {
     goldValue = "1\n"
