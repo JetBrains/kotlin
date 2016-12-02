@@ -58,7 +58,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     @Override
     public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
-        assert file instanceof KtFile : "KtElement not inside KtFile: " + file + " " + file.getText();
+        assert file instanceof KtFile : "KtElement not inside KtFile: " + file + (file == null ? "" : " " + file.getText());
         return (KtFile) file;
     }
 
