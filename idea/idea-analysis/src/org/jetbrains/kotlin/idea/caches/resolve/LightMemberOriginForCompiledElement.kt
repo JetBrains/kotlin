@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationContainer
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -51,7 +53,7 @@ data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: K
     override val originalElement: KtDeclaration? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val desc = MapPsiToAsmDesc.typeDesc(psiField.type)
         val signature = MemberSignature.fromFieldNameAndDesc(psiField.name!!, desc)
-        file.getDeclaration(ByJvmSignatureIndexer, ClassNameAndSignature(psiField.relativeClassName(), signature))
+        findDeclarationInCompiledFile(file, psiField, signature)
     }
 }
 
@@ -63,8 +65,36 @@ data class LightMemberOriginForCompiledMethod(val psiMethod: PsiMethod, val file
     override val originalElement: KtDeclaration? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val desc = MapPsiToAsmDesc.methodDesc(psiMethod)
         val signature = MemberSignature.fromMethodNameAndDesc(psiMethod.name, desc)
-        file.getDeclaration(ByJvmSignatureIndexer, ClassNameAndSignature(psiMethod.relativeClassName(), signature))
+        findDeclarationInCompiledFile(file, psiMethod, signature)
     }
+}
+
+private fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, signature: MemberSignature): KtDeclaration? {
+    val relativeClassName = member.relativeClassName()
+    val key = ClassNameAndSignature(relativeClassName, signature)
+
+    val memberName = member.name
+
+    if (memberName != null && !file.isContentsLoaded && file.hasDeclarationWithKey(ByJvmSignatureIndexer, key)) {
+        val container: KtDeclarationContainer? = if (relativeClassName.isEmpty())
+            file
+        else {
+            val topClassOrObject = file.declarations.singleOrNull() as? KtClassOrObject
+            relativeClassName.fold<Name, KtClassOrObject?>(topClassOrObject) { classOrObject, name ->
+                classOrObject?.declarations?.singleOrNull { it.name == name.asString() } as? KtClassOrObject
+            }
+        }
+
+        val declaration = container?.declarations?.singleOrNull {
+            it.name == memberName
+        }
+
+        if (declaration != null) {
+            return declaration
+        }
+    }
+
+    return file.getDeclaration(ByJvmSignatureIndexer, key)
 }
 
 // this is convenient data structure for this purpose and is not supposed to be used outside this file
