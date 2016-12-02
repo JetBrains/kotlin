@@ -21,7 +21,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         if (currentFunction == descriptor) return
         variableIndex = 0
         currentFunction = declaration.descriptor
-        val fn = declaration.descriptor.llvmFunction.getLlvmValue()
+        val fn = declaration.descriptor.llvmFunction
         prologueBb = LLVMAppendBasicBlock(fn, "prologue")
         entryBb = LLVMAppendBasicBlock(fn, "entry")
         positionAtEnd(entryBb!!)
@@ -122,20 +122,19 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     /* to class descriptor */
     fun classType(descriptor: ClassDescriptor): LLVMTypeRef = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
-    fun typeInfoType(descriptor: ClassDescriptor): LLVMTypeRef = descriptor.llvmTypeInfoPtr.getLlvmType()
-    fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr.getLlvmValue()!!
+    fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr
 
     fun param(fn: FunctionDescriptor, i: Int): LLVMValueRef {
         assert (i >= 0 && i < countParams(fn))
-        return LLVMGetParam(fn.llvmFunction.getLlvmValue(), i)!!
+        return LLVMGetParam(fn.llvmFunction, i)!!
     }
-    fun countParams(fn: FunctionDescriptor) = LLVMCountParams(fn.llvmFunction.getLlvmValue())
+    fun countParams(fn: FunctionDescriptor) = LLVMCountParams(fn.llvmFunction)
 
     fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
 
 
     fun basicBlock(name: String = "label_"): LLVMBasicBlockRef =
-            LLVMAppendBasicBlock(currentFunction!!.llvmFunction.getLlvmValue(), name)!!
+            LLVMAppendBasicBlock(currentFunction!!.llvmFunction, name)!!
 
     fun basicBlock(name: String, code: () -> Unit) = basicBlock(name).apply {
         appendingTo(this) {
@@ -143,10 +142,10 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
     }
 
-    fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction.getLlvmValue())
+    fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction)
 
-    fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction.getLlvmValue()!!
-    fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.getLlvmValue()!!
+    fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction
+    fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.llvm
 
     fun br(bbLabel: LLVMBasicBlockRef): LLVMValueRef {
         val res = LLVMBuildBr(builder, bbLabel)!!

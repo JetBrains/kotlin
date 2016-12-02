@@ -18,20 +18,15 @@ import java.io.*
 fun readModuleMetadata(file: File): String {
 
     val reader = MetadataReader(file)
-    var metadataString: String? = null
 
-    try {
+    reader.use {
         val metadataNode = reader.namedMetadataNode("kmetadata", 0);
-        val stringNode = reader.metadataOperand(metadataNode, 0)!!
-        metadataString = reader.string(stringNode)
-    } finally {
-        reader.close()
+        val stringNode = reader.metadataOperand(metadataNode, 0)
+        return reader.string(stringNode)
     }
-
-    return metadataString!!
 }
 
-class MetadataReader(file: File) {
+class MetadataReader(file: File) : Closeable {
 
     lateinit var llvmModule: LLVMModuleRef
     lateinit var llvmContext: LLVMContextRef
@@ -69,10 +64,10 @@ class MetadataReader(file: File) {
 
     fun namedMetadataNode(name: String, index: Int): LLVMValueRef {
         memScoped {
-            val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, "kmetadata")!!
+            val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, "kmetadata")
             val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
 
-            LLVMGetNamedMetadataOperands(llvmModule, "kmetadata", nodeArray[0].ptr)!!
+            LLVMGetNamedMetadataOperands(llvmModule, "kmetadata", nodeArray[0].ptr)
 
             return nodeArray[0].value!!
         }
@@ -80,16 +75,16 @@ class MetadataReader(file: File) {
 
     fun metadataOperand(metadataNode: LLVMValueRef, index: Int): LLVMValueRef {
         memScoped {
-            val operandCount = LLVMGetMDNodeNumOperands(metadataNode)!!
+            val operandCount = LLVMGetMDNodeNumOperands(metadataNode)
             val operandArray = allocArray<LLVMValueRefVar>(operandCount)
 
-            LLVMGetMDNodeOperands(metadataNode, operandArray[0].ptr)!!
+            LLVMGetMDNodeOperands(metadataNode, operandArray[0].ptr)
 
             return operandArray[0].value!!
         }
     }
 
-    fun close() {
+    override fun close() {
         LLVMDisposeModule(llvmModule)
         LLVMContextDispose(llvmContext)
     }
@@ -155,7 +150,7 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
     }
 
     internal fun function(declaration: IrFunction) {
-        val fn = declaration.descriptor.llvmFunction.getLlvmValue()
+        val fn = declaration.descriptor.llvmFunction
 
         val proto = serializeFunSignature(declaration)
 
@@ -165,7 +160,7 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
 
     // Quick check consistency
     private fun debug_blob(blob: String) {
-        var metadataList = mutableListOf<KotlinKonanMetadata>()
+        val metadataList = mutableListOf<KotlinKonanMetadata>()
         KotlinKonanMetadataUtils.parseMetadata(blob, metadataList)
 
         val body = metadataList.first().body

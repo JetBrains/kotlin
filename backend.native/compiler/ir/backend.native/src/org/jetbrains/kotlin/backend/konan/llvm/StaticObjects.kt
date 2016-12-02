@@ -42,7 +42,7 @@ internal fun StaticData.createKotlinStringLiteral(value: IrConst<String>): Const
 
     val stringClass = value.type.constructor.declarationDescriptor as ClassDescriptor
     assert (stringClass.fqNameSafe.asString() == "kotlin.String")
-    val arrayHeader = arrayHeader(containerOffsetNegative, stringClass.llvmTypeInfoPtr, arrayCount)
+    val arrayHeader = arrayHeader(containerOffsetNegative, stringClass.typeInfoPtr, arrayCount)
 
     val array = ConstArray(int8Type, valueBytes.map { Int8(it) } )
 
@@ -50,7 +50,7 @@ internal fun StaticData.createKotlinStringLiteral(value: IrConst<String>): Const
 
     val stringRef = objHeaderPtr.bitcast(getLLVMType(value.type))
     val res = createAlias("kstr:$base64Str", stringRef)
-    LLVMSetLinkage(res.getLlvmValue(), LLVMLinkage.LLVMWeakAnyLinkage)
+    LLVMSetLinkage(res.llvm, LLVMLinkage.LLVMWeakAnyLinkage)
 
     return res
 }

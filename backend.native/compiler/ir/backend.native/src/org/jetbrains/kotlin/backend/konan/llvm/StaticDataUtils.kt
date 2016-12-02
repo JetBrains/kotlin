@@ -10,9 +10,9 @@ import llvm.*
  * If [elements] is empty, then null pointer is returned.
  */
 internal fun StaticData.placeGlobalConstArray(name: String,
-                                              elemType: LLVMTypeRef?,
+                                              elemType: LLVMTypeRef,
                                               elements: List<ConstValue>): ConstPointer {
-    if (elements.size > 0) {
+    if (elements.isNotEmpty()) {
         val global = this.placeGlobalArray(name, elemType, elements)
         global.setConstant(true)
         return global.pointer.getElementPtr(0)
@@ -22,6 +22,6 @@ internal fun StaticData.placeGlobalConstArray(name: String,
 }
 
 internal fun StaticData.createAlias(name: String, aliasee: ConstPointer): ConstPointer {
-    val alias = LLVMAddAlias(context.llvmModule, aliasee.getLlvmType(), aliasee.getLlvmValue(), name)!!
+    val alias = LLVMAddAlias(context.llvmModule, aliasee.llvmType, aliasee.llvm, name)!!
     return constPointer(alias)
 }

@@ -56,15 +56,16 @@ internal interface ContextUtils {
      * LLVM function generated from the Kotlin function.
      * It may be declared as external function prototype.
      */
-    val FunctionDescriptor.llvmFunction: ConstValue
+    val FunctionDescriptor.llvmFunction: LLVMValueRef
         get() {
             assert (this.kind.isReal)
             val globalName = this.symbolName
             val module = context.llvmModule
 
             val functionType = getLlvmFunctionType(this)
-            val function = LLVMGetNamedFunction(module, globalName) ?: LLVMAddFunction(module, globalName, functionType)
-            return constValue(function)
+
+            return LLVMGetNamedFunction(module, globalName) ?:
+                    LLVMAddFunction(module, globalName, functionType)!!
         }
 
     /**
@@ -72,7 +73,7 @@ internal interface ContextUtils {
      */
     val FunctionDescriptor.entryPointAddress: ConstValue
         get() {
-            val result = LLVMConstBitCast(this.llvmFunction.getLlvmValue(), pointerType(LLVMInt8Type()))
+            val result = LLVMConstBitCast(this.llvmFunction, int8TypePtr)!!
             return constValue(result)
         }
 
@@ -80,15 +81,18 @@ internal interface ContextUtils {
      * Pointer to type info for given class.
      * It may be declared as pointer to external variable.
      */
-    val ClassDescriptor.llvmTypeInfoPtr: ConstPointer
+    val ClassDescriptor.llvmTypeInfoPtr: LLVMValueRef
         get() {
             val module = context.llvmModule
             val globalName = this.typeInfoSymbolName
             val globalPtr = LLVMGetNamedGlobal(module, globalName) ?:
-                            LLVMAddGlobal(module, runtime.typeInfoType, globalName)
+                            LLVMAddGlobal(module, runtime.typeInfoType, globalName)!!
 
-            return constPointer(globalPtr)
+            return globalPtr
         }
+
+    val ClassDescriptor.typeInfoPtr: ConstPointer
+        get() = constPointer(this.llvmTypeInfoPtr)
 
     /**
      * Returns contents of this [GlobalHash].

@@ -470,7 +470,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         return paramDescriptors.mapIndexed { i, paramDescriptor ->
             val param = codegen.param(descriptor, i)
-            assert(codegen.getLLVMType(paramDescriptor.type) == LLVMTypeOf(param))
+            assert(codegen.getLLVMType(paramDescriptor.type) == param.type)
             paramDescriptor to param
         }.toMap()
     }
@@ -694,11 +694,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateVararg(tmpVariableName: String, value: IrVararg): LLVMValueRef? {
-        val arrayCreationArgs = listOf(codegen.kTheArrayTypeInfo!!, kImmInt32One!!, Int32(value.elements.size).getLlvmValue()!!)
+        val arrayCreationArgs = listOf(codegen.kTheArrayTypeInfo, kImmInt32One, Int32(value.elements.size).llvm)
         val array = currentCodeContext.genCall(context.allocArrayFunction, arrayCreationArgs, tmpVariableName)
         value.elements.forEachIndexed { i, it ->
             val elementValueRaw = evaluateExpression(codegen.newVar(), it)
-            currentCodeContext.genCall(context.setArrayFunction, listOf(array!!, Int32(i).getLlvmValue()!!, elementValueRaw!!), "")
+            currentCodeContext.genCall(context.setArrayFunction, listOf(array, Int32(i).llvm, elementValueRaw!!), "")
             return@forEachIndexed
         }
         return array
@@ -1316,7 +1316,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrConstKind.Int    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(),   1)
             IrConstKind.Long   -> return LLVMConstInt(LLVMInt64Type(), value.value as Long,             1)
             IrConstKind.String ->
-                return context.staticData.kotlinStringLiteral(value as IrConst<String>).getLlvmValue()
+                return context.staticData.kotlinStringLiteral(value as IrConst<String>).llvm
             IrConstKind.Float  -> return LLVMConstRealOfString(LLVMFloatType(), (value.value as Float).toString())
             IrConstKind.Double -> return LLVMConstRealOfString(LLVMDoubleType(), (value.value as Double).toString())
         }
@@ -1464,9 +1464,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         memScoped {
             val containingClass = (callee.descriptor as ClassConstructorDescriptor).containingDeclaration
             val typeInfo = codegen.typeInfoValue(containingClass)
-            val allocHint = Int32(1).getLlvmValue()!!
+            val allocHint = Int32(1).llvm
             val thisValue = if (containingClass.isArray) {
-                assert(args.size == 1 && LLVMTypeOf(args[0]) == LLVMInt32Type())
+                assert(args.size == 1 && args[0].type == int32Type)
                 val allocArrayInstanceArgs = listOf(typeInfo, allocHint, args[0])
                 currentCodeContext.genCall(context.allocArrayFunction, allocArrayInstanceArgs, variableName)
             } else {
@@ -1670,7 +1670,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisAsReceiverParameter)
 
         val thisPtrArgType = codegen.getLLVMType(descriptor.allValueParameters[0].type)
-        val thisPtrArg = if (LLVMTypeOf(thisPtr) == thisPtrArgType) {
+        val thisPtrArg = if (thisPtr.type == thisPtrArgType) {
             thisPtr
         } else {
             // e.g. when array constructor calls super (i.e. Any) constructor.
@@ -1703,7 +1703,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         memScoped {
             val arrayLength = args.size
-            val argsCasted = args.map{it -> constPointer(LLVMConstBitCast(it, int8TypePtr)) }
+            val argsCasted = args.map { it -> constPointer(it).bitcast(int8TypePtr) }
             val llvmUsedGlobal = 
                 context.staticData.placeGlobalArray("llvm.used", int8TypePtr, argsCasted)
 

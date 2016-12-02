@@ -25,7 +25,7 @@ internal class StaticData(override val context: Context): ContextUtils {
         }
 
         fun setInitializer(value: ConstValue) {
-            LLVMSetInitializer(llvmGlobal, value.getLlvmValue())
+            LLVMSetInitializer(llvmGlobal, value.llvm)
         }
 
         fun setConstant(value: Boolean) {
@@ -51,7 +51,7 @@ internal class StaticData(override val context: Context): ContextUtils {
 
         private fun getElementOffset(index: Int): Long {
             val llvmTargetData = global.staticData.llvmTargetData
-            val type = LLVMGetElementType(delegate.getLlvmType())
+            val type = LLVMGetElementType(delegate.llvmType)
             return when (LLVMGetTypeKind(type)) {
                 LLVMTypeKind.LLVMStructTypeKind -> LLVMOffsetOfElement(llvmTargetData, type, index)
                 LLVMTypeKind.LLVMArrayTypeKind -> LLVMABISizeOfType(llvmTargetData, LLVMGetElementType(type)) * index
@@ -95,7 +95,7 @@ internal class StaticData(override val context: Context): ContextUtils {
      * Creates [Global] with given name and value.
      */
     fun placeGlobal(name: String, initializer: ConstValue): Global {
-        val global = createGlobal(initializer.getLlvmType(), name)
+        val global = createGlobal(initializer.llvmType, name)
         global.setInitializer(initializer)
         return global
     }

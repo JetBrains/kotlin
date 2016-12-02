@@ -151,9 +151,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val superTypeOrAny = classDesc.getSuperClassOrAny()
         val superType = if (KotlinBuiltIns.isAny(classDesc)) NullPointer(runtime.typeInfoType)
-                else superTypeOrAny.llvmTypeInfoPtr
+                else superTypeOrAny.typeInfoPtr
 
-        val interfaces = classDesc.implementedInterfaces.map { it.llvmTypeInfoPtr }
+        val interfaces = classDesc.implementedInterfaces.map { it.typeInfoPtr }
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
                 pointerType(runtime.typeInfoType), interfaces)
 
@@ -212,8 +212,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 methodsPtr, methods.size,
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size)
 
-        val typeInfoGlobal = classDesc.llvmTypeInfoPtr.getLlvmValue() // TODO: it is a hack
-        LLVMSetInitializer(typeInfoGlobal, typeInfo.getLlvmValue())
+        val typeInfoGlobal = classDesc.llvmTypeInfoPtr // TODO: it is a hack
+        LLVMSetInitializer(typeInfoGlobal, typeInfo.llvm)
         LLVMSetGlobalConstant(typeInfoGlobal, 1)
 
         exportTypeInfoIfRequired(classDesc, typeInfoGlobal)

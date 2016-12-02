@@ -21,7 +21,7 @@ internal class Logger(val generator: CodeGenerator, override val context: Contex
   fun logIr() {
     val function = generator.currentFunction ?: return
 
-    val irFunctionDeclaration = LLVMPrintValueToString(function.llvmFunction.getLlvmValue())!!.asCString().toString()
+    val irFunctionDeclaration = LLVMPrintValueToString(function.llvmFunction)!!.asCString().toString()
     irFunctionDeclaration.lines().forEach { println("    $it") }
   }
 
