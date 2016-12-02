@@ -9,7 +9,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../dependencies/guava-17.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../dependencies/guava-19.0-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/../dependencies/asm5-src.zip!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </SOURCES>
