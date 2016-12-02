@@ -81,19 +81,19 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     override val name = template.simpleName!!
 
-    override fun <TF> isScript(file: TF): Boolean =
+    override fun <TF: Any> isScript(file: TF): Boolean =
             scriptFilePattern.let { Regex(it).matches(getFileName(file)) }
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
+    override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
 
         fun logClassloadingError(ex: Throwable) {
             logScriptDefMessage(ScriptDependenciesResolver.ReportSeverity.WARNING, ex.message ?: "Invalid script template: ${template.qualifiedName}", null)
         }
 
-        val script = BasicScriptContents(file, getAnnotations = {
+        fun makeScriptContents() = BasicScriptContents(file, getAnnotations = {
             val classLoader = (template as Any).javaClass.classLoader
             try {
                 getAnnotationEntries(file, project)
@@ -112,7 +112,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         })
 
         try {
-            val fileDeps = resolver?.resolve(script, environment, ::logScriptDefMessage, previousDependencies)
+            val fileDeps = resolver?.resolve(makeScriptContents(), environment, ::logScriptDefMessage, previousDependencies)
             // TODO: use it as a Future
             return fileDeps?.get()
         }
@@ -122,7 +122,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         return null
     }
 
-    private fun <TF> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
+    private fun <TF: Any> getAnnotationEntries(file: TF, project: Project): Iterable<KtAnnotationEntry> = when (file) {
         is PsiFile -> getAnnotationEntriesFromPsiFile(file)
         is VirtualFile -> getAnnotationEntriesFromVirtualFile(file, project)
         is File -> {
@@ -143,7 +143,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         return getAnnotationEntriesFromPsiFile(psiFile)
     }
 
-    class BasicScriptContents<out TF>(myFile: TF, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
+    class BasicScriptContents<out TF: Any>(myFile: TF, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
         override val file: File? by lazy { getFile(myFile) }
         override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
         override val text: CharSequence? by lazy { getFileContents(myFile) }

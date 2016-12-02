@@ -21,42 +21,42 @@ import com.intellij.psi.PsiFile
 import java.io.File
 import java.io.InputStream
 
-fun <TF> getFileName(file: TF): String = when (file) {
+fun <TF: Any> getFileName(file: TF): String = when (file) {
     is PsiFile -> file.originalFile.name
     is VirtualFile -> file.name
     is File -> file.name
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
-fun <TF> getFilePath(file: TF): String = when (file) {
+fun <TF: Any> getFilePath(file: TF): String = when (file) {
     is PsiFile -> file.originalFile.run { virtualFile?.path ?: name } // TODO: replace name with path of PSI elements
     is VirtualFile -> file.path
     is File -> file.canonicalPath
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
-fun <TF> isValidFile(file: TF): Boolean = when (file) {
+fun <TF: Any> isValidFile(file: TF): Boolean = when (file) {
     is PsiFile -> file.isValid
     is VirtualFile -> file.isValid
     is File -> file.exists() && file.isFile
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
-fun <TF> getFile(file: TF): File? = when (file) {
+fun <TF: Any> getFile(file: TF): File? = when (file) {
     is PsiFile -> file.originalFile.run { File(virtualFile?.path) }
     is VirtualFile -> File(file.path)
     is File -> file
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
-fun <TF> getFileContents(file: TF): CharSequence = when (file) {
+fun <TF: Any> getFileContents(file: TF): CharSequence = when (file) {
     is PsiFile -> file.viewProvider.contents
     is VirtualFile -> file.inputStream.reader(charset = file.charset).readText()
     is File -> file.readText()
     else -> throw IllegalArgumentException("Unsupported file type $file")
 }
 
-fun <TF> getFileContentsStream(file: TF): InputStream = when (file) {
+fun <TF: Any> getFileContentsStream(file: TF): InputStream = when (file) {
     is PsiFile -> file.viewProvider.contents.toString().byteInputStream()
     is VirtualFile -> file.inputStream
     is File -> file.inputStream()

@@ -37,13 +37,13 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
     open val annotationsForSamWithReceivers: List<String>
         get() = emptyList()
 
-    open fun <TF> isScript(file: TF): Boolean =
+    open fun <TF: Any> isScript(file: TF): Boolean =
             getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
     open fun getScriptName(script: KtScript): Name =
         ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
 
-    open fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
+    open fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
 }
 
 interface KotlinScriptExternalDependencies : Comparable<KotlinScriptExternalDependencies> {

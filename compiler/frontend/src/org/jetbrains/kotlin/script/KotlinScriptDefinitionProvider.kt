@@ -44,11 +44,11 @@ class KotlinScriptDefinitionProvider {
         return changed
     }
 
-    fun<TF> findScriptDefinition(file: TF): KotlinScriptDefinition? = definitionsLock.read {
+    fun<TF: Any> findScriptDefinition(file: TF): KotlinScriptDefinition? = definitionsLock.read {
         definitions.firstOrNull { it.isScript(file) }
     }
 
-    fun<TF> isScript(file: TF): Boolean = findScriptDefinition(file) != null
+    fun<TF: Any> isScript(file: TF): Boolean = findScriptDefinition(file) != null
 
     fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
         definitionsLock.write {

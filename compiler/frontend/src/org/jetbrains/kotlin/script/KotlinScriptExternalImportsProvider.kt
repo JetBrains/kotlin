@@ -31,13 +31,13 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
     private val cache = hashMapOf<String, KotlinScriptExternalDependencies>()
     private val cacheOfNulls = hashSetOf<String>()
 
-    fun <TF> getExternalImports(file: TF): KotlinScriptExternalDependencies? = cacheLock.read { calculateExternalDependencies(file) }
+    fun <TF: Any> getExternalImports(file: TF): KotlinScriptExternalDependencies? = cacheLock.read { calculateExternalDependencies(file) }
 
-    fun <TF> getExternalImports(files: Iterable<TF>): List<KotlinScriptExternalDependencies> = cacheLock.read {
+    fun <TF: Any> getExternalImports(files: Iterable<TF>): List<KotlinScriptExternalDependencies> = cacheLock.read {
         files.mapNotNull { calculateExternalDependencies(it) }
     }
 
-    private fun <TF> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
+    private fun <TF: Any> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
         val path = getFilePath(file)
         return cache[path]
                ?: if (cacheOfNulls.contains(path)) null
@@ -56,7 +56,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
     }
 
     // optimized for initial caching, additional handling of possible duplicates to save a call to distinct
-    fun <TF> cacheExternalImports(files: Iterable<TF>): Unit = cacheLock.write {
+    fun <TF: Any> cacheExternalImports(files: Iterable<TF>): Unit = cacheLock.write {
         val uncached = hashSetOf<String>()
         files.forEach { file ->
             val path = getFilePath(file)
@@ -130,9 +130,9 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         }
     }
 
-    fun <TF> invalidateCachesFor(vararg files: TF) { invalidateCachesFor(files.asIterable()) }
+    fun <TF: Any> invalidateCachesFor(vararg files: TF) { invalidateCachesFor(files.asIterable()) }
 
-    fun <TF> invalidateCachesFor(files: Iterable<TF>) {
+    fun <TF: Any> invalidateCachesFor(files: Iterable<TF>) {
         cacheLock.write {
             files.forEach { file ->
                 val path = getFilePath(file)
@@ -150,7 +150,7 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         cache.values.flatMap { it.sources }
     }.distinct()
 
-    fun <TF> getCombinedClasspathFor(files: Iterable<TF>): List<File> =
+    fun <TF: Any> getCombinedClasspathFor(files: Iterable<TF>): List<File> =
         getExternalImports(files)
                 .flatMap { it.classpath }
                 .distinct()
