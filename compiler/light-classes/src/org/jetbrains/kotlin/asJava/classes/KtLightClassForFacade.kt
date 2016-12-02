@@ -214,6 +214,18 @@ class KtLightClassForFacade private constructor(
         return baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
     }
 
+    override fun getSuperClass(): PsiClass? {
+        return JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_LANG_OBJECT, resolveScope)
+    }
+
+    override fun getSupers(): Array<PsiClass> {
+        return superClass?.let { arrayOf(it) } ?: arrayOf()
+    }
+
+    override fun getSuperTypes(): Array<PsiClassType> {
+        return arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+    }
+
     override fun hashCode() = hashCode
 
     private fun computeHashCode(): Int {
