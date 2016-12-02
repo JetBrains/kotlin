@@ -669,6 +669,8 @@
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
                         <file file="@{idea.dir}/lib/snappy-in-java-0.5.1.jar"/>
 
+                        <file file="@{idea.dir}/lib/xercesImpl.jar"/>
+                        
                         <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
                         <file file="@{idea.dir}/lib/util.jar"/>
                     </resources>
