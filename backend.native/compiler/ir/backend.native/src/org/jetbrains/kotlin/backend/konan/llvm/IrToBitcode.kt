@@ -103,9 +103,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         fun genReturn(target: CallableDescriptor, value: LLVMValueRef?)
 
-        fun genBreak()
+        fun genBreak(destination: IrBreak)
 
-        fun genContinue()
+        fun genContinue(destination: IrContinue)
 
         fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>, result: String?): LLVMValueRef
 
@@ -141,9 +141,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) = unsupported(target)
 
-        override fun genBreak() = unsupported()
+        override fun genBreak(destination: IrBreak) = unsupported()
 
-        override fun genContinue() = unsupported()
+        override fun genContinue(destination: IrContinue) = unsupported()
 
         override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>, result: String?) = unsupported(function)
 
@@ -216,70 +216,44 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val loopCheck = codegen.basicBlock()
         val loopExit  = codegen.basicBlock()
 
-        override fun genBreak() {
-            codegen.br(loopExit)
+        override fun genBreak(destination: IrBreak) {
+            if (destination.label == loop.label)
+                codegen.br(loopExit)
+            else
+                super.genBreak(destination)
         }
 
-        override fun genContinue() {
-            codegen.br(loopCheck)
+        override fun genContinue(destination: IrContinue) {
+            if (destination.label == loop.label)
+                codegen.br(loopCheck)
+            else
+                super.genContinue(destination)
         }
     }
 
     //-------------------------------------------------------------------------//
 
     override fun visitWhileLoop(loop: IrWhileLoop) {
-
-        using(LoopScope(loop)) {
-            val loopScope = currentCodeContext as LoopScope
-            val loopBody  = codegen.basicBlock()
-
-            codegen.br(loopScope.loopCheck)
-
-            codegen.positionAtEnd(loopScope.loopCheck)
-            val condition = evaluateExpression(codegen.newVar(), loop.condition)
-            codegen.condBr(condition, loopBody, loopScope.loopExit)
-
-            codegen.positionAtEnd(loopBody)
-            evaluateExpression(codegen.newVar(), loop.body)
-
-            codegen.br(loopScope.loopCheck)
-            codegen.positionAtEnd(loopScope.loopExit)
-        }
+        evaluateWhileLoop(loop)
     }
 
     //-------------------------------------------------------------------------//
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
-
-        using(LoopScope(loop)) {
-            val loopScope = currentCodeContext as LoopScope
-            val loopBody = codegen.basicBlock()
-
-            codegen.br(loopBody)
-
-            codegen.positionAtEnd(loopBody)
-            evaluateExpression(codegen.newVar(), loop.body)
-            codegen.br(loopScope.loopCheck)
-
-            codegen.positionAtEnd(loopScope.loopCheck)
-            val condition = evaluateExpression(codegen.newVar(), loop.condition)
-            codegen.condBr(condition, loopBody, loopScope.loopExit)
-
-            codegen.positionAtEnd(loopScope.loopExit)
-        }
+        evaluateDoWhileLoop(loop)
     }
 
     //-------------------------------------------------------------------------//
 
-    fun evaluateBreak(): LLVMValueRef? {
-        (currentCodeContext as LoopScope).genBreak()
+    fun evaluateBreak(destination: IrBreak): LLVMValueRef? {
+        currentCodeContext.genBreak(destination)
         return null
     }
 
     //-------------------------------------------------------------------------//
 
-    fun evaluateContinue(): LLVMValueRef? {
-        (currentCodeContext as LoopScope).genContinue()
+    fun evaluateContinue(destination: IrContinue): LLVMValueRef? {
+        currentCodeContext.genContinue(destination)
         return null
     }
 
@@ -630,9 +604,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrStringConcatenation -> return evaluateStringConcatenation(tmpVariableName, value)
             is IrBlockBody           -> return evaluateBlock              (tmpVariableName, value as IrStatementContainer)
             is IrWhileLoop           -> return evaluateWhileLoop          (                 value)
+            is IrDoWhileLoop         -> return evaluateDoWhileLoop        (                 value)
             is IrVararg              -> return evaluateVararg             (tmpVariableName, value)
-            is IrBreak               -> return evaluateBreak              (                      )
-            is IrContinue            -> return evaluateContinue           (                      )
+            is IrBreak               -> return evaluateBreak              (                 value)
+            is IrContinue            -> return evaluateContinue           (                 value)
             null                     -> return null
             else                     -> {
                 TODO("${ir2string(value)}")
@@ -914,9 +889,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             jump(block, value)
         }
 
-        override fun genBreak() = TODO()
-        override fun genContinue() = TODO()
-
         // When an exception is caught, finalize the scope and rethrow the exception.
         override fun genHandler(exception: LLVMValueRef) {
             genFinalize()
@@ -1019,9 +991,45 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         return null
     }
 
+    //-------------------------------------------------------------------------//
+
     private fun evaluateWhileLoop(loop: IrWhileLoop): LLVMValueRef? {
-        visitWhileLoop(loop)
-        // TODO: incorrect!
+        val loopScope = LoopScope(loop)
+        using(loopScope) {
+            val loopBody  = codegen.basicBlock()
+            codegen.br(loopScope.loopCheck)
+
+            codegen.positionAtEnd(loopScope.loopCheck)
+            val condition = evaluateExpression(codegen.newVar(), loop.condition)
+            codegen.condBr(condition, loopBody, loopScope.loopExit)
+
+            codegen.positionAtEnd(loopBody)
+            evaluateExpression(codegen.newVar(), loop.body)
+
+            codegen.br(loopScope.loopCheck)
+            codegen.positionAtEnd(loopScope.loopExit)
+        }
+        return null
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateDoWhileLoop(loop: IrDoWhileLoop): LLVMValueRef? {
+        val loopScope = LoopScope(loop)
+        using(loopScope) {
+            val loopBody = codegen.basicBlock()
+            codegen.br(loopBody)
+
+            codegen.positionAtEnd(loopBody)
+            evaluateExpression(codegen.newVar(), loop.body)
+            codegen.br(loopScope.loopCheck)
+
+            codegen.positionAtEnd(loopScope.loopCheck)
+            val condition = evaluateExpression(codegen.newVar(), loop.condition)
+            codegen.condBr(condition, loopBody, loopScope.loopExit)
+
+            codegen.positionAtEnd(loopScope.loopExit)
+        }
         return null
     }
 
