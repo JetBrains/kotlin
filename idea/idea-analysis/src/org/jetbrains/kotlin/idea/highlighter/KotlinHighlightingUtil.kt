@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.psi.KtFile
 object KotlinHighlightingUtil {
     fun shouldHighlight(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
-        return ktFile is KtCodeFragment || ktFile.isScript || ProjectRootsUtil.isInProjectOrLibraryContent(ktFile)
+        return (ktFile is KtCodeFragment && ktFile.context != null) || ktFile.isScript || ProjectRootsUtil.isInProjectOrLibraryContent(ktFile)
     }
 
     fun shouldHighlightErrors(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
-        return ktFile is KtCodeFragment || ktFile.isScript || ProjectRootsUtil.isInProjectSource(ktFile)
+        return (ktFile is KtCodeFragment && ktFile.context != null) || ktFile.isScript || ProjectRootsUtil.isInProjectSource(ktFile)
     }
 }
