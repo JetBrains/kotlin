@@ -2977,6 +2977,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("tryCatchDynamic.kt")
+            public void testTryCatchDynamic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/try/tryCatchDynamic.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("tryCatchExpr.kt")
             public void testTryCatchExpr() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/try/tryCatchExpr.kt");
