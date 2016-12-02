@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsNumberLiteral;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
@@ -31,8 +32,6 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelF
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
-
-import java.util.Collections;
 
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.sum;
@@ -90,7 +89,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
 
             KotlinType type = context().bindingContext().getType(entryExpression);
             if (type == null || type.isMarkedNullable()) {
-                append(TopLevelFIF.TO_STRING.apply((JsExpression) null, Collections.singletonList(translatedExpression), context()));
+                append(TopLevelFIF.TO_STRING.apply((JsExpression) null, new SmartList<JsExpression>(translatedExpression), context()));
             }
             else if (mustCallToString(type)) {
                 append(new JsInvocation(new JsNameRef("toString", translatedExpression)));

@@ -3680,6 +3680,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineCallInsideStringTemplate.kt")
+        public void testInlineCallInsideStringTemplate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/inlineCallInsideStringTemplate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineCallNoInline.kt")
         public void testInlineCallNoInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/inlineCallNoInline.kt");
