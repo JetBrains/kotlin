@@ -577,7 +577,12 @@
                 </fileset>
 
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-                <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
+                <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar,xercesImpl.jar"/>
+
+                <zipfileset src="${basedir}/ideaSDK/core/xercesImpl.jar">
+                    <exclude name="META-INF/**"/>
+                </zipfileset>
+
                 <zipfileset src="${idea.sdk}/lib/jna-platform.jar"/>
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>

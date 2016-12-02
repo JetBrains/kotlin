@@ -46,6 +46,8 @@ messages/**)
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionInputStream
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionOutputStream
 -dontwarn com.google.common.util.concurrent.*
+-dontwarn org.apache.xerces.dom.**
+-dontwarn org.apache.xerces.util.**
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
