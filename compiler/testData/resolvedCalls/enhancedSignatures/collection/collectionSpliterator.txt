@@ -1,0 +1,21 @@
+// TODO: Fix platform types
+fun <E : CharSequence> notNullValues(collection: Collection<E>) {
+    collection.spliterator()
+        // SUCCESS
+        // ORIGINAL:    fun spliterator(): Spliterator<E!> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun spliterator(): Spliterator<E!> defined in kotlin.collections.Collection
+}
+
+fun <E : CharSequence> nullableValues(collection: Collection<E?>) {
+    collection.spliterator()
+        // SUCCESS
+        // ORIGINAL:    fun spliterator(): Spliterator<E!> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun spliterator(): Spliterator<E?> defined in kotlin.collections.Collection
+}
+
+fun <E : CharSequence?> nullableValues2(collection: Collection<E>) {
+    collection.spliterator()
+        // SUCCESS
+        // ORIGINAL:    fun spliterator(): Spliterator<E!> defined in kotlin.collections.Collection
+        // SUBSTITUTED: fun spliterator(): Spliterator<E!> defined in kotlin.collections.Collection
+}

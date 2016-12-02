@@ -1,0 +1,20 @@
+fun <E : CharSequence> notNullValues(collection: Iterable<E>) {
+    collection.spliterator()
+        // SUCCESS
+        // ORIGINAL:    fun spliterator(): Spliterator<T> defined in kotlin.collections.Iterable
+        // SUBSTITUTED: fun spliterator(): Spliterator<E> defined in kotlin.collections.Iterable
+}
+
+fun <E : CharSequence> nullableValues(collection: Iterable<E?>) {
+    collection.spliterator()
+        // SUCCESS
+        // ORIGINAL:    fun spliterator(): Spliterator<T> defined in kotlin.collections.Iterable
+        // SUBSTITUTED: fun spliterator(): Spliterator<E?> defined in kotlin.collections.Iterable
+}
+
+fun <E : CharSequence?> nullableValues2(collection: Iterable<E>) {
+    collection.spliterator()
+        // SUCCESS
+        // ORIGINAL:    fun spliterator(): Spliterator<T> defined in kotlin.collections.Iterable
+        // SUBSTITUTED: fun spliterator(): Spliterator<E> defined in kotlin.collections.Iterable
+}

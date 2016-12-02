@@ -1,0 +1,13 @@
+fun notNullValues(it: Iterator<String>) {
+    it.forEachRemaining { e -> }
+        // SUCCESS
+        // ORIGINAL:    fun forEachRemaining((T) -> Unit): Unit defined in kotlin.collections.Iterator
+        // SUBSTITUTED: fun forEachRemaining((String) -> Unit): Unit defined in kotlin.collections.Iterator
+}
+
+fun mutableNullableValues(it: MutableIterator<String?>) {
+    it.forEachRemaining { e -> }
+        // SUCCESS
+        // ORIGINAL:    fun forEachRemaining((T) -> Unit): Unit defined in kotlin.collections.MutableIterator
+        // SUBSTITUTED: fun forEachRemaining((String?) -> Unit): Unit defined in kotlin.collections.MutableIterator
+}

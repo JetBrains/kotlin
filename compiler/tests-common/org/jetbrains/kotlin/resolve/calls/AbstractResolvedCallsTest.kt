@@ -48,34 +48,62 @@ abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     fun doTest(filePath: String) {
-        val text = KotlinTestUtils.doLoadFile(File(filePath))!!
+        val originalText = KotlinTestUtils.doLoadFile(File(filePath))!!
+        val (text, carets) = extractCarets(originalText)
 
-        val ktFile = KtPsiFactory(project).createFile(text.replace("<caret>", ""))
+        val ktFile = KtPsiFactory(project).createFile(text)
         val bindingContext = JvmResolveUtil.analyze(ktFile, environment).bindingContext
 
-        val (element, cachedCall) = buildCachedCall(bindingContext, ktFile, text)
+        val resolvedCallsAt = carets.map { caret -> caret to run {
+            val (element, cachedCall) = buildCachedCallAtIndex(bindingContext, ktFile, caret)
 
-        val resolvedCall = if (cachedCall !is VariableAsFunctionResolvedCall) cachedCall
-            else if ("(" == element?.text) cachedCall.functionCall
-            else cachedCall.variableCall
+            val resolvedCall = when {
+                cachedCall !is VariableAsFunctionResolvedCall -> cachedCall
+                "(" == element?.text -> cachedCall.functionCall
+                else -> cachedCall.variableCall
+            }
+
+            resolvedCall
+        }}
+
+        val output = renderOutput(originalText, text, resolvedCallsAt)
 
         val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
-        KotlinTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall?.renderToText()}")
+        KotlinTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), output)
     }
 
-    open protected fun buildCachedCall(
-            bindingContext: BindingContext, jetFile: KtFile, text: String
+    protected open fun renderOutput(originalText: String, text: String, resolvedCallsAt: List<Pair<Int, ResolvedCall<*>?>>): String =
+            resolvedCallsAt.joinToString("\n\n", prefix = "$originalText\n\n\n") { (_, resolvedCall) ->
+                resolvedCall?.renderToText().toString()
+            }
+
+    protected fun extractCarets(text: String): Pair<String, List<Int>> {
+        val parts = text.split("<caret>")
+        if (parts.size < 2) return text to emptyList()
+        // possible to rewrite using 'scan' function to get partial sums of parts lengths
+        val indices = mutableListOf<Int>()
+        val resultText = buildString {
+            parts.dropLast(1).forEach { part ->
+                append(part)
+                indices.add(this.length)
+            }
+            append(parts.last())
+        }
+        return resultText to indices
+    }
+
+    protected open fun buildCachedCallAtIndex(
+            bindingContext: BindingContext, jetFile: KtFile, index: Int
     ): Pair<PsiElement?, ResolvedCall<out CallableDescriptor>?> {
-        val element = jetFile.findElementAt(text.indexOf("<caret>"))!!
+        val element = jetFile.findElementAt(index)!!
         val expression = element.getStrictParentOfType<KtExpression>()
 
         val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)
         return Pair(element, cachedCall)
     }
-
 }
 
-private fun Receiver?.getText() = when (this) {
+internal fun Receiver?.getText() = when (this) {
     is ExpressionReceiver -> "${expression.text} {${type}}"
     is ImplicitClassReceiver -> "Class{${type}}"
     is ExtensionReceiver -> "${type}Ext{${declarationDescriptor.getText()}}"
@@ -83,9 +111,9 @@ private fun Receiver?.getText() = when (this) {
     else -> toString()
 }
 
-private fun ValueArgument.getText() = this.getArgumentExpression()?.text?.replace("\n", " ") ?: ""
+internal fun ValueArgument.getText() = this.getArgumentExpression()?.text?.replace("\n", " ") ?: ""
 
-private fun ArgumentMapping.getText() = when (this) {
+internal fun ArgumentMapping.getText() = when (this) {
     is ArgumentMatch -> {
         val parameterType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(valueParameter.type)
         "${status.name}  ${valueParameter.name} : ${parameterType} ="
@@ -93,12 +121,12 @@ private fun ArgumentMapping.getText() = when (this) {
     else -> "ARGUMENT UNMAPPED: "
 }
 
-private fun DeclarationDescriptor.getText(): String = when (this) {
+internal fun DeclarationDescriptor.getText(): String = when (this) {
     is ReceiverParameterDescriptor -> "${value.getText()}::this"
     else -> DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(this)
 }
 
-private fun ResolvedCall<*>.renderToText(): String {
+internal fun ResolvedCall<*>.renderToText(): String {
     return buildString {
         appendln("Resolved call:")
         appendln()

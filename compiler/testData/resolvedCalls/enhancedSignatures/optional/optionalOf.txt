@@ -1,0 +1,19 @@
+import java.util.*
+
+fun use() {
+    val x: String? = "x"
+    Optional.of(x)
+        // OTHER_ERROR
+        // ORIGINAL:    fun <T : Any!> of(T): Optional<T> defined in java.util.Optional
+        // SUBSTITUTED: fun <T : Any!> of(String): Optional<String> defined in java.util.Optional
+
+    Optional.of(x!!)
+        // SUCCESS
+        // ORIGINAL:    fun <T : Any!> of(T): Optional<T> defined in java.util.Optional
+        // SUBSTITUTED: fun <T : Any!> of(String): Optional<String> defined in java.util.Optional
+    Optional.ofNullable(x)
+        // SUCCESS
+        // ORIGINAL:    fun <T : Any!> ofNullable(T?): Optional<T> defined in java.util.Optional
+        // SUBSTITUTED: fun <T : Any!> ofNullable(String?): Optional<String> defined in java.util.Optional
+}
+

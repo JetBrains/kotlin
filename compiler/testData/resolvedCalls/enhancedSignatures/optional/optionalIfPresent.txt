@@ -1,0 +1,16 @@
+import java.util.*
+
+fun use(v: Optional<String>) {
+    v.ifPresent { value ->  }
+        // SUCCESS
+        // ORIGINAL:    fun ifPresent((T) -> Unit): Unit defined in java.util.Optional
+        // SUBSTITUTED: fun ifPresent((String) -> Unit): Unit defined in java.util.Optional
+}
+
+fun use2(v: Optional<String?>) {
+    v.ifPresent { value ->  }
+        // SUCCESS
+        // ORIGINAL:    fun ifPresent((T) -> Unit): Unit defined in java.util.Optional
+        // SUBSTITUTED: fun ifPresent((String) -> Unit): Unit defined in java.util.Optional
+}
+

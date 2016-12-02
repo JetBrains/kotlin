@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     public void testAllFilesPresentInResolvedCalls() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "enhancedSignatures");
     }
 
     @TestMetadata("explicitReceiverIsDispatchReceiver.kt")
