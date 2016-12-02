@@ -1,3 +1,4 @@
+
 public final class CalculatorConstants {
     private final field airCondMult: double
     private final field autoTransMult: double
@@ -17,7 +18,7 @@ public final class CalculatorConstants {
     private final @org.jetbrains.annotations.NotNull field status: java.lang.String
     private final field taxi: double
     private final field travelClassOne: double
-    public method <init>(): void
+    public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
     public method <init>(p0: long, p1: double, p2: double, p3: double, p4: double, p5: double, p6: double, p7: double, p8: double, p9: double, p10: double, p11: double, p12: double, p13: double, p14: double, @org.jetbrains.annotations.Nullable p15: java.lang.String, p16: double, @org.jetbrains.annotations.NotNull p17: java.lang.String): void
     public synthetic method <init>(p0: long, p1: double, p2: double, p3: double, p4: double, p5: double, p6: double, p7: double, p8: double, p9: double, p10: double, p11: double, p12: double, p13: double, p14: double, p15: java.lang.String, p16: double, p17: java.lang.String, p18: int, p19: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method getAirCondMult(): double
