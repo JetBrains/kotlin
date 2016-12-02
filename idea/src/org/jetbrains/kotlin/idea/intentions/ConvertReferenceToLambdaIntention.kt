@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ConvertReferenceToLambdaInspection : IntentionBasedInspection<KtCallableReferenceExpression>(ConvertReferenceToLambdaIntention::class)
@@ -49,12 +52,16 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val receiverNameAndType = receiverType?.let { KotlinNameSuggester.suggestNamesByType(it, validator = {
             name -> name !in parameterNamesAndTypes.map { it.first }
         }, defaultName = "receiver").first() to it }
-        val acceptsReceiverAsParameter = receiverNameAndType != null &&
+
+        val valueArgumentParent = element.parent as? KtValueArgument
+        val callGrandParent = valueArgumentParent?.parent?.parent as? KtCallExpression
+        val resolvedCall = callGrandParent?.getResolvedCall(context)
+        val matchingParameterType = resolvedCall?.getParameterForArgument(valueArgumentParent)?.type
+        val matchingParameterIsExtension = matchingParameterType?.isExtensionFunctionType ?: false
+
+        val acceptsReceiverAsParameter = receiverNameAndType != null && !matchingParameterIsExtension &&
                                          (targetDescriptor.dispatchReceiverParameter != null ||
                                           targetDescriptor.extensionReceiverParameter != null)
-
-        val referenceParent = element.parent
-        val insideCall = referenceParent is KtValueArgument
 
         val factory = KtPsiFactory(element)
         val targetName = reference.text
@@ -62,10 +69,13 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                 if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
                 else parameterNamesAndTypes
 
-        val receiverPrefix =
-                if (acceptsReceiverAsParameter) receiverNameAndType!!.first + "."
-                else receiverTypeReference?.let { it.text + "." } ?: ""
-        val lambdaExpression = if (insideCall && lambdaParameterNamesAndTypes.size == 1) {
+        val receiverPrefix = when {
+            acceptsReceiverAsParameter -> receiverNameAndType!!.first + "."
+            matchingParameterIsExtension -> ""
+            else -> receiverTypeReference?.let { it.text + "." } ?: ""
+        }
+
+        val lambdaExpression = if (valueArgumentParent != null && lambdaParameterNamesAndTypes.size == 1) {
             factory.createLambdaExpression(
                     parameters = "",
                     body = when {
@@ -80,7 +90,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         else {
             factory.createLambdaExpression(
                     parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
-                        if (insideCall) it.first
+                        if (valueArgumentParent != null) it.first
                         else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
                     },
                     body = if (targetDescriptor is PropertyDescriptor) {
@@ -98,11 +108,10 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val lambdaResult = element.replace(lambdaExpression) as KtLambdaExpression
         ShortenReferences.DEFAULT.process(lambdaResult)
 
-        if (insideCall) {
-            val call = referenceParent?.parent?.parent as? KtCallExpression ?: return
+        if (valueArgumentParent != null && callGrandParent != null) {
             val moveOutOfParenthesis = MoveLambdaOutsideParenthesesIntention()
-            if (moveOutOfParenthesis.isApplicableTo(call, referenceParent.startOffset)) {
-                moveOutOfParenthesis.applyTo(call, editor)
+            if (moveOutOfParenthesis.isApplicableTo(callGrandParent, valueArgumentParent.startOffset)) {
+                moveOutOfParenthesis.applyTo(callGrandParent, editor)
             }
         }
     }
