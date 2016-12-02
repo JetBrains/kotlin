@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class ConvertReferenceToLambdaInspection : IntentionBasedInspection<KtCallableReferenceExpression>(ConvertReferenceToLambdaIntention::class)
 
@@ -50,23 +49,31 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val receiverNameAndType = receiverType?.let { KotlinNameSuggester.suggestNamesByType(it, validator = {
             name -> name !in parameterNamesAndTypes.map { it.first }
         }, defaultName = "receiver").first() to it }
+        val acceptsReceiverAsParameter = receiverNameAndType != null &&
+                                         (targetDescriptor.dispatchReceiverParameter != null ||
+                                          targetDescriptor.extensionReceiverParameter != null)
 
         val referenceParent = element.parent
         val insideCall = referenceParent is KtValueArgument
 
         val factory = KtPsiFactory(element)
         val targetName = reference.text
-        val lambdaParameterNamesAndTypes = receiverNameAndType.singletonOrEmptyList() + parameterNamesAndTypes
-        val receiverPrefix = receiverNameAndType?.let { it.first + "." } ?: ""
+        val lambdaParameterNamesAndTypes =
+                if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
+                else parameterNamesAndTypes
+
+        val receiverPrefix =
+                if (acceptsReceiverAsParameter) receiverNameAndType!!.first + "."
+                else receiverTypeReference?.let { it.text + "." } ?: ""
         val lambdaExpression = if (insideCall && lambdaParameterNamesAndTypes.size == 1) {
             factory.createLambdaExpression(
                     parameters = "",
                     body = when {
-                        receiverNameAndType != null ->
+                        acceptsReceiverAsParameter ->
                             if (targetDescriptor is PropertyDescriptor) "it.$targetName"
                             else "it.$targetName()"
                         else ->
-                            "$targetName(it)"
+                            "$receiverPrefix$targetName(it)"
                     }
             )
         }
