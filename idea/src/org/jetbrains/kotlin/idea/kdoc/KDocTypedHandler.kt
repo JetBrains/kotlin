@@ -20,15 +20,13 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
-import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class KDocTypedHandler : TypedHandlerDelegate() {
     override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result {
@@ -51,15 +49,16 @@ class KDocTypedHandler : TypedHandlerDelegate() {
         val document = editor.document
         val chars = document.charsSequence
         if (offset < document.textLength && chars[offset] == c) {
-            PsiDocumentManager.getInstance(file.getProject()).commitDocument(document)
+            val iterator = (editor as EditorEx).highlighter.createIterator(offset)
+            val elementType = iterator.tokenType
+            if (iterator.start == 0) return false
+            iterator.retreat()
+            val prevElementType = iterator.tokenType
 
-            val element = file.findElementAt(offset) ?: return false
-            val elementType = element.node.elementType
             return when (c) {
                 ']' -> {
                     // if the bracket is not part of a link, it will be part of KDOC_TEXT, not a separate RBRACKET element
-                    element.getParentOfType<KDoc>(false) != null
-                           && (elementType == KtTokens.RBRACKET || (offset > 0 && chars[offset - 1] == '['))
+                    prevElementType in KDocTokens.KDOC_HIGHLIGHT_TOKENS && (elementType == KDocTokens.MARKDOWN_LINK || (offset > 0 && chars[offset - 1] == '['))
                 }
 
                 ')' -> elementType == KDocTokens.MARKDOWN_INLINE_LINK
