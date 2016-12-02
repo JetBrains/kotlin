@@ -96,7 +96,9 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfigurat
             null -> null
             is KtFile -> container.javaFileFacadeFqName.asString()
             is KtClassOrObject -> {
-                if (container is KtObjectDeclaration && container.isCompanion()) {
+                if (!container.isValid)
+                    null
+                else if (container is KtObjectDeclaration && container.isCompanion()) {
                     val containerClass = container.getParentOfType<KtClass>(true)
                     containerClass?.toLightClass()?.let { ClassUtil.getJVMClassName(it) }
                 } else {
