@@ -74,6 +74,12 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             doTest(fileName);
         }
 
+        @TestMetadata("FunctionInNestedClassInDataFlowInspection.kt")
+        public void testFunctionInNestedClassInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/FunctionInNestedClassInDataFlowInspection.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ImplementedMethodsFromTraits.kt")
         public void testImplementedMethodsFromTraits() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ImplementedMethodsFromTraits.kt");
@@ -119,6 +125,24 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
         @TestMetadata("TopLevelFunctionInDataFlowInspection.kt")
         public void testTopLevelFunctionInDataFlowInspection() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelFunctionInDataFlowInspection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelFunctionWithNameSimilarToClassInDataFlowInspection.kt")
+        public void testTopLevelFunctionWithNameSimilarToClassInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelFunctionWithNameSimilarToClassInDataFlowInspection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelFunctionWithNameSimilarToPropertyInDataFlowInspection.kt")
+        public void testTopLevelFunctionWithNameSimilarToPropertyInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelFunctionWithNameSimilarToPropertyInDataFlowInspection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelOverloadedFunctionInDataFlowInspection.kt")
+        public void testTopLevelOverloadedFunctionInDataFlowInspection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelOverloadedFunctionInDataFlowInspection.kt");
             doTest(fileName);
         }
 
