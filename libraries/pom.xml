@@ -80,6 +80,7 @@
         <module>tools/kotlin-maven-plugin</module>
 
         <module>tools/runtime</module>
+        <module>tools/script-runtime</module>
         <module>kotlin.test</module>
         <module>stdlib</module>
         <module>stdlib/jre7</module>
