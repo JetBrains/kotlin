@@ -4961,6 +4961,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertReferenceToLambda"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("apply.kt")
+        public void testApply() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/apply.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("boundReference.kt")
         public void testBoundReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/boundReference.kt");
@@ -4982,6 +4988,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("conversion.kt")
         public void testConversion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/conversion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionFunctionalType.kt")
+        public void testExtensionFunctionalType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertReferenceToLambda/extensionFunctionalType.kt");
             doTest(fileName);
         }
 
