@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.name.Name
 object OperatorNameConventions {
     @JvmField val GET_VALUE = Name.identifier("getValue")
     @JvmField val SET_VALUE = Name.identifier("setValue")
+    @JvmField val PROPERTY_DELEGATED = Name.identifier("propertyDelegated")
+    @JvmField val CREATE_DELEGATE = Name.identifier("createDelegate")
 
     @JvmField val EQUALS = Name.identifier("equals")
     @JvmField val COMPARE_TO = Name.identifier("compareTo")
@@ -61,9 +63,6 @@ object OperatorNameConventions {
     @JvmField val COROUTINE_HANDLE_RESULT = Name.identifier("handleResult")
     @JvmField val COROUTINE_HANDLE_EXCEPTION = Name.identifier("handleException")
     @JvmField val COROUTINE_INTERCEPT_RESUME = Name.identifier("interceptResume")
-
-
-    @JvmField val PROPERTY_DELEGATED = Name.identifier("propertyDelegated")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 

@@ -5524,6 +5524,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("createDelegateOperatorDeclaration.kt")
+            public void testCreateDelegateOperatorDeclaration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegateOperatorDeclaration.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("defaultGetter.kt")
             public void testDefaultGetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/defaultGetter.kt");
