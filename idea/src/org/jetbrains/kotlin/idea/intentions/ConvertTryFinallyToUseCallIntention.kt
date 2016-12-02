@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -88,6 +89,7 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExp
 
         val context = element.analyze()
         val resolvedCall = finallyExpression.getResolvedCall(context) ?: return null
+        if (resolvedCall.call.isSafeCall()) return null
         if (resolvedCall.candidateDescriptor.name.asString() != "close") return null
         if (resolvedCall.extensionReceiver != null) return null
         val receiver = resolvedCall.dispatchReceiver ?: return null
