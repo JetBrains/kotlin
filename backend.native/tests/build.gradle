@@ -90,7 +90,8 @@ abstract class KonanTest extends DefaultTask {
         println "${bcFile.absolutePath} -> ${outputFile.absolutePath}"
         println "tool: ${llvmLlc}"
         project.exec {
-            commandLine "${llvmLlc}", "-o", "${outputFile.absolutePath}" , "${bcFile}"
+            commandLine "${llvmLlc}", "-o", "${outputFile.absolutePath}" , "${bcFile}",
+                    '-disable-fp-elim' // currently required for stack traces
         }
         return outputFile
     }

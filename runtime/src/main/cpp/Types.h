@@ -15,6 +15,7 @@ typedef float   KFloat;
 typedef double  KDouble;
 
 typedef ObjHeader* KRef;
+typedef ArrayHeader* KArrayRef;
 typedef const ObjHeader* KConstRef;
 typedef const ArrayHeader* KString;
 

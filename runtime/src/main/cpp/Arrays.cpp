@@ -19,7 +19,7 @@ KRef Kotlin_Array_get(const ArrayHeader* obj, KInt index) {
   return *ArrayAddressOfElementAt(obj, index);
 }
 
-void Kotlin_Array_set(ArrayHeader* obj, KInt index, KRef value) {
+void Kotlin_Array_set(ArrayHeader* obj, KInt index, KConstRef value) {
   if (static_cast<uint32_t>(index) >= obj->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }

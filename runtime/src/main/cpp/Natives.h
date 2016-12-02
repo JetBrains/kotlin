@@ -37,8 +37,8 @@ inline const T* PrimitiveArrayAddressOfElementAt(
   return reinterpret_cast<const T*>(obj + 1) + index;
 }
 
-inline KRef* ArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
-  return reinterpret_cast<KRef*>(obj + 1) + index;
+inline KConstRef* ArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
+  return reinterpret_cast<KConstRef*>(obj + 1) + index;
 }
 
 inline const KRef* ArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
@@ -60,7 +60,7 @@ KString Kotlin_Any_toString(KConstRef thiz);
 // TODO: those must be compiler intrinsics afterwards.
 ArrayHeader* Kotlin_Array_clone(const ArrayHeader* thiz);
 KRef Kotlin_Array_get(const ArrayHeader* thiz, KInt index);
-void Kotlin_Array_set(ArrayHeader* thiz, KInt index, KRef value);
+void Kotlin_Array_set(ArrayHeader* thiz, KInt index, KConstRef value);
 KInt Kotlin_Array_getArrayLength(const ArrayHeader* thiz);
 
 ArrayHeader* Kotlin_ByteArray_clone(const ArrayHeader* thiz);
@@ -97,6 +97,8 @@ KString Kotlin_String_fromCharArray(const ArrayHeader* array, KInt start, KInt s
 KString Kotlin_String_plusImpl(KString thiz, KString other);
 KInt Kotlin_String_getStringLength(KString thiz);
 KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex);
+
+KArrayRef Kotlin_getCurrentStackTrace();
 
 #ifdef __cplusplus
 }

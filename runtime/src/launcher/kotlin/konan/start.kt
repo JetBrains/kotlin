@@ -10,9 +10,9 @@ private fun Konan_start(args: Array<String>) {
         main(args)
 
     } catch (e: Throwable) {
-        // TODO: Remove .toString() when println is more capable, 
-        // and may be add some more info.
+        // TODO: may be add some more info.
         print("Uncaught exception from Kotlin's main: ")
-        println(e.toString())
+        e.printStackTrace()
+        // TODO: should exit with non-zero code.
     }
 }

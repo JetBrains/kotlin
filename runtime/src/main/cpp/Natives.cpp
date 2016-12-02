@@ -180,4 +180,8 @@ KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex) 
   return result;
 }
 
+KArrayRef Kotlin_getCurrentStackTrace() {
+  return GetCurrentStackTrace();
+}
+
 }  // extern "C"
