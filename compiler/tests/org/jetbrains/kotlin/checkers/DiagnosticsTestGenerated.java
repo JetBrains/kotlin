@@ -10618,6 +10618,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("protectedDepecation.kt")
+            public void testProtectedDepecation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/protectedDepecation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("publishedApi.kt")
             public void testPublishedApi() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/publishedApi.kt");

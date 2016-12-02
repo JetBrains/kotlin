@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.checkers;
 
 import com.intellij.psi.PsiElement;
-import com.sun.mirror.declaration.PackageDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
@@ -253,6 +252,10 @@ class InlineChecker implements CallChecker {
         }
         else {
             checkPrivateClassMemberAccess(declarationDescriptor, expression, context);
+        }
+
+        if (isEffectivelyPublicOrPublishedApiFunction && declarationDescriptor.getVisibility() == Visibilities.PROTECTED) {
+            context.getTrace().report(Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE.on(expression, declarationDescriptor));
         }
     }
 
