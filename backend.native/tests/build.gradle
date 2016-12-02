@@ -289,6 +289,11 @@ task null_check(type: UnitKonanTest) {
     source = "codegen/basics/null_check.kt"
 }
 
+task array_to_any(type: RunKonanTest) {
+    disabled = true
+    source = "codegen/basics/array_to_any.kt"
+}
+
 task hello0(type: RunKonanTest) {
     goldValue = "Hello, world!\n"
     source = "runtime/basic/hello0.kt"
