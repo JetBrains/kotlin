@@ -622,7 +622,8 @@ task args0(type: RunKonanTest) {
 }
 
 task main_exception(type: RunKonanTest) {
-    goldValue = "Uncaught exception from Kotlin's main: Throwable\n"
+    // TODO: cannot currently check the output because the exact stacktrace strings are unpredictable.
+    // goldValue = "Uncaught exception from Kotlin's main: Throwable\n"
     source = "runtime/basic/main_exception.kt"
 }
 
