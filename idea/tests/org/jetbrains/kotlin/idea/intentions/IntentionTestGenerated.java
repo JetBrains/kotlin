@@ -12939,6 +12939,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("flexibleBoolean.kt")
+        public void testFlexibleBoolean() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/flexibleBoolean.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inapplicableNoConstants.kt")
         public void testInapplicableNoConstants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/inapplicableNoConstants.kt");

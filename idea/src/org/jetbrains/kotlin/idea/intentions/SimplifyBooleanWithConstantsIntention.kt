@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.isFlexible
 
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
 
@@ -136,7 +137,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
 
     private fun KtExpression?.hasBooleanType(): Boolean {
         val type = this?.getType(this.analyze()) ?: return false
-        return KotlinBuiltIns.isBoolean(type)
+        return KotlinBuiltIns.isBoolean(type) && !type.isFlexible()
     }
 
     private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean? = null): Boolean {
