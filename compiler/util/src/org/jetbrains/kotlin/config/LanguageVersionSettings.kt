@@ -33,6 +33,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     SingleUnderscoreForParameterName(KOTLIN_1_1),
     DslMarkersSupport(KOTLIN_1_1),
     UnderscoresInNumericLiterals(KOTLIN_1_1),
+    DivisionByZeroInConstantExpressions(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null),

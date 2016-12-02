@@ -1,0 +1,8 @@
+package
+
+public const val a: kotlin.Double
+public const val b: kotlin.Double
+public const val c: kotlin.Double
+public const val i: kotlin.Int
+public val nonConst1: kotlin.Double
+public val nonConst2: kotlin.Int

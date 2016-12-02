@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -92,8 +91,6 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
     private DefaultSourceMapper sourceMapper;
 
-    private final ConstantExpressionEvaluator constantExpressionEvaluator;
-
     public MemberCodegen(
             @NotNull GenerationState state,
             @Nullable MemberCodegen<?> parentCodegen,
@@ -111,7 +108,6 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         this.functionCodegen = new FunctionCodegen(context, v, state, this);
         this.propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
         this.parentCodegen = parentCodegen;
-        this.constantExpressionEvaluator = new ConstantExpressionEvaluator(state.getModule().getBuiltIns());
     }
 
     protected MemberCodegen(@NotNull MemberCodegen<T> wrapped, T declaration, FieldOwnerContext codegenContext) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -64,7 +65,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotationDesc
 
     private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor): CompileTimeConstant<*>? {
         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as KtProperty
-        val compileTimeConstant = ConstantExpressionEvaluator(property.builtIns).evaluateExpression(
+        val compileTimeConstant = ConstantExpressionEvaluator(property.builtIns, LanguageVersionSettingsImpl.DEFAULT).evaluateExpression(
                 propertyDeclaration.initializer!!,
                 DelegatingBindingTrace(context, "trace for evaluating compile time constant"),
                 property.type

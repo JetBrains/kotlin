@@ -23,6 +23,7 @@ import com.intellij.psi.PsiExpression
 import com.intellij.psi.impl.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -53,7 +54,8 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
         return when (expressionToCompute) {
             is KtExpression -> {
                 val resolutionFacade = expressionToCompute.getResolutionFacade()
-                val evaluator = FrontendConstantExpressionEvaluator(resolutionFacade.moduleDescriptor.builtIns)
+                val evaluator = FrontendConstantExpressionEvaluator(resolutionFacade.moduleDescriptor.builtIns,
+                                                                    expressionToCompute.languageVersionSettings)
                 val evaluatorTrace = DelegatingBindingTrace(resolutionFacade.analyze(expressionToCompute), "Evaluating annotation argument")
 
                 val constant = evaluator.evaluateExpression(expressionToCompute, evaluatorTrace) ?: return null

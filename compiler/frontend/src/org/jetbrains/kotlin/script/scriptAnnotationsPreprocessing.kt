@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.script
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -42,7 +43,7 @@ internal class KtAnnotationWrapper(val psi: KtAnnotationEntry, val targetClass: 
         // TODO: annotation constructors unsupported yet in kotlin reflection, test and correct when they will be ready
         val targetAnnParams = targetClass.primaryConstructor?.parameters
         psi.valueArguments.mapIndexed { i, arg ->
-            val evaluator = ConstantExpressionEvaluator(DefaultBuiltIns.Instance)
+            val evaluator = ConstantExpressionEvaluator(DefaultBuiltIns.Instance, LanguageVersionSettingsImpl.DEFAULT)
             val trace = BindingTraceContext()
             val result = evaluator.evaluateToConstantValue(arg.getArgumentExpression()!!, trace, TypeUtils.NO_EXPECTED_TYPE)
             // TODO: consider inspecting `trace` to find diagnostics reported during the computation (such as division by zero, integer overflow, invalid annotation parameters etc.)

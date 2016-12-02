@@ -12261,6 +12261,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("noDivisionByZeroFeature.kt")
+                public void testNoDivisionByZeroFeature() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/noDivisionByZeroFeature.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("types.kt")
                 public void testTypes() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/types.kt");

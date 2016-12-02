@@ -21,6 +21,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -44,7 +46,8 @@ import java.math.BigInteger
 import java.util.*
 
 class ConstantExpressionEvaluator(
-        internal val builtIns: KotlinBuiltIns
+        internal val builtIns: KotlinBuiltIns,
+        internal val languageVersionSettings: LanguageVersionSettings
 ) {
     internal val constantValueFactory = ConstantValueFactory(builtIns)
 
@@ -456,7 +459,8 @@ private class ConstantExpressionEvaluatorVisitor(
                 val parentExpression: KtExpression = PsiTreeUtil.getParentOfType(receiverExpression, KtExpression::class.java)!!
                 trace.report(Errors.DIVISION_BY_ZERO.on(parentExpression))
 
-                if (isIntegerType(argumentForReceiver.value) && isIntegerType(argumentForParameter.value)) {
+                if ((isIntegerType(argumentForReceiver.value) && isIntegerType(argumentForParameter.value)) ||
+                    !constantExpressionEvaluator.languageVersionSettings.supportsFeature(LanguageFeature.DivisionByZeroInConstantExpressions)) {
                     return factory.createErrorValue("Division by zero").wrap()
                 }
             }
