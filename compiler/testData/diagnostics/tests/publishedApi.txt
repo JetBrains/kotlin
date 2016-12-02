@@ -1,0 +1,54 @@
+package
+
+@kotlin.PublishedApi public var ap: kotlin.Int
+@kotlin.PublishedApi internal var bp: kotlin.Int
+@kotlin.PublishedApi internal var c: kotlin.Int
+@kotlin.PublishedApi public fun a(): kotlin.Unit
+@kotlin.PublishedApi internal fun b(): kotlin.Unit
+@kotlin.PublishedApi internal fun c(): kotlin.Unit
+
+@kotlin.PublishedApi public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.PublishedApi internal final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.PublishedApi private final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class D {
+    @kotlin.PublishedApi public constructor D()
+    @kotlin.PublishedApi public constructor D(/*0*/ a: kotlin.String)
+    @kotlin.PublishedApi private constructor D(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String)
+    @kotlin.PublishedApi internal constructor D(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String, /*2*/ c: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class E {
+    public constructor E()
+    @kotlin.PublishedApi public final val ap: kotlin.Int = 1
+    @kotlin.PublishedApi internal final val bp: kotlin.Int = 1
+    @kotlin.PublishedApi protected final val c: kotlin.Int = 1
+    @kotlin.PublishedApi private final val d: kotlin.Int = 1
+    @kotlin.PublishedApi public final fun a(): kotlin.Unit
+    @kotlin.PublishedApi internal final fun b(): kotlin.Unit
+    @kotlin.PublishedApi private final fun c(): kotlin.Unit
+    @kotlin.PublishedApi protected final fun d(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

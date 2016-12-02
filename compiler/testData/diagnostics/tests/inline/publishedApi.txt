@@ -1,0 +1,17 @@
+package
+
+public inline fun call(/*0*/ a: A): kotlin.Unit
+internal fun internalFun(): kotlin.Unit
+private fun privateFun(): kotlin.Unit
+public fun publicFun(): kotlin.Unit
+@kotlin.PublishedApi internal fun testTopLevel(): kotlin.Unit
+@kotlin.PublishedApi internal inline fun testTopLevelInline(): kotlin.Unit
+
+@kotlin.PublishedApi internal final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @kotlin.PublishedApi internal final fun test(): kotlin.Unit
+    @kotlin.PublishedApi internal final inline fun testInline(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

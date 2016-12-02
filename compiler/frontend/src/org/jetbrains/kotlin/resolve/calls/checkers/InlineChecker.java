@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.resolve.calls.checkers;
 
 import com.intellij.psi.PsiElement;
+import com.sun.mirror.declaration.PackageDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -50,13 +52,13 @@ import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturn
 class InlineChecker implements CallChecker {
     private final FunctionDescriptor descriptor;
     private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<CallableDescriptor>();
-    private final boolean isEffectivelyPublicApiFunction;
+    private final boolean isEffectivelyPublicOrPublishedApiFunction;
     private final boolean isEffectivelyPrivateApiFunction;
 
     public InlineChecker(@NotNull FunctionDescriptor descriptor) {
         assert InlineUtil.isInline(descriptor) : "This extension should be created only for inline functions: " + descriptor;
         this.descriptor = descriptor;
-        this.isEffectivelyPublicApiFunction = DescriptorUtilsKt.isEffectivelyPublicApi(descriptor);
+        this.isEffectivelyPublicOrPublishedApiFunction = isEffectivelyPublicOrPublishedApi(descriptor);
         this.isEffectivelyPrivateApiFunction = DescriptorUtilsKt.isEffectivelyPrivateApi(descriptor);
         for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
             if (isInlinableParameter(param)) {
@@ -242,16 +244,23 @@ class InlineChecker implements CallChecker {
             @NotNull KtElement expression,
             @NotNull CallCheckerContext context
     ) {
-        boolean declarationDescriptorIsPublicApi = DescriptorUtilsKt.isEffectivelyPublicApi(declarationDescriptor) ||
-                                                   isDefinedInInlineFunction(declarationDescriptor);
-        if (isEffectivelyPublicApiFunction &&
-            !declarationDescriptorIsPublicApi &&
+        boolean declarationDescriptorIsPublicOrPublishedApi = isEffectivelyPublicOrPublishedApi(declarationDescriptor) ||
+                                                              isDefinedInInlineFunction(declarationDescriptor);
+        if (isEffectivelyPublicOrPublishedApiFunction &&
+            !declarationDescriptorIsPublicOrPublishedApi &&
             declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
             context.getTrace().report(Errors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE.on(expression, declarationDescriptor, descriptor));
         }
         else {
             checkPrivateClassMemberAccess(declarationDescriptor, expression, context);
         }
+    }
+
+    private static boolean isEffectivelyPublicOrPublishedApi(@NotNull CallableDescriptor descriptor) {
+        EffectiveVisibility visibility = EffectiveVisibilityKt.effectiveVisibility(descriptor, descriptor.getVisibility());
+        if (visibility.getPublicApi()) return true;
+
+        return false;
     }
 
     private void checkPrivateClassMemberAccess(
