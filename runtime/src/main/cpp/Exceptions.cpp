@@ -36,12 +36,7 @@ class AutoFree {
 
 // TODO: this method ignores the encoding
 KString CreateKotlinStringFromCString(const char* str) {
-  int32_t length = strlen(str);
-  ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
-  memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      str, length);
-  return result;
+  return AllocStringInstance(str, strlen(str));
 }
 
 #ifdef __cplusplus
