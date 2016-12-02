@@ -51,7 +51,7 @@ KString Kotlin_Int_toString(KInt value) {
 
 KString Kotlin_Long_toString(KLong value) {
   char cstring[32];
-  snprintf(cstring, sizeof(cstring), "%lld", value);
+  snprintf(cstring, sizeof(cstring), "%lld", static_cast<long long>(value));
   return makeString(cstring);
 }
 

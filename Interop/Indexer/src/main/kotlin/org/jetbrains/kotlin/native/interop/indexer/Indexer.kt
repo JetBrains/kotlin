@@ -313,8 +313,8 @@ fun buildNativeIndexImpl(headerFile: File, args: List<String>): NativeIndex {
                 importedASTFile.value = null
                 startedTranslationUnit.value = null
                 indexDeclaration.value = staticCFunction { clientData, info ->
-                    val index = StableObjPtr.fromValue(clientData!!).get() as NativeIndexImpl
-                    index.indexDeclaration(info!!.pointed)
+                    val nativeIndex = StableObjPtr.fromValue(clientData!!).get() as NativeIndexImpl
+                    nativeIndex.indexDeclaration(info!!.pointed)
                 }
                 indexEntityReference.value = null
             }

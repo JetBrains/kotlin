@@ -87,8 +87,8 @@ private fun Properties.getSpaceSeparated(name: String): List<String> {
 }
 
 private fun List<String>?.isTrue(): Boolean {
-    // The rightmost wins
-    return this?.last() == "true" ?: false
+    // The rightmost wins, null != "true".
+    return this?.last() == "true"
 }
 
 private fun processLib(ktGenRoot: String,
