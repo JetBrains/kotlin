@@ -102,8 +102,8 @@ val defaultScriptBaseClasspath: List<File> by lazy {
     ?: emptyList()
 }
 
-class DefaultKotlinResolver() :
+class ContextBasedResolver() :
         KotlinAnnotatedScriptDependenciesResolver(defaultScriptBaseClasspath, arrayListOf())
 
-class DefaultKotlinAnnotatedScriptDependenciesResolver :
+class ContextAndAnnotationsBasedResolver :
         KotlinAnnotatedScriptDependenciesResolver(defaultScriptBaseClasspath, arrayListOf(DirectResolver(), MavenResolver()))

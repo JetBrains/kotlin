@@ -22,7 +22,7 @@
      </dependencies>
 
     <properties>
-        <kotlin.compiler.scriptTemplates>org.jetbrains.kotlin.script.util.StandardScript</kotlin.compiler.scriptTemplates>
+        <kotlin.compiler.scriptTemplates>org.jetbrains.kotlin.script.util.templates.StandardScriptTemplate</kotlin.compiler.scriptTemplates>
         <kotlin.compiler.scriptClasspath>${org.jetbrains.kotlin:kotlin-script-util:jar}</kotlin.compiler.scriptClasspath>
     </properties>
 

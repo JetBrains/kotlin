@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.util.templates.ScriptTemplateWithBindings
+import org.jetbrains.kotlin.script.util.templates.StandardScriptTemplate
+import org.jetbrains.kotlin.script.util.templates.StandardScriptTemplateWithAnnotatedResolving
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
@@ -60,7 +63,7 @@ done
 
     @Test
     fun testArgsHelloWorld() {
-        val scriptClass = compileScript("args-hello-world.kts", StandardScript::class)
+        val scriptClass = compileScript("args-hello-world.kts", StandardScriptTemplate::class)
         Assert.assertNotNull(scriptClass)
         val ctor = scriptClass?.getConstructor(Array<String>::class.java)
         Assert.assertNotNull(ctor)
@@ -73,7 +76,7 @@ done
 
     @Test
     fun testBndHelloWorld() {
-        val scriptClass = compileScript("bindings-hello-world.kts", ScriptWithBindings::class)
+        val scriptClass = compileScript("bindings-hello-world.kts", ScriptTemplateWithBindings::class)
         Assert.assertNotNull(scriptClass)
         val ctor = scriptClass?.getConstructor(Map::class.java)
         Assert.assertNotNull(ctor)
@@ -87,7 +90,7 @@ done
     @Test
     fun testResolveStdHelloWorld() {
         try {
-            compileScript("args-junit-hello-world.kts", StandardScript::class)
+            compileScript("args-junit-hello-world.kts", StandardScriptTemplate::class)
             Assert.fail("Should throw exception")
         }
         catch (e: Exception) {
@@ -95,9 +98,9 @@ done
             Assert.assertTrue("Expecting message \"$expectedMsg...\"", e.message?.startsWith(expectedMsg) ?: false)
         }
 
-        val scriptClass = compileScript("args-junit-hello-world.kts", StandardScriptWithAnnotatedResolving::class)
+        val scriptClass = compileScript("args-junit-hello-world.kts", StandardScriptTemplateWithAnnotatedResolving::class)
         if (scriptClass == null) {
-            val resolver = DefaultKotlinAnnotatedScriptDependenciesResolver()
+            val resolver = ContextAndAnnotationsBasedResolver()
             System.err.println(resolver.baseClassPath)
         }
         Assert.assertNotNull(scriptClass)
