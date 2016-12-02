@@ -14,461 +14,395 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Function;
-import kotlin.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
-import org.jetbrains.kotlin.resolve.calls.inference.TypeVariableKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.types.expressions.FakeCallResolver;
-import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER;
-import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
-import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
+import com.google.common.collect.Lists
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
+import org.jetbrains.kotlin.resolve.calls.inference.toHandle
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
+import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType
+import org.jetbrains.kotlin.types.expressions.FakeCallResolver
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //TODO: check for 'operator' modifier!
-public class DelegatedPropertyResolver {
-    private final KotlinBuiltIns builtIns;
-    private final FakeCallResolver fakeCallResolver;
-    private final ExpressionTypingServices expressionTypingServices;
+class DelegatedPropertyResolver(
+        private val builtIns: KotlinBuiltIns,
+        private val fakeCallResolver: FakeCallResolver,
+        private val expressionTypingServices: ExpressionTypingServices
+) {
 
-    public DelegatedPropertyResolver(
-            @NotNull KotlinBuiltIns builtIns,
-            @NotNull FakeCallResolver fakeCallResolver,
-            @NotNull ExpressionTypingServices expressionTypingServices
+    fun resolvePropertyDelegate(
+            outerDataFlowInfo: DataFlowInfo,
+            property: KtProperty,
+            variableDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            propertyHeaderScope: LexicalScope,
+            trace: BindingTrace
     ) {
-        this.builtIns = builtIns;
-        this.fakeCallResolver = fakeCallResolver;
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    public void resolvePropertyDelegate(
-            @NotNull DataFlowInfo outerDataFlowInfo,
-            @NotNull KtProperty property,
-            @NotNull VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull KtExpression delegateExpression,
-            @NotNull LexicalScope propertyHeaderScope,
-            @NotNull BindingTrace trace
-    ) {
-        KtPropertyAccessor getter = property.getGetter();
-        if (getter != null && getter.hasBody()) {
-            trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
+        property.getter?.let { getter ->
+            if (getter.hasBody()) trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter))
+        }
+        property.setter?.let { setter ->
+            if (setter.hasBody()) trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter))
         }
 
-        KtPropertyAccessor setter = property.getSetter();
-        if (setter != null && setter.hasBody()) {
-            trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
-        }
+        val delegateFunctionsScope: LexicalScope
+        val initializerScope: LexicalScope
 
-        LexicalScope delegateFunctionsScope;
-        LexicalScope initializerScope;
-
-        if (variableDescriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, propertyDescriptor);
-            initializerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, propertyDescriptor);
+        if (variableDescriptor is PropertyDescriptor) {
+            delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, variableDescriptor)
+            initializerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, variableDescriptor)
         }
         else {
-            delegateFunctionsScope = initializerScope = propertyHeaderScope;
+            initializerScope = propertyHeaderScope
+            delegateFunctionsScope = initializerScope
         }
 
-        KotlinType delegateType = resolveDelegateExpression(
-                delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo
-        );
-
-        resolveDelegatedPropertyGetMethod(
-                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
-        );
-        if (property.isVar()) {
-            resolveDelegatedPropertySetMethod(
-                    variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
-            );
+        val delegateType = resolveDelegateExpression(delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo)
+        resolveDelegatedPropertyGetMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo)
+        if (property.isVar) {
+            resolveDelegatedPropertySetMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo)
         }
 
-        resolveDelegatedPropertyPDMethod(
-                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo
-        );
+        resolveDelegatedPropertyPDMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo)
     }
 
-    @Nullable
-    public KotlinType getDelegatedPropertyGetMethodReturnType(
-            @NotNull VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull KtExpression delegateExpression,
-            @NotNull KotlinType delegateType,
-            @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope,
-            @NotNull DataFlowInfo dataFlowInfo
-    ) {
+    fun getDelegatedPropertyGetMethodReturnType(
+            variableDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            delegateType: KotlinType,
+            trace: BindingTrace,
+            delegateFunctionsScope: LexicalScope,
+            dataFlowInfo: DataFlowInfo
+    ): KotlinType? {
         resolveDelegatedPropertyConventionMethod(
                 variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo, true
-        );
-        ResolvedCall<FunctionDescriptor> resolvedCall =
-                trace.getBindingContext().get(DELEGATED_PROPERTY_RESOLVED_CALL, variableDescriptor.getGetter());
-        return resolvedCall != null ? resolvedCall.getResultingDescriptor().getReturnType() : null;
+        )
+        val resolvedCall = trace.bindingContext.get(DELEGATED_PROPERTY_RESOLVED_CALL, variableDescriptor.getter)
+        return if (resolvedCall != null) resolvedCall.resultingDescriptor.returnType else null
     }
 
-    private void resolveDelegatedPropertyGetMethod(
-            @NotNull VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull KtExpression delegateExpression,
-            @NotNull KotlinType delegateType,
-            @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope,
-            @NotNull DataFlowInfo dataFlowInfo
+    private fun resolveDelegatedPropertyGetMethod(
+            variableDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            delegateType: KotlinType,
+            trace: BindingTrace,
+            delegateFunctionsScope: LexicalScope,
+            dataFlowInfo: DataFlowInfo
     ) {
-        KotlinType returnType = getDelegatedPropertyGetMethodReturnType(
+        val returnType = getDelegatedPropertyGetMethodReturnType(
                 variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo
-        );
-        KotlinType propertyType = variableDescriptor.getType();
+        )
+        val propertyType = variableDescriptor.type
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
-        if (!(propertyType instanceof DeferredType) && returnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(returnType, propertyType)) {
-            Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, variableDescriptor.getGetter());
-            assert call != null : "Call should exists for " + variableDescriptor.getGetter();
-            trace.report(DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH
-                                 .on(delegateExpression, renderCall(call, trace.getBindingContext()), variableDescriptor.getType(), returnType));
+        if (propertyType !is DeferredType && returnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(returnType, propertyType)) {
+            val call = trace.bindingContext.get(DELEGATED_PROPERTY_CALL, variableDescriptor.getter)
+                       ?: throw AssertionError("Call should exists for ${variableDescriptor.getter}")
+            trace.report(DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH.on(
+                    delegateExpression, renderCall(call, trace.bindingContext), variableDescriptor.type, returnType))
         }
     }
 
-    private void resolveDelegatedPropertySetMethod(
-            @NotNull VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull KtExpression delegateExpression,
-            @NotNull KotlinType delegateType,
-            @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope,
-            @NotNull DataFlowInfo dataFlowInfo
+    private fun resolveDelegatedPropertySetMethod(
+            variableDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            delegateType: KotlinType,
+            trace: BindingTrace,
+            delegateFunctionsScope: LexicalScope,
+            dataFlowInfo: DataFlowInfo
     ) {
-        resolveDelegatedPropertyConventionMethod(
-                variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo, false
-        );
+        resolveDelegatedPropertyConventionMethod(variableDescriptor, delegateExpression, delegateType, trace,
+                                                 delegateFunctionsScope, dataFlowInfo, false)
     }
 
-    @NotNull
-    private static KtExpression createExpressionForProperty(@NotNull KtPsiFactory psiFactory) {
-        return psiFactory.createExpression("null as " + KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString() + "<*>");
+    private fun createExpressionForProperty(psiFactory: KtPsiFactory): KtExpression {
+        return psiFactory.createExpression("null as ${KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString()}<*>")
     }
 
-    private void resolveDelegatedPropertyPDMethod(
-            @NotNull VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull KtExpression delegateExpression,
-            @NotNull KotlinType delegateType,
-            @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope,
-            @NotNull DataFlowInfo dataFlowInfo
+    private fun resolveDelegatedPropertyPDMethod(
+            variableDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            delegateType: KotlinType,
+            trace: BindingTrace,
+            delegateFunctionsScope: LexicalScope,
+            dataFlowInfo: DataFlowInfo
     ) {
-        TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                traceToResolvePDMethod, delegateFunctionsScope, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE
-        );
+        val traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property")
+        val context = ExpressionTypingContext.newContext(traceToResolvePDMethod, delegateFunctionsScope, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
 
-        KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
-        List<KtExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
-        ExpressionReceiver receiver = ExpressionReceiver.Companion.create(delegateExpression, delegateType, trace.getBindingContext());
+        val psiFactory = KtPsiFactory(delegateExpression)
+        val arguments = listOf(createExpressionForProperty(psiFactory))
+        val receiver = ExpressionReceiver.create(delegateExpression, delegateType, trace.bindingContext)
 
-        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
-                fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, OperatorNameConventions.PROPERTY_DELEGATED, delegateExpression);
+        val resolutionResult = fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments,
+                                                                                OperatorNameConventions.PROPERTY_DELEGATED, delegateExpression)
 
-        Call call = resolutionResult.getFirst();
-        OverloadResolutionResults<FunctionDescriptor> functionResults = resolutionResult.getSecond();
+        val call = resolutionResult.first
+        val functionResults = resolutionResult.second
 
-        if (!functionResults.isSuccess()) {
-            String expectedFunction = renderCall(call, traceToResolvePDMethod.getBindingContext());
-            if (functionResults.isIncomplete() || functionResults.isSingleResult() ||
-                functionResults.getResultCode() == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
-                trace.report(DELEGATE_PD_METHOD_NONE_APPLICABLE.on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
-            } else if (functionResults.isAmbiguity()) {
-                trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
-                                     .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+        if (!functionResults.isSuccess) {
+            val expectedFunction = renderCall(call, traceToResolvePDMethod.bindingContext)
+            if (functionResults.isIncomplete || functionResults.isSingleResult ||
+                functionResults.resultCode == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
+                trace.report(DELEGATE_PD_METHOD_NONE_APPLICABLE.on(delegateExpression, expectedFunction, functionResults.resultingCalls))
             }
-            return;
+            else if (functionResults.isAmbiguity) {
+                trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.on(delegateExpression, expectedFunction, functionResults.resultingCalls))
+            }
+            return
         }
 
-        trace.record(DELEGATED_PROPERTY_PD_RESOLVED_CALL, variableDescriptor, functionResults.getResultingCall());
+        trace.record(DELEGATED_PROPERTY_PD_RESOLVED_CALL, variableDescriptor, functionResults.resultingCall)
     }
 
     /* Resolve getValue() or setValue() methods from delegate */
-    private void resolveDelegatedPropertyConventionMethod(
-            @NotNull VariableDescriptorWithAccessors propertyDescriptor,
-            @NotNull KtExpression delegateExpression,
-            @NotNull KotlinType delegateType,
-            @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope,
-            @NotNull DataFlowInfo dataFlowInfo,
-            boolean isGet
+    private fun resolveDelegatedPropertyConventionMethod(
+            propertyDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            delegateType: KotlinType,
+            trace: BindingTrace,
+            delegateFunctionsScope: LexicalScope,
+            dataFlowInfo: DataFlowInfo,
+            isGet: Boolean
     ) {
-        VariableAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
-        assert accessor != null : "Delegated property should have getter/setter " + propertyDescriptor + " " + delegateExpression.getText();
+        val accessor = (if (isGet) propertyDescriptor.getter else propertyDescriptor.setter)
+                       ?: throw AssertionError("Delegated property should have getter/setter $propertyDescriptor ${delegateExpression.text}")
 
-        if (trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor) != null) return;
+        if (trace.bindingContext.get(DELEGATED_PROPERTY_CALL, accessor) != null) return
 
-        OverloadResolutionResults<FunctionDescriptor> functionResults = getDelegatedPropertyConventionMethod(
-                propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo, isGet, true
-        );
-        Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor);
-        assert call != null : "'getDelegatedPropertyConventionMethod' didn't record a call";
+        val functionResults = getDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace,
+                                                                   delegateFunctionsScope, dataFlowInfo, isGet, true)
+        val call = trace.bindingContext.get(DELEGATED_PROPERTY_CALL, accessor)
+                   ?: throw AssertionError("'getDelegatedPropertyConventionMethod' didn't record a call")
 
-        if (!functionResults.isSuccess()) {
-            String expectedFunction = renderCall(call, trace.getBindingContext());
-            if (functionResults.isSingleResult() || functionResults.isIncomplete() ||
-                     functionResults.getResultCode() == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
-                trace.report(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
-                                     .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+        if (!functionResults.isSuccess) {
+            val expectedFunction = renderCall(call, trace.bindingContext)
+            when {
+                functionResults.isSingleResult ||
+                functionResults.isIncomplete ||
+                functionResults.resultCode == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES ->
+                    trace.report(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE.on(delegateExpression, expectedFunction, functionResults.resultingCalls))
+                functionResults.isAmbiguity ->
+                    trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.on(delegateExpression, expectedFunction, functionResults.resultingCalls))
+                else ->
+                    trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType))
             }
-            else if (functionResults.isAmbiguity()) {
-                trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
-                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
-            }
-            else {
-                trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
-            }
-            return;
+            return
         }
 
-        FunctionDescriptor resultingDescriptor = functionResults.getResultingDescriptor();
+        val resultingDescriptor = functionResults.resultingDescriptor
 
-        ResolvedCall<FunctionDescriptor> resultingCall = functionResults.getResultingCall();
-        PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
-        if (declaration instanceof KtProperty) {
-            KtProperty property = (KtProperty) declaration;
-            KtPropertyDelegate delegate = property.getDelegate();
+        val resultingCall = functionResults.resultingCall
+        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor)
+        if (declaration is KtProperty) {
+            val delegate = declaration.delegate
             if (delegate != null) {
-                PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
-
-                if (!resultingDescriptor.isOperator()) {
-                    OperatorCallChecker.Companion.report(byKeyword, resultingDescriptor, trace);
+                if (!resultingDescriptor.isOperator) {
+                    val byKeyword = delegate.byKeywordNode.psi
+                    OperatorCallChecker.report(byKeyword, resultingDescriptor, trace)
                 }
             }
         }
-        trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);
+
+        trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall)
     }
 
     /* Resolve getValue() or setValue() methods from delegate */
-    private OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
-            @NotNull VariableDescriptorWithAccessors propertyDescriptor,
-            @NotNull KtExpression delegateExpression,
-            @NotNull KotlinType delegateType,
-            @NotNull BindingTrace trace,
-            @NotNull LexicalScope delegateFunctionsScope,
-            @NotNull DataFlowInfo dataFlowInfo,
-            boolean isGet,
-            boolean isComplete
-    ) {
-        VariableAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
-        assert accessor != null : "Delegated property should have getter/setter " + propertyDescriptor + " " + delegateExpression.getText();
+    private fun getDelegatedPropertyConventionMethod(
+            propertyDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            delegateType: KotlinType,
+            trace: BindingTrace,
+            delegateFunctionsScope: LexicalScope,
+            dataFlowInfo: DataFlowInfo,
+            isGet: Boolean,
+            isComplete: Boolean
+    ): OverloadResolutionResults<FunctionDescriptor> {
+        val accessor = (if (isGet) propertyDescriptor.getter else propertyDescriptor.setter)
+                       ?: throw AssertionError("Delegated property should have getter/setter $propertyDescriptor ${delegateExpression.text}")
 
-        KotlinType expectedType = isComplete && isGet && !(propertyDescriptor.getType() instanceof DeferredType)
-                               ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
+        val expectedType = if (isComplete && isGet && propertyDescriptor.type !is DeferredType)
+            propertyDescriptor.type
+        else
+            TypeUtils.NO_EXPECTED_TYPE
 
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(trace, delegateFunctionsScope, dataFlowInfo, expectedType);
+        val context = ExpressionTypingContext.newContext(trace, delegateFunctionsScope, dataFlowInfo, expectedType)
 
-        boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
+        val hasThis = propertyDescriptor.extensionReceiverParameter != null || propertyDescriptor.dispatchReceiverParameter != null
 
-        List<KtExpression> arguments = Lists.newArrayList();
-        KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
-        arguments.add(psiFactory.createExpression(hasThis ? "this" : "null"));
-        arguments.add(createExpressionForProperty(psiFactory));
+        val arguments = Lists.newArrayList<KtExpression>()
+        val psiFactory = KtPsiFactory(delegateExpression)
+        arguments.add(psiFactory.createExpression(if (hasThis) "this" else "null"))
+        arguments.add(createExpressionForProperty(psiFactory))
 
         if (!isGet) {
-            KtReferenceExpression fakeArgument = (KtReferenceExpression) createFakeExpressionOfType(delegateExpression.getProject(), trace,
-                                                                                                      "fakeArgument" + arguments.size(),
-                                                                                                    propertyDescriptor.getType());
-            arguments.add(fakeArgument);
-            List<ValueParameterDescriptor> valueParameters = accessor.getValueParameters();
-            trace.record(REFERENCE_TARGET, fakeArgument, valueParameters.get(0));
+            val fakeArgument = createFakeExpressionOfType(delegateExpression.project, trace,
+                                                          "fakeArgument${arguments.size}",
+                                                          propertyDescriptor.type) as KtReferenceExpression
+            arguments.add(fakeArgument)
+            val valueParameters = accessor.valueParameters
+            trace.record(REFERENCE_TARGET, fakeArgument, valueParameters[0])
         }
 
-        Name functionName = isGet ? OperatorNameConventions.GET_VALUE : OperatorNameConventions.SET_VALUE;
-        ExpressionReceiver receiver = ExpressionReceiver.Companion.create(delegateExpression, delegateType, trace.getBindingContext());
+        val functionName = if (isGet) OperatorNameConventions.GET_VALUE else OperatorNameConventions.SET_VALUE
+        val receiver = ExpressionReceiver.create(delegateExpression, delegateType, trace.bindingContext)
 
-        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
-                fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression);
+        val resolutionResult = fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression)
 
-        trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, resolutionResult.getFirst());
-        return resolutionResult.getSecond();
+        trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, resolutionResult.first)
+        return resolutionResult.second
     }
 
     //TODO: diagnostics rendering does not belong here
-    private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {
-        KtExpression calleeExpression = call.getCalleeExpression();
-        assert calleeExpression != null : "CalleeExpression should exists for fake call of convention method";
-        StringBuilder builder = new StringBuilder(calleeExpression.getText());
-        builder.append("(");
-        List<KotlinType> argumentTypes = Lists.newArrayList();
-        for (ValueArgument argument : call.getValueArguments()) {
-            argumentTypes.add(context.getType(argument.getArgumentExpression()));
+    private fun renderCall(call: Call, context: BindingContext): String {
+        val calleeExpression = call.calleeExpression
+                               ?: throw AssertionError("CalleeExpression should exists for fake call of convention method")
 
-        }
-        String arguments = StringUtil.join(argumentTypes, new Function<KotlinType, String>() {
-            @Override
-            public String fun(KotlinType type) {
-                return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
-            }
-        }, ", ");
-        builder.append(arguments);
-        builder.append(")");
-        return builder.toString();
+        return call.valueArguments.joinToString(
+                prefix = "${calleeExpression.text}(",
+                postfix = ")",
+                separator = ", ",
+                transform = { argument ->
+                    val type = context.getType(argument.getArgumentExpression()!!)!!
+                    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type)
+                }
+        )
     }
 
-    @NotNull
-    public KotlinType resolveDelegateExpression(
-            @NotNull KtExpression delegateExpression,
-            @NotNull KtProperty property,
-            @NotNull VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull LexicalScope scopeForDelegate,
-            @NotNull BindingTrace trace,
-            @NotNull DataFlowInfo dataFlowInfo
-    ) {
-        TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
-        KtExpression calleeExpression = CallUtilKt.getCalleeExpressionIfAny(delegateExpression);
-        ConstraintSystemCompleter completer = createConstraintSystemCompleter(
+    fun resolveDelegateExpression(
+            delegateExpression: KtExpression,
+            property: KtProperty,
+            variableDescriptor: VariableDescriptorWithAccessors,
+            scopeForDelegate: LexicalScope,
+            trace: BindingTrace,
+            dataFlowInfo: DataFlowInfo
+    ): KotlinType {
+        val traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property")
+        val calleeExpression = delegateExpression.getCalleeExpressionIfAny()
+        val completer = createConstraintSystemCompleter(
                 property, variableDescriptor, delegateExpression, scopeForDelegate, trace, dataFlowInfo
-        );
+        )
         if (calleeExpression != null) {
-            traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
+            traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer)
         }
-        KotlinType delegateType = expressionTypingServices.safeGetType(scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE,
-                                                                       dataFlowInfo, traceToResolveDelegatedProperty);
-        traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
-            @Override
-            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
-                return slice != CONSTRAINT_SYSTEM_COMPLETER;
-            }
-        }, true);
-        return delegateType;
+        val delegateType = expressionTypingServices.safeGetType(scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE,
+                                                                dataFlowInfo, traceToResolveDelegatedProperty)
+        traceToResolveDelegatedProperty.commit({ slice, key -> slice !== CONSTRAINT_SYSTEM_COMPLETER }, true)
+        return delegateType
     }
 
-    @NotNull
-    private ConstraintSystemCompleter createConstraintSystemCompleter(
-            @NotNull KtProperty property,
-            @NotNull final VariableDescriptorWithAccessors variableDescriptor,
-            @NotNull final KtExpression delegateExpression,
-            @NotNull LexicalScope scopeForDelegate,
-            @NotNull final BindingTrace trace,
-            @NotNull final DataFlowInfo dataFlowInfo
-    ) {
-        final LexicalScope delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForDelegate, variableDescriptor);
-        final KotlinType expectedType = property.getTypeReference() != null ? variableDescriptor.getType() : NO_EXPECTED_TYPE;
-        return new ConstraintSystemCompleter() {
-            @Override
-            public void completeConstraintSystem(
-                    @NotNull ConstraintSystem.Builder constraintSystem, @NotNull ResolvedCall<?> resolvedCall
-            ) {
-                KotlinType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
-                if (returnType == null) return;
+    private fun createConstraintSystemCompleter(
+            property: KtProperty,
+            variableDescriptor: VariableDescriptorWithAccessors,
+            delegateExpression: KtExpression,
+            scopeForDelegate: LexicalScope,
+            trace: BindingTrace,
+            dataFlowInfo: DataFlowInfo
+    ): ConstraintSystemCompleter {
+        val delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForDelegate, variableDescriptor)
+        val expectedType = if (property.typeReference != null) variableDescriptor.type else NO_EXPECTED_TYPE
 
-                TypeSubstitutor typeVariableSubstitutor =
-                        constraintSystem.getTypeVariableSubstitutors().get(TypeVariableKt.toHandle(resolvedCall.getCall()));
-                assert typeVariableSubstitutor != null : "No substitutor in the system for call: " + resolvedCall.getCall();
+        return object : ConstraintSystemCompleter {
+            override fun completeConstraintSystem(constraintSystem: ConstraintSystem.Builder, resolvedCall: ResolvedCall<*>) {
+                val returnType = resolvedCall.candidateDescriptor.returnType ?: return
 
-                TemporaryBindingTrace traceToResolveConventionMethods =
-                        TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods");
-                OverloadResolutionResults<FunctionDescriptor>
-                        getMethodResults = getDelegatedPropertyConventionMethod(
-                                variableDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
-                                dataFlowInfo, true, false
-                        );
+                val typeVariableSubstitutor = constraintSystem.typeVariableSubstitutors[resolvedCall.call.toHandle()]
+                                              ?: throw AssertionError("No substitutor in the system for call: " + resolvedCall.call)
+
+                val traceToResolveConventionMethods = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods")
+                val getMethodResults = getDelegatedPropertyConventionMethod(
+                        variableDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
+                        dataFlowInfo, true, false
+                )
 
                 if (conventionMethodFound(getMethodResults)) {
-                    FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
-                    KotlinType returnTypeOfGetMethod = descriptor.getReturnType();
+                    val descriptor = getMethodResults.resultingDescriptor
+                    val returnTypeOfGetMethod = descriptor.returnType
                     if (returnTypeOfGetMethod != null && !TypeUtils.noExpectedType(expectedType)) {
-                        KotlinType returnTypeInSystem = typeVariableSubstitutor.substitute(returnTypeOfGetMethod, Variance.INVARIANT);
+                        val returnTypeInSystem = typeVariableSubstitutor.substitute(returnTypeOfGetMethod, Variance.INVARIANT)
                         if (returnTypeInSystem != null) {
-                            constraintSystem.addSubtypeConstraint(returnTypeInSystem, expectedType, FROM_COMPLETER.position());
+                            constraintSystem.addSubtypeConstraint(returnTypeInSystem, expectedType, FROM_COMPLETER.position())
                         }
                     }
-                    addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor);
+                    addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor)
                 }
-                if (!variableDescriptor.isVar()) return;
+                if (!variableDescriptor.isVar) return
 
                 // For the case: 'val v by d' (no declared type).
                 // When we add a constraint for 'set' method for delegated expression 'd' we use a type of the declared variable 'v'.
                 // But if the type isn't known yet, the constraint shouldn't be added (we try to infer the type of 'v' here as well).
-                if (variableDescriptor.getReturnType() instanceof DeferredType) return;
+                if (variableDescriptor.returnType is DeferredType) return
 
-                OverloadResolutionResults<FunctionDescriptor>
-                        setMethodResults = getDelegatedPropertyConventionMethod(
-                                variableDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
-                                dataFlowInfo, false, false
-                        );
+                val setMethodResults = getDelegatedPropertyConventionMethod(
+                        variableDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
+                        dataFlowInfo, false, false
+                )
 
                 if (conventionMethodFound(setMethodResults)) {
-                    FunctionDescriptor descriptor = setMethodResults.getResultingDescriptor();
-                    List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
-                    if (valueParameters.size() == 3) {
-                        ValueParameterDescriptor valueParameterForThis = valueParameters.get(2);
+                    val descriptor = setMethodResults.resultingDescriptor
+                    val valueParameters = descriptor.valueParameters
+                    if (valueParameters.size == 3) {
+                        val valueParameterForThis = valueParameters[2]
 
                         if (!noExpectedType(expectedType)) {
                             constraintSystem.addSubtypeConstraint(
                                     expectedType,
-                                    typeVariableSubstitutor.substitute(valueParameterForThis.getType(), Variance.INVARIANT),
+                                    typeVariableSubstitutor.substitute(valueParameterForThis.type, Variance.INVARIANT),
                                     FROM_COMPLETER.position()
-                            );
+                            )
                         }
-                        addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor);
+                        addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor)
                     }
                 }
             }
 
-            private boolean conventionMethodFound(@NotNull OverloadResolutionResults<FunctionDescriptor> results) {
-                return results.isSuccess() ||
-                       (results.isSingleResult() &&
-                        results.getResultCode() == OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
-            }
+            private fun conventionMethodFound(results: OverloadResolutionResults<FunctionDescriptor>): Boolean =
+                    results.isSuccess ||
+                    results.isSingleResult && results.resultCode == OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH
 
-            private void addConstraintForThisValue(
-                    ConstraintSystem.Builder constraintSystem,
-                    TypeSubstitutor typeVariableSubstitutor,
-                    FunctionDescriptor resultingDescriptor
+            private fun addConstraintForThisValue(
+                    constraintSystem: ConstraintSystem.Builder,
+                    typeVariableSubstitutor: TypeSubstitutor,
+                    resultingDescriptor: FunctionDescriptor
             ) {
-                ReceiverParameterDescriptor extensionReceiver = variableDescriptor.getExtensionReceiverParameter();
-                ReceiverParameterDescriptor dispatchReceiver = variableDescriptor.getDispatchReceiverParameter();
-                KotlinType typeOfThis =
-                        extensionReceiver != null ? extensionReceiver.getType() :
-                        dispatchReceiver != null ? dispatchReceiver.getType() :
-                        builtIns.getNullableNothingType();
+                val extensionReceiver = variableDescriptor.extensionReceiverParameter
+                val dispatchReceiver = variableDescriptor.dispatchReceiverParameter
+                val typeOfThis = extensionReceiver?.type ?: dispatchReceiver?.type ?: builtIns.nullableNothingType
 
-                List<ValueParameterDescriptor> valueParameters = resultingDescriptor.getValueParameters();
-                if (valueParameters.isEmpty()) return;
-                ValueParameterDescriptor valueParameterForThis = valueParameters.get(0);
+                val valueParameters = resultingDescriptor.valueParameters
+                if (valueParameters.isEmpty()) return
+                val valueParameterForThis = valueParameters[0]
 
                 constraintSystem.addSubtypeConstraint(
                         typeOfThis,
-                        typeVariableSubstitutor.substitute(valueParameterForThis.getType(), Variance.INVARIANT),
+                        typeVariableSubstitutor.substitute(valueParameterForThis.type, Variance.INVARIANT),
                         FROM_COMPLETER.position()
-                );
+                )
             }
-        };
+        }
     }
 }
