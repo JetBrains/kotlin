@@ -215,22 +215,22 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         buildPrimitives.addAll(p.toList())
     }
 
-    fun instantiate(platform: Platform, vararg families: Family = Family.values()): List<ConcreteFunction> {
+    fun instantiate(platform: Platform?, vararg families: Family = Family.values()): List<ConcreteFunction> {
         return families
                 .sortedBy { it.ordinal }
                 .filter { buildFamilies.contains(it) }
                 .filter { platform == Platform.JVM || jvmOnly[it] != true  }
-                .flatMap { family -> instantiate(family) }
+                .flatMap { family -> instantiate(family, platform == null) }
     }
 
-    fun instantiate(f: Family): List<ConcreteFunction> {
+    fun instantiate(f: Family, headerOnly: Boolean): List<ConcreteFunction> {
         val onlyPrimitives = buildFamilyPrimitives[f]
 
         if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
             return (onlyPrimitives ?: buildPrimitives).sortedBy { it.ordinal }
-                    .map { primitive -> ConcreteFunction( { build(it, f, primitive) }, sourceFileFor(f) ) }
+                    .map { primitive -> ConcreteFunction( { build(it, f, primitive, headerOnly) }, sourceFileFor(f) ) }
         } else {
-            return listOf(ConcreteFunction( { build(it, f, null) }, sourceFileFor(f) ))
+            return listOf(ConcreteFunction( { build(it, f, null, headerOnly) }, sourceFileFor(f) ))
         }
     }
 
@@ -248,6 +248,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         Primitives, Generic -> SourceFile.Misc
     }
 
+/*
     fun build(vararg families: Family = Family.values()): String {
         val builder = StringBuilder()
         for (family in families.sortedBy { it.name }) {
@@ -266,8 +267,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             build(builder, f, null)
         }
     }
+*/
 
-    fun build(builder: Appendable, f: Family, primitive: PrimitiveType?) {
+    fun build(builder: Appendable, f: Family, primitive: PrimitiveType?, headerOnly: Boolean) {
         val returnType = returns[f] ?: throw RuntimeException("No return type specified for $signature")
 
         fun renderType(expression: String, receiver: String, self: String): String {
@@ -423,6 +425,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         }
 
         builder.append(visibility[f] ?: "public").append(' ')
+        if (headerOnly) {
+            builder.append("header ")
+        }
         if (external[f] == true)
             builder.append("external ")
         if (inline[f]?.isInline() == true)
@@ -444,6 +449,12 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         builder.append(receiverType)
         if (receiverType.isNotEmpty()) builder.append('.')
         builder.append("${(customSignature[f] ?: signature).renderType()}: ${returnType.renderType()}")
+
+        if (headerOnly) {
+            builder.append("\n\n")
+            return
+        }
+
         if (keyword == "fun") builder.append(" {")
 
         val body = (

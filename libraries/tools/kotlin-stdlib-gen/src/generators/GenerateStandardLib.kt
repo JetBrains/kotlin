@@ -28,6 +28,7 @@ fun main(args: Array<String>) {
 
     generateCollectionsAPI(outDir)
     generateCollectionsJsAPI(jsCoreDir)
+    generateCommonAPI(baseDir.resolve("out/src/stdlib/common").apply { mkdirs() })
 
 }
 
@@ -61,10 +62,17 @@ fun generateCollectionsJsAPI(outDir: File) {
             .groupByFileAndWrite(outDir, Platform.JS, { "_${it.name.capitalize()}Js.kt"})
 }
 
+fun generateCommonAPI(outDir: File) {
+    (commonGenerators + ::specialJVM + ::specialJS).flatMap { it().sortedBy { it.signature }.asSequence() }
+            .groupByFileAndWrite(outDir, platform = null)
+}
+
+
+
 
 private fun Sequence<GenericFunction>.groupByFileAndWrite(
         outDir: File,
-        platform: Platform,
+        platform: Platform?,
         fileNameBuilder: (SourceFile) -> String = { "_${it.name.capitalize()}.kt" }
 ) {
     val groupedConcreteFunctions = map { it.instantiate(platform) }.flatten().groupBy { it.sourceFile }
@@ -75,7 +83,7 @@ private fun Sequence<GenericFunction>.groupByFileAndWrite(
     }
 }
 
-private fun List<ConcreteFunction>.writeTo(file: File, sourceFile: SourceFile, platform: Platform) {
+private fun List<ConcreteFunction>.writeTo(file: File, sourceFile: SourceFile, platform: Platform?) {
     println("Generating file: $file")
 
     FileWriter(file).use { writer ->
