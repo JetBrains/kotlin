@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("RangesKt")
-@file:kotlin.jvm.JvmVersion
 
 package kotlin.ranges
 

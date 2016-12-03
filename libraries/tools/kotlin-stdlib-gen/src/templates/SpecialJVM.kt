@@ -269,6 +269,16 @@ fun specialJVM(): List<GenericFunction> {
             }
             """
         }
+//
+//        body(ArraysOfObjects) {
+//            """
+//            return ArrayList<T>(this.unsafeCast<Array<Any?>>())
+//            """
+//        }
+//
+//        inline(true, ArraysOfPrimitives)
+//        body(ArraysOfPrimitives) {"""return this.unsafeCast<Array<T>>().asList()"""}
+
     }
 
     templates add f("toTypedArray()") {
@@ -288,6 +298,11 @@ fun specialJVM(): List<GenericFunction> {
             return result as Array<T>
             """
         }
+//        body {
+//            """
+//            return copyOf().unsafeCast<Array<T>>()
+//            """
+//        }
     }
 
     templates.forEach { it.apply { jvmOnly(true) } }

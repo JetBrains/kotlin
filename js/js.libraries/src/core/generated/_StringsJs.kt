@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
-@file:kotlin.jvm.JvmVersion
 
 package kotlin.text
 
@@ -622,14 +621,6 @@ public fun CharSequence.toSet(): Set<Char> {
         1 -> setOf(this[0])
         else -> toCollection(LinkedHashSet<Char>(mapCapacity(length)))
     }
-}
-
-/**
- * Returns a [SortedSet] of all characters.
- */
-@kotlin.jvm.JvmVersion
-public fun CharSequence.toSortedSet(): SortedSet<Char> {
-    return toCollection(TreeSet<Char>())
 }
 
 /**

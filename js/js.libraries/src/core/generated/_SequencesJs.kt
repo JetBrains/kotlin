@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequencesKt")
-@file:kotlin.jvm.JvmVersion
 
 package kotlin.sequences
 
@@ -565,24 +564,6 @@ public fun <T> Sequence<T>.toMutableList(): MutableList<T> {
  */
 public fun <T> Sequence<T>.toSet(): Set<T> {
     return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
-}
-
-/**
- * Returns a [SortedSet] of all elements.
- */
-@kotlin.jvm.JvmVersion
-public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
-    return toCollection(TreeSet<T>())
-}
-
-/**
- * Returns a [SortedSet] of all elements.
- * 
- * Elements in the set returned are sorted according to the given [comparator].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
-    return toCollection(TreeSet<T>(comparator))
 }
 
 /**
@@ -1392,24 +1373,5 @@ public fun Sequence<Double>.sum(): Double {
         sum += element
     }
     return sum
-}
-
-/**
- * Returns a sequence containing all elements that are instances of specified class.
- */
-@kotlin.jvm.JvmVersion
-public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
-    @Suppress("UNCHECKED_CAST")
-    return filter { klass.isInstance(it) } as Sequence<R>
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
 }
 

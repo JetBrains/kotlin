@@ -1,5 +1,6 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("ArraysKt")
+@file:kotlin.jvm.JvmVersion
 
 package kotlin.collections
 
@@ -12600,6 +12601,306 @@ public fun CharArray.asSequence(): Sequence<Char> {
 }
 
 /**
+ * Returns an average value of elements in the array.
+ */
+@kotlin.jvm.JvmName("averageOfByte")
+public fun Array<out Byte>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+@kotlin.jvm.JvmName("averageOfShort")
+public fun Array<out Short>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+@kotlin.jvm.JvmName("averageOfInt")
+public fun Array<out Int>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+@kotlin.jvm.JvmName("averageOfLong")
+public fun Array<out Long>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+@kotlin.jvm.JvmName("averageOfFloat")
+public fun Array<out Float>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+@kotlin.jvm.JvmName("averageOfDouble")
+public fun Array<out Double>.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun ByteArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun ShortArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun IntArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun LongArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun FloatArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the array.
+ */
+public fun DoubleArray.average(): Double {
+    var sum: Double = 0.0
+    var count: Int = 0
+    for (element in this) {
+        sum += element
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfByte")
+public fun Array<out Byte>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfShort")
+public fun Array<out Short>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfInt")
+public fun Array<out Int>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfLong")
+public fun Array<out Long>.sum(): Long {
+    var sum: Long = 0L
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfFloat")
+public fun Array<out Float>.sum(): Float {
+    var sum: Float = 0.0f
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+@kotlin.jvm.JvmName("sumOfDouble")
+public fun Array<out Double>.sum(): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun ByteArray.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun ShortArray.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun IntArray.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun LongArray.sum(): Long {
+    var sum: Long = 0L
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun FloatArray.sum(): Float {
+    var sum: Float = 0.0f
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun DoubleArray.sum(): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
  * Returns a [List] that wraps the original array.
  */
 @kotlin.jvm.JvmVersion
@@ -13757,305 +14058,5 @@ public fun CharArray.toTypedArray(): Array<Char> {
         result[index] = this[index]
     @Suppress("UNCHECKED_CAST")
     return result as Array<Char>
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-@kotlin.jvm.JvmName("averageOfByte")
-public fun Array<out Byte>.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-@kotlin.jvm.JvmName("averageOfShort")
-public fun Array<out Short>.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-@kotlin.jvm.JvmName("averageOfInt")
-public fun Array<out Int>.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-@kotlin.jvm.JvmName("averageOfLong")
-public fun Array<out Long>.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-@kotlin.jvm.JvmName("averageOfFloat")
-public fun Array<out Float>.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-@kotlin.jvm.JvmName("averageOfDouble")
-public fun Array<out Double>.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-public fun ByteArray.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-public fun ShortArray.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-public fun IntArray.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-public fun LongArray.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-public fun FloatArray.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the array.
- */
-public fun DoubleArray.average(): Double {
-    var sum: Double = 0.0
-    var count: Int = 0
-    for (element in this) {
-        sum += element
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-@kotlin.jvm.JvmName("sumOfByte")
-public fun Array<out Byte>.sum(): Int {
-    var sum: Int = 0
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-@kotlin.jvm.JvmName("sumOfShort")
-public fun Array<out Short>.sum(): Int {
-    var sum: Int = 0
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-@kotlin.jvm.JvmName("sumOfInt")
-public fun Array<out Int>.sum(): Int {
-    var sum: Int = 0
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-@kotlin.jvm.JvmName("sumOfLong")
-public fun Array<out Long>.sum(): Long {
-    var sum: Long = 0L
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-@kotlin.jvm.JvmName("sumOfFloat")
-public fun Array<out Float>.sum(): Float {
-    var sum: Float = 0.0f
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-@kotlin.jvm.JvmName("sumOfDouble")
-public fun Array<out Double>.sum(): Double {
-    var sum: Double = 0.0
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-public fun ByteArray.sum(): Int {
-    var sum: Int = 0
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-public fun ShortArray.sum(): Int {
-    var sum: Int = 0
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-public fun IntArray.sum(): Int {
-    var sum: Int = 0
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-public fun LongArray.sum(): Long {
-    var sum: Long = 0L
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-public fun FloatArray.sum(): Float {
-    var sum: Float = 0.0f
-    for (element in this) {
-        sum += element
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the array.
- */
-public fun DoubleArray.sum(): Double {
-    var sum: Double = 0.0
-    for (element in this) {
-        sum += element
-    }
-    return sum
 }
 

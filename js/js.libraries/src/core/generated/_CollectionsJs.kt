@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
-@file:kotlin.jvm.JvmVersion
 
 package kotlin.collections
 
@@ -782,14 +781,6 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
- * Reverses elements in the list in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun <T> MutableList<T>.reverse(): Unit {
-    java.util.Collections.reverse(this)
-}
-
-/**
  * Returns a list with elements in reversed order.
  */
 public fun <T> Iterable<T>.reversed(): List<T> {
@@ -1093,24 +1084,6 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
         }
     }
     return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
-}
-
-/**
- * Returns a [SortedSet] of all elements.
- */
-@kotlin.jvm.JvmVersion
-public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
-    return toCollection(TreeSet<T>())
-}
-
-/**
- * Returns a [SortedSet] of all elements.
- * 
- * Elements in the set returned are sorted according to the given [comparator].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Iterable<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
-    return toCollection(TreeSet<T>(comparator))
 }
 
 /**
@@ -2114,23 +2087,5 @@ public fun Iterable<Double>.sum(): Double {
         sum += element
     }
     return sum
-}
-
-/**
- * Returns a list containing all elements that are instances of specified class.
- */
-@kotlin.jvm.JvmVersion
-public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
-    return filterIsInstanceTo(ArrayList<R>(), klass)
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
 }
 

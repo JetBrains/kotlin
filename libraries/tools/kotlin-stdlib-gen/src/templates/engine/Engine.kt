@@ -70,6 +70,11 @@ enum class Inline {
     fun isInline() = this != No
 }
 
+enum class Platform {
+    JVM,
+    JS
+}
+
 data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
 val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 
@@ -100,6 +105,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     open class FamilyProperty<TValue: Any>() : SpecializedProperty<Family, TValue>()
     open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
+//
+//    operator fun <TValue : Any> FamilyProperty<TValue>.invoke(vararg keys: Family, valueBuilder: (Family) -> TValue) = set(keys.map { null to it }, valueBuilder)
+//    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
 
     class DeprecationProperty() : FamilyProperty<Deprecation>()
     operator fun DeprecationProperty.invoke(value: String, vararg keys: Family) = set(keys.asList(), { Deprecation(value) })
@@ -207,10 +215,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         buildPrimitives.addAll(p.toList())
     }
 
-    fun instantiate(vararg families: Family = Family.values()): List<ConcreteFunction> {
+    fun instantiate(platform: Platform, vararg families: Family = Family.values()): List<ConcreteFunction> {
         return families
                 .sortedBy { it.ordinal }
                 .filter { buildFamilies.contains(it) }
+                .filter { platform == Platform.JVM || jvmOnly[it] != true  }
                 .flatMap { family -> instantiate(family) }
     }
 
