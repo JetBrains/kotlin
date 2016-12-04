@@ -65,6 +65,10 @@
       <root url="file://$PROJECT_DIR$/../out/production/util.runtime" />
       <root url="file://$PROJECT_DIR$/../out/production/Kotlin" />
       <root url="file://$PROJECT_DIR$/../out/production/formatter" />
+      <root url="file://$PROJECT_DIR$/../out/production/allopen-cli" />
+      <root url="file://$PROJECT_DIR$/../out/production/allopen-ide" />
+      <root url="file://$PROJECT_DIR$/../out/production/noarg-ide" />
+      <root url="file://$PROJECT_DIR$/../out/production/noarg-cli" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

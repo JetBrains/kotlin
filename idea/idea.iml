@@ -54,5 +54,7 @@
     <orderEntry type="library" name="java-decompiler-plugin" level="project" />
     <orderEntry type="module" module-name="formatter" />
     <orderEntry type="module" module-name="idea-maven" />
+    <orderEntry type="module" module-name="allopen-ide" scope="TEST" />
+    <orderEntry type="module" module-name="noarg-ide" scope="TEST" />
   </component>
 </module>
