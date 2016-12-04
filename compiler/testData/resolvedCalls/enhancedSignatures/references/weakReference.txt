@@ -1,0 +1,23 @@
+import java.lang.ref.*
+
+fun notNull(r: WeakReference<String>) {
+    r.get()
+        // SUCCESS
+        // ORIGINAL:    fun get(): T? defined in java.lang.ref.WeakReference
+        // SUBSTITUTED: fun get(): String? defined in java.lang.ref.WeakReference
+}
+
+fun nullable(r: WeakReference<String?>) {
+    r.get()
+        // SUCCESS
+        // ORIGINAL:    fun get(): T? defined in java.lang.ref.WeakReference
+        // SUBSTITUTED: fun get(): String? defined in java.lang.ref.WeakReference
+}
+
+fun platform() {
+    val r = WeakReference("x")
+    r.get()
+        // SUCCESS
+        // ORIGINAL:    fun get(): T? defined in java.lang.ref.WeakReference
+        // SUBSTITUTED: fun get(): String? defined in java.lang.ref.WeakReference
+}

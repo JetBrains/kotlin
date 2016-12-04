@@ -197,4 +197,25 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/resolvedCalls/enhancedSignatures/references")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class References extends AbstractEnhancedSignaturesResolvedCallsTest {
+        public void testAllFilesPresentInReferences() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/references"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("softReference.kt")
+        public void testSoftReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/enhancedSignatures/references/softReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("weakReference.kt")
+        public void testWeakReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/enhancedSignatures/references/weakReference.kt");
+            doTest(fileName);
+        }
+    }
 }
