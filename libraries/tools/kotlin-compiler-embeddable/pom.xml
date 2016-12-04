@@ -212,7 +212,7 @@
                 <configuration>
                     <workingDirectory>${project.build.directory}</workingDirectory>
                     <systemPropertyVariables>
-                        <compilerJar>${artifactId}-${parent.version}.jar</compilerJar>
+                        <compilerJar>${project.artifactId}-${project.parent.version}.jar</compilerJar>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>

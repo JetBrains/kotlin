@@ -41,7 +41,7 @@
                         <configuration>
                             <includeScope>compile</includeScope>
                             <includeGroupIds>${project.parent.groupId}</includeGroupIds>
-                            <outputDirectory>${build.outputDirectory}</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <excludes>**/MANIFEST.MF</excludes>
                         </configuration>
                     </execution>
