@@ -100,7 +100,7 @@ done
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardScriptTemplateWithAnnotatedResolving::class)
         if (scriptClass == null) {
-            val resolver = ContextAndAnnotationsBasedResolver()
+            val resolver = AnnotationsBasedResolver()
             System.err.println(resolver.baseClassPath)
         }
         Assert.assertNotNull(scriptClass)
@@ -148,8 +148,9 @@ done
                     }
                     else {
                         // attempt to workaround some maven quirks
-                        addJvmClasspathRoots(
-                                Thread.currentThread().contextClassLoader.manifestClassPath().toList())
+                        manifestClassPath(Thread.currentThread().contextClassLoader)?.let {
+                            addJvmClasspathRoots(it)
+                        }
                     }
                 }
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script-util-test")
@@ -177,13 +178,6 @@ done
             Disposer.dispose(rootDisposable)
         }
     }
-
-    private fun ClassLoader.manifestClassPath() =
-            getResources("META-INF/MANIFEST.MF")
-                    .asSequence()
-                    .mapNotNull { ifFailed(null) { it.openStream().use { Manifest().apply { read(it) } } } }
-                    .flatMap { it.mainAttributes?.getValue("Class-Path")?.splitToSequence(" ") ?: emptySequence() }
-                    .mapNotNull { ifFailed(null) { File(URI.create(it)) } }
 
     private inline fun <R> ifFailed(default: R, block: () -> R) = try {
         block()

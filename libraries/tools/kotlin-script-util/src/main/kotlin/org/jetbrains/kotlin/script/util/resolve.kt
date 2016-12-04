@@ -69,41 +69,5 @@ open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<Fil
     }
 }
 
-private fun URL.toFile() =
-        try {
-            File(toURI().schemeSpecificPart)
-        }
-        catch (e: java.net.URISyntaxException) {
-            if (protocol != "file") null
-            else File(file)
-        }
-
-private fun classpathFromClassloader(classLoader: ClassLoader): List<File>? =
-        generateSequence(classLoader) { it.parent }.toList().flatMap { (it as? URLClassLoader)?.urLs?.mapNotNull { it.toFile() } ?: emptyList() }
-
-private fun classpathFromClasspathProperty(): List<File>? =
-        System.getProperty("java.class.path")?.let {
-            it.split(String.format("\\%s", File.pathSeparatorChar).toRegex()).dropLastWhile(String::isEmpty)
-                    .map(::File)
-        }
-
-private fun classpathFromClass(classLoader: ClassLoader, klass: KClass<out Any>): List<File>? {
-    val clp = "${klass.qualifiedName?.replace('.', '/')}.class"
-    val url = classLoader.getResource(clp)
-    return url?.toURI()?.path?.removeSuffix(clp)?.let {
-        listOf(File(it))
-    }
-}
-
-val defaultScriptBaseClasspath: List<File> by lazy {
-    classpathFromClass(Thread.currentThread().contextClassLoader, KotlinAnnotatedScriptDependenciesResolver::class)
-    ?: classpathFromClasspathProperty()
-    ?: classpathFromClassloader(Thread.currentThread().contextClassLoader)
-    ?: emptyList()
-}
-
-class ContextBasedResolver() :
-        KotlinAnnotatedScriptDependenciesResolver(defaultScriptBaseClasspath, arrayListOf())
-
-class ContextAndAnnotationsBasedResolver :
-        KotlinAnnotatedScriptDependenciesResolver(defaultScriptBaseClasspath, arrayListOf(DirectResolver(), MavenResolver()))
+class AnnotationsBasedResolver :
+        KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), MavenResolver()))

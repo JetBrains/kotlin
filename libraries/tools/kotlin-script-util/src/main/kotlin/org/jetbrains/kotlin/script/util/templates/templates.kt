@@ -19,17 +19,16 @@
 package org.jetbrains.kotlin.script.util.templates
 
 import org.jetbrains.kotlin.script.ScriptTemplateDefinition
-import org.jetbrains.kotlin.script.util.ContextAndAnnotationsBasedResolver
-import org.jetbrains.kotlin.script.util.ContextBasedResolver
+import org.jetbrains.kotlin.script.util.AnnotationsBasedResolver
 
-@ScriptTemplateDefinition(resolver = ContextBasedResolver::class, scriptFilePattern = ".*\\.kts")
+@ScriptTemplateDefinition(scriptFilePattern = ".*\\.kts")
 abstract class StandardScriptTemplate(val args: Array<String>)
 
-@ScriptTemplateDefinition(resolver = ContextAndAnnotationsBasedResolver::class, scriptFilePattern = ".*\\.kts")
+@ScriptTemplateDefinition(resolver = AnnotationsBasedResolver::class, scriptFilePattern = ".*\\.kts")
 abstract class StandardScriptTemplateWithAnnotatedResolving(val args: Array<String>)
 
-@ScriptTemplateDefinition(resolver = ContextBasedResolver::class, scriptFilePattern = ".*\\.kts")
+@ScriptTemplateDefinition(scriptFilePattern = ".*\\.kts")
 abstract class ScriptTemplateWithBindings(val bindings: Map<String, Any?>)
 
-@ScriptTemplateDefinition(resolver = ContextAndAnnotationsBasedResolver::class, scriptFilePattern = ".*\\.kts")
+@ScriptTemplateDefinition(resolver = AnnotationsBasedResolver::class, scriptFilePattern = ".*\\.kts")
 abstract class ScriptTemplateWithBindingsAndAnnotatedResolving(val bindings: Map<String, Any?>)

@@ -51,18 +51,6 @@
         
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${project.version}</version>
@@ -84,12 +72,6 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.6</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <kotlin.compiler.jar>${org.jetbrains.kotlin:kotlin-compiler:jar}</kotlin.compiler.jar>
-                        <kotlin.java.runtime.jar>${org.jetbrains.kotlin:kotlin-runtime:jar}</kotlin.java.runtime.jar>
-                    </systemPropertyVariables>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>

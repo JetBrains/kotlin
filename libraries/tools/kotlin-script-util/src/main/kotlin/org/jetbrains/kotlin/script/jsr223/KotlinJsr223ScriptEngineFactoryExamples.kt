@@ -20,6 +20,11 @@ package org.jetbrains.kotlin.script.jsr223
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.script.util.classpathFromClass
+import org.jetbrains.kotlin.script.util.classpathFromClassloader
+import org.jetbrains.kotlin.script.util.classpathFromClasspathProperty
+import org.jetbrains.kotlin.script.util.manifestClassPath
 import org.jetbrains.kotlin.utils.PathUtil.*
 import java.io.File
 import java.io.FileNotFoundException
@@ -33,7 +38,7 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
             KotlinJsr223JvmLocalScriptEngine(
                     Disposer.newDisposable(),
                     this,
-                    listOf(kotlinScriptRuntimeJar),
+                    scriptCompilationClasspathFromContext(),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",
                     { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
                     arrayOf(Map::class.java)
@@ -47,7 +52,7 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptE
                     Disposer.newDisposable(),
                     this,
                     kotlinCompilerJar,
-                    listOf(kotlinScriptRuntimeJar),
+                    scriptCompilationClasspathFromContext(),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",
                     { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
                     arrayOf(Map::class.java)
@@ -61,7 +66,7 @@ class KotlinJsr223JvmDaemonRemoteEvalScriptEngineFactory : KotlinJsr223JvmScript
                     Disposer.newDisposable(),
                     this,
                     kotlinCompilerJar,
-                    listOf(kotlinScriptRuntimeJar),
+                    scriptCompilationClasspathFromContext(),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",
                     ::makeSerializableArgumentsForTemplateWithBindings,
                     arrayOf(Map::class.java)
@@ -79,16 +84,50 @@ private fun makeSerializableArgumentsForTemplateWithBindings(ctx: ScriptContext)
 private fun File.existsOrNull(): File? = existsAndCheckOrNull { true }
 private inline fun File.existsAndCheckOrNull(check: (File.() -> Boolean)): File? = if (exists() && check()) this else null
 
-private val kotlinCompilerJar = System.getProperty("kotlin.compiler.jar")?.let(::File)?.existsOrNull()
-        ?: getPathUtilJar().existsAndCheckOrNull { name == KOTLIN_COMPILER_JAR }
-        ?: throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.jar property to proper location")
+private val kotlinCompilerJar: File by lazy {
+    // highest prio - explicit property
+    System.getProperty("kotlin.compiler.jar")?.let(::File)?.existsOrNull()
+    // search classpath from context classloader and `java.calss.path` property
+    ?: (classpathFromClass(Thread.currentThread().contextClassLoader, K2JVMCompiler::class)
+        ?: contextClasspath(KOTLIN_COMPILER_JAR, Thread.currentThread().contextClassLoader)
+        ?: classpathFromClasspathProperty()
+    )?.firstOrNull { it.matchMaybeVersionedFile(KOTLIN_COMPILER_JAR) }
+    ?: throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.jar property to proper location")
+}
 
-private val kotlinRuntimeJar = System.getProperty("kotlin.java.runtime.jar")?.let(::File)?.existsOrNull()
-        ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_RUNTIME_JAR) }.existsOrNull()
-        ?: getResourcePathForClass(JvmStatic::class.java).existsOrNull()
-        ?: throw FileNotFoundException("Cannot find kotlin runtime jar, set kotlin.java.runtime.jar property to proper location")
+private fun <T> Iterable<T>.anyOrNull(predicate: (T) -> Boolean) = if (any(predicate)) this else null
 
-private val kotlinScriptRuntimeJar = System.getProperty("kotlin.script.runtime.jar")?.let(::File)?.existsOrNull()
-        ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR) }.existsOrNull()
-        ?: getResourcePathForClass(ScriptTemplateWithArgs::class.java).existsOrNull()
-        ?: throw FileNotFoundException("Cannot find kotlin script runtime jar, set kotlin.script.runtime.jar property to proper location")
+private fun File.matchMaybeVersionedFile(baseName: String) =
+        name == baseName ||
+        name == baseName.removeSuffix(".jar") || // for classes dirs
+        name.startsWith(baseName.removeSuffix(".jar") + "-")
+
+private fun contextClasspath(keyName: String, classLoader: ClassLoader): List<File>? =
+        ( classpathFromClassloader(classLoader)?.anyOrNull { it.matchMaybeVersionedFile(keyName) }
+          ?: manifestClassPath(classLoader)?.anyOrNull { it.matchMaybeVersionedFile(keyName) }
+        )?.toList()
+
+
+private fun scriptCompilationClasspathFromContext(classLoader: ClassLoader = Thread.currentThread().contextClassLoader): List<File> =
+        ( System.getProperty("kotlin.script.classpath")?.split(File.pathSeparator)?.map(::File)
+          ?: contextClasspath(KOTLIN_JAVA_RUNTIME_JAR, classLoader)
+          ?: listOf(kotlinRuntimeJar, kotlinScriptRuntimeJar)
+        )
+        .map { it?.canonicalFile }
+        .distinct()
+        .mapNotNull { it?.existsOrNull() }
+
+
+private val kotlinRuntimeJar: File? by lazy {
+    System.getProperty("kotlin.java.runtime.jar")?.let(::File)?.existsOrNull()
+    ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_RUNTIME_JAR) }.existsOrNull()
+    ?: getResourcePathForClass(JvmStatic::class.java).existsOrNull()
+}
+
+private val kotlinScriptRuntimeJar: File? by lazy {
+    System.getProperty("kotlin.script.runtime.jar")?.let(::File)?.existsOrNull()
+    ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR) }.existsOrNull()
+    ?: getResourcePathForClass(ScriptTemplateWithArgs::class.java).existsOrNull()
+}
+
+
