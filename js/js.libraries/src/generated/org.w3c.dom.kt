@@ -33,12 +33,14 @@ import org.w3c.xhr.*
         set(value) = noImpl
     open val rootElement: SVGSVGElement?
         get() = noImpl
-    open val title: String
+    var title: String
         get() = noImpl
+        set(value) = noImpl
     open val referrer: String
         get() = noImpl
-    open val domain: String
+    var domain: String
         get() = noImpl
+        set(value) = noImpl
     open val activeElement: Element?
         get() = noImpl
     open val location: Location?
