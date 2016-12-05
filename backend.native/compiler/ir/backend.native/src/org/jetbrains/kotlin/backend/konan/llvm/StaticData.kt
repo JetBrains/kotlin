@@ -15,11 +15,16 @@ internal class StaticData(override val context: Context): ContextUtils {
         companion object {
             fun create(staticData: StaticData, type: LLVMTypeRef, name: String): Global {
                 val module = staticData.context.llvmModule
-                if (LLVMGetNamedGlobal(module, name) != null) {
+                if (name != "" && LLVMGetNamedGlobal(module, name) != null) {
                     throw IllegalArgumentException("Global '$name' already exists")
                 }
 
                 val llvmGlobal = LLVMAddGlobal(module, type, name)!!
+
+                if (name == "") {
+                    LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMPrivateLinkage)
+                }
+
                 return Global(staticData, llvmGlobal)
             }
         }

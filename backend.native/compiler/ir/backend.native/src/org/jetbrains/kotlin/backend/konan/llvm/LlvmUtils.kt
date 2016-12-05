@@ -57,6 +57,8 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
 
     constructor(type: LLVMTypeRef?, vararg elements: ConstValue) : this(type, elements.toList())
 
+    constructor(vararg elements: ConstValue) : this(structType(elements.map { it.llvmType }), *elements)
+
     override val llvm = memScoped {
         val values = elements.map { it.llvm }.toTypedArray()
         val valuesNativeArrayPtr = allocArrayOf(*values)[0].ptr
@@ -128,8 +130,10 @@ internal val ContextUtils.kNullArrayHeaderPtr: LLVMValueRef
 
 internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType, 0)!!
 
-internal fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = memScoped {
-    LLVMStructType(allocArrayOf(*types)[0].ptr, types.size, 0)!!
+internal fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
+
+internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef = memScoped {
+    LLVMStructType(allocArrayOf(types)[0].ptr, types.size, 0)!!
 }
 
 internal fun ContextUtils.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {

@@ -76,6 +76,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun load(value: LLVMValueRef, varName: String): LLVMValueRef = LLVMBuildLoad(builder, value, varName)!!
     fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(builder, value, ptr)!!
 
+    fun isConst(value: LLVMValueRef): Boolean = (LLVMIsConstant(value) == 1)
+
     //-------------------------------------------------------------------------//
 
     fun invoke(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>,
@@ -123,6 +125,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     /* to class descriptor */
     fun classType(descriptor: ClassDescriptor): LLVMTypeRef = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
     fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr
+
+    /**
+     * Pointer to type info for given type, or `null` if the type doesn't have corresponding type info.
+     */
+    fun typeInfoValue(type: KotlinType): LLVMValueRef? = type.typeInfoPtr?.llvm
 
     fun param(fn: FunctionDescriptor, i: Int): LLVMValueRef {
         assert (i >= 0 && i < countParams(fn))

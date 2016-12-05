@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -694,12 +695,30 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateVararg(tmpVariableName: String, value: IrVararg): LLVMValueRef? {
-        val arrayCreationArgs = listOf(codegen.kTheArrayTypeInfo, kImmInt32One, Int32(value.elements.size).llvm)
+        val arguments = value.elements.map {
+            assert (it !is IrSpreadElement)
+            evaluateExpression(codegen.newVar(), it)!!
+        }
+
+        return genCreateArray(tmpVariableName, value.type, arguments)
+    }
+
+    private fun genCreateArray(tmpVariableName: String,
+                               arrayType: KotlinType, elements: List<LLVMValueRef>): LLVMValueRef {
+
+        if (elements.all { codegen.isConst(it) }) {
+            // Note: even if all elements are const, they aren't guaranteed to be statically initialized.
+            // E.g. an element may be a pointer to lazy-initialized object (aka singleton).
+            // However it is guaranteed that all elements are already initialized at this point.
+            return codegen.staticData.createKotlinArray(arrayType, elements)
+        }
+
+        val typeInfo = codegen.typeInfoValue(arrayType)!!
+
+        val arrayCreationArgs = listOf(typeInfo, kImmInt32One, Int32(elements.size).llvm)
         val array = currentCodeContext.genCall(context.allocArrayFunction, arrayCreationArgs, tmpVariableName)
-        value.elements.forEachIndexed { i, it ->
-            val elementValueRaw = evaluateExpression(codegen.newVar(), it)
-            currentCodeContext.genCall(context.setArrayFunction, listOf(array, Int32(i).llvm, elementValueRaw!!), "")
-            return@forEachIndexed
+        elements.forEachIndexed { i, it ->
+            currentCodeContext.genCall(context.setArrayFunction, listOf(array, Int32(i).llvm, it), "")
         }
         return array
     }
@@ -1367,10 +1386,53 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
+    /**
+     * Tries to evaluate given expression with given (already evaluated) arguments in compile time.
+     * Returns `null` on failure.
+     */
+    private fun compileTimeEvaluate(expression: IrMemberAccessExpression, args: List<LLVMValueRef>): LLVMValueRef? {
+        if (!args.all { codegen.isConst(it) }) {
+            return null
+        }
+
+        val function = expression.descriptor
+
+        if (function.fqNameSafe.asString() == "kotlin.collections.listOf" && function.valueParameters.size == 1) {
+            val varargExpression = expression.getValueArgument(0) as? IrVararg
+
+            if (varargExpression != null) {
+                // The function is kotlin.collections.listOf<T>(vararg args: T).
+                // TODO: refer functions more reliably.
+
+                val vararg = args.single()
+
+                if (varargExpression.elements.any { it is IrSpreadElement }) {
+                    return null // not supported yet, see `length` calculation below.
+                }
+                val length = varargExpression.elements.size
+                // TODO: store length in `vararg` itself when more abstract types will be used for values.
+
+                // `elementType` is type argument of function return type:
+                val elementType = function.returnType!!.arguments.single()
+
+                val array = constPointer(vararg)
+                // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createArrayList` expects `Array<E>`;
+                // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
+                // so let's ignore this mismatch currently for simplicity.
+
+                return context.staticData.createArrayList(elementType, array, length).llvm
+            }
+        }
+
+        return null
+    }
+
     private fun evaluateCall(tmpVariableName: String, value: IrMemberAccessExpression): LLVMValueRef {
         logger.log("evaluateCall               : $tmpVariableName = ${ir2string(value)}")
 
         val args = evaluateExplicitArgs(value)
+
+        compileTimeEvaluate(value, args)?.let { return it }
 
         when {
             value is IrDelegatingConstructorCall ->

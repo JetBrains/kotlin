@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
 /**
  * Provides utility methods to the implementer.
@@ -93,6 +95,12 @@ internal interface ContextUtils {
 
     val ClassDescriptor.typeInfoPtr: ConstPointer
         get() = constPointer(this.llvmTypeInfoPtr)
+
+    /**
+     * Pointer to type info for this type, or `null` if the type doesn't have corresponding type info.
+     */
+    val KotlinType.typeInfoPtr: ConstPointer?
+        get() = TypeUtils.getClassDescriptor(this)?.typeInfoPtr
 
     /**
      * Returns contents of this [GlobalHash].
