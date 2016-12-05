@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.isFlexible
-import java.util.*
 
 class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtQualifiedExpression>(RemoveRedundantCallsOfConversionMethodsIntention::class) {
     override val problemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
@@ -35,15 +37,7 @@ class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspecti
 
 class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtQualifiedExpression>(KtQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
 
-    private val targetClassMap = mapOf("toList()" to List::class.qualifiedName,
-                                       "toSet()" to Set::class.qualifiedName,
-                                       "toMap()" to Map::class.qualifiedName,
-                                       "toMutableList()" to "kotlin.collections.MutableList",
-                                       "toMutableSet()" to "kotlin.collections.MutableSet",
-                                       "toMutableMap()" to "kotlin.collections.MutableMap",
-                                       "toSortedSet()" to SortedSet::class.qualifiedName,
-                                       "toSortedMap()" to SortedMap::class.qualifiedName,
-                                       "toString()" to String::class.qualifiedName,
+    private val targetClassMap = mapOf("toString()" to String::class.qualifiedName,
                                        "toDouble()" to Double::class.qualifiedName,
                                        "toFloat()" to Float::class.qualifiedName,
                                        "toLong()" to Long::class.qualifiedName,
