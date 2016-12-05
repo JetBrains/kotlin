@@ -20,7 +20,7 @@ public class Ref {
     private Ref() {}
 
     public static final class ObjectRef<T> {
-        public volatile T element;
+        public T element;
 
         @Override
         public String toString() {
@@ -29,7 +29,7 @@ public class Ref {
     }
 
     public static final class ByteRef {
-        public volatile byte element;
+        public byte element;
 
         @Override
         public String toString() {
@@ -38,7 +38,7 @@ public class Ref {
     }
 
     public static final class ShortRef {
-        public volatile short element;
+        public short element;
 
         @Override
         public String toString() {
@@ -47,7 +47,7 @@ public class Ref {
     }
 
     public static final class IntRef {
-        public volatile int element;
+        public int element;
 
         @Override
         public String toString() {
@@ -56,7 +56,7 @@ public class Ref {
     }
 
     public static final class LongRef {
-        public volatile long element;
+        public long element;
 
         @Override
         public String toString() {
@@ -65,7 +65,7 @@ public class Ref {
     }
 
     public static final class FloatRef {
-        public volatile float element;
+        public float element;
 
         @Override
         public String toString() {
@@ -74,7 +74,7 @@ public class Ref {
     }
 
     public static final class DoubleRef {
-        public volatile double element;
+        public double element;
 
         @Override
         public String toString() {
@@ -83,7 +83,7 @@ public class Ref {
     }
 
     public static final class CharRef {
-        public volatile char element;
+        public char element;
 
         @Override
         public String toString() {
@@ -92,7 +92,7 @@ public class Ref {
     }
 
     public static final class BooleanRef {
-        public volatile boolean element;
+        public boolean element;
 
         @Override
         public String toString() {
