@@ -4,7 +4,7 @@ package test.text
 import kotlin.test.*
 import org.junit.Test
 
-class ParsePrimitivesJVMTest {
+class StringNumberConversionTest {
 
     @Test fun toBoolean() {
         assertEquals(true, "true".toBoolean())
