@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 
+@SuppressWarnings("PointlessBitwiseExpression")
 public final class JvmAnnotationNames {
     public static final FqName METADATA_FQ_NAME = new FqName("kotlin.Metadata");
     public static final String METADATA_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(METADATA_FQ_NAME).getInternalName() + ";";
@@ -32,7 +33,9 @@ public final class JvmAnnotationNames {
     public static final String METADATA_EXTRA_STRING_FIELD_NAME = "xs";
     public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = METADATA_EXTRA_STRING_FIELD_NAME;
     public static final String METADATA_EXTRA_INT_FIELD_NAME = "xi";
-    public static final String METADATA_MULTIFILE_CLASS_KIND_FIELD_NAME = METADATA_EXTRA_INT_FIELD_NAME;
+
+    public static final int METADATA_MULTIFILE_PARTS_INHERIT_FLAG = 1 << 0;
+    public static final int METADATA_PRE_RELEASE_FLAG = 1 << 1;
 
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 

@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -326,14 +324,14 @@ class MultifileClassCodegen(
         if (!state.classBuilderMode.generateMetadata) return
         if (files.any { it.isScript }) return
 
-        writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS) { av ->
+        val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
+
+        writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS, extraFlags) { av ->
             val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
             for (internalName in partInternalNamesSorted) {
                 arv.visit(null, internalName)
             }
             arv.visitEnd()
-            val multifileClassKind = if (shouldGeneratePartHierarchy) INHERITING else DELEGATING
-            av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_KIND_FIELD_NAME, multifileClassKind.id)
         }
     }
 

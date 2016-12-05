@@ -230,7 +230,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         final ProtoBuf.Function functionProto = serializer.functionProto(freeLambdaDescriptor).build();
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.SYNTHETIC_CLASS, new Function1<AnnotationVisitor, Unit>() {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, new Function1<AnnotationVisitor, Unit>() {
             @Override
             public Unit invoke(AnnotationVisitor av) {
                 writeAnnotationData(av, serializer, functionProto);
