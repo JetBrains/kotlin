@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
@@ -45,8 +43,8 @@ import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.GOTO
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.MOVE
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN
-import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_VOID
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_OBJECT
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_VOID
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_WIDE
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
@@ -181,13 +179,7 @@ private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunc
     val descriptor = containingFunction.resolveToDescriptor()
     if (!InlineUtil.isInline(descriptor)) return emptyList()
 
-    val inlineFunctionsCalls = DebuggerUtils.analyzeElementWithInline(
-            containingFunction.getResolutionFacade(),
-            containingFunction.analyzeFully(),
-            containingFunction,
-            false
-    ).filterIsInstance<KtNamedFunction>()
-
+    val inlineFunctionsCalls = DebuggerUtils.analyzeElementWithInline(containingFunction, false).filterIsInstance<KtNamedFunction>()
     return inlineFunctionsCalls
 }
 
