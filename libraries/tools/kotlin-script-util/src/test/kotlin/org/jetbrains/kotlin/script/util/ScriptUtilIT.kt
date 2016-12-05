@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.util.templates.ScriptTemplateWithBindings
-import org.jetbrains.kotlin.script.util.templates.StandardScriptTemplate
-import org.jetbrains.kotlin.script.util.templates.StandardScriptTemplateWithAnnotatedResolving
+import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
+import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
+import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
@@ -63,7 +63,7 @@ done
 
     @Test
     fun testArgsHelloWorld() {
-        val scriptClass = compileScript("args-hello-world.kts", StandardScriptTemplate::class)
+        val scriptClass = compileScript("args-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class)
         Assert.assertNotNull(scriptClass)
         val ctor = scriptClass?.getConstructor(Array<String>::class.java)
         Assert.assertNotNull(ctor)
@@ -76,7 +76,7 @@ done
 
     @Test
     fun testBndHelloWorld() {
-        val scriptClass = compileScript("bindings-hello-world.kts", ScriptTemplateWithBindings::class)
+        val scriptClass = compileScript("bindings-hello-world.kts", BindingsScriptTemplateWithLocalResolving::class)
         Assert.assertNotNull(scriptClass)
         val ctor = scriptClass?.getConstructor(Map::class.java)
         Assert.assertNotNull(ctor)
@@ -88,19 +88,12 @@ done
     }
 
     @Test
-    fun testResolveStdHelloWorld() {
-        try {
-            compileScript("args-junit-hello-world.kts", StandardScriptTemplate::class)
-            Assert.fail("Should throw exception")
-        }
-        catch (e: Exception) {
-            val expectedMsg = "Unable to resolve dependency"
-            Assert.assertTrue("Expecting message \"$expectedMsg...\"", e.message?.startsWith(expectedMsg) ?: false)
-        }
+    fun testResolveStdJUnitHelloWorld() {
+        Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
 
-        val scriptClass = compileScript("args-junit-hello-world.kts", StandardScriptTemplateWithAnnotatedResolving::class)
+        val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
         if (scriptClass == null) {
-            val resolver = AnnotationsBasedResolver()
+            val resolver = FilesAndMavenResolver()
             System.err.println(resolver.baseClassPath)
         }
         Assert.assertNotNull(scriptClass)
@@ -149,7 +142,8 @@ done
                     else {
                         // attempt to workaround some maven quirks
                         manifestClassPath(Thread.currentThread().contextClassLoader)?.let {
-                            addJvmClasspathRoots(it)
+                            val files = it.filter { it.name.startsWith("kotlin-") }
+                            addJvmClasspathRoots(files)
                         }
                     }
                 }

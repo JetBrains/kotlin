@@ -67,8 +67,7 @@ internal class KtAnnotationWrapper(val psi: KtAnnotationEntry, val targetClass: 
 
     internal class AnnProxyInvocationHandler(val targetAnnClass: KClass<out Annotation>, val annParams: Map<String, Any?>) : InvocationHandler {
         override fun invoke(proxy: Any?, method: Method?, params: Array<out Any>?): Any? = method?.let {
-            // TODO: the functionality with checking annParams size is here only to workaround missing access to constructors in annotations. Drop as soon as possible (see above)
-            annParams[it.name] ?: if (annParams.size == 1) annParams.values.firstOrNull() else null
+            method?.name?.let { annParams[it] }
         }
     }
 

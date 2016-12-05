@@ -19,16 +19,17 @@
 package org.jetbrains.kotlin.script.util.templates
 
 import org.jetbrains.kotlin.script.ScriptTemplateDefinition
-import org.jetbrains.kotlin.script.util.AnnotationsBasedResolver
+import org.jetbrains.kotlin.script.util.FilesAndMavenResolver
+import org.jetbrains.kotlin.script.util.LocalFilesResolver
 
-@ScriptTemplateDefinition(scriptFilePattern = ".*\\.kts")
-abstract class StandardScriptTemplate(val args: Array<String>)
+@ScriptTemplateDefinition(resolver = LocalFilesResolver::class, scriptFilePattern = ".*\\.kts")
+abstract class StandardArgsScriptTemplateWithLocalResolving(val args: Array<String>)
 
-@ScriptTemplateDefinition(resolver = AnnotationsBasedResolver::class, scriptFilePattern = ".*\\.kts")
-abstract class StandardScriptTemplateWithAnnotatedResolving(val args: Array<String>)
+@ScriptTemplateDefinition(resolver = FilesAndMavenResolver::class, scriptFilePattern = ".*\\.kts")
+abstract class StandardArgsScriptTemplateWithMavenResolving(val args: Array<String>)
 
-@ScriptTemplateDefinition(scriptFilePattern = ".*\\.kts")
-abstract class ScriptTemplateWithBindings(val bindings: Map<String, Any?>)
+@ScriptTemplateDefinition(resolver = LocalFilesResolver::class, scriptFilePattern = ".*\\.kts")
+abstract class BindingsScriptTemplateWithLocalResolving(val bindings: Map<String, Any?>)
 
-@ScriptTemplateDefinition(resolver = AnnotationsBasedResolver::class, scriptFilePattern = ".*\\.kts")
-abstract class ScriptTemplateWithBindingsAndAnnotatedResolving(val bindings: Map<String, Any?>)
+@ScriptTemplateDefinition(resolver = FilesAndMavenResolver::class, scriptFilePattern = ".*\\.kts")
+abstract class BindingsScriptTemplateWithMavenResolving(val bindings: Map<String, Any?>)

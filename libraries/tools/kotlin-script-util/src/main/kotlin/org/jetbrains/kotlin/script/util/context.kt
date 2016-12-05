@@ -52,19 +52,3 @@ private inline fun <R> ifFailed(default: R, block: () -> R) = try {
     default
 }
 
-private val defaultScriptContextClasspath: List<File> by lazy {
-    classpathFromClass(Thread.currentThread().contextClassLoader, KotlinAnnotatedScriptDependenciesResolver::class)
-    ?: classpathFromClasspathProperty()
-    ?: classpathFromClassloader(Thread.currentThread().contextClassLoader)
-    ?: emptyList()
-}
-
-// NOTE: context-based resolvers may behave unexpectedly with daemon-based REPLs.
-// since the context is calculated at the point of resolver creation
-// TODO: consider removing as confusing
-class ContextBasedResolver :
-        KotlinAnnotatedScriptDependenciesResolver(defaultScriptContextClasspath, arrayListOf())
-
-class ContextAndAnnotationsBasedResolver :
-        KotlinAnnotatedScriptDependenciesResolver(defaultScriptContextClasspath, arrayListOf(DirectResolver(), MavenResolver()))
-

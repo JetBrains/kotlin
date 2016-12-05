@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
+@file:DependsOn("org.funktionale:funktionale:0.9.6")
+
 package org.jetbrains.kotlin.script.util.resolvers
 
 import com.jcabi.aether.Aether
 import org.jetbrains.kotlin.script.util.DependsOn
+import org.jetbrains.kotlin.script.util.Repository
+import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.util.*
 import org.sonatype.aether.repository.RemoteRepository
 import org.sonatype.aether.resolution.DependencyResolutionException
 import org.sonatype.aether.util.artifact.DefaultArtifact
 import org.sonatype.aether.util.artifact.JavaScopes
+import java.net.MalformedURLException
+import java.net.URL
 
 val mavenCentral = RemoteRepository("maven-central", "default", "http://repo1.maven.org/maven2/")
 
-class MavenResolver(val reportError: ((String) -> Unit) = {}): Resolver {
+class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
 
     // TODO: make robust
     val localRepo = File(File(System.getProperty("user.home")!!, ".m2"), "repository")
@@ -36,23 +43,59 @@ class MavenResolver(val reportError: ((String) -> Unit) = {}): Resolver {
 
     private fun currentRepos() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos
 
+    private fun String?.isValidParam() = if (this != null && isNotBlank()) true else false
+
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? {
-        if (dependsOn.value.count { it == ':' } == 2) {
-            try {
-                val deps = Aether(currentRepos(), localRepo).resolve(
-                        DefaultArtifact(dependsOn.value),
-                        JavaScopes.RUNTIME)
-                if (deps != null)
-                    return deps.map { it.file }
-                else {
-                    reportError("resolving [${dependsOn.value}] failed: no results")
-                }
+
+        fun error(msg: String) {
+            reportError?.invoke(msg) ?: throw RuntimeException(msg)
+        }
+
+        fun String?.orNullIfBlank(): String? = this?.check(String::isNotBlank)
+
+        val artifactId: DefaultArtifact = when {
+            dependsOn.groupId.isValidParam() || dependsOn.artifactId.isValidParam() -> {
+                val s1 = dependsOn.groupId
+                val s2 = dependsOn.artifactId
+                DefaultArtifact(dependsOn.groupId.orNullIfBlank(), dependsOn.artifactId.orNullIfBlank(), null, dependsOn.version.orNullIfBlank())
             }
-            catch (e: DependencyResolutionException) {
-                reportError("resolving [${dependsOn.value}] failed: $e")
+            dependsOn.value.isValidParam() && dependsOn.value.count { it == ':' } == 2 -> {
+                val s = dependsOn.value
+                DefaultArtifact(s)
             }
-            return listOf()
+            else -> {
+                error("Unknown set of arguments to maven resolver: ${dependsOn.value}")
+                return null
+            }
+        }
+
+        try {
+            val deps = Aether(currentRepos(), localRepo).resolve( artifactId, JavaScopes.RUNTIME)
+            if (deps != null)
+                return deps.map { it.file }
+            else {
+                error("resolving ${artifactId.artifactId} failed: no results")
+            }
+        }
+        catch (e: DependencyResolutionException) {
+            reportError?.invoke("resolving ${artifactId.artifactId} failed: $e") ?: rethrow(e)
         }
         return null
+    }
+
+    fun tryAddRepo(annotation: Repository): Boolean {
+        val urlStr = if (annotation.url.isValidParam()) annotation.url else annotation.value ?: return false
+        try {
+            URL(urlStr)
+        } catch (_: MalformedURLException) {
+            return false
+        }
+        repos.add(
+                RemoteRepository(
+                        if (annotation.id.isValidParam()) annotation.id else "cantral",
+                        "default",
+                        urlStr
+                ))
+        return true
     }
 }
