@@ -34,6 +34,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     DslMarkersSupport(KOTLIN_1_1),
     UnderscoresInNumericLiterals(KOTLIN_1_1),
     DivisionByZeroInConstantExpressions(KOTLIN_1_1),
+    InlineConstVals(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.internal
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,6 +45,9 @@ abstract class AbstractBytecodeToolWindowTest: KotlinLightCodeInsightFixtureTest
         if (InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") == false) {
             configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true)
         }
+
+        configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, file.languageVersionSettings)
+
         val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, configuration)
         assert(bytecodes.contains("// ================")) {
             "The header \"// ================\" is missing.\n This means that there is an exception failed during compilation:\n$bytecodes"

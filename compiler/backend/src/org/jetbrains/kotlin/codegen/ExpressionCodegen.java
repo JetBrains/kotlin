@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -2603,9 +2607,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean skipPropertyAccessors;
 
         PropertyDescriptor originalPropertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
+        LanguageVersionSettings languageVersionSettings = state.getConfiguration().get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS);
+        if (languageVersionSettings == null) {
+            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT;
+        }
+
         if (fieldAccessorKind != FieldAccessorKind.NORMAL) {
             int flags = AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty);
-            skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || skipAccessorsForPrivateFieldInOuterClass;
+            boolean isInlinedConst = propertyDescriptor.isConst() && languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals);
+            skipPropertyAccessors = isInlinedConst || (flags & ACC_PRIVATE) == 0 || skipAccessorsForPrivateFieldInOuterClass;
+
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(
@@ -2624,7 +2635,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (!skipPropertyAccessors) {
-            if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context)) {
+            if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context, languageVersionSettings)) {
                 propertyDescriptor = context.getAccessorForSuperCallIfNeeded(propertyDescriptor, superCallTarget);
 
                 propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
@@ -2638,7 +2649,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (propertyDescriptor.isVar()) {
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                 if (setter != null &&
-                    !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context) &&
+                    !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context, languageVersionSettings) &&
                     !isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
                     callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
                 }

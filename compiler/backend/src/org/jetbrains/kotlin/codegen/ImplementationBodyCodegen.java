@@ -37,6 +37,9 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -646,7 +649,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         private Type genPropertyOnStack(InstructionAdapter iv, MethodContext context, @NotNull PropertyDescriptor propertyDescriptor, int index) {
             iv.load(index, classAsmType);
-            if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true, /* isDelegated = */ false, context)) {
+            LanguageVersionSettings settings = state.getConfiguration().get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS);
+            if (settings == null) {
+                settings = LanguageVersionSettingsImpl.DEFAULT;
+            }
+            if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true,
+                                               /* isDelegated = */ false, context, settings)) {
                 Type type = typeMapper.mapType(propertyDescriptor.getType());
                 String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);
                 iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());

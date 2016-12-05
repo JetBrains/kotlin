@@ -138,6 +138,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inlineProtectedJavaConstantFromOtherPackage.kt")
+    public void testInlineProtectedJavaConstantFromOtherPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineProtectedJavaConstantFromOtherPackage.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("intConstantNotNull.kt")
     public void testIntConstantNotNull() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/intConstantNotNull.kt");
@@ -267,6 +273,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("noFlagAnnotations.kt")
     public void testNoFlagAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noFlagAnnotations.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noInlineJavaProtectedConstants.kt")
+    public void testNoInlineJavaProtectedConstants() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noInlineJavaProtectedConstants.kt");
         doTest(fileName);
     }
 
@@ -712,8 +724,20 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConstProperty extends AbstractBytecodeTextTest {
+        @TestMetadata("accessorsForPrivateConstants.kt")
+        public void testAccessorsForPrivateConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constProperty/accessorsForPrivateConstants.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInConstProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("noAccessorsForPrivateConstants.kt")
+        public void testNoAccessorsForPrivateConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constProperty/noAccessorsForPrivateConstants.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("noInline.kt")
