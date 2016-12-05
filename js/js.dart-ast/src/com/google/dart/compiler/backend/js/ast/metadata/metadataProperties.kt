@@ -109,6 +109,8 @@ var JsFunction.continuationInterfaceRef: JsExpression? by MetadataProperty(defau
 
 var JsName.imported by MetadataProperty(default = false)
 
+var JsFunction.interceptResumeRef: JsExpression? by MetadataProperty(default = null)
+
 enum class TypeCheck {
     TYPEOF,
     INSTANCEOF,

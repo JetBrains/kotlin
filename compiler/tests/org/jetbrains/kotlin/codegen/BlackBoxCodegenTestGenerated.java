@@ -4595,6 +4595,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("interceptResume.kt")
+        public void testInterceptResume() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/interceptResume.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("iterateOverArray.kt")
         public void testIterateOverArray() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/iterateOverArray.kt");

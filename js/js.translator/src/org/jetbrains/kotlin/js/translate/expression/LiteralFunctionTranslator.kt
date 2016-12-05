@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
+import org.jetbrains.kotlin.backend.common.findInterceptResume
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -96,6 +97,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             null
         }
 
+        val interceptResumeRef = controllerType?.let { context().generateInterceptResumeRef(it) }
+
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
             lambdaCreator.name = invokingContext.getInnerNameForDescriptor(descriptor)
@@ -108,6 +111,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             lambdaCreator.name.staticRef = lambdaCreator
             lambdaCreator.continuationInterfaceRef = invokingContext.getContinuationInterfaceReference()
             lambdaCreator.suspendObjectRef = suspendObjectRef
+            lambdaCreator.interceptResumeRef = interceptResumeRef
             return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
                                                         invokingContext)
         }
@@ -120,6 +124,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         lambda.name.staticRef = lambda
         lambda.continuationInterfaceRef = invokingContext.getContinuationInterfaceReference()
         lambda.suspendObjectRef = suspendObjectRef
+        lambda.interceptResumeRef = interceptResumeRef
         return getReferenceToLambda(invokingContext, descriptor, lambda.name)
     }
 
@@ -198,6 +203,17 @@ private fun getReferenceToLambda(context: TranslationContext, descriptor: Callab
     }
     else {
         JsAstUtils.pureFqn(name, null)
+    }
+}
+
+private fun TranslationContext.generateInterceptResumeRef(classDescriptor: ClassDescriptor): JsExpression? {
+    val interceptResumeFunction = classDescriptor.defaultType.findInterceptResume()
+    return if (interceptResumeFunction != null) {
+        val controllerRef = JsNameRef("\$\$controller\$\$", JsLiteral.THIS).apply { coroutineController = true }
+        JsNameRef(getNameForDescriptor(interceptResumeFunction), controllerRef)
+    }
+    else {
+        null
     }
 }
 

@@ -198,7 +198,7 @@ private fun CoroutineBlock.collectFinallyPaths(): List<List<CoroutineBlock>> {
     return finallyPaths
 }
 
-fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformationContext, localVariables: Set<JsName>) {
+fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
     val visitor = object : JsVisitorWithContextImpl() {
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             when {
@@ -213,11 +213,19 @@ fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformati
                         sideEffects = SideEffectKind.DEPENDS_ON_STATE
                     })
                 }
+            }
+        }
+    }
+    visitor.accept(this)
+}
 
-                x.qualifier == null && x.name in localVariables -> {
-                    val fieldName = scope.getFieldName(x.name!!)
-                    ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS))
-                }
+fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformationContext, localVariables: Set<JsName>) {
+    replaceSpecialReferences(context)
+    val visitor = object : JsVisitorWithContextImpl() {
+        override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
+            if (x.qualifier == null && x.name in localVariables) {
+                val fieldName = scope.getFieldName(x.name!!)
+                ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS))
             }
         }
 

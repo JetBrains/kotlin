@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 val SUSPEND_WITH_CURRENT_CONTINUATION_NAME = Name.identifier("suspendWithCurrentContinuation")
 
@@ -30,4 +33,7 @@ fun FunctionDescriptor.getBuiltInSuspendWithCurrentContinuation() =
                     ?.getContributedFunctions(SUSPEND_WITH_CURRENT_CONTINUATION_NAME, NoLookupLocation.FROM_BACKEND)
                     ?.singleOrNull()
 
+fun KotlinType.findInterceptResume() = findOperatorInController(this, OperatorNameConventions.COROUTINE_INTERCEPT_RESUME)
 
+fun findOperatorInController(controllerType: KotlinType, name: Name): SimpleFunctionDescriptor? =
+        controllerType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).singleOrNull { it.isOperator }

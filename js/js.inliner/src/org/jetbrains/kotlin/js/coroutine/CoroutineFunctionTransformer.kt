@@ -61,7 +61,7 @@ class CoroutineFunctionTransformer(
         val additionalStatements = mutableListOf<JsStatement>()
         val resumeName = generateDoResume(coroutineBlocks, context, additionalStatements, throwName)
         generateContinuationConstructor(context, additionalStatements, bodyTransformer.hasFinallyBlocks, globalCatchBlockIndex)
-        generateContinuationMethods(resumeName, additionalStatements)
+        generateContinuationMethods(context, resumeName, additionalStatements)
 
         generateCoroutineInstantiation()
 
@@ -116,12 +116,18 @@ class CoroutineFunctionTransformer(
         return JsAstUtils.assignment(JsNameRef(Namer.METADATA, constructorName.makeRef()), metadataObject).makeStmt()
     }
 
-    private fun generateContinuationMethods(doResumeName: JsName, statements: MutableList<JsStatement>) {
-        generateResumeFunction(doResumeName, statements, "resume", "data", listOf())
-        generateResumeFunction(doResumeName, statements, "resumeWithException", "exception", listOf(Namer.getUndefinedExpression()))
+    private fun generateContinuationMethods(
+            context: CoroutineTransformationContext,
+            doResumeName: JsName,
+            statements: MutableList<JsStatement>
+    ) {
+        generateResumeFunction(context, doResumeName, statements, "resume", "data", listOf())
+        generateResumeFunction(context, doResumeName, statements, "resumeWithException", "exception",
+                               listOf(Namer.getUndefinedExpression()))
     }
 
     private fun generateResumeFunction(
+            context: CoroutineTransformationContext,
             doResumeName: JsName,
             statements: MutableList<JsStatement>,
             name: String,
@@ -137,9 +143,19 @@ class CoroutineFunctionTransformer(
         resumeFunction.parameters += JsParameter(resumeParameter)
 
         resumeFunction.body.statements.apply {
+            val interceptResumeRef = function.interceptResumeRef
             val invocation = JsInvocation(JsNameRef(doResumeName, JsLiteral.THIS), additionalArgs + resumeParameter.makeRef())
-            this += JsReturn(invocation)
+            if (interceptResumeRef == null) {
+                this += JsReturn(invocation)
+            }
+            else {
+                val interceptLambda = JsFunction(resumeFunction.scope, JsBlock(JsReturn(invocation)), "")
+                val interceptParameter = JsInvocation(JsNameRef("bind", interceptLambda), JsLiteral.THIS)
+                val interceptInvocation = JsInvocation(interceptResumeRef.deepCopy(), interceptParameter)
+                this += JsReturn(interceptInvocation)
+            }
         }
+        resumeFunction.body.replaceSpecialReferences(context)
 
         statements.apply {
             assignToPrototype(resumeName, resumeFunction)
