@@ -615,6 +615,12 @@ task break_continue(type: RunKonanTest) {
     source = "codegen/controlflow/break.kt"
 }
 
+task break1(type: RunKonanTest) {
+    disabled = true
+    goldValue = "Body\nDone\n"
+    source = "codegen/controlflow/break1.kt"
+}
+
 task range0(type: RunKonanTest) {
     goldValue = "123\nabcd\n"
     source = "runtime/collections/range0.kt"
