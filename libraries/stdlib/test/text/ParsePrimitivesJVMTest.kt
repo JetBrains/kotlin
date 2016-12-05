@@ -155,6 +155,40 @@ class ParsePrimitivesJVMTest {
             assertFailsOrNull("007 not a number")
         }
     }
+
+    @Test fun byteToStringWithRadix() {
+        assertEquals("7a", 0x7a.toByte().toString(16))
+        assertEquals("-80", Byte.MIN_VALUE.toString(radix = 16))
+        assertEquals("3v", Byte.MAX_VALUE.toString(radix = 32))
+        assertEquals("-40", Byte.MIN_VALUE.toString(radix = 32))
+        // TODO: IllegalArgumentException on incorrect radix
+    }
+
+    @Test fun shortToStringWithRadix() {
+        assertEquals("7FFF", 0x7FFF.toShort().toString(radix = 16).toUpperCase())
+        assertEquals("-8000", (-0x8000).toShort().toString(radix = 16))
+        assertEquals("-sfs", (-29180).toShort().toString(radix = 32))
+
+        // TODO: IllegalArgumentException on incorrect radix
+    }
+
+    @Test fun intToStringWithRadix() {
+        assertEquals("-ff", (-255).toString(radix = 16))
+        assertEquals("1100110", 102.toString(radix = 2))
+        assertEquals("kona", 411787.toString(radix = 27))
+        // TODO: IllegalArgumentException on incorrect radix
+
+    }
+
+    @Test fun longToStringWithRadix() {
+        assertEquals("7f11223344556677", 0x7F11223344556677.toString(radix = 16))
+        assertEquals("hazelnut", 1356099454469L.toString(radix = 36))
+        assertEquals("-8000000000000000", Long.MIN_VALUE.toString(radix = 16))
+
+        // TODO: IllegalArgumentException on incorrect radix
+//        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37.toString(radix = 37) }
+//        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toString(radix = 1) }
+    }
 }
 
 
@@ -181,7 +215,7 @@ private class ConversionContext<T: Any>(val convertOrFail: (String) -> T,
 
     fun assertFailsOrNull(input: String) {
         assertFailsWith<NumberFormatException>("Expected to fail on input \"$input\"") { convertOrFail(input) }
-        assertNull (convertOrNull(input), message = "On input \"$input\"")
+        assertNull(convertOrNull(input), message = "On input \"$input\"")
     }
 }
 
@@ -196,7 +230,7 @@ private class ConversionWithRadixContext<T: Any>(val convertOrFail: String.(Int)
         assertFailsWith<NumberFormatException>("Expected to fail on input \"$input\" with radix $radix",
                                                { input.convertOrFail(radix) })
 
-        assertNull (input.convertOrNull(radix), message = "On input \"$input\" with radix $radix")
+        assertNull(input.convertOrNull(radix), message = "On input \"$input\" with radix $radix")
     }
 }
 

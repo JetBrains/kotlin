@@ -5,6 +5,34 @@
 
 package kotlin.text
 
+/**
+ * Returns a string representation of this [Byte] value in the specified [radix].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
+
+/**
+ * Returns a string representation of this [Short] value in the specified [radix].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun Short.toString(radix: Int): String = this.toInt().toString(radix)
+
+/**
+ * Returns a string representation of this [Int] value in the specified [radix].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+// TODO: use checkRadix(radix) when PublishedApi is available
+public inline fun Int.toString(radix: Int): String = java.lang.Integer.toString(this, radix)
+
+/**
+ * Returns a string representation of this [Long] value in the specified [radix].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun Long.toString(radix: Int): String = java.lang.Long.toString(this, radix)
 
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
@@ -25,6 +53,7 @@ public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
+// TODO: use checkRadix(radix) when PublishedApi is available
 public inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseByte(this, radix)
 
 
@@ -295,8 +324,11 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
 }
 
 internal fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
-internal fun checkRadix(radix: Int) {
+
+// TODO: @PublishedApi
+internal fun checkRadix(radix: Int): Int {
     if(radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
     }
+    return radix
 }
