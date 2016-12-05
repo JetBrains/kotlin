@@ -1251,17 +1251,3 @@ public final class kotlin/reflect/KVisibility : java/lang/Enum {
 	public static fun values ()[Lkotlin/reflect/KVisibility;
 }
 
-public abstract interface annotation class org/jetbrains/annotations/Mutable : java/lang/annotation/Annotation {
-}
-
-public abstract interface annotation class org/jetbrains/annotations/NotNull : java/lang/annotation/Annotation {
-	public abstract fun value ()Ljava/lang/String;
-}
-
-public abstract interface annotation class org/jetbrains/annotations/Nullable : java/lang/annotation/Annotation {
-	public abstract fun value ()Ljava/lang/String;
-}
-
-public abstract interface annotation class org/jetbrains/annotations/ReadOnly : java/lang/annotation/Annotation {
-}
-

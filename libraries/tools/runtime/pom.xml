@@ -15,6 +15,14 @@
     <artifactId>kotlin-runtime</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <sourceDirectory>target/copied-sources</sourceDirectory>
 
@@ -42,7 +50,9 @@
                                 <delete dir="${basedir}/target/copied-sources" failonerror="false"/>
                                 <copy todir="${basedir}/target/copied-sources">
                                     <fileset dir="${basedir}/../../../core/builtins/src"/>
-                                    <fileset dir="${basedir}/../../../core/runtime.jvm/src"/>
+                                    <fileset dir="${basedir}/../../../core/runtime.jvm/src">
+                                        <exclude name="org/jetbrains/annotations/**"/>
+                                    </fileset>
                                 </copy>
                             </target>
                         </configuration>
