@@ -58,28 +58,35 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
 
         val expectedType: KotlinType
         val expressionType: KotlinType?
-        if (diagnostic.factory === Errors.TYPE_MISMATCH) {
-            val diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic)
-            expectedType = diagnosticWithParameters.a
-            expressionType = diagnosticWithParameters.b
-        }
-        else if (diagnostic.factory === Errors.NULL_FOR_NONNULL_TYPE) {
-            val diagnosticWithParameters = Errors.NULL_FOR_NONNULL_TYPE.cast(diagnostic)
-            expectedType = diagnosticWithParameters.a
-            expressionType = expectedType.makeNullable()
-        }
-        else if (diagnostic.factory === Errors.CONSTANT_EXPECTED_TYPE_MISMATCH) {
-            val diagnosticWithParameters = Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic)
-            expectedType = diagnosticWithParameters.b
-            expressionType = context.getType(diagnosticElement)
-            if (expressionType == null) {
-                LOG.error("No type inferred: " + diagnosticElement.text)
+        when (diagnostic.factory) {
+            Errors.TYPE_MISMATCH -> {
+                val diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic)
+                expectedType = diagnosticWithParameters.a
+                expressionType = diagnosticWithParameters.b
+            }
+            Errors.NULL_FOR_NONNULL_TYPE -> {
+                val diagnosticWithParameters = Errors.NULL_FOR_NONNULL_TYPE.cast(diagnostic)
+                expectedType = diagnosticWithParameters.a
+                expressionType = expectedType.makeNullable()
+            }
+            Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH -> {
+                val diagnosticWithParameters = Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.cast(diagnostic)
+                expectedType = diagnosticWithParameters.a
+                expressionType = diagnosticWithParameters.b
+            }
+            Errors.CONSTANT_EXPECTED_TYPE_MISMATCH -> {
+                val diagnosticWithParameters = Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic)
+                expectedType = diagnosticWithParameters.b
+                expressionType = context.getType(diagnosticElement)
+                if (expressionType == null) {
+                    LOG.error("No type inferred: " + diagnosticElement.text)
+                    return emptyList()
+                }
+            }
+            else -> {
+                LOG.error("Unexpected diagnostic: " + DefaultErrorMessages.render(diagnostic))
                 return emptyList()
             }
-        }
-        else {
-            LOG.error("Unexpected diagnostic: " + DefaultErrorMessages.render(diagnostic))
-            return emptyList()
         }
 
         if (expressionType.isPrimitiveNumberType() && expectedType.isPrimitiveNumberType()) {
