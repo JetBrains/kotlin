@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -83,6 +84,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final JvmRuntimeTypes runtimeTypes;
     private final JvmFileClassesProvider fileClassesProvider;
     private final TypeMappingConfiguration<Type> typeMappingConfiguration;
+    private final boolean shouldInlineConstVals;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
@@ -91,6 +93,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.runtimeTypes = state.getJvmRuntimeTypes();
         this.fileClassesProvider = state.getFileClassesProvider();
         this.typeMappingConfiguration = state.getTypeMapper().getTypeMappingConfiguration();
+        this.shouldInlineConstVals = state.getShouldInlineConstVals();
     }
 
     @NotNull
@@ -645,7 +648,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         WhenByEnumsMapping mapping = new WhenByEnumsMapping(classDescriptor, currentClassName, fieldNumber);
 
-        for (ConstantValue<?> constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext)) {
+        for (ConstantValue<?> constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext, shouldInlineConstVals)) {
             if (constant instanceof NullValue) continue;
 
             assert constant instanceof EnumValue : "expression in when should be EnumValue";
@@ -662,6 +665,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                SwitchCodegenUtil.checkAllItemsAreConstantsSatisfying(
                        expression,
                        bindingContext,
+                       shouldInlineConstVals,
                        new Function1<ConstantValue<?>, Boolean>() {
                            @Override
                            public Boolean invoke(@NotNull ConstantValue<?> constant) {

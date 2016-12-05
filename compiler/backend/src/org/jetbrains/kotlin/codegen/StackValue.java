@@ -30,10 +30,11 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -1199,7 +1200,7 @@ public abstract class StackValue {
             if (getter == null) {
                 assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
                 assert backingFieldOwner != null : "Property should have either a getter or a backingFieldOwner: " + descriptor;
-                if (inlineJavaConstantIfNeeded(type, v)) return;
+                if (inlineConstantIfNeeded(type, v)) return;
 
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD,
                                  backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
@@ -1227,15 +1228,24 @@ public abstract class StackValue {
             }
         }
 
-        private boolean inlineJavaConstantIfNeeded(@NotNull Type type, @NotNull InstructionAdapter v) {
-            if (!JvmCodegenUtil.isInlinedJavaConstProperty(descriptor)) return false;
+        private boolean inlineConstantIfNeeded(@NotNull Type type, @NotNull InstructionAdapter v) {
+            if (JvmCodegenUtil.isInlinedJavaConstProperty(descriptor)) {
+                return inlineConstant(type, v);
+            }
 
+            if (descriptor.isConst() && codegen.getState().getShouldInlineConstVals()) {
+                return inlineConstant(type, v);
+            }
+
+            return false;
+        }
+
+        private boolean inlineConstant(@NotNull Type type, @NotNull InstructionAdapter v) {
             assert AsmUtil.isPrimitive(this.type) || AsmTypes.JAVA_STRING_TYPE.equals(this.type) :
-                    "Java const property should have primitive or string type: " + descriptor;
-            assert isStaticPut : "Java const property should be static" + descriptor;
+                    "Const property should have primitive or string type: " + descriptor;
+            assert isStaticPut : "Const property should be static" + descriptor;
 
-            JavaPropertyDescriptor javaPropertyDescriptor = (JavaPropertyDescriptor) descriptor;
-            ConstantValue<?> constantValue = javaPropertyDescriptor.getCompileTimeInitializer();
+            ConstantValue<?> constantValue = descriptor.getCompileTimeInitializer();
             if (constantValue == null) return false;
 
             Object value = constantValue.getValue();

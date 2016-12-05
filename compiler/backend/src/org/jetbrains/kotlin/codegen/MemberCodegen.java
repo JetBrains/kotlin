@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -461,7 +462,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         KtExpression initializer = property.getInitializer();
 
         ConstantValue<?> initializerValue =
-                initializer != null ? ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext) : null;
+                initializer != null ? ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext, state.getShouldInlineConstVals()) : null;
         // we must write constant values for fields in light classes,
         // because Java's completion for annotation arguments uses this information
         if (initializerValue == null) return state.getClassBuilderMode().generateBodies;

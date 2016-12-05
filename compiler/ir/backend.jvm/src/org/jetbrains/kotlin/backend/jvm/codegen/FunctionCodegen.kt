@@ -89,7 +89,8 @@ class FunctionCodegen(val irFunction: IrFunction, val classCodegen: ClassCodegen
             val source = directMember.source
             (source.getPsi() as? KtParameter)?.defaultValue?.apply {
                 val defaultValue = this
-                val constant = org.jetbrains.kotlin.codegen.ExpressionCodegen.getCompileTimeConstant(defaultValue, state.bindingContext, true)
+                val constant = org.jetbrains.kotlin.codegen.ExpressionCodegen.getCompileTimeConstant(
+                        defaultValue, state.bindingContext, true, state.shouldInlineConstVals)
                 assert(!state.classBuilderMode.generateBodies || constant != null) { "Default value for annotation parameter should be compile time value: " + defaultValue.getText() }
                 if (constant != null) {
                     val annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(methodVisitor, classCodegen, state.typeMapper)

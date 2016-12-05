@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.when;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.FrameMap;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -98,7 +99,7 @@ abstract public class SwitchCodegen {
         for (KtWhenEntry entry : expression.getEntries()) {
             Label entryLabel = new Label();
 
-            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
+            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext, codegen.getState().getShouldInlineConstVals())) {
                 if (constant instanceof NullValue) continue;
                 processConstant(constant, entryLabel);
             }
@@ -156,7 +157,7 @@ abstract public class SwitchCodegen {
     private int findNullEntryIndex(@NotNull KtWhenExpression expression) {
         int entryIndex = 0;
         for (KtWhenEntry entry : expression.getEntries()) {
-            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
+            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext, codegen.getState().getShouldInlineConstVals())) {
                 if (constant instanceof NullValue) {
                     return entryIndex;
                 }

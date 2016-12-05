@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -168,6 +165,11 @@ class GenerationState @JvmOverloads constructor(
     val classFileVersion: Int = if (isJvm8Target) Opcodes.V1_8 else Opcodes.V1_6
 
     val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
+
+    val shouldInlineConstVals = run {
+        val settings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS) ?: LanguageVersionSettingsImpl.DEFAULT
+        settings.supportsFeature(LanguageFeature.InlineConstVals)
+    }
 
     init {
         this.interceptedBuilderFactory = builderFactory

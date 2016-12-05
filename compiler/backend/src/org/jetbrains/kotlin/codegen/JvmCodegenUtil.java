@@ -185,9 +185,9 @@ public class JvmCodegenUtil {
             boolean forGetter,
             boolean isDelegated,
             @NotNull MethodContext contextBeforeInline,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            boolean shouldInlineConstVals
     ) {
-        if (languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals) && property.isConst()) return true;
+        if (shouldInlineConstVals && property.isConst()) return true;
 
         if (KotlinTypeMapper.isAccessor(property)) return false;
 

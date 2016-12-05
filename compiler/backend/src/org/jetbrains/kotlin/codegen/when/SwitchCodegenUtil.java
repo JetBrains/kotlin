@@ -36,6 +36,7 @@ public class SwitchCodegenUtil {
     public static boolean checkAllItemsAreConstantsSatisfying(
             @NotNull KtWhenExpression expression,
             @NotNull BindingContext bindingContext,
+            boolean shouldInlineConstVals,
             Function1<ConstantValue<?>, Boolean> predicate
     ) {
         for (KtWhenEntry entry : expression.getEntries()) {
@@ -49,7 +50,7 @@ public class SwitchCodegenUtil {
 
                 if (patternExpression == null) return false;
 
-                ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext);
+                ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext, shouldInlineConstVals);
                 if (constant == null || !predicate.invoke(constant)) {
                     return false;
                 }
@@ -62,12 +63,13 @@ public class SwitchCodegenUtil {
     @NotNull
     public static Iterable<ConstantValue<?>> getAllConstants(
             @NotNull KtWhenExpression expression,
-            @NotNull BindingContext bindingContext
+            @NotNull BindingContext bindingContext,
+            boolean shouldInlineConstVals
     ) {
         List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
 
         for (KtWhenEntry entry : expression.getEntries()) {
-            addConstantsFromEntry(result, entry, bindingContext);
+            addConstantsFromEntry(result, entry, bindingContext, shouldInlineConstVals);
         }
 
         return result;
@@ -76,7 +78,8 @@ public class SwitchCodegenUtil {
     private static void addConstantsFromEntry(
             @NotNull List<ConstantValue<?>> result,
             @NotNull KtWhenEntry entry,
-            @NotNull BindingContext bindingContext
+            @NotNull BindingContext bindingContext,
+            boolean shouldInlineConstVals
     ) {
         for (KtWhenCondition condition : entry.getConditions()) {
             if (!(condition instanceof KtWhenConditionWithExpression)) continue;
@@ -84,17 +87,18 @@ public class SwitchCodegenUtil {
             KtExpression patternExpression = ((KtWhenConditionWithExpression) condition).getExpression();
 
             assert patternExpression != null : "expression in when should not be null";
-            result.add(ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext));
+            result.add(ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext, shouldInlineConstVals));
         }
     }
 
     @NotNull
     public static Iterable<ConstantValue<?>> getConstantsFromEntry(
             @NotNull KtWhenEntry entry,
-            @NotNull BindingContext bindingContext
+            @NotNull BindingContext bindingContext,
+            boolean shouldInlineConstVals
     ) {
         List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
-        addConstantsFromEntry(result, entry, bindingContext);
+        addConstantsFromEntry(result, entry, bindingContext, shouldInlineConstVals);
         return result;
     }
 
@@ -106,7 +110,8 @@ public class SwitchCodegenUtil {
             @NotNull ExpressionCodegen codegen
     ) {
         BindingContext bindingContext = codegen.getBindingContext();
-        if (!isThereConstantEntriesButNulls(expression, bindingContext)) {
+        boolean shouldInlineConstVals = codegen.getState().getShouldInlineConstVals();
+        if (!isThereConstantEntriesButNulls(expression, bindingContext, shouldInlineConstVals)) {
             return null;
         }
 
@@ -118,11 +123,11 @@ public class SwitchCodegenUtil {
             return new EnumSwitchCodegen(expression, isStatement, isExhaustive, codegen, mapping);
         }
 
-        if (isIntegralConstantsSwitch(expression, subjectType, bindingContext)) {
+        if (isIntegralConstantsSwitch(expression, subjectType, bindingContext, shouldInlineConstVals)) {
             return new IntegralConstantsSwitchCodegen(expression, isStatement, isExhaustive, codegen);
         }
 
-        if (isStringConstantsSwitch(expression, subjectType, bindingContext)) {
+        if (isStringConstantsSwitch(expression, subjectType, bindingContext, shouldInlineConstVals)) {
             return new StringSwitchCodegen(expression, isStatement, isExhaustive, codegen);
         }
 
@@ -131,9 +136,10 @@ public class SwitchCodegenUtil {
 
     private static boolean isThereConstantEntriesButNulls(
             @NotNull KtWhenExpression expression,
-            @NotNull BindingContext bindingContext
+            @NotNull BindingContext bindingContext,
+            boolean shouldInlineConstVals
     ) {
-        for (ConstantValue<?> constant : getAllConstants(expression, bindingContext)) {
+        for (ConstantValue<?> constant : getAllConstants(expression, bindingContext, shouldInlineConstVals)) {
             if (constant != null && !(constant instanceof NullValue)) return true;
         }
 
@@ -143,7 +149,8 @@ public class SwitchCodegenUtil {
     private static boolean isIntegralConstantsSwitch(
             @NotNull KtWhenExpression expression,
             @NotNull Type subjectType,
-            @NotNull BindingContext bindingContext
+            @NotNull BindingContext bindingContext,
+            boolean shouldInlineConstVals
     ) {
         int typeSort = subjectType.getSort();
 
@@ -151,7 +158,7 @@ public class SwitchCodegenUtil {
             return false;
         }
 
-        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<ConstantValue<?>, Boolean>() {
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals, new Function1<ConstantValue<?>, Boolean>() {
             @Override
             public Boolean invoke(
                     @NotNull ConstantValue<?> constant
@@ -164,14 +171,15 @@ public class SwitchCodegenUtil {
     private static boolean isStringConstantsSwitch(
             @NotNull KtWhenExpression expression,
             @NotNull Type subjectType,
-            @NotNull BindingContext bindingContext
+            @NotNull BindingContext bindingContext,
+            boolean shouldInlineConstVals
     ) {
 
         if (!subjectType.getClassName().equals(String.class.getName())) {
             return false;
         }
 
-        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<ConstantValue<?>, Boolean>() {
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, shouldInlineConstVals, new Function1<ConstantValue<?>, Boolean>() {
             @Override
             public Boolean invoke(
                     @NotNull ConstantValue<?> constant

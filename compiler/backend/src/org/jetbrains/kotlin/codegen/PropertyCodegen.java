@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
@@ -228,7 +229,8 @@ public class PropertyCodegen {
 
         KtExpression defaultValue = p.getDefaultValue();
         if (defaultValue != null) {
-            ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext, true);
+            ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(
+                    defaultValue, bindingContext, true, state.getShouldInlineConstVals());
             assert !state.getClassBuilderMode().generateBodies || constant != null
                     : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
             if (constant != null) {

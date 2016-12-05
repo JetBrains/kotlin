@@ -38,8 +38,7 @@
 			{"visibility": "public",	"declaration": "fun publicFun(): kotlin.Unit", "name": "publicFun", "desc": "()V"},
 			{"visibility": "internal",	"declaration": "fun internalFun(param1: kotlin.Int): kotlin.Unit", "name": "internalFun", "desc": "(I)V"},
 			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any): kotlin.Unit", "name": "privateFun$MultifileFacade__Part2Kt", "desc": "(Ljava/lang/Object;)V"},
-			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any): kotlin.Unit", "name": "access$privateFun", "desc": "(Ljava/lang/Object;)V"},
-			{"visibility": "private",	"declaration": "fun <get-privateConst>(): kotlin.Int", "name": "access$getPrivateConst$p", "desc": "()I"}
+			{"visibility": "private",	"declaration": "fun privateFun(x: kotlin.Any): kotlin.Unit", "name": "access$privateFun", "desc": "(Ljava/lang/Object;)V"}
 		]
 	},
 	{
