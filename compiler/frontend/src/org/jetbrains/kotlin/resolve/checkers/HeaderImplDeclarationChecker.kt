@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
-class HeaderImplDeclarationChecker : DeclarationChecker {
+class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) : DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -64,7 +64,7 @@ class HeaderImplDeclarationChecker : DeclarationChecker {
         }
     }
 
-    private fun checkHeaderDeclarationHasImplementation(
+    fun checkHeaderDeclarationHasImplementation(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkImpl: Boolean
     ) {
         val compatibility = when (descriptor) {
@@ -132,7 +132,7 @@ class HeaderImplDeclarationChecker : DeclarationChecker {
 
     private fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
         val packageFqName = (containingDeclaration as? PackageFragmentDescriptor)?.fqName ?: return emptyList()
-        val myModule = this.module
+        val myModule = moduleToCheck ?: module
         val scope = myModule.getPackage(packageFqName).memberScope
 
         return when (this) {
@@ -145,8 +145,9 @@ class HeaderImplDeclarationChecker : DeclarationChecker {
     }
 
     private fun ClassifierDescriptor.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptor> {
+        val myModule = moduleToCheck ?: module
         // TODO: support nested classes
-        return module.getPackage(fqNameSafe.parent()).memberScope
+        return myModule.getPackage(fqNameSafe.parent()).memberScope
                 .getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS) { it == name }
                 .filterIsInstance<ClassifierDescriptor>()
     }

@@ -21,14 +21,19 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.testFramework.PsiTestUtil
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.roots.DependencyScope
-import com.intellij.testFramework.IdeaTestUtil
+import com.sampullara.cli.Argument
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.junit.Assert
 
@@ -48,7 +53,7 @@ abstract class AbstractMultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
 
     protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
         val srcDir = TEST_DATA_PATH + "${getTestName(true)}/$name"
-        val moduleWithSrcRootSet = createModuleFromTestData(srcDir, "$name", StdModuleTypes.JAVA, true)!!
+        val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)!!
         if (hasTestRoot) {
             setTestRoot(moduleWithSrcRootSet, name)
         }
@@ -78,4 +83,36 @@ abstract class AbstractMultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
             exported: Boolean = false
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
+
+    private fun Module.createFacet() {
+        val accessToken = WriteAction.start()
+        try {
+            val modelsProvider = IdeModifiableModelsProviderImpl(project)
+            getOrCreateFacet(modelsProvider)
+            modelsProvider.commit()
+        }
+        finally {
+            accessToken.finish()
+        }
+    }
+
+    protected fun Module.setPlatformKind(platformKind: TargetPlatformKind<*>) {
+        createFacet()
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
+        val versionInfo = facetSettings.versionInfo
+        versionInfo.targetPlatformKind = platformKind
+    }
+
+    protected fun Module.enableMultiPlatform() {
+        createFacet()
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
+        val compilerInfo = facetSettings.compilerInfo
+        val compilerSettings = CompilerSettings()
+        compilerSettings.additionalArguments += " -$multiPlatformArg"
+        compilerInfo.compilerSettings = compilerSettings
+    }
+
+    companion object {
+        private val multiPlatformArg = CommonCompilerArguments::multiPlatform.annotations.filterIsInstance<Argument>().single().value
+    }
 }

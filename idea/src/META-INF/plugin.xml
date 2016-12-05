@@ -505,6 +505,7 @@
 
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DebugInfoAnnotator"/>
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureAnnotator"/>
+    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.PlatformHeaderAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.kotlin.idea.highlighter.KotlinProblemHighlightFilter"/>
 
     <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinStatementGroupSelectioner"/>
