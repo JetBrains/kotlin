@@ -906,6 +906,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         /**
          * Cache for [genContinue].
+         *
+         * Note: can't merge with [breakBlocks] because the code for `break` and `continue` is different.
          */
         private val continueBlocks = mutableMapOf<IrLoop, LLVMBasicBlockRef>()
 
