@@ -23,6 +23,7 @@ internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
 
     val allocInstanceFunction = importRtFunction("AllocInstance")
+    val initInstanceFunction = importRtFunction("InitInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
     val setArrayFunction = importRtFunction("Kotlin_Array_set")
     val lookupFieldOffset = importRtFunction("LookupFieldOffset")

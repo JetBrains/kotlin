@@ -60,10 +60,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun icmpLe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, result)!!
     fun icmpNe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, result)!!
 
+    fun ucmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntUGT, arg0, arg1, result)!!
+
     /* floating-point comparisons */
     fun fcmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildFCmp(builder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
 
     fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, result: String) = LLVMBuildBitCast(builder, value, type, result)!!
+
+    fun intToPtr(imm: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String) = LLVMBuildIntToPtr(builder, imm, DestTy, Name)
 
     fun alloca(type: KotlinType, varName: String): LLVMValueRef = alloca( getLLVMType(type), varName)
     fun alloca(type: LLVMTypeRef?, varName: String): LLVMValueRef {
@@ -255,6 +259,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         positionAtEnd(block)
         code()
     }
+
+    fun  llvmFunction(function: FunctionDescriptor): LLVMValueRef = function.llvmFunction
 
 }
 

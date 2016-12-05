@@ -279,7 +279,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             if (!skipConstructorBodyGeneration(constructorDeclaration))
                 constructorDeclaration.acceptChildrenVoid(this)
 
-            if (constructorDescriptor.isPrimary && !DescriptorUtils.isCompanionObject(constructorDescriptor.constructedClass)) {
+            if (constructorDescriptor.isPrimary) {
                 val irOfCurrentClass = context.moduleIndex.classes[classDescriptor.classId]
                 irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
                     override fun visitElement(element: IrElement) {
@@ -602,12 +602,44 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrVararg              -> return evaluateVararg             (tmpVariableName, value)
             is IrBreak               -> return evaluateBreak              (                 value)
             is IrContinue            -> return evaluateContinue           (                 value)
+            is IrGetObjectValue      -> return evaluateGetObjectValue     (tmpVariableName, value)
             null                     -> return null
             else                     -> {
                 TODO("${ir2string(value)}")
             }
         }
     }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateGetObjectValue(tmpVariableName: String, value: IrGetObjectValue): LLVMValueRef? {
+        val objName = value.descriptor.fqNameSafe.asString()
+        var objectPtr = LLVMGetNamedGlobal(context.llvmModule, objName)
+        if (objectPtr == null) {
+            objectPtr = LLVMAddGlobal(context.llvmModule, codegen.getLLVMType(value.type), objName)
+            LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
+        }
+
+        val bbInit    = codegen.basicBlock("label_init")
+        val bbExit    = codegen.basicBlock("label_continue")
+        val onePtr    = codegen.intToPtr(kImmInt64One, codegen.kObjHeaderPtr, codegen.newVar())
+        val objectVal = codegen.load(objectPtr!!, codegen.newVar())
+        val condition = codegen.ucmpGt(objectVal, onePtr!!, codegen.newVar())
+        codegen.condBr(condition, bbExit, bbInit)
+
+        codegen.positionAtEnd(bbInit)
+        val typeInfo = codegen.typeInfoValue(value.descriptor)
+        val allocHint = Int32(1).llvm
+        val initFunction = value.descriptor.constructors.first { it.valueParameters.size == 0 }
+        val ctor = codegen.llvmFunction(initFunction)
+        val args = listOf(objectPtr, typeInfo, allocHint, ctor)
+        currentCodeContext.genCall(context.initInstanceFunction, args, codegen.newVar())
+        codegen.br(bbExit)
+
+        codegen.positionAtEnd(bbExit)
+        return objectVal
+    }
+    //-------------------------------------------------------------------------//
 
     private fun evaluateExpressionAndJump(expression: IrExpression, destination: ContinuationBlock) {
         val result = evaluateExpression("res", expression)
