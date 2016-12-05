@@ -10,8 +10,8 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final operator fun minusAssign(/*0*/ x: kotlin.Int): kotlin.Unit
-    public final operator fun modAssign(/*0*/ x: kotlin.Int): kotlin.Unit
     public final operator fun plusAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public final operator fun remAssign(/*0*/ x: kotlin.Int): kotlin.Unit
     public final operator fun timesAssign(/*0*/ x: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -22,8 +22,8 @@ public final class B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final operator fun minus(/*0*/ x: kotlin.Int): B
-    public final operator fun mod(/*0*/ x: kotlin.Int): B
     public final operator fun plus(/*0*/ x: kotlin.Int): B
+    public final operator fun rem(/*0*/ x: kotlin.Int): B
     public final operator fun times(/*0*/ x: kotlin.Int): B
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

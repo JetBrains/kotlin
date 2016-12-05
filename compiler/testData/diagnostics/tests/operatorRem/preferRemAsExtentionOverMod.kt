@@ -2,7 +2,7 @@
 
 class Foo {
 }
-operator fun Foo.mod(x: Int): Foo = Foo()
+<!DEPRECATED_BINARY_MOD!>operator<!> fun Foo.mod(x: Int): Foo = Foo()
 operator fun Foo.rem(x: Int): Int = 0
 
 fun foo() {

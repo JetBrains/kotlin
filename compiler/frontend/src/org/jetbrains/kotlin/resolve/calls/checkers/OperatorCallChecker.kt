@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class OperatorCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -58,6 +60,15 @@ class OperatorCallChecker : CallChecker {
         }
 
         val isConventionOperator = element is KtOperationReferenceExpression && element.isConventionOperator()
+
+        if (isConventionOperator) {
+            val shouldUseOperatorRem = context.languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
+            if (functionDescriptor.name in OperatorConventions.REM_TO_MOD_OPERATION_NAMES.values && shouldUseOperatorRem) {
+                val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[functionDescriptor.name]
+                context.trace.report(Errors.DEPRECATED_BINARY_MOD_AS_REM.on(reportOn, functionDescriptor, newNameConvention!!.asString()))
+            }
+        }
+
         if (isConventionOperator || element is KtArrayAccessExpression) {
             if (!functionDescriptor.isOperator) {
                 report(reportOn, functionDescriptor, context.trace)

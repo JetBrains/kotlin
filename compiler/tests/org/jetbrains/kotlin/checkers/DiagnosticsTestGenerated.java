@@ -13336,6 +13336,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorRem"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("deprecatedModConvention.kt")
+            public void testDeprecatedModConvention() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/deprecatedModConvention.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDeprecatedModConventionWithoutFeature.kt")
+            public void testNoDeprecatedModConventionWithoutFeature() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/noDeprecatedModConventionWithoutFeature.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noOperatorRemFeature.kt")
             public void testNoOperatorRemFeature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/noOperatorRemFeature.kt");

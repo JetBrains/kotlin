@@ -1,12 +1,12 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class OldAndNew {
-    operator fun mod(x: Int) {}
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int) {}
     operator fun rem(x: Int) {}
 }
 
 class OnlyOld {
-    operator fun mod(x: Int) {}
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int) {}
 }
 
 class OnlyNew {
@@ -15,17 +15,17 @@ class OnlyNew {
 
 class Sample
 
-operator fun Sample.mod(x: Int) {}
+<!DEPRECATED_BINARY_MOD!>operator<!> fun Sample.mod(x: Int) {}
 operator fun Sample.rem(x: Int) {}
 
 class IntAndUnit {
-    operator fun mod(x: Int): Int = 0
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int): Int = 0
     operator fun rem(x: Int) {}
 }
 
 fun test() {
     OldAndNew() % 1
-    OnlyOld() % 1
+    OnlyOld() <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 1
     OnlyNew() % 1
     Sample() % 1
 

@@ -42,6 +42,7 @@ object OperatorModifierChecker {
 
         val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) {
+            val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
             when (functionDescriptor.name) {
                 in COROUTINE_OPERATOR_NAMES -> {
                     if (!languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
@@ -50,10 +51,15 @@ object OperatorModifierChecker {
                 }
 
                 in REM_TO_MOD_OPERATION_NAMES.keys -> {
-                    if (!languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)) {
+                    if (!shouldUseOperatorRem) {
                         diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, LanguageFeature.OperatorRem))
                     }
                 }
+            }
+
+            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values && shouldUseOperatorRem) {
+                val newNameConvention = REM_TO_MOD_OPERATION_NAMES.inverse()[functionDescriptor.name]
+                diagnosticHolder.report(Errors.DEPRECATED_BINARY_MOD.on(modifier, functionDescriptor, newNameConvention!!.asString()))
             }
 
             return
