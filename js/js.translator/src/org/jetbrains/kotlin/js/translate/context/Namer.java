@@ -97,6 +97,7 @@ public final class Namer {
 
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE";
+    private static final String THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE";
     private static final String PROTOTYPE_NAME = "prototype";
     private static final String CAPTURED_VAR_FIELD = "v";
 
@@ -327,6 +328,11 @@ public final class Namer {
     @NotNull
     public static JsExpression throwClassCastExceptionFunRef() {
         return new JsNameRef(THROW_CLASS_CAST_EXCEPTION_FUN_NAME, kotlinObject());
+    }
+
+    @NotNull
+    public static JsExpression throwIllegalStateExcpetionFunRef() {
+        return new JsNameRef(THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME, kotlinObject());
     }
 
     @NotNull

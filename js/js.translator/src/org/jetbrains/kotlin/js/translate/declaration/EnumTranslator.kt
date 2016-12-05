@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.js.translate.declaration
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class EnumTranslator(
         context: TranslationContext,
@@ -54,8 +56,17 @@ class EnumTranslator(
             }
         }
 
+        val message = JsBinaryOperation(JsBinaryOperator.ADD,
+                context().program().getStringLiteral("No enum constant ${descriptor.fqNameSafe}."),
+                nameParam.makeRef())
+        val throwStatement = JsExpressionStatement(JsInvocation(Namer.throwIllegalStateExcpetionFunRef(), message))
+
         if (clauses.isNotEmpty()) {
-            function.body.statements += JsSwitch(nameParam.makeRef(), clauses)
+            val defaultCase = JsDefault().apply { statements += throwStatement }
+            function.body.statements += JsSwitch(nameParam.makeRef(), clauses + defaultCase)
+        }
+        else {
+            function.body.statements += throwStatement
         }
 
     }

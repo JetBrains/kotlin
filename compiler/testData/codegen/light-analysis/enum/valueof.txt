@@ -9,4 +9,5 @@ public enum class Color {
 
 public final class ValueofKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method throwsOnGreen(): boolean
 }
