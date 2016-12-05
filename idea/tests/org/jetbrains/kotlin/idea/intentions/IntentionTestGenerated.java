@@ -11607,45 +11607,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("list.kt")
-        public void testList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/list.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("list2.kt")
-        public void testList2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/list2.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/long.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mutableList.kt")
-        public void testMutableList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/mutableList.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mutableSet.kt")
-        public void testMutableSet() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/mutableSet.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("platformTypes.kt")
-        public void testPlatformTypes() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/platformTypes.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("safeSortedMap.kt")
-        public void testSafeSortedMap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/safeSortedMap.kt");
             doTest(fileName);
         }
 
@@ -11655,27 +11619,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("set.kt")
-        public void testSet() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/set.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("short.kt")
         public void testShort() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/short.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("sortedMap.kt")
-        public void testSortedMap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/sortedMap.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("sortedSet.kt")
-        public void testSortedSet() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/sortedSet.kt");
             doTest(fileName);
         }
 
