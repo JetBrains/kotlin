@@ -88,7 +88,7 @@ internal val GENERATED_FUNCTION_NAME = "generated_for_debugger_kotlin_rulezzzz"
 
 private val DEBUG_MODE = false
 
-object KotlinEvaluationBuilder: EvaluatorBuilder {
+object KotlinEvaluationBuilder : EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
         if (codeFragment !is KtCodeFragment || position == null) {
             return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
@@ -121,7 +121,7 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
     }
 }
 
-class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: SourcePosition): Evaluator {
+class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: SourcePosition) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
         if (codeFragment.text.isEmpty()) {
             return context.debugProcess.virtualMachineProxy.mirrorOfVoid()
@@ -163,9 +163,9 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                                       Attachment("context.info", text))
 
             LOG.error(LogMessageEx.createEvent(
-                                "Couldn't evaluate expression",
-                                ExceptionUtil.getThrowableText(e),
-                                mergeAttachments(*attachments)))
+                    "Couldn't evaluate expression",
+                    ExceptionUtil.getThrowableText(e),
+                    mergeAttachments(*attachments)))
 
             val cause = if (e.message != null) ": ${e.message}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")
@@ -195,7 +195,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             codeFragment.checkForErrors()
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
-                                            ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
+                                   ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
             val parametersDescriptor = extractionResult.getParametersForDebugger(codeFragment)
             val extractedFunction = extractionResult.declaration as KtNamedFunction
 
@@ -325,7 +325,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
                 val contextElementFile = fragment.context?.containingFile
                 if (contextElementFile is KtCodeFragment) {
-                    contextElementFile.accept(object: KtTreeVisitorVoid() {
+                    contextElementFile.accept(object : KtTreeVisitorVoid() {
                         override fun visitProperty(property: KtProperty) {
                             val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
                             if (value != null) {
@@ -435,7 +435,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val declarationDescriptor = paramAnonymousType.constructor.declarationDescriptor
                 if (declarationDescriptor is ClassDescriptor) {
                     val localVariable = visitor.findValue(localVariableName, asmType = null, checkType = false, failIfNotFound = false)
-                                                ?: exception("Couldn't find local variable this in current frame to get classType for anonymous type $paramAnonymousType}")
+                                        ?: exception("Couldn't find local variable this in current frame to get classType for anonymous type $paramAnonymousType}")
                     record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
                     if (LOG.isDebugEnabled) {
                         LOG.debug("Asm type ${localVariable.asmType.className} was recorded for ${declarationDescriptor.name}")
@@ -474,7 +474,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
 
                 if (analyzeInlineFunctions) {
-                    val (newBindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, bindingContext, this, false)
+                    val (newBindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, this, false)
                     ExtendedAnalysisResult(newBindingContext, analysisResult.moduleDescriptor, files)
                 }
                 else {

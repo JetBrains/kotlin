@@ -181,13 +181,7 @@ private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunc
     val descriptor = containingFunction.resolveToDescriptor()
     if (!InlineUtil.isInline(descriptor)) return emptyList()
 
-    val inlineFunctionsCalls = DebuggerUtils.analyzeElementWithInline(
-            containingFunction.getResolutionFacade(),
-            containingFunction.analyzeFully(),
-            containingFunction,
-            false
-    ).filterIsInstance<KtNamedFunction>()
-
+    val inlineFunctionsCalls = DebuggerUtils.analyzeElementWithInline(containingFunction, false).filterIsInstance<KtNamedFunction>()
     return inlineFunctionsCalls
 }
 
