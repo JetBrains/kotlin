@@ -274,6 +274,18 @@ private fun <F, T> Pair<F, F>.map(block: (F) -> T) = block(first) to block(secon
 private fun Pair<Type, Type>.betterType() = if (first is DynamicType || first is AnyType) first else second
 private fun Pair<String, String>.betterName() = if (((0..9).map(Int::toString) + listOf("arg")).none { first.toLowerCase().contains(it) }) first else second
 
+private fun merge(a: AttributeKind, b: AttributeKind): AttributeKind {
+    if (a == b) {
+        return a
+    }
+
+    if (a == AttributeKind.VAR || b == AttributeKind.VAR) {
+        return AttributeKind.VAR
+    }
+
+    return a
+}
+
 private fun merge(a: GenerateAttribute, b: GenerateAttribute): GenerateAttribute {
     require(a.name == b.name)
 
@@ -287,7 +299,7 @@ private fun merge(a: GenerateAttribute, b: GenerateAttribute): GenerateAttribute
             type,
             a.initializer ?: b.initializer,
             a.getterSetterNoImpl || b.getterSetterNoImpl,
-            a.kind,
+            merge(a.kind, b.kind),
             a.override,
             a.vararg,
             a.static
