@@ -22,8 +22,7 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImpl
-import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -56,7 +55,7 @@ open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileReso
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            Kotlin2JsPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
+            Kotlin2JsPlugin(Kotlin2JsTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 }
 
 private fun Any.loadKotlinVersionFromResource(log: Logger): String {
