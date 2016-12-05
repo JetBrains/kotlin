@@ -12,9 +12,9 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertReportExists()
 
             assertContains(
-                    ":libraryProject:jarSources\n",
-                    ":mainProject:compileKotlin2Js\n",
-                    ":libraryProject:compileKotlin2Js\n"
+                    ":libraryProject:jarSources",
+                    ":mainProject:compileKotlin2Js",
+                    ":libraryProject:compileKotlin2Js"
             )
 
             listOf("mainProject/web/js/app.js",
@@ -71,5 +71,21 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertContains("compileKotlin2Js.kotlinOptions.outputFile should be specified.")
         }
     }
-}
 
+    @Test
+    fun testCompileTestCouldAccessProduction() {
+        val project = Project("kotlin2JsProjectWithTests", "2.10")
+
+        project.build("build") {
+            assertSuccessful()
+
+            assertContains(
+                    ":compileKotlin2Js",
+                    ":compileTestKotlin2Js"
+            )
+
+            assertFileExists("build/kotlin2js/main/module.js")
+            assertFileExists("build/kotlin2js/test/module-tests.js")
+        }
+    }
+}

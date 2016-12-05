@@ -32,10 +32,17 @@ internal open class KotlinTasksProvider {
     }
 
     fun createKotlinJSTask(project: Project, name: String, sourceSetName: String): Kotlin2JsCompile =
-            project.tasks.create(name, Kotlin2JsCompile::class.java)
+            project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
+                friendTaskName = taskToFriendTaskMapper[this]
+            }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
             RegexTaskToFriendTaskMapper.Default()
+}
+
+internal class Kotlin2JsTasksProvider : KotlinTasksProvider() {
+    override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
+            RegexTaskToFriendTaskMapper.JavaScript()
 }
 
 internal class AndroidTasksProvider : KotlinTasksProvider() {

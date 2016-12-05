@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
@@ -27,7 +25,6 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
-import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -309,10 +306,22 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
     override fun populateCompilerArguments(): K2JSCompilerArguments {
         val args = K2JSCompilerArguments().apply { fillDefaultValues() }
-        args.libraryFiles = project.configurations.getByName("compile")
+        val friendDependency = friendTaskName
+                ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
+                ?.outputFile
+                ?.let { File(it).parentFile }
+                ?.let { if (LibraryUtils.isKotlinJavascriptLibrary(it)) it else null }
+                ?.absolutePath
+
+        val dependencies = project.configurations.getByName("compile")
                 .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
                 .map { it.canonicalPath }
-                .toTypedArray()
+
+        args.libraryFiles = when (friendDependency) {
+            null -> dependencies.toTypedArray()
+            else -> (dependencies + friendDependency).toTypedArray()
+        }
+
         kotlinOptionsImpl.updateArguments(args)
         return args
     }
