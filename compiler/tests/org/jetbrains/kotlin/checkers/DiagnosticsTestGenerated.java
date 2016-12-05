@@ -206,6 +206,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DeprecatedModAssignOperatorConventions.kt")
+        public void testDeprecatedModAssignOperatorConventions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DeprecatedModAssignOperatorConventions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DeprecatedModOperatorConventions.kt")
+        public void testDeprecatedModOperatorConventions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DeprecatedModOperatorConventions.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DeprecatedUnaryOperatorConventions.kt")
         public void testDeprecatedUnaryOperatorConventions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DeprecatedUnaryOperatorConventions.kt");
@@ -13312,6 +13324,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("upperBoundViolated.kt")
             public void testUpperBoundViolated() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/upperBoundViolated.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/operatorRem")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OperatorRem extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInOperatorRem() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorRem"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("noOperatorRemFeature.kt")
+            public void testNoOperatorRemFeature() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/noOperatorRemFeature.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("operatorRem.kt")
+            public void testOperatorRem() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/operatorRem.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("preferRemAsExtentionOverMod.kt")
+            public void testPreferRemAsExtentionOverMod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/preferRemAsExtentionOverMod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("preferRemAsMemberOverMod.kt")
+            public void testPreferRemAsMemberOverMod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/preferRemAsMemberOverMod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("prefereRemAsExtensionOverMemberMod.kt")
+            public void testPrefereRemAsExtensionOverMemberMod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/prefereRemAsExtensionOverMemberMod.kt");
                 doTest(fileName);
             }
         }

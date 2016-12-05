@@ -35,6 +35,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     UnderscoresInNumericLiterals(KOTLIN_1_1),
     DivisionByZeroInConstantExpressions(KOTLIN_1_1),
     InlineConstVals(KOTLIN_1_1),
+    OperatorRem(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null),

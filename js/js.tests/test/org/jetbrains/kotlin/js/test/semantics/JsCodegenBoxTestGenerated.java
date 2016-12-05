@@ -12333,6 +12333,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("remAssignmentOperation.kt")
+        public void testRemAssignmentOperation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/remAssignmentOperation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("remOverModOperation.kt")
+        public void testRemOverModOperation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/remOverModOperation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

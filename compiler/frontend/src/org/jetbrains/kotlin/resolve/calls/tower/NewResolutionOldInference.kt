@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -159,7 +161,18 @@ class NewResolutionOldInference(
             return allCandidatesResult(towerResolver.collectAllCandidates(scopeTower, processor))
         }
 
-        val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference)
+        var candidates = towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference)
+
+        // Temporary hack to resolve 'rem' as 'mod' if the first is do not present
+        val emptyOrInapplicableCandidates = candidates.isEmpty() ||
+                                            candidates.all {
+                                                it.candidateStatus.resultingApplicability == ResolutionCandidateApplicability.INAPPLICABLE
+                                            }
+        if (emptyOrInapplicableCandidates && isBinaryRemOperator(context.call)) {
+            val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]
+            val processorForDeprecatedName = kind.createTowerProcessor(this, deprecatedName!!, tracing, scopeTower, detailedReceiver, context)
+            candidates = towerResolver.runResolve(scopeTower, processorForDeprecatedName, useOrder = kind != ResolutionKind.CallableReference)
+        }
 
         if (candidates.isEmpty()) {
             if (reportAdditionalDiagnosticIfNoCandidates(context, name, kind, scopeTower, detailedReceiver)) {
