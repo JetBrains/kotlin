@@ -96,7 +96,7 @@ class ChangeFunctionLiteralReturnTypeFix(
             val parentFunctionReturnTypeRef = parentFunction.typeReference
             val parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef)
             return if (parentFunctionReturnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType))
-                ChangeFunctionReturnTypeFix.ForEnclosing(parentFunction, eventualFunctionLiteralType)
+                ChangeCallableReturnTypeFix.ForEnclosing(parentFunction, eventualFunctionLiteralType)
             else
                 null
         }

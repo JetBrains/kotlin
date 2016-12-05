@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ChangeFunctionReturnTypeFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ChangeCallableReturnTypeFix" "false"
 // ACTION: Change type of 'b' to 'A'
 // ACTION: Convert property initializer to getter
 // ACTION: Let 'A' implement interface 'B'
