@@ -575,7 +575,6 @@ task finally8(type: RunKonanTest) {
 }
 
 task finally9(type: RunKonanTest) {
-    disabled = true
     goldValue = "Finally 1\nFinally 2\nAfter\n"
     source = "codegen/try/finally9.kt"
 }
