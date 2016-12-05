@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 class EnumTranslator(
         context: TranslationContext,
@@ -37,14 +35,14 @@ class EnumTranslator(
     }
 
     private fun generateValuesFunction() {
-        val function = createFunction(getEnumFunction(DescriptorUtils.ENUM_VALUES))
+        val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, DescriptorUtils.ENUM_VALUES))
 
         val values = entries.map { JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(it), null)) }
         function.body.statements += JsReturn(JsArrayLiteral(values))
     }
 
     private fun generateValueOfFunction() {
-        val function = createFunction(getEnumFunction(DescriptorUtils.ENUM_VALUE_OF))
+        val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, DescriptorUtils.ENUM_VALUE_OF))
 
         val nameParam = function.scope.declareTemporaryName("name")
         function.parameters += JsParameter(nameParam)
@@ -73,12 +71,5 @@ class EnumTranslator(
         context().addDeclarationStatement(assignment.makeStmt())
 
         return function
-    }
-
-    private fun getEnumFunction(name: Name): FunctionDescriptor {
-        val functions = descriptor.staticScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
-        return functions
-                .mapNotNull { (it as? FunctionDescriptor)?.original }
-                .first { it.name == name }
     }
 }

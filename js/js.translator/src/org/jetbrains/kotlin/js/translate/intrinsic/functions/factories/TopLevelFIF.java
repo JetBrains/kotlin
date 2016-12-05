@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -38,6 +36,7 @@ import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
+import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -140,19 +139,25 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    private static final JsExpression getReferenceToOnlyTypeParameter(
+            @NotNull CallInfo callInfo, @NotNull TranslationContext context
+    ) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = callInfo.getResolvedCall();
+        Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();
+
+        assert typeArguments.size() == 1;
+        KotlinType type = typeArguments.values().iterator().next();
+
+        return UtilsKt.getReferenceToJsClass(type, context);
+    }
+
     private static final FunctionIntrinsic JS_CLASS_FUN_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override
         public JsExpression apply(
                 @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
         ) {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = callInfo.getResolvedCall();
-            Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();
-
-            assert typeArguments.size() == 1;
-            KotlinType type = typeArguments.values().iterator().next();
-
-            return UtilsKt.getReferenceToJsClass(type, context);
+            return getReferenceToOnlyTypeParameter(callInfo, context);
         }
 
         @NotNull
@@ -163,6 +168,39 @@ public final class TopLevelFIF extends CompositeFIF {
             throw new IllegalStateException();
         }
     };
+
+
+    private static final FunctionIntrinsic ENUM_VALUES_INTRINSIC = new CallParametersAwareFunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            JsExpression enumClassRef = getReferenceToOnlyTypeParameter(callInfo, context);
+
+            FunctionDescriptor fd = DescriptorFactory.createEnumValuesMethod(context.getCurrentModule().getBuiltIns().getEnum());
+
+            return new JsInvocation(new JsNameRef(context.getNameForDescriptor(fd), enumClassRef));
+        }
+    };
+
+
+    private static final FunctionIntrinsic ENUM_VALUE_OF_INTRINSIC = new CallParametersAwareFunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            JsExpression arg = arguments.get(2); // The first two are reified parameters
+
+            JsExpression enumClassRef = getReferenceToOnlyTypeParameter(callInfo, context);
+
+            FunctionDescriptor fd = DescriptorFactory.createEnumValueOfMethod(context.getCurrentModule().getBuiltIns().getEnum());
+
+            return new JsInvocation(new JsNameRef(context.getNameForDescriptor(fd), enumClassRef), arg);
+        }
+    };
+
 
     @NotNull
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
@@ -187,6 +225,9 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
 
         add(pattern("kotlin.js", "jsClass"), JS_CLASS_FUN_INTRINSIC);
+
+        add(pattern("kotlin", "enumValues"), ENUM_VALUES_INTRINSIC);
+        add(pattern("kotlin", "enumValueOf"), ENUM_VALUE_OF_INTRINSIC);
     }
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {

@@ -1258,6 +1258,10 @@ fun main(args: Array<String>) {
         testClass<AbstractCallableReferenceInlineTests> {
             model("codegen/boxInline/callableReference/", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractEnumValuesInlineTests> {
+            model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS)
+        }
     }
 }
 
