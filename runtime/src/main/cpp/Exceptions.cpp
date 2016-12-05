@@ -36,7 +36,7 @@ class AutoFree {
 
 // TODO: this method ignores the encoding
 KString CreateKotlinStringFromCString(const char* str) {
-  return AllocStringInstance(str, strlen(str));
+  return AllocStringInstance(SCOPE_GLOBAL, str, strlen(str));
 }
 
 #ifdef __cplusplus

@@ -9,7 +9,8 @@ ArrayHeader* setupArgs(int argc, char** argv) {
     ArrayHeader* args = AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, argc-1);
 
     for (int i = 0; i < argc-1; i++) {
-        Kotlin_Array_set(args, i, AllocStringInstance( argv[i+1], strlen(argv[i+1]) ));
+      Kotlin_Array_set(args, i, AllocStringInstance(
+          SCOPE_GLOBAL, argv[i+1], strlen(argv[i+1]) ));
     }
 
     return args;
@@ -27,4 +28,3 @@ int main(int argc, char** argv) {
     // Yes, we have to follow Java convention and return zero.
     return 0;
 }
-

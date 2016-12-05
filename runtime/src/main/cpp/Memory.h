@@ -254,7 +254,11 @@ void InitMemory();
 ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
 ArrayHeader* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
-ArrayHeader* AllocStringInstance(const char* data, uint32_t length);
+ArrayHeader* AllocStringInstance(PlacementHint hint,
+                                 const char* data, uint32_t length);
+ObjHeader* InitInstance(
+    ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
+    void (*ctor)(ObjHeader*));
 
 #ifdef __cplusplus
 }
