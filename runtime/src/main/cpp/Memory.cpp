@@ -101,7 +101,7 @@ ObjHeader* AllocStringInstance(
 
 ObjHeader* InitInstance(
     ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
-    void (*ctor)(ObjHeader*)) {
+    ObjHeader* (*ctor)(ObjHeader*)) {
   ObjHeader* sentinel = reinterpret_cast<ObjHeader*>(1);
   ObjHeader* value;
   // Wait until other initializers.

@@ -258,7 +258,7 @@ ObjHeader* AllocStringInstance(PlacementHint hint,
                                  const char* data, uint32_t length);
 ObjHeader* InitInstance(
     ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
-    void (*ctor)(ObjHeader*));
+    ObjHeader* (*ctor)(ObjHeader*));
 
 #ifdef __cplusplus
 }
