@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.load.kotlin.header
 
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
 
 class KotlinClassHeader(
         val kind: KotlinClassHeader.Kind,
@@ -45,27 +48,27 @@ class KotlinClassHeader(
         }
     }
 
-    // See kotlin.Metadata
-    enum class MultifileClassKind(val id: Int) {
-        DELEGATING(0),
-        INHERITING(1);
-
-        companion object {
-            private val entryById = values().associateBy(MultifileClassKind::id)
-
-            @JvmStatic
-            fun getById(id: Int) = entryById[id]
-        }
+    enum class MultifileClassKind {
+        DELEGATING,
+        INHERITING;
     }
 
     val multifileClassName: String?
         get() = if (kind == Kind.MULTIFILE_CLASS_PART) extraString else null
 
+    // TODO: use in incremental compilation
     val multifileClassKind: MultifileClassKind?
-        get() = if (kind == Kind.MULTIFILE_CLASS || kind == Kind.MULTIFILE_CLASS_PART)
-            MultifileClassKind.getById(extraInt)
+        get() = if (kind == Kind.MULTIFILE_CLASS || kind == Kind.MULTIFILE_CLASS_PART) {
+            if ((extraInt and JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG) != 0)
+                INHERITING
+            else
+                DELEGATING
+        }
         else
             null
+
+    val isPreRelease: Boolean
+        get() = (extraInt and JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG) != 0
 
     override fun toString() = "$kind version=$metadataVersion"
 }

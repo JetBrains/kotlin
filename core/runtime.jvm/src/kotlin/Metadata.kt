@@ -57,7 +57,10 @@ internal annotation class Metadata(
          */
         val xs: String = "",
         /**
-         * An extra int. For multi-file class, represents code generation scheme.
+         * An extra int. Bits of this number represent the following flags:
+         *
+         * 0 - this is a multi-file class facade or part, compiled with `-Xmultifile-parts-inherit`.
+         * 1 - this class file is compiled by a pre-release version of Kotlin and is not visible to release versions.
          */
         val xi: Int = 0
 )
