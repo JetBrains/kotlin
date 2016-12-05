@@ -342,7 +342,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         if (!arguments.version) return;
 
         messageCollector.report(CompilerMessageSeverity.INFO,
-                                "Kotlin Compiler version " + KotlinVersion.VERSION,
+                                "Kotlin Compiler version " + KotlinCompilerVersion.VERSION,
                                 CompilerMessageLocation.NO_LOCATION);
     }
 

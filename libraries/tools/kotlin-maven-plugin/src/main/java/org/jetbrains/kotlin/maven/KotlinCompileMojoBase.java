@@ -27,8 +27,8 @@ import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
@@ -127,7 +127,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        getLog().info("Kotlin Compiler version " + KotlinVersion.VERSION);
+        getLog().info("Kotlin Compiler version " + KotlinCompilerVersion.VERSION);
 
         if (!hasKotlinFilesInSources()) {
             getLog().warn("No sources found skipping Kotlin compile");

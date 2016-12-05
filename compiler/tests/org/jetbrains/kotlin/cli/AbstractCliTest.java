@@ -26,9 +26,9 @@ import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -77,7 +77,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
                 .replace("expected version is " + version, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
-                .replace(KotlinVersion.VERSION, "$VERSION$");
+                .replace(KotlinCompilerVersion.VERSION, "$VERSION$");
 
         return normalizedOutputWithoutExitCode + exitCode;
     }

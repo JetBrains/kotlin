@@ -33,7 +33,7 @@ import kotlin.text.Regex;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.KotlinVersion;
+import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -85,7 +85,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, tmpdir, "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
         content = normalizePath(content, getKotlinProjectHome(), "[KotlinProjectHome]");
-        content = content.replaceAll(Pattern.quote(KotlinVersion.VERSION), "[KotlinVersion]");
+        content = content.replaceAll(Pattern.quote(KotlinCompilerVersion.VERSION), "[KotlinVersion]");
         content = StringUtil.convertLineSeparators(content);
         return content;
     }

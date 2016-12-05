@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.KotlinVersion
 import org.jetbrains.kotlin.cli.jvm.repl.LineResult.*
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
@@ -44,7 +44,7 @@ class ReplFromTerminal(
 
     private fun doRun() {
         try {
-            writer.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinVersion.VERSION} " +
+            writer.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
                                          "(JRE ${System.getProperty("java.runtime.version")})")
             writer.printlnWelcomeMessage("Type :help for help, :quit for quit")
             var next = WhatNextAfterOneLine.READ_LINE
