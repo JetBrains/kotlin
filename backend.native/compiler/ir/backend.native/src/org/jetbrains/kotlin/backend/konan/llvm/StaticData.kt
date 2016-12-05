@@ -15,13 +15,17 @@ internal class StaticData(override val context: Context): ContextUtils {
         companion object {
             fun create(staticData: StaticData, type: LLVMTypeRef, name: String): Global {
                 val module = staticData.context.llvmModule
-                if (name != "" && LLVMGetNamedGlobal(module, name) != null) {
+
+                val isUnnamed = (name == "") // LLVM will select the unique index and represent the global as `@idx`.
+
+                if (!isUnnamed && LLVMGetNamedGlobal(module, name) != null) {
                     throw IllegalArgumentException("Global '$name' already exists")
                 }
 
                 val llvmGlobal = LLVMAddGlobal(module, type, name)!!
-
-                if (name == "") {
+                if (isUnnamed) {
+                    // Currently using unnamed globals may result in link errors due to symbol redefinition;
+                    // apply the workaround:
                     LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMPrivateLinkage)
                 }
 

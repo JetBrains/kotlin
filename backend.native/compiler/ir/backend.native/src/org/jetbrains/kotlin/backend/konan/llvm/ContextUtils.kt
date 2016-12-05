@@ -24,6 +24,11 @@ internal interface ContextUtils {
     val runtime: Runtime
         get() = context.runtime
 
+    /**
+     * Describes the target platform.
+     *
+     * TODO: using [llvmTargetData] usually results in generating non-portable bitcode.
+     */
     val llvmTargetData: LLVMTargetDataRef
         get() = runtime.targetData
 
@@ -155,7 +160,4 @@ internal interface ContextUtils {
 
     val FqName.localHash: LocalHash
         get() = this.toString().localHash
-
-    val pointerSize: Int
-        get() = LLVMPointerSize(llvmTargetData)
 }

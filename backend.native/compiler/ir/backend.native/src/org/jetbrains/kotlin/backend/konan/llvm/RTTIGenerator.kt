@@ -121,7 +121,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private val arrayClasses = mapOf(
-            "kotlin.Array"        to -pointerSize,
+            "kotlin.Array"        to -LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt(),
             "kotlin.ByteArray"    to -1,
             "kotlin.CharArray"    to -2,
             "kotlin.ShortArray"   to -2,
@@ -136,7 +136,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private fun getInstanceSize(classType: LLVMTypeRef?, className: FqName) : Int {
         val arraySize = arrayClasses.get(className.asString());
         if (arraySize != null) return arraySize;
-        return LLVMStoreSizeOfType(runtime.targetData, classType).toInt()
+        return LLVMStoreSizeOfType(llvmTargetData, classType).toInt()
     }
 
     fun generate(classDesc: ClassDescriptor) {
@@ -166,14 +166,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             }
         }
         // TODO: reuse offsets obtained for 'fields' below
-        val objOffsets = refFieldIndices.map { LLVMOffsetOfElement(runtime.targetData, classType, it) }
+        val objOffsets = refFieldIndices.map { LLVMOffsetOfElement(llvmTargetData, classType, it) }
         val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", int32Type,
                 objOffsets.map { Int32(it.toInt()) })
 
         val fields = classDesc.fields.mapIndexed { index, field ->
             // Note: using FQ name because a class may have multiple fields with the same name due to property overriding
             val nameSignature = field.fqNameSafe.localHash // FIXME: add signature
-            val fieldOffset = LLVMOffsetOfElement(runtime.targetData, classType, index)
+            val fieldOffset = LLVMOffsetOfElement(llvmTargetData, classType, index)
             FieldTableRecord(nameSignature, fieldOffset.toInt())
         }.sortedBy { it.nameSignature.value }
 
