@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -42,22 +43,17 @@ object OperatorModifierChecker {
 
         val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) {
-            val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
             when (functionDescriptor.name) {
-                in COROUTINE_OPERATOR_NAMES -> {
-                    if (!languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
-                        diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, LanguageFeature.Coroutines))
-                    }
-                }
-
-                in REM_TO_MOD_OPERATION_NAMES.keys -> {
-                    if (!shouldUseOperatorRem) {
-                        diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, LanguageFeature.OperatorRem))
-                    }
-                }
+                in COROUTINE_OPERATOR_NAMES ->
+                    checkSupportsFeature(LanguageFeature.Coroutines, languageVersionSettings, diagnosticHolder, modifier)
+                in REM_TO_MOD_OPERATION_NAMES.keys ->
+                    checkSupportsFeature(LanguageFeature.OperatorRem, languageVersionSettings, diagnosticHolder, modifier)
+                OperatorNameConventions.CREATE_DELEGATE ->
+                    checkSupportsFeature(LanguageFeature.OperatorCreateDelegate, languageVersionSettings, diagnosticHolder, modifier)
             }
 
-            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values && shouldUseOperatorRem) {
+            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values
+                && languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)) {
                 val newNameConvention = REM_TO_MOD_OPERATION_NAMES.inverse()[functionDescriptor.name]
                 diagnosticHolder.report(Errors.DEPRECATED_BINARY_MOD.on(modifier, functionDescriptor, newNameConvention!!.asString()))
             }
@@ -68,6 +64,12 @@ object OperatorModifierChecker {
         val errorDescription = (checkResult as? CheckResult.IllegalSignature)?.error ?: "illegal function name"
 
         diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier, errorDescription))
+    }
+
+    private fun checkSupportsFeature(feature: LanguageFeature, languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, modifier: PsiElement) {
+        if (!languageVersionSettings.supportsFeature(feature)) {
+            diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, feature))
+        }
     }
 }
 

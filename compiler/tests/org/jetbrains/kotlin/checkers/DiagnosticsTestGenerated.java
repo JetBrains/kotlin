@@ -5758,6 +5758,39 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CreateDelegate extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInCreateDelegate() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("genericCreateDelegate.kt")
+                public void testGenericCreateDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/genericCreateDelegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noOperatorModifierOnCreateDelegate.kt")
+                public void testNoOperatorModifierOnCreateDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/noOperatorModifierOnCreateDelegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleCreateDelegate.kt")
+                public void testSimpleCreateDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/simpleCreateDelegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unsupportedOperatorCreateDelegate.kt")
+                public void testUnsupportedOperatorCreateDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/unsupportedOperatorCreateDelegate.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

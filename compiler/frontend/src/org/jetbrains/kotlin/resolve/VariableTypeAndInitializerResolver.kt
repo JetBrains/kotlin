@@ -140,7 +140,7 @@ class VariableTypeAndInitializerResolver(
                 delegateExpression, property, variableDescriptor, scopeForInitializer, trace, dataFlowInfo)
 
         val delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, variableDescriptor)
-        val getterReturnType = delegatedPropertyResolver.getDelegatedPropertyGetMethodReturnType(
+        val getterReturnType = delegatedPropertyResolver.getGetValueMethodReturnType(
                 variableDescriptor, delegateExpression, type, trace, delegateFunctionsScope, dataFlowInfo
         )
 
