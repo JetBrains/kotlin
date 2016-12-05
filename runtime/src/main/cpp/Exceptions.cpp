@@ -34,9 +34,10 @@ class AutoFree {
   }
 };
 
-// TODO: this method ignores the encoding
+// TODO: this method ignores the encoding.
 KString CreateKotlinStringFromCString(const char* str) {
-  return AllocStringInstance(SCOPE_GLOBAL, str, strlen(str));
+  return static_cast<KString>(AllocStringInstance(
+      SCOPE_GLOBAL, str, strlen(str)));
 }
 
 #ifdef __cplusplus
@@ -45,7 +46,7 @@ extern "C" {
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
-KArrayRef GetCurrentStackTrace() {
+KRef GetCurrentStackTrace() {
   const int maxSize = 32;
   void* buffer[maxSize];
 
@@ -54,7 +55,7 @@ KArrayRef GetCurrentStackTrace() {
   RuntimeAssert(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
 
   AutoFree autoFree(symbols);
-  KArrayRef result = AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, size);
+  KRef result = AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, size);
 
   for (int i = 0; i < size; ++i) {
     KString symbol = CreateKotlinStringFromCString(symbols[i]);

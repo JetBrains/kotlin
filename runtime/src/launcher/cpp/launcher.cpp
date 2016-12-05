@@ -3,10 +3,9 @@
 #include "Natives.h"
 #include "Types.h"
 
-ArrayHeader* setupArgs(int argc, char** argv) {
-
+ObjHeader* setupArgs(int argc, char** argv) {
     // The count is one less, because we skip argv[0] which is the binary name.
-    ArrayHeader* args = AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, argc-1);
+    ObjHeader* args = AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, argc-1);
 
     for (int i = 0; i < argc-1; i++) {
       Kotlin_Array_set(args, i, AllocStringInstance(
@@ -16,13 +15,13 @@ ArrayHeader* setupArgs(int argc, char** argv) {
     return args;
 }
 
-extern "C" void Konan_start(ArrayHeader* );
+extern "C" void Konan_start(ObjHeader* );
 
 int main(int argc, char** argv) {
 
     InitMemory();
 
-    ArrayHeader* args = setupArgs(argc, argv);
+    ObjHeader* args = setupArgs(argc, argv);
     Konan_start(args);
 
     // Yes, we have to follow Java convention and return zero.

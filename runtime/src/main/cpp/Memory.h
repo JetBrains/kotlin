@@ -252,9 +252,9 @@ extern "C" {
 
 void InitMemory();
 ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
-ArrayHeader* AllocArrayInstance(
+ObjHeader* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
-ArrayHeader* AllocStringInstance(PlacementHint hint,
+ObjHeader* AllocStringInstance(PlacementHint hint,
                                  const char* data, uint32_t length);
 ObjHeader* InitInstance(
     ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,

@@ -83,13 +83,13 @@ ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint) {
   return ObjectContainer(type_info).GetPlace();
 }
 
-ArrayHeader* AllocArrayInstance(
+ObjHeader* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
   return ArrayContainer(type_info, elements).GetPlace();
 }
 
-ArrayHeader* AllocStringInstance(
+ObjHeader* AllocStringInstance(
     PlacementHint hint, const char* data, uint32_t length) {
   ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
   memcpy(

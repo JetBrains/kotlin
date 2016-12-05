@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.types.KotlinType
 
 internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
     return when {
+        // Nullable types must be represented as objects for boxing.
+        type.isMarkedNullable -> this.kObjHeaderPtr
         KotlinBuiltIns.isBoolean(type) -> LLVMInt1Type()
         KotlinBuiltIns.isByte(type) -> LLVMInt8Type()
         KotlinBuiltIns.isShort(type) || KotlinBuiltIns.isChar(type) -> LLVMInt16Type()
@@ -14,7 +16,6 @@ internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
         KotlinBuiltIns.isUnit(type) -> LLVMVoidType() // TODO: handle Unit parameter case
         KotlinBuiltIns.isFloat(type) -> LLVMFloatType()
         KotlinBuiltIns.isDouble(type) -> LLVMDoubleType()
-        KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)-> this.kArrayHeaderPtr
         !KotlinBuiltIns.isPrimitiveType(type) -> this.kObjHeaderPtr
         else -> throw NotImplementedError(type.toString() + " is not supported")
     }!!

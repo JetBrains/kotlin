@@ -58,25 +58,25 @@ KString Kotlin_Any_toString(KConstRef thiz);
 
 // Arrays.kt
 // TODO: those must be compiler intrinsics afterwards.
-ArrayHeader* Kotlin_Array_clone(const ArrayHeader* thiz);
-KRef Kotlin_Array_get(const ArrayHeader* thiz, KInt index);
-void Kotlin_Array_set(ArrayHeader* thiz, KInt index, KConstRef value);
-KInt Kotlin_Array_getArrayLength(const ArrayHeader* thiz);
+KRef Kotlin_Array_clone(KConstRef thiz);
+KRef Kotlin_Array_get(KConstRef thiz, KInt index);
+void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value);
+KInt Kotlin_Array_getArrayLength(KConstRef thiz);
 
-ArrayHeader* Kotlin_ByteArray_clone(const ArrayHeader* thiz);
-KByte Kotlin_ByteArray_get(const ArrayHeader* thiz, KInt index);
-void Kotlin_ByteArray_set(ArrayHeader* thiz, KInt index, KByte value);
-KInt Kotlin_ByteArray_getArrayLength(const ArrayHeader* thiz);
+KRef Kotlin_ByteArray_clone(KConstRef thiz);
+KByte Kotlin_ByteArray_get(KConstRef thiz, KInt index);
+void Kotlin_ByteArray_set(KRef thiz, KInt index, KByte value);
+KInt Kotlin_ByteArray_getArrayLength(KConstRef thiz);
 
-ArrayHeader* Kotlin_CharArray_clone(const ArrayHeader* thiz);
-KChar Kotlin_CharArray_get(const ArrayHeader* thiz, KInt index);
-void Kotlin_CharArray_set(ArrayHeader* thiz, KInt index, KChar value);
-KInt Kotlin_CharArray_getArrayLength(const ArrayHeader* thiz);
+KRef Kotlin_CharArray_clone(KConstRef thiz);
+KChar Kotlin_CharArray_get(KConstRef thiz, KInt index);
+void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value);
+KInt Kotlin_CharArray_getArrayLength(KConstRef thiz);
 
-ArrayHeader* Kotlin_IntArray_clone(const ArrayHeader* thiz);
-KInt Kotlin_IntArray_get(const ArrayHeader* thiz, KInt index);
-void Kotlin_IntArray_set(ArrayHeader* thiz, KInt index, KInt value);
-KInt Kotlin_IntArray_getArrayLength(const ArrayHeader* thiz);
+KRef Kotlin_IntArray_clone(KConstRef thiz);
+KInt Kotlin_IntArray_get(KConstRef thiz, KInt index);
+void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value);
+KInt Kotlin_IntArray_getArrayLength(KConstRef thiz);
 
 // io/Console.kt
 void Kotlin_io_Console_print(KString message);
@@ -92,13 +92,13 @@ KInt Kotlin_String_hashCode(KString thiz);
 KBoolean Kotlin_String_equals(KString thiz, KConstRef other);
 KInt Kotlin_String_compareTo(KString thiz, KString other);
 KChar Kotlin_String_get(KString thiz, KInt index);
-KString Kotlin_String_fromUtf8Array(const ArrayHeader* array, KInt start, KInt size);
-KString Kotlin_String_fromCharArray(const ArrayHeader* array, KInt start, KInt size);
+KString Kotlin_String_fromUtf8Array(KConstRef array, KInt start, KInt size);
+KString Kotlin_String_fromCharArray(KConstRef array, KInt start, KInt size);
 KString Kotlin_String_plusImpl(KString thiz, KString other);
 KInt Kotlin_String_getStringLength(KString thiz);
 KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex);
 
-KArrayRef Kotlin_getCurrentStackTrace();
+KConstRef Kotlin_getCurrentStackTrace();
 
 #ifdef __cplusplus
 }
