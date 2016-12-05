@@ -13,8 +13,8 @@
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned"/>
     <property name="plugin.xml.version.number" value="${build.number}"/>
 
-    <property name="compiler.version.java" value="compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/KotlinVersion.java"/>
-    <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinVersion.java.bk"/>
+    <property name="compiler.version.java" value="core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java"/>
+    <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinCompilerVersion.java.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned"/>
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip"/>
