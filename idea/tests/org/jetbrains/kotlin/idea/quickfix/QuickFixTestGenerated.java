@@ -8829,6 +8829,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("changeReturnTypeForTypeInference.kt")
+        public void testChangeReturnTypeForTypeInference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeForTypeInference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeReturnTypeForTypeMismatch.kt")
+        public void testChangeReturnTypeForTypeMismatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeForTypeMismatch.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("changeReturnTypeNoFqNameForAnonymousObject.kt")
         public void testChangeReturnTypeNoFqNameForAnonymousObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/changeReturnTypeNoFqNameForAnonymousObject.kt");
