@@ -257,10 +257,8 @@ class InlineChecker implements CallChecker {
     }
 
     private static boolean isEffectivelyPublicOrPublishedApi(@NotNull CallableDescriptor descriptor) {
-        EffectiveVisibility visibility = EffectiveVisibilityKt.effectiveVisibility(descriptor, descriptor.getVisibility());
-        if (visibility.getPublicApi()) return true;
-
-        return false;
+        EffectiveVisibility visibility = EffectiveVisibilityKt.effectiveVisibility(descriptor, descriptor.getVisibility(), true);
+        return visibility.getPublicApi();
     }
 
     private void checkPrivateClassMemberAccess(
