@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.allopen.ide
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -41,6 +41,10 @@ class IdeAllOpenDeclarationAttributeAltererExtension(val project: Project) : Abs
     }
 
     override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String> {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            return ANNOTATIONS_FOR_TESTS
+        }
+
         val module = ModuleUtilCore.findModuleForPsiElement(modifierListOwner) ?: return emptyList()
 
         return cache.value.getOrPut(module) {

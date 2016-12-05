@@ -21,12 +21,9 @@ import org.jetbrains.kotlin.codegen.AbstractBytecodeListingTest
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 
 abstract class AbstractBytecodeListingTestForAllOpen : AbstractBytecodeListingTest() {
-    private companion object {
-        val ALLOPEN_ANNOTATIONS = listOf("AllOpen", "AllOpen2", "test.AllOpen")
-    }
-
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         DeclarationAttributeAltererExtension.registerExtension(
-                environment.project, CliAllOpenDeclarationAttributeAltererExtension(ALLOPEN_ANNOTATIONS))
+                environment.project, CliAllOpenDeclarationAttributeAltererExtension(
+                AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS))
     }
 }

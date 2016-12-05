@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.allopen
 
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
@@ -31,6 +33,11 @@ class CliAllOpenDeclarationAttributeAltererExtension(
 }
 
 abstract class AbstractAllOpenDeclarationAttributeAltererExtension : DeclarationAttributeAltererExtension, AnnotationBasedExtension {
+    companion object {
+        @TestOnly
+        val ANNOTATIONS_FOR_TESTS = listOf("AllOpen", "AllOpen2", "test.AllOpen")
+    }
+
     override fun refineDeclarationModality(
             modifierListOwner: KtModifierListOwner,
             declaration: DeclarationDescriptor?,
@@ -42,13 +49,13 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
             return null
         }
 
-        // Explicit final
-        if (modifierListOwner.hasModifier(KtTokens.FINAL_KEYWORD)) {
-            return Modality.FINAL
+        val descriptor = declaration as? ClassDescriptor ?: containingDeclaration ?: return null
+        if (descriptor.hasSpecialAnnotation(modifierListOwner)) {
+            return if (modifierListOwner.hasModifier(KtTokens.FINAL_KEYWORD))
+                Modality.FINAL // Explicit final
+            else
+                Modality.OPEN
         }
-
-        val descriptor = declaration ?: containingDeclaration ?: return null
-        if (descriptor.hasSpecialAnnotation(modifierListOwner)) return Modality.OPEN
 
         return null
     }

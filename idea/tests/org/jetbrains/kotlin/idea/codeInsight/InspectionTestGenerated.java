@@ -119,6 +119,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
         }
 
+        @TestMetadata("allOpenSimple/inspectionData/inspections.test")
+        public void testAllOpenSimple_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/allOpenSimple/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("androidIllegalIdentifiers/inspectionData/inspections.test")
         public void testAndroidIllegalIdentifiers_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/androidIllegalIdentifiers/inspectionData/inspections.test");
