@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.*
@@ -232,18 +233,19 @@ private fun lowerBound(first: EffectiveVisibility, args: List<EffectiveVisibilit
 private fun lowerBound(args: List<EffectiveVisibility>) =
         if (args.isEmpty()) Public else lowerBound(args.first(), args.subList(1, args.size))
 
-private fun Visibility.forVisibility(descriptor: ClassDescriptor? = null, checkPublishedApi: Boolean = false): EffectiveVisibility =
+private fun Visibility.forVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false): EffectiveVisibility =
         when (this) {
             Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INVISIBLE_FAKE -> Private
-            Visibilities.PROTECTED -> Protected(descriptor)
-            Visibilities.INTERNAL -> Internal
+            Visibilities.PROTECTED -> Protected(descriptor.containingDeclaration as? ClassDescriptor)
+            Visibilities.INTERNAL -> if (!checkPublishedApi ||
+                                         !descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)) Internal else Public
             Visibilities.PUBLIC -> Public
             Visibilities.LOCAL -> Local
         // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
             else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
         }
 
-fun effectiveVisibility(visibility: Visibility, descriptor: ClassDescriptor?, checkPublishedApi: Boolean = false) =
+fun effectiveVisibility(visibility: Visibility, descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false) =
         visibility.forVisibility(descriptor, checkPublishedApi)
 
 enum class RelationToType(val description: String) {
@@ -262,7 +264,7 @@ enum class RelationToType(val description: String) {
 
 data class DescriptorWithRelation(val descriptor: ClassifierDescriptor, val relation: RelationToType) {
     fun effectiveVisibility() =
-            (descriptor as? ClassDescriptor)?.visibility?.effectiveVisibility(descriptor.containingDeclaration as? ClassDescriptor, false) ?: Public
+            (descriptor as? ClassDescriptor)?.visibility?.effectiveVisibility(descriptor, false) ?: Public
 
     override fun toString() = "$relation ${descriptor.name}"
 }
@@ -276,7 +278,7 @@ fun ClassDescriptor.effectiveVisibility(checkPublishedApi: Boolean = false) = ef
 private fun ClassDescriptor.effectiveVisibility(classes: Set<ClassDescriptor>, checkPublishedApi: Boolean): EffectiveVisibility =
         if (this in classes) Public
         else with(this.containingDeclaration as? ClassDescriptor) {
-            lowerBound(visibility.effectiveVisibility(this, checkPublishedApi), this?.effectiveVisibility(classes + this@effectiveVisibility, checkPublishedApi) ?: Public)
+            lowerBound(visibility.effectiveVisibility(this@effectiveVisibility, checkPublishedApi), this?.effectiveVisibility(classes + this@effectiveVisibility, checkPublishedApi) ?: Public)
         }
 
 // Should collect all dependent classifier descriptors, to get verbose diagnostic
@@ -307,6 +309,6 @@ fun KotlinType.leastPermissiveDescriptor(base: EffectiveVisibility) = dependentD
 fun DeclarationDescriptorWithVisibility.effectiveVisibility(
         visibility: Visibility = this.visibility, checkPublishedApi: Boolean = false
 ): EffectiveVisibility =
-        lowerBound(visibility.effectiveVisibility(this.containingDeclaration as? ClassDescriptor, checkPublishedApi),
+        lowerBound(visibility.effectiveVisibility(this, checkPublishedApi),
                    (this.containingDeclaration as? ClassDescriptor)?.effectiveVisibility(checkPublishedApi) ?: Public)
 

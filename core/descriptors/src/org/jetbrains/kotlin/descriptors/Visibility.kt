@@ -64,5 +64,5 @@ abstract class Visibility protected constructor(
     open fun normalize(): Visibility = this
 
     // Should be overloaded in Java visibilities
-    open fun effectiveVisibility(descriptor: ClassDescriptor?, checkPublishedApi: Boolean) = effectiveVisibility(normalize(), descriptor, checkPublishedApi)
+    open fun effectiveVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean) = effectiveVisibility(normalize(), descriptor, checkPublishedApi)
 }
