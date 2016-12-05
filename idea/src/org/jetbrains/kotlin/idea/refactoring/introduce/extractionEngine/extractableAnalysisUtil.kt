@@ -804,9 +804,9 @@ fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarg
             object : KtTreeVisitorVoid() {
                 override fun visitUserType(userType: KtUserType) {
                     val refExpr = userType.referenceExpression ?: return
-                    val declaration = refExpr.mainReference.resolve() as? PsiNamedElement ?: return
                     val diagnostics = bindingContext.diagnostics.forElement(refExpr)
                     diagnostics.firstOrNull { it.factory == Errors.INVISIBLE_REFERENCE }?.let {
+                        val declaration = refExpr.mainReference.resolve() as? PsiNamedElement ?: return
                         conflicts.putValue(declaration, getDeclarationMessage(declaration, "0.will.become.invisible.after.extraction"))
                     }
                 }
