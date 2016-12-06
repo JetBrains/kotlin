@@ -1,0 +1,18 @@
+package
+
+public object Inference1 {
+    private constructor Inference1()
+    public final val test1: kotlin.String
+    public final val test2: kotlin.String
+    public final fun </*0*/ T> delegate(): Inference1.Foo<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final operator fun </*0*/ T> Inference1.Foo<T>.getValue(/*0*/ receiver: T, /*1*/ p: kotlin.Any?): kotlin.String
+
+    public interface Foo</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

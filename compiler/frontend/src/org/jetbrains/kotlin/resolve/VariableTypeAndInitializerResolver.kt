@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.DescriptorResolver.transformAnonymousTypeIfN
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -139,9 +138,8 @@ class VariableTypeAndInitializerResolver(
         val type = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, variableDescriptor, scopeForInitializer, trace, dataFlowInfo)
 
-        val delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, variableDescriptor)
         val getterReturnType = delegatedPropertyResolver.getGetValueMethodReturnType(
-                variableDescriptor, delegateExpression, type, trace, delegateFunctionsScope, dataFlowInfo
+                variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo
         )
 
         getterReturnType ?: ErrorUtils.createErrorType("Type from delegate")
