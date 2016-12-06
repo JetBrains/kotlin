@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils
+import com.intellij.openapi.project.Project
 
 
 fun <T : Any> runInReadActionWithWriteActionPriority(f: () -> T): T {
@@ -30,4 +32,10 @@ fun <T : Any> runInReadActionWithWriteActionPriority(f: () -> T): T {
     if (!complete) throw ProcessCanceledException()
 
     return r!!
+}
+
+fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String, canBeCanceled: Boolean, action: () -> T): T? {
+    var result: T? = null
+    ProgressManager.getInstance().runProcessWithProgressSynchronously({ result = action() }, progressTitle, canBeCanceled, this)
+    return result
 }
