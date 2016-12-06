@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
       NOSTDLIB=YES
       shift
       ;;
-    -o)
+    -o|-output)
       OUTPUT_NAME=$2
       shift
       shift
@@ -87,7 +87,7 @@ STDLIB="$KONAN_HOME/lib/stdlib.kt.bc"
 # KONAN BACKEND INVOCATION
 #
 
-java_args=("${java_args[@]}" "-noverify")
+java_args=("${java_args[@]} -noverify -Djava.library.path=${KONAN_HOME}/konan/nativelib")
 
 konan_args=("-runtime" $RUNTIME "${konan_args[@]}")
 [ -z $NOSTDLIB ] && konan_args=("-library" $STDLIB "${konan_args[@]}")

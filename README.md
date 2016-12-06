@@ -1,16 +1,17 @@
 # Kotlin-native backend #
 
-## Build
-
 Download dependencies:
 
-	gradle :dependencies:update
+	./gradlew dependencies:update
 
-To run native translator just use:
+Then build the compiler
 
-	gradle :backend.native:run
+	./gradlew dist
 
-And it will run simple example (currently prints out IR of test file).
+After that you should be able to compile your programs like that:
+
+	./dist/bin/konanc hello.kt -o hello
+
 For more tests, use:
 
-	gradle :backend.native:tests:run
+	./gradlew backend.native:tests:run
