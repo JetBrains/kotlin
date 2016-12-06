@@ -313,7 +313,7 @@ class KotlinCoreEnvironment private constructor(
 
     companion object {
         init {
-            System.getProperties().setProperty("idea.plugins.compatible.build", "162.9999")
+            setCompatibleBuild()
         }
 
         private val APPLICATION_LOCK = Object()
@@ -323,6 +323,7 @@ class KotlinCoreEnvironment private constructor(
         @JvmStatic fun createForProduction(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
         ): KotlinCoreEnvironment {
+            setCompatibleBuild()
             val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths)
             // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
             // breaks a lot of tests, therefore it is disabled for production and enabled for tests
@@ -343,6 +344,11 @@ class KotlinCoreEnvironment private constructor(
                 ourProjectCount++
             }
             return environment
+        }
+
+        @JvmStatic
+        private fun setCompatibleBuild() {
+            System.getProperties().setProperty("idea.plugins.compatible.build", "162.9999")
         }
 
         @TestOnly
