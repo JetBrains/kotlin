@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifference
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
+import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -92,8 +92,8 @@ class IncrementalJvmCompilerRunner(
         private val cacheVersions: List<CacheVersion>,
         private val reporter: ICReporter,
         private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
-        private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
-        private val artifactFile: File? = null
+        private val artifactChangesProvider: ArtifactChangesProvider? = null,
+        private val changesRegistry: ChangesRegistry? = null
 ) {
     var anyClassesCompiled: Boolean = false
             private set
@@ -112,7 +112,6 @@ class IncrementalJvmCompilerRunner(
 
         fun onError(e: Exception): ExitCode {
             caches.clean()
-            artifactDifferenceRegistryProvider?.clean()
 
             // todo: warn?
             reporter.report { "Possible cache corruption. Rebuilding. $e" }
@@ -135,9 +134,6 @@ class IncrementalJvmCompilerRunner(
             onError(e)
         }
         finally {
-            artifactDifferenceRegistryProvider?.withRegistry(reporter) {
-                it.flush(memoryCachesOnly = true)
-            }
             caches.close(flush = true)
             reporter.report { "flushed incremental caches" }
         }
@@ -227,10 +223,6 @@ class IncrementalJvmCompilerRunner(
             reporter.report {"No classpath changes"}
             return ChangesEither.Known()
         }
-        if (artifactDifferenceRegistryProvider == null) {
-            reporter.report {"No artifact history provider"}
-            return ChangesEither.Unknown()
-        }
 
         val lastBuildTS = lastBuildInfo?.startTS
         if (lastBuildTS == null) {
@@ -241,23 +233,16 @@ class IncrementalJvmCompilerRunner(
         val symbols = HashSet<LookupSymbol>()
         val fqNames = HashSet<FqName>()
         for (file in modifiedClasspath) {
-            val diffs = artifactDifferenceRegistryProvider.withRegistry(reporter) {artifactDifferenceRegistry ->
-                artifactDifferenceRegistry[file]
-            }
+            val diffs = artifactChangesProvider?.getChanges(file, lastBuildTS)
+
             if (diffs == null) {
                 reporter.report {"Could not get changes for file: $file"}
                 return ChangesEither.Unknown()
             }
 
-            val (beforeLastBuild, afterLastBuild) = diffs.partition {it.buildTS < lastBuildTS}
-            if (beforeLastBuild.isEmpty()) {
-                reporter.report {"No known build preceding timestamp $lastBuildTS for file $file"}
-                return ChangesEither.Unknown()
-            }
-
-            afterLastBuild.forEach {
-                symbols.addAll(it.dirtyData.dirtyLookupSymbols)
-                fqNames.addAll(it.dirtyData.dirtyClassesFqNames)
+            diffs.forEach {
+                symbols.addAll(it.dirtyLookupSymbols)
+                fqNames.addAll(it.dirtyClassesFqNames)
             }
         }
 
@@ -295,7 +280,6 @@ class IncrementalJvmCompilerRunner(
         @Suppress("NAME_SHADOWING")
         var compilationMode = compilationMode
 
-        reporter.report { "Artifact to register difference for: $artifactFile" }
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
         BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
@@ -347,11 +331,6 @@ class IncrementalJvmCompilerRunner(
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
 
             if (compilationMode is CompilationMode.Rebuild) {
-                artifactFile?.let { artifactFile ->
-                    artifactDifferenceRegistryProvider?.withRegistry(reporter) { registry ->
-                        registry.remove(artifactFile)
-                    }
-                }
                 break
             }
 
@@ -371,16 +350,14 @@ class IncrementalJvmCompilerRunner(
         if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
             buildDirtyLookupSymbols.addAll(javaFilesProcessor.allChangedSymbols)
         }
-        if (artifactFile != null && artifactDifferenceRegistryProvider != null) {
-            val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
-            val artifactDifference = ArtifactDifference(currentBuildInfo.startTS, dirtyData)
-            artifactDifferenceRegistryProvider.withRegistry(reporter) {registry ->
-                registry.add(artifactFile, artifactDifference)
+        if (changesRegistry != null) {
+            if (compilationMode is CompilationMode.Incremental) {
+                val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
+                changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
             }
-            reporter.report {
-                val dirtySymbolsSorted = buildDirtyLookupSymbols.map { it.scope + "#" + it.name }.sorted()
-                "Added artifact difference for $artifactFile (ts: ${currentBuildInfo.startTS}): " +
-                        "[\n\t${dirtySymbolsSorted.joinToString(",\n\t")}]"
+            else {
+                assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode.javaClass}" }
+                changesRegistry.unknownChanges(currentBuildInfo.startTS)
             }
         }
 

@@ -25,6 +25,7 @@ interface ArtifactDifferenceRegistry {
     fun add(artifact: File, difference: ArtifactDifference)
     fun remove(artifact: File)
     fun flush(memoryCachesOnly: Boolean)
+    fun close()
 }
 
 class ArtifactDifference(val buildTS: Long, val dirtyData: DirtyData)
