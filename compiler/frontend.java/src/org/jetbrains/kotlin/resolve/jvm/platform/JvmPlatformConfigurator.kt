@@ -62,7 +62,9 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 JavaTypeAccessibilityChecker()
         ),
 
-        additionalClassifierUsageCheckers = listOf(),
+        additionalClassifierUsageCheckers = listOf(
+                MissingDependencyClassChecker.ClassifierUsage
+        ),
 
         additionalAnnotationCheckers = listOf(
                 RepeatableAnnotationChecker,

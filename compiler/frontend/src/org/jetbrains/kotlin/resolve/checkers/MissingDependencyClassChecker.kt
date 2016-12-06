@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.MISSING_DEPENDENCY_CLASS
 import org.jetbrains.kotlin.diagnostics.Errors.PRE_RELEASE_CLASS
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isComputingDeferredType
@@ -39,22 +42,29 @@ object MissingDependencyClassChecker : CallChecker {
         }
     }
 
+    private fun diagnosticFor(descriptor: ClassifierDescriptor, reportOn: PsiElement): Diagnostic? {
+        if (descriptor is NotFoundClasses.MockClassDescriptor) {
+            return MISSING_DEPENDENCY_CLASS.on(reportOn, descriptor.fqNameSafe)
+        }
+
+        val source = descriptor.source
+        if (source is DeserializedContainerSource && source.isPreReleaseInvisible) {
+            // TODO: if at least one PRE_RELEASE_CLASS is reported, display a hint to disable the diagnostic
+            return PRE_RELEASE_CLASS.on(reportOn, descriptor.fqNameSafe)
+        }
+
+        return null
+    }
+
     private fun collectDiagnostics(reportOn: PsiElement, descriptor: CallableDescriptor): Set<Diagnostic> {
         val result: MutableSet<Diagnostic> = newLinkedHashSetWithExpectedSize(1)
 
         fun consider(classDescriptor: ClassDescriptor) {
-            if (classDescriptor is NotFoundClasses.MockClassDescriptor) {
-                result.add(MISSING_DEPENDENCY_CLASS.on(reportOn, classDescriptor.fqNameSafe))
+            val diagnostic = diagnosticFor(classDescriptor, reportOn)
+            if (diagnostic != null) {
+                result.add(diagnostic)
                 return
             }
-
-            val source = classDescriptor.source
-            if (source is DeserializedContainerSource && source.isPreReleaseInvisible) {
-                // TODO: if at least one PRE_RELEASE_CLASS is reported, display a hint to disable the diagnostic
-                result.add(PRE_RELEASE_CLASS.on(reportOn, classDescriptor.fqNameSafe))
-                return
-            }
-
             (classDescriptor.containingDeclaration as? ClassDescriptor)?.let(::consider)
         }
 
@@ -69,5 +79,18 @@ object MissingDependencyClassChecker : CallChecker {
         descriptor.valueParameters.forEach { consider(it.type) }
 
         return result
+    }
+
+    object ClassifierUsage : ClassifierUsageChecker {
+        override fun check(
+                targetDescriptor: ClassifierDescriptor,
+                trace: BindingTrace,
+                element: PsiElement,
+                languageVersionSettings: LanguageVersionSettings
+        ) {
+            diagnosticFor(targetDescriptor, element)?.let { diagnostic ->
+                trace.report(diagnostic)
+            }
+        }
     }
 }
