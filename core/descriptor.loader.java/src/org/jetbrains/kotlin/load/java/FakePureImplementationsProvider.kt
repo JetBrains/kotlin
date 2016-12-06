@@ -16,30 +16,25 @@
 
 package org.jetbrains.kotlin.load.java
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 object FakePureImplementationsProvider {
-    fun getPurelyImplementedInterface(classFqName: FqName): FqName? = when(classFqName) {
-        in MUTABLE_LISTS_IMPLEMENTATIONS -> MUTABLE_LIST_FQ_NAME
-        in MUTABLE_MAPS_IMPLEMENTATIONS -> MUTABLE_MAP_FQ_NAME
-        in MUTABLE_SETS_IMPLEMENTATIONS -> MUTABLE_SET_FQ_NAME
-        else -> null
+    fun getPurelyImplementedInterface(classFqName: FqName): FqName? = pureImplementations[classFqName]
+
+    private val pureImplementations = hashMapOf<FqName, FqName>()
+    private infix fun FqName.implementedWith(implementations: List<FqName>) {
+        implementations.associateTo(pureImplementations) { it to this }
     }
 
-    private val MUTABLE_LIST_FQ_NAME = KotlinBuiltIns.FQ_NAMES.mutableList
-    private val MUTABLE_SET_FQ_NAME = KotlinBuiltIns.FQ_NAMES.mutableSet
-    private val MUTABLE_MAP_FQ_NAME = KotlinBuiltIns.FQ_NAMES.mutableMap
+    init {
+        FQ_NAMES.mutableList implementedWith fqNameListOf("java.util.ArrayList", "java.util.LinkedList")
+        FQ_NAMES.mutableSet implementedWith fqNameListOf("java.util.HashSet", "java.util.TreeSet", "java.util.LinkedHashSet")
+        FQ_NAMES.mutableMap implementedWith fqNameListOf("java.util.HashMap", "java.util.TreeMap", "java.util.LinkedHashMap",
+                                                         "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap")
+        // TODO: FqName("java.util.function.Function") implementedWith fqNameListOf("java.util.function.UnaryOperator")
+    }
 
-    private val MUTABLE_LISTS_IMPLEMENTATIONS = setOfFqNames("java.util.ArrayList", "java.util.LinkedList")
-    private val MUTABLE_MAPS_IMPLEMENTATIONS = setOfFqNames(
-            "java.util.HashMap", "java.util.TreeMap", "java.util.LinkedHashMap",
-            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap"
-    )
-    private val MUTABLE_SETS_IMPLEMENTATIONS = setOfFqNames(
-            "java.util.HashSet", "java.util.TreeSet", "java.util.LinkedHashSet"
-    )
+    private fun fqNameListOf(vararg names: String): List<FqName> = names.map(::FqName)
 }
 
-private fun setOfFqNames(vararg names: String) = names.map { FqName(it) }.toSet()
