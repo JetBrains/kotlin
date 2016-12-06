@@ -4,13 +4,14 @@ class B() {}
 
 //-----------------------------------------------------------------------------//
 
-fun isTypeOf(a: Any) : Boolean {
+fun isTypeOf(a: Any?) : Boolean {
   return a is A
 }
 
-fun check_type(): Boolean {
-  val a = A()
-  return isTypeOf(a)
+//-----------------------------------------------------------------------------//
+
+fun isTypeNullableOf(a: Any?) : Boolean {
+  return a is A?
 }
 
 //-----------------------------------------------------------------------------//
@@ -19,34 +20,20 @@ fun isNotTypeOf(a: Any) : Boolean {
   return a !is A
 }
 
-fun check_not_type(): Boolean {
-  val b = B()
-  return isNotTypeOf(b)
-}
-
 //-----------------------------------------------------------------------------//
 
 fun isTypeOfInterface(a: Any) : Boolean {
   return a is I
 }
 
-fun check_interface(): Boolean {
-  val a = A()
-  return isTypeOfInterface(a)
-}
+//-----------------------------------------------------------------------------//
 
-//interface AI {
-//  fun v():Int
-//}
-//
-//val global:Int = 1
-//class A1() : AI {
-//  override fun v():Int = global
-//}
-//
-//fun smartCast(a:Any): Int {
-//  if (a is AI) {
-//    return a.v()
-//  }
-//  return 24
-//}
+fun main(args: Array<String>) {
+
+  println(isTypeOf(A()))
+  println(isTypeOf(null))
+  println(isTypeNullableOf(A()))
+  println(isTypeNullableOf(null))
+  println(isNotTypeOf(B()))
+  println(isTypeOfInterface(A()))
+}

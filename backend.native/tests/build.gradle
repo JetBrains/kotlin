@@ -252,7 +252,8 @@ task objectBasic(type: UnitKonanTest) {
     source = "codegen/klass/basic.kt"
 }
 
-task check_type(type: UnitKonanTest) {
+task check_type(type: RunKonanTest) {
+    goldValue = "true\nfalse\ntrue\ntrue\ntrue\ntrue\n"
     source = "codegen/basics/check_type.kt"
 }
 
