@@ -64,7 +64,7 @@ fun generateCollectionsJsAPI(outDir: File) {
 
 fun generateCommonAPI(outDir: File) {
     (commonGenerators + ::specialJVM + ::specialJS).flatMap { it().sortedBy { it.signature }.asSequence() }
-            .groupByFileAndWrite(outDir, platform = null)
+            .groupByFileAndWrite(outDir, platform = Platform.Common)
 }
 
 
@@ -72,7 +72,7 @@ fun generateCommonAPI(outDir: File) {
 
 private fun Sequence<GenericFunction>.groupByFileAndWrite(
         outDir: File,
-        platform: Platform?,
+        platform: Platform,
         fileNameBuilder: (SourceFile) -> String = { "_${it.name.capitalize()}.kt" }
 ) {
     val groupedConcreteFunctions = map { it.instantiate(platform) }.flatten().groupBy { it.sourceFile }

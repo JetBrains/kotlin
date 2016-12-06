@@ -140,7 +140,7 @@ fun arrays(): List<GenericFunction> {
         val arrayType = primitive.name + "Array"
         f("to$arrayType()") {
             only(ArraysOfObjects, Collections)
-            buildFamilies.forEach { family -> onlyPrimitives(family, primitive) }
+            buildFamilies.default!!.forEach { family -> onlyPrimitives(family, primitive) }
             doc(ArraysOfObjects) { "Returns an array of ${primitive.name} containing all of the elements of this generic array." }
             doc(Collections) { "Returns an array of ${primitive.name} containing all of the elements of this collection." }
             returns(arrayType)

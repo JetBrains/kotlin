@@ -71,6 +71,7 @@ enum class Inline {
 }
 
 enum class Platform {
+    Common,
     JVM,
     JS
 }
@@ -78,47 +79,90 @@ enum class Platform {
 data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
 val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 
+open class BaseSpecializedProperty<TKey: Any, TValue : Any> {
+    protected open fun onKeySet(key: TKey) {}
+
+    var default: TValue? = null
+        protected set
+}
+
+open class PlatformSpecializedProperty<TKey: Any, TValue : Any>() : BaseSpecializedProperty<TKey, TValue>() {
+    private val valueBuilders = HashMap<Platform?, HashMap<TKey?, ((TKey) -> TValue)>>()
+
+    operator fun get(platform: Platform, key: TKey): TValue? = run {
+        valueBuilders[platform]?.get(key)
+                ?: valueBuilders[null]?.get(key)
+                ?: valueBuilders[platform]?.get(null)
+                ?: valueBuilders[null]?.get(null)
+    }?.let { it(key) }
+
+    fun isSpecializedFor(platform: Platform, key: TKey): Boolean
+            = valueBuilders[platform]?.contains(key) == true || valueBuilders[null]?.contains(key) == true
+
+    operator fun set(platform: Platform?, keys: Collection<TKey>, value: TValue) {
+        if (platform == null && keys.isEmpty()) default = value
+        set(platform, keys, { value })
+    }
+    operator fun set(platform: Platform?, keys: Collection<TKey>, value: (TKey)->TValue) {
+        val valueBuilders = valueBuilders.getOrPut(platform) { hashMapOf() }
+        if (keys.isEmpty())
+            valueBuilders[null] = value;
+        else
+            for (key in keys) {
+                valueBuilders[key] = value
+                onKeySet(key)
+            }
+    }
+
+}
+
+open class SpecializedProperty<TKey: Any, TValue : Any>() : BaseSpecializedProperty<TKey, TValue>() {
+    private val valueBuilders = HashMap<TKey?, ((TKey) -> TValue)>()
+
+    operator fun get(key: TKey): TValue? = (valueBuilders[key] ?: valueBuilders[null])?.let { it(key) }
+
+
+    operator fun set(keys: Collection<TKey>, value: TValue) {
+        if (keys.isEmpty()) default = value
+        set(keys, { value })
+    }
+    operator fun set(keys: Collection<TKey>, value: (TKey)->TValue) {
+        if (keys.isEmpty())
+            valueBuilders[null] = value;
+        else
+            for (key in keys) {
+                valueBuilders[key] = value
+                onKeySet(key)
+            }
+    }
+
+}
+
+operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(keys.asList(), valueBuilder)
+operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), value)
+operator fun <TKey: Any, TValue : Any> PlatformSpecializedProperty<TKey, TValue>.invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(null, keys.asList(), valueBuilder)
+operator fun <TKey: Any, TValue : Any> PlatformSpecializedProperty<TKey, TValue>.invoke(value: TValue, vararg keys: TKey) = set(null, keys.asList(), value)
+operator fun <TKey: Any, TValue : Any> PlatformSpecializedProperty<TKey, TValue>.invoke(platform: Platform, vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(platform, keys.asList(), valueBuilder)
+operator fun <TKey: Any, TValue : Any> PlatformSpecializedProperty<TKey, TValue>.invoke(platform: Platform, value: TValue, vararg keys: TKey) = set(platform, keys.asList(), value)
+
+typealias FamilyProperty<TValue> = SpecializedProperty<Family, TValue>
+typealias PlatformProperty<TValue> = SpecializedProperty<Platform, TValue>
+typealias PlatformFamilyProperty<TValue> = PlatformSpecializedProperty<Family, TValue>
+typealias PlatformPrimitiveProperty<TValue> = PlatformSpecializedProperty<PrimitiveType, TValue>
+
+class DeprecationProperty() : PlatformFamilyProperty<Deprecation>()
+operator fun DeprecationProperty.invoke(value: String, vararg keys: Family) = set(null, keys.asList(), Deprecation(value))
+
+class DocProperty() : PlatformFamilyProperty<String>()
+operator fun DocProperty.invoke(vararg keys: Family, valueBuilder: DocExtensions.(Family) -> String) = set(null, keys.asList(), { f -> valueBuilder(DocExtensions, f) })
+
+class InlineProperty : PlatformFamilyProperty<Inline>()
+operator fun InlineProperty.invoke(vararg keys: Family) = set(null, keys.asList(), Inline.Yes)
+operator fun InlineProperty.invoke(value: Boolean, vararg keys: Family) = set(null, keys.asList(), if (value) Inline.Yes else Inline.No)
+
 class ConcreteFunction(val textBuilder: (Appendable) -> Unit, val sourceFile: SourceFile)
 
 class GenericFunction(val signature: String, val keyword: String = "fun") {
-
-    open class SpecializedProperty<TKey: Any, TValue : Any>() {
-        private val valueBuilders = HashMap<TKey?, ((TKey) -> TValue)>()
-
-        operator fun get(key: TKey): TValue? = (valueBuilders[key] ?: valueBuilders[null] ?: null)?.let { it(key) }
-
-        operator fun set(keys: Collection<TKey>, value: (TKey)->TValue) {
-            if (keys.isEmpty())
-                valueBuilders[null] = value;
-            else
-                for (key in keys) {
-                    valueBuilders[key] = value
-                    onKeySet(key)
-                }
-        }
-
-        protected open fun onKeySet(key: TKey) {}
-    }
-
-    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(keys.asList(), valueBuilder)
-    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
-
-    open class FamilyProperty<TValue: Any>() : SpecializedProperty<Family, TValue>()
-    open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
-//
-//    operator fun <TValue : Any> FamilyProperty<TValue>.invoke(vararg keys: Family, valueBuilder: (Family) -> TValue) = set(keys.map { null to it }, valueBuilder)
-//    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
-
-    class DeprecationProperty() : FamilyProperty<Deprecation>()
-    operator fun DeprecationProperty.invoke(value: String, vararg keys: Family) = set(keys.asList(), { Deprecation(value) })
-
-    class DocProperty() : FamilyProperty<String>()
-    operator fun DocProperty.invoke(vararg keys: Family, valueBuilder: DocExtensions.(Family) -> String) = set(keys.asList(), { f -> valueBuilder(DocExtensions, f) })
-
-    class InlineProperty() : FamilyProperty<Inline>()
-    operator fun InlineProperty.invoke(vararg keys: Family) = set(keys.asList(), { Inline.Yes })
-    operator fun InlineProperty.invoke(value: Boolean, vararg keys: Family) = set(keys.asList(), { if (value) Inline.Yes else Inline.No })
-
 
     data class TypeParameter(val original: String, val name: String, val constraint: TypeRef? = null) {
         constructor(simpleName: String) : this(simpleName, simpleName)
@@ -139,31 +183,35 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     var toNullableT: Boolean = false
 
-    val receiverAsterisk = FamilyProperty<Boolean>()
+    val receiverAsterisk = PlatformFamilyProperty<Boolean>()
 
-    val buildFamilies = LinkedHashSet(defaultFamilies)
-    val buildPrimitives = LinkedHashSet(defaultPrimitives)
-    val buildFamilyPrimitives = FamilyProperty<Set<PrimitiveType>>()
+    val buildFamilies = PlatformProperty<Set<Family>>().apply {
+        invoke(defaultFamilies)
+    }
+    //val buildFamilies = LinkedHashSet(defaultFamilies)
+    val buildFamilyPrimitives = PlatformFamilyProperty<Set<PrimitiveType>>().apply {
+        invoke(defaultPrimitives)
+    }
 
-    val customReceiver = FamilyProperty<String>()
-    val customSignature = FamilyProperty<String>()
+    val customReceiver = PlatformFamilyProperty<String>()
+    val customSignature = PlatformFamilyProperty<String>()
     val deprecate = DeprecationProperty()
     val doc = DocProperty()
-    val platformName = PrimitiveProperty<String>()
+    val platformName = PlatformPrimitiveProperty<String>()
     val inline = InlineProperty()
     val jvmOnly = FamilyProperty<Boolean>()
-    val since = FamilyProperty<String>()
+    val since = PlatformFamilyProperty<String>()
     val typeParams = ArrayList<String>()
-    val returns = FamilyProperty<String>()
+    val returns = PlatformFamilyProperty<String>()
     val visibility = FamilyProperty<String>()
     val operator = FamilyProperty<Boolean>()
     val infix = FamilyProperty<Boolean>()
-    val external = FamilyProperty<Boolean>()
-    val body = object : FamilyProperty<String>() {
+    val external = PlatformFamilyProperty<Boolean>()
+    val body = object : PlatformFamilyProperty<String>() {
         override fun onKeySet(key: Family) = include(key)
     }
     val customPrimitiveBodies = HashMap<Pair<Family, PrimitiveType>, String>()
-    val annotations = FamilyProperty<String>()
+    val annotations = PlatformFamilyProperty<String>()
     val sourceFile = FamilyProperty<SourceFile>()
 
     fun bodyForTypes(family: Family, vararg primitiveTypes: PrimitiveType, b: (PrimitiveType) -> String) {
@@ -178,12 +226,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     }
 
     fun exclude(vararg families: Family) {
-        buildFamilies.removeAll(families.toList())
+        buildFamilies(buildFamilies.default!! - families)
     }
 
     fun only(vararg families: Family) {
-        buildFamilies.clear()
-        buildFamilies.addAll(families.toList())
+        buildFamilies(families.toSet())
     }
 
     fun only(vararg primitives: PrimitiveType) {
@@ -191,8 +238,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     }
 
     fun only(primitives: Collection<PrimitiveType>) {
-        buildPrimitives.clear()
-        buildPrimitives.addAll(primitives)
+        buildFamilyPrimitives(primitives.toSet())
     }
 
     fun onlyPrimitives(family: Family, vararg primitives: PrimitiveType) {
@@ -204,33 +250,29 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     }
 
     fun include(vararg families: Family) {
-        buildFamilies.addAll(families.toList())
+        buildFamilies(buildFamilies.default!! + families)
     }
 
     fun exclude(vararg p: PrimitiveType) {
-        buildPrimitives.removeAll(p.toList())
+        buildFamilyPrimitives(buildFamilyPrimitives.default!! - p)
     }
 
-    fun include(vararg p: PrimitiveType) {
-        buildPrimitives.addAll(p.toList())
-    }
-
-    fun instantiate(platform: Platform?, vararg families: Family = Family.values()): List<ConcreteFunction> {
+    fun instantiate(platform: Platform, vararg families: Family = Family.values()): List<ConcreteFunction> {
         return families
                 .sortedBy { it.ordinal }
-                .filter { buildFamilies.contains(it) }
+                .filter { buildFamilies[platform]!!.contains(it) }
                 .filter { platform == Platform.JVM || jvmOnly[it] != true  }
-                .flatMap { family -> instantiate(family, platform == null) }
+                .flatMap { family -> instantiate(family, platform) }
     }
 
-    fun instantiate(f: Family, headerOnly: Boolean): List<ConcreteFunction> {
-        val onlyPrimitives = buildFamilyPrimitives[f]
+    fun instantiate(f: Family, platform: Platform): List<ConcreteFunction> {
+        val onlyPrimitives = buildFamilyPrimitives[platform, f]!!
 
-        if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
-            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.ordinal }
-                    .map { primitive -> ConcreteFunction( { build(it, f, primitive, headerOnly) }, sourceFileFor(f) ) }
+        if (f.isPrimitiveSpecialization || buildFamilyPrimitives.isSpecializedFor(platform, f)) {
+            return (onlyPrimitives).sortedBy { it.ordinal }
+                    .map { primitive -> ConcreteFunction( { build(it, f, primitive, platform) }, sourceFileFor(f) ) }
         } else {
-            return listOf(ConcreteFunction( { build(it, f, null, headerOnly) }, sourceFileFor(f) ))
+            return listOf(ConcreteFunction( { build(it, f, null, platform) }, sourceFileFor(f) ))
         }
     }
 
@@ -269,8 +311,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     }
 */
 
-    fun build(builder: Appendable, f: Family, primitive: PrimitiveType?, headerOnly: Boolean) {
-        val returnType = returns[f] ?: throw RuntimeException("No return type specified for $signature")
+    fun build(builder: Appendable, f: Family, primitive: PrimitiveType?, platform: Platform) {
+        val headerOnly: Boolean = platform == Platform.Common
+        val returnType = returns[platform, f] ?: throw RuntimeException("No return type specified for $signature")
 
         fun renderType(expression: String, receiver: String, self: String): String {
             val t = StringTokenizer(expression, " \t\n,:()<>?.", true)
@@ -339,7 +382,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             return answer.toString()
         }
 
-        val isAsteriskOrT = if (receiverAsterisk[f] == true) "*" else "T"
+        val isAsteriskOrT = if (receiverAsterisk[platform, f] == true) "*" else "T"
         val self = (when (f) {
             Iterables -> "Iterable<$isAsteriskOrT>"
             Collections -> "Collection<$isAsteriskOrT>"
@@ -359,7 +402,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             Generic -> "T"
         })
 
-        val receiver = (customReceiver[f] ?: self).let { renderType(it, it, self) }
+        val receiver = (customReceiver[platform, f] ?: self).let { renderType(it, it, self) }
 
         fun String.renderType(): String = renderType(this, receiver, self)
 
@@ -388,7 +431,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             }
         }
 
-        doc[f]?.let { methodDoc ->
+        doc[platform, f]?.let { methodDoc ->
             builder.append("/**\n")
             StringReader(methodDoc.trim()).forEachLine { line ->
                 builder.append(" * ").append(line.trim()).append("\n")
@@ -396,7 +439,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             builder.append(" */\n")
         }
 
-        deprecate[f]?.let { deprecated ->
+        deprecate[platform, f]?.let { deprecated ->
             val args = listOfNotNull(
                 "\"${deprecated.message}\"",
                 deprecated.replaceWith?.let { "ReplaceWith(\"$it\")" },
@@ -406,7 +449,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         }
 
         if (!f.isPrimitiveSpecialization && primitive != null) {
-            platformName[primitive]
+            platformName[platform, primitive]
                     ?.replace("<T>", primitive.name)
                     ?.let { platformName -> builder.append("@kotlin.jvm.JvmName(\"${platformName}\")\n")}
         }
@@ -414,13 +457,13 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         if (jvmOnly[f] ?: false) {
             builder.append("@kotlin.jvm.JvmVersion\n")
         }
-        since[f]?.let { since ->
+        since[platform, f]?.let { since ->
             builder.append("@SinceKotlin(\"$since\")\n")
         }
 
-        annotations[f]?.let { builder.append(it).append('\n') }
+        annotations[platform, f]?.let { builder.append(it).append('\n') }
 
-        if (inline[f] == Inline.Only) {
+        if (inline[platform, f] == Inline.Only) {
             builder.append("@kotlin.internal.InlineOnly").append('\n')
         }
 
@@ -428,9 +471,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         if (headerOnly) {
             builder.append("header ")
         }
-        if (external[f] == true)
+        if (external[platform, f] == true)
             builder.append("external ")
-        if (inline[f]?.isInline() == true)
+        if (inline[platform, f]?.isInline() == true)
             builder.append("inline ")
         if (infix[f] == true)
             builder.append("infix ")
@@ -448,7 +491,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         builder.append(receiverType)
         if (receiverType.isNotEmpty()) builder.append('.')
-        builder.append("${(customSignature[f] ?: signature).renderType()}: ${returnType.renderType()}")
+        builder.append("${(customSignature[platform, f] ?: signature).renderType()}: ${returnType.renderType()}")
 
         if (headerOnly) {
             builder.append("\n\n")
@@ -459,8 +502,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         val body = (
                 primitive?.let { customPrimitiveBodies[f to primitive] } ?:
-                body[f] ?:
-                deprecate[f]?.replaceWith?.let { "return $it" } ?:
+                body[platform, f] ?:
+                deprecate[platform, f]?.replaceWith?.let { "return $it" } ?:
                 throw RuntimeException("No body specified for $signature for ${f to primitive}")
         ).trim('\n')
         val indent: Int = body.takeWhile { it == ' ' }.length

@@ -7,7 +7,7 @@ fun numeric(): List<GenericFunction> {
 
     templates add f("sum()") {
         exclude(Strings)
-        buildFamilies.forEach { family -> onlyPrimitives(family, numericPrimitives) }
+        buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
         doc { f -> "Returns the sum of all elements in the ${f.collection}." }
         returns("SUM")
         platformName("sumOf<T>")
@@ -24,7 +24,7 @@ fun numeric(): List<GenericFunction> {
 
     templates add f("average()") {
         exclude(Strings)
-        buildFamilies.forEach { family -> onlyPrimitives(family, numericPrimitives) }
+        buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
         doc { f -> "Returns an average value of elements in the ${f.collection}."}
         returns("Double")
         platformName("averageOf<T>")

@@ -16,10 +16,27 @@
     <artifactId>kotlin-stdlib-gen</artifactId>
     <version>1.1-SNAPSHOT</version>
     <properties>
-        <kotlin.version>1.0.4</kotlin.version>
-        <kotlin.compiler.languageVersion>1.0</kotlin.compiler.languageVersion>
+        <kotlin.version>1.1-M03</kotlin.version>
+        <kotlin.compiler.languageVersion>1.1</kotlin.compiler.languageVersion>
         <kotlin.compiler.jdkHome>${env.JAVA_HOME}</kotlin.compiler.jdkHome>
     </properties>
+
+    <repositories>
+        <repository>
+            <snapshots><enabled>false</enabled></snapshots>
+            <id>bintray-kotlin-kotlin-eap-1.1</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/kotlin/kotlin-eap-1.1</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots><enabled>false</enabled></snapshots>
+            <id>bintray-kotlin-kotlin-eap-1.1</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/kotlin/kotlin-eap-1.1</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 
     <dependencies>
