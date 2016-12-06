@@ -146,6 +146,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             doNewlineTest(fileName);
         }
 
+        @TestMetadata("InBinaryExpressionUnfinishedInIf.after.kt")
+        public void testInBinaryExpressionUnfinishedInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinishedInIf.after.kt");
+            doNewlineTest(fileName);
+        }
+
         @TestMetadata("InBinaryExpressionsBeforeCloseParenthesis.after.kt")
         public void testInBinaryExpressionsBeforeCloseParenthesis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.kt");
@@ -371,6 +377,12 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("InBinaryExpressionUnfinished.after.inv.kt")
         public void testInBinaryExpressionUnfinished() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinished.after.inv.kt");
+            doNewlineTestWithInvert(fileName);
+        }
+
+        @TestMetadata("InBinaryExpressionUnfinishedInIf.after.inv.kt")
+        public void testInBinaryExpressionUnfinishedInIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinishedInIf.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
