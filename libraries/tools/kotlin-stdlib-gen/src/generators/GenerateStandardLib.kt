@@ -47,7 +47,8 @@ val commonGenerators = sequenceOf(
         ::sequences,
         ::ranges,
         ::numeric,
-        ::comparables
+        ::comparables,
+        CommonArrays::templates
 )
 
 fun generateCollectionsAPI(outDir: File) {

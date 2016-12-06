@@ -12561,6 +12561,62 @@ public inline fun CharArray.asList(): List<Char> {
 }
 
 /**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ByteArray.toTypedArray(): Array<Byte> {
+    return copyOf().unsafeCast<Array<Byte>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ShortArray.toTypedArray(): Array<Short> {
+    return copyOf().unsafeCast<Array<Short>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun IntArray.toTypedArray(): Array<Int> {
+    return copyOf().unsafeCast<Array<Int>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun LongArray.toTypedArray(): Array<Long> {
+    return copyOf().unsafeCast<Array<Long>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun FloatArray.toTypedArray(): Array<Float> {
+    return copyOf().unsafeCast<Array<Float>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun DoubleArray.toTypedArray(): Array<Double> {
+    return copyOf().unsafeCast<Array<Double>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun BooleanArray.toTypedArray(): Array<Boolean> {
+    return copyOf().unsafeCast<Array<Boolean>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun CharArray.toTypedArray(): Array<Char> {
+    return copyOf().unsafeCast<Array<Char>>()
+}
+
+/**
  * Returns `true` if the two specified arrays are *deeply* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  * 
@@ -13398,61 +13454,5 @@ public inline fun CharArray.sort(noinline comparison: (Char, Char) -> Int): Unit
 public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
     if (size > 1)
         sort { a, b -> comparator.compare(a, b) }
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun ByteArray.toTypedArray(): Array<Byte> {
-    return copyOf().unsafeCast<Array<Byte>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun ShortArray.toTypedArray(): Array<Short> {
-    return copyOf().unsafeCast<Array<Short>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun IntArray.toTypedArray(): Array<Int> {
-    return copyOf().unsafeCast<Array<Int>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun LongArray.toTypedArray(): Array<Long> {
-    return copyOf().unsafeCast<Array<Long>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun FloatArray.toTypedArray(): Array<Float> {
-    return copyOf().unsafeCast<Array<Float>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun DoubleArray.toTypedArray(): Array<Double> {
-    return copyOf().unsafeCast<Array<Double>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun BooleanArray.toTypedArray(): Array<Boolean> {
-    return copyOf().unsafeCast<Array<Boolean>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun CharArray.toTypedArray(): Array<Char> {
-    return copyOf().unsafeCast<Array<Char>>()
 }
 

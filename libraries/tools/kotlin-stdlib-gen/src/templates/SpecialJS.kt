@@ -21,36 +21,6 @@ import templates.Family.*
 fun specialJS(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("asList()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns a [List] that wraps the original array." }
-        returns("List<T>")
-        body(ArraysOfObjects) {
-            """
-            return ArrayList<T>(this.unsafeCast<Array<Any?>>())
-            """
-        }
-
-        inline(true, ArraysOfPrimitives)
-        body(ArraysOfPrimitives) {"""return this.unsafeCast<Array<T>>().asList()"""}
-    }
-
-
-    templates add f("toTypedArray()") {
-        only(ArraysOfPrimitives)
-        returns("Array<T>")
-        doc {
-            """
-            Returns a *typed* object array containing all of the elements of this primitive array.
-            """
-        }
-        body {
-            """
-            return copyOf().unsafeCast<Array<T>>()
-            """
-        }
-    }
-
     templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
         // TODO: Arguments checking as in java?
         only(ArraysOfObjects, ArraysOfPrimitives)

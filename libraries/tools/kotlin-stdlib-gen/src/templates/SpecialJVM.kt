@@ -247,17 +247,29 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("asList()") {
+    templates.forEach { it.apply { jvmOnly(true) } }
+
+    return templates
+}
+
+object CommonArrays {
+    fun f_asList() = f("asList()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns a [List] that wraps the original array." }
         returns("List<T>")
-        body(ArraysOfObjects) {
+        body(Platform.JVM, ArraysOfObjects) {
             """
             return ArraysUtilJVM.asList(this)
             """
         }
 
-        body(ArraysOfPrimitives) {
+        body(Platform.JS, ArraysOfObjects) {
+            """
+            return ArrayList<T>(this.unsafeCast<Array<Any?>>())
+            """
+        }
+
+        body(Platform.JVM, ArraysOfPrimitives) {
             """
             return object : AbstractList<T>(), RandomAccess {
                 override val size: Int get() = this@asList.size
@@ -269,19 +281,14 @@ fun specialJVM(): List<GenericFunction> {
             }
             """
         }
-//
-//        body(ArraysOfObjects) {
-//            """
-//            return ArrayList<T>(this.unsafeCast<Array<Any?>>())
-//            """
-//        }
-//
-//        inline(true, ArraysOfPrimitives)
-//        body(ArraysOfPrimitives) {"""return this.unsafeCast<Array<T>>().asList()"""}
+
+
+        inline(Platform.JS, Inline.Yes, ArraysOfPrimitives)
+        body(Platform.JS, ArraysOfPrimitives) {"""return this.unsafeCast<Array<T>>().asList()"""}
 
     }
 
-    templates add f("toTypedArray()") {
+    fun f_toTypedArray() = f("toTypedArray()") {
         only(ArraysOfPrimitives)
         returns("Array<T>")
         doc {
@@ -289,7 +296,7 @@ fun specialJVM(): List<GenericFunction> {
             Returns a *typed* object array containing all of the elements of this primitive array.
             """
         }
-        body {
+        body(Platform.JVM) {
             """
             val result = arrayOfNulls<T>(size)
             for (index in indices)
@@ -298,14 +305,13 @@ fun specialJVM(): List<GenericFunction> {
             return result as Array<T>
             """
         }
-//        body {
-//            """
-//            return copyOf().unsafeCast<Array<T>>()
-//            """
-//        }
+        body(Platform.JS) {
+            """
+            return copyOf().unsafeCast<Array<T>>()
+            """
+        }
     }
 
-    templates.forEach { it.apply { jvmOnly(true) } }
-
-    return templates
+    // TODO: use reflection later to get all functions of matching type
+    fun templates() = listOf(this.f_asList(), this.f_toTypedArray())
 }

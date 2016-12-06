@@ -12903,7 +12903,6 @@ public fun DoubleArray.sum(): Double {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.asList(): List<T> {
     return ArraysUtilJVM.asList(this)
 }
@@ -12911,7 +12910,6 @@ public fun <T> Array<out T>.asList(): List<T> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun ByteArray.asList(): List<Byte> {
     return object : AbstractList<Byte>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -12926,7 +12924,6 @@ public fun ByteArray.asList(): List<Byte> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun ShortArray.asList(): List<Short> {
     return object : AbstractList<Short>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -12941,7 +12938,6 @@ public fun ShortArray.asList(): List<Short> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun IntArray.asList(): List<Int> {
     return object : AbstractList<Int>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -12956,7 +12952,6 @@ public fun IntArray.asList(): List<Int> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun LongArray.asList(): List<Long> {
     return object : AbstractList<Long>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -12971,7 +12966,6 @@ public fun LongArray.asList(): List<Long> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -12986,7 +12980,6 @@ public fun FloatArray.asList(): List<Float> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -13001,7 +12994,6 @@ public fun DoubleArray.asList(): List<Double> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun BooleanArray.asList(): List<Boolean> {
     return object : AbstractList<Boolean>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -13016,7 +13008,6 @@ public fun BooleanArray.asList(): List<Boolean> {
 /**
  * Returns a [List] that wraps the original array.
  */
-@kotlin.jvm.JvmVersion
 public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
         override val size: Int get() = this@asList.size
@@ -13026,6 +13017,94 @@ public fun CharArray.asList(): List<Char> {
         override fun indexOf(element: Char): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
     }
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ByteArray.toTypedArray(): Array<Byte> {
+    val result = arrayOfNulls<Byte>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Byte>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ShortArray.toTypedArray(): Array<Short> {
+    val result = arrayOfNulls<Short>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Short>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun IntArray.toTypedArray(): Array<Int> {
+    val result = arrayOfNulls<Int>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Int>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun LongArray.toTypedArray(): Array<Long> {
+    val result = arrayOfNulls<Long>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Long>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun FloatArray.toTypedArray(): Array<Float> {
+    val result = arrayOfNulls<Float>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Float>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun DoubleArray.toTypedArray(): Array<Double> {
+    val result = arrayOfNulls<Double>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Double>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun BooleanArray.toTypedArray(): Array<Boolean> {
+    val result = arrayOfNulls<Boolean>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Boolean>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun CharArray.toTypedArray(): Array<Char> {
+    val result = arrayOfNulls<Char>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Char>
 }
 
 /**
@@ -13962,101 +14041,5 @@ public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex, comparator)
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun ByteArray.toTypedArray(): Array<Byte> {
-    val result = arrayOfNulls<Byte>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Byte>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun ShortArray.toTypedArray(): Array<Short> {
-    val result = arrayOfNulls<Short>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Short>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun IntArray.toTypedArray(): Array<Int> {
-    val result = arrayOfNulls<Int>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Int>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun LongArray.toTypedArray(): Array<Long> {
-    val result = arrayOfNulls<Long>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Long>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun FloatArray.toTypedArray(): Array<Float> {
-    val result = arrayOfNulls<Float>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Float>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun DoubleArray.toTypedArray(): Array<Double> {
-    val result = arrayOfNulls<Double>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Double>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun BooleanArray.toTypedArray(): Array<Boolean> {
-    val result = arrayOfNulls<Boolean>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Boolean>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-@kotlin.jvm.JvmVersion
-public fun CharArray.toTypedArray(): Array<Char> {
-    val result = arrayOfNulls<Char>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Char>
 }
 
