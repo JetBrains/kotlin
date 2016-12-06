@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.Flags
@@ -44,6 +45,9 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
 interface DeserializedContainerSource : SourceElement {
     // True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release
     val isPreReleaseInvisible: Boolean
+
+    // This FQ name should only be used for error messages
+    val presentableFqName: FqName
 }
 
 interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor

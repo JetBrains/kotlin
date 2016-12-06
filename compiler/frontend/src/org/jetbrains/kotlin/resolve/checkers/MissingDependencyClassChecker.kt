@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.MISSING_DEPENDENCY_CLASS
 import org.jetbrains.kotlin.diagnostics.Errors.PRE_RELEASE_CLASS
@@ -32,14 +33,19 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 
 object MissingDependencyClassChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        for (diagnostic in collectDiagnostics(reportOn, resolvedCall.resultingDescriptor)) {
+        val resultingDescriptor = resolvedCall.resultingDescriptor
+        for (diagnostic in collectDiagnostics(reportOn, resultingDescriptor)) {
             context.trace.report(diagnostic)
         }
+
+        val containerSource = (resultingDescriptor as? DeserializedMemberDescriptor)?.containerSource
+        incompatibilityDiagnosticFor(containerSource, reportOn)?.let(context.trace::report)
     }
 
     private fun diagnosticFor(descriptor: ClassifierDescriptor, reportOn: PsiElement): Diagnostic? {
@@ -47,10 +53,13 @@ object MissingDependencyClassChecker : CallChecker {
             return MISSING_DEPENDENCY_CLASS.on(reportOn, descriptor.fqNameSafe)
         }
 
-        val source = descriptor.source
+        return incompatibilityDiagnosticFor(descriptor.source, reportOn)
+    }
+
+    private fun incompatibilityDiagnosticFor(source: SourceElement?, reportOn: PsiElement): Diagnostic? {
         if (source is DeserializedContainerSource && source.isPreReleaseInvisible) {
             // TODO: if at least one PRE_RELEASE_CLASS is reported, display a hint to disable the diagnostic
-            return PRE_RELEASE_CLASS.on(reportOn, descriptor.fqNameSafe)
+            return PRE_RELEASE_CLASS.on(reportOn, source.presentableFqName)
         }
 
         return null
@@ -88,9 +97,10 @@ object MissingDependencyClassChecker : CallChecker {
                 element: PsiElement,
                 languageVersionSettings: LanguageVersionSettings
         ) {
-            diagnosticFor(targetDescriptor, element)?.let { diagnostic ->
-                trace.report(diagnostic)
-            }
+            diagnosticFor(targetDescriptor, element)?.let(trace::report)
+
+            val containerSource = (targetDescriptor as? DeserializedMemberDescriptor)?.containerSource
+            incompatibilityDiagnosticFor(containerSource, element)?.let(trace::report)
         }
     }
 }
