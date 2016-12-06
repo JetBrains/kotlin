@@ -4493,6 +4493,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("await.kt")
+        public void testAwait() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/await.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beginWithException.kt")
         public void testBeginWithException() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/beginWithException.kt");
@@ -4592,6 +4598,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
         @TestMetadata("instanceOfContinuation.kt")
         public void testInstanceOfContinuation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/instanceOfContinuation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("interceptResume.kt")
+        public void testInterceptResume() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/interceptResume.kt");
             doTest(fileName);
         }
 
