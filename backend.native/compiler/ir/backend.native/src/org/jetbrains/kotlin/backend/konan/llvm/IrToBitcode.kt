@@ -620,6 +620,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
         }
 
+        val bbCurrent = codegen.currentBlock
         val bbInit    = codegen.basicBlock("label_init")
         val bbExit    = codegen.basicBlock("label_continue")
         val onePtr    = codegen.intToPtr(kImmInt64One, codegen.kObjHeaderPtr, codegen.newVar())
@@ -633,11 +634,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val initFunction = value.descriptor.constructors.first { it.valueParameters.size == 0 }
         val ctor = codegen.llvmFunction(initFunction)
         val args = listOf(objectPtr, typeInfo, allocHint, ctor)
-        currentCodeContext.genCall(context.initInstanceFunction, args, codegen.newVar())
+        val newValue = currentCodeContext.genCall(
+                context.initInstanceFunction, args, codegen.newVar())
         codegen.br(bbExit)
 
         codegen.positionAtEnd(bbExit)
-        return objectVal
+        val valuePhi = codegen.phi(codegen.getLLVMType(value.type), codegen.newVar())
+        codegen.addPhiIncoming(valuePhi,
+                bbCurrent to objectVal, bbInit to newValue)
+
+        return valuePhi
     }
     //-------------------------------------------------------------------------//
 

@@ -915,27 +915,27 @@ public final class Float : Number(), Comparable<Float> {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
-        //public const val MIN_VALUE: Float
+        public const val MIN_VALUE: Float = 1.17549435E-38f
 
         /**
          * A constant holding the largest positive finite value of Float.
          */
-        //public const val MAX_VALUE: Float
+        public const val MAX_VALUE: Float = 3.4028235E+38f
 
         /**
          * A constant holding the positive infinity value of Float.
          */
-        //public val POSITIVE_INFINITY: Float
+        public val POSITIVE_INFINITY: Float = 1.0f / 0.0f
 
         /**
          * A constant holding the negative infinity value of Float.
          */
-        //public const val NEGATIVE_INFINITY: Float
+        public val NEGATIVE_INFINITY: Float = -1.0f / 0.0f
 
         /**
          * A constant holding the "not a number" value of Float.
          */
-        //public const val NaN: Float
+        public val NaN: Float = 0.0f / 0.0f
     }
 
     /**
@@ -1125,27 +1125,27 @@ public final class Double : Number(), Comparable<Double> {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */
-        //public const val MIN_VALUE: Double
+        public const val MIN_VALUE: Double = 4.9e-324
 
         /**
          * A constant holding the largest positive finite value of Double.
          */
-        //public const val MAX_VALUE: Double
+        public const val MAX_VALUE: Double = 1.7976931348623157e+308
 
         /**
          * A constant holding the positive infinity value of Double.
          */
-        // public const val POSITIVE_INFINITY: Double
+        public val POSITIVE_INFINITY: Double = 1.0 / 0.0
 
         /**
          * A constant holding the negative infinity value of Double.
          */
-        // public const val NEGATIVE_INFINITY: Double
+        public val NEGATIVE_INFINITY: Double = -1.0 / 0.0
 
         /**
          * A constant holding the "not a number" value of Double.
          */
-        // public const val NaN: Double
+        public val NaN: Double = 0.0 / 0.0
     }
 
     /**

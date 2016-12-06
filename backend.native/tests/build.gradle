@@ -342,6 +342,14 @@ task tostring2(type: RunKonanTest) {
     source = "runtime/basic/tostring2.kt"
 }
 
+task tostring3(type: RunKonanTest) {
+    goldValue = "-128\n127\n-32768\n32767\n" +
+            "-2147483648\n2147483647\n-9223372036854775808\n9223372036854775807\n" +
+            "1.17549E-38\n3.40282E+38\n-INF\nINF\nNAN\n" +
+            "4.94066E-324\n1.79769E+308\nINF\nINF\nNAN\n"
+    source = "runtime/basic/tostring3.kt"
+}
+
 task empty_substring(type: RunKonanTest) {
     goldValue = "\n"
     source = "runtime/basic/empty_substring.kt"
@@ -349,12 +357,12 @@ task empty_substring(type: RunKonanTest) {
 
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
-    source = "runtime/basic/array0.kt"
+    source = "runtime/collections/array0.kt"
 }
 
 task array1(type: RunKonanTest) {
     goldValue = "4 2\n1-1\n69\n38\n"
-    source = "runtime/basic/array1.kt"
+    source = "runtime/collections/array1.kt"
 }
 
 task if_else(type: UnitKonanTest) {

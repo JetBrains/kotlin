@@ -1,16 +1,5 @@
 package kotlin.collections
 
-
-// TODO: remove
-private val MAGIC: Long = 2654435769 // golden ratio
-private val INITIAL_CAPACITY = 8
-private val INITIAL_MAX_PROBE_DISTANCE = 2
-private val TOMBSTONE = -1
-
-private fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).highestOneBit()
-
-private fun computeShift(hashSize: Int): Int = hashSize.numberOfLeadingZeros() + 1
-
 class HashMap<K, V> private constructor(
         private var keysArray: Array<K>,
         private var valuesArray: Array<V>?, // allocated only when actually used, always null in pure HashSet
@@ -182,7 +171,7 @@ class HashMap<K, V> private constructor(
         return newValuesArray
     }
 
-    private fun hash(key: K) = (key.hashCode() * MAGIC.toInt()) ushr hashShift
+    private fun hash(key: K) = (key.hashCode() * MAGIC) ushr hashShift
 
     private fun compact() {
         var i = 0
@@ -475,8 +464,7 @@ class HashMap<K, V> private constructor(
     internal fun valuesIterator() = ValuesItr(this)
     internal fun entriesIterator() = EntriesItr(this)
 
-    // TODO: fix!
-    /* private companion object {
+    private companion object {
         const val MAGIC = 2654435769L.toInt() // golden ratio
         const val INITIAL_CAPACITY = 8
         const val INITIAL_MAX_PROBE_DISTANCE = 2
@@ -485,7 +473,7 @@ class HashMap<K, V> private constructor(
         fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).highestOneBit()
 
         fun computeShift(hashSize: Int): Int = hashSize.numberOfLeadingZeros() + 1
-    } */
+    }
 
     internal open class Itr<K, V>(
             internal val map: HashMap<K, V>
