@@ -5847,6 +5847,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("localDelegatedProperty.kt")
+                public void testLocalDelegatedProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/localDelegatedProperty.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("noOperatorModifierOnToDelegateFor.kt")
                 public void testNoOperatorModifierOnToDelegateFor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/noOperatorModifierOnToDelegateFor.kt");
