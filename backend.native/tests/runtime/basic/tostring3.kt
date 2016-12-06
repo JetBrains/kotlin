@@ -35,24 +35,24 @@ fun testLong() {
 }
 
 fun testFloat() {
-    val values = FloatArray(5)
+    val values = FloatArray(4)
     values[0] = Float.MIN_VALUE
     values[1] = Float.MAX_VALUE
     values[2] = Float.NEGATIVE_INFINITY
     values[3] = Float.POSITIVE_INFINITY
-    values[4] = Float.NaN
+    //values[4] = Float.NaN
     for (v in values) {
         println(v)
     }
 }
 
 fun testDouble() {
-    val values = DoubleArray(5)
+    val values = DoubleArray(4)
     values[0] = Double.MIN_VALUE
     values[1] = Double.MAX_VALUE
     values[2] = Double.NEGATIVE_INFINITY
     values[3] = Double.POSITIVE_INFINITY
-    values[4] = Double.NaN
+    //values[4] = Double.NaN
     for (v in values) {
         println(v)
     }
