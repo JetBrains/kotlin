@@ -356,7 +356,6 @@ fun main(args : Array<String>) {
     testSubListContains()
     testSubListIndexOf()
     testSubListLastIndexOf()
-    /*
     testSubListClear()
     testSubListSubListClear()
     testSubListAdd()
@@ -369,7 +368,7 @@ fun main(args : Array<String>) {
     testSubListSubListRemoveAll()
     testSubListSubListRemoveAll()
     testSubListRetainAll()
-    testSubListSubListRetainAll() */
+    testSubListSubListRetainAll()
     testIteratorRemove()
     testIteratorAdd()
 
