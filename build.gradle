@@ -1,5 +1,7 @@
 //ant.importBuild 'backend.native/kotlin-ir/build.xml'
 
+defaultTasks 'clean', 'demo'
+
 if (new File("$project.rootDir/local.properties").exists()) {
   Properties props = new Properties()
   props.load(new FileInputStream("$project.rootDir/local.properties"))
@@ -35,6 +37,8 @@ allprojects {
     }
     ext.clangArgs << "-B$binDir"
     ext.clangPath << binDir
+
+    ext.jvmArgs=["-ea"]
 
     convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
@@ -86,3 +90,86 @@ class PlatformInfo {
         return new Error("unsupported platform: $osName/$osArch")
     }
 }
+
+task dist_compiler(type: Copy) {
+    dependsOn ':backend.native:jars', 'dist_runtime'
+
+    destinationDir file('dist')
+
+    from(project(':backend.native').file('build/libs')) {
+        into('konan/lib')
+    }
+
+    from(project('Interop').file('Runtime/build/libs')) {
+        into('konan/lib')
+    }
+
+    from(project(':backend.native').file('build/external_jars')) {
+        into('konan/lib')
+    }
+
+    from(project(':backend.native').file('build/nativelibs')) {
+        into('konan/nativelib')
+    }
+
+    from(file('cmd')) {
+        fileMode(0775)
+        include('konanc')
+        include('kotlinc-native')
+
+        filter { line -> line.replaceAll("FILTER_CLANG_PLATFORM_ARGS", clangArgs.join(' ')) }
+        filter { line -> line.replaceAll("FILTER_CLANG_BIN_PATH", "${project.llvmDir}/bin") }
+
+        into('bin')
+    }
+}
+
+task stdlib(type: Exec) {
+    dependsOn 'dist_compiler', 'list_dist'
+
+    commandLine './dist/bin/konanc', 
+        "-J${jvmArgs.join(' ')}", '-Djava.library.path=backend.native/build/nativelibs',
+        '-nolink', '-nostdlib', 'runtime/src/main/kotlin', '-o', 'dist/lib/stdlib.kt.bc'
+
+    outputs.file(project.file('dist/lib/stdlib.kt.bc'))
+}
+
+task list_dist(type: Exec) {
+    commandLine 'find', 'dist'
+}
+
+task start(type: Exec) {
+    dependsOn 'dist_compiler', 'stdlib'
+
+    commandLine './dist/bin/konanc', 
+        "-J${jvmArgs.join(' ')}", '-Djava.library.path=backend.native/build/nativelibs',
+        '-nolink', 'runtime/src/launcher/kotlin', '-o', 'dist/lib/start.kt.bc'
+
+    outputs.file(project.file('dist/lib/start.kt.bc'))
+}
+
+task dist_runtime(type: Copy) {
+    dependsOn ':runtime:build'
+
+    destinationDir file('dist')
+
+    from(project(':runtime').file('build')) {
+        include('*.bc')
+        into('lib')
+    }
+}
+
+task dist {
+    dependsOn 'dist_compiler', 'dist_runtime', 'stdlib', 'start'
+}
+
+task demo(type: Exec) {
+    dependsOn 'dist'
+
+    commandLine './dist/bin/konanc', 'backend.native/tests/runtime/collections/moderately_large_array.kt', '-o', 'build/demo.kexe'
+}
+
+task clean {
+    delete 'dist'
+}
+

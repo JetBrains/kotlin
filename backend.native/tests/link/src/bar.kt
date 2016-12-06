@@ -1,5 +1,6 @@
-package qwerty
+import qwerty.*
 
-fun bar(a: Int): Int {
-    return foo(foo2(a))
+fun main(args: Array<String>) {
+    val size = foo(foo2(args.size))
+    println(size.toString())
 }

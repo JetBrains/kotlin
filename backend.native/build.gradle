@@ -223,17 +223,26 @@ task run(type: JavaExec) {
    environment 'LD_LIBRARY_PATH' : "${llvmDir}/lib:${project.buildDir}/nativelibs"
 }
 
+task jars(type: Jar) {
+    from 'build/classes/cli_bc', 
+         'build/classes/compiler', 
+         'build/classes/hashInteropStubs', 
+         'build/classes/llvmInteropStubs'
 
-
-task jars {
-  doFirst {
-    project.buildscript.configurations.classpath.each {
-      String jarName = it.getName();
-      print jarName + ":"
-    }
-  }
+    dependsOn 'build', ':runtime:build', 'external_jars'
 }
 
+task external_jars(type: Copy) {
+    from configurations.compilerCompile {
+
+        include 'protobuf-java-3.0.0.jar'
+
+        include 'kotlin-compiler*.jar'
+        rename 'kotlin-compiler(.*).jar', 'kotlin-compiler.jar'
+
+        into 'build/external_jars'
+    }
+}
 
 protobuf {
     protoc {

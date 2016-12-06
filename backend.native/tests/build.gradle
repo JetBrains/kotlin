@@ -187,6 +187,7 @@ class LinkKonanTest extends KonanTest {
             jvmArgs "-ea"
             args "-output", outPath,
                  "-runtime", "${runtimeBc.absolutePath}",
+                 "-library", "${stdlibKtBc.absolutePath}",
                  "-library", "${libBc.absolutePath}",
                  "${sourceKt.absolutePath}"
 
@@ -445,6 +446,7 @@ task intrinsic(type: UnitKonanTest) {
 }
 
 task link(type: LinkKonanTest) {
+    goldValue = "0\n"
     source = "link/src/bar.kt"
     lib = "link/lib"
 }
