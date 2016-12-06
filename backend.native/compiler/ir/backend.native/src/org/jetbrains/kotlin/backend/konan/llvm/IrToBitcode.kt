@@ -4,32 +4,25 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrBreakImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetterCallImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
@@ -726,7 +719,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateStringConcatenation(tmpVariableName: String, value: IrStringConcatenation): LLVMValueRef? {
-        val stringPlus = KonanPlatform.builtIns.stringType.memberScope.getContributedFunctions(Name.identifier("plus"), NoLookupLocation.FROM_BACKEND).first()
+        val stringPlus = KonanPlatform.builtIns.stringType.memberScope.getContributedFunctions(
+                Name.identifier("plus"), NoLookupLocation.FROM_BACKEND).first()
         var res:LLVMValueRef? = null
         val strings:List<LLVMValueRef> = value.arguments.map {
             val descriptor = getToString(it.type)
@@ -1464,6 +1458,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         descriptor.valueParameters.map {
+            //println(it.index)
             res += (it to expression.getValueArgument(it.index)!!)
         }
 
@@ -1549,6 +1544,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private val kLt0         = Name.identifier("LT0")
     private val kLteq0       = Name.identifier("LTEQ0")
     private val kNot         = Name.identifier("NOT")
+    private val kThrowNpe    = Name.identifier("THROW_NPE")
     private val kImmZero     = LLVMConstInt(LLVMInt32Type(),  0, 1)!!
     private val kImmOne      = LLVMConstInt(LLVMInt32Type(),  1, 1)!!
     private val kTrue        = LLVMConstInt(LLVMInt1Type(),   1, 1)!!
@@ -1559,13 +1555,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("evaluateCall               : $tmpVariableName origin:${ir2string(callee)}")
         val descriptor = callee.descriptor
         when (descriptor.name) {
-            kEqeq    -> return evaluateOperatorEqeq  (callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
-            ktEqeqeq -> return evaluateOperatorEqeqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
-            kGt0     -> return codegen.icmpGt(args[0]!!, kImmZero, tmpVariableName)
-            kGteq0   -> return codegen.icmpGe(args[0]!!, kImmZero, tmpVariableName)
-            kLt0     -> return codegen.icmpLt(args[0]!!, kImmZero, tmpVariableName)
-            kLteq0   -> return codegen.icmpLe(args[0]!!, kImmZero, tmpVariableName)
-            kNot     -> return codegen.icmpNe(args[0]!!, kTrue,    tmpVariableName)
+            kEqeq     -> return evaluateOperatorEqeq  (callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
+            ktEqeqeq  -> return evaluateOperatorEqeqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!, tmpVariableName)
+            kGt0      -> return codegen.icmpGt(args[0]!!, kImmZero, tmpVariableName)
+            kGteq0    -> return codegen.icmpGe(args[0]!!, kImmZero, tmpVariableName)
+            kLt0      -> return codegen.icmpLt(args[0]!!, kImmZero, tmpVariableName)
+            kLteq0    -> return codegen.icmpLe(args[0]!!, kImmZero, tmpVariableName)
+            kNot      -> return codegen.icmpNe(args[0]!!, kTrue,    tmpVariableName)
+            // TODO: reconsider.
+            kThrowNpe -> return evaluateOperatorThrowNpe()
             else -> {
                 TODO(descriptor.name.toString())
             }
@@ -1574,9 +1572,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun getEquals(type: KotlinType, methodName: String) : SimpleFunctionDescriptor {
+    private fun getEquals(type: KotlinType) : SimpleFunctionDescriptor {
 
-        val name = Name.identifier(methodName)
+        val name = Name.identifier("equals")
         val descriptors = type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).filter {
             it.valueParameters.size == 1 && KotlinBuiltIns.isAnyOrNullableAny(it.valueParameters[0].type)
         }
@@ -1590,6 +1588,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun getToString(type: KotlinType): SimpleFunctionDescriptor {
         val name = Name.identifier("toString")
         val descriptor = type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).first()
+        return descriptor
+    }
+
+    private fun getThrowNpe(): SimpleFunctionDescriptor {
+        val name = Name.identifier("ThrowNullPointerException")
+        val moduleDescriptor = KonanPlatform.builtIns.builtInsModule
+        val packageDescriptor = moduleDescriptor.getPackage(FqName("konan.internal"))
+        val descriptor =  packageDescriptor.memberScope.getContributedFunctions(
+                name, NoLookupLocation.FROM_BACKEND).first()
         return descriptor
     }
 
@@ -1611,14 +1618,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun generateEqeqForObjects(callee: IrBinaryPrimitiveImpl, arg0: LLVMValueRef, arg1: LLVMValueRef, tmpVariableName: String): LLVMValueRef {
         val arg0Type = callee.argument0.type
-        val descriptor = getEquals(arg0Type, "equals")                          // Get descriptor for "arg0.equals".
+        val descriptor = getEquals(arg0Type)                                    // Get descriptor for "arg0.equals".
         if (arg0Type.isMarkedNullable) {                                        // If arg0 is nullable.
             val bbEq2  = codegen.basicBlock()                                   // Block to process "eqeq".
             val bbEq3  = codegen.basicBlock()                                   // Block to process "eqeqeq".
             val bbExit = codegen.basicBlock()                                   // Exit block for feather generation.
             val result = codegen.alloca(codegen.getLLVMType(callee.type), codegen.newVar())
 
-            val condition = codegen.icmpEq(arg0, codegen.kNullObjHeaderPtr, codegen.newVar())    // Compare arg0 with "null".
+            val condition = codegen.icmpEq(
+                    arg0, codegen.kNullObjHeaderPtr, codegen.newVar())          // Compare arg0 with "null".
             codegen.condBr(condition, bbEq3, bbEq2)                             // If (arg0 == null) bbEq3 else bbEq2.
 
             codegen.positionAtEnd(bbEq3)                                        // Get generation to bbEq3.
@@ -1651,6 +1659,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO("${ir2string(callee)}")
             else -> codegen.icmpEq(arg0, arg1, tmpVariableName)
         }
+    }
+
+    private fun evaluateOperatorThrowNpe(): LLVMValueRef {
+        val result = evaluateSimpleFunctionCall("", getThrowNpe(), listOf())
+        codegen.unreachable()
+        return result
     }
 
     //-------------------------------------------------------------------------//

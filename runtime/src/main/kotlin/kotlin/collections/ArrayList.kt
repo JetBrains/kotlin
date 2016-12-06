@@ -9,7 +9,8 @@ class ArrayList<E> private constructor(
 
     constructor() : this(10)
 
-    constructor(initialCapacity: Int) : this(arrayOfLateInitElements(initialCapacity), 0, 0, null)
+    constructor(initialCapacity: Int) : this(
+            arrayOfUninitializedElements(initialCapacity), 0, 0, null)
 
     constructor(c: Collection<E>) : this(c.size) {
         addAll(c)
@@ -135,7 +136,7 @@ class ArrayList<E> private constructor(
     fun trimToSize() {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         if (length < array.size)
-            array = array.copyOfLateInitElements(length)
+            array = array.copyOfUninitializedElements(length)
     }
 
     fun ensureCapacity(capacity: Int) {
@@ -144,7 +145,7 @@ class ArrayList<E> private constructor(
             var newSize = array.size * 3 / 2
             if (capacity > newSize)
                 newSize = capacity
-            array = array.copyOfLateInitElements(newSize)
+            array = array.copyOfUninitializedElements(newSize)
         }
     }
 

@@ -23,6 +23,7 @@ public final class Array<T> : Cloneable {
         return IteratorImpl(this)
     }
 
+    // Konan-specific.
     @SymbolName("Kotlin_Array_getArrayLength")
     external private fun getArrayLength(): Int
 }

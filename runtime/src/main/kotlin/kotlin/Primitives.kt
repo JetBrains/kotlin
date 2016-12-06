@@ -647,6 +647,32 @@ public final class Int : Number(), Comparable<Int> {
     public override fun hashCode(): Int {
         return this
     }
+
+    fun highestOneBit() : Int {
+        var index = 31
+
+        while (index >= 0) {
+            var mask = (1 shl index)
+            if ((mask and this) != 0) {
+                return mask
+            }
+            index--
+        }
+        return 0
+    }
+
+    fun numberOfLeadingZeros() : Int {
+        var index = 31
+
+        while (index >= 0) {
+            var mask = (1 shl index)
+            if ((mask and this) != 0) {
+                return 31 - index
+            }
+            index--
+        }
+        return 0
+    }
 }
 
 /**

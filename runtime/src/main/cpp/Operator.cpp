@@ -191,6 +191,14 @@ KInt    Kotlin_Int_dec              (KInt a           ) { return --a; }
 KInt    Kotlin_Int_unaryPlus        (KInt a           ) { return  +a; }
 KInt    Kotlin_Int_unaryMinus       (KInt a           ) { return  -a; }
 
+KInt    Kotlin_Int_xor_Int          (KInt a, KInt   b)  { return a ^ b; }
+KInt    Kotlin_Int_and_Int          (KInt a, KInt   b)  { return a & b; }
+KInt    Kotlin_Int_shl_Int          (KInt a, KInt   b)  { return a << b; }
+KInt    Kotlin_Int_shr_Int          (KInt a, KInt   b)  { return a >> b; }
+KInt    Kotlin_Int_ushr_Int         (KInt a, KInt   b) {
+  return static_cast<uint32_t>(a) >> b;
+}
+
 KByte   Kotlin_Int_toByte           (KInt a           ) { return a; }
 KChar   Kotlin_Int_toChar           (KInt a           ) { return a; }
 KShort  Kotlin_Int_toShort          (KInt a           ) { return a; }

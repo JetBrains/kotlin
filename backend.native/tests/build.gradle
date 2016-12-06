@@ -477,6 +477,16 @@ task array_list1(type: RunKonanTest) {
     source = "runtime/collections/array_list1.kt"
 }
 
+task hash_map0(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "runtime/collections/hash_map0.kt"
+}
+
+task hash_set0(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "runtime/collections/hash_set0.kt"
+}
+
 task listof0(type: RunKonanTest) {
     goldValue = "abc\n[a, b, c, d]\n[n, s, a]\n"
     arguments = ["a"]

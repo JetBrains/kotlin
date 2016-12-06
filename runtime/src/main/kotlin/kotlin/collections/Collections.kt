@@ -32,6 +32,14 @@ fun <E> Array<E>.asList(): List<E> {
     return result
 }
 
+fun <E> Array<E>.toSet(): Set<E> {
+    val result = HashSet<E>(this.size)
+    for (e in this) {
+        result.add(e)
+    }
+    return result
+}
+
 public fun <T> arrayListOf(vararg args: T): MutableList<T> {
     val result = ArrayList<T>(args.size)
     for (arg in args) {
@@ -40,8 +48,24 @@ public fun <T> arrayListOf(vararg args: T): MutableList<T> {
     return result
 }
 
+public fun <T> hashSetOf(vararg args: T): HashSet<T> {
+    val result = HashSet<T>(args.size)
+    for (arg in args) {
+        result.add(arg)
+    }
+    return result
+}
+
+// TODO: implement EmptySet and EmptyList objects.
+
 /*
  * TODO: in Big Kotlin this function is following: (see libraries/stdlib/src/kotlin/collections/Collections.kt)
  * public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
  */
+public fun <T> listOf(): List<T> = ArrayList(0)
+
 public fun <T> listOf(vararg args: T): List<T> = args.asList()
+
+public fun <T> setOf(vararg args: T): Set<T> = args.toSet()
+
+public fun <T> mutableSetOf(vararg args: T): MutableSet<T> = HashSet<T>(args.asList())

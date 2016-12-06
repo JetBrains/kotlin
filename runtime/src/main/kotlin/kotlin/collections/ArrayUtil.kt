@@ -5,8 +5,7 @@ package kotlin.collections
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-fun <E> arrayOfLateInitElements(size: Int): Array<E> {
-   // TODO: maybe use an empty array.
+fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
    // return (if (size == 0) emptyArray else Array<Any>(size)) as Array<E>
    return Array<E>(size)
 }
@@ -16,8 +15,14 @@ fun <E> arrayOfLateInitElements(size: Int): Array<E> {
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-fun <E> Array<E>.copyOfLateInitElements(newSize: Int): Array<E> {
+fun <E> Array<E>.copyOfUninitializedElements(newSize: Int): Array<E> {
     val result = Array<E>(newSize)
+    this.copyRangeTo(result, 0, if (newSize > this.size) this.size else newSize, 0)
+    return result
+}
+
+fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
+    val result = IntArray(newSize)
     this.copyRangeTo(result, 0, if (newSize > this.size) this.size else newSize, 0)
     return result
 }
@@ -35,6 +40,9 @@ fun <E> Array<E>.resetAt(index: Int) {
 @SymbolName("Kotlin_Array_fillImpl")
 external private fun fillImpl(array: Array<Any>, fromIndex: Int, toIndex: Int, value: Any?)
 
+@SymbolName("Kotlin_IntArray_fillImpl")
+external private fun fillImpl(array: IntArray, fromIndex: Int, toIndex: Int, value: Int)
+
 /**
  * Resets a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
  * to some implementation-specific _uninitialized_ value.
@@ -46,9 +54,17 @@ fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
     fillImpl(this as Array<Any>, fromIndex, toIndex, null)
 }
 
+fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
+    fillImpl(this, fromIndex, toIndex, value)
+}
+
 @SymbolName("Kotlin_Array_copyImpl")
 external private fun copyImpl(array: Array<Any>, fromIndex: Int,
                          destination: Array<Any>, toIndex: Int, count: Int)
+
+@SymbolName("Kotlin_IntArray_copyImpl")
+external private fun copyImpl(array: IntArray, fromIndex: Int,
+                              destination: IntArray, toIndex: Int, count: Int)
 
 /**
  * Copies a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
@@ -58,10 +74,29 @@ fun <E> Array<E>.copyRangeTo(destination: Array<E>, fromIndex: Int, toIndex: Int
     copyImpl(this as Array<Any>, fromIndex, destination as Array<Any>, destinationIndex, toIndex - fromIndex)
 }
 
+fun IntArray.copyRangeTo(destination: IntArray, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
+    copyImpl(this, fromIndex, destination, destinationIndex, toIndex - fromIndex)
+}
+
 /**
  * Copies a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
  * to another part of this array starting at [destinationIndex].
  */
 fun <E> Array<E>.copyRange(fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
     copyRangeTo(this, fromIndex, toIndex, destinationIndex)
+}
+
+internal fun <E> Collection<E>.collectionToString(): String {
+    val sb = StringBuilder(2 + size * 3)
+    sb.append("[")
+    var i = 0
+    val it = iterator()
+    while (it.hasNext()) {
+        if (i > 0) sb.append(", ")
+        val next = it.next()
+        if (next == this) sb.append("(this Collection)") else sb.append(next)
+        i++
+    }
+    sb.append("]")
+    return sb.toString()
 }
