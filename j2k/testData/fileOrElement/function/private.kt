@@ -1,2 +1,1 @@
-private fun test() {
-}
+private fun test() {}

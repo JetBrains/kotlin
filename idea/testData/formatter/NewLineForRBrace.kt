@@ -25,3 +25,6 @@ enum class E1 {
     EE2 {
         val some = 1}
 }
+
+fun e = fun(a: Int,
+            b: String) {}

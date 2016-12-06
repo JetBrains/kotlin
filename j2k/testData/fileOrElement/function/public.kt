@@ -1,2 +1,1 @@
-fun test() {
-}
+fun test() {}

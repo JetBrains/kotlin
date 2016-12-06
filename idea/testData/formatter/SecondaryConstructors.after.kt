@@ -1,40 +1,28 @@
 class A {
-    constructor() {
-    }
+    constructor() {}
+    constructor() {}
 
-    constructor() {
-    }
-
-    fun foo() {
-    }
+    fun foo() {}
 
     constructor()
 
-    fun foo() {
-    }
+    fun foo() {}
 
-    constructor() {
-    }
+    constructor() {}
 
     val x = 1
 
-    constructor() {
-    }
+    constructor() {}
 
-    fun foo() {
-    }
-
+    fun foo() {}
     val x = 1
 
-    constructor() {
-    }
+    constructor() {}
 
     val x = 1
     val x = 1
 
-    constructor() {
-    }
-
+    constructor() {}
     constructor() {
 
         x = 1
@@ -42,30 +30,24 @@ class A {
 
     fun foo() = 1
 
-    constructor() {
-    }
+    constructor() {}
 
     fun foo() = 1
 
 
-    constructor() : this() {
-    }
-
-    constructor() : this() {
-    }
+    constructor() : this() {}
+    constructor() : this() {}
 
 
     constructor(a: Int) : this()
     constructor(a: Byte) : this()
     constructor() : this()
-    constructor() : super() {
-    }
+    constructor() : super() {}
 
 
     constructor() : this()
 
-    constructor() : super() {
-    }
+    constructor() : super() {}
 
     constructor() :
             this()

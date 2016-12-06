@@ -16,8 +16,7 @@ internal class B// this constructor will disappear
 (private val x: Int) // end of constructor body
 {
 
-    fun foo() {
-    }
+    fun foo() {}
 }
 
 internal class CtorComment {

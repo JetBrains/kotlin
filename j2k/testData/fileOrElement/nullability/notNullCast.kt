@@ -23,9 +23,7 @@ class Passenger {
         accept2(pass as PassChild?)
     }
 
-    fun accept1(p: PassChild) {
-    }
+    fun accept1(p: PassChild) {}
 
-    fun accept2(p: PassChild) {
-    }
+    fun accept2(p: PassChild) {}
 }

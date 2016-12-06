@@ -2,51 +2,39 @@
 internal object Outer {
     private class Nested1() {
 
-        constructor(a: Int) : this() {
-        }
+        constructor(a: Int) : this() {}
 
-        protected constructor(c: Char) : this() {
-        }
+        protected constructor(c: Char) : this() {}
 
-        private constructor(b: Boolean) : this() {
-        }
+        private constructor(b: Boolean) : this() {}
     }
 
     protected class Nested2() {
 
-        constructor(a: Int) : this() {
-        }
+        constructor(a: Int) : this() {}
 
-        protected constructor(c: Char) : this() {
-        }
+        protected constructor(c: Char) : this() {}
 
-        private constructor(b: Boolean) : this() {
-        }
+        private constructor(b: Boolean) : this() {}
 
     }
 
     internal class Nested3() {
 
-        constructor(a: Int) : this() {
-        }
+        constructor(a: Int) : this() {}
 
-        protected constructor(c: Char) : this() {
-        }
+        protected constructor(c: Char) : this() {}
 
-        private constructor(b: Boolean) : this() {
-        }
+        private constructor(b: Boolean) : this() {}
     }
 
     class Nested4() {
 
-        constructor(a: Int) : this() {
-        }
+        constructor(a: Int) : this() {}
 
-        protected constructor(c: Char) : this() {
-        }
+        protected constructor(c: Char) : this() {}
 
-        private constructor(b: Boolean) : this() {
-        }
+        private constructor(b: Boolean) : this() {}
     }
 
     fun foo() {

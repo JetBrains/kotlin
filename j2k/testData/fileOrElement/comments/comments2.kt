@@ -14,11 +14,9 @@ internal class A {
 
     private /*it's private*/ val field = 0
 
-    /*it's public*/ fun foo(s: String): Char {
-    }
+    /*it's public*/ fun foo(s: String): Char {}
 
-    protected /*it's protected*/ fun foo(c: Char) {
-    }
+    protected /*it's protected*/ fun foo(c: Char) {}
 
     companion object {
 

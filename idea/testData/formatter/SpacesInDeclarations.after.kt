@@ -7,8 +7,7 @@ data class FooClass2
 
 //-----------------------
 
-public fun fooFun1() {
-}
+public fun fooFun1() {}
 
 public
 fun fooFun2() {
@@ -102,11 +101,8 @@ object FooObject2 {
 
 }
 
-fun <T> foo_1() {
-}
-
-fun <T> foo_2() {
-}
+fun <T> foo_1() {}
+fun <T> foo_2() {}
 
 fun
         <T>

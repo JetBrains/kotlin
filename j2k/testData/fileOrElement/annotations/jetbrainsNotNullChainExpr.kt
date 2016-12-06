@@ -3,8 +3,7 @@
 package test
 
 internal class Foo {
-    fun execute() {
-    }
+    fun execute() {}
 }
 
 internal class Bar {

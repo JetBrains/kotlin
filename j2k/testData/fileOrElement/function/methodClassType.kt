@@ -1,2 +1,1 @@
-fun main(): String {
-}
+fun main(): String {}

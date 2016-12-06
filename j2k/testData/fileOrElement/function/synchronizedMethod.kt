@@ -3,6 +3,5 @@ internal class A {
         bar()
     }
 
-    fun bar() {
-    }
+    fun bar() {}
 }

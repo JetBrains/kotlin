@@ -1,13 +1,9 @@
-fun f1() {
-}
-
+fun f1() {}
 class C1 {}
 
 // -----
 
-fun f2() {
-}
-
+fun f2() {}
 class C2
 
 // -----
@@ -24,15 +20,13 @@ class C4
 
 class C5 {}
 
-fun f5() {
-}
+fun f5() {}
 
 // -----
 
 class C6
 
-fun f6() {
-}
+fun f6() {}
 
 // -----
 

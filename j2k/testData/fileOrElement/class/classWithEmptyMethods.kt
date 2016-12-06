@@ -1,10 +1,5 @@
 internal class T {
-    fun main() {
-    }
-
-    fun i(): Int {
-    }
-
-    fun s(): String {
-    }
+    fun main() {}
+    fun i(): Int {}
+    fun s(): String {}
 }

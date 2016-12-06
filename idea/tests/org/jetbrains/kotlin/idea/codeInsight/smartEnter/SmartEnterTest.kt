@@ -960,6 +960,16 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testFunBody9() = doFileTest(
+            """
+            fun test(){<caret>}
+            """,
+            """
+            fun test() {}
+            <caret>
+            """
+    )
+
     fun testInLambda1() = doFunTest(
             """
             some {

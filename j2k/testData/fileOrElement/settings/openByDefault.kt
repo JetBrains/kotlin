@@ -1,19 +1,13 @@
 // !openByDefault: true
 
 internal open class A {
-    internal open fun foo1() {
-    }
-
-    private fun foo2() {
-    }
-
-    fun foo3() {
-    }
+    internal open fun foo1() {}
+    private fun foo2() {}
+    fun foo3() {}
 }
 
 internal class B {
-    fun foo() {
-    }
+    fun foo() {}
 }
 
 internal abstract class C {
@@ -25,8 +19,7 @@ internal interface I {
 }
 
 internal open class D : I {
-    override fun foo() {
-    }
+    override fun foo() {}
 }
 
 internal enum class E {

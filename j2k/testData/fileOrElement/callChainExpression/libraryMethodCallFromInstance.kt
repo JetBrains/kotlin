@@ -1,6 +1,5 @@
 internal class Library {
-    fun call() {
-    }
+    fun call() {}
 
     val string: String
         get() = ""
