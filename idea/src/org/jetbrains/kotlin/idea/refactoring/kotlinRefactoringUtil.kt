@@ -34,7 +34,6 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.Messages
@@ -102,7 +101,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.io.File
-import java.lang.AssertionError
 import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
@@ -694,12 +692,6 @@ fun (() -> Any).runRefactoringWithPostprocessing(
     catch(e: Exception) {
         throw ConfigurationException(errorMessage)
     }
-}
-
-fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String, canBeCanceled: Boolean, action: () -> T): T? {
-    var result: T? = null
-    ProgressManager.getInstance().runProcessWithProgressSynchronously({ result = action() }, progressTitle, canBeCanceled, this)
-    return result
 }
 
 fun invokeOnceOnCommandFinish(action: () -> Unit) {
