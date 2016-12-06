@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
@@ -361,9 +361,14 @@ class ReferenceVariantsHelper(
         if (kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) return
         if (receiverTypes.isEmpty()) return
 
-        fun process(extension: CallableDescriptor) {
-            if (kindFilter.accepts(extension) && nameFilter(extension.name)) {
-                addAll(extension.substituteExtensionIfCallable(receiverTypes, callType))
+        fun process(extensionOrSyntheticMember: CallableDescriptor) {
+            if (kindFilter.accepts(extensionOrSyntheticMember) && nameFilter(extensionOrSyntheticMember.name)) {
+                if (extensionOrSyntheticMember.isExtension) {
+                    addAll(extensionOrSyntheticMember.substituteExtensionIfCallable(receiverTypes, callType))
+                }
+                else {
+                    add(extensionOrSyntheticMember)
+                }
             }
         }
 
@@ -380,8 +385,8 @@ class ReferenceVariantsHelper(
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            for (extension in syntheticScopes.collectSyntheticExtensionFunctions(receiverTypes)) {
-                process(extension)
+            for (syntheticMember in syntheticScopes.collectSyntheticExtensionFunctions(receiverTypes)) {
+                process(syntheticMember)
             }
         }
     }
