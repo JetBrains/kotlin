@@ -64,6 +64,7 @@ fun KaptContext.doAnnotationProcessing(
 
         val log = Log.instance(context)
         if (compiler.shouldStop(CompileStates.CompileState.PARSE) || log.nerrors > 0) {
+            log.flush()
             throw KaptError(KaptError.Kind.JAVA_FILE_PARSING_ERROR)
         }
 
