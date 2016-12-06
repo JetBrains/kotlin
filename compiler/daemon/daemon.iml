@@ -12,5 +12,8 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="incremental-compilation-impl" />
+    <orderEntry type="module" module-name="build-common" />
+    <orderEntry type="module" module-name="descriptor.loader.java" />
   </component>
 </module>

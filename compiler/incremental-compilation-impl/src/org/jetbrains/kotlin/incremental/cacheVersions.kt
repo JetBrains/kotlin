@@ -22,10 +22,15 @@ import java.io.File
 internal const val STANDALONE_CACHE_VERSION = 0
 internal const val STANDALONE_VERSION_FILE_NAME = "standalone-ic-format-version.txt"
 
-internal fun standaloneCacheVersion(dataRoot: File): CacheVersion =
+fun standaloneCacheVersion(dataRoot: File, forceEnable: Boolean = false): CacheVersion =
         CacheVersion(ownVersion = STANDALONE_CACHE_VERSION,
                 versionFile = File(dataRoot, STANDALONE_VERSION_FILE_NAME),
                 whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOff = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-                isEnabled = { IncrementalCompilation.isExperimental() })
+                isEnabled = { IncrementalCompilation.isExperimental() || forceEnable })
+
+fun commonCacheVersions(cachesDir: File): List<CacheVersion> =
+        listOf(normalCacheVersion(cachesDir),
+               experimentalCacheVersion(cachesDir),
+               dataContainerCacheVersion(cachesDir))

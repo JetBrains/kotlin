@@ -93,7 +93,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
     protected fun processCompilerOutput(
             environment: Env,
             stream: ByteArrayOutputStream,
-            exitCode: ExitCode
+            exitCode: ExitCode?
     ) {
         val reader = BufferedReader(StringReader(stream.toString()))
         CompilerOutputParser.parseCompilerMessagesFromReader(environment.messageCollector, reader, environment.outputItemsCollector)
@@ -194,12 +194,12 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
         return null
     }
 
-    protected fun exitCodeFromProcessExitCode(res: Int): ExitCode =
-            if (res == 0) {
-                ExitCode.OK
-            }
-            else {
-                ExitCode.COMPILATION_ERROR
-            }
+    protected fun exitCodeFromProcessExitCode(code: Int): ExitCode {
+        val exitCode = ExitCode.values().find { it.code == code }
+        if (exitCode != null) return exitCode
+
+        log.debug("Could not find exit code by value: $code")
+        return if (code == 0) ExitCode.OK else ExitCode.COMPILATION_ERROR
+    }
 }
 
