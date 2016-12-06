@@ -29,7 +29,8 @@ allprojects {
         binDir = "$gccToolchainDir/$gnuTriplet/bin"
         ext.clangArgs.addAll([
                 "--sysroot=$gccToolchainDir/$gnuTriplet/sysroot",
-                "--gcc-toolchain=$gccToolchainDir"
+                "--gcc-toolchain=$gccToolchainDir",
+                "-L$llvmDir/lib"
         ])
     } else {
         binDir = "$sysrootDir/usr/bin"

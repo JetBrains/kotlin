@@ -104,41 +104,44 @@ abstract class KonanTest extends DefaultTask {
         return project.isLinux()
     }
 
-    // TODO: stop copy-pasting
-    protected String linkDl() {
+    protected List<String> linkCppAbi() {
+        if (linux()) {
+            return ["-Wl,-Bstatic", "-lc++abi", "-Wl,-Bdynamic"]
+        } else {
+            // Life is hard. MacOS linker is harder.
+            // This is how we force the linker to link statically.
+            return ["${project.llvmDir}/lib/libc++abi.a"]
+        }
+    }
+
+    protected List<String> linkPlatform() {
        if (linux()) {
-         return "-ldl"
+         return ["-ldl", "-lpthread", "-lm", "-rdynamic"]
        }
        else {
-         return ""
+         return []
        }
     }
 
-    protected String linkM() {
-       if (linux()) {
-         return "-lm"
-       }
-       else {
-         return ""
-       }
+    protected List<String> libLink() {
+        def libs = []
+        libs.addAll(linkPlatform())
+        libs.addAll(linkCppAbi())
+        return libs
     }
 
-    protected String rdynamic() {
-       if (linux()) {
-         return "-rdynamic"
-       }
-       else {
-         return ""
-       }
-    }
 }
 
 class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
-            commandLine "clang++", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
-                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc', testC, mainC
+            executable "clang"
+            def argList = []
+            argList.addAll([ runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
+                    "-o", exe.absolutePath, testC, mainC ])
+            argList.addAll(libLink())
+            args argList
         }
     }
 }
@@ -146,8 +149,12 @@ class UnitKonanTest extends KonanTest {
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File libraryPath, File exe) {
         project.execClang {
-            commandLine "clang++", launcherBc.absolutePath, startKtBc.absolutePath, runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
-                    "-o", exe.absolutePath, linkDl(), linkM(), rdynamic(), '-xc'
+            executable "clang"
+            def argList = []
+            argList.addAll([ launcherBc.absolutePath, startKtBc.absolutePath, 
+                runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath, "-o", exe.absolutePath ])
+            argList.addAll(libLink())
+            args argList
         }
     }
 }
@@ -202,8 +209,12 @@ class LinkKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
         project.execClang {
-            commandLine "clang++", runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
-                    "-o", exe.absolutePath, linkDl(), rdynamic(), '-xc', testC, mainC
+            executable "clang"
+            def argList = []
+            argList.addAll([ runtimeS.absolutePath, stdlibKtBc.absolutePath, 
+                sourceS.absolutePath, "-o", exe.absolutePath, testC, mainC ])
+            argList.addAll(libLink())
+            args argList
         }
     }
 
