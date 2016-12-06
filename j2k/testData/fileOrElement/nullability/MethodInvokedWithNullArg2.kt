@@ -1,6 +1,5 @@
 internal class C {
-    fun foo(s: String?) {
-    }
+    fun foo(s: String?) {}
 }
 
 internal class D {

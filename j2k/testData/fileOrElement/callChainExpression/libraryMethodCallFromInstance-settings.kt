@@ -1,8 +1,7 @@
 // !forceNotNullTypes: false
 // !specifyLocalVariableTypeByDefault: true
 internal class Library {
-    fun call() {
-    }
+    fun call() {}
 
     val string: String?
         get() = ""

@@ -138,6 +138,5 @@ internal class A {
         */
     }
 
-    fun useSplit(result: Array<String>) {
-    }
+    fun useSplit(result: Array<String>) {}
 }

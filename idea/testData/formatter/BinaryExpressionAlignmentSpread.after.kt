@@ -1,5 +1,4 @@
-fun some(f: (String) -> Unit) {
-}
+fun some(f: (String) -> Unit) {}
 
 fun test() {
     3 + object {

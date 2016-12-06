@@ -39,8 +39,7 @@ internal open class B {
         set(value) {
         }
 
-    open fun setFromB5(value: String) {
-    }
+    open fun setFromB5(value: String) {}
 }
 
 internal abstract class C(override val something1: Int) : B(), I {

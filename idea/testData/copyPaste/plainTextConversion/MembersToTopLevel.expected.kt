@@ -8,5 +8,4 @@ fun foo() {
     list.add(1)
 }
 
-fun bar() {
-}
+fun bar() {}

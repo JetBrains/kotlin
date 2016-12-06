@@ -42,4 +42,3 @@ fun testWithComments() {
         it > 4
     }
 }
-

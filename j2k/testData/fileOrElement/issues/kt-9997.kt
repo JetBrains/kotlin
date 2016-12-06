@@ -133,6 +133,5 @@ internal class A {
         t(c > c)
     }
 
-    private fun t(b: Boolean) {
-    }
+    private fun t(b: Boolean) {}
 }
