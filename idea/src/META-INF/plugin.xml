@@ -545,6 +545,7 @@
 
     <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRecursiveCallLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinSuspendCallLineMarkerProvider"/>
     <runLineMarkerContributor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRunLineMarkerContributor"/>
     <runLineMarkerContributor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor"/>
 

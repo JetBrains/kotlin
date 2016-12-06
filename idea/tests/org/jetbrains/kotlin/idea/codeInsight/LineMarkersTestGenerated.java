@@ -320,4 +320,19 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/codeInsight/lineMarker/suspendCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SuspendCall extends AbstractLineMarkersTest {
+        public void testAllFilesPresentInSuspendCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker/suspendCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("suspendCall.kt")
+        public void testSuspendCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/suspendCall/suspendCall.kt");
+            doTest(fileName);
+        }
+    }
 }
