@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.incremental.*
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
+import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -293,12 +296,16 @@ class CompileServiceImpl(
                 ChangedFiles.Unknown()
             }
 
+            val artifactChanges = RemoteArtifactChangesProvider(servicesFacade)
+            val changesRegistry = RemoteChangesRegostry(servicesFacade)
+
             val workingDir = servicesFacade.workingDir()
             val versions = commonCacheVersions(workingDir) + standaloneCacheVersion(workingDir, forceEnable = true)
 
             try {
                 printStream.print(renderer.renderPreamble())
-                IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater)
+                IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater,
+                                             artifactChanges, changesRegistry)
                         .compile(allKotlinFiles, k2jvmArgs, messageCollector, { changedFiles })
             }
             finally {

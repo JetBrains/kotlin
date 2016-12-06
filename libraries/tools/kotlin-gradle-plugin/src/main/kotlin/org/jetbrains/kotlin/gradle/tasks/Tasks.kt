@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
@@ -181,24 +182,33 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.destinationAsFile = destinationDir
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
+        val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
             !incremental -> GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
             else -> {
                 logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
-                val reporter = GradleICReporter(project.rootProject.projectDir)
                 GradleIncrementalCompilerEnvironment(compilerJar, changedFiles, reporter, taskBuildDirectory,
-                        messageCollector, outputItemCollector, kaptAnnotationsFileUpdater)
+                        messageCollector, outputItemCollector, kaptAnnotationsFileUpdater,
+                        artifactDifferenceRegistryProvider,
+                        artifactFile)
             }
         }
 
         try {
             val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
             processCompilerExitCode(exitCode)
+            artifactDifferenceRegistryProvider?.withRegistry(reporter) {
+                it.flush(true)
+            }
         }
         catch (e: Throwable) {
             cleanupOnError()
+            artifactDifferenceRegistryProvider?.clean()
             throw e
+        }
+        finally {
+            artifactDifferenceRegistryProvider?.withRegistry(reporter, ArtifactDifferenceRegistry::close)
         }
         anyClassesCompiled = true
     }
