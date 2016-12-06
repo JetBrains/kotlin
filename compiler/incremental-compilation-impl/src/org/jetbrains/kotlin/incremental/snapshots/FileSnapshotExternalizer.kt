@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.snapshots
 
-import org.jetbrains.kotlin.com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.DataExternalizer
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
