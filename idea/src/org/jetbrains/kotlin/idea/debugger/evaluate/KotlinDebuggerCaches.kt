@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
 import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
 import org.jetbrains.kotlin.idea.debugger.WeakBytecodeDebugInfoStorage
+import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriority
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
@@ -119,7 +120,7 @@ class KotlinDebuggerCaches(project: Project) {
             return newCompiledData
         }
 
-        fun <T: PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> ComputedClassNames): List<String> {
+        fun <T : PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> ComputedClassNames): List<String> {
             val cache = getInstance(runReadAction { psiElement.project })
 
             val classNamesCache = cache.cachedClassNames.value
@@ -149,21 +150,16 @@ class KotlinDebuggerCaches(project: Project) {
             val cachedValue = typeMappersCache[key]
             if (cachedValue != null) return cachedValue
 
-            if (!isInLibrary) {
-                val newValue = createTypeMapperForSourceFile(file)
-
-                typeMappersCache[file] = newValue
-
-                return newValue
+            val newValue = if (!isInLibrary) {
+                createTypeMapperForSourceFile(file)
             }
             else {
                 val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
-                val newValue = createTypeMapperForLibraryFile(element, file)
-
-                typeMappersCache[psiElement] = newValue
-
-                return newValue
+                createTypeMapperForLibraryFile(element, file)
             }
+
+            typeMappersCache[key] = newValue
+            return newValue
         }
 
         fun getOrReadDebugInfoFromBytecode(
@@ -178,12 +174,12 @@ class KotlinDebuggerCaches(project: Project) {
                 runReadAction { element as? KtElement ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
         private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): KotlinTypeMapper =
-                runReadAction {
+                runInReadActionWithWriteActionPriority {
                     createTypeMapper(file, element.analyzeAndGetResult())
                 }
 
         private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper =
-                runReadAction {
+                runInReadActionWithWriteActionPriority {
                     createTypeMapper(file, file.analyzeFullyAndGetResult().apply(AnalysisResult::throwIfError))
                 }
 
@@ -238,12 +234,12 @@ class KotlinDebuggerCaches(project: Project) {
     data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null)
 
     sealed class ComputedClassNames(val classNames: List<String>, val shouldBeCached: Boolean) {
-        class CachedClassNames(classNames: List<String>): ComputedClassNames(classNames, true) {
-            constructor(className: String?): this(className.toList())
+        class CachedClassNames(classNames: List<String>) : ComputedClassNames(classNames, true) {
+            constructor(className: String?) : this(className.toList())
         }
 
-        class NonCachedClassNames(classNames: List<String>): ComputedClassNames(classNames, false) {
-            constructor(className: String?): this(className.toList())
+        class NonCachedClassNames(classNames: List<String>) : ComputedClassNames(classNames, false) {
+            constructor(className: String?) : this(className.toList())
         }
     }
 }

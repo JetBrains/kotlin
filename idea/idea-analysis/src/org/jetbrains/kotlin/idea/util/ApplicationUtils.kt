@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.util.application
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 
 fun <T> runReadAction(action: () -> T): T {
