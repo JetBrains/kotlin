@@ -26,7 +26,7 @@
 
         <sequential>
             <echo message="Building stdlib docs for JRE @{jdk.version}" />
-            <dokka src="stdlib/src:@{additional.src}:../core/builtins:../core/reflection.jvm:../core/runtime.jvm/src/kotlin/jvm/annotations:../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt"
+            <dokka src="stdlib/src:@{additional.src}:../core/builtins:../core/reflection.jvm:../core/runtime.jvm/src/kotlin/jvm/annotations:../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt:../core/runtime.jvm/src/kotlin/jvm/PurelyImplements.kt"
                    samples="stdlib/samples/src" outputDir="${output}/jre@{jdk.version}" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="kotlin-website" jdkversion="@{jdk.version}"
                    include="stdlib/src/Module.md">
                 <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>

@@ -22,17 +22,27 @@ package kotlin.jvm
  *
  * Example:
  *
+ * ```java
  * class MyList<T> extends AbstractList<T> { ... }
+ * ```
  *
- * Methods defined in MyList<T> use T as platform, i.e. it's possible to perform unsafe operation in Kotlin:
+ * Methods defined in `MyList<T>` use `T` as platform, i.e. it's possible to perform unsafe operation in Kotlin:
+ *
+ * ```kotlin
  *  MyList<Int>().add(null) // compiles
+ * ```
  *
- * @PurelyImplements("kotlin.MutableList")
+ * ```java
+ * @PurelyImplements("kotlin.collections.MutableList")
  * class MyPureList<T> extends AbstractList<T> { ... }
+ * ```
  *
- * Methods defined in MyPureList<T> overriding methods in MutableList use T as non-platform types:
+ * Methods defined in `MyPureList<T>` overriding methods in `MutableList` use `T` as non-platform types:
+ *
+ * ```kotlin
  *  MyList<Int>().add(null) // Error
  *  MyList<Int?>().add(null) // Ok
+ * ```
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
