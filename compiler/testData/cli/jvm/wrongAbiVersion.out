@@ -1,11 +1,12 @@
+compiler/testData/cli/jvm/wrongAbiVersion.kt:3:12: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 0.30.0, expected version is $ABI_VERSION$.
+The class is loaded from $TESTDATA_DIR$/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class
+fun foo(x: ClassWithWrongAbiVersion) {
+           ^
 compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference: bar
-(note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. See below for more information)
     bar()
     ^
 compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
 public fun String.replaceIndent(newIndent: String = ...): String defined in kotlin.text
-(note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. See below for more information)
     1.replaceIndent(2, 3)
       ^
-compiler/testData/cli/jvm/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 0.30.0, expected version is $ABI_VERSION$
 COMPILATION_ERROR

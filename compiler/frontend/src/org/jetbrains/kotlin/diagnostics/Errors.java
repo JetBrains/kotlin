@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier;
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.lang.reflect.Field;
@@ -76,6 +77,7 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, FqName> MISSING_DEPENDENCY_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, FqName> PRE_RELEASE_CLASS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, FqName, IncompatibleVersionErrorData<?>> INCOMPATIBLE_CLASS = DiagnosticFactory2.create(ERROR);
 
     //Elements with "INVISIBLE_REFERENCE" error are marked as unresolved, unlike elements with "INVISIBLE_MEMBER" error
     //"INVISIBLE_REFERENCE" is used for invisible classes references and references in import

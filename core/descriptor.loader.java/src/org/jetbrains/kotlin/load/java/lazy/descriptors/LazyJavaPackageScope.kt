@@ -88,25 +88,20 @@ class LazyJavaPackageScope(
         object SyntheticClass : KotlinClassLookupResult()
     }
 
-    private fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult {
-        if (kotlinClass == null) return KotlinClassLookupResult.NotFound
-
-        val header = kotlinClass.classHeader
-        return when {
-            !header.metadataVersion.isCompatible() -> {
-                c.components.errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
-                KotlinClassLookupResult.NotFound
+    private fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult =
+            when {
+                kotlinClass == null -> {
+                    KotlinClassLookupResult.NotFound
+                }
+                kotlinClass.classHeader.kind == KotlinClassHeader.Kind.CLASS -> {
+                    val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
+                    if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
+                }
+                else -> {
+                    // This is a package or interface DefaultImpls or something like that
+                    KotlinClassLookupResult.SyntheticClass
+                }
             }
-            header.kind == KotlinClassHeader.Kind.CLASS -> {
-                val descriptor = c.components.deserializedDescriptorResolver.resolveClass(kotlinClass)
-                if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
-            }
-            else -> {
-                // This is a package or interface DefaultImpls or something like that
-                KotlinClassLookupResult.SyntheticClass
-            }
-        }
-    }
 
     // javaClass here is only for sake of optimizations
     private class FindClassRequest(val name: Name, val javaClass: JavaClass?) {

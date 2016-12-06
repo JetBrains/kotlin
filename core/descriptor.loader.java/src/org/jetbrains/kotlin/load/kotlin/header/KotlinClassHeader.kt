@@ -27,6 +27,7 @@ class KotlinClassHeader(
         val metadataVersion: JvmMetadataVersion,
         val bytecodeVersion: JvmBytecodeBinaryVersion,
         val data: Array<String>?,
+        val incompatibleData: Array<String>?,
         val strings: Array<String>?,
         val extraString: String?,
         val extraInt: Int

@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors.MISSING_DEPENDENCY_CLASS
-import org.jetbrains.kotlin.diagnostics.Errors.PRE_RELEASE_CLASS
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ClassifierUsageChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -57,9 +56,15 @@ object MissingDependencyClassChecker : CallChecker {
     }
 
     private fun incompatibilityDiagnosticFor(source: SourceElement?, reportOn: PsiElement): Diagnostic? {
-        if (source is DeserializedContainerSource && source.isPreReleaseInvisible) {
-            // TODO: if at least one PRE_RELEASE_CLASS is reported, display a hint to disable the diagnostic
-            return PRE_RELEASE_CLASS.on(reportOn, source.presentableFqName)
+        if (source is DeserializedContainerSource) {
+            val incompatibility = source.incompatibility
+            if (incompatibility != null) {
+                return INCOMPATIBLE_CLASS.on(reportOn, source.presentableFqName, incompatibility)
+            }
+            if (source.isPreReleaseInvisible) {
+                // TODO: if at least one PRE_RELEASE_CLASS is reported, display a hint to disable the diagnostic
+                return PRE_RELEASE_CLASS.on(reportOn, source.presentableFqName)
+            }
         }
 
         return null

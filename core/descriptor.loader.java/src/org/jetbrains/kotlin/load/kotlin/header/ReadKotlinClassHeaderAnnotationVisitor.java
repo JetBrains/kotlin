@@ -54,12 +54,17 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private int extraInt = 0;
     private String[] data = null;
     private String[] strings = null;
+    private String[] incompatibleData = null;
     private KotlinClassHeader.Kind headerKind = null;
 
     @Nullable
     public KotlinClassHeader createHeader() {
         if (headerKind == null) {
             return null;
+        }
+
+        if (!metadataVersion.isCompatible()) {
+            incompatibleData = data;
         }
 
         if (metadataVersion == null || !metadataVersion.isCompatible()) {
@@ -76,6 +81,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 metadataVersion != null ? metadataVersion : JvmMetadataVersion.INVALID_VERSION,
                 bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
                 data,
+                incompatibleData,
                 strings,
                 extraString,
                 extraInt
