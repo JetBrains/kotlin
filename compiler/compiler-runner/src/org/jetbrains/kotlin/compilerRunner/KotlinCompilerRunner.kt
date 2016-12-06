@@ -138,57 +138,60 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
     protected open fun compileWithDaemon(
             compilerClassName: String,
             argsArray: Array<String>,
-            environment: Env,
-            retryOnConnectionError: Boolean = true
+            environment: Env
     ): ExitCode? {
-            log.debug("Try to connect to daemon")
-            val connection = getDaemonConnection(environment)
+        val compilerOut = ByteArrayOutputStream()
+        val daemonOut = ByteArrayOutputStream()
+        val services = CompilationServices(
+                incrementalCompilationComponents = environment.services.get(IncrementalCompilationComponents::class.java),
+                compilationCanceledStatus = environment.services.get(CompilationCanceledStatus::class.java))
+        val targetPlatform = when (compilerClassName) {
+            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
+            K2JS_COMPILER -> CompileService.TargetPlatform.JS
+            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+        }
 
-            if (connection.daemon != null) {
-                log.info("Connected to daemon")
+        val res: Int = withDaemon(environment) { daemon, sessionId ->
+            KotlinCompilerClient.incrementalCompile(daemon, sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
+        } ?: return null
 
-                val compilerOut = ByteArrayOutputStream()
-                val daemonOut = ByteArrayOutputStream()
+        val exitCode = exitCodeFromProcessExitCode(res)
+        processCompilerOutput(environment, compilerOut, exitCode)
+        BufferedReader(StringReader(daemonOut.toString())).forEachLine {
+            environment.messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
+        }
+        return exitCode
+    }
 
-                val services = CompilationServices(
-                        incrementalCompilationComponents = environment.services.get(IncrementalCompilationComponents::class.java),
-                        compilationCanceledStatus = environment.services.get(CompilationCanceledStatus::class.java))
-
-                val targetPlatform = when (compilerClassName) {
-                    K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
-                    K2JS_COMPILER -> CompileService.TargetPlatform.JS
-                    else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
-                }
-
-                fun retryOrFalse(e: Exception): ExitCode? {
-                    if (retryOnConnectionError) {
-                        log.debug("retrying once on daemon connection error: ${e.message}")
-                        return compileWithDaemon(compilerClassName, argsArray, environment, retryOnConnectionError = false)
-                    }
-                    log.info("daemon connection error: ${e.message}")
-                    return null
-                }
-
-                val res: Int = try {
-                    KotlinCompilerClient.incrementalCompile(connection.daemon, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
-                }
-                catch (e: java.rmi.ConnectException) {
-                    return retryOrFalse(e)
-                }
-                catch (e: java.rmi.UnmarshalException) {
-                    return retryOrFalse(e)
-                }
-
-                val exitCode = exitCodeFromProcessExitCode(res)
-                processCompilerOutput(environment, compilerOut, exitCode)
-                BufferedReader(StringReader(daemonOut.toString())).forEachLine {
-                    environment.messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
-                }
-                return exitCode
+    protected fun <T> withDaemon(environment: Env, retryOnConnectionError: Boolean = true, fn: (CompileService, sessionId: Int)->T): T? {
+        fun retryOrFalse(e: Exception): T? {
+            if (retryOnConnectionError) {
+                log.debug("retrying once on daemon connection error: ${e.message}")
+                return withDaemon(environment, false, fn)
             }
-
-            log.info("Daemon not found")
+            log.info("daemon connection error: ${e.message}")
             return null
+        }
+
+        log.debug("Try to connect to daemon")
+        val connection = getDaemonConnection(environment)
+
+        if (connection.daemon != null) {
+            log.info("Connected to daemon")
+
+            try {
+                return fn(connection.daemon, connection.sessionId)
+            }
+            catch (e: java.rmi.ConnectException) {
+                return retryOrFalse(e)
+            }
+            catch (e: java.rmi.UnmarshalException) {
+                return retryOrFalse(e)
+            }
+        }
+
+        log.info("Daemon not found")
+        return null
     }
 
     protected fun exitCodeFromProcessExitCode(res: Int): ExitCode =
