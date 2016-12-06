@@ -128,7 +128,7 @@ task stdlib(type: Exec) {
     dependsOn 'dist_compiler', 'list_dist'
 
     commandLine './dist/bin/konanc', 
-        "-J${jvmArgs.join(' ')}", '-Djava.library.path=backend.native/build/nativelibs',
+        "-J${jvmArgs.join(' ')}",
         '-nolink', '-nostdlib', 'runtime/src/main/kotlin', '-o', 'dist/lib/stdlib.kt.bc'
 
     outputs.file(project.file('dist/lib/stdlib.kt.bc'))
@@ -142,7 +142,7 @@ task start(type: Exec) {
     dependsOn 'dist_compiler', 'stdlib'
 
     commandLine './dist/bin/konanc', 
-        "-J${jvmArgs.join(' ')}", '-Djava.library.path=backend.native/build/nativelibs',
+        "-J${jvmArgs.join(' ')}",
         '-nolink', 'runtime/src/launcher/kotlin', '-o', 'dist/lib/start.kt.bc'
 
     outputs.file(project.file('dist/lib/start.kt.bc'))
