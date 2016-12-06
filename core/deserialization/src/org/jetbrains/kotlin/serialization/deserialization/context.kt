@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.FlexibleTypeFactory
 
@@ -50,7 +51,7 @@ class DeserializationComponents(
             descriptor: PackageFragmentDescriptor,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            containerSource: SourceElement?
+            containerSource: DeserializedContainerSource?
     ): DeserializationContext =
             DeserializationContext(this, nameResolver, descriptor, typeTable, containerSource,
                                    parentTypeDeserializer = null, typeParameters = listOf())
@@ -62,7 +63,7 @@ class DeserializationContext(
         val nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeTable: TypeTable,
-        val containerSource: SourceElement?,
+        val containerSource: DeserializedContainerSource?,
         parentTypeDeserializer: TypeDeserializer?,
         typeParameters: List<ProtoBuf.TypeParameter>
 ) {
