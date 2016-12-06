@@ -13348,6 +13348,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("modWithRemAssign.kt")
+            public void testModWithRemAssign() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/modWithRemAssign.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noDeprecatedModConventionWithoutFeature.kt")
             public void testNoDeprecatedModConventionWithoutFeature() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/noDeprecatedModConventionWithoutFeature.kt");
@@ -13399,6 +13405,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("prefereRemAsExtensionOverMemberMod.kt")
             public void testPrefereRemAsExtensionOverMemberMod() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/prefereRemAsExtensionOverMemberMod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("remAndRemAssignAmbiguity.kt")
+            public void testRemAndRemAssignAmbiguity() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/remAndRemAssignAmbiguity.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("remWithModAndModAssign.kt")
+            public void testRemWithModAndModAssign() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/remWithModAndModAssign.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("remWithModAssign.kt")
+            public void testRemWithModAssign() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/remWithModAssign.kt");
                 doTest(fileName);
             }
 

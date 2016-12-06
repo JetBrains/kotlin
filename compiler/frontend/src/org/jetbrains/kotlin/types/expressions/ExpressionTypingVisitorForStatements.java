@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
 
@@ -250,7 +251,12 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         KotlinType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
         KotlinTypeInfo rightInfo = leftInfo;
-        if (assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess()) {
+
+        boolean hasRemAssignOperation = atLeastOneOperation(assignmentOperationDescriptors.getResultingCalls(), OperatorNameConventions.REM_ASSIGN);
+        boolean hasRemBinaryOperation = atLeastOneOperation(binaryOperationDescriptors.getResultingCalls(), OperatorNameConventions.REM);
+
+        boolean oneTypeOfModRemOperations = hasRemAssignOperation == hasRemBinaryOperation;
+        if (assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess() && oneTypeOfModRemOperations) {
             // Both 'plus()' and 'plusAssign()' available => ambiguity
             OverloadResolutionResults<FunctionDescriptor> ambiguityResolutionResults = OverloadResolutionResultsUtil.ambiguity(assignmentOperationDescriptors, binaryOperationDescriptors);
             context.trace.report(ASSIGN_OPERATOR_AMBIGUITY.on(operationSign, ambiguityResolutionResults.getResultingCalls()));
@@ -261,7 +267,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
             context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);
         }
-        else if (assignmentOperationType != null && (assignmentOperationDescriptors.isSuccess() || !binaryOperationDescriptors.isSuccess())) {
+        else if (assignmentOperationType != null &&
+                 (assignmentOperationDescriptors.isSuccess() || !binaryOperationDescriptors.isSuccess()) &&
+                 (!hasRemBinaryOperation || !binaryOperationDescriptors.isSuccess())) {
             // There's 'plusAssign()', so we do a.plusAssign(b)
             temporaryForAssignmentOperation.commit();
             if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
@@ -287,6 +295,16 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
         temporary.commit();
         return rightInfo.replaceType(checkAssignmentType(type, expression, contextWithExpectedType));
+    }
+
+    private static boolean atLeastOneOperation(Collection<? extends ResolvedCall<FunctionDescriptor>> calls, Name operationName) {
+        for (ResolvedCall<FunctionDescriptor> call : calls) {
+            if (call.getCandidateDescriptor().getName().equals(operationName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Nullable

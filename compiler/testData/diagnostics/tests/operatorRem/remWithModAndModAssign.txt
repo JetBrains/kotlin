@@ -1,0 +1,16 @@
+package
+
+public fun test(): kotlin.Unit
+public operator fun ModAndRemAssign.mod(/*0*/ x: kotlin.String): ModAndRemAssign
+public operator fun ModAndRemAssign.modAssign(/*0*/ x: kotlin.String): kotlin.Unit
+
+public final class ModAndRemAssign {
+    public constructor ModAndRemAssign()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun mod(/*0*/ x: kotlin.Int): ModAndRemAssign
+    public final operator fun mod(/*0*/ x: kotlin.String): ModAndRemAssign
+    public final operator fun modAssign(/*0*/ x: kotlin.String): kotlin.Unit
+    public final operator fun rem(/*0*/ x: kotlin.Int): ModAndRemAssign
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
