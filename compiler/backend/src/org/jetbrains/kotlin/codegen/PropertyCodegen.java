@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
@@ -367,14 +366,31 @@ public class PropertyCodegen {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations
     ) {
-        KtExpression delegateExpression = p.getDelegateExpression();
-        KotlinType delegateType = delegateExpression != null ? bindingContext.getType(p.getDelegateExpression()) : null;
-        if (delegateType == null) {
-            // If delegate expression is unresolved reference
-            delegateType = ErrorUtils.createErrorType("Delegate type");
-        }
+        KotlinType delegateType = getDelegateTypeForProperty(p, propertyDescriptor);
 
         generateBackingField(p, propertyDescriptor, true, delegateType, null, annotations);
+    }
+
+    @NotNull
+    private KotlinType getDelegateTypeForProperty(@NotNull KtProperty p, @NotNull PropertyDescriptor propertyDescriptor) {
+        KotlinType delegateType = null;
+
+        ResolvedCall<FunctionDescriptor> toDelegateForResolvedCall =
+                bindingContext.get(BindingContext.TO_DELEGATE_FOR_RESOLVED_CALL, propertyDescriptor);
+        KtExpression delegateExpression = p.getDelegateExpression();
+
+        if (toDelegateForResolvedCall != null) {
+            delegateType = toDelegateForResolvedCall.getResultingDescriptor().getReturnType();
+        }
+        else if (delegateExpression != null) {
+            delegateType = bindingContext.getType(delegateExpression);
+        }
+
+        if (delegateType == null) {
+            // Delegation convention is unresolved
+            delegateType = ErrorUtils.createErrorType("Delegate type");
+        }
+        return delegateType;
     }
 
     private void generateBackingFieldAccess(
@@ -519,20 +535,22 @@ public class PropertyCodegen {
             final int indexInPropertyMetadataArray,
             int propertyMetadataArgumentIndex
     ) {
-        CodegenContext<? extends ClassOrPackageFragmentDescriptor> ownerContext = codegen.getContext().getClassOrPackageParentContext();
-        final Type owner;
-        if (ownerContext instanceof ClassContext) {
-            owner = typeMapper.mapClass(((ClassContext) ownerContext).getContextDescriptor());
-        }
-        else if (ownerContext instanceof PackageContext) {
-            owner = ((PackageContext) ownerContext).getPackagePartType();
-        }
-        else if (ownerContext instanceof MultifileClassContextBase) {
-            owner = ((MultifileClassContextBase) ownerContext).getFilePartType();
-        }
-        else {
-            throw new UnsupportedOperationException("Unknown context: " + ownerContext);
-        }
+        StackValue.Property receiver = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
+        return invokeDelegatedPropertyConventionMethodWithReceiver(
+                codegen, typeMapper, resolvedCall, indexInPropertyMetadataArray, propertyMetadataArgumentIndex,
+                receiver
+        );
+    }
+
+    public static StackValue invokeDelegatedPropertyConventionMethodWithReceiver(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull ResolvedCall<FunctionDescriptor> resolvedCall,
+            final int indexInPropertyMetadataArray,
+            int propertyMetadataArgumentIndex,
+            @Nullable StackValue receiver
+    ) {
+        final Type owner = getDelegatedPropertyMetadataOwner(codegen, typeMapper);
 
         codegen.tempVariables.put(
                 resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),
@@ -549,8 +567,23 @@ public class PropertyCodegen {
                 }
         );
 
-        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
-        return codegen.invokeFunction(resolvedCall, delegatedProperty);
+        return codegen.invokeFunction(resolvedCall, receiver);
+    }
+
+    private static Type getDelegatedPropertyMetadataOwner(@NotNull ExpressionCodegen codegen, @NotNull KotlinTypeMapper typeMapper) {
+        CodegenContext<? extends ClassOrPackageFragmentDescriptor> ownerContext = codegen.getContext().getClassOrPackageParentContext();
+        if (ownerContext instanceof ClassContext) {
+            return typeMapper.mapClass(((ClassContext) ownerContext).getContextDescriptor());
+        }
+        else if (ownerContext instanceof PackageContext) {
+            return ((PackageContext) ownerContext).getPackagePartType();
+        }
+        else if (ownerContext instanceof MultifileClassContextBase) {
+            return ((MultifileClassContextBase) ownerContext).getFilePartType();
+        }
+        else {
+            throw new UnsupportedOperationException("Unknown context: " + ownerContext);
+        }
     }
 
     private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
