@@ -6,7 +6,7 @@ where advanced options include:
   -Xreport-perf              Report detailed performance statistics
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
-  -Xskip-metadata-version-check Try loading binary incompatible classes, may cause crashes
+  -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
   -Xdump-declarations-to <path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)

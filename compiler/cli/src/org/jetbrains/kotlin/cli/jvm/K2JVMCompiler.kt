@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.StandardScriptDefinition
@@ -128,6 +129,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         if (arguments.skipMetadataVersionCheck) {
             JvmMetadataVersion.skipCheck = true
+            @Suppress("DEPRECATION")
+            DeserializedDescriptorResolver.IS_PRE_RELEASE = true
         }
 
         if (arguments.jvmTarget != null) {

@@ -68,7 +68,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
 
 public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
-    public static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/";
+    private static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/";
     private static final Pattern JAVA_FILES = Pattern.compile(".*\\.java$");
 
     @NotNull
@@ -183,10 +183,19 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         return library;
     }
 
+    private Pair<String, ExitCode> compileKotlin(
+            @NotNull String fileName,
+            @NotNull File output,
+            @NotNull File... classpath
+    ) {
+        return compileKotlin(fileName, output, Collections.<String>emptyList(), classpath);
+    }
+
     @NotNull
     private Pair<String, ExitCode> compileKotlin(
             @NotNull String fileName,
             @NotNull File output,
+            List<String> additionalOptions,
             @NotNull File... classpath
     ) {
         List<String> args = new ArrayList<String>();
@@ -199,6 +208,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         }
         args.add("-d");
         args.add(output.getPath());
+        args.addAll(additionalOptions);
 
         return AbstractCliTest.executeCompilerGrabOutput(new K2JVMCompiler(), args);
     }
@@ -220,7 +230,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @SuppressWarnings("deprecation")
-    private void doTestPreReleaseKotlinLibrary(@NotNull String libraryName) throws Exception {
+    private void doTestPreReleaseKotlinLibrary(@NotNull String libraryName, @NotNull String... additionalOptions) throws Exception {
         // Compiles the library with the "pre-release" flag, then compiles a usage of this library in the release mode
 
         File library;
@@ -235,7 +245,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Pair<String, ExitCode> output;
         try {
             DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(false);
-            output = compileKotlin("source.kt", tmpdir, library);
+            output = compileKotlin("source.kt", tmpdir, Arrays.asList(additionalOptions), library);
         }
         finally {
             DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(KotlinCompilerVersion.IS_PRE_RELEASE);
@@ -358,6 +368,15 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     public void testReleaseCompilerAgainstPreReleaseLibrary() throws Exception {
         doTestPreReleaseKotlinLibrary("library");
     }
+
+    /*
+    // This test should pass but is commented out because the compiler flag is implemented via mutation of the public field,
+    // which may cause subsequent tests to behave unexpectedly
+    // TODO: refactor and uncomment
+    public void testReleaseCompilerAgainstPreReleaseLibrarySkipVersionCheck() throws Exception {
+        doTestPreReleaseKotlinLibrary("library", "-Xskip-metadata-version-check");
+    }
+    */
 
     /*test source mapping generation when source info is absent*/
     public void testInlineFunWithoutDebugInfo() throws Exception {
