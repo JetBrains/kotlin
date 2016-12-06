@@ -363,6 +363,11 @@ private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
                 .`in`(KtNodeTypes.PARENTHESIZED)
                 .set(Indent.getContinuationWithoutFirstIndent(false)),
 
+        strategy("Round Brackets around conditions")
+                .forType(LPAR, RPAR)
+                .`in`(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+                .set(Indent.getContinuationWithoutFirstIndent(true)),
+
         strategy("KDoc comment indent")
                 .`in`(KDOC_CONTENT)
                 .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
