@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.daemon
+package org.jetbrains.kotlin.daemon.incremental
 
+import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
 import org.jetbrains.kotlin.incremental.ICReporter
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
-internal class RemoteICReporter(private val servicesFacade: IncrementalCompilationServicesFacade) : ICReporter() {
-    override fun report(message: () -> String) {
-        if (servicesFacade.shouldReportIC()) {
-            servicesFacade.reportIC(message())
-        }
+internal class RemoteAnnotationsFileUpdater(private val servicesFacade: IncrementalCompilationServicesFacade) : AnnotationFileUpdater {
+    override fun updateAnnotations(outdatedClasses: Iterable<JvmClassName>) {
+        servicesFacade.updateAnnotations(outdatedClasses.map { it.internalName })
     }
 
-    override fun reportCompileIteration(sourceFiles: Iterable<File>, exitCode: ExitCode) {
-        if (servicesFacade.shouldReportIC()) {
-            servicesFacade.reportCompileIteration(sourceFiles, exitCode.code)
-        }
+    override fun revert() {
+        servicesFacade.revert()
     }
 }

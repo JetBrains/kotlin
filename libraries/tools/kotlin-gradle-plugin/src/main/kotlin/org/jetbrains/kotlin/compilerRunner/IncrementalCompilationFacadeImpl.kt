@@ -20,7 +20,12 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
+import org.jetbrains.kotlin.daemon.incremental.toDirtyData
+import org.jetbrains.kotlin.daemon.incremental.toSimpleDirtyData
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.DirtyData
+import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifference
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.rmi.server.UnicastRemoteObject
@@ -70,5 +75,33 @@ internal class IncrementalCompilationFacadeImpl(
     override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) {
         val jvmNames = outdatedClassesJvmNames.map { JvmClassName.byInternalName(it) }
         environment.kaptAnnotationsFileUpdater!!.updateAnnotations(jvmNames)
+    }
+
+    override fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
+        val artifactChanges = environment.artifactDifferenceRegistryProvider?.withRegistry(environment.reporter) { registry ->
+            registry[artifact]
+        } ?: return null
+
+        val (beforeLastBuild, afterLastBuild) = artifactChanges.partition { it.buildTS < sinceTS }
+        if (beforeLastBuild.isEmpty()) return null
+
+        return afterLastBuild.map { it.dirtyData.toSimpleDirtyData() }
+    }
+
+    override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) {
+        val artifactFile = environment.artifactFile ?: return
+
+        environment.artifactDifferenceRegistryProvider?.withRegistry(environment.reporter) { registry ->
+            registry.add(artifactFile, ArtifactDifference(timestamp, dirtyData.toDirtyData()))
+        }
+    }
+
+    override fun unknownChanges(timestamp: Long) {
+        val artifactFile = environment.artifactFile ?: return
+
+        environment.artifactDifferenceRegistryProvider?.withRegistry(environment.reporter) { registry ->
+            registry.remove(artifactFile)
+            registry.add(artifactFile, ArtifactDifference(timestamp, DirtyData()))
+        }
     }
 }
