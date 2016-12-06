@@ -145,12 +145,6 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("propertyDelegatedFunction.0.kt")
-            public void testPropertyDelegatedFunction() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/propertyDelegatedFunction.0.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("set.0.kt")
             public void testSet() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/set.0.kt");

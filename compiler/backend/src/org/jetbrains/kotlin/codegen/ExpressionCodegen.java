@@ -4086,7 +4086,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (isDelegatedLocalVariable(variableDescriptor)) {
             StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
             initializePropertyMetadata((KtProperty) variableDeclaration, variableDescriptor, metadataValue);
-            invokePropertyDelegatedOnLocalVar(variableDescriptor, storeTo, metadataValue);
         }
     }
 
@@ -4095,19 +4094,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         VariableDescriptor descriptor = bindingContext.get(VARIABLE, declaration);
         assert descriptor != null :  "Couldn't find variable declaration in binding context " + declaration.getText();
         return descriptor;
-    }
-
-    private void invokePropertyDelegatedOnLocalVar(
-            @NotNull LocalVariableDescriptor variableDescriptor,
-            @NotNull StackValue delegateValue,
-            @NotNull StackValue metadataValue
-    ) {
-        ResolvedCall<FunctionDescriptor> pdResolvedCall =
-                bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, variableDescriptor);
-        if (pdResolvedCall == null) return;
-
-        tempVariables.put(pdResolvedCall.getCall().getValueArguments().get(0).asElement(), metadataValue);
-        invokeFunction(pdResolvedCall, delegateValue).put(Type.VOID_TYPE, v);
     }
 
     private void initializePropertyMetadata(

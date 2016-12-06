@@ -5620,36 +5620,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("propertyDelegatedAmbiguity.kt")
-            public void testPropertyDelegatedAmbiguity() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/propertyDelegatedAmbiguity.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyDelegatedIncomplete.kt")
-            public void testPropertyDelegatedIncomplete() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/propertyDelegatedIncomplete.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyDelegatedMissing.kt")
-            public void testPropertyDelegatedMissing() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/propertyDelegatedMissing.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyDelegatedPrivate.kt")
-            public void testPropertyDelegatedPrivate() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/propertyDelegatedPrivate.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("propertyDelegatedWrongArguments.kt")
-            public void testPropertyDelegatedWrongArguments() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/propertyDelegatedWrongArguments.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("recursiveType.kt")
             public void testRecursiveType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/recursiveType.kt");

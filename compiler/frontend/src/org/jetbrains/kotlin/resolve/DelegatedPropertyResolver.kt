@@ -72,17 +72,10 @@ class DelegatedPropertyResolver(
             if (setter.hasBody()) trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter))
         }
 
-        val delegateFunctionsScope: LexicalScope
-        val initializerScope: LexicalScope
-
-        if (variableDescriptor is PropertyDescriptor) {
-            delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, variableDescriptor)
-            initializerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, variableDescriptor)
-        }
-        else {
-            initializerScope = propertyHeaderScope
-            delegateFunctionsScope = initializerScope
-        }
+        val initializerScope: LexicalScope =
+                if (variableDescriptor is PropertyDescriptor)
+                    ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, variableDescriptor)
+                else propertyHeaderScope
 
         val byExpressionType = resolveDelegateExpression(delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo)
 
@@ -93,8 +86,6 @@ class DelegatedPropertyResolver(
         if (property.isVar) {
             resolveSetValueMethod(variableDescriptor, delegateExpression, delegateType, trace, initializerScope, outerDataFlowInfo)
         }
-
-        resolvePropertyDelegatedMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo)
     }
 
     private fun getResolvedDelegateType(
@@ -164,42 +155,6 @@ class DelegatedPropertyResolver(
 
     private fun KtPsiFactory.createExpressionForProperty(): KtExpression {
         return createExpression("null as ${KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString()}<*>")
-    }
-
-    private fun resolvePropertyDelegatedMethod(
-            variableDescriptor: VariableDescriptorWithAccessors,
-            delegateExpression: KtExpression,
-            delegateType: KotlinType,
-            trace: BindingTrace,
-            delegateFunctionsScope: LexicalScope,
-            dataFlowInfo: DataFlowInfo
-    ) {
-        val traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property")
-        val context = ExpressionTypingContext.newContext(traceToResolvePDMethod, delegateFunctionsScope, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
-
-        val psiFactory = KtPsiFactory(delegateExpression)
-        val arguments = listOf(psiFactory.createExpressionForProperty())
-        val receiver = ExpressionReceiver.create(delegateExpression, delegateType, trace.bindingContext)
-
-        val resolutionResult = fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments,
-                                                                                OperatorNameConventions.PROPERTY_DELEGATED, delegateExpression)
-
-        val call = resolutionResult.first
-        val functionResults = resolutionResult.second
-
-        if (!functionResults.isSuccess) {
-            val expectedFunction = renderCall(call, traceToResolvePDMethod.bindingContext)
-            if (functionResults.isIncomplete || functionResults.isSingleResult ||
-                functionResults.resultCode == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
-                trace.report(DELEGATE_PD_METHOD_NONE_APPLICABLE.on(delegateExpression, expectedFunction, functionResults.resultingCalls))
-            }
-            else if (functionResults.isAmbiguity) {
-                trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.on(delegateExpression, expectedFunction, functionResults.resultingCalls))
-            }
-            return
-        }
-
-        trace.record(DELEGATED_PROPERTY_PD_RESOLVED_CALL, variableDescriptor, functionResults.resultingCall)
     }
 
     /* Resolve getValue() or setValue() methods from delegate */

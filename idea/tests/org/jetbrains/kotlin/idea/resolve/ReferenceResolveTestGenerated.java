@@ -519,18 +519,6 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getOneFakeOverride.kt");
                 doTest(fileName);
             }
-
-            @TestMetadata("getSetPropertyDelegatedExtension.kt")
-            public void testGetSetPropertyDelegatedExtension() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetPropertyDelegatedExtension.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("getSetPropertyDelegatedMember.kt")
-            public void testGetSetPropertyDelegatedMember() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetPropertyDelegatedMember.kt");
-                doTest(fileName);
-            }
         }
 
         @TestMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary")
