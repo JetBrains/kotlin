@@ -32,7 +32,7 @@ open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
         nameResolver: NameResolver,
-        containerSource: SourceElement?,
+        containerSource: DeserializedContainerSource?,
         components: DeserializationComponents,
         classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(

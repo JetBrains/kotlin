@@ -37,7 +37,10 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
     val typeTable: TypeTable
 
     // Information about the origin of this callable's container (class or package part on JVM) or null if there's no such information.
-    val containerSource: SourceElement?
+    val containerSource: DeserializedContainerSource?
+}
+
+interface DeserializedContainerSource : SourceElement {
 }
 
 interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor
@@ -51,7 +54,7 @@ class DeserializedSimpleFunctionDescriptor(
         override val proto: ProtoBuf.Function,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: SourceElement?,
+        override val containerSource: DeserializedContainerSource?,
         source: SourceElement? = null
 ) : DeserializedCallableMemberDescriptor,
     SimpleFunctionDescriptorImpl(
@@ -87,7 +90,7 @@ class DeserializedPropertyDescriptor(
         override val proto: ProtoBuf.Property,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: SourceElement?
+        override val containerSource: DeserializedContainerSource?
 ) : DeserializedCallableMemberDescriptor,
         PropertyDescriptorImpl(containingDeclaration, original, annotations,
                                modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, isLateInit, isConst, false, false) {
@@ -115,7 +118,7 @@ class DeserializedClassConstructorDescriptor(
         override val proto: ProtoBuf.Constructor,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: SourceElement?,
+        override val containerSource: DeserializedContainerSource?,
         source: SourceElement? = null
 ) : DeserializedCallableMemberDescriptor,
         ClassConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source ?: SourceElement.NO_SOURCE) {
@@ -151,7 +154,7 @@ class DeserializedTypeAliasDescriptor(
         override val proto: ProtoBuf.TypeAlias,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
-        override val containerSource: SourceElement?
+        override val containerSource: DeserializedContainerSource?
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
         DeserializedMemberDescriptor {
 
