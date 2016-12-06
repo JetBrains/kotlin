@@ -229,7 +229,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @SuppressWarnings("deprecation")
-    private void doTestPreReleaseKotlinLibrary(@NotNull String libraryName) throws Exception {
+    private void doTestPreReleaseKotlinLibrary(@NotNull String libraryName, @NotNull String... additionalOptions) throws Exception {
         // Compiles the library with the "pre-release" flag, then compiles a usage of this library in the release mode
 
         File library;
@@ -244,7 +244,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Pair<String, ExitCode> output;
         try {
             DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(false);
-            output = compileKotlin("source.kt", tmpdir, library);
+            output = compileKotlin("source.kt", tmpdir, Arrays.asList(additionalOptions), library);
         }
         finally {
             DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(KotlinCompilerVersion.IS_PRE_RELEASE);
@@ -367,6 +367,15 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     public void testReleaseCompilerAgainstPreReleaseLibrary() throws Exception {
         doTestPreReleaseKotlinLibrary("library");
     }
+
+    /*
+    // This test should pass but is commented out because the compiler flag is implemented via mutation of the public field,
+    // which may cause subsequent tests to behave unexpectedly
+    // TODO: refactor and uncomment
+    public void testReleaseCompilerAgainstPreReleaseLibrarySkipVersionCheck() throws Exception {
+        doTestPreReleaseKotlinLibrary("library", "-Xskip-metadata-version-check");
+    }
+    */
 
     /*test source mapping generation when source info is absent*/
     public void testInlineFunWithoutDebugInfo() throws Exception {

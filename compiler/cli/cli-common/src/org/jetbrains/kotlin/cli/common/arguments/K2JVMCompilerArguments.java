@@ -95,7 +95,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
     public boolean allowKotlinPackage;
 
-    @Argument(value = "Xskip-metadata-version-check", description = "Try loading binary incompatible classes, may cause crashes")
+    @Argument(value = "Xskip-metadata-version-check", description = "Load classes with bad metadata version anyway (incl. pre-release classes)")
     public boolean skipMetadataVersionCheck;
 
     @Argument(value = "Xdump-declarations-to", description = "Path to JSON file to dump Java to Kotlin declaration mappings")
