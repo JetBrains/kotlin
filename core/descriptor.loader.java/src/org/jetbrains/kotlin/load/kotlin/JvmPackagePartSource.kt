@@ -21,18 +21,25 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class JvmPackagePartSource(
         val className: JvmClassName,
         val facadeClassName: JvmClassName?,
+        override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
         override val isPreReleaseInvisible: Boolean = false
 ) : DeserializedContainerSource {
-    constructor(kotlinClass: KotlinJvmBinaryClass, isPreReleaseInvisible: Boolean = false) : this(
+    constructor(
+            kotlinClass: KotlinJvmBinaryClass,
+            incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
+            isPreReleaseInvisible: Boolean = false
+    ) : this(
             JvmClassName.byClassId(kotlinClass.classId),
             kotlinClass.classHeader.multifileClassName?.let {
                 if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
             },
+            incompatibility,
             isPreReleaseInvisible
     )
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.types.SimpleType
@@ -43,6 +44,9 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
 }
 
 interface DeserializedContainerSource : SourceElement {
+    // Non-null if this container is loaded from a class with an incompatible binary version
+    val incompatibility: IncompatibleVersionErrorData<*>?
+
     // True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release
     val isPreReleaseInvisible: Boolean
 

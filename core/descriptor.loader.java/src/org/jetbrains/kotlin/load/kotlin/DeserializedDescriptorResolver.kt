@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.sure
 import javax.inject.Inject
 
@@ -50,7 +52,11 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         val classData = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         }
-        val sourceElement = KotlinJvmBinarySourceElement(kotlinClass, !IS_PRE_RELEASE && kotlinClass.classHeader.isPreRelease)
+        val sourceElement = KotlinJvmBinarySourceElement(
+                kotlinClass,
+                kotlinClass.incompatibility,
+                !IS_PRE_RELEASE && kotlinClass.classHeader.isPreRelease
+        )
         return ClassDataWithSource(classData, sourceElement)
     }
 
@@ -62,6 +68,7 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         }
         val source = JvmPackagePartSource(
                 kotlinClass,
+                kotlinClass.incompatibility,
                 isPreReleaseInvisible = !IS_PRE_RELEASE && kotlinClass.classHeader.isPreRelease
         )
         return DeserializedPackageMemberScope(descriptor, packageProto, nameResolver, source, components) {
@@ -70,16 +77,15 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         }
     }
 
-    private fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
-        val header = kotlinClass.classHeader
-        if (!header.metadataVersion.isCompatible()) {
-            errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
-        }
-        else if (expectedKinds.contains(header.kind)) {
-            return header.data
+    private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
+        get() {
+            if (classHeader.metadataVersion.isCompatible()) return null
+            return IncompatibleVersionErrorData(classHeader.metadataVersion, JvmMetadataVersion.INSTANCE, location, classId)
         }
 
-        return null
+    internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
+        val header = kotlinClass.classHeader
+        return (header.data ?: header.incompatibleData)?.check { header.kind in expectedKinds }
     }
 
     private inline fun <T> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T {

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli;
 
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import kotlin.Pair;
@@ -72,8 +73,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             @NotNull String testDataDir,
             @NotNull BinaryVersion version
     ) {
+        String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
         String normalizedOutputWithoutExitCode = pureOutput
-                .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
+                .replace(testDataAbsoluteDir, "$TESTDATA_DIR$")
+                .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), "$TESTDATA_DIR$")
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
                 .replace("expected version is " + version, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
