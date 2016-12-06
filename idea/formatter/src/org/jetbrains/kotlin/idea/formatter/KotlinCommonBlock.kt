@@ -192,50 +192,52 @@ abstract class KotlinCommonBlock(
         val jetCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)
         val jetSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
         val parentType = node.elementType
-        if (parentType === KtNodeTypes.VALUE_PARAMETER_LIST) {
-            return getAlignmentForChildInParenthesis(
-                    jetCommonSettings.ALIGN_MULTILINE_PARAMETERS, KtNodeTypes.VALUE_PARAMETER, COMMA,
-                    jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
-        }
-        else if (parentType === KtNodeTypes.VALUE_ARGUMENT_LIST) {
-            return getAlignmentForChildInParenthesis(
-                    jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, KtNodeTypes.VALUE_ARGUMENT, COMMA,
-                    jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
-        }
-        else if (parentType === KtNodeTypes.WHEN) {
-            return getAlignmentForCaseBranch(jetSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
-        }
-        else if (parentType === KtNodeTypes.WHEN_ENTRY) {
-            return alignmentStrategy
-        }
-        else if (parentType in BINARY_EXPRESSIONS && getOperationType(node) in ALIGN_FOR_BINARY_OPERATIONS) {
-            return createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())
-        }
-        else if (parentType === KtNodeTypes.SUPER_TYPE_LIST || parentType === KtNodeTypes.INITIALIZER_LIST) {
-            return createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
-        }
-        else if (parentType === KtNodeTypes.PARENTHESIZED) {
-            return object : CommonAlignmentStrategy() {
-                private var bracketsAlignment: Alignment? = if (jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION) Alignment.createAlignment() else null
+        return when {
+            parentType === KtNodeTypes.VALUE_PARAMETER_LIST ->
+                getAlignmentForChildInParenthesis(
+                        jetCommonSettings.ALIGN_MULTILINE_PARAMETERS, KtNodeTypes.VALUE_PARAMETER, COMMA,
+                        jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
 
-                override fun getAlignment(node: ASTNode): Alignment? {
-                    val childNodeType = node.elementType
-                    val prev = getPrevWithoutWhitespace(node)
+            parentType === KtNodeTypes.VALUE_ARGUMENT_LIST ->
+                getAlignmentForChildInParenthesis(
+                        jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, KtNodeTypes.VALUE_ARGUMENT, COMMA,
+                        jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
 
-                    if (prev != null && prev.elementType === TokenType.ERROR_ELEMENT || childNodeType === TokenType.ERROR_ELEMENT) {
-                        return bracketsAlignment
+            parentType === KtNodeTypes.WHEN ->
+                getAlignmentForCaseBranch(jetSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
+
+            parentType === KtNodeTypes.WHEN_ENTRY ->
+                alignmentStrategy
+
+            parentType in BINARY_EXPRESSIONS && getOperationType(node) in ALIGN_FOR_BINARY_OPERATIONS ->
+                createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())
+
+            parentType === KtNodeTypes.SUPER_TYPE_LIST || parentType === KtNodeTypes.INITIALIZER_LIST ->
+                createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
+
+            parentType === KtNodeTypes.PARENTHESIZED ->
+                object : CommonAlignmentStrategy() {
+                    private var bracketsAlignment: Alignment? = if (jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION) Alignment.createAlignment() else null
+
+                    override fun getAlignment(node: ASTNode): Alignment? {
+                        val childNodeType = node.elementType
+                        val prev = getPrevWithoutWhitespace(node)
+
+                        if (prev != null && prev.elementType === TokenType.ERROR_ELEMENT || childNodeType === TokenType.ERROR_ELEMENT) {
+                            return bracketsAlignment
+                        }
+
+                        if (childNodeType === LPAR || childNodeType === RPAR) {
+                            return bracketsAlignment
+                        }
+
+                        return null
                     }
-
-                    if (childNodeType === LPAR || childNodeType === RPAR) {
-                        return bracketsAlignment
-                    }
-
-                    return null
                 }
-            }
-        }
 
-        return getNullAlignmentStrategy()
+            else ->
+                getNullAlignmentStrategy()
+        }
     }
 
 
