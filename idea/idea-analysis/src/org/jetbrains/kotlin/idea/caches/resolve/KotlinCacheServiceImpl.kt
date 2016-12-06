@@ -76,15 +76,16 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             }
 
 
-    private val facadesForScriptDependencies: SLRUCache<KotlinScriptExternalDependencies, ProjectResolutionFacade> =
-            object : SLRUCache<KotlinScriptExternalDependencies, ProjectResolutionFacade>(2, 3) {
-                override fun createValue(key: KotlinScriptExternalDependencies?): ProjectResolutionFacade {
-                    return createFacadeForScriptDependencies(ScriptDependenciesModuleInfo(project, key))
+    private val facadesForScriptDependencies: SLRUCache<ScriptModuleInfo, ProjectResolutionFacade> =
+            object : SLRUCache<ScriptModuleInfo, ProjectResolutionFacade>(2, 3) {
+                override fun createValue(scriptModuleInfo: ScriptModuleInfo?): ProjectResolutionFacade {
+                    val dependencies = scriptModuleInfo?.externalDependencies
+                    return createFacadeForScriptDependencies(ScriptDependenciesModuleInfo(project, dependencies, scriptModuleInfo))
                 }
             }
 
-    private fun getFacadeForScriptDependencies(dependencies: KotlinScriptExternalDependencies?) = synchronized(facadesForScriptDependencies) {
-        facadesForScriptDependencies.get(dependencies)
+    private fun getFacadeForScriptDependencies(scriptModuleInfo: ScriptModuleInfo) = synchronized(facadesForScriptDependencies) {
+        facadesForScriptDependencies.get(scriptModuleInfo)
     }
 
     private fun createFacadeForScriptDependencies(
@@ -230,7 +231,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 createFacadeForScriptDependencies(syntheticFileModule, files)
             }
             syntheticFileModule is ScriptModuleInfo -> {
-                val facadeForScriptDependencies = getFacadeForScriptDependencies(syntheticFileModule.externalDependencies)
+                val facadeForScriptDependencies = getFacadeForScriptDependencies(syntheticFileModule)
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 ProjectResolutionFacade(
                         "facadeForSynthetic in ScriptModuleInfo",

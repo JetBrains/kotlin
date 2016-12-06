@@ -1,0 +1,18 @@
+package
+
+@SamWithReceiver public /*synthesized*/ fun Sam(/*0*/ function: kotlin.String!.() -> kotlin.Unit): Sam
+public fun test(): kotlin.Unit
+
+@SamWithReceiver public interface Sam {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(/*0*/ a: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class SamWithReceiver : kotlin.Annotation {
+    public constructor SamWithReceiver()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

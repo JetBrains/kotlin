@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 class LazyJavaClassDescriptor(
-        outerContext: LazyJavaResolverContext,
+        val outerContext: LazyJavaResolverContext,
         containingDeclaration: DeclarationDescriptor,
         private val jClass: JavaClass,
         private val additionalSupertypeClassDescriptor: ClassDescriptor? = null
@@ -123,10 +123,6 @@ class LazyJavaClassDescriptor(
 
     override val annotations by c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
 
-    private val functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
-        c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
-    }
-
     private val declaredParameters = c.storageManager.createLazyValue {
         jClass.typeParameters.map {
             p ->
@@ -137,7 +133,7 @@ class LazyJavaClassDescriptor(
 
     override fun getDeclaredTypeParameters() = declaredParameters()
 
-    override fun getFunctionTypeForSamInterface(): SimpleType? = functionTypeForSamInterface()
+    override fun getFunctionTypeForSamInterface(): SimpleType? = c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 

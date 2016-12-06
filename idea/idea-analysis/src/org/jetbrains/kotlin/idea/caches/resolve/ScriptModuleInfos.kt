@@ -55,7 +55,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
     override fun dependencies(): List<IdeaModuleInfo> {
         return listOf(
                 this,
-                ScriptDependenciesModuleInfo(project, externalDependencies)
+                ScriptDependenciesModuleInfo(project, externalDependencies, this)
         ) + sdkDependencies(externalDependencies, project)
     }
 }
@@ -73,7 +73,11 @@ fun findJdk(dependencies: KotlinScriptExternalDependencies?, project: Project): 
            allJdks.firstOrNull()
 }
 
-class ScriptDependenciesModuleInfo(val project: Project, val dependencies: KotlinScriptExternalDependencies?): IdeaModuleInfo {
+class ScriptDependenciesModuleInfo(
+        val project: Project,
+        val dependencies: KotlinScriptExternalDependencies?,
+        val scriptModuleInfo: ScriptModuleInfo?
+): IdeaModuleInfo {
     override fun dependencies() = (listOf(this) + sdkDependencies(dependencies, project))
 
     override val name = Name.special("<Script dependencies>")

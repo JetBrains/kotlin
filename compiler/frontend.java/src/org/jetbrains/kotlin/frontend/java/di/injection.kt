@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
+import org.jetbrains.kotlin.load.java.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.JvmBuiltIns
@@ -68,7 +69,8 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<TraceBasedErrorReporter>()
     useImpl<PsiBasedExternalAnnotationResolver>()
     useImpl<JavaPropertyInitializerEvaluatorImpl>()
-    useInstance(SamConversionResolverImpl)
+    useImpl<SamWithReceiverResolver>()
+    useImpl<SamConversionResolverImpl>()
     useImpl<JavaSourceElementFactoryImpl>()
     useInstance(InternalFlexibleTypeTransformer)
 

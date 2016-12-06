@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
@@ -91,6 +92,9 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
                 useLazyResolve = true
         )
+
+        StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(container, moduleInfo) }
+
         val resolveSession = container.get<ResolveSession>()
         val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 

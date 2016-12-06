@@ -34,6 +34,9 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
     // TODO: consider creating separate type (subtype? for kotlin scripts)
     open val fileType: LanguageFileType = KotlinFileType.INSTANCE
 
+    open val annotationsForSamWithReceivers: List<String>
+        get() = emptyList()
+
     open fun <TF> isScript(file: TF): Boolean =
             getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.sam;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -23,19 +24,19 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension;
 import org.jetbrains.kotlin.load.java.descriptors.*;
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.util.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
 import org.jetbrains.kotlin.types.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 
@@ -97,18 +98,33 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SimpleType getFunctionTypeForAbstractMethod(@NotNull FunctionDescriptor function) {
+    public static SimpleType getFunctionTypeForAbstractMethod(
+            @NotNull FunctionDescriptor function,
+            boolean shouldConvertFirstParameterToDescriptor
+    ) {
         KotlinType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
         List<ValueParameterDescriptor> valueParameters = function.getValueParameters();
         List<KotlinType> parameterTypes = new ArrayList<KotlinType>(valueParameters.size());
         List<Name> parameterNames = new ArrayList<Name>(valueParameters.size());
-        for (ValueParameterDescriptor parameter : valueParameters) {
+
+        int startIndex = 0;
+        KotlinType receiverType = null;
+
+        if (shouldConvertFirstParameterToDescriptor && !function.getValueParameters().isEmpty()) {
+            receiverType = valueParameters.get(0).getType();
+            startIndex = 1;
+        }
+
+        for (int i = startIndex; i < valueParameters.size(); ++i) {
+            ValueParameterDescriptor parameter = valueParameters.get(i);
             parameterTypes.add(parameter.getType());
             parameterNames.add(function.hasSynthesizedParameterNames() ? SpecialNames.NO_NAME_PROVIDED : parameter.getName());
         }
+
         return FunctionTypeResolveUtilsKt.createFunctionType(
-                DescriptorUtilsKt.getBuiltIns(function), Annotations.Companion.getEMPTY(), null, parameterTypes, parameterNames, returnType
+                DescriptorUtilsKt.getBuiltIns(function), Annotations.Companion.getEMPTY(),
+                receiverType, parameterTypes, parameterNames, returnType
         );
     }
 

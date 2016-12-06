@@ -85,6 +85,8 @@
       <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/resolution/resolution.iml" filepath="$PROJECT_DIR$/compiler/resolution/resolution.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-cli/sam-with-receiver-cli.iml" filepath="$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-cli/sam-with-receiver-cli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-ide/sam-with-receiver-ide.iml" filepath="$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver-ide/sam-with-receiver-ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/script.runtime/script.runtime.iml" filepath="$PROJECT_DIR$/core/script.runtime/script.runtime.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/serialization/serialization.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests-common/tests-common.iml" filepath="$PROJECT_DIR$/compiler/tests-common/tests-common.iml" group="compiler" />

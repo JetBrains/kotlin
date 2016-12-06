@@ -39,7 +39,8 @@ class IdeNoArgDeclarationChecker(val project: Project) : AbstractNoArgDeclaratio
         CachedValueProvider.Result.create(WeakHashMap<Module, List<String>>(), ProjectRootModificationTracker.getInstance(project))
     }
 
-    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String> {
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> {
+        if (modifierListOwner == null) return emptyList()
         val module = ModuleUtilCore.findModuleForPsiElement(modifierListOwner) ?: return emptyList()
 
         return cache.value.getOrPut(module) {

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
@@ -79,6 +80,8 @@ object TopDownAnalyzerFacadeForJVM {
         val container = createContainer(
                 project, files, trace, configuration, packagePartProvider, declarationProviderFactory, sourceModuleSearchScope
         )
+
+        StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(container, null) }
 
         val module = container.get<ModuleDescriptor>()
         val moduleContext = container.get<ModuleContext>()

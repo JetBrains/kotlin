@@ -40,11 +40,12 @@ class IdeAllOpenDeclarationAttributeAltererExtension(val project: Project) : Abs
         CachedValueProvider.Result.create(WeakHashMap<Module, List<String>>(), ProjectRootModificationTracker.getInstance(project))
     }
 
-    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String> {
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> {
         if (ApplicationManager.getApplication().isUnitTestMode) {
             return ANNOTATIONS_FOR_TESTS
         }
 
+        if (modifierListOwner == null) return emptyList()
         val module = ModuleUtilCore.findModuleForPsiElement(modifierListOwner) ?: return emptyList()
 
         return cache.value.getOrPut(module) {

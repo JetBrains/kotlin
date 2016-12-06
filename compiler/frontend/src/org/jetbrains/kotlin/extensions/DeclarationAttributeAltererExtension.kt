@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.extensions
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -37,4 +38,6 @@ interface DeclarationAttributeAltererExtension {
             currentModality: Modality,
             bindingContext: BindingContext
     ): Modality? = null
+
+    fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor) : Boolean = false
 }

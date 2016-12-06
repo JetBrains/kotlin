@@ -23,6 +23,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import junit.framework.TestCase;
 import kotlin.TuplesKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.MapsKt;
@@ -189,7 +190,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         }
         else {
             File lazyLogFile = getLazyLogFile(testDataFile);
-            assertFalse("No lazy log expected, but found: " + lazyLogFile.getAbsolutePath(), lazyLogFile.exists());
+            TestCase.assertFalse("No lazy log expected, but found: " + lazyLogFile.getAbsolutePath(), lazyLogFile.exists());
         }
 
         Throwable exceptionFromDescriptorValidation = null;
@@ -225,7 +226,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
         KotlinTestUtils.assertEqualsToFile(testDataFile, actualText.toString());
 
-        assertTrue("Diagnostics mismatch. See the output above", ok);
+        TestCase.assertTrue("Diagnostics mismatch. See the output above", ok);
 
         // now we throw a previously found error, if any
         if (exceptionFromDescriptorValidation != null) {
@@ -440,7 +441,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
                 return InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT");
             }
         })) {
-            assertFalse(".txt file should not exist if SKIP_TXT directive is used: " + expectedFile, expectedFile.exists());
+            TestCase.assertFalse(".txt file should not exist if SKIP_TXT directive is used: " + expectedFile, expectedFile.exists());
             return;
         }
 
@@ -452,7 +453,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         for (Iterator<TestModule> module = CollectionsKt.sorted(modules.keySet()).iterator(); module.hasNext(); ) {
             ModuleDescriptorImpl moduleDescriptor = modules.get(module.next());
             PackageViewDescriptor aPackage = moduleDescriptor.getPackage(FqName.ROOT);
-            assertFalse(aPackage.isEmpty());
+            TestCase.assertFalse(aPackage.isEmpty());
 
             if (isMultiModuleTest) {
                 rootPackageText.append(String.format("// -- Module: %s --\n", moduleDescriptor.getName()));
@@ -587,8 +588,8 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
             DiagnosticUtils.LineAndColumn lineAndColumn =
                     DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange());
 
-            assertTrue("Resolved call for '" + element.getText() + "'" + lineAndColumn + " is not completed",
-                       ((MutableResolvedCall<?>) resolvedCall).isCompleted());
+            TestCase.assertTrue("Resolved call for '" + element.getText() + "'" + lineAndColumn + " is not completed",
+                                ((MutableResolvedCall<?>) resolvedCall).isCompleted());
         }
 
         checkResolvedCallsInDiagnostics(bindingContext);
@@ -633,8 +634,8 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         DiagnosticUtils.LineAndColumn lineAndColumn =
                 DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange());
 
-        assertTrue("Resolved calls stored in " + diagnostic.getFactory().getName() + "\n" +
-                   "for '" + element.getText() + "'" + lineAndColumn + " are not completed",
-                   allCallsAreCompleted);
+        TestCase.assertTrue("Resolved calls stored in " + diagnostic.getFactory().getName() + "\n" +
+                            "for '" + element.getText() + "'" + lineAndColumn + " are not completed",
+                            allCallsAreCompleted);
     }
 }

@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeUtils
 
 interface AnnotationBasedExtension {
-    fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner): List<String>
+    fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String>
 
-    fun DeclarationDescriptor.hasSpecialAnnotation(modifierListOwner: KtModifierListOwner): Boolean {
+    fun DeclarationDescriptor.hasSpecialAnnotation(modifierListOwner: KtModifierListOwner?): Boolean {
         if (annotations.any { it.isASpecialAnnotation(modifierListOwner) }) return true
 
         if (this is ClassDescriptor) {
@@ -40,7 +40,7 @@ interface AnnotationBasedExtension {
     }
 
     private fun AnnotationDescriptor.isASpecialAnnotation(
-            modifierListOwner: KtModifierListOwner,
+            modifierListOwner: KtModifierListOwner?,
             allowMetaAnnotations: Boolean = true
     ): Boolean {
         val annotationType = type.constructor.declarationDescriptor ?: return false
