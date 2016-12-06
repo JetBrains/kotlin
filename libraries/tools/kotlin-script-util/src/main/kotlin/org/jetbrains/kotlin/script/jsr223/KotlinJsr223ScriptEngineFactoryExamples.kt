@@ -48,27 +48,13 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
 class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
     override fun getScriptEngine(): ScriptEngine =
-            KotlinJsr223JvmDaemonLocalEvalScriptEngine(
+            KotlinJsr223JvmDaemonCompileScriptEngine(
                     Disposer.newDisposable(),
                     this,
                     kotlinCompilerJar,
                     scriptCompilationClasspathFromContext(),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",
                     { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
-                    arrayOf(Map::class.java)
-            )
-}
-
-class KotlinJsr223JvmDaemonRemoteEvalScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
-
-    override fun getScriptEngine(): ScriptEngine =
-            KotlinJsr223JvmDaemonRemoteEvalScriptEngine(
-                    Disposer.newDisposable(),
-                    this,
-                    kotlinCompilerJar,
-                    scriptCompilationClasspathFromContext(),
-                    "kotlin.script.templates.standard.ScriptTemplateWithBindings",
-                    ::makeSerializableArgumentsForTemplateWithBindings,
                     arrayOf(Map::class.java)
             )
 }

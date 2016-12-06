@@ -121,7 +121,6 @@
         <module>examples/browser-example-with-library</module>
         <module>examples/kotlin-jsr223-local-example</module>
         <module>examples/kotlin-jsr223-daemon-local-eval-example</module>
-        <module>examples/kotlin-jsr223-daemon-remote-eval-example</module>
 
         <module>tools/kotlin-gradle-plugin-integration-tests</module>
     </modules>

@@ -38,13 +38,12 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
+import java.io.*
 import java.net.URI
 import java.util.jar.Manifest
 import kotlin.reflect.KClass
 import kotlin.test.*
+
 
 class ScriptUtilIT {
 
@@ -89,7 +88,14 @@ done
 
     @Test
     fun testResolveStdJUnitHelloWorld() {
-        Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
+        val savedErr = System.err
+        try {
+            System.setErr(PrintStream(NullOutputStream()))
+            Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
+        }
+        finally {
+            System.setErr(savedErr)
+        }
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
         if (scriptClass == null) {
@@ -195,4 +201,10 @@ done
         }
         return outStream.toString()
     }
+}
+
+private class NullOutputStream : OutputStream() {
+    override fun write(b: Int) { }
+    override fun write(b: ByteArray) { }
+    override fun write(b: ByteArray, off: Int, len: Int) { }
 }

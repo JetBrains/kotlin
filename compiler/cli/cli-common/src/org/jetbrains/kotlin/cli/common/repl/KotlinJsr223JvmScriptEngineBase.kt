@@ -16,27 +16,63 @@
 
 package org.jetbrains.kotlin.cli.common.repl
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import java.io.Reader
 import javax.script.*
 
-//val KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY = "kotlin.script.history"
-//
-//val Bindings.kotlinScriptHistory:
+val KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY = "kotlin.script.history"
+
+// TODO consider additional error handling
+val Bindings.kotlinScriptHistory: MutableList<ReplCodeLine>
+    get() = getOrPut(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, { arrayListOf<ReplCodeLine>() }) as MutableList<ReplCodeLine>
 
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
-    protected var lineCount = 0
 
-    protected val history = arrayListOf<ReplCodeLine>()
+    private var lineCount = 0
 
-    abstract fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult
+    protected abstract val replCompiler: ReplCompiler
 
-    override fun eval(script: String, context: ScriptContext?): Any? {
+    protected abstract val replEvaluator: ReplCompiledEvaluator
 
+    override fun eval(script: String, context: ScriptContext): Any? = compile(script, context).eval(context)
+
+    override fun eval(script: Reader, context: ScriptContext): Any? = compile(script.readText(), context).eval()
+
+    override fun compile(script: String): CompiledScript = compile(script, getContext())
+
+    override fun compile(script: Reader): CompiledScript = compile(script.readText(), getContext())
+
+    override fun createBindings(): Bindings = SimpleBindings()
+
+    override fun getFactory(): ScriptEngineFactory = myFactory
+
+    open fun compile(script: String, context: ScriptContext): CompiledScript {
         lineCount += 1
-        // TODO bind to context
-        val codeLine = ReplCodeLine(lineCount, script)
 
-        val evalResult = eval(codeLine, history)
+        val codeLine = ReplCodeLine(lineCount, script)
+        val history = context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptHistory
+
+        val compileResult = replCompiler.compile(codeLine, history)
+
+        val compiled = when (compileResult) {
+            is ReplCompileResult.Error -> throw ScriptException("Error${compileResult.locationString()}: ${compileResult.message}")
+            is ReplCompileResult.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplCompileResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${compileResult.lineNo}")
+            is ReplCompileResult.CompiledClasses -> compileResult
+        }
+
+        return CompiledKotlinScript(this, codeLine, compiled)
+    }
+
+    open fun eval(compiledScript: CompiledKotlinScript, context: ScriptContext): Any? {
+        val history = context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptHistory
+
+        val evalResult = try {
+            replEvaluator.eval(compiledScript.codeLine, history, compiledScript.compiledData.classes, compiledScript.compiledData.hasResult, compiledScript.compiledData.classpathAddendum)
+        }
+        catch (e: Exception) {
+            throw ScriptException(e)
+        }
 
         val ret = when (evalResult) {
             is ReplEvalResult.ValueResult -> evalResult.value
@@ -45,63 +81,17 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
             is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${evalResult.lineNo}")
         }
-        history.add(codeLine)
-        // TODO update context
+        history.add(compiledScript.codeLine)
         return ret
     }
 
-    override fun eval(script: Reader, context: ScriptContext?): Any? = eval(script.readText(), context)
-
-    override fun compile(p0: String?): CompiledScript {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    class CompiledKotlinScript(val engine: KotlinJsr223JvmScriptEngineBase, val codeLine: ReplCodeLine, val compiledData: ReplCompileResult.CompiledClasses) : CompiledScript() {
+        override fun eval(context: ScriptContext): Any? = engine.eval(this, context)
+        override fun getEngine(): ScriptEngine = engine
     }
-
-    override fun compile(p0: Reader?): CompiledScript {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createBindings(): Bindings = SimpleBindings()
-
-    override fun getFactory(): ScriptEngineFactory = myFactory
 }
 
+private fun ReplCompileResult.Error.locationString() =
+        if (location == CompilerMessageLocation.NO_LOCATION) ""
+        else " at ${location.line}:${location.column}"
 
-@Suppress("unused") // used externally (kotlin.script.utils)
-interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
-
-    val replScriptInvoker: ReplScriptInvoker
-
-    override fun invokeFunction(name: String?, vararg args: Any?): Any? {
-        if (name == null) throw java.lang.NullPointerException("function name cannot be null")
-        return processInvokeResult(replScriptInvoker.invokeFunction(name, *args), isMethod = true)
-    }
-
-    override fun invokeMethod(thiz: Any?, name: String?, vararg args: Any?): Any? {
-        if (name == null) throw java.lang.NullPointerException("method name cannot be null")
-        if (thiz == null) throw IllegalArgumentException("cannot invoke method on the null object")
-        return processInvokeResult(replScriptInvoker.invokeMethod(thiz, name, *args), isMethod = true)
-    }
-
-    override fun <T : Any> getInterface(clasz: Class<T>?): T? {
-        if (clasz == null) throw IllegalArgumentException("class object cannot be null")
-        if (!clasz.isInterface) throw IllegalArgumentException("expecting interface")
-        return processInvokeResult(replScriptInvoker.getInterface(clasz.kotlin), isMethod = false) as? T
-    }
-
-    override fun <T : Any> getInterface(thiz: Any?, clasz: Class<T>?): T? {
-        if (thiz == null) throw IllegalArgumentException("object cannot be null")
-        if (clasz == null) throw IllegalArgumentException("class object cannot be null")
-        if (!clasz.isInterface) throw IllegalArgumentException("expecting interface")
-        return processInvokeResult(replScriptInvoker.getInterface(thiz, clasz.kotlin), isMethod = false) as? T
-    }
-
-    private fun processInvokeResult(res: ReplScriptInvokeResult, isMethod: Boolean): Any? =
-            when (res) {
-                is ReplScriptInvokeResult.Error.NoSuchEntity -> throw if (isMethod) NoSuchMethodException(res.message) else IllegalArgumentException(res.message)
-                is ReplScriptInvokeResult.Error.CompileTime -> throw IllegalArgumentException(res.message) // should not happen in the current code, so leaving it here despite the contradiction with Invocable's specs
-                is ReplScriptInvokeResult.Error.Runtime -> throw ScriptException(res.message)
-                is ReplScriptInvokeResult.Error -> throw ScriptException(res.message)
-                is ReplScriptInvokeResult.UnitResult -> Unit // TODO: check if it is suitable replacement for java's Void
-                is ReplScriptInvokeResult.ValueResult -> res.value
-            }
-}

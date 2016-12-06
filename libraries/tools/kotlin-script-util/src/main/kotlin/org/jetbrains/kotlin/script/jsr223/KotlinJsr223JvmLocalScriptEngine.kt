@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.script.jsr223
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.repl.GenericRepl
+import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -33,7 +31,6 @@ import java.io.File
 import java.net.URLClassLoader
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
-import javax.script.ScriptException
 
 class KotlinJsr223JvmLocalScriptEngine(
         disposable: Disposable,
@@ -44,52 +41,19 @@ class KotlinJsr223JvmLocalScriptEngine(
         scriptArgsTypes: Array<Class<*>>?
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
-    data class MessageCollectorReport(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation)
-
-    private val messageCollector = object : MessageCollector {
-
-        private val messageRenderer = MessageRenderer.WITHOUT_PATHS
-        private var hasErrors = false
-        private val reports = arrayListOf<MessageCollectorReport>()
-
-        override fun clear() {
-            reports.clear()
-        }
-
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-            hasErrors = hasErrors or severity.isError
-            reports.add(MessageCollectorReport(severity, message, location))
-        }
-
-        override fun hasErrors(): Boolean = hasErrors
-
-        fun resetAndThrowOnErrors() {
-            try {
-                if (hasErrors) {
-                    val firstErr = reports.firstOrNull { it.severity.isError }
-                    if (firstErr != null)
-                        throw ScriptException(messageRenderer.render(firstErr.severity, firstErr.message, firstErr.location), firstErr.location.path, firstErr.location.line, firstErr.location.column)
-                    else
-                        throw ScriptException(reports.joinToString("\n") { messageRenderer.render(it.severity, it.message, it.location) })
-                }
-            }
-            finally {
-                clear()
-                hasErrors = false
-            }
-        }
+    override val replCompiler: ReplCompiler by lazy {
+       GenericReplCompiler(
+               disposable,
+               makeScriptDefinition(templateClasspath, templateClassName),
+               makeCompilerConfiguration(),
+               PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
     }
+    // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
+    val localEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
 
-    private val repl by lazy {
-        GenericRepl(
-                disposable,
-                makeScriptDefinition(templateClasspath, templateClassName),
-                makeCompilerConfiguration(),
-                messageCollector,
-                Thread.currentThread().contextClassLoader,
-                getScriptArgs(getContext()),
-                scriptArgsTypes)
-    }
+    override val replScriptInvoker: ReplScriptInvoker get() = localEvaluator
+
+    override val replEvaluator: ReplCompiledEvaluator get() = localEvaluator
 
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
@@ -101,15 +65,5 @@ class KotlinJsr223JvmLocalScriptEngine(
         addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
-    }
-
-    override val replScriptInvoker: ReplScriptInvoker
-        get() = repl.scriptInvoker
-
-
-    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult {
-        val evalResult = repl.eval(codeLine, history)
-        messageCollector.resetAndThrowOnErrors()
-        return evalResult
     }
 }
