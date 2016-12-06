@@ -35,9 +35,16 @@ private fun findKotlinCompilerJar(project: Project, compilerClassName: String): 
 
     val entryToFind = compilerClassName.replace(".", "/") + ".class"
     val jarFromClasspath = project.classpathJars().firstOrNull { it.hasEntry(entryToFind) }
-    val compilerJar = jarFromClasspath
 
-    return compilerJar
+    return when {
+        jarFromClasspath != null ->
+            jarFromClasspath
+        project.parent != null ->
+            findKotlinCompilerJar(project.parent, compilerClassName)
+        else ->
+            null
+
+    }
 }
 
 private fun File.hasEntry(entryToFind: String): Boolean {

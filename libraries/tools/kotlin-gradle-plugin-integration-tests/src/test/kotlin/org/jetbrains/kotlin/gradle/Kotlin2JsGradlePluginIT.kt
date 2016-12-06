@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import java.io.File
 
 class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     @Test
@@ -79,7 +80,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         val project = Project("kotlinBuiltins", "3.2")
 
         project.setupWorkingDir()
-        val buildGradle = project.projectDir.getFileByName("build.gradle")
+        val buildGradle = File(project.projectDir, "app").getFileByName("build.gradle")
         buildGradle.modify {
             it.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\"") +
                     "\ncompileKotlin2Js.kotlinOptions.outputFile = \"out/out.js\""
