@@ -7,7 +7,7 @@ class StringDelegate(val s: String) {
 }
 
 // NB no operator
-fun String.createDelegate(a: Any?, p: KProperty<*>) = StringDelegate(this)
+fun String.toDelegateFor(a: Any?, p: KProperty<*>) = StringDelegate(this)
 
 operator fun String.getValue(a: Any?, p: KProperty<*>) = this
 

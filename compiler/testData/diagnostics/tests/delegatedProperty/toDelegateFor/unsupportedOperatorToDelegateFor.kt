@@ -1,11 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: -OperatorCreateDelegate
+// !LANGUAGE: -OperatorToDelegateFor
 
 class WrongDelegate(val x: Int) {
     operator fun getValue(thisRef: Any?, prop: Any): Int = x
 }
 
-<!UNSUPPORTED_FEATURE(only available since Kotlin 1.1: operator createDelegate)!>operator<!> fun String.createDelegate(thisRef: Any?, prop: Any) = WrongDelegate(this.length)
+<!UNSUPPORTED_FEATURE!>operator<!> fun String.toDelegateFor(thisRef: Any?, prop: Any) = WrongDelegate(this.length)
 
 operator fun String.getValue(thisRef: Any?, prop: Any) = this
 

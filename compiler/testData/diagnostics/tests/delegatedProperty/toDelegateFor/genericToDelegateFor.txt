@@ -3,8 +3,8 @@ package
 public val test1: Cell<kotlin.String>
 public val test2: Cell<kotlin.Any>
 public val test3: Cell<kotlin.String>
-public operator fun </*0*/ T> T.createDelegate(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.Any?): GenericDelegate<T>
 public operator fun </*0*/ W> GenericDelegate<W>.getValue(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.Any?): Cell<W>
+public operator fun </*0*/ T> T.toDelegateFor(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.Any?): GenericDelegate<T>
 
 public final class Cell</*0*/ out V> {
     public constructor Cell</*0*/ out V>(/*0*/ value: V)

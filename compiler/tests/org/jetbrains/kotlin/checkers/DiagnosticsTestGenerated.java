@@ -5524,12 +5524,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("createDelegateOperatorDeclaration.kt")
-            public void testCreateDelegateOperatorDeclaration() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegateOperatorDeclaration.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("defaultGetter.kt")
             public void testDefaultGetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/defaultGetter.kt");
@@ -5758,39 +5752,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class CreateDelegate extends AbstractDiagnosticsTest {
-                public void testAllFilesPresentInCreateDelegate() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-                }
-
-                @TestMetadata("genericCreateDelegate.kt")
-                public void testGenericCreateDelegate() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/genericCreateDelegate.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("noOperatorModifierOnCreateDelegate.kt")
-                public void testNoOperatorModifierOnCreateDelegate() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/noOperatorModifierOnCreateDelegate.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("simpleCreateDelegate.kt")
-                public void testSimpleCreateDelegate() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/simpleCreateDelegate.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("unsupportedOperatorCreateDelegate.kt")
-                public void testUnsupportedOperatorCreateDelegate() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/createDelegate/unsupportedOperatorCreateDelegate.kt");
-                    doTest(fileName);
-                }
-            }
-
             @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -5868,6 +5829,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("useExpectedTypeForVal.kt")
                 public void testUseExpectedTypeForVal() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/useExpectedTypeForVal.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ToDelegateFor extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInToDelegateFor() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("genericToDelegateFor.kt")
+                public void testGenericToDelegateFor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/genericToDelegateFor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noOperatorModifierOnToDelegateFor.kt")
+                public void testNoOperatorModifierOnToDelegateFor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/noOperatorModifierOnToDelegateFor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleToDelegateFor.kt")
+                public void testSimpleToDelegateFor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/simpleToDelegateFor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("toDelegateForOperatorDeclaration.kt")
+                public void testToDelegateForOperatorDeclaration() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/toDelegateForOperatorDeclaration.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unsupportedOperatorToDelegateFor.kt")
+                public void testUnsupportedOperatorToDelegateFor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/unsupportedOperatorToDelegateFor.kt");
                     doTest(fileName);
                 }
             }

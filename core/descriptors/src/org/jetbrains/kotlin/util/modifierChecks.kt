@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_RESULT
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_INTERCEPT_RESUME
-import org.jetbrains.kotlin.util.OperatorNameConventions.CREATE_DELEGATE
+import org.jetbrains.kotlin.util.OperatorNameConventions.TO_DELEGATE_FOR
 import org.jetbrains.kotlin.util.OperatorNameConventions.DEC
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET
@@ -186,7 +186,7 @@ object OperatorChecks : AbstractModifierChecks() {
             },
             Checks(GET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(2), IsKPropertyCheck),
             Checks(SET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(3), IsKPropertyCheck),
-            Checks(CREATE_DELEGATE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.Equals(2), IsKPropertyCheck),
+            Checks(TO_DELEGATE_FOR, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.Equals(2), IsKPropertyCheck),
             Checks(INVOKE, MemberOrExtension),
             Checks(CONTAINS, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck, ReturnsBoolean),
             Checks(ITERATOR, MemberOrExtension, NoValueParameters),

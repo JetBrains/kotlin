@@ -4,7 +4,7 @@ class Cell<out V>(val value: V)
 
 class GenericDelegate<V>(val value: V)
 
-operator fun <T> T.createDelegate(a: Any?, p: Any?) = GenericDelegate(this)
+operator fun <T> T.toDelegateFor(a: Any?, p: Any?) = GenericDelegate(this)
 
 operator fun <W> GenericDelegate<W>.getValue(a: Any?, p: Any?) = Cell(value)
 

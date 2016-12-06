@@ -2,7 +2,7 @@
 
 import kotlin.reflect.KProperty
 
-operator fun String.createDelegate(a: Any?, p: KProperty<*>) = this
+operator fun String.toDelegateFor(a: Any?, p: KProperty<*>) = this
 operator fun String.getValue(a: Any?, p: KProperty<*>) = this
 
 val test1: String by "OK"

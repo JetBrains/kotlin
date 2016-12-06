@@ -3,8 +3,8 @@ package
 public val test1: kotlin.String
 public val test2: kotlin.Int
 public val test3: kotlin.String
-public fun kotlin.String.createDelegate(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): StringDelegate
 public operator fun kotlin.String.getValue(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): kotlin.String
+public fun kotlin.String.toDelegateFor(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): StringDelegate
 
 public final class StringDelegate {
     public constructor StringDelegate(/*0*/ s: kotlin.String)

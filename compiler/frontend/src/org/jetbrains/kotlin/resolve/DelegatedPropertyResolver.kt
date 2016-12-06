@@ -86,7 +86,7 @@ class DelegatedPropertyResolver(
 
         val byExpressionType = resolveDelegateExpression(delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo)
 
-        resolveCreateDelegateMethod(variableDescriptor, delegateExpression, byExpressionType, trace, delegateFunctionsScope, outerDataFlowInfo)
+        resolveToDelegateForMethod(variableDescriptor, delegateExpression, byExpressionType, trace, delegateFunctionsScope, outerDataFlowInfo)
         val delegateType = getResolvedDelegateType(variableDescriptor, delegateExpression, byExpressionType, trace)
 
         resolveGetValueMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, outerDataFlowInfo)
@@ -103,10 +103,10 @@ class DelegatedPropertyResolver(
             byExpressionType: KotlinType,
             trace: BindingTrace
     ): KotlinType {
-        val createDelegateResolvedCall = trace.bindingContext.get(CREATE_DELEGATE_RESOLVED_CALL, variableDescriptor)
+        val createDelegateResolvedCall = trace.bindingContext.get(TO_DELEGATE_FOR_RESOLVED_CALL, variableDescriptor)
         if (createDelegateResolvedCall != null) {
             return createDelegateResolvedCall.resultingDescriptor.returnType
-                    ?: throw AssertionError("No return type fore 'createDelegate' of ${delegateExpression.text}")
+                   ?: throw AssertionError("No return type fore 'toDelegateFor' of ${delegateExpression.text}")
         }
         return byExpressionType
     }
@@ -119,7 +119,7 @@ class DelegatedPropertyResolver(
             delegateFunctionsScope: LexicalScope,
             dataFlowInfo: DataFlowInfo
     ): KotlinType? {
-        resolveCreateDelegateMethod(variableDescriptor, delegateExpression, byExpressionType, trace, delegateFunctionsScope, dataFlowInfo)
+        resolveToDelegateForMethod(variableDescriptor, delegateExpression, byExpressionType, trace, delegateFunctionsScope, dataFlowInfo)
         val delegateType = getResolvedDelegateType(variableDescriptor, delegateExpression, byExpressionType, trace)
         resolveGetSetValueMethod(variableDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, dataFlowInfo, true)
 
@@ -127,8 +127,8 @@ class DelegatedPropertyResolver(
         return if (resolvedCall != null) resolvedCall.resultingDescriptor.returnType else null
     }
 
-    private val isOperatorCreateDelegateSupported: Boolean
-            get() = languageVersionSettings.supportsFeature(LanguageFeature.OperatorCreateDelegate)
+    private val isOperatorToDelegateForSupported: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.OperatorToDelegateFor)
 
     private fun resolveGetValueMethod(
             variableDescriptor: VariableDescriptorWithAccessors,
@@ -268,7 +268,7 @@ class DelegatedPropertyResolver(
         }
     }
 
-    private fun resolveCreateDelegateMethod(
+    private fun resolveToDelegateForMethod(
             propertyDescriptor: VariableDescriptorWithAccessors,
             byExpression: KtExpression,
             byExpressionType: KotlinType,
@@ -276,27 +276,27 @@ class DelegatedPropertyResolver(
             delegateFunctionsScope: LexicalScope,
             dataFlowInfo: DataFlowInfo
     ) {
-        if (!isOperatorCreateDelegateSupported) return
-        if (trace.bindingContext.get(BindingContext.CREATE_DELEGATE_CALL, propertyDescriptor) != null) return
+        if (!isOperatorToDelegateForSupported) return
+        if (trace.bindingContext.get(BindingContext.TO_DELEGATE_FOR_CALL, propertyDescriptor) != null) return
 
-        val createDelegateResults = getCreateDelegateMethod(propertyDescriptor, byExpression, byExpressionType,
-                                                            trace, delegateFunctionsScope, dataFlowInfo)
-        if (!createDelegateResults.isSuccess) {
-            val call = trace.bindingContext.get(BindingContext.CREATE_DELEGATE_CALL, propertyDescriptor)
+        val toDelegateForResults = getToDelegateForMethod(propertyDescriptor, byExpression, byExpressionType,
+                                                          trace, delegateFunctionsScope, dataFlowInfo)
+        if (!toDelegateForResults.isSuccess) {
+            val call = trace.bindingContext.get(BindingContext.TO_DELEGATE_FOR_CALL, propertyDescriptor)
                        ?: throw AssertionError("'getDelegatedPropertyConventionMethod' didn't record a call")
-            reportDelegateOperatorResolutionError(trace, call, createDelegateResults, byExpression, byExpressionType,
+            reportDelegateOperatorResolutionError(trace, call, toDelegateForResults, byExpression, byExpressionType,
                                                   operatorRequired = false)
             return
         }
 
-        val resultingDescriptor = createDelegateResults.resultingDescriptor
+        val resultingDescriptor = toDelegateForResults.resultingDescriptor
         if (!resultingDescriptor.isOperator) {
             // TODO resolved 'createDelegate' function, which is not an operator - warning?
             return
         }
 
-        val resultingCall = createDelegateResults.resultingCall
-        trace.record(CREATE_DELEGATE_RESOLVED_CALL, propertyDescriptor, resultingCall)
+        val resultingCall = toDelegateForResults.resultingCall
+        trace.record(TO_DELEGATE_FOR_RESOLVED_CALL, propertyDescriptor, resultingCall)
     }
 
     /* Resolve getValue() or setValue() methods from delegate */
@@ -345,7 +345,7 @@ class DelegatedPropertyResolver(
         return resolutionResult.second
     }
 
-    private fun getCreateDelegateMethod(
+    private fun getToDelegateForMethod(
             propertyDescriptor: VariableDescriptorWithAccessors,
             delegateExpression: KtExpression,
             delegateExpressionType: KotlinType,
@@ -363,14 +363,14 @@ class DelegatedPropertyResolver(
                     createExpressionForProperty()
             )
         }
-        val functionName = OperatorNameConventions.CREATE_DELEGATE
+        val functionName = OperatorNameConventions.TO_DELEGATE_FOR
         val receiver = ExpressionReceiver.create(delegateExpression, delegateExpressionType, trace.bindingContext)
 
-        val (createDelegateCall, createDelegateResolutionResult) =
+        val (toDelegateForCall, toDelegateForResults) =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression)
-        trace.record(BindingContext.CREATE_DELEGATE_CALL, propertyDescriptor, createDelegateCall)
+        trace.record(BindingContext.TO_DELEGATE_FOR_CALL, propertyDescriptor, toDelegateForCall)
 
-        return createDelegateResolutionResult
+        return toDelegateForResults
     }
 
     //TODO: diagnostics rendering does not belong here
@@ -480,17 +480,17 @@ class DelegatedPropertyResolver(
                     typeVariableSubstitutor: TypeSubstitutor,
                     traceToResolveConventionMethods: TemporaryBindingTrace
             ): KotlinType {
-                if (isOperatorCreateDelegateSupported) {
-                    val createDelegateResults = getCreateDelegateMethod(
+                if (isOperatorToDelegateForSupported) {
+                    val toDelegateForResults = getToDelegateForMethod(
                             variableDescriptor, delegateExpression, byExpressionType,
                             traceToResolveConventionMethods, delegateFunctionsScope, dataFlowInfo
                     )
-                    if (conventionMethodFound(createDelegateResults)) {
-                        val createDelegateDescriptor = createDelegateResults.resultingDescriptor
-                        val createDelegateReturnType = createDelegateDescriptor.returnType
-                        if (createDelegateDescriptor.isOperator) {
-                            addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, createDelegateDescriptor)
-                            return createDelegateReturnType
+                    if (conventionMethodFound(toDelegateForResults)) {
+                        val toDelegateForDescriptor = toDelegateForResults.resultingDescriptor
+                        val toDelegateForReturnType = toDelegateForDescriptor.returnType
+                        if (toDelegateForDescriptor.isOperator) {
+                            addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, toDelegateForDescriptor)
+                            return toDelegateForReturnType
                                    ?: throw AssertionError("No return type fore 'createDelegate' of ${delegateExpression.text}")
                         }
                     }

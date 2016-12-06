@@ -3,8 +3,8 @@ package
 public val test1: kotlin.String
 public val test2: kotlin.Int
 public val test3: kotlin.String
-public operator fun kotlin.String.createDelegate(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.Any): WrongDelegate
 public operator fun kotlin.String.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.Any): kotlin.String
+public operator fun kotlin.String.toDelegateFor(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.Any): WrongDelegate
 
 public final class WrongDelegate {
     public constructor WrongDelegate(/*0*/ x: kotlin.Int)
