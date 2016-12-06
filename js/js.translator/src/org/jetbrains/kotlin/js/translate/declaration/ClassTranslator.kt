@@ -133,10 +133,6 @@ class ClassTranslator private constructor(
             }
 
             primaryConstructor = ConstructorInfo(constructorFunction, constructorContext, descriptor)
-
-            if (descriptor.kind == ClassKind.ENUM_CLASS) {
-                addEnumClassParameters(constructorFunction)
-            }
         }
     }
 
@@ -147,15 +143,6 @@ class ClassTranslator private constructor(
         function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction).makeStmt()
         context().addDeclarationStatement(function.makeStmt())
         return function
-    }
-
-    private fun addEnumClassParameters(constructorFunction: JsFunction) {
-        val nameParamName = constructorFunction.scope.declareTemporaryName("name")
-        val ordinalParamName = constructorFunction.scope.declareTemporaryName("ordinal")
-        constructorFunction.parameters.addAll(0, listOf(JsParameter(nameParamName), JsParameter(ordinalParamName)))
-
-        constructorFunction.body.statements += JsAstUtils.assignmentToThisField(Namer.ENUM_NAME_FIELD, nameParamName.makeRef())
-        constructorFunction.body.statements += JsAstUtils.assignmentToThisField(Namer.ENUM_ORDINAL_FIELD, ordinalParamName.makeRef())
     }
 
     private fun isObjectLike() = when (descriptor.kind) {

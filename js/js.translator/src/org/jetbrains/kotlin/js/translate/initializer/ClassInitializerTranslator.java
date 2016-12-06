@@ -98,10 +98,24 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             //NOTE: while we translate constructor parameters we also add property initializer statements
             // for properties declared as constructor parameters
             initFunction.getParameters().addAll(translatePrimaryConstructorParameters());
+
+            // Initialize enum 'name' and 'ordinal' before translating property initializers.
+            if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+                addEnumClassParameters(initFunction);
+            }
         }
 
         delegationTranslator.addInitCode(initFunction.getBody().getStatements());
         new InitializerVisitor().traverseContainer(classDeclaration, context().innerBlock(initFunction.getBody()));
+    }
+
+    private static void addEnumClassParameters(JsFunction constructorFunction) {
+        JsName nameParamName = constructorFunction.getScope().declareFreshName("name");
+        JsName ordinalParamName = constructorFunction.getScope().declareFreshName("ordinal");
+        constructorFunction.getParameters().addAll(0, Arrays.asList(new JsParameter(nameParamName), new JsParameter(ordinalParamName)));
+
+        constructorFunction.getBody().getStatements().add(JsAstUtils.assignmentToThisField(Namer.ENUM_NAME_FIELD, nameParamName.makeRef()));
+        constructorFunction.getBody().getStatements().add(JsAstUtils.assignmentToThisField(Namer.ENUM_ORDINAL_FIELD, ordinalParamName.makeRef()));
     }
 
     private void addOuterClassReference(ClassDescriptor classDescriptor) {
