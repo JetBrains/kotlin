@@ -14,31 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.incremental
+package org.jetbrains.kotlin.daemon
 
-import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
+import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 
-internal class GradleICReporter(private val projectRootFile: File) : ICReporter() {
-    private val log = Logging.getLogger(GradleICReporter::class.java)
-
-    val isDebugEnabled: Boolean
-            get() = log.isDebugEnabled
-
-    override fun report(message: ()->String) {
-        log.kotlinDebug(message)
+internal class RemoteICReporter(private val servicesFacade: IncrementalCompilationServicesFacade) : ICReporter() {
+    override fun report(message: () -> String) {
+        if (servicesFacade.shouldReportIC()) {
+            servicesFacade.reportIC(message())
+        }
     }
-
-    override fun pathsAsString(files: Iterable<File>): String =
-            files.pathsAsStringRelativeTo(projectRootFile)
 
     override fun reportCompileIteration(sourceFiles: Iterable<File>, exitCode: ExitCode) {
-        if (sourceFiles.any()) {
-            report { "compile iteration: ${pathsAsString(sourceFiles)}" }
+        if (servicesFacade.shouldReportIC()) {
+            servicesFacade.reportCompileIteration(sourceFiles, exitCode.code)
         }
-        report { "compiler exit code: $exitCode" }
     }
 }
-
