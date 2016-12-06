@@ -27,6 +27,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -147,7 +148,14 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             project.extensions.findByName("android") as? BaseExtension
         }
 
-        for ((key, value) in kaptExtension.getAdditionalArguments(project, variantData, androidPlugin)) {
+        val androidOptions = if (variantData != null)
+            AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData) ?: emptyMap()
+        else
+            emptyMap()
+
+        val apOptions = kaptExtension.getAdditionalArguments(project, variantData, androidPlugin) + androidOptions
+
+        for ((key, value) in apOptions) {
             pluginOptions += SubpluginOption("apoption", "$key:$value")
         }
 
