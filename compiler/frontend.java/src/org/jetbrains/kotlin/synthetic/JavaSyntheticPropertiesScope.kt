@@ -259,8 +259,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         return Name.identifier("set" + identifier.removePrefix(prefix))
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
+    override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
+    override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
 
     private data class SyntheticPropertyHolder(val descriptor: PropertyDescriptor?, val lookedNames: List<Name>) {
         companion object {

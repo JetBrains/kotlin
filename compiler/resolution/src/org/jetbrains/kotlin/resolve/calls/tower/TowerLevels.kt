@@ -146,7 +146,7 @@ internal class MemberScopeTowerLevel(
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>> {
         return collectMembers {
             getContributedFunctions(name, location) + it.getInnerConstructors(name, location) +
-            syntheticScopes.collectSyntheticExtensionFunctions(it.singletonOrEmptyList(), name, location)
+            syntheticScopes.collectSyntheticMemberFunctions(it.singletonOrEmptyList(), name, location)
         }
     }
 }

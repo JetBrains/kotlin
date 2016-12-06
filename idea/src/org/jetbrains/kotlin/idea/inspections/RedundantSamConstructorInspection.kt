@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
-import org.jetbrains.kotlin.resolve.scopes.collectSyntheticExtensionFunctions
+import org.jetbrains.kotlin.resolve.scopes.collectSyntheticMemberFunctions
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -186,7 +186,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             // SAM adapters for member functions
             val syntheticScopes = functionCall.getResolutionFacade().getFrontendService(SyntheticScopes::class.java)
-            val syntheticExtensions = syntheticScopes.collectSyntheticExtensionFunctions(
+            val syntheticExtensions = syntheticScopes.collectSyntheticMemberFunctions(
                         containingClass.defaultType.singletonList(),
                         functionResolvedCall.resultingDescriptor.name,
                         NoLookupLocation.FROM_IDE)

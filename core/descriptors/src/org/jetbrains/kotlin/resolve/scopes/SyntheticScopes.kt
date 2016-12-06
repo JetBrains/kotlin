@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface SyntheticScope {
     fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-    fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
     fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
-    fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
+    fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
 }
 
 interface SyntheticScopes {
@@ -43,11 +43,11 @@ interface SyntheticScopes {
 fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
         = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
 
-fun SyntheticScopes.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-        = scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
+fun SyntheticScopes.collectSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+        = scopes.flatMap { it.getSyntheticMemberFunctions(receiverTypes, name, location) }
 
 fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
         = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes) }
 
-fun SyntheticScopes.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-        = scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes) }
+fun SyntheticScopes.collectSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>)
+        = scopes.flatMap { it.getSyntheticMemberFunctions(receiverTypes) }
