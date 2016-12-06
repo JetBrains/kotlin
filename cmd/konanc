@@ -134,7 +134,7 @@ CLANG="$CLANG_BIN_PATH/clang++"
 # [ -z $NOSTDLIB ] && clang_args=($STDLIB "${clang_args[@]}")
 clang_args=($STDLIB "${clang_args[@]}")
 clang_args=($LAUNCHER $START $RUNTIME "${clang_args[@]}")
-clang_args=("${clang_args[@]}" "-xc $CLANG_PLATFORM_ARGS")
+clang_args=("${clang_args[@]} -xc $CLANG_PLATFORM_ARGS")
 
 $CLANG $KTBC_NAME -o $OUTPUT_NAME ${clang_args[@]} 
 

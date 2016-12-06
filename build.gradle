@@ -38,7 +38,7 @@ allprojects {
     ext.clangArgs << "-B$binDir"
     ext.clangPath << binDir
 
-    ext.jvmArgs=["-ea"]
+    ext.jvmArgs = ["-ea"]
 
     convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
@@ -113,7 +113,7 @@ task dist_compiler(type: Copy) {
     }
 
     from(file('cmd')) {
-        fileMode(0775)
+        fileMode(0755)
         include('konanc')
         include('kotlinc-native')
 
