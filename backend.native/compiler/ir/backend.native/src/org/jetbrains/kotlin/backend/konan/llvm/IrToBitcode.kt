@@ -645,6 +645,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         return valuePhi
     }
+
     //-------------------------------------------------------------------------//
 
     private fun evaluateExpressionAndJump(expression: IrExpression, destination: ContinuationBlock) {
@@ -1242,8 +1243,28 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val type     = value.typeOperand
         val srcArg   = evaluateExpression(codegen.newVar(), value.argument)!!     // Evaluate src expression.
 
-        return genInstanceOf(tmpVariableName, srcArg, type)
+        val bbNull       = codegen.basicBlock()
+        val bbInstanceOf = codegen.basicBlock()
+        val bbExit       = codegen.basicBlock()
+
+        val condition = codegen.icmpEq(srcArg, codegen.kNullObjHeaderPtr, codegen.newVar())
+        codegen.condBr(condition, bbNull, bbInstanceOf)
+
+        codegen.positionAtEnd(bbNull)
+        val resultNull = if (TypeUtils.isNullableType(type)) kTrue else kFalse
+        codegen.br(bbExit)
+
+        codegen.positionAtEnd(bbInstanceOf)
+        val resultInstanceOf = genInstanceOf(tmpVariableName, srcArg, type)
+        codegen.br(bbExit)
+
+        codegen.positionAtEnd(bbExit)
+        val result = codegen.phi(kBoolean, codegen.newVar())
+        codegen.addPhiIncoming(result, bbNull to resultNull, bbInstanceOf to resultInstanceOf)
+        return result
     }
+
+    //-------------------------------------------------------------------------//
 
     private fun genInstanceOf(tmpVariableName: String, obj: LLVMValueRef, type: KotlinType): LLVMValueRef {
         val dstDescriptor = TypeUtils.getClassDescriptor(type)                         // Get class descriptor for dst type.
