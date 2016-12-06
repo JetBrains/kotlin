@@ -5052,6 +5052,63 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertRangeCheckToTwoComparisons extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertRangeCheckToTwoComparisons() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertRangeCheckToTwoComparisons"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("double.kt")
+        public void testDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/double.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forLoop.kt")
+        public void testForLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/forLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideForLoop.kt")
+        public void testInsideForLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/insideForLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideForLoop2.kt")
+        public void testInsideForLoop2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/insideForLoop2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("int.kt")
+        public void testInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/int.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonConstants.kt")
+        public void testNonConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/nonConstants.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("otherOp.kt")
+        public void testOtherOp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/otherOp.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withSideEffects.kt")
+        public void testWithSideEffects() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/withSideEffects.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertReceiverToParameter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6438,6 +6495,159 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("wrongCaret.kt")
         public void testWrongCaret() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTryFinallyToUseCall/wrongCaret.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertTwoComparisonsToRangeCheck extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertTwoComparisonsToRangeCheck() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertTwoComparisonsToRangeCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("char.kt")
+        public void testChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/char.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("charInclusive.kt")
+        public void testCharInclusive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/charInclusive.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("double.kt")
+        public void testDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/double.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("flipped.kt")
+        public void testFlipped() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/flipped.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("flippedSideEffect.kt")
+        public void testFlippedSideEffect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/flippedSideEffect.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gtDouble.kt")
+        public void testGtDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gtDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gtDouble2.kt")
+        public void testGtDouble2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gtDouble2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gteqgt.kt")
+        public void testGteqgt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gteqgt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gteqgteq.kt")
+        public void testGteqgteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gteqgteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gteqlt.kt")
+        public void testGteqlt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gteqlt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gteqlteq.kt")
+        public void testGteqlteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gteqlteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gtgt.kt")
+        public void testGtgt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gtgt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gtgteq.kt")
+        public void testGtgteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gtgteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gtlt.kt")
+        public void testGtlt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gtlt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("gtlteq.kt")
+        public void testGtlteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/gtlteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lteqgt.kt")
+        public void testLteqgt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/lteqgt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lteqgteq.kt")
+        public void testLteqgteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/lteqgteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lteqlt.kt")
+        public void testLteqlt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/lteqlt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lteqlteq.kt")
+        public void testLteqlteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/lteqlteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ltgt.kt")
+        public void testLtgt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/ltgt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ltgteq.kt")
+        public void testLtgteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/ltgteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ltlt.kt")
+        public void testLtlt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/ltlt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ltlteq.kt")
+        public void testLtlteq() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/ltlteq.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonConstants.kt")
+        public void testNonConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/nonConstants.kt");
             doTest(fileName);
         }
     }
