@@ -60,7 +60,10 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         }
-        val source = JvmPackagePartSource(kotlinClass)
+        val source = JvmPackagePartSource(
+                kotlinClass,
+                isPreReleaseInvisible = !IS_PRE_RELEASE && kotlinClass.classHeader.isPreRelease
+        )
         return DeserializedPackageMemberScope(descriptor, packageProto, nameResolver, source, components) {
             // All classes are included into Java scope
             emptyList()

@@ -18,20 +18,26 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: JvmClassName?) : DeserializedContainerSource {
-    constructor(kotlinClass: KotlinJvmBinaryClass) : this(
+class JvmPackagePartSource(
+        val className: JvmClassName,
+        val facadeClassName: JvmClassName?,
+        override val isPreReleaseInvisible: Boolean = false
+) : DeserializedContainerSource {
+    constructor(kotlinClass: KotlinJvmBinaryClass, isPreReleaseInvisible: Boolean = false) : this(
             JvmClassName.byClassId(kotlinClass.classId),
             kotlinClass.classHeader.multifileClassName?.let {
                 if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
-            }
+            },
+            isPreReleaseInvisible
     )
 
-    // TODO
-    override val isPreReleaseInvisible: Boolean get() = false
+    override val presentableFqName: FqName
+        get() = classId.asSingleFqName()
 
     val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -42,6 +43,9 @@ interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
 interface DeserializedContainerSource : SourceElement {
     // True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release
     val isPreReleaseInvisible: Boolean
+
+    // This FQ name should only be used for error messages
+    val presentableFqName: FqName
 }
 
 class DeserializedSimpleFunctionDescriptor(
