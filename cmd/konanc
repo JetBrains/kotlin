@@ -34,16 +34,20 @@ while [ $# -gt 0 ]; do
       NOSTDLIB=YES
       shift
       ;;
+    -opt)
+     OPTIMIZE=YES
+     shift
+     ;;
     -o|-output)
       OUTPUT_NAME=$2
       shift
       shift
       ;;
-   -X*)
+    -X*)
       clang_args=("${clang_args[@]}" "${1:2}")
       shift
       ;;
-    *)
+     *)
       konan_args=("${konan_args[@]}" "$1")
       shift
       ;;
@@ -132,6 +136,7 @@ CLANG="$CLANG_BIN_PATH/clang++"
 # TODO: Compilation without stdlib.kt.bc doesn't work because 'start' requires stdlib, for example.
 # Probably, we need a .klib compilation mode.
 # [ -z $NOSTDLIB ] && clang_args=($STDLIB "${clang_args[@]}")
+[ "$OPTIMIZE" == "YES" ] && clang_args=("-flto -O3 ${clang_args[@]}")
 clang_args=($STDLIB "${clang_args[@]}")
 clang_args=($LAUNCHER $START $RUNTIME "${clang_args[@]}")
 clang_args=("${clang_args[@]} -xc $CLANG_PLATFORM_ARGS")
