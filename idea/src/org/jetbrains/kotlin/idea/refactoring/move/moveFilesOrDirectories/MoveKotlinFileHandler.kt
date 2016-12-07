@@ -78,8 +78,10 @@ class MoveKotlinFileHandler : MoveFileHandler() {
             ContainerInfo.UnknownPackage -> EmptyKotlinMoveTarget
 
             else -> KotlinMoveTargetForDeferredFile(newPackage.fqName!!, newParent) {
-                MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, newParent)
-                newParent?.findFile(psiFile.name) as? KtFile
+                newParent?.let {
+                    MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, it)
+                    it.findFile(psiFile.name) as? KtFile
+                }
             }
         }
 
