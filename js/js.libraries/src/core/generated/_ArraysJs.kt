@@ -12851,6 +12851,78 @@ public inline fun CharArray.asList(): List<Char> {
 }
 
 /**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun IntArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun LongArray.sort(): Unit {
+    if (size > 1)
+        sort { a: Long, b: Long -> a.compareTo(b) }
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun ByteArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun ShortArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun DoubleArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun FloatArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun CharArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place according to the natural order of its elements.
+ */
+public fun <T: Comparable<T>> Array<out T>.sort(): Unit {
+    if (size > 1)
+        sort { a: T, b: T -> a.compareTo(b) }
+}
+
+/**
+ * Sorts the array in-place according to the order specified by the given [comparator].
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1)
+        sort { a, b -> comparator.compare(a, b) }
+}
+
+/**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun ByteArray.toTypedArray(): Array<Byte> {
@@ -13329,70 +13401,6 @@ public inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
 }
 
 /**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun ByteArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun ShortArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun IntArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun FloatArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun DoubleArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun CharArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun <T: Comparable<T>> Array<out T>.sort(): Unit {
-    if (size > 1)
-        sort { a: T, b: T -> a.compareTo(b) }
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun LongArray.sort(): Unit {
-    if (size > 1)
-        sort { a: Long, b: Long -> a.compareTo(b) }
-}
-
-/**
  * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 public inline fun <T> Array<out T>.sort(noinline comparison: (T, T) -> Int): Unit {
@@ -13446,13 +13454,5 @@ public inline fun DoubleArray.sort(noinline comparison: (Double, Double) -> Int)
  */
 public inline fun CharArray.sort(noinline comparison: (Char, Char) -> Int): Unit {
     asDynamic().sort(comparison)
-}
-
-/**
- * Sorts the array in-place according to the order specified by the given [comparator] object.
- */
-public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1)
-        sort { a, b -> comparator.compare(a, b) }
 }
 

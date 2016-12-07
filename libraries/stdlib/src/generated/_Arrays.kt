@@ -12990,6 +12990,70 @@ public fun CharArray.asList(): List<Char> {
 }
 
 /**
+ * Sorts the array in-place.
+ */
+public fun IntArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun LongArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun ByteArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun ShortArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun DoubleArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun FloatArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun CharArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place according to the natural order of its elements.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T: Comparable<T>> Array<out T>.sort(): Unit {
+    (this as Array<Any?>).sort()
+}
+
+/**
+ * Sorts the array in-place according to the order specified by the given [comparator].
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1) java.util.Arrays.sort(this, comparator)
+}
+
+/**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun ByteArray.toTypedArray(): Array<Byte> {
@@ -13870,66 +13934,12 @@ public inline fun <T> Array<T>.plusElement(element: T): Array<T> {
 }
 
 /**
- * Sorts the array in-place.
+ * Sorts the array in-place according to the natural order of its elements.
+ * 
+ * @throws ClassCastException if any element of the array is not [Comparable].
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun ByteArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun ShortArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun IntArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun LongArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun FloatArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun DoubleArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun CharArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
 }
 
@@ -13995,14 +14005,6 @@ public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @kotlin.jvm.JvmVersion
 public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts the array in-place with the given [comparator].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1) java.util.Arrays.sort(this, comparator)
 }
 
 /**

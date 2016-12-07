@@ -172,9 +172,15 @@ fun specialJVM(): List<GenericFunction> {
 
 
     templates add f("sort()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        exclude(PrimitiveType.Boolean)
-        doc { "Sorts the array in-place." }
+        // left with more generic signature for JVM only
+        only(ArraysOfObjects)
+        doc {
+            """
+            Sorts the array in-place according to the natural order of its elements.
+
+            @throws ClassCastException if any element of the array is not [Comparable].
+            """
+        }
         returns("Unit")
         body {
             "if (size > 1) java.util.Arrays.sort(this)"
@@ -188,15 +194,6 @@ fun specialJVM(): List<GenericFunction> {
         returns("Unit")
         body {
             "java.util.Arrays.sort(this, fromIndex, toIndex)"
-        }
-    }
-
-    templates add f("sortWith(comparator: Comparator<in T>)") {
-        only(ArraysOfObjects)
-        doc { "Sorts the array in-place with the given [comparator]." }
-        returns("Unit")
-        body {
-            "if (size > 1) java.util.Arrays.sort(this, comparator)"
         }
     }
 
@@ -253,6 +250,68 @@ fun specialJVM(): List<GenericFunction> {
 }
 
 object CommonArrays {
+    fun f_sortPrimitives() =
+        (PrimitiveType.numericPrimitives + PrimitiveType.Char).map { primitive ->
+            f("sort()") {
+                only(ArraysOfPrimitives)
+                only(primitive)
+                doc { "Sorts the array in-place." }
+                returns("Unit")
+                body(Platform.JVM) {
+                    "if (size > 1) java.util.Arrays.sort(this)"
+                }
+                if (primitive != PrimitiveType.Long) {
+                    annotations(Platform.JS, """@library("primitiveArraySort")""")
+                    body(Platform.JS) { "noImpl" }
+                }
+                else {
+                    body(Platform.JS) {
+                        """
+                        if (size > 1)
+                            sort { a: T, b: T -> a.compareTo(b) }
+                        """
+                    }
+                }
+            }
+        }
+
+    fun f_sort() = f("sort()") {
+        only(ArraysOfObjects)
+        typeParam("T: Comparable<T>")
+        doc {
+            """
+            Sorts the array in-place according to the natural order of its elements.
+            """
+        }
+        returns("Unit")
+        inline(Platform.JVM, Inline.Only)
+        body(Platform.JVM) {
+            "(this as Array<Any?>).sort()"
+        }
+        body(Platform.JS) {
+            """
+            if (size > 1)
+                sort { a: T, b: T -> a.compareTo(b) }
+            """
+        }
+    }
+
+    fun f_sortWith() = f("sortWith(comparator: Comparator<in T>)") {
+        only(ArraysOfObjects)
+        buildFamilyPrimitives(Platform.JS, buildFamilyPrimitives.default!! - PrimitiveType.Boolean)
+        doc { "Sorts the array in-place according to the order specified by the given [comparator]." }
+        returns("Unit")
+        body(Platform.JVM) {
+            "if (size > 1) java.util.Arrays.sort(this, comparator)"
+        }
+        body(Platform.JS) {
+            """
+            if (size > 1)
+                sort { a, b -> comparator.compare(a, b) }
+            """
+        }
+    }
+
     fun f_asList() = f("asList()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns a [List] that wraps the original array." }
@@ -313,5 +372,5 @@ object CommonArrays {
     }
 
     // TODO: use reflection later to get all functions of matching type
-    fun templates() = listOf(this.f_asList(), this.f_toTypedArray())
+    fun templates() = f_sortPrimitives() + listOf(f_sort(), f_sortWith(), f_asList(), f_toTypedArray())
 }

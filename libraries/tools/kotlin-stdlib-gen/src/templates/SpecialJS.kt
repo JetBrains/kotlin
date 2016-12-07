@@ -144,43 +144,5 @@ fun specialJS(): List<GenericFunction> {
         body { "asDynamic().sort(comparison)" }
     }
 
-    templates add f("sortWith(comparator: Comparator<in T>)") {
-        only(ArraysOfObjects)
-        exclude(PrimitiveType.Boolean)
-        returns("Unit")
-        doc { "Sorts the array in-place according to the order specified by the given [comparator] object." }
-        body {
-            """
-            if (size > 1)
-                sort { a, b -> comparator.compare(a, b) }
-            """
-        }
-    }
-
-    templates add f("sort()") {
-        only(ArraysOfPrimitives)
-        only(numericPrimitives + PrimitiveType.Char)
-        exclude(PrimitiveType.Long)
-        returns("Unit")
-        doc { "Sorts the array in-place." }
-        annotations("""@library("primitiveArraySort")""")
-        body { "noImpl" }
-    }
-
-    templates add f("sort()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        only(PrimitiveType.Long)
-        typeParam("T: Comparable<T>")
-        returns("Unit")
-        doc { "Sorts the array in-place." }
-        body {
-            """
-            if (size > 1)
-                sort { a: T, b: T -> a.compareTo(b) }
-            """
-        }
-    }
-
-
     return templates
 }
