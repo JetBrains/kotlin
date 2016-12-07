@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -40,12 +41,14 @@ import org.jetbrains.kotlin.platform.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
@@ -187,18 +190,33 @@ class LazyJavaClassDescriptor(
         }
 
         private fun getPurelyImplementedSupertype(): KotlinType? {
-            val purelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()
-                                          ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqNameSafe)
-                                          ?: return null
+            val annotatedPurelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()?.check {
+                !it.isRoot && it.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)
+            }
 
-            if (purelyImplementedFqName.isRoot || !purelyImplementedFqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null
+            val purelyImplementedFqName =
+                    annotatedPurelyImplementedFqName
+                    ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqNameSafe)
+                    ?: return null
 
-            val classDescriptor = c.module.builtIns.getBuiltInClassByFqNameNullable(purelyImplementedFqName) ?: return null
+            val classDescriptor = c.module.resolveTopLevelClass(purelyImplementedFqName, NoLookupLocation.FROM_JAVA_LOADER) ?: return null
 
-            if (classDescriptor.typeConstructor.parameters.size != getTypeConstructor().parameters.size) return null
+            val supertypeParameterCount = classDescriptor.typeConstructor.parameters.size
+            val typeParameters = getTypeConstructor().parameters
+            val typeParameterCount = typeParameters.size
 
-            val parametersAsTypeProjections = getTypeConstructor().parameters.map {
-                parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.defaultType)
+            val parametersAsTypeProjections = when {
+                typeParameterCount == supertypeParameterCount ->
+                    typeParameters.map {
+                        parameter ->
+                        TypeProjectionImpl(Variance.INVARIANT, parameter.defaultType)
+                    }
+                typeParameterCount == 1 && supertypeParameterCount > 1 && annotatedPurelyImplementedFqName == null ->
+                {
+                    val parameter = TypeProjectionImpl(Variance.INVARIANT, typeParameters.single().defaultType)
+                    (1..supertypeParameterCount).map { parameter } // TODO: List(supertypeParameterCount) { parameter }
+                }
+                else -> return null
             }
 
             return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, classDescriptor, parametersAsTypeProjections)
