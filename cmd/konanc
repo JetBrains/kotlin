@@ -131,7 +131,7 @@ START="${KONAN_HOME}/lib/start.kt.bc"
 CLANG_PLATFORM_ARGS="FILTER_CLANG_PLATFORM_ARGS"
 CLANG_BIN_PATH="FILTER_CLANG_BIN_PATH"
 
-CLANG="$CLANG_BIN_PATH/clang++"
+CLANG="$CLANG_BIN_PATH/clang"
 
 # TODO: Compilation without stdlib.kt.bc doesn't work because 'start' requires stdlib, for example.
 # Probably, we need a .klib compilation mode.
@@ -139,7 +139,7 @@ CLANG="$CLANG_BIN_PATH/clang++"
 [ "$OPTIMIZE" == "YES" ] && clang_args=("-flto -O3 ${clang_args[@]}")
 clang_args=($STDLIB "${clang_args[@]}")
 clang_args=($LAUNCHER $START $RUNTIME "${clang_args[@]}")
-clang_args=("${clang_args[@]} -xc $CLANG_PLATFORM_ARGS")
+clang_args=("${clang_args[@]} $CLANG_PLATFORM_ARGS")
 
 $CLANG $KTBC_NAME -o $OUTPUT_NAME ${clang_args[@]} 
 

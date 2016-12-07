@@ -100,36 +100,9 @@ abstract class KonanTest extends DefaultTask {
         return "${project.llvmDir}/bin/${tool}"
     }
 
-    private linux() {
-        return project.isLinux()
+    protected List<String> clangLinkArgs() {
+        return project.clangLinkArgs
     }
-
-    protected List<String> linkCppAbi() {
-        if (linux()) {
-            return ["-Wl,-Bstatic", "-lc++abi", "-Wl,-Bdynamic"]
-        } else {
-            // Life is hard. MacOS linker is harder.
-            // This is how we force the linker to link statically.
-            return ["${project.llvmDir}/lib/libc++abi.a"]
-        }
-    }
-
-    protected List<String> linkPlatform() {
-       if (linux()) {
-         return ["-ldl", "-lpthread", "-lm", "-rdynamic"]
-       }
-       else {
-         return []
-       }
-    }
-
-    protected List<String> libLink() {
-        def libs = []
-        libs.addAll(linkPlatform())
-        libs.addAll(linkCppAbi())
-        return libs
-    }
-
 }
 
 class UnitKonanTest extends KonanTest {
@@ -140,7 +113,7 @@ class UnitKonanTest extends KonanTest {
             def argList = []
             argList.addAll([ runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
                     "-o", exe.absolutePath, testC, mainC ])
-            argList.addAll(libLink())
+            argList.addAll(clangLinkArgs())
             args argList
         }
     }
@@ -153,7 +126,7 @@ class RunKonanTest extends KonanTest {
             def argList = []
             argList.addAll([ launcherBc.absolutePath, startKtBc.absolutePath, 
                 runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath, "-o", exe.absolutePath ])
-            argList.addAll(libLink())
+            argList.addAll(clangLinkArgs())
             args argList
         }
     }
@@ -213,7 +186,7 @@ class LinkKonanTest extends KonanTest {
             def argList = []
             argList.addAll([ runtimeS.absolutePath, stdlibKtBc.absolutePath, 
                 sourceS.absolutePath, "-o", exe.absolutePath, testC, mainC ])
-            argList.addAll(libLink())
+            argList.addAll(clangLinkArgs())
             args argList
         }
     }

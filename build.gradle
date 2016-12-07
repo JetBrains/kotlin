@@ -22,6 +22,7 @@ allprojects {
         }
     }
 
+    convention.plugins.clangFlags = new ClangFlags(isLinux(), "$llvmDir")
     ext.clangPath = ["$llvmDir/bin"]
     ext.clangArgs = []
     final String binDir
@@ -40,6 +41,8 @@ allprojects {
     ext.clangPath << binDir
 
     ext.jvmArgs = ["-ea"]
+
+    ext.clangLinkArgs = libLink()
 
     convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
@@ -62,6 +65,44 @@ allprojects {
         }
     }
 }
+
+class ClangFlags {
+
+    protected Boolean isLinux
+    protected String llvmDir
+
+    ClangFlags(linux, llvm) {
+        isLinux = linux
+        llvmDir = llvm
+    }
+
+    public List<String> linkCppAbi() {
+        if (isLinux) {
+            return ["-Wl,-Bstatic", "-lc++abi", "-Wl,-Bdynamic"]
+        } else {
+            // Life is hard. MacOS linker is harder.
+            // This is how we force the linker to link statically.
+            return ["${llvmDir}/lib/libc++abi.a"]
+        }
+    }
+
+    public List<String> linkPlatform() {
+       if (isLinux) {
+         return ["-ldl", "-lpthread", "-lm", "-rdynamic"]
+       } else {
+         return []
+       }
+    }
+
+    public List<String> libLink() {
+        def libs = []
+        libs.addAll(linkPlatform())
+        libs.addAll(linkCppAbi())
+        return libs
+    }
+}
+
+
 
 class PlatformInfo {
     private final String osName = System.properties['os.name']
@@ -118,7 +159,8 @@ task dist_compiler(type: Copy) {
         include('konanc')
         include('kotlinc-native')
 
-        filter { line -> line.replaceAll("FILTER_CLANG_PLATFORM_ARGS", clangArgs.join(' ')) }
+        def allClangArgs = "${clangArgs.join(' ')} ${clangLinkArgs.join(' ')}"
+        filter { line -> line.replaceAll("FILTER_CLANG_PLATFORM_ARGS", allClangArgs) }
         filter { line -> line.replaceAll("FILTER_CLANG_BIN_PATH", "${project.llvmDir}/bin") }
 
         into('bin')
