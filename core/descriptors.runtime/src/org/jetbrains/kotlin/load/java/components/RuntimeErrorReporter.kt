@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.load.java.components
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 
 object RuntimeErrorReporter : ErrorReporter {
@@ -29,14 +26,8 @@ object RuntimeErrorReporter : ErrorReporter {
         throw IllegalStateException("Incomplete hierarchy for class ${descriptor.name}, unresolved classes $unresolvedSuperClasses")
     }
 
-    override fun reportIncompatibleMetadataVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
-        throw IllegalStateException("Incompatible binary version of $classId: $actualVersion " +
-                                    "(expected version is ${JvmMetadataVersion.INSTANCE})")
-    }
-
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
         // TODO: use DescriptorRenderer
         throw IllegalStateException("Cannot infer visibility for $descriptor")
     }
-
 }
