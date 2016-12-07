@@ -42,6 +42,8 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
 }
 
 interface DeserializedContainerSource : SourceElement {
+    // True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release
+    val isPreReleaseInvisible: Boolean
 }
 
 interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor

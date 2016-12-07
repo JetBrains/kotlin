@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -49,7 +50,7 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         val classData = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         }
-        val sourceElement = KotlinJvmBinarySourceElement(kotlinClass)
+        val sourceElement = KotlinJvmBinarySourceElement(kotlinClass, !IS_PRE_RELEASE && kotlinClass.classHeader.isPreRelease)
         return ClassDataWithSource(classData, sourceElement)
     }
 
@@ -92,5 +93,8 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
 
         private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
                 setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
+
+        var IS_PRE_RELEASE = KotlinCompilerVersion.IS_PRE_RELEASE
+            @Deprecated("Should only be used in tests") set
     }
 }

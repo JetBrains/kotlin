@@ -30,6 +30,9 @@ class JvmPackagePartSource(val className: JvmClassName, val facadeClassName: Jvm
             }
     )
 
+    // TODO
+    override val isPreReleaseInvisible: Boolean get() = false
+
     val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
 
     val classId: ClassId get() = ClassId(className.packageFqName, simpleName)

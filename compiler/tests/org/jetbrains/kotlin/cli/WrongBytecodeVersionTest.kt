@@ -41,7 +41,9 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(librarySource), tmpdir, environment)
 
         for (classFile in File(tmpdir, "library").listFiles { file -> file.extension == JavaClassFileType.INSTANCE.defaultExtension }) {
-            changeVersionInBytecode(classFile)
+            classFile.writeBytes(transformMetadataInClassFile(classFile.readBytes()) { name, _ ->
+                if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) incompatibleVersion else null
+            })
         }
 
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
@@ -57,28 +59,27 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
         KotlinTestUtils.assertEqualsToFile(File(directory, "output.txt"), normalized)
     }
 
-    private fun changeVersionInBytecode(file: File) {
-        val writer = ClassWriter(0)
-        ClassReader(file.inputStream()).accept(object : ClassVisitor(Opcodes.ASM5, writer) {
-            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                val superVisitor = super.visitAnnotation(desc, visible)!!
-                if (desc == JvmAnnotationNames.METADATA_DESC) {
-                    return object : AnnotationVisitor(Opcodes.ASM5, superVisitor) {
-                        override fun visit(name: String?, value: Any) {
-                            val updatedValue: Any =
-                                    if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) incompatibleVersion
-                                    else value
-                            super.visit(name, updatedValue)
-                        }
-                    }
-                }
-                return superVisitor
-            }
-        }, 0)
-        file.writeBytes(writer.toByteArray())
-    }
-
     fun testSimple() {
         doTest("/bytecodeVersion/simple")
+    }
+
+    companion object {
+        fun transformMetadataInClassFile(bytes: ByteArray, transform: (fieldName: String, value: Any?) -> Any?): ByteArray {
+            val writer = ClassWriter(0)
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5, writer) {
+                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
+                    val superVisitor = super.visitAnnotation(desc, visible)
+                    if (desc == JvmAnnotationNames.METADATA_DESC) {
+                        return object : AnnotationVisitor(Opcodes.ASM5, superVisitor) {
+                            override fun visit(name: String, value: Any) {
+                                super.visit(name, transform(name, value) ?: value)
+                            }
+                        }
+                    }
+                    return superVisitor
+                }
+            }, 0)
+            return writer.toByteArray()
+        }
     }
 }

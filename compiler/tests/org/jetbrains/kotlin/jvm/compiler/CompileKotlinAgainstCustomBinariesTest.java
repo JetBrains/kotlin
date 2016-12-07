@@ -34,8 +34,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -226,6 +228,31 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 
+    @SuppressWarnings("deprecation")
+    private void doTestPreReleaseKotlinLibrary(@NotNull String libraryName) throws Exception {
+        // Compiles the library with the "pre-release" flag, then compiles a usage of this library in the release mode
+
+        File library;
+        try {
+            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(true);
+            library = compileLibrary(libraryName);
+        }
+        finally {
+            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(KotlinCompilerVersion.IS_PRE_RELEASE);
+        }
+
+        Pair<String, ExitCode> output;
+        try {
+            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(false);
+            output = compileKotlin("source.kt", tmpdir, library);
+        }
+        finally {
+            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(KotlinCompilerVersion.IS_PRE_RELEASE);
+        }
+
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    }
+
     // ------------------------------------------------------------------------------
 
     public void testRawTypes() throws Exception {
@@ -335,6 +362,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     public void testMissingDependencyJavaNestedAnnotation() throws Exception {
         doTestBrokenJavaLibrary("library", "test/A$Anno.class");
+    }
+
+    public void testReleaseCompilerAgainstPreReleaseLibrary() throws Exception {
+        doTestPreReleaseKotlinLibrary("library");
     }
 
     /*test source mapping generation when source info is absent*/
