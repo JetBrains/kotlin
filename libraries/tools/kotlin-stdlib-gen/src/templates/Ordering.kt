@@ -8,10 +8,9 @@ fun ordering(): List<GenericFunction> {
     templates add f("reverse()") {
         doc { f -> "Reverses ${f.element.pluralize()} in the ${f.collection} in-place." }
         only(Lists, InvariantArraysOfObjects, ArraysOfPrimitives)
-        jvmOnly(Lists) { true }
         customReceiver(Lists) { "MutableList<T>" }
         returns { "Unit" }
-        body { f ->
+        body {
             """
             val midPoint = (size / 2) - 1
             if (midPoint < 0) return
@@ -24,7 +23,7 @@ fun ordering(): List<GenericFunction> {
             }
             """
         }
-        body(Lists) { """java.util.Collections.reverse(this)""" }
+        body(Platform.JVM, Lists) { """java.util.Collections.reverse(this)""" }
     }
 
     templates add f("reversed()") {

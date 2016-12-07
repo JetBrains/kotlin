@@ -75,15 +75,3 @@ public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
 private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in T>): Unit = noImpl
 
 
-/**
- * Reverses elements in the list in-place.
- */
-public fun <T> MutableList<T>.reverse(): Unit {
-    val size = this.size
-    for (i in 0..(size / 2) - 1) {
-        val i2 = size - i - 1
-        val tmp = this[i]
-        this[i] = this[i2]
-        this[i2] = tmp
-    }
-}
