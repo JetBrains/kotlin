@@ -727,30 +727,45 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateVararg(tmpVariableName: String, value: IrVararg): LLVMValueRef? {
-        val arguments = value.elements.map {
-            assert (it !is IrSpreadElement)
-            evaluateExpression(codegen.newVar(), it)!!
+        var oneSizedElementsCount = 0
+        data class Element(val exp: LLVMValueRef, val size: LLVMValueRef?, val isArray: Boolean)
+
+        val elements = value.elements.map {
+            if (it is IrSpreadElement) {
+                val exp = evaluateExpression(codegen.newVar(), it.expression)!!
+                val array = codegen.bitcast(codegen.kArrayHeaderPtr, exp, codegen.newVar())
+                val sizePtr = LLVMBuildStructGEP(codegen.builder, array, 1, codegen.newVar())
+                return@map Element(exp, codegen.load(sizePtr!!, codegen.newVar()), true)
+            }
+            val exp = evaluateExpression(codegen.newVar(), it)!!
+            oneSizedElementsCount++
+            return@map Element(exp, null, false)
         }
 
-        return genCreateArray(tmpVariableName, value.type, arguments)
-    }
-
-    private fun genCreateArray(tmpVariableName: String,
-                               arrayType: KotlinType, elements: List<LLVMValueRef>): LLVMValueRef {
-
-        if (elements.all { codegen.isConst(it) }) {
+        if (elements.all { codegen.isConst(it.exp) && !it.isArray }) {
             // Note: even if all elements are const, they aren't guaranteed to be statically initialized.
             // E.g. an element may be a pointer to lazy-initialized object (aka singleton).
             // However it is guaranteed that all elements are already initialized at this point.
-            return codegen.staticData.createKotlinArray(arrayType, elements)
+            return codegen.staticData.createKotlinArray(value.type, elements.map { it.exp })
         }
 
-        val typeInfo = codegen.typeInfoValue(arrayType)!!
+        val length = LLVMConstInt(LLVMInt32Type(), oneSizedElementsCount.toLong(), 0)
+        val finalLength = elements.filter { it.isArray }.fold(length) { sum, (_, size, _) ->
+            codegen.plus(sum!!, size!!, codegen.newVar())
+        }
 
-        val arrayCreationArgs = listOf(typeInfo, kImmInt32One, Int32(elements.size).llvm)
+        val typeInfo = codegen.typeInfoValue(value.type)!!
+        val arrayCreationArgs = listOf(typeInfo, kImmInt32One, finalLength!!)
         val array = currentCodeContext.genCall(context.allocArrayFunction, arrayCreationArgs, tmpVariableName)
-        elements.forEachIndexed { i, it ->
-            currentCodeContext.genCall(context.setArrayFunction, listOf(array, Int32(i).llvm, it), "")
+
+        elements.fold(kImmZero) { sum, (exp, size, isArray) ->
+            if (!isArray) {
+                currentCodeContext.genCall(context.setArrayFunction, listOf(array, sum, exp), "")
+                return@fold codegen.plus(sum, kImmOne, codegen.newVar())
+            } else {
+                currentCodeContext.genCall(context.copyImplArrayFunction, listOf(exp, kImmZero, array, sum, size!!), "")
+                return@fold codegen.plus(sum, size, codegen.newVar())
+            }
         }
         return array
     }

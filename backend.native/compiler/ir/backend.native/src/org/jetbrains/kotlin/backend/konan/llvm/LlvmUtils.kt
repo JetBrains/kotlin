@@ -112,6 +112,10 @@ internal val ContextUtils.kObjHeaderPtr: LLVMTypeRef
     get() = pointerType(kObjHeader)
 internal val ContextUtils.kObjHeaderPtrPtr: LLVMTypeRef
     get() = pointerType(kObjHeaderPtr)
+internal val ContextUtils.kArrayHeader: LLVMTypeRef
+    get() = LLVMGetTypeByName(context.llvmModule, "struct.ArrayHeader")!!
+internal val ContextUtils.kArrayHeaderPtr: LLVMTypeRef
+    get() = pointerType(kArrayHeader)
 internal val ContextUtils.kTypeInfoPtr: LLVMTypeRef
     get() = pointerType(kTypeInfo)
 internal val kInt1         = LLVMInt1Type()!!
