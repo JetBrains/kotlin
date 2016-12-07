@@ -5148,6 +5148,296 @@ public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
 }
 
 /**
+ * Returns `true` if the two specified arrays are *deeply* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ * 
+ * If two corresponding elements are nested arrays, they are also compared deeply.
+ * If any of arrays contains itself on any nesting level the behavior is undefined.
+ */
+@SinceKotlin("1.1")
+@library("arrayDeepEquals")
+public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ * Nested arrays are treated as lists too.
+ * 
+ * If any of arrays contains itself on any nesting level the behavior is undefined.
+ */
+@SinceKotlin("1.1")
+@library("arrayDeepHashCode")
+public fun <T> Array<out T>.contentDeepHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of this array as if it is a [List].
+ * Nested arrays are treated as lists too.
+ * 
+ * If any of arrays contains itself on any nesting level that reference
+ * is rendered as `"[...]"` to prevent recursion.
+ */
+@SinceKotlin("1.1")
+@library("arrayDeepToString")
+public fun <T> Array<out T>.contentDeepToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun IntArray.contentEquals(other: IntArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun LongArray.contentEquals(other: LongArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.1")
+@library("arrayEquals")
+public infix fun CharArray.contentEquals(other: CharArray): Boolean {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun <T> Array<out T>.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun ByteArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun ShortArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun IntArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun LongArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun FloatArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun DoubleArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun BooleanArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayHashCode")
+public fun CharArray.contentHashCode(): Int {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun <T> Array<out T>.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun ByteArray.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun ShortArray.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun IntArray.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun LongArray.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun FloatArray.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun DoubleArray.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun BooleanArray.contentToString(): String {
+    return noImpl
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@library("arrayToString")
+public fun CharArray.contentToString(): String {
+    return noImpl
+}
+
+/**
  * Returns the range of valid indices for the array.
  */
 public val <T> Array<out T>.indices: IntRange
@@ -12614,296 +12904,6 @@ public fun BooleanArray.toTypedArray(): Array<Boolean> {
  */
 public fun CharArray.toTypedArray(): Array<Char> {
     return copyOf().unsafeCast<Array<Char>>()
-}
-
-/**
- * Returns `true` if the two specified arrays are *deeply* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- * 
- * If two corresponding elements are nested arrays, they are also compared deeply.
- * If any of arrays contains itself on any nesting level the behavior is undefined.
- */
-@SinceKotlin("1.1")
-@library("arrayDeepEquals")
-public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- * Nested arrays are treated as lists too.
- * 
- * If any of arrays contains itself on any nesting level the behavior is undefined.
- */
-@SinceKotlin("1.1")
-@library("arrayDeepHashCode")
-public fun <T> Array<out T>.contentDeepHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of this array as if it is a [List].
- * Nested arrays are treated as lists too.
- * 
- * If any of arrays contains itself on any nesting level that reference
- * is rendered as `"[...]"` to prevent recursion.
- */
-@SinceKotlin("1.1")
-@library("arrayDeepToString")
-public fun <T> Array<out T>.contentDeepToString(): String {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun IntArray.contentEquals(other: IntArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun LongArray.contentEquals(other: LongArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@SinceKotlin("1.1")
-@library("arrayEquals")
-public infix fun CharArray.contentEquals(other: CharArray): Boolean {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun <T> Array<out T>.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun ByteArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun ShortArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun IntArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun LongArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun FloatArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun DoubleArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun BooleanArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@SinceKotlin("1.1")
-@library("arrayHashCode")
-public fun CharArray.contentHashCode(): Int {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun <T> Array<out T>.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun ByteArray.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun ShortArray.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun IntArray.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun LongArray.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun FloatArray.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun DoubleArray.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun BooleanArray.contentToString(): String {
-    return noImpl
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is a [List].
- */
-@SinceKotlin("1.1")
-@library("arrayToString")
-public fun CharArray.contentToString(): String {
-    return noImpl
 }
 
 /**

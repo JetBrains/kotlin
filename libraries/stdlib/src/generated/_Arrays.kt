@@ -5155,7 +5155,6 @@ public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
  * If two corresponding elements are nested arrays, they are also compared deeply.
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
@@ -5168,7 +5167,6 @@ public inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>):
  * 
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.contentDeepHashCode(): Int {
@@ -5182,7 +5180,6 @@ public inline fun <T> Array<out T>.contentDeepHashCode(): Int {
  * If any of arrays contains itself on any nesting level that reference
  * is rendered as `"[...]"` to prevent recursion.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.contentDeepToString(): String {
@@ -5193,7 +5190,6 @@ public inline fun <T> Array<out T>.contentDeepToString(): String {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
@@ -5204,7 +5200,6 @@ public inline infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
@@ -5215,7 +5210,6 @@ public inline infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
@@ -5226,7 +5220,6 @@ public inline infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun IntArray.contentEquals(other: IntArray): Boolean {
@@ -5237,7 +5230,6 @@ public inline infix fun IntArray.contentEquals(other: IntArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun LongArray.contentEquals(other: LongArray): Boolean {
@@ -5248,7 +5240,6 @@ public inline infix fun LongArray.contentEquals(other: LongArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
@@ -5259,7 +5250,6 @@ public inline infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
@@ -5270,7 +5260,6 @@ public inline infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
@@ -5281,7 +5270,6 @@ public inline infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline infix fun CharArray.contentEquals(other: CharArray): Boolean {
@@ -5291,7 +5279,6 @@ public inline infix fun CharArray.contentEquals(other: CharArray): Boolean {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.contentHashCode(): Int {
@@ -5301,7 +5288,6 @@ public inline fun <T> Array<out T>.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.contentHashCode(): Int {
@@ -5311,7 +5297,6 @@ public inline fun ByteArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.contentHashCode(): Int {
@@ -5321,7 +5306,6 @@ public inline fun ShortArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.contentHashCode(): Int {
@@ -5331,7 +5315,6 @@ public inline fun IntArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.contentHashCode(): Int {
@@ -5341,7 +5324,6 @@ public inline fun LongArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.contentHashCode(): Int {
@@ -5351,7 +5333,6 @@ public inline fun FloatArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.contentHashCode(): Int {
@@ -5361,7 +5342,6 @@ public inline fun DoubleArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.contentHashCode(): Int {
@@ -5371,7 +5351,6 @@ public inline fun BooleanArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.contentHashCode(): Int {
@@ -5381,7 +5360,6 @@ public inline fun CharArray.contentHashCode(): Int {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.contentToString(): String {
@@ -5391,7 +5369,6 @@ public inline fun <T> Array<out T>.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.contentToString(): String {
@@ -5401,7 +5378,6 @@ public inline fun ByteArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.contentToString(): String {
@@ -5411,7 +5387,6 @@ public inline fun ShortArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.contentToString(): String {
@@ -5421,7 +5396,6 @@ public inline fun IntArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.contentToString(): String {
@@ -5431,7 +5405,6 @@ public inline fun LongArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.contentToString(): String {
@@ -5441,7 +5414,6 @@ public inline fun FloatArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.contentToString(): String {
@@ -5451,7 +5423,6 @@ public inline fun DoubleArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.contentToString(): String {
@@ -5461,7 +5432,6 @@ public inline fun BooleanArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
-@kotlin.jvm.JvmVersion
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.contentToString(): String {
