@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -517,13 +516,7 @@ public abstract class StackValue {
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
             ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
 
-            if (descriptor.getOriginal() instanceof SamAdapterExtensionFunctionDescriptor) {
-                callDispatchReceiver = callExtensionReceiver;
-                callExtensionReceiver = null;
-                dispatchReceiverParameter = extensionReceiverParameter;
-                extensionReceiverParameter = null;
-            }
-            else if (descriptor instanceof SyntheticFieldDescriptor) {
+            if (descriptor instanceof SyntheticFieldDescriptor) {
                 dispatchReceiverParameter = ((SyntheticFieldDescriptor) descriptor).getDispatchReceiverParameterForBackend();
             }
 

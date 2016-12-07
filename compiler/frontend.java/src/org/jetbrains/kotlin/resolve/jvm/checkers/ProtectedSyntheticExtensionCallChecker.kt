@@ -34,6 +34,8 @@ object ProtectedSyntheticExtensionCallChecker : CallChecker {
 
         val sourceFunction = when (descriptor) {
             is SyntheticJavaPropertyDescriptor -> descriptor.getMethod
+            // TODO: this branch becomes unnecessary, because common checks are applied to SAM adapters being resolved as common members
+            // But this part may be still useful when we enable backward compatibility mode and SAM adapters become extensions again
             is SamAdapterExtensionFunctionDescriptor -> descriptor.baseDescriptorForSynthetic
             else -> return
         }

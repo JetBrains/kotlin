@@ -30,14 +30,18 @@ fun FunctionDescriptor.hasJavaOriginInHierarchy(): Boolean {
 
 fun Visibility.isVisibleOutside() = this != Visibilities.PRIVATE && this != Visibilities.PRIVATE_TO_THIS && this != Visibilities.INVISIBLE_FAKE
 
-fun syntheticExtensionVisibility(originalDescriptor: DeclarationDescriptorWithVisibility): Visibility {
+fun syntheticVisibility(originalDescriptor: DeclarationDescriptorWithVisibility, isUsedForExtension: Boolean): Visibility {
     val originalVisibility = originalDescriptor.visibility
     return when (originalVisibility) {
         Visibilities.PUBLIC -> Visibilities.PUBLIC
 
         else -> object : Visibility(originalVisibility.name, originalVisibility.isPublicAPI) {
-            override fun isVisible(receiver: ReceiverValue?, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor)
-                    = originalVisibility.isVisible(Visibilities.ALWAYS_SUITABLE_RECEIVER, originalDescriptor, from)
+            override fun isVisible(
+                    receiver: ReceiverValue?,
+                    what: DeclarationDescriptorWithVisibility,
+                    from: DeclarationDescriptor
+            ) = originalVisibility.isVisible(
+                    if (isUsedForExtension) Visibilities.ALWAYS_SUITABLE_RECEIVER else receiver, originalDescriptor, from)
 
             override fun mustCheckInImports()
                     = throw UnsupportedOperationException("Should never be called for this visibility")

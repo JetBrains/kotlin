@@ -11,7 +11,7 @@ class Data(var x: A)
 
 class B : A() {
     fun baz(a: A, b: B, d: Data) {
-        a.<!INVISIBLE_MEMBER!>foo<!> { }
+        a.<!INVISIBLE_MEMBER!>foo<!> <!TYPE_MISMATCH!>{ }<!>
 
         b.foo { }
 
@@ -20,7 +20,7 @@ class B : A() {
         }
 
         if (d.x is B) {
-            d.x.<!INVISIBLE_MEMBER!>foo<!> {}
+            <!SMARTCAST_IMPOSSIBLE!>d.x<!>.foo <!TYPE_MISMATCH!>{}<!>
         }
     }
 }

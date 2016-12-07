@@ -189,8 +189,7 @@ class NewResolutionOldInference(
             )
             candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
 
-            val diagnostics = listOfNotNull(SynthesizedDescriptorDiagnostic.check { candidate.descriptor.isSynthesized },
-                                            createPreviousResolveError(resolvedCall.status))
+            val diagnostics = listOfNotNull(createPreviousResolveError(resolvedCall.status))
             MyCandidate(ResolutionCandidateStatus(diagnostics), resolvedCall)
         }
         if (basicCallContext.collectAllCandidates) {

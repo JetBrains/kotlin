@@ -67,8 +67,9 @@ internal class ExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: Ca
     }
 
     private fun resolveAsMember(): Collection<C> {
-        val members = ReceiverScopeTowerLevel(scopeTower, explicitReceiver)
-                .collectCandidates(null).filter { !it.requiresExtensionReceiver }
+        val members =
+                MemberScopeTowerLevel(scopeTower, explicitReceiver)
+                        .collectCandidates(null).filter { !it.requiresExtensionReceiver }
         return members.map { candidateFactory.createCandidate(it, ExplicitReceiverKind.DISPATCH_RECEIVER, extensionReceiver = null) }
     }
 
@@ -118,6 +119,35 @@ private class NoExplicitReceiverScopeTowerProcessor<D : CallableDescriptor, C: C
                 }
                 else -> emptyList()
             }
+
+}
+private fun <D : CallableDescriptor, C : Candidate<D>> processCommonAndSyntheticMembers(
+        receiverForMember: ReceiverValueWithSmartCastInfo,
+        scopeTowerLevel: ScopeTowerLevel,
+        collectCandidates: CandidatesCollector<D>,
+        candidateFactory: CandidateFactory<D, C>,
+        isExplicitReceiver: Boolean
+): List<C> {
+    val (members, syntheticExtension) =
+            scopeTowerLevel.collectCandidates(null)
+                    .filter {
+                        it.descriptor.dispatchReceiverParameter == null || it.descriptor.extensionReceiverParameter == null
+                    }.partition { !it.requiresExtensionReceiver }
+
+    return members.map {
+               candidateFactory.createCandidate(
+                       it,
+                       if (isExplicitReceiver) ExplicitReceiverKind.DISPATCH_RECEIVER else ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                       extensionReceiver = null
+               )
+           } +
+           syntheticExtension.map {
+               candidateFactory.createCandidate(
+                       it,
+                       if (isExplicitReceiver) ExplicitReceiverKind.EXTENSION_RECEIVER else ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                       extensionReceiver = receiverForMember
+               )
+           }
 }
 
 private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(

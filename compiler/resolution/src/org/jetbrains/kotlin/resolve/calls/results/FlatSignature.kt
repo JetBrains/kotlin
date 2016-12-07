@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -43,7 +44,8 @@ class FlatSignature<out T> private constructor(
         val hasExtensionReceiver: Boolean,
         val hasVarargs: Boolean,
         val numDefaults: Int,
-        val isPlatform: Boolean
+        val isPlatform: Boolean,
+        val isSyntheticMember: Boolean
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 
@@ -63,7 +65,8 @@ class FlatSignature<out T> private constructor(
                                  hasExtensionReceiver = extensionReceiverType != null,
                                  hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                                  numDefaults = numDefaults,
-                                 isPlatform = descriptor is MemberDescriptor && descriptor.isPlatform
+                                 isPlatform = descriptor is MemberDescriptor && descriptor.isPlatform,
+                                 isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
             )
         }
 

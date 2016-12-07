@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
@@ -62,7 +63,6 @@ internal abstract class AbstractScopeTowerLevel(
         }
         else {
             if (descriptor.hasLowPriorityInOverloadResolution()) diagnostics.add(LowPriorityDescriptorDiagnostic)
-            if (descriptor.isSynthesized) diagnostics.add(SynthesizedDescriptorDiagnostic)
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
             val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
@@ -81,10 +81,12 @@ internal abstract class AbstractScopeTowerLevel(
 
 // todo KT-9538 Unresolved inner class via subclass reference
 // todo add static methods & fields with error
-internal class ReceiverScopeTowerLevel(
+internal class MemberScopeTowerLevel(
         scopeTower: ImplicitScopeTower,
         val dispatchReceiver: ReceiverValueWithSmartCastInfo
 ): AbstractScopeTowerLevel(scopeTower) {
+
+    private val syntheticScopes = scopeTower.syntheticScopes
 
     private fun <D : CallableDescriptor> collectMembers(
             getMembers: ResolutionScope.(KotlinType?) -> Collection<D>
@@ -100,7 +102,11 @@ internal class ReceiverScopeTowerLevel(
 
         for (possibleType in dispatchReceiver.possibleTypes) {
             possibleType.memberScope.getMembers(possibleType).mapTo(unstableCandidates ?: result) {
-                createCandidateDescriptor(it, dispatchReceiver.smartCastReceiver(possibleType), unstableError, dispatchReceiverSmartCastType = possibleType)
+                createCandidateDescriptor(
+                        it,
+                        dispatchReceiver.smartCastReceiver(possibleType),
+                        unstableError, dispatchReceiverSmartCastType = possibleType
+                )
             }
         }
 
@@ -139,7 +145,8 @@ internal class ReceiverScopeTowerLevel(
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>> {
         return collectMembers {
-            getContributedFunctions(name, location) + it.getInnerConstructors(name, location)
+            getContributedFunctions(name, location) + it.getInnerConstructors(name, location) +
+            syntheticScopes.collectSyntheticExtensionFunctions(it.singletonOrEmptyList(), name, location)
         }
     }
 }
@@ -204,16 +211,17 @@ internal class SyntheticScopeBasedTowerLevel(
         }
     }
 
-    override fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
-            = emptyList()
+    override fun getObjects(
+            name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>> =
+            emptyList()
 
-    override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>> {
-        if (extensionReceiver == null) return emptyList()
+    override fun getFunctions(
+            name: Name,
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>> =
+            emptyList()
 
-        return syntheticScopes.collectSyntheticExtensionFunctions(extensionReceiver.allTypes, name, location).map {
-            createCandidateDescriptor(it, dispatchReceiver = null)
-        }
-    }
 }
 
 internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower): AbstractScopeTowerLevel(scopeTower) {

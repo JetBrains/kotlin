@@ -133,6 +133,10 @@ class OverloadingConflictResolver<C : Any>(
 
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
                     findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)
+                    ?: findMaximallySpecificCall(
+                            candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
+                            discriminateGenerics, isDebuggerContext
+                    )
             }
 
     // null means ambiguity between variables
@@ -219,7 +223,7 @@ class OverloadingConflictResolver<C : Any>(
     }
 
     /**
-     * Returns `true` if [call1] is definitely not less specific than [call2],
+     * Returns `true` if [call1] is definitely more or equally specific [call2],
      * `false` otherwise.
      */
     private fun compareCallsByUsedArguments(

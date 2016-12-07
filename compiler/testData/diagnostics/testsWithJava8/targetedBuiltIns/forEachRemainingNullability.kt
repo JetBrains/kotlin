@@ -30,7 +30,7 @@ abstract class MyIt7 : Iterator<String> {
 
 
 fun foo(x: Iterator<String>, y: Iterator<String?>) {
-    x.<!TYPE_INFERENCE_INCORPORATION_ERROR!>forEachRemaining<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.forEachRemaining(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     x.forEachRemaining { it -> it.length }
     x.forEachRemaining { it -> it<!UNNECESSARY_SAFE_CALL!>?.<!>length }

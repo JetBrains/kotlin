@@ -291,7 +291,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         companion object {
             fun create(ownerClass: ClassDescriptor, getMethod: FunctionDescriptor, setMethod: FunctionDescriptor?, name: Name, type: KotlinType): MyPropertyDescriptor {
-                val visibility = syntheticExtensionVisibility(getMethod)
+                val visibility = syntheticVisibility(getMethod, isUsedForExtension = true)
                 val descriptor = MyPropertyDescriptor(DescriptorUtils.getContainingModule(ownerClass),
                                                       null,
                                                       Annotations.EMPTY,
@@ -328,7 +328,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                     PropertySetterDescriptorImpl(descriptor,
                                                  setMethod.annotations,
                                                  Modality.FINAL,
-                                                 syntheticExtensionVisibility(setMethod),
+                                                 syntheticVisibility(setMethod, isUsedForExtension = true),
                                                  false,
                                                  setMethod.isExternal,
                                                  false,

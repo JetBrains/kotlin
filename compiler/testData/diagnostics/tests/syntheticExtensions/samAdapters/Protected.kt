@@ -12,7 +12,7 @@ fun foo(javaClass: JavaClass) {
 class X : JavaClass() {
     fun foo(other: JavaClass) {
         doSomething { bar() }
-        other.<!INVISIBLE_MEMBER!>doSomething<!> { bar() }
+        other.<!INVISIBLE_MEMBER!>doSomething<!> <!TYPE_MISMATCH!>{ bar() }<!>
     }
 }
 

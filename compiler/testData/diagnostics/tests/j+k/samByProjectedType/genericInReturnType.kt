@@ -47,6 +47,6 @@ fun main() {
         x -> x.toString()
     }
 
-    A.<!NONE_APPLICABLE!>baz<!>(block)
+    A.baz(<!TYPE_MISMATCH!>block<!>)
     A.baz(block2)
 }

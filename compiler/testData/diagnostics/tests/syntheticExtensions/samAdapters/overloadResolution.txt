@@ -1,0 +1,15 @@
+package
+
+public fun fn(): kotlin.Unit
+public fun x(/*0*/ a: A, /*1*/ r: java.lang.Runnable): kotlin.Unit
+
+public open class A {
+    public constructor A()
+    public open fun bar(/*0*/ r: java.lang.Runnable!): kotlin.Int
+    public open fun bar(/*0*/ r: kotlin.CharSequence!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Int
+    public open fun foo(/*0*/ r: kotlin.Any!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
