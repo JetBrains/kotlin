@@ -75,6 +75,28 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
                             override fun visit(name: String, value: Any) {
                                 super.visit(name, transform(name, value) ?: value)
                             }
+
+                            override fun visitArray(name: String): AnnotationVisitor {
+                                val entries = arrayListOf<String>()
+                                val arrayVisitor = { super.visitArray(name) }
+                                return object : AnnotationVisitor(Opcodes.ASM5) {
+                                    override fun visit(name: String?, value: Any) {
+                                        entries.add(value as String)
+                                    }
+
+                                    override fun visitEnd() {
+                                        @Suppress("UNCHECKED_CAST")
+                                        val result = transform(name, entries.toTypedArray()) as Array<String>? ?: entries.toTypedArray()
+                                        if (result.isEmpty()) return
+                                        with(arrayVisitor()) {
+                                            for (value in result) {
+                                                visit(null, value)
+                                            }
+                                            visitEnd()
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     return superVisitor

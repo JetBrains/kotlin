@@ -20,11 +20,13 @@ import com.google.common.collect.Iterables;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ArrayUtil;
 import kotlin.Pair;
 import kotlin.collections.SetsKt;
 import kotlin.io.FilesKt;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.AbstractCliTest;
 import org.jetbrains.kotlin.cli.WrongBytecodeVersionTest;
@@ -251,7 +253,11 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 
-    private void doTestKotlinLibraryWithWrongMetadataVersion(@NotNull String libraryName, @NotNull String... additionalOptions) throws Exception {
+    private void doTestKotlinLibraryWithWrongMetadataVersion(
+            @NotNull String libraryName,
+            @Nullable final Function2<String, Object, Object> additionalTransformation,
+            @NotNull String... additionalOptions
+    ) throws Exception {
         final int[] version = new JvmMetadataVersion(42, 0, 0).toArray();
         File library = transformJar(compileLibrary(libraryName), new Function2<String, byte[], byte[]>() {
             @Override
@@ -259,6 +265,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
                 return WrongBytecodeVersionTest.Companion.transformMetadataInClassFile(bytes, new Function2<String, Object, Object>() {
                     @Override
                     public Object invoke(String name, Object value) {
+                        if (additionalTransformation != null) {
+                            Object result = additionalTransformation.invoke(name, value);
+                            if (result != null) return result;
+                        }
                         return JvmAnnotationNames.METADATA_VERSION_FIELD_NAME.equals(name) ? version : null;
                     }
                 });
@@ -418,13 +428,49 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     */
 
     public void testWrongMetadataVersion() throws Exception {
-        doTestKotlinLibraryWithWrongMetadataVersion("library");
+        doTestKotlinLibraryWithWrongMetadataVersion("library", null);
+    }
+
+    public void testWrongMetadataVersionBadMetadata() throws Exception {
+        doTestKotlinLibraryWithWrongMetadataVersion(
+                "library",
+                new Function2<String, Object, Object>() {
+                    @Override
+                    public Object invoke(String name, Object value) {
+                        if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME.equals(name)) {
+                            String[] strings = (String[]) value;
+                            for (int i = 0; i < strings.length; i++) {
+                                byte[] bytes = strings[i].getBytes();
+                                for (int j = 0; j < bytes.length; j++) bytes[j] ^= 42;
+                                strings[i] = new String(bytes);
+                            }
+                            return strings;
+                        }
+                        return null;
+                    }
+                }
+        );
+    }
+
+    public void testWrongMetadataVersionBadMetadata2() throws Exception {
+        doTestKotlinLibraryWithWrongMetadataVersion(
+                "library",
+                new Function2<String, Object, Object>() {
+                    @Override
+                    public Object invoke(String name, Object value) {
+                        if (JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME.equals(name)) {
+                            return ArrayUtil.EMPTY_STRING_ARRAY;
+                        }
+                        return null;
+                    }
+                }
+        );
     }
 
     /*
     // TODO: refactor and uncomment
     public void testWrongMetadataVersionSkipVersionCheck() throws Exception {
-        doTestKotlinLibraryWithWrongMetadataVersion("library", "-Xskip-metadata-version-check");
+        doTestKotlinLibraryWithWrongMetadataVersion("library", null, "-Xskip-metadata-version-check");
     }
     */
 
