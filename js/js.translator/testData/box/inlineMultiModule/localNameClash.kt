@@ -15,7 +15,7 @@ public fun <T, R> apply(x: T, fn: (T)->R): R {
 
 import utils.*
 
-// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_CONTAINS_NO_CALLS: test except=imul
 
 internal fun test(x: Int, y: Int): Int = apply(x) { it + 1 } * y
 

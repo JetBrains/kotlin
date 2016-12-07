@@ -1,10 +1,10 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test1
-// CHECK_CONTAINS_NO_CALLS: test2
-// CHECK_CONTAINS_NO_CALLS: test3
-// CHECK_CONTAINS_NO_CALLS: test4_buocd8$
-// CHECK_CONTAINS_NO_CALLS: test5
+// CHECK_CONTAINS_NO_CALLS: test1 except=imul
+// CHECK_CONTAINS_NO_CALLS: test2 except=imul
+// CHECK_CONTAINS_NO_CALLS: test3 except=imul
+// CHECK_CONTAINS_NO_CALLS: test4_buocd8$ except=imul
+// CHECK_CONTAINS_NO_CALLS: test5 except=imul
 // CHECK_HAS_INLINE_METADATA: apply
 // CHECK_HAS_INLINE_METADATA: applyL_hiyix$
 // CHECK_HAS_INLINE_METADATA: applyM_hiyix$

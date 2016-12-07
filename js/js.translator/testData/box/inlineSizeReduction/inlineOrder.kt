@@ -4,7 +4,7 @@ package foo
 // CHECK_VARS_COUNT: function=test2 count=0
 // CHECK_VARS_COUNT: function=test3 count=0
 // CHECK_VARS_COUNT: function=test4 count=0
-// CHECK_VARS_COUNT: function=test5 count=0
+// CHECK_VARS_COUNT: function=test5 count=2
 
 var global = ""
 var globalNum = 1
