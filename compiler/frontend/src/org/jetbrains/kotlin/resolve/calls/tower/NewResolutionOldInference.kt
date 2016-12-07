@@ -261,20 +261,18 @@ class NewResolutionOldInference(
     ): Boolean {
         val reference = context.call.calleeExpression as? KtReferenceExpression ?: return false
 
-        val errorCadidates = when (kind) {
+        val errorCandidates = when (kind) {
             ResolutionKind.Function -> collectErrorCandidatesForFunction(scopeTower, name, detailedReceiver)
             ResolutionKind.Variable -> collectErrorCandidatesForVariable(scopeTower, name, detailedReceiver)
             else -> emptyList()
         }
 
-        for (candidate in errorCadidates) {
-            if (candidate is ErrorCandidate.Classifier) {
-                context.trace.record(BindingContext.REFERENCE_TARGET, reference, candidate.descriptor)
-                context.trace.report(Errors.RESOLUTION_TO_CLASSIFIER.on(reference, candidate.descriptor, candidate.kind, candidate.errorMessage))
-                return true
-            }
-        }
-        return false
+        val candidate = errorCandidates.firstOrNull() as? ErrorCandidate.Classifier ?: return false
+
+        context.trace.record(BindingContext.REFERENCE_TARGET, reference, candidate.descriptor)
+        context.trace.report(Errors.RESOLUTION_TO_CLASSIFIER.on(reference, candidate.descriptor, candidate.kind, candidate.errorMessage))
+
+        return true
     }
 
     private class ImplicitScopeTowerImpl(

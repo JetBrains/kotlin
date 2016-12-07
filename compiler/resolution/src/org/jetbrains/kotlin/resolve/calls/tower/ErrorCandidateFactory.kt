@@ -31,12 +31,14 @@ enum class WrongResolutionToClassifier(val message: (Name) -> String) {
     INTERFACE_AS_VALUE({ "Interface $it does not have companion object" }),
     INTERFACE_AS_FUNCTION({ "Interface $it does not have constructors" }),
     CLASS_AS_VALUE({ "Class $it does not have companion object" }),
-    OBJECT_AS_FUNCTION({ " Function 'invoke()' is not found in object $it " })
+    OBJECT_AS_FUNCTION({ "Function 'invoke()' is not found in object $it" })
 }
 
 sealed class ErrorCandidate<out D: DeclarationDescriptor>(val descriptor: D) {
-    class Classifier(classifierDescriptor: ClassifierDescriptor, val kind: WrongResolutionToClassifier)
-    : ErrorCandidate<ClassifierDescriptor>(classifierDescriptor) {
+    class Classifier(
+            classifierDescriptor: ClassifierDescriptor,
+            val kind: WrongResolutionToClassifier
+    ) : ErrorCandidate<ClassifierDescriptor>(classifierDescriptor) {
         val errorMessage = kind.message(descriptor.name)
     }
 }
