@@ -3054,6 +3054,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("remSanityTest.kt")
+            public void testRemSanityTest() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/remSanityTest.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("safeCompareTo.kt")
             public void testSafeCompareTo() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/safeCompareTo.kt");
