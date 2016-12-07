@@ -19,20 +19,16 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 class JavaClassDataFinder(
         private val kotlinClassFinder: KotlinClassFinder,
         private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
-        val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
-        assert(kotlinJvmBinaryClass.classId == classId) {
-            "Class with incorrect id found: expected $classId, actual ${kotlinJvmBinaryClass.classId}"
+        val kotlinClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
+        assert(kotlinClass.classId == classId) {
+            "Class with incorrect id found: expected $classId, actual ${kotlinClass.classId}"
         }
-        val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, DeserializedDescriptorResolver.KOTLIN_CLASS) ?: return null
-        val strings = kotlinJvmBinaryClass.classHeader.strings ?: error("String table not found in $kotlinJvmBinaryClass")
-        val classData = JvmProtoBufUtil.readClassDataFrom(data, strings)
-        return ClassDataWithSource(classData, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass))
+        return deserializedDescriptorResolver.readClassData(kotlinClass)
     }
 }

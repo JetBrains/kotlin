@@ -39,16 +39,18 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
     }
 
     fun resolveClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor? {
+        val classData = readClassData(kotlinClass) ?: return null
+        return components.classDeserializer.deserializeClass(kotlinClass.classId, classData)
+    }
+
+    internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassDataWithSource? {
         val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
         val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
         val classData = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         }
         val sourceElement = KotlinJvmBinarySourceElement(kotlinClass)
-        return components.classDeserializer.deserializeClass(
-                kotlinClass.classId,
-                ClassDataWithSource(classData, sourceElement)
-        )
+        return ClassDataWithSource(classData, sourceElement)
     }
 
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
@@ -64,7 +66,7 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         }
     }
 
-    internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
+    private fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader
         if (!header.metadataVersion.isCompatible()) {
             errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
