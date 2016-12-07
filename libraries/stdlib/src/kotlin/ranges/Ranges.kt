@@ -2,10 +2,21 @@
 @file:kotlin.jvm.JvmName("RangesKt")
 package kotlin.ranges
 
+/**
+ * Represents a range of values (for example, numbers or characters).
+ * Extends [ClosedRange] interface providing custom operation [lessThanOrEquals] for comparing values of range domain type.
+ *
+ * This interface is implemented by floating point ranges returned by [Float.rangeTo] and [Double.rangeTo] operators to
+ * achieve IEEE-754 comparison order instead of total order of floating point numbers.
+ */
+@SinceKotlin("1.1")
 public interface ClosedComparableRange<T: Comparable<T>> : ClosedRange<T> {
-    override fun contains(value: T): Boolean = lessThanOrEquals(value, start) && lessThanOrEquals(value, endInclusive)
+    override fun contains(value: T): Boolean = lessThanOrEquals(start, value) && lessThanOrEquals(value, endInclusive)
     override fun isEmpty(): Boolean = !lessThanOrEquals(start, endInclusive)
 
+    /**
+     * Compares two values of range domain type and returns true if first is less than or equal to second.
+     */
     fun lessThanOrEquals(a: T, b: T): Boolean
 }
 
@@ -63,7 +74,6 @@ private class ClosedDoubleRange (
  * A closed range of values of type `Float`.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
-
  */
 @JvmVersion
 private class ClosedFloatRange (
@@ -100,12 +110,16 @@ public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Comp
 
 /**
  * Creates a range from this [Double] value to the specified [other] value.
+ *
+ * Numbers are compared with the ends of this range according to IEEE-754.
  */
 @SinceKotlin("1.1")
 public operator fun Double.rangeTo(that: Double): ClosedComparableRange<Double> = ClosedDoubleRange(this, that)
 
 /**
  * Creates a range from this [Float] value to the specified [other] value.
+ *
+ * Numbers are compared with the ends of this range according to IEEE-754.
  */
 @JvmVersion
 @SinceKotlin("1.1")
