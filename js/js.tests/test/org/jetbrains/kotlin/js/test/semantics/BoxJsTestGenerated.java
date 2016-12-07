@@ -5951,6 +5951,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/number"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("assignmentIntOverflow.kt")
+        public void testAssignmentIntOverflow() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/assignmentIntOverflow.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("byteAndShortConversions.kt")
         public void testByteAndShortConversions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/byteAndShortConversions.kt");

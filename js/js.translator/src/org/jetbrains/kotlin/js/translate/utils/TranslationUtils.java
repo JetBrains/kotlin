@@ -242,7 +242,10 @@ public final class TranslationUtils {
         if (operationDescriptor == null || !(operationDescriptor instanceof FunctionDescriptor)) return true;
 
         KotlinType returnType = operationDescriptor.getReturnType();
-        if (returnType != null && (KotlinBuiltIns.isChar(returnType) || KotlinBuiltIns.isLong(returnType))) return false;
+        if (returnType != null &&
+            (KotlinBuiltIns.isChar(returnType) || KotlinBuiltIns.isLong(returnType) || KotlinBuiltIns.isInt(returnType))) {
+            return false;
+        }
 
         if (context.intrinsics().getFunctionIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;
 
