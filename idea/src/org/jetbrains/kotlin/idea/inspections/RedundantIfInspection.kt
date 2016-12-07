@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.CodeInsightUtil
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
@@ -92,6 +93,7 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement as KtIfExpression
+            if (!CodeInsightUtil.preparePsiElementsForWrite(element)) return
             val condition = when (redundancyType) {
                 RedundancyType.NONE -> return
                 RedundancyType.THEN_TRUE -> element.condition!!
