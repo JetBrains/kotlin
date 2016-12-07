@@ -51,9 +51,9 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
         }
     }
 
-    class ForJs(kotlinSourceFiles: List<File>) : SourceRoots(kotlinSourceFiles) {
+    class KotlinOnly(kotlinSourceFiles: List<File>) : SourceRoots(kotlinSourceFiles) {
         companion object {
-            fun create(taskSource: FileTree) = ForJs((taskSource as Iterable<File>).filter(File::isKotlinFile))
+            fun create(taskSource: FileTree) = KotlinOnly((taskSource as Iterable<File>).filter(File::isKotlinFile))
         }
     }
 }

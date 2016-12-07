@@ -335,10 +335,10 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         return args
     }
 
-    override fun getSourceRoots() = SourceRoots.ForJs.create(getSource())
+    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource())
 
     override fun callCompiler(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
-        sourceRoots as SourceRoots.ForJs
+        sourceRoots as SourceRoots.KotlinOnly
 
         val messageCollector = GradleMessageCollector(logger)
         logger.debug("Calling compiler")
