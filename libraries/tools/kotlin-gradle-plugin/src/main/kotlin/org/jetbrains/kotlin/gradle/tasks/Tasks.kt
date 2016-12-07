@@ -219,14 +219,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             cleanupOnError()
         }
 
-        when (exitCode) {
-            ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
-            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
-            ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
-            ExitCode.OK -> {
-                logger.kotlinInfo("Compilation succeeded")
-            }
-        }
+        throwGradleExceptionIfError(exitCode)
     }
 
     private fun handleKaptProperties() {
