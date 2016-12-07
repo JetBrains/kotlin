@@ -100,7 +100,7 @@ class SamAdapterFunctionsScope(
         override var baseDescriptorForSynthetic: FunctionDescriptor by Delegates.notNull()
             private set
 
-        private var toSourceFunctionTypeParameters: Map<TypeParameterDescriptor, TypeParameterDescriptor>? = null
+        private lateinit var fromSourceFunctionTypeParameters: Map<TypeParameterDescriptor, TypeParameterDescriptor>
 
         companion object {
             fun create(sourceFunction: FunctionDescriptor): MyFunctionDescriptor {
@@ -125,7 +125,7 @@ class SamAdapterFunctionsScope(
                 val typeParameters = ArrayList<TypeParameterDescriptor>(sourceTypeParams.size)
                 val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(sourceTypeParams, TypeSubstitution.EMPTY, descriptor, typeParameters)
 
-                descriptor.toSourceFunctionTypeParameters = typeParameters.zip(sourceTypeParams).toMap()
+                descriptor.fromSourceFunctionTypeParameters = sourceTypeParams.zip(typeParameters).toMap()
 
                 val returnType = typeSubstitutor.safeSubstitute(sourceFunction.returnType!!, Variance.INVARIANT)
                 val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
@@ -169,20 +169,10 @@ class SamAdapterFunctionsScope(
             original as MyFunctionDescriptor
             assert(original.original == original) { "original in doSubstitute should have no other original" }
 
-            val substitutionMap = HashMap<TypeConstructor, TypeProjection>()
-            for (typeParameter in original.typeParameters) {
-                val typeProjection = configuration.substitution[typeParameter.defaultType] ?: continue
-                val sourceTypeParameter = original.toSourceFunctionTypeParameters!![typeParameter]!!
-                substitutionMap[sourceTypeParameter.typeConstructor] = typeProjection
-
-            }
-
             val sourceFunctionSubstitutor =
-                    TypeConstructorSubstitution.createByConstructorsMap(
-                            substitutionMap, configuration.substitution.approximateCapturedTypes()).buildSubstitutor()
+                    CompositionTypeSubstitution(configuration.substitution, fromSourceFunctionTypeParameters).buildSubstitutor()
 
             descriptor.baseDescriptorForSynthetic = original.baseDescriptorForSynthetic.substitute(sourceFunctionSubstitutor) ?: return null
-
             return descriptor
         }
     }
