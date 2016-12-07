@@ -1,0 +1,10 @@
+public final class A {
+    public method <init>(): void
+    public final @kotlin.PublishedApi @org.jetbrains.annotations.NotNull method published(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+
+public final class SimpleKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
