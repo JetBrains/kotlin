@@ -51,7 +51,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 ProtectedInSuperClassCompanionCallChecker(),
                 UnsupportedSyntheticCallableReferenceChecker(),
                 SuperCallWithDefaultArgumentsChecker(),
-                MissingDependencyClassChecker(),
+                MissingDependencyClassChecker,
                 ProtectedSyntheticExtensionCallChecker
         ),
 

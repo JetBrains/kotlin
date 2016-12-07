@@ -19,32 +19,42 @@ package org.jetbrains.kotlin.resolve.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors.MISSING_DEPENDENCY_CLASS
+import org.jetbrains.kotlin.diagnostics.Errors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isComputingDeferredType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 
-class MissingDependencyClassChecker : CallChecker {
+object MissingDependencyClassChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        for (classId in collectNotFoundClasses(resolvedCall.resultingDescriptor)) {
-            context.trace.report(Errors.MISSING_DEPENDENCY_CLASS.on(reportOn, classId.asSingleFqName()))
+        for (diagnostic in collectDiagnostics(reportOn, resolvedCall.resultingDescriptor)) {
+            context.trace.report(diagnostic)
         }
     }
 
-    private fun collectNotFoundClasses(descriptor: CallableDescriptor): Set<ClassId> {
-        val result: MutableSet<ClassId> = newLinkedHashSetWithExpectedSize(1)
+    private fun collectDiagnostics(reportOn: PsiElement, descriptor: CallableDescriptor): Set<Diagnostic> {
+        val result: MutableSet<Diagnostic> = newLinkedHashSetWithExpectedSize(1)
 
         fun consider(classDescriptor: ClassDescriptor) {
             if (classDescriptor is NotFoundClasses.MockClassDescriptor) {
-                result.add(classDescriptor.classId)
+                result.add(MISSING_DEPENDENCY_CLASS.on(reportOn, classDescriptor.fqNameSafe))
                 return
             }
+
+            val source = classDescriptor.source
+            if (source is DeserializedContainerSource && source.isPreReleaseInvisible) {
+                // TODO: if at least one PRE_RELEASE_CLASS is reported, display a hint to disable the diagnostic
+                result.add(PRE_RELEASE_CLASS.on(reportOn, classDescriptor.fqNameSafe))
+                return
+            }
+
             (classDescriptor.containingDeclaration as? ClassDescriptor)?.let(::consider)
         }
 
@@ -58,6 +68,6 @@ class MissingDependencyClassChecker : CallChecker {
         descriptor.extensionReceiverParameter?.value?.type?.let(::consider)
         descriptor.valueParameters.forEach { consider(it.type) }
 
-        return result.orEmpty()
+        return result
     }
 }

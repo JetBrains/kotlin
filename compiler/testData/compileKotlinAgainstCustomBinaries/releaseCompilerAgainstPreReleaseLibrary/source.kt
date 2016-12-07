@@ -1,0 +1,10 @@
+package usage
+
+import a.*
+
+fun baz(param: A, nested: A.Nested) {
+    val constructor = A()
+    val nested = A.Nested()
+    val methodCall = param.method()
+    val supertype = object : A() {}
+}

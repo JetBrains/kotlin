@@ -18,8 +18,13 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class KotlinJvmBinarySourceElement(val binaryClass: KotlinJvmBinaryClass) : SourceElement {
-    override fun toString() = "${javaClass.simpleName}: $binaryClass"
+class KotlinJvmBinarySourceElement(
+        val binaryClass: KotlinJvmBinaryClass,
+        override val isPreReleaseInvisible: Boolean = false
+) : DeserializedContainerSource {
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
+
+    override fun toString() = "${javaClass.simpleName}: $binaryClass"
 }
