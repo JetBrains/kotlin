@@ -4062,6 +4062,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertFunctionTypeReceiverToParameter extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertFunctionTypeReceiverToParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertFunctionTypeReceiverToParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInFunctionParameter.kt")
+        public void testNotInFunctionParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter/notInFunctionParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notOnReceiver.kt")
+        public void testNotOnReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter/notOnReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlyLambdaArgument.kt")
+        public void testOnlyLambdaArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter/onlyLambdaArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parameterlessFunction.kt")
+        public void testParameterlessFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter/parameterlessFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter/primaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionTypeReceiverToParameter/secondaryConstructor.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertIfWithThrowToAssert")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

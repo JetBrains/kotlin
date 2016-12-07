@@ -110,6 +110,10 @@ class KtPsiFactory(private val project: Project) {
         return (createType("A.() -> B").typeElement as KtFunctionType).receiver!!.apply { this.typeReference.replace(typeReference) }
     }
 
+    fun createFunctionTypeParameter(typeReference: KtTypeReference): KtParameter {
+        return (createType("(A) -> B").typeElement as KtFunctionType).parameters.first().apply { this.typeReference!!.replace(typeReference) }
+    }
+
     fun createStar(): PsiElement {
         return createType("List<*>").findElementAt(5)!!
     }

@@ -32,7 +32,7 @@ object EditCommaSeparatedListHelper {
     fun <TItem: KtElement> addItemAfter(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?, prefix: KtToken = KtTokens.LPAR): TItem {
         assert(anchor == null || anchor.parent == list)
         if (allItems.isEmpty()) {
-            if (list.firstChild.node.elementType == prefix) {
+            if (list.firstChild?.node?.elementType == prefix) {
                 return list.addAfter(item, list.firstChild) as TItem
             }
             else {
