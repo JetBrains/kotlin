@@ -135,6 +135,18 @@ public final class JsAstUtils {
         return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, JsNumberLiteral.ZERO);
     }
 
+    @Nullable
+    public static JsExpression extractToInt32Argument(@NotNull JsExpression expression) {
+        if (!(expression instanceof JsBinaryOperation)) return null;
+
+        JsBinaryOperation binary = (JsBinaryOperation) expression;
+        if (binary.getOperator() != JsBinaryOperator.BIT_OR) return null;
+
+        if (!(binary.getArg2() instanceof JsNumberLiteral.JsIntLiteral)) return null;
+        JsNumberLiteral.JsIntLiteral arg2 = (JsNumberLiteral.JsIntLiteral) binary.getArg2();
+        return arg2.value == 0 ? binary.getArg1() : null;
+    }
+
     @NotNull
     public static JsExpression charToInt(@NotNull JsExpression expression) {
         return invokeMethod(expression, "charCodeAt", JsNumberLiteral.ZERO);

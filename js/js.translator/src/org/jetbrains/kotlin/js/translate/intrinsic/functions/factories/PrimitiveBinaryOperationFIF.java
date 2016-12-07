@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -64,12 +61,23 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     }
 
     private static final BinaryOperationIntrinsicBase INT_MULTIPLICATION_INTRINSIC = new BinaryOperationIntrinsicBase() {
+        // IEEE 754 mantissa is 52 bits long. Assuming one argument may be up to 2^31, the second argument should be
+        // not greater than 2^21 in order their product don't exceed 2^52. We preserve two extra bits to be more safe.
+        private static final int SAFE_THRESHOLD = 2 << 19;
+
         @NotNull
         @Override
-        public JsExpression doApply(
-                @NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context
-        ) {
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            if (isSafeConstant(left) || isSafeConstant(right)) {
+                return JsAstUtils.toInt32(JsAstUtils.mul(left, right));
+            }
             return new JsInvocation(Namer.imul(), left, right);
+        }
+
+        private boolean isSafeConstant(@NotNull JsExpression expression) {
+            if (!(expression instanceof JsNumberLiteral.JsIntLiteral)) return false;
+            int value = ((JsNumberLiteral.JsIntLiteral) expression).value;
+            return Math.abs(value) < SAFE_THRESHOLD;
         }
     };
 
@@ -94,7 +102,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorNameConventions.BINARY_OPERATION_NAMES);
 
-    private static final DescriptorPredicate INT_BINARY_OPERATIONS = pattern("Int.plus|minus|div(Int)");
+    private static final DescriptorPredicate INT_BINARY_OPERATIONS = pattern("Int.plus|minus(Int)");
     private static final DescriptorPredicate SIMPLE_INT_MULTIPLICATION = pattern("Byte|Short.times(Byte|Short)");
     private static final DescriptorPredicate INT_DIVISION = pattern("Byte|Short|Int.div(Byte|Short|Int)");
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_BINARY_OPERATIONS =
@@ -155,11 +163,14 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         if (INT_WITH_BIT_OPERATIONS.apply(descriptor)) {
             JsBinaryOperator op = BINARY_BITWISE_OPERATIONS.get(descriptor.getName().asString());
             if (op != null) {
-                return new PrimitiveBinaryOperationFunctionIntrinsic(op);
+                return new OptimizedIntBinaryOperationInstrinsic(op);
             }
         }
         JsBinaryOperator operator = getOperator(descriptor);
-        if (INT_BINARY_OPERATIONS.apply(descriptor) || SIMPLE_INT_MULTIPLICATION.apply(descriptor) || INT_DIVISION.apply(descriptor)) {
+        if (INT_BINARY_OPERATIONS.apply(descriptor)) {
+            return new AdditiveIntBinaryOperationInstrinsic(operator);
+        }
+        if (SIMPLE_INT_MULTIPLICATION.apply(descriptor) || INT_DIVISION.apply(descriptor)) {
             return new IntBinaryOperationFunctionIntrinsic(operator);
         }
         BinaryOperationIntrinsicBase result = new PrimitiveBinaryOperationFunctionIntrinsic(operator);
@@ -207,6 +218,48 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     private static class IntBinaryOperationFunctionIntrinsic extends PrimitiveBinaryOperationFunctionIntrinsic {
         private IntBinaryOperationFunctionIntrinsic(@NotNull JsBinaryOperator operator) {
+            super(operator);
+        }
+
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            return JsAstUtils.toInt32(super.doApply(left, right, context));
+        }
+    }
+
+    private static class OptimizedIntBinaryOperationInstrinsic extends PrimitiveBinaryOperationFunctionIntrinsic {
+        public OptimizedIntBinaryOperationInstrinsic(@NotNull JsBinaryOperator operator) {
+            super(operator);
+        }
+
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            left = unwrapAdditive(left);
+            right = unwrapAdditive(right);
+            return super.doApply(left, right, context);
+        }
+
+        @NotNull
+        private static JsExpression unwrapAdditive(@NotNull JsExpression expression) {
+            JsExpression toIntArgument = JsAstUtils.extractToInt32Argument(expression);
+            if (toIntArgument == null) return expression;
+
+            if (!(toIntArgument instanceof JsBinaryOperation)) return expression;
+            JsBinaryOperator operator = ((JsBinaryOperation) toIntArgument).getOperator();
+            switch (operator) {
+                case ADD:
+                case SUB:
+                    return toIntArgument;
+                default:
+                    return expression;
+            }
+        }
+    }
+
+    private static class AdditiveIntBinaryOperationInstrinsic extends OptimizedIntBinaryOperationInstrinsic {
+        public AdditiveIntBinaryOperationInstrinsic(@NotNull JsBinaryOperator operator) {
             super(operator);
         }
 
