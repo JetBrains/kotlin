@@ -34,14 +34,6 @@ open class KaptTask : AbstractCompile() {
         return FileUtil.isAncestor(destinationDir, this, /* strict = */ false)
     }
 
-    private fun processCompilerExitCode(exitCode: ExitCode) {
-        when (exitCode) {
-            ExitCode.COMPILATION_ERROR -> throw GradleException("Annotation processing error. See log for more details")
-            ExitCode.INTERNAL_ERROR -> throw GradleException("Annotation processing internal error. See log for more details")
-            else -> {}
-        }
-    }
-
     @TaskAction
     override fun compile() {
         /** Delete everything inside the [destinationDir] */
@@ -59,8 +51,9 @@ open class KaptTask : AbstractCompile() {
         kotlinCompileTask.parentKotlinOptionsImpl?.updateArguments(args)
         KotlinJvmOptionsImpl().updateArguments(args)
 
-        processCompilerExitCode(compileJvmNotIncrementally(compiler, logger,
+        val exitCode = compileJvmNotIncrementally(compiler, logger,
                 sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, compileClasspath,
-                destinationDir, args))
+                destinationDir, args)
+        throwGradleExceptionIfError(exitCode)
     }
 }
