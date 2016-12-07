@@ -871,8 +871,10 @@ public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
 public fun <T: Comparable<T>> T.coerceIn(range: ClosedComparableRange<T>): T {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return when {
-        !range.lessThanOrEquals(range.start, this) -> range.start
-        !range.lessThanOrEquals(this, range.endInclusive) -> range.endInclusive
+        // this < start equiv to this <= start && !(this >= start)
+        range.lessThanOrEquals(this, range.start) && !range.lessThanOrEquals(range.start, this) -> range.start
+        // this > end equiv to this >= end && !(this <= end)
+        range.lessThanOrEquals(range.endInclusive, this) && !range.lessThanOrEquals(this, range.endInclusive) -> range.endInclusive
         else -> this
     }
 }
