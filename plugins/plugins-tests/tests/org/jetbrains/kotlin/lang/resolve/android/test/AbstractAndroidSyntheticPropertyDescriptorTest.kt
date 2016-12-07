@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.lang.resolve.android.test
 
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.android.synthetic.res.AndroidPackageFragmentProviderExtension
-import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticPackageFragmentProvider
+import org.jetbrains.kotlin.androidExtensions.res.AndroidPackageFragmentProviderExtension
+import org.jetbrains.kotlin.androidExtensions.res.AndroidSyntheticPackageFragmentProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator

@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.lang.resolve.android.test
 
 import com.intellij.testFramework.registerServiceInstance
-import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
-import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor
-import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
-import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
-import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
+import org.jetbrains.kotlin.androidExtensions.AndroidConfigurationKeys
+import org.jetbrains.kotlin.androidExtensions.AndroidExtensionPropertiesComponentContainerContributor
+import org.jetbrains.kotlin.androidExtensions.codegen.AndroidExpressionCodegenExtension
+import org.jetbrains.kotlin.androidExtensions.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.androidExtensions.res.AndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.androidExtensions.res.AndroidVariant
+import org.jetbrains.kotlin.androidExtensions.res.CliAndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.androidExtensions.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension

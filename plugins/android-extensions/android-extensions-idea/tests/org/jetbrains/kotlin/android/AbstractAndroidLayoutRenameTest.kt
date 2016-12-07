@@ -21,7 +21,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.psi.xml.XmlFile
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.androidExtensions.AndroidConst
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractAndroidLayoutRenameTest : KotlinAndroidTestCase() {
