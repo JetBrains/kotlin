@@ -643,24 +643,26 @@ internal class DescriptorRendererImpl(
     /* FUNCTIONS */
     private fun renderFunction(function: FunctionDescriptor, builder: StringBuilder) {
         if (!startFromName) {
-            builder.renderAnnotations(function)
-            renderVisibility(function.visibility, builder)
-            renderModalityForCallable(function, builder)
+            if (!startFromDeclarationKeyword) {
+                builder.renderAnnotations(function)
+                renderVisibility(function.visibility, builder)
+                renderModalityForCallable(function, builder)
 
-            if (includeAdditionalModifiers) {
-                renderAdditionalModifiers(function, builder)
-            }
-
-            renderOverride(function, builder)
-            renderMemberKind(function, builder)
-
-            if (verbose) {
-                if (function.isHiddenToOvercomeSignatureClash) {
-                    builder.append("/*isHiddenToOvercomeSignatureClash*/ ")
+                if (includeAdditionalModifiers) {
+                    renderAdditionalModifiers(function, builder)
                 }
 
-                if (function.isHiddenForResolutionEverywhereBesideSupercalls) {
-                    builder.append("/*isHiddenForResolutionEverywhereBesideSupercalls*/ ")
+                renderOverride(function, builder)
+                renderMemberKind(function, builder)
+
+                if (verbose) {
+                    if (function.isHiddenToOvercomeSignatureClash) {
+                        builder.append("/*isHiddenToOvercomeSignatureClash*/ ")
+                    }
+
+                    if (function.isHiddenForResolutionEverywhereBesideSupercalls) {
+                        builder.append("/*isHiddenForResolutionEverywhereBesideSupercalls*/ ")
+                    }
                 }
             }
 

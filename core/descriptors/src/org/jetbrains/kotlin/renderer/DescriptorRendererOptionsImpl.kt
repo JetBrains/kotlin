@@ -68,6 +68,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var withDefinedIn by property(true)
     override var modifiers: Set<DescriptorRendererModifier> by property(DescriptorRendererModifier.DEFAULTS)
     override var startFromName by property(false)
+    override var startFromDeclarationKeyword by property(false)
     override var debugMode by property(false)
     override var classWithPrimaryConstructor by property(false)
     override var verbose by property(false)

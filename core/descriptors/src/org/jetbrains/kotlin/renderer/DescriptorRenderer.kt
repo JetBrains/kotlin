@@ -171,6 +171,7 @@ interface DescriptorRendererOptions {
     var withDefinedIn: Boolean
     var modifiers: Set<DescriptorRendererModifier>
     var startFromName: Boolean
+    var startFromDeclarationKeyword: Boolean
     var debugMode: Boolean
     var classWithPrimaryConstructor: Boolean
     var verbose: Boolean
