@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.java.components.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,7 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import java.util.*
 
 class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector) {
@@ -84,12 +82,12 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
         }
     }
 
-    private val abiVersionErrors: List<IncompatibleVersionErrorData>
+    private val abiVersionErrors: List<IncompatibleVersionErrorData<JvmMetadataVersion>>
         get() {
             val bindingContext = analysisResult.bindingContext
 
             val errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.METADATA_VERSION_ERRORS)
-            val result = ArrayList<IncompatibleVersionErrorData>(errorClasses.size)
+            val result = ArrayList<IncompatibleVersionErrorData<JvmMetadataVersion>>(errorClasses.size)
             for (kotlinClass in errorClasses) {
                 result.add(bindingContext.get(TraceBasedErrorReporter.METADATA_VERSION_ERRORS, kotlinClass)!!)
             }
@@ -97,9 +95,9 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
             return result
         }
 
-    private fun reportMetadataVersionErrors(errors: List<IncompatibleVersionErrorData>) {
+    private fun reportMetadataVersionErrors(errors: List<IncompatibleVersionErrorData<JvmMetadataVersion>>) {
         for (data in errors) {
-            reportIncompatibleBinaryVersion(messageCollector, data, JvmMetadataVersion.INSTANCE, "metadata", CompilerMessageSeverity.ERROR)
+            reportIncompatibleBinaryVersion(messageCollector, data, "metadata", CompilerMessageSeverity.ERROR)
         }
     }
 
@@ -245,21 +243,20 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
             for (location in locations) {
                 val data = bindingContext.get(IncompatibleClassTrackerImpl.BYTECODE_VERSION_ERRORS, location)
                            ?: error("Value is missing for key in binding context: " + location)
-                reportIncompatibleBinaryVersion(messageCollector, data, JvmBytecodeBinaryVersion.INSTANCE, "bytecode", severity)
+                reportIncompatibleBinaryVersion(messageCollector, data, "bytecode", severity)
             }
         }
 
         private fun reportIncompatibleBinaryVersion(
                 messageCollector: MessageCollector,
-                data: IncompatibleVersionErrorData,
-                expectedVersion: BinaryVersion,
+                data: IncompatibleVersionErrorData<*>,
                 versionSortText: String,
                 severity: CompilerMessageSeverity) {
             messageCollector.report(
                     severity,
                     "Class '" + JvmClassName.byClassId(data.classId) + "' was compiled with an incompatible version of Kotlin. " +
                     "The binary version of its " + versionSortText + " is " + data.actualVersion + ", " +
-                    "expected version is " + expectedVersion,
+                    "expected version is " + data.expectedVersion,
                     CompilerMessageLocation.create(toSystemDependentName(data.filePath), -1, -1, null)
             )
         }

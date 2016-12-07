@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.components
+package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 
-data class IncompatibleVersionErrorData(
-        val actualVersion: BinaryVersion,
+data class IncompatibleVersionErrorData<out T : BinaryVersion>(
+        val actualVersion: T,
+        val expectedVersion: T,
         val filePath: String,
         val classId: ClassId
 )
