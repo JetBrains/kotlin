@@ -54,6 +54,12 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
         doTest(fileName);
     }
 
+    @TestMetadata("closeCursor.kt")
+    public void testCloseCursor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/lint/lint-checks/testData/lint/closeCursor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("commitFragment.kt")
     public void testCommitFragment() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/lint/lint-checks/testData/lint/commitFragment.kt");
@@ -147,6 +153,12 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
     @TestMetadata("valueOf.kt")
     public void testValueOf() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/lint/lint-checks/testData/lint/valueOf.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("velocityTrackerRecycle.kt")
+    public void testVelocityTrackerRecycle() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/lint/lint-checks/testData/lint/velocityTrackerRecycle.kt");
         doTest(fileName);
     }
 
