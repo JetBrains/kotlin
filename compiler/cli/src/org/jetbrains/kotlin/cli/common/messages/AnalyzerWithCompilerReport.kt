@@ -24,11 +24,14 @@ import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.util.PsiFormatUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.SimpleDiagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -38,7 +41,6 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
-import java.util.*
 
 class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector) {
     lateinit var analysisResult: AnalysisResult
@@ -82,25 +84,6 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
         }
     }
 
-    private val abiVersionErrors: List<IncompatibleVersionErrorData<JvmMetadataVersion>>
-        get() {
-            val bindingContext = analysisResult.bindingContext
-
-            val errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.METADATA_VERSION_ERRORS)
-            val result = ArrayList<IncompatibleVersionErrorData<JvmMetadataVersion>>(errorClasses.size)
-            for (kotlinClass in errorClasses) {
-                result.add(bindingContext.get(TraceBasedErrorReporter.METADATA_VERSION_ERRORS, kotlinClass)!!)
-            }
-
-            return result
-        }
-
-    private fun reportMetadataVersionErrors(errors: List<IncompatibleVersionErrorData<JvmMetadataVersion>>) {
-        for (data in errors) {
-            reportIncompatibleBinaryVersion(messageCollector, data, "metadata", CompilerMessageSeverity.ERROR)
-        }
-    }
-
     private fun reportSyntaxErrors(files: Collection<KtFile>) {
         for (file in files) {
             reportSyntaxErrors(file, messageCollector)
@@ -126,11 +109,7 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
         if (analysisResult.bindingContext.diagnostics.any { it.isValid && it.severity == Severity.ERROR }) {
             analyzer.reportEnvironmentErrors()
         }
-        val abiVersionErrors = abiVersionErrors
-        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, !abiVersionErrors.isEmpty())
-        if (hasErrors()) {
-            reportMetadataVersionErrors(abiVersionErrors)
-        }
+        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector)
         reportIncompleteHierarchies()
         reportAlternativeSignatureErrors()
     }
@@ -152,51 +131,28 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
 
         private val SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create<PsiErrorElement>(Severity.ERROR)
 
-        private fun reportDiagnostic(
-                diagnostic: Diagnostic,
-                reporter: DiagnosticMessageReporter,
-                incompatibleFilesFound: Boolean): Boolean {
+        private fun reportDiagnostic(diagnostic: Diagnostic, reporter: DiagnosticMessageReporter): Boolean {
             if (!diagnostic.isValid) return false
 
-            var render: String = if (diagnostic is MyDiagnostic<*>) {
-                diagnostic.message
-            }
-            else {
-                DefaultErrorMessages.render(diagnostic)
-            }
-
-            if (incompatibleFilesFound && diagnostic.factory in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS) {
-                render += "\n(note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin " +
-                          "were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. " +
-                          "See below for more information)"
-            }
-
-            val file = diagnostic.psiFile
-            reporter.report(diagnostic, file, render)
+            reporter.report(
+                    diagnostic,
+                    diagnostic.psiFile,
+                    (diagnostic as? MyDiagnostic<*>)?.message ?: DefaultErrorMessages.render(diagnostic)
+            )
 
             return diagnostic.severity == Severity.ERROR
         }
 
-        fun reportDiagnostics(
-                diagnostics: Diagnostics,
-                reporter: DiagnosticMessageReporter,
-                incompatibleFilesFound: Boolean): Boolean {
+        fun reportDiagnostics(diagnostics: Diagnostics, reporter: DiagnosticMessageReporter): Boolean {
             var hasErrors = false
             for (diagnostic in sortedDiagnostics(diagnostics.all())) {
-                hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter, incompatibleFilesFound)
+                hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter)
             }
             return hasErrors
         }
 
-        fun reportDiagnostics(
-                diagnostics: Diagnostics,
-                messageCollector: MessageCollector,
-                incompatibleFilesFound: Boolean): Boolean {
-            return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), incompatibleFilesFound)
-        }
-
         fun reportDiagnostics(diagnostics: Diagnostics, messageCollector: MessageCollector): Boolean {
-            return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), false)
+            return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
         }
 
         fun reportSyntaxErrors(
@@ -208,7 +164,7 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
 
                 private fun <E : PsiElement> reportDiagnostic(element: E, factory: DiagnosticFactory0<E>, message: String) {
                     val diagnostic = MyDiagnostic(element, factory, message)
-                    AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter, false)
+                    AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter)
                     if (element.textRange.startOffset != file.textRange.endOffset) {
                         allErrorsAtEof = false
                     }
@@ -245,20 +201,19 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
             for (location in locations) {
                 val data = bindingContext.get(IncompatibleClassTrackerImpl.BYTECODE_VERSION_ERRORS, location)
                            ?: error("Value is missing for key in binding context: " + location)
-                reportIncompatibleBinaryVersion(messageCollector, data, "bytecode", severity)
+                reportIncompatibleBinaryVersion(messageCollector, data, severity)
             }
         }
 
         private fun reportIncompatibleBinaryVersion(
                 messageCollector: MessageCollector,
-                data: IncompatibleVersionErrorData<*>,
-                versionSortText: String,
-                severity: CompilerMessageSeverity) {
+                data: IncompatibleVersionErrorData<JvmBytecodeBinaryVersion>,
+                severity: CompilerMessageSeverity
+        ) {
             messageCollector.report(
                     severity,
                     "Class '" + JvmClassName.byClassId(data.classId) + "' was compiled with an incompatible version of Kotlin. " +
-                    "The binary version of its " + versionSortText + " is " + data.actualVersion + ", " +
-                    "expected version is " + data.expectedVersion,
+                    "The binary version of its bytecode is " + data.actualVersion + ", expected version is " + data.expectedVersion,
                     CompilerMessageLocation.create(toSystemDependentName(data.filePath), -1, -1, null)
             )
         }

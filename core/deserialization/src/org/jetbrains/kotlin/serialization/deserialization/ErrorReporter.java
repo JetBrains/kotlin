@@ -19,24 +19,15 @@ package org.jetbrains.kotlin.serialization.deserialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.name.ClassId;
 
 import java.util.List;
 
 public interface ErrorReporter {
-    void reportIncompatibleMetadataVersion(@NotNull ClassId classId, @NotNull String filePath, @NotNull BinaryVersion actualVersion);
-
     void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses);
 
     void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
 
     ErrorReporter DO_NOTHING = new ErrorReporter() {
-        @Override
-        public void reportIncompatibleMetadataVersion(
-                @NotNull ClassId classId, @NotNull String filePath, @NotNull BinaryVersion actualVersion
-        ) {
-        }
-
         @Override
         public void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses) {
         }

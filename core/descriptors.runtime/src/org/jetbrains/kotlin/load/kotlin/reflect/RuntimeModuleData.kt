@@ -48,7 +48,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager, emptyList(), builtIns)
 
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
-            val deserializedDescriptorResolver = DeserializedDescriptorResolver(RuntimeErrorReporter)
+            val deserializedDescriptorResolver = DeserializedDescriptorResolver()
             val singleModuleClassResolver = SingleModuleClassResolver()
             val runtimePackageFacadeProvider = RuntimePackagePartProvider(classLoader)
             val globalJavaResolverContext = JavaResolverComponents(

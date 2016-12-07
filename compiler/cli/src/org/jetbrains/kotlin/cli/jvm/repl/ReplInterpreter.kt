@@ -103,7 +103,7 @@ class ReplInterpreter(
         }
 
         val analysisResult = analyzerEngine.analyzeReplLine(psiFile, lineNumber)
-        AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, false)
+        AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
         val scriptDescriptor = when (analysisResult) {
             is WithErrors -> return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
             is Successful -> analysisResult.scriptDescriptor
