@@ -11,8 +11,8 @@ public interface A : kotlin.collections.Collection<kotlin.String> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<kotlin.String>
-    public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<kotlin.String!>!
-    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.String!>
     public open override /*1*/ fun stream(): java.util.stream.Stream<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
