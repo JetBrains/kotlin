@@ -158,7 +158,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
         val file = element.getContainingKtFile()
 
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
         if (!checkErrorStillPresent(bindingContext)) return emptyList()
 
         val searchScope = getResolveScope(file)
