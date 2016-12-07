@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.sure
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver {
@@ -47,10 +46,10 @@ class DeserializedDescriptorResolver {
 
     internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassDataWithSource? {
         val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
-        val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
+        val strings = kotlinClass.classHeader.strings ?: return null
         val classData = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
-        }
+        } ?: return null
         val sourceElement = KotlinJvmBinarySourceElement(
                 kotlinClass,
                 kotlinClass.incompatibility,
@@ -61,10 +60,10 @@ class DeserializedDescriptorResolver {
 
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
         val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART) ?: return null
-        val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
+        val strings = kotlinClass.classHeader.strings ?: return null
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
-        }
+        } ?: return null
         val source = JvmPackagePartSource(
                 kotlinClass,
                 kotlinClass.incompatibility,
@@ -87,12 +86,21 @@ class DeserializedDescriptorResolver {
         return (header.data ?: header.incompatibleData)?.check { header.kind in expectedKinds }
     }
 
-    private inline fun <T> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T {
+    private inline fun <T : Any> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T? {
         try {
-            return block()
+            try {
+                return block()
+            }
+            catch (e: InvalidProtocolBufferException) {
+                throw IllegalStateException("Could not read data from ${klass.location}", e)
+            }
         }
-        catch (e: InvalidProtocolBufferException) {
-            throw IllegalStateException("Could not read data from ${klass.location}", e)
+        catch (e: Throwable) {
+            if (!klass.classHeader.metadataVersion.isCompatible()) {
+                // TODO: log.warn
+                return null
+            }
+            throw e
         }
     }
 
