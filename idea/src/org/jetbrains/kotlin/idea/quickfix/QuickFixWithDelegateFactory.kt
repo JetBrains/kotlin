@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
@@ -49,6 +50,10 @@ open class QuickFixWithDelegateFactory(
     override fun startInWriteAction() = startInWriteAction
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+        if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
+            return
+        }
+
         val action = delegateFactory() ?: return
 
         assert(action.detectPriority() == this.detectPriority()) {
