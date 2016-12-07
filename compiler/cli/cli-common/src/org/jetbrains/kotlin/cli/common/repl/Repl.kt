@@ -120,8 +120,8 @@ interface ReplCompiler : ReplChecker {
 interface ReplScriptInvoker {
     fun <T: Any> getInterface(clasz: KClass<T>): ReplScriptInvokeResult
     fun <T: Any> getInterface(receiver: Any, clasz: KClass<T>): ReplScriptInvokeResult
-    fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplScriptInvokeResult
-    fun invokeFunction(name: String, vararg args: Any?): ReplScriptInvokeResult
+    fun invokeMethod(receiver: Any, name: String, vararg args: Any?, invokeWrapper: InvokeWrapper? = null): ReplScriptInvokeResult
+    fun invokeFunction(name: String, vararg args: Any?, invokeWrapper: InvokeWrapper? = null): ReplScriptInvokeResult
 }
 
 // TODO this is a bit cumbersome, consider some other ways to access an invoker
@@ -131,17 +131,24 @@ interface ReplScriptInvokerProxy {
 
 interface ReplCompiledEvaluator {
 
-    fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, classpathAddendum: List<File>): ReplEvalResult
-
-    // override to capture output
-    fun<T> evalWithIO(body: () -> T): T = body()
+    fun eval(codeLine: ReplCodeLine,
+             history: List<ReplCodeLine>,
+             compiledClasses: List<CompiledClassData>,
+             hasResult: Boolean,
+             classpathAddendum: List<File>,
+             invokeWrapper: InvokeWrapper? = null
+    ): ReplEvalResult
 }
 
 
 interface ReplEvaluator : ReplChecker {
 
-    fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult
+    fun eval(codeLine: ReplCodeLine,
+             history: List<ReplCodeLine>,
+             invokeWrapper: InvokeWrapper? = null
+    ): ReplEvalResult
+}
 
-    // override to capture output
-    fun<T> evalWithIO(body: () -> T): T = body()
+interface InvokeWrapper {
+    operator fun<T> invoke(body: () -> T): T // e.g. for capturing io
 }

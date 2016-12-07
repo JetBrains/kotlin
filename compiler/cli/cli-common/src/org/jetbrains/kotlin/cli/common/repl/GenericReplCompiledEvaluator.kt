@@ -41,7 +41,13 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
 
     private val compiledLoadedClassesHistory = ReplHistory<ClassWithInstance>()
 
-    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, compiledClasses: List<CompiledClassData>, hasResult: Boolean, classpathAddendum: List<File>): ReplEvalResult /*= evalStateLock.write*/ {
+    override fun eval(codeLine: ReplCodeLine,
+                      history: List<ReplCodeLine>,
+                      compiledClasses: List<CompiledClassData>,
+                      hasResult: Boolean,
+                      classpathAddendum: List<File>,
+                      invokeWrapper: InvokeWrapper?
+    ): ReplEvalResult /*= evalStateLock.write*/ {
         checkAndUpdateReplHistoryCollection(compiledLoadedClassesHistory, history)?.let {
             return@eval ReplEvalResult.HistoryMismatch(compiledLoadedClassesHistory.lines, it)
         }
@@ -85,7 +91,7 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
         val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
         val scriptInstance =
                 try {
-                    evalWithIO { scriptInstanceConstructor.newInstance(*constructorArgs) }
+                    invokeWrapper?.invoke { scriptInstanceConstructor.newInstance(*constructorArgs) } ?: scriptInstanceConstructor.newInstance(*constructorArgs)
                 }
                 catch (e: Throwable) {
                     // ignore everything in the stack trace until this constructor call
@@ -109,16 +115,16 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
         return ReplScriptInvokeResult.ValueResult(klass.safeCast(receiver))
     }
 
-    override fun invokeMethod(receiver: Any, name: String, vararg args: Any?): ReplScriptInvokeResult = evalStateLock.read {
-        return invokeImpl(receiver.javaClass.kotlin, receiver, name, args)
+    override fun invokeMethod(receiver: Any, name: String, vararg args: Any?, invokeWrapper: InvokeWrapper?): ReplScriptInvokeResult = evalStateLock.read {
+        return invokeImpl(receiver.javaClass.kotlin, receiver, name, args, invokeWrapper)
     }
 
-    override fun invokeFunction(name: String, vararg args: Any?): ReplScriptInvokeResult = evalStateLock.read {
+    override fun invokeFunction(name: String, vararg args: Any?, invokeWrapper: InvokeWrapper?): ReplScriptInvokeResult = evalStateLock.read {
         val (klass, instance) = compiledLoadedClassesHistory.values.lastOrNull() ?: return ReplScriptInvokeResult.Error.NoSuchEntity("no script ")
-        return invokeImpl(klass.kotlin, instance, name, args)
+        return invokeImpl(klass.kotlin, instance, name, args, invokeWrapper)
     }
 
-    private fun invokeImpl(receiverClass: KClass<*>, receiverInstance: Any, name: String, args: Array<out Any?>): ReplScriptInvokeResult {
+    private fun invokeImpl(receiverClass: KClass<*>, receiverInstance: Any, name: String, args: Array<out Any?>, invokeWrapper: InvokeWrapper?): ReplScriptInvokeResult {
 
         val candidates = receiverClass.memberFunctions.filter { it.name == name } +
                          receiverClass.memberExtensionFunctions.filter { it.name == name }
@@ -126,7 +132,7 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
                             candidates.findMapping(listOf<Any?>(receiverInstance) + args) ?:
                             return ReplScriptInvokeResult.Error.NoSuchEntity("no suitable function '$name' found")
         val res = try {
-            evalWithIO { fn.callBy(mapping) }
+            invokeWrapper?.invoke { fn.callBy(mapping) } ?: fn.callBy(mapping)
         }
         catch (e: Throwable) {
             // ignore everything in the stack trace until this constructor call

@@ -191,18 +191,18 @@ open class GenericRepl(
     override val scriptInvoker: ReplScriptInvoker get() = compiledEvaluator
 
     @Synchronized
-    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult =
-        compileAndEval(this, compiledEvaluator, codeLine, history)
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, invokeWrapper: InvokeWrapper?): ReplEvalResult =
+        compileAndEval(this, compiledEvaluator, codeLine, history, invokeWrapper)
 }
 
 
-fun compileAndEval(replCompiler: ReplCompiler, replCompiledEvaluator: ReplCompiledEvaluator, codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult =
+fun compileAndEval(replCompiler: ReplCompiler, replCompiledEvaluator: ReplCompiledEvaluator, codeLine: ReplCodeLine, history: List<ReplCodeLine>, invokeWrapper: InvokeWrapper?): ReplEvalResult =
         replCompiler.compile(codeLine, history).let {
             when (it) {
                 is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete(it.updatedHistory)
                 is ReplCompileResult.HistoryMismatch -> ReplEvalResult.HistoryMismatch(it.updatedHistory, it.lineNo)
                 is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(it.updatedHistory, it.message, it.location)
-                is ReplCompileResult.CompiledClasses -> replCompiledEvaluator.eval(codeLine, history, it.classes, it.hasResult, it.classpathAddendum)
+                is ReplCompileResult.CompiledClasses -> replCompiledEvaluator.eval(codeLine, history, it.classes, it.hasResult, it.classpathAddendum, invokeWrapper)
             }
         }
 

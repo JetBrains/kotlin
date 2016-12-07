@@ -115,30 +115,30 @@ open class KotlinJvmReplService(
         else GenericReplCompiler(disposable, scriptDef, configuration, messageCollector)
     }
 
-    private val compiledEvaluator : GenericReplCompiledEvaluator by lazy {
-        if (evalOutputStream == null && evalErrorStream == null && evalInputStream == null)
-            GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, scriptArgs, scriptArgsTypes)
-        else object : GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, scriptArgs, scriptArgsTypes) {
-            val out = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(evalOutputStream!!, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE))
-            val err = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(evalErrorStream!!, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE))
-            val `in` = BufferedInputStream(RemoteInputStreamClient(evalInputStream!!, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE)
-            override fun<T> evalWithIO(body: () -> T): T {
-                val prevOut = System.out
-                System.setOut(out)
-                val prevErr = System.err
-                System.setErr(err)
-                val prevIn = System.`in`
-                System.setIn(`in`)
+    private val invokeWrapper : InvokeWrapper? by lazy {
+        if (evalOutputStream == null && evalErrorStream == null && evalInputStream == null) null
+        else object : InvokeWrapper {
+            val out = evalOutputStream?.let { PrintStream(BufferedOutputStream(RemoteOutputStreamClient(it, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE)) }
+            val err = evalErrorStream?.let { PrintStream(BufferedOutputStream(RemoteOutputStreamClient(it, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE)) }
+            val `in` = evalInputStream?.let { BufferedInputStream(RemoteInputStreamClient(it, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE) }
+            override operator fun<T> invoke(body: () -> T): T {
+                val prevOut = swapOrNull(out, { System.out }, { System.setOut(it) })
+                val prevErr = swapOrNull(err, { System.err }, { System.setErr(it) })
+                val prevIn = swapOrNull(`in`, { System.`in` }, { System.setIn(it) })
                 try {
                     return body()
                 }
                 finally {
-                    System.setIn(prevIn)
-                    System.setErr(prevErr)
-                    System.setOut(prevOut)
+                    prevIn?.let { System.setIn(prevIn) }
+                    prevErr?.let { System.setErr(prevErr) }
+                    prevOut?.let { System.setOut(prevOut) }
                 }
             }
         }
+    }
+
+    private val compiledEvaluator : GenericReplCompiledEvaluator by lazy {
+        GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, scriptArgs, scriptArgsTypes)
     }
 
     override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
@@ -167,10 +167,10 @@ open class KotlinJvmReplService(
         }
     }
 
-    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplEvalResult = synchronized(this) {
+    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, invokeWrapper: InvokeWrapper?): ReplEvalResult = synchronized(this) {
         operationsTracer?.before("eval")
         try {
-            return replCompiler?.let { compileAndEval(it, compiledEvaluator, codeLine, history) }
+            return replCompiler?.let { compileAndEval(it, compiledEvaluator, codeLine, history, invokeWrapper) }
                    ?: ReplEvalResult.Error.CompileTime(history,
                                                        messageCollector.firstErrorMessage ?: "Unknown error",
                                                        messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
@@ -180,3 +180,10 @@ open class KotlinJvmReplService(
         }
     }
 }
+
+private inline fun<T> swapOrNull(value: T?, get: () -> T, set: (T) -> Unit): T? =
+        value?.let {
+            val prevValue = get()
+            set(value)
+            prevValue
+        }
