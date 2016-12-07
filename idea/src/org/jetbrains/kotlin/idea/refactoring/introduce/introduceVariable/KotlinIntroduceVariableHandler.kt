@@ -163,7 +163,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             }
 
             var anchor = calculateAnchor(commonParent, commonContainer, allReplaces) ?: return
-            val needBraces = commonContainer !is KtBlockExpression
+            val needBraces = commonContainer !is KtBlockExpression && commonContainer !is KtClassBody && commonContainer !is KtFile
             if (!needBraces) {
                 property = commonContainer.addBefore(property, anchor) as KtDeclaration
                 commonContainer.addBefore(psiFactory.createNewLine(), anchor)
@@ -348,6 +348,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 is KtBlockExpression -> true
                 is KtWhenEntry -> place == parent.expression
                 is KtDeclarationWithBody -> parent.bodyExpression == place
+                is KtClassBody -> true
+                is KtFile -> true
                 else -> false
             }
         }?.second as? KtElement
@@ -368,7 +370,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         for ((place, parent) in parentsWithSelf.zip(parents)) {
             when {
                 parent is KtContainerNode && place !is KtBlockExpression && !parent.isBadContainerNode(place) -> result = parent
-                parent is KtClassBody || parent is KtFile -> return result
+                parent is KtClassBody || parent is KtFile -> return parent as KtElement
                 parent is KtBlockExpression -> result = parent
                 parent is KtWhenEntry && place !is KtBlockExpression -> result = parent
                 parent is KtDeclarationWithBody && parent.bodyExpression == place && place !is KtBlockExpression -> result = parent
@@ -473,7 +475,9 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         PsiTreeUtil.getNonStrictParentOfType(physicalExpression,
                                              KtTypeReference::class.java,
                                              KtConstructorCalleeExpression::class.java,
-                                             KtSuperExpression::class.java)?.let {
+                                             KtSuperExpression::class.java,
+                                             KtConstructorDelegationReferenceExpression::class.java,
+                                             KtAnnotationEntry::class.java)?.let {
             return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"))
         }
 

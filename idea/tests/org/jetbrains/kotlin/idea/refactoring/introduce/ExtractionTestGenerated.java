@@ -50,18 +50,6 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
-        @TestMetadata("CantIntroduceToClass.kt")
-        public void testCantIntroduceToClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/CantIntroduceToClass.kt");
-            doIntroduceVariableTest(fileName);
-        }
-
-        @TestMetadata("CantIntroduceToFile.kt")
-        public void testCantIntroduceToFile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/CantIntroduceToFile.kt");
-            doIntroduceVariableTest(fileName);
-        }
-
         @TestMetadata("commentSkipping.kt")
         public void testCommentSkipping() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/commentSkipping.kt");
@@ -215,6 +203,18 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("IntroduceLambdaAndCreateBlock.kt")
         public void testIntroduceLambdaAndCreateBlock() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/IntroduceLambdaAndCreateBlock.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("introduceToClass.kt")
+        public void testIntroduceToClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/introduceToClass.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("introduceToFile.kt")
+        public void testIntroduceToFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/introduceToFile.kt");
             doIntroduceVariableTest(fileName);
         }
 
