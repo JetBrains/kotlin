@@ -124,7 +124,6 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractBoxJsTest
 import org.jetbrains.kotlin.js.test.semantics.AbstractJsCodegenBoxTest
@@ -1145,12 +1144,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidIntentionTest>() {
             model("android/intentions", pattern = "^([\\w\\-_]+)\\.kt$")
-        }
-    }
-
-    testGroup("plugins/plugins-tests/tests", "plugins/android-extensions/android-extensions-jps/testData") {
-        testClass<AbstractAndroidJpsTestCase>() {
-            model("android", recursive = false, extension = null)
         }
     }
 
