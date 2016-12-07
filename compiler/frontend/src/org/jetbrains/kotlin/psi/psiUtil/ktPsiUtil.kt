@@ -476,3 +476,24 @@ fun isTypeConstructorReference(e: PsiElement): Boolean {
 fun KtParameter.isPropertyParameter() = ownerFunction is KtPrimaryConstructor && hasValOrVar()
 
 fun isDoubleColonReceiver(expression: KtExpression) = expression.getParentOfTypeAndBranch<KtDoubleColonExpression> { this.receiverExpression } != null
+
+fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList {
+    valueParameterList?.let { return it }
+
+    val psiFactory = KtPsiFactory(this)
+
+    val anchor = lBrace
+    val newParameterList = addAfter(psiFactory.createLambdaParameterList("x"), anchor) as KtParameterList
+    newParameterList.removeParameter(0)
+    if (arrow == null) {
+        val whitespaceAndArrow = psiFactory.createWhitespaceAndArrow()
+        addRangeAfter(whitespaceAndArrow.first, whitespaceAndArrow.second, newParameterList)
+    }
+    return newParameterList
+}
+
+fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList {
+    valueArgumentList?.let { return it }
+    return addAfter(KtPsiFactory(this).createCallArguments("()"),
+                    typeArgumentList ?: calleeExpression) as KtValueArgumentList
+}

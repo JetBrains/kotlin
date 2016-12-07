@@ -26,7 +26,6 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.util.RefactoringUIUtil
-import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -60,14 +59,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
         KtTypeReference::class.java,
         "Convert function type parameter to receiver"
 ) {
-    abstract class AbstractUsageInfo<out T : PsiElement>(element: T) : UsageInfo(element) {
-        @Suppress("UNCHECKED_CAST")
-        override fun getElement() = super.getElement() as T?
-
-        abstract fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>)
-    }
-
-    class FunctionDefinitionInfo(element: KtFunction) : AbstractUsageInfo<KtFunction>(element) {
+    class FunctionDefinitionInfo(element: KtFunction) : AbstractProcessableUsageInfo<KtFunction, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
             val function = element ?: return
             val functionParameter = function.valueParameters.getOrNull(data.functionParameterIndex) ?: return
@@ -80,7 +72,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
         }
     }
 
-    class ParameterCallInfo(element: KtCallExpression) : AbstractUsageInfo<KtCallExpression>(element) {
+    class ParameterCallInfo(element: KtCallExpression) : AbstractProcessableUsageInfo<KtCallExpression, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
             val callExpression = element ?: return
             val argumentList = callExpression.valueArgumentList ?: return
@@ -91,7 +83,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
         }
     }
 
-    class InternalReferencePassInfo(element: KtSimpleNameExpression) : AbstractUsageInfo<KtSimpleNameExpression>(element) {
+    class InternalReferencePassInfo(element: KtSimpleNameExpression) : AbstractProcessableUsageInfo<KtSimpleNameExpression, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
             val expression = element ?: return
             val lambdaType = data.lambdaType
@@ -111,7 +103,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
         }
     }
 
-    class LambdaInfo(element: KtExpression) : AbstractUsageInfo<KtExpression>(element) {
+    class LambdaInfo(element: KtExpression) : AbstractProcessableUsageInfo<KtExpression, ConversionData>(element) {
         override fun process(data: ConversionData, elementsToShorten: MutableList<KtElement>) {
             val expression = element ?: return
             val context = expression.analyze(BodyResolveMode.PARTIAL)
@@ -185,7 +177,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
 
             val conflicts = MultiMap<PsiElement, String>()
 
-            val usages = ArrayList<AbstractUsageInfo<*>>()
+            val usages = ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>()
 
             project.runSynchronouslyWithProgress("Looking for usages and conflicts...", true) {
                 runReadAction {
@@ -233,7 +225,11 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             }
         }
 
-        private fun processExternalUsage(conflicts: MultiMap<PsiElement, String>, refElement: PsiElement, usages: java.util.ArrayList<AbstractUsageInfo<*>>) {
+        private fun processExternalUsage(
+                conflicts: MultiMap<PsiElement, String>,
+                refElement: PsiElement,
+                usages: ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>
+        ) {
             val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
             if (callElement != null) {
                 val context = callElement.analyze(BodyResolveMode.PARTIAL)
@@ -294,7 +290,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             return true
         }
 
-        private fun processInternalUsages(callable: KtFunction, usages: ArrayList<AbstractUsageInfo<*>>) {
+        private fun processInternalUsages(callable: KtFunction, usages: ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>) {
             val body = when (callable) {
                 is KtConstructor<*> -> callable.containingClassOrObject?.getBody()
                 else -> callable.bodyExpression
