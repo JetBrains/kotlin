@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     };
 
     @NotNull
-    private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorConventions.BINARY_OPERATION_NAMES.values());
+    private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorNameConventions.BINARY_OPERATION_NAMES);
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_BINARY_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, BINARY_OPERATIONS);
 
@@ -166,12 +166,15 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     @NotNull
     private static JsBinaryOperator getOperator(@NotNull FunctionDescriptor descriptor) {
-        KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptor.getName());
+        // Temporary hack to get '%' for deprecated 'mod' operator
+        Name descriptorName = descriptor.getName().equals(OperatorNameConventions.MOD) ? OperatorNameConventions.REM : descriptor.getName();
+
+        KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptorName);
         if (token == null) {
-            token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptor.getName());
+            token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptorName);
         }
         if (token == null) {
-            assert descriptor.getName().asString().equals("xor");
+            assert descriptorName.asString().equals("xor");
             return JsBinaryOperator.BIT_XOR;
         }
         return OperatorTable.getBinaryOperator(token);
