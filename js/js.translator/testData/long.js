@@ -297,7 +297,7 @@ Kotlin.Long.prototype.toString = function(opt_radix) {
   }
 
   if (this.isNegative()) {
-    if (this.equals(Kotlin.Long.MIN_VALUE)) {
+    if (this.equalsLong(Kotlin.Long.MIN_VALUE)) {
       // We need to change the Long value before it can be negated, so we remove
       // the bottom-most digit in this base and then recurse to do the rest.
       var radixLong = Kotlin.Long.fromNumber(radix);
@@ -358,7 +358,7 @@ Kotlin.Long.prototype.getLowBitsUnsigned = function() {
  */
 Kotlin.Long.prototype.getNumBitsAbs = function() {
   if (this.isNegative()) {
-    if (this.equals(Kotlin.Long.MIN_VALUE)) {
+    if (this.equalsLong(Kotlin.Long.MIN_VALUE)) {
       return 64;
     } else {
       return this.negate().getNumBitsAbs();
@@ -397,7 +397,7 @@ Kotlin.Long.prototype.isOdd = function() {
  * @param {Kotlin.Long} other Long to compare against.
  * @return {boolean} Whether this Long equals the other.
  */
-Kotlin.Long.prototype.equals = function(other) {
+Kotlin.Long.prototype.equalsLong = function(other) {
   return (this.high_ == other.high_) && (this.low_ == other.low_);
 };
 
@@ -406,7 +406,7 @@ Kotlin.Long.prototype.equals = function(other) {
  * @param {Kotlin.Long} other Long to compare against.
  * @return {boolean} Whether this Long does not equal the other.
  */
-Kotlin.Long.prototype.notEquals = function(other) {
+Kotlin.Long.prototype.notEqualsLong = function(other) {
   return (this.high_ != other.high_) || (this.low_ != other.low_);
 };
 
@@ -454,7 +454,7 @@ Kotlin.Long.prototype.greaterThanOrEqual = function(other) {
  *     if the given one is greater.
  */
 Kotlin.Long.prototype.compare = function(other) {
-  if (this.equals(other)) {
+  if (this.equalsLong(other)) {
     return 0;
   }
 
@@ -478,7 +478,7 @@ Kotlin.Long.prototype.compare = function(other) {
 
 /** @return {!Kotlin.Long} The negation of this value. */
 Kotlin.Long.prototype.negate = function() {
-  if (this.equals(Kotlin.Long.MIN_VALUE)) {
+  if (this.equalsLong(Kotlin.Long.MIN_VALUE)) {
     return Kotlin.Long.MIN_VALUE;
   } else {
     return this.not().add(Kotlin.Long.ONE);
@@ -542,9 +542,9 @@ Kotlin.Long.prototype.multiply = function(other) {
     return Kotlin.Long.ZERO;
   }
 
-  if (this.equals(Kotlin.Long.MIN_VALUE)) {
+  if (this.equalsLong(Kotlin.Long.MIN_VALUE)) {
     return other.isOdd() ? Kotlin.Long.MIN_VALUE : Kotlin.Long.ZERO;
-  } else if (other.equals(Kotlin.Long.MIN_VALUE)) {
+  } else if (other.equalsLong(Kotlin.Long.MIN_VALUE)) {
     return this.isOdd() ? Kotlin.Long.MIN_VALUE : Kotlin.Long.ZERO;
   }
 
@@ -614,17 +614,17 @@ Kotlin.Long.prototype.div = function(other) {
     return Kotlin.Long.ZERO;
   }
 
-  if (this.equals(Kotlin.Long.MIN_VALUE)) {
-    if (other.equals(Kotlin.Long.ONE) ||
-        other.equals(Kotlin.Long.NEG_ONE)) {
+  if (this.equalsLong(Kotlin.Long.MIN_VALUE)) {
+    if (other.equalsLong(Kotlin.Long.ONE) ||
+        other.equalsLong(Kotlin.Long.NEG_ONE)) {
       return Kotlin.Long.MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE
-    } else if (other.equals(Kotlin.Long.MIN_VALUE)) {
+    } else if (other.equalsLong(Kotlin.Long.MIN_VALUE)) {
       return Kotlin.Long.ONE;
     } else {
       // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.
       var halfThis = this.shiftRight(1);
       var approx = halfThis.div(other).shiftLeft(1);
-      if (approx.equals(Kotlin.Long.ZERO)) {
+      if (approx.equalsLong(Kotlin.Long.ZERO)) {
         return other.isNegative() ? Kotlin.Long.ONE : Kotlin.Long.NEG_ONE;
       } else {
         var rem = this.subtract(other.multiply(approx));
@@ -632,7 +632,7 @@ Kotlin.Long.prototype.div = function(other) {
         return result;
       }
     }
-  } else if (other.equals(Kotlin.Long.MIN_VALUE)) {
+  } else if (other.equalsLong(Kotlin.Long.MIN_VALUE)) {
     return Kotlin.Long.ZERO;
   }
 
@@ -810,8 +810,8 @@ Kotlin.Long.prototype.shiftRightUnsigned = function(numBits) {
 };
 
 // Support for Kotlin
-Kotlin.Long.prototype.equals_za3rmp$ = function (other) {
-    return other instanceof Kotlin.Long && this.equals(other);
+Kotlin.Long.prototype.equals = function (other) {
+    return other instanceof Kotlin.Long && this.equalsLong(other);
 };
 
 Kotlin.Long.prototype.compareTo_za3rmp$ = Kotlin.Long.prototype.compare;

@@ -230,6 +230,7 @@ class NameSuggestion {
                 when (overriddenDescriptor.fqNameUnsafe.asString()) {
                     "kotlin.CharSequence.subSequence" -> return NameAndStability("substring", true)
                     "kotlin.CharSequence.get" -> return NameAndStability("charAt", true)
+                    "kotlin.Any.equals" -> return NameAndStability("equals", true)
                 }
             }
 

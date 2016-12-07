@@ -5609,6 +5609,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("equalsMangling.kt")
+        public void testEqualsMangling() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/equalsMangling.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("eval.kt")
         public void testEval() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/eval.kt");

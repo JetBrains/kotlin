@@ -54,7 +54,7 @@ fun test(expected: String, f: () -> Unit) {
     }
 }
 
-val STABLE_EQUALS = "equals_za3rmp$"
+val STABLE_EQUALS = "equals"
 val STABLE_HASH_CODE = "hashCode"
 val STABLE_TO_STRING = "toString"
 val STABLE_EQUALS_2 = "equals_wn2jw4$"

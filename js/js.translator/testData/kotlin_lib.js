@@ -48,8 +48,8 @@ Kotlin.equals = function (obj1, obj2) {
         return false;
     }
 
-    if (typeof obj1 == "object" && typeof obj1.equals_za3rmp$ === "function") {
-        return obj1.equals_za3rmp$(obj2);
+    if (typeof obj1 == "object" && typeof obj1.equals === "function") {
+        return obj1.equals(obj2);
     }
 
     return obj1 === obj2;
