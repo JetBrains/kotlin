@@ -297,13 +297,17 @@ abstract class KotlinCommonBlock(
         val commonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)
         val elementType = node.elementType
 
-        if (elementType === KtNodeTypes.VALUE_ARGUMENT_LIST) {
-            return getWrappingStrategyForItemList(commonSettings.CALL_PARAMETERS_WRAP, KtNodeTypes.VALUE_ARGUMENT)
-        }
-        if (elementType === KtNodeTypes.VALUE_PARAMETER_LIST) {
-            val parentElementType = node.treeParent.elementType
-            if (parentElementType === KtNodeTypes.FUN || parentElementType === KtNodeTypes.CLASS) {
-                return getWrappingStrategyForItemList(commonSettings.METHOD_PARAMETERS_WRAP, KtNodeTypes.VALUE_PARAMETER)
+        when {
+            elementType === KtNodeTypes.VALUE_ARGUMENT_LIST ->
+                return getWrappingStrategyForItemList(commonSettings.CALL_PARAMETERS_WRAP, KtNodeTypes.VALUE_ARGUMENT)
+
+            elementType === KtNodeTypes.VALUE_PARAMETER_LIST -> {
+                val parentElementType = node.treeParent.elementType
+                if (parentElementType === KtNodeTypes.FUN ||
+                    parentElementType === KtNodeTypes.PRIMARY_CONSTRUCTOR ||
+                    parentElementType === KtNodeTypes.SECONDARY_CONSTRUCTOR) {
+                    return getWrappingStrategyForItemList(commonSettings.METHOD_PARAMETERS_WRAP, KtNodeTypes.VALUE_PARAMETER)
+                }
             }
         }
 
