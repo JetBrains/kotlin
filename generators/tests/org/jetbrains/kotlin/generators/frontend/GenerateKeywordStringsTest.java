@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.generators.frontend;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.UsefulTestCase;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.io.IOException;
 
-public class GenerateKeywordStringsTest extends UsefulTestCase {
+public class GenerateKeywordStringsTest extends KtUsefulTestCase {
     public void testGeneratedDataIsUpToDate() throws IOException {
         String text = GenerateKeywordStrings.generate();
         assertEquals("Contents differ. Regenerate " + GenerateKeywordStrings.class.getName(),
