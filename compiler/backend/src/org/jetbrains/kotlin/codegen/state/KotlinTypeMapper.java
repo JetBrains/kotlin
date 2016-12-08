@@ -311,7 +311,7 @@ public class KotlinTypeMapper {
     }
 
     @Nullable
-    private static String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
+    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
 
@@ -322,7 +322,7 @@ public class KotlinTypeMapper {
 
         ClassId ownerClassId = publicFacade ? containingClasses.getFacadeClassId()
                                             : containingClasses.getImplClassId();
-        return JvmClassName.byClassId(ownerClassId).getInternalName();
+        return JvmClassName.byClassId(ownerClassId, typeMappingConfiguration).getInternalName();
     }
 
     private static final ClassId FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(new FqName("kotlin.KotlinPackage"));

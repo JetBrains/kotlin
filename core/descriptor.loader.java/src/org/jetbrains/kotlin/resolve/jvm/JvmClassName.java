@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.jvm;
 
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+
+import java.util.regex.Pattern;
 
 public class JvmClassName {
     @NotNull
@@ -28,8 +33,31 @@ public class JvmClassName {
 
     @NotNull
     public static JvmClassName byClassId(@NotNull ClassId classId) {
+        return byClassId(classId, null);
+    }
+
+    @NotNull
+    public static JvmClassName byClassId(@NotNull ClassId classId, @Nullable TypeMappingConfiguration<?> typeMappingConfiguration) {
         FqName packageFqName = classId.getPackageFqName();
-        String relativeClassName = classId.getRelativeClassName().asString().replace('.', '$');
+
+        String[] relativeClassNameSegments = classId.getRelativeClassName().asString().split(Pattern.quote("."));
+        String relativeClassName;
+
+        if (relativeClassNameSegments.length == 1) {
+            relativeClassName = relativeClassNameSegments[0];
+        }
+        else if (relativeClassNameSegments.length > 1 && typeMappingConfiguration != null) {
+            Function2<String, String, String> innerClassNameFactory = typeMappingConfiguration.getInnerClassNameFactory();
+            relativeClassName = innerClassNameFactory.invoke(relativeClassNameSegments[0], relativeClassNameSegments[1]);
+            for (int i = 2; i < relativeClassNameSegments.length; ++i) {
+                relativeClassName = innerClassNameFactory.invoke(relativeClassName, relativeClassNameSegments[i]);
+            }
+        }
+        else {
+            // Default behavior if we don't have an inner class name factory
+            relativeClassName = classId.getRelativeClassName().asString().replace('.', '$');
+        }
+
         return packageFqName.isRoot()
                ? new JvmClassName(relativeClassName)
                : new JvmClassName(packageFqName.asString().replace('.', '/') + "/" + relativeClassName);
