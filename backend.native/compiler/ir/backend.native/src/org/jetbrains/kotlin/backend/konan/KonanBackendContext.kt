@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
-import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.KonanPlatform
 
 open internal class KonanBackendContext : BackendContext {
     override val builtIns = KonanPlatform.builtIns

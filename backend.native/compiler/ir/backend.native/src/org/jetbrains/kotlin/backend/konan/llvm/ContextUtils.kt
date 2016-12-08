@@ -2,7 +2,9 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -22,7 +24,7 @@ internal interface ContextUtils {
     val context: Context
 
     val runtime: Runtime
-        get() = context.runtime
+        get() = context.llvm.runtime
 
     /**
      * Describes the target platform.
@@ -33,7 +35,7 @@ internal interface ContextUtils {
         get() = runtime.targetData
 
     val staticData: StaticData
-        get() = context.staticData
+        get() = context.llvm.staticData
 
     /**
      * All fields of the class instance.
@@ -160,4 +162,43 @@ internal interface ContextUtils {
 
     val FqName.localHash: LocalHash
         get() = this.toString().localHash
+}
+
+
+internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
+
+    private fun importFunction(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
+        if (LLVMGetNamedFunction(llvmModule, name) != null) {
+            throw IllegalArgumentException("function $name already exists")
+        }
+
+        val externalFunction = LLVMGetNamedFunction(otherModule, name)!!
+
+        val functionType = getFunctionType(externalFunction)
+        return LLVMAddFunction(llvmModule, name, functionType)!!
+    }
+
+    val staticData = StaticData(context)
+
+    val runtimeFile = context.config.configuration.get(KonanConfigKeys.RUNTIME_FILE)!!
+    val runtime = Runtime(runtimeFile) // TODO: dispose
+
+    init {
+        LLVMSetDataLayout(llvmModule, runtime.dataLayout)
+        LLVMSetTarget(llvmModule, runtime.target)
+    }
+
+    private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
+
+    val allocInstanceFunction = importRtFunction("AllocInstance")
+    val initInstanceFunction = importRtFunction("InitInstance")
+    val allocArrayFunction = importRtFunction("AllocArrayInstance")
+    val setArrayFunction = importRtFunction("Kotlin_Array_set")
+    val copyImplArrayFunction = importRtFunction("Kotlin_Array_copyImpl")
+    val lookupFieldOffset = importRtFunction("LookupFieldOffset")
+    val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")
+    val isInstanceFunction = importRtFunction("IsInstance")
+    val checkInstanceFunction = importRtFunction("CheckInstance")
+    val throwExceptionFunction = importRtFunction("ThrowException")
+    val usedFunctions = mutableListOf<LLVMValueRef>()
 }

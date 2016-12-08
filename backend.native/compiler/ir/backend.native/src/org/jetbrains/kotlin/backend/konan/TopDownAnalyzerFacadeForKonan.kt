@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.bc
+package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.konan.llvm.KonanBuiltIns
-import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.ContextForNewModule

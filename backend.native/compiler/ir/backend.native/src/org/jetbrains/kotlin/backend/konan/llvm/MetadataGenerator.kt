@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.BinaryLinkdata.*
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -104,7 +104,7 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         }
     }
 
-    private fun metadataFun(fn: LLVMValueRef?, info: String): LLVMValueRef {
+    private fun metadataFun(fn: LLVMValueRef, info: String): LLVMValueRef {
         val args = listOf(fn, metadataString(info));
         val md = metadataNode(args)
         return md
@@ -146,11 +146,12 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         // Convert it to ProtoBuf's TextFormat representation.
         // Use TextFormat.merge(str, builder) to parse it back
         val str = proto.toString()
+
         return str
     }
 
     internal fun function(declaration: IrFunction) {
-        val fn = declaration.descriptor.llvmFunction
+        val fn = declaration.descriptor.llvmFunction!!
 
         val proto = serializeFunSignature(declaration)
 
@@ -173,6 +174,7 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
     }
 
     private fun serializeModule(moduleDescriptor: ModuleDescriptor): String {
+
         val description = JsModuleDescriptor(
                 name = "foo",
                 kind = ModuleKind.PLAIN,
@@ -196,6 +198,4 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         emitModuleMetadata("kmetadata", stringNode)
     }
 }
-
-
 

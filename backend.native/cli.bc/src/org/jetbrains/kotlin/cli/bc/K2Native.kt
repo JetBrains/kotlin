@@ -1,16 +1,16 @@
 package org.jetbrains.kotlin.cli.bc
 
+import org.jetbrains.kotlin.backend.konan.*
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.konan.llvm.emitLLVM
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
@@ -21,70 +21,65 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.lang.System.out
 import java.util.*
 
-class NativeAnalyzer(
-        val environment: KotlinCoreEnvironment, 
-        val  sources: Collection<KtFile>, 
-        val  config: KonanConfig) : AnalyzerWithCompilerReport.Analyzer {
-
-    override fun  analyze(): AnalysisResult {
-        return TopDownAnalyzerFacadeForKonan.analyzeFiles(sources, config);
-    }
-
-    override fun reportEnvironmentErrors() {
-    }
-}
-
 class K2Native : CLICompiler<K2NativeCompilerArguments>() { 
 
-    val defaultModuleName = "main";
 
-    override fun doExecute(arguments     : K2NativeCompilerArguments,
+    override fun doExecute(arguments : K2NativeCompilerArguments,
                            configuration : CompilerConfiguration,
                            rootDisposable: Disposable
                           ): ExitCode {
 
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, defaultModuleName)
 
-        configuration.addKotlinSourceRoots(arguments.freeArgs)
-
-        val libraries = arguments.libraries?.asList<String>() ?: listOf<String>()
-        configuration.put(KonanConfigurationKeys.LIBRARY_FILES, libraries)
-        libraries.forEach{println(it)}
+        configuration.get(KonanConfigKeys.LIBRARY_FILES)?.forEach{ println(it) }
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
             configuration, Arrays.asList<String>("extensions/common.xml"))
-
-        val collector = configuration.getNotNull(
-            CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
-
         val project = environment.project
-        val config = KonanConfig(project, configuration)
+        val konanConfig = KonanConfig(project, configuration)
 
-
-        // Build AST and binding info.
-        analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles(),
-                NativeAnalyzer(environment, environment.getSourceFiles(), config))
-
-        // Translate AST to high level IR.
-        val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
-        val module = translator.generateModule(
-                                    analyzerWithCompilerReport.analysisResult.moduleDescriptor,
-                                    environment.getSourceFiles(),
-                                    analyzerWithCompilerReport.analysisResult.bindingContext)
-
-        // Emit LLVM code.
-        module.accept(DumpIrTreeVisitor(out), "")
-        emitLLVM(module, arguments.runtimeFile, arguments.outputFile)
+        runTopLevelPhases(konanConfig, environment)
 
         return ExitCode.OK
     }
 
+    fun Array<String>?.toNonNullList(): List<String> {
+        return this?.asList<String>() ?: listOf<String>()
+    }
+
+
+    // It is executed before doExecute().
     override fun setupPlatformSpecificArgumentsAndServices(
             configuration: CompilerConfiguration,
             arguments    : K2NativeCompilerArguments,
-            services     : Services) {}
+            services     : Services) {
+
+
+        configuration.addKotlinSourceRoots(arguments.freeArgs)
+
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, "main")
+
+        val libraries = arguments.libraries.toNonNullList()
+        configuration.put(KonanConfigKeys.LIBRARY_FILES, 
+            arguments.libraries.toNonNullList())
+        configuration.put(KonanConfigKeys.RUNTIME_FILE, arguments.runtimeFile)
+        configuration.put(KonanConfigKeys.OUTPUT_FILE, arguments.outputFile)
+
+        configuration.put(KonanConfigKeys.PRINT_IR, arguments.printIr)
+        configuration.put(KonanConfigKeys.PRINT_DESCRIPTORS, arguments.printDescriptors)
+        configuration.put(KonanConfigKeys.PRINT_BITCODE, arguments.printBitCode)
+
+        configuration.put(KonanConfigKeys.VERIFY_IR, arguments.verifyIr)
+        configuration.put(KonanConfigKeys.VERIFY_DESCRIPTORS, arguments.verifyDescriptors)
+        configuration.put(KonanConfigKeys.VERIFY_BITCODE, arguments.verifyBitCode)
+
+        configuration.put(KonanConfigKeys.ENABLED_PHASES, 
+            arguments.enablePhases.toNonNullList())
+        configuration.put(KonanConfigKeys.DISABLED_PHASES, 
+            arguments.disablePhases.toNonNullList())
+        configuration.put(KonanConfigKeys.VERBOSE_PHASES, 
+            arguments.verbosePhases.toNonNullList())
+        configuration.put(KonanConfigKeys.LIST_PHASES, arguments.listPhases)
+    }
 
     override fun createArguments(): K2NativeCompilerArguments {
         return K2NativeCompilerArguments()

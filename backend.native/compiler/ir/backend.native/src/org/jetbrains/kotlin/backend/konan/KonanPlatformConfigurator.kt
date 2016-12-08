@@ -16,7 +16,7 @@
 
 // Adapted from JS compiler, but everyhing has been switched off for now.
 
-package org.jetbrains.kotlin.backend.konan.llvm
+package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl

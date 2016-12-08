@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.implementation
 import org.jetbrains.kotlin.backend.konan.implementedInterfaces
 import org.jetbrains.kotlin.backend.konan.isInterface

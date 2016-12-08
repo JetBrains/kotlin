@@ -1,7 +1,7 @@
-package org.jetbrains.kotlin.cli.bc
+package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -18,13 +18,11 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.backend.konan.llvm.KotlinKonanMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.KotlinKonanMetadataUtils
 
-/**
- * Base class representing a configuration of translator.
- */
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
+
     private val storageManager = LockBasedStorageManager()
 
-    private val libraries = configuration.getList(KonanConfigurationKeys.LIBRARY_FILES)
+    private val libraries = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
     private val metadata = KotlinKonanMetadataUtils.loadLibMetadata(libraries)
 
@@ -32,7 +30,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
 
     val moduleKind: ModuleKind
-        get() = configuration.get(KonanConfigurationKeys.MODULE_KIND)!!
+        get() = configuration.get(KonanConfigKeys.MODULE_KIND)!!
 
     // We reuse JsModuleDescriptor for serialization for now, as we haven't got one for Konan yet.
     internal val moduleDescriptors: MutableList<JsModuleDescriptor<ModuleDescriptorImpl>> by lazy {

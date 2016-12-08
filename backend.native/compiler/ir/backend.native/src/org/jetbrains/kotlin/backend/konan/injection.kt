@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.kotlin.cli.bc
+package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl

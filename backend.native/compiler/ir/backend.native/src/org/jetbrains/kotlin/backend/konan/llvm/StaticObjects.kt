@@ -108,7 +108,7 @@ internal fun StaticData.createKotlinObject(type: KotlinType, body: ConstValue): 
 }
 
 private fun StaticData.getArrayListClass(): ClassDescriptor {
-    val module = context.irModule.descriptor
+    val module = context.irModule!!.descriptor
     val pkg = module.getPackage(FqName.fromSegments(listOf("kotlin", "collections")))
     val classifier = pkg.memberScope.getContributedClassifier(Name.identifier("ArrayList"),
             NoLookupLocation.FROM_BACKEND)

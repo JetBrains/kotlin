@@ -2,23 +2,23 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import java.io.StringWriter
 
-internal class Logger(val generator: CodeGenerator, override val context: Context) : ContextUtils {
+internal open class Logger(val generator: CodeGenerator, override val context: Context) : ContextUtils {
   private var logcounter: Int = LLVMPrintModuleToString(context.llvmModule)!!.asCString().toString().lines().size
 
   //---------------------------------------------------------------------------//
 
-  fun log(msg: String) {
-    // logIr()
+  open fun log(msg: String) {
     println(msg)
   }
 
   //---------------------------------------------------------------------------//
 
-  fun logIr() {
+  open fun logIr() {
     val function = generator.currentFunction ?: return
 
     val irFunctionDeclaration = LLVMPrintValueToString(function.llvmFunction)!!.asCString().toString()
@@ -48,3 +48,10 @@ fun llvm2string(value: LLVMValueRef?): String {
   return LLVMPrintValueToString(value)!!.asCString().toString()
 }
 
+
+//-----------------------------------------------------------------------------//
+
+internal class DummyLogger(generator: CodeGenerator, context: Context) : Logger(generator, context) {
+    override fun log(msg: String) = Unit
+    override fun logIr() = Unit
+}

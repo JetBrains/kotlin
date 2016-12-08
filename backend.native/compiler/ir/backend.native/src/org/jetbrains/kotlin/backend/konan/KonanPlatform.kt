@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.llvm
+package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.backend.konan.llvm.KonanPlatformConfigurator
+import org.jetbrains.kotlin.backend.konan.KonanPlatformConfigurator
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform

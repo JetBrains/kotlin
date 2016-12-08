@@ -26,26 +26,32 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
-    val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
-    val runtime = Runtime(runtimeFile) // TODO: dispose
-    LLVMSetDataLayout(llvmModule, runtime.dataLayout)
-    LLVMSetTarget(llvmModule, runtime.target)
 
-    // TODO: shall we provide better binding context?
-    val context = Context(
-            module, runtime, llvmModule, BindingContext.EMPTY) // TODO: dispose
+internal fun emitLLVM(context: Context) {
 
-    KonanLower(context).lower(module)
+        val irModule = context.irModule!!
+        val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
+        context.llvmModule = llvmModule
 
-    module.acceptVoid(RTTIGeneratorVisitor(context))
-    println("\n--- Generate bitcode ------------------------------------------------------\n")
-    module.acceptVoid(CodeGeneratorVisitor(context))
-    verifyModule(llvmModule)
-    LLVMWriteBitcodeToFile(llvmModule, outFile)
+        val phaser = PhaseManager(context)
+
+        phaser.phase("RTTI") {
+            irModule.acceptVoid(RTTIGeneratorVisitor(context))
+        }
+
+        phaser.phase("Codegen") {
+            irModule.acceptVoid(CodeGeneratorVisitor(context))
+        }
+
+        phaser.phase("Metadator") {
+            irModule.acceptVoid(MetadatorVisitor(context))
+        }
+
+        val outFile = context.config.configuration.get(KonanConfigKeys.OUTPUT_FILE)!!
+        LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
 
-private fun verifyModule(llvmModule: LLVMModuleRef) {
+internal fun verifyModule(llvmModule: LLVMModuleRef) {
     memScoped {
         val errorRef = allocPointerTo<CInt8Var>()
         // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
@@ -84,11 +90,31 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
 
 //-------------------------------------------------------------------------//
 
+internal class MetadatorVisitor(val context: Context) : IrElementVisitorVoid {
+
+    val metadator = MetadataGenerator(context)
+
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitModuleFragment(module: IrModuleFragment) {
+        module.acceptChildrenVoid(this)
+       metadator.endModule(module)
+    }
+}
+
+
+//-------------------------------------------------------------------------//
+
 internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid {
 
     val codegen = CodeGenerator(context)
-    val logger = Logger(codegen, context)
-    val metadator = MetadataGenerator(context)
+    val logger = if (context.phase!!.verbose) {
+        Logger(codegen, context) 
+    } else {
+        DummyLogger(codegen, context)
+    }
 
     //-------------------------------------------------------------------------//
 
@@ -191,9 +217,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         logger.log("visitModule                  : ${ir2string(module)}")
         module.acceptChildrenVoid(this)
 
-        appendLlvmUsed(context.usedFunctions) 
-
-        metadator.endModule(module)
+        appendLlvmUsed(context.llvm.usedFunctions) 
     }
 
     //-------------------------------------------------------------------------//
@@ -459,7 +483,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         override fun genThrow(exception: LLVMValueRef) {
             val objHeaderPtr = codegen.bitcast(codegen.kObjHeaderPtr, exception, codegen.newVar())
             val args = listOf(objHeaderPtr)
-            codegen.call(context.throwExceptionFunction, args, "")
+            codegen.call(context.llvm.throwExceptionFunction, args, "")
             codegen.unreachable()
         }
     }
@@ -485,14 +509,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return
 
         codegen.prologue(declaration)
-        metadator.function(declaration)
 
         using(FunctionScope(declaration)) {
             declaration.acceptChildrenVoid(this)
         }
+
         codegen.epilogue(declaration)
 
-        verifyModule(context.llvmModule)
+        verifyModule(context.llvmModule!!)
     }
 
     //-------------------------------------------------------------------------//
@@ -641,7 +665,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val ctor = codegen.llvmFunction(initFunction)
         val args = listOf(objectPtr, typeInfo, allocHint, ctor)
         val newValue = currentCodeContext.genCall(
-                context.initInstanceFunction, args, codegen.newVar())
+                context.llvm.initInstanceFunction, args, codegen.newVar())
         codegen.br(bbExit)
 
         codegen.positionAtEnd(bbExit)
@@ -763,14 +787,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         val typeInfo = codegen.typeInfoValue(value.type)!!
         val arrayCreationArgs = listOf(typeInfo, kImmInt32One, finalLength!!)
-        val array = currentCodeContext.genCall(context.allocArrayFunction, arrayCreationArgs, tmpVariableName)
+        val array = currentCodeContext.genCall(context.llvm.allocArrayFunction, arrayCreationArgs, tmpVariableName)
 
         elements.fold(kImmZero) { sum, (exp, size, isArray) ->
             if (!isArray) {
-                currentCodeContext.genCall(context.setArrayFunction, listOf(array, sum, exp), "")
+                currentCodeContext.genCall(context.llvm.setArrayFunction, listOf(array, sum, exp), "")
                 return@fold codegen.plus(sum, kImmOne, codegen.newVar())
             } else {
-                currentCodeContext.genCall(context.copyImplArrayFunction, listOf(exp, kImmZero, array, sum, size!!), "")
+                currentCodeContext.genCall(context.llvm.copyImplArrayFunction, listOf(exp, kImmZero, array, sum, size!!), "")
                 return@fold codegen.plus(sum, size, codegen.newVar())
             }
         }
@@ -1251,7 +1275,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val srcArg        = evaluateExpression(codegen.newVar(), value.argument)!!     // Evaluate src expression.
         val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, srcArg, codegen.newVar())   // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
-        currentCodeContext.genCall(context.checkInstanceFunction, args, "")            // Check if dst is subclass of src.
+        currentCodeContext.genCall(context.llvm.checkInstanceFunction, args, "")            // Check if dst is subclass of src.
         return srcArg
     }
 
@@ -1293,7 +1317,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
 
         val result = currentCodeContext.genCall(                                       // Check if dst is subclass of src.
-                context.isInstanceFunction, args, codegen.newVar())
+                context.llvm.isInstanceFunction, args, codegen.newVar())
 
         return LLVMBuildTrunc(codegen.builder, result, kInt1, tmpVariableName)!!       // Truncate result to boolean
     }
@@ -1422,7 +1446,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrConstKind.Int    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(),   1)
             IrConstKind.Long   -> return LLVMConstInt(LLVMInt64Type(), value.value as Long,             1)
             IrConstKind.String ->
-                return context.staticData.kotlinStringLiteral(value as IrConst<String>).llvm
+                return context.llvm.staticData.kotlinStringLiteral(value as IrConst<String>).llvm
             IrConstKind.Float  -> return LLVMConstRealOfString(LLVMFloatType(), (value.value as Float).toString())
             IrConstKind.Double -> return LLVMConstRealOfString(LLVMDoubleType(), (value.value as Double).toString())
         }
@@ -1507,7 +1531,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
                 // so let's ignore this mismatch currently for simplicity.
 
-                return context.staticData.createArrayList(elementType, array, length).llvm
+                return context.llvm.staticData.createArrayList(elementType, array, length).llvm
             }
         }
 
@@ -1641,9 +1665,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val thisValue = if (containingClass.isArray) {
                 assert(args.size == 1 && args[0].type == int32Type)
                 val allocArrayInstanceArgs = listOf(typeInfo, allocHint, args[0])
-                currentCodeContext.genCall(context.allocArrayFunction, allocArrayInstanceArgs, variableName)
+                currentCodeContext.genCall(context.llvm.allocArrayFunction, allocArrayInstanceArgs, variableName)
             } else {
-                currentCodeContext.genCall(context.allocInstanceFunction, listOf(typeInfo, allocHint), variableName)
+                currentCodeContext.genCall(context.llvm.allocInstanceFunction, listOf(typeInfo, allocHint), variableName)
             }
             val constructorParams: MutableList<LLVMValueRef> = mutableListOf()
             constructorParams += thisValue
@@ -1833,7 +1857,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val methodHash      = codegen.functionHash(descriptor)                                 // Calculate hash of the method to be invoked
         val lookupArgs      = listOf(typeInfoPtr, methodHash)                                  // Prepare args for lookup
         val llvmMethod      = currentCodeContext.genCall(
-                              context.lookupOpenMethodFunction,
+                              context.llvm.lookupOpenMethodFunction,
                               lookupArgs,
                               codegen.newVar())                                                 // Get method ptr to be invoked
 
@@ -1897,7 +1921,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val arrayLength = args.size
             val argsCasted = args.map { it -> constPointer(it).bitcast(int8TypePtr) }
             val llvmUsedGlobal = 
-                context.staticData.placeGlobalArray("llvm.used", int8TypePtr, argsCasted)
+                context.llvm.staticData.placeGlobalArray("llvm.used", int8TypePtr, argsCasted)
 
             LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage);
             LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata");
