@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -81,6 +83,18 @@ internal fun KonanBuiltIns.getKonanInternalClass(name: String): ClassDescriptor 
             .getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
 
     return classifier as ClassDescriptor
+}
+
+private val UNBOUND_CALLABLE_REFERENCE = "UnboundCallableReference"
+
+internal val KonanBuiltIns.unboundCallableReferenceType: KotlinType
+    get() = this.getKonanInternalClass(UNBOUND_CALLABLE_REFERENCE).defaultType
+
+internal fun KotlinType.isUnboundCallableReference(): Boolean {
+    val classDescriptor = TypeUtils.getClassDescriptor(this) ?: return false
+
+    return !this.isMarkedNullable &&
+            classDescriptor.fqNameUnsafe.asString() == "konan.internal.$UNBOUND_CALLABLE_REFERENCE"
 }
 
 internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>

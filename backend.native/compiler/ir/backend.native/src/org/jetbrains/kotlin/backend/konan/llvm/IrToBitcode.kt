@@ -1531,38 +1531,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     /**
-     * Binds the arguments of [expression] explicitly represented in the IR to the parameters of accessed function.
-     * The arguments should be further evaluated in the same order as they appear in the resulting list.
-     */
-    private fun bindExplicitArgs(expression: IrMemberAccessExpression): List<Pair<ParameterDescriptor, IrExpression>> {
-        val res = mutableListOf<Pair<ParameterDescriptor, IrExpression>>()
-        val descriptor = expression.descriptor
-
-        // TODO: ensure the order below corresponds to the one defined in Kotlin specs.
-
-        expression.dispatchReceiver?.let {
-            res += (descriptor.dispatchReceiverParameter!! to it)
-        }
-
-        expression.extensionReceiver?.let {
-            res += (descriptor.extensionReceiverParameter!! to it)
-        }
-
-        descriptor.valueParameters.map {
-            //println(it.index)
-            res += (it to expression.getValueArgument(it.index)!!)
-        }
-
-        return res
-    }
-
-    /**
      * Evaluates all arguments of [expression] that are explicitly represented in the IR.
      * Returns results in the same order as LLVM function expects, assuming that all explicit arguments
      * exactly correspond to a tail of LLVM parameters.
      */
     private fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> {
-        val evaluatedArgs = bindExplicitArgs(expression).map { (param, argExpr) ->
+        val evaluatedArgs = expression.getArguments().map { (param, argExpr) ->
             param to evaluateExpression("arg", argExpr)!!
         }.toMap()
 
