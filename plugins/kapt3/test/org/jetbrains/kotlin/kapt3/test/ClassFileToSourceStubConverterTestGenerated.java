@@ -138,6 +138,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("mapEntry.kt")
+    public void testMapEntry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/mapEntry.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("methodPropertySignatureClash.kt")
     public void testMethodPropertySignatureClash() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/methodPropertySignatureClash.kt");
