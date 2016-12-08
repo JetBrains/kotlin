@@ -21,69 +21,6 @@ import templates.Family.*
 fun specialJS(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-
-
-    templates add f("plusElement(element: T)") {
-        only(ArraysOfObjects)
-        returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
-        inline(true)
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        doc { "Returns an array containing all elements of the original array and then the given [element]." }
-        body() {
-            """
-            return this.asDynamic().concat(arrayOf(element))
-            """
-        }
-    }
-
-    templates add f("plus(element: T)") {
-        operator(true)
-
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
-        inline(true)
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        doc { "Returns an array containing all elements of the original array and then the given [element]." }
-        body() {
-            """
-            return this.asDynamic().concat(arrayOf(element))
-            """
-        }
-    }
-
-    templates add f("plus(elements: Collection<T>)") {
-        operator(true)
-
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
-        body {
-            """
-            return arrayPlusCollection(this, elements)
-            """
-        }
-    }
-
-    // This overload can cause nulls if array size is expanding, hence different return overload
-    templates add f("plus(elements: SELF)") {
-        operator(true)
-
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
-        inline(true)
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
-        body {
-            """
-            return this.asDynamic().concat(elements)
-            """
-        }
-    }
-
     templates add f("sort(noinline comparison: (T, T) -> Int)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)

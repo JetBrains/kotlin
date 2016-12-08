@@ -13058,134 +13058,6 @@ public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 }
 
 /**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun IntArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun LongArray.sort(): Unit {
-    if (size > 1)
-        sort { a: Long, b: Long -> a.compareTo(b) }
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun ByteArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun ShortArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun DoubleArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun FloatArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place.
- */
-@library("primitiveArraySort")
-public fun CharArray.sort(): Unit {
-    noImpl
-}
-
-/**
- * Sorts the array in-place according to the natural order of its elements.
- */
-public fun <T: Comparable<T>> Array<out T>.sort(): Unit {
-    if (size > 1)
-        sort { a: T, b: T -> a.compareTo(b) }
-}
-
-/**
- * Sorts the array in-place according to the order specified by the given [comparator].
- */
-public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1)
-        sort { a, b -> comparator.compare(a, b) }
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun ByteArray.toTypedArray(): Array<Byte> {
-    return copyOf().unsafeCast<Array<Byte>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun ShortArray.toTypedArray(): Array<Short> {
-    return copyOf().unsafeCast<Array<Short>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun IntArray.toTypedArray(): Array<Int> {
-    return copyOf().unsafeCast<Array<Int>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun LongArray.toTypedArray(): Array<Long> {
-    return copyOf().unsafeCast<Array<Long>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun FloatArray.toTypedArray(): Array<Float> {
-    return copyOf().unsafeCast<Array<Float>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun DoubleArray.toTypedArray(): Array<Double> {
-    return copyOf().unsafeCast<Array<Double>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun BooleanArray.toTypedArray(): Array<Boolean> {
-    return copyOf().unsafeCast<Array<Boolean>>()
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun CharArray.toTypedArray(): Array<Char> {
-    return copyOf().unsafeCast<Array<Char>>()
-}
-
-/**
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -13398,6 +13270,134 @@ public inline operator fun CharArray.plus(elements: CharArray): CharArray {
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
     return this.asDynamic().concat(arrayOf(element))
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun IntArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun LongArray.sort(): Unit {
+    if (size > 1)
+        sort { a: Long, b: Long -> a.compareTo(b) }
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun ByteArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun ShortArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun DoubleArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun FloatArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@library("primitiveArraySort")
+public fun CharArray.sort(): Unit {
+    noImpl
+}
+
+/**
+ * Sorts the array in-place according to the natural order of its elements.
+ */
+public fun <T: Comparable<T>> Array<out T>.sort(): Unit {
+    if (size > 1)
+        sort { a: T, b: T -> a.compareTo(b) }
+}
+
+/**
+ * Sorts the array in-place according to the order specified by the given [comparator].
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1)
+        sort { a, b -> comparator.compare(a, b) }
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ByteArray.toTypedArray(): Array<Byte> {
+    return copyOf().unsafeCast<Array<Byte>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ShortArray.toTypedArray(): Array<Short> {
+    return copyOf().unsafeCast<Array<Short>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun IntArray.toTypedArray(): Array<Int> {
+    return copyOf().unsafeCast<Array<Int>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun LongArray.toTypedArray(): Array<Long> {
+    return copyOf().unsafeCast<Array<Long>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun FloatArray.toTypedArray(): Array<Float> {
+    return copyOf().unsafeCast<Array<Float>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun DoubleArray.toTypedArray(): Array<Double> {
+    return copyOf().unsafeCast<Array<Double>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun BooleanArray.toTypedArray(): Array<Boolean> {
+    return copyOf().unsafeCast<Array<Boolean>>()
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun CharArray.toTypedArray(): Array<Char> {
+    return copyOf().unsafeCast<Array<Char>>()
 }
 
 /**

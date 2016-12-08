@@ -21,65 +21,6 @@ import templates.Family.*
 fun specialJVM(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("plusElement(element: T)") {
-        inline(Inline.Only)
-
-        only(InvariantArraysOfObjects)
-        returns("SELF")
-        doc { "Returns an array containing all elements of the original array and then the given [element]." }
-        body { "return plus(element)" }
-    }
-
-    templates add f("plus(element: T)") {
-        operator(true)
-
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        returns("SELF")
-        doc { "Returns an array containing all elements of the original array and then the given [element]." }
-        body() {
-            """
-            val index = size
-            val result = java.util.Arrays.copyOf(this, index + 1)
-            result[index] = element
-            return result
-            """
-        }
-    }
-
-    templates add f("plus(elements: Collection<T>)") {
-        operator(true)
-
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        returns("SELF")
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
-        body {
-            """
-            var index = size
-            val result = java.util.Arrays.copyOf(this, index + elements.size)
-            for (element in elements) result[index++] = element
-            return result
-            """
-        }
-    }
-
-    templates add f("plus(elements: SELF)") {
-        operator(true)
-
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        customSignature(InvariantArraysOfObjects) { "plus(elements: Array<out T>)" }
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
-        returns("SELF")
-        body {
-            """
-            val thisSize = size
-            val arraySize = elements.size
-            val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-            System.arraycopy(elements, 0, result, thisSize, arraySize)
-            return result
-            """
-        }
-    }
-
     templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value." }
@@ -214,7 +155,111 @@ fun specialJVM(): List<GenericFunction> {
 }
 
 object CommonArrays {
-    // TODO: plus
+
+    fun f_plusElement() = f("plusElement(element: T)") {
+        inline(Platform.JVM, Inline.Only)
+        inline(Platform.JS, Inline.Yes)
+        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+
+        only(InvariantArraysOfObjects)
+        only(Platform.JS, ArraysOfObjects)
+
+        returns("SELF")
+        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+        doc { "Returns an array containing all elements of the original array and then the given [element]." }
+        body(Platform.JVM) { "return plus(element)" }
+        body(Platform.JS) {
+            """
+            return this.asDynamic().concat(arrayOf(element))
+            """
+        }
+    }
+
+    fun f_plusElementOperator() = f("plus(element: T)") {
+        operator(true)
+
+        inline(Platform.JS, Inline.Yes)
+        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+
+        returns("SELF")
+        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+        doc { "Returns an array containing all elements of the original array and then the given [element]." }
+        body(Platform.JVM) {
+            """
+            val index = size
+            val result = java.util.Arrays.copyOf(this, index + 1)
+            result[index] = element
+            return result
+            """
+        }
+        body(Platform.JS) {
+            """
+            return this.asDynamic().concat(arrayOf(element))
+            """
+        }
+    }
+
+    fun f_plusCollection() = f("plus(elements: Collection<T>)") {
+        operator(true)
+
+        // TODO: inline arrayPlusCollection when @PublishedAPI is available
+//        inline(Platform.JS, Inline.Yes)
+//        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+
+        returns("SELF")
+        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
+        body(Platform.JVM) {
+            """
+            var index = size
+            val result = java.util.Arrays.copyOf(this, index + elements.size)
+            for (element in elements) result[index++] = element
+            return result
+            """
+        }
+        body(Platform.JS) {
+            """
+            return arrayPlusCollection(this, elements)
+            """
+        }
+    }
+
+    fun f_plusArray() = f("plus(elements: SELF)") {
+        operator(true)
+
+        inline(Platform.JS, Inline.Yes)
+        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+        customSignature(InvariantArraysOfObjects) { "plus(elements: Array<out T>)" }
+
+        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
+        returns("SELF")
+        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+
+        body(Platform.JVM) {
+            """
+            val thisSize = size
+            val arraySize = elements.size
+            val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+            System.arraycopy(elements, 0, result, thisSize, arraySize)
+            return result
+            """
+        }
+        body(Platform.JS) {
+            """
+            return this.asDynamic().concat(elements)
+            """
+        }
+    }
+
     fun f_copyOfRange() = f("copyOfRange(fromIndex: Int, toIndex: Int)") {
         inline(Platform.JVM, Inline.Only)
         inline(Platform.JS, Inline.Yes)
@@ -414,6 +459,7 @@ object CommonArrays {
 
     // TODO: use reflection later to get all functions of matching type
     fun templates() =
+            listOf(f_plusElement(), f_plusElementOperator(), f_plusCollection(), f_plusArray()) +
             listOf(f_copyOf(), f_copyOfRange()) +
             f_copyOfResized() +
             f_sortPrimitives() +
