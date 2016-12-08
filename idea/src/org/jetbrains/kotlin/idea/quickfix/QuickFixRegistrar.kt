@@ -132,6 +132,9 @@ class QuickFixRegistrar : QuickFixContributor {
         NON_PRIVATE_CONSTRUCTOR_IN_ENUM.registerFactory(removeModifierFactory)
         NON_PRIVATE_CONSTRUCTOR_IN_SEALED.registerFactory(removeModifierFactory)
 
+        DEPRECATED_BINARY_MOD.registerFactory(removeModifierFactory)
+        DEPRECATED_BINARY_MOD.registerFactory(RenameModToRemFix.Factory)
+
         UNRESOLVED_REFERENCE.registerFactory(ImportMemberFix)
         UNRESOLVED_REFERENCE.registerFactory(ImportFix)
 

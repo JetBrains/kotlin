@@ -1,0 +1,5 @@
+// Remove 'operator' modifier
+
+object A {
+    <caret>fun modAssign(x: Int) {}
+}

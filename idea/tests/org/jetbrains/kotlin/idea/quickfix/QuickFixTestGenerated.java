@@ -6335,6 +6335,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeModifierFromOperatorMod.kt")
+        public void testRemoveModifierFromOperatorMod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/removeModifierFromOperatorMod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeModifierFromOperatorModAssign.kt")
+        public void testRemoveModifierFromOperatorModAssign() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/removeModifierFromOperatorModAssign.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeProtectedModifier.kt")
         public void testRemoveProtectedModifier() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/removeProtectedModifier.kt");
@@ -7641,6 +7653,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("inProperty.kt")
         public void testInProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnusedReceiver/inProperty.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/renameToRem")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RenameToRem extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRenameToRem() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToRem"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("modAsExtension.kt")
+        public void testModAsExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToRem/modAsExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("modAsMember.kt")
+        public void testModAsMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToRem/modAsMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("modAssignAsMember.kt")
+        public void testModAssignAsMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameToRem/modAssignAsMember.kt");
             doTest(fileName);
         }
     }

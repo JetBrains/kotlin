@@ -1,0 +1,14 @@
+// "Rename to 'remAssign'" "true"
+
+object Rem {
+    operator fun mod(x: Int) {}
+    operator fun remAssign(x: Int) {}
+}
+
+fun test() {
+    Rem % 1
+    Rem.mod(1)
+    Rem.remAssign(1)
+    val c = Rem
+    c %= 1
+}
