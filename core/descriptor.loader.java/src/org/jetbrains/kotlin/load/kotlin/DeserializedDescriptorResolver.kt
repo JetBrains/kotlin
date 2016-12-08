@@ -50,12 +50,8 @@ class DeserializedDescriptorResolver {
         val classData = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
-        val sourceElement = KotlinJvmBinarySourceElement(
-                kotlinClass,
-                kotlinClass.incompatibility,
-                !IS_PRE_RELEASE && kotlinClass.classHeader.isPreRelease
-        )
-        return ClassDataWithSource(classData, sourceElement)
+        val source = KotlinJvmBinarySourceElement(kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible)
+        return ClassDataWithSource(classData, source)
     }
 
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
@@ -64,11 +60,7 @@ class DeserializedDescriptorResolver {
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
-        val source = JvmPackagePartSource(
-                kotlinClass,
-                kotlinClass.incompatibility,
-                isPreReleaseInvisible = !IS_PRE_RELEASE && kotlinClass.classHeader.isPreRelease
-        )
+        val source = JvmPackagePartSource(kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible)
         return DeserializedPackageMemberScope(descriptor, packageProto, nameResolver, source, components) {
             // All classes are included into Java scope
             emptyList()
@@ -80,6 +72,9 @@ class DeserializedDescriptorResolver {
             if (classHeader.metadataVersion.isCompatible()) return null
             return IncompatibleVersionErrorData(classHeader.metadataVersion, JvmMetadataVersion.INSTANCE, location, classId)
         }
+
+    private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
+        get() = !IS_PRE_RELEASE && (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)
 
     internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader
@@ -109,6 +104,8 @@ class DeserializedDescriptorResolver {
 
         private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
                 setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
+
+        private val KOTLIN_1_1_EAP_METADATA_VERSION = JvmMetadataVersion(1, 1, 2)
 
         var IS_PRE_RELEASE = KotlinCompilerVersion.IS_PRE_RELEASE
             @Deprecated("Should only be used in tests") set
