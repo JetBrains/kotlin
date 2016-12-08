@@ -25,6 +25,9 @@ public final class JvmStaticTest {
 
     public static final class Companion {
 
+        private static void one$annotations() {
+        }
+
         public final int getOne() {
             return 0;
         }

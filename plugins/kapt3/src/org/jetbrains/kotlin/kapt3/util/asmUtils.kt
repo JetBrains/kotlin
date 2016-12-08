@@ -25,6 +25,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 internal fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) != 0
 internal fun isPublic(access: Int) = (access and Opcodes.ACC_PUBLIC) != 0
 internal fun isSynthetic(access: Int) = (access and Opcodes.ACC_SYNTHETIC) != 0
+internal fun isPrivate(access: Int) = (access and Opcodes.ACC_PRIVATE) != 0
 internal fun isFinal(access: Int) = (access and Opcodes.ACC_FINAL) != 0
 internal fun isStatic(access: Int) = (access and Opcodes.ACC_STATIC) != 0
 internal fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) != 0
