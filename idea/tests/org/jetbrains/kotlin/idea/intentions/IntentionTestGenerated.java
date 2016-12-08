@@ -11805,6 +11805,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/nullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("safeString.kt")
         public void testSafeString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/safeString.kt");
