@@ -55,7 +55,8 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected val sourceRootDir: String = "src/$sourceSetName/kotlin"
     protected val kotlinSourceSet: KotlinSourceSet = createKotlinSourceSet()
     protected val kotlinTask: T = createKotlinCompileTask()
-    protected abstract val defaultKotlinDestinationDir: File
+    protected open val defaultKotlinDestinationDir: File
+            get() = sourceSet.output.classesDir
 
     fun run() {
         addKotlinDirSetToSources()
@@ -183,9 +184,6 @@ internal class Kotlin2JsSourceSetProcessor(
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
         compileTaskNameSuffix = "kotlin2Js"
 ) {
-    override val defaultKotlinDestinationDir: File
-        get() = File(project.buildDir, "kotlin2js/$sourceSetName")
-
     private val clean = project.tasks.findByName("clean")
     private val build = project.tasks.findByName("build")
 
