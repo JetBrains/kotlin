@@ -28,7 +28,7 @@ interface Resolver {
 
 class DirectResolver : Resolver {
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
-            dependsOn.value?.let(::File)?.check { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
+            dependsOn.value.check(String::isNotBlank)?.let(::File)?.check { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
 }
 
 class FlatLibDirectoryResolver(val path: File) : Resolver {
@@ -39,10 +39,10 @@ class FlatLibDirectoryResolver(val path: File) : Resolver {
 
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
             // TODO: add coordinates and wildcard matching
-            dependsOn.value?.let{ File(path, it) }?.check { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
+            dependsOn.value.check(String::isNotBlank)?.let{ File(path, it) }?.check { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
 
     companion object {
         fun tryCreate(annotation: Repository): FlatLibDirectoryResolver? =
-                annotation.value?.check(String::isNotBlank)?.let(::File)?.check { it.exists() && it.isDirectory }?.let(::FlatLibDirectoryResolver)
+                annotation.value.check(String::isNotBlank)?.let(::File)?.check { it.exists() && it.isDirectory }?.let(::FlatLibDirectoryResolver)
     }
 }

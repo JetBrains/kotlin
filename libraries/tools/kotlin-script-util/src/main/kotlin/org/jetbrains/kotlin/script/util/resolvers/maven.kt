@@ -43,7 +43,7 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
 
     private fun currentRepos() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos
 
-    private fun String?.isValidParam() = if (this != null && isNotBlank()) true else false
+    private fun String.isValidParam() = isNotBlank()
 
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? {
 
@@ -55,13 +55,10 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
 
         val artifactId: DefaultArtifact = when {
             dependsOn.groupId.isValidParam() || dependsOn.artifactId.isValidParam() -> {
-                val s1 = dependsOn.groupId
-                val s2 = dependsOn.artifactId
                 DefaultArtifact(dependsOn.groupId.orNullIfBlank(), dependsOn.artifactId.orNullIfBlank(), null, dependsOn.version.orNullIfBlank())
             }
             dependsOn.value.isValidParam() && dependsOn.value.count { it == ':' } == 2 -> {
-                val s = dependsOn.value
-                DefaultArtifact(s)
+                DefaultArtifact(dependsOn.value)
             }
             else -> {
                 error("Unknown set of arguments to maven resolver: ${dependsOn.value}")
@@ -84,7 +81,7 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
     }
 
     fun tryAddRepo(annotation: Repository): Boolean {
-        val urlStr = if (annotation.url.isValidParam()) annotation.url else annotation.value ?: return false
+        val urlStr = annotation.url.check { it.isValidParam() } ?: annotation.value.check { it.isValidParam() } ?: return false
         try {
             URL(urlStr)
         } catch (_: MalformedURLException) {
@@ -92,7 +89,7 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
         }
         repos.add(
                 RemoteRepository(
-                        if (annotation.id.isValidParam()) annotation.id else "cantral",
+                        if (annotation.id.isValidParam()) annotation.id else "central",
                         "default",
                         urlStr
                 ))

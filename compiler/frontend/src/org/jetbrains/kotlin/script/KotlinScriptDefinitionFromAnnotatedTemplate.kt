@@ -101,9 +101,8 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                             // TODO: consider advanced matching using semantic similar to actual resolving
                             acceptedAnnotations.find { ann ->
                                 psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                            }?.let { KtAnnotationWrapper(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                            }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
                         }
-                        .map { it.getProxy(classLoader) }
             }
             catch (ex: Throwable) {
                 logClassloadingError(ex)

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.repl
 
-import org.jetbrains.kotlin.cli.common.tryCreateCallableMapping
+import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.net.URLClassLoader

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.tryConstructClassFromStringArgs
+import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.io.OutputStream
+import java.io.PrintStream
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 import java.net.URL
@@ -91,7 +93,14 @@ class ScriptTemplateTest {
 
     @Test
     fun testScriptWithDependsAnn2() {
-        Assert.assertNull(compileScript("fib_ext_ann2.kts", ScriptWithIntParamAndDummyResolver::class, null, includeKotlinRuntime = false))
+        val savedErr = System.err
+        try {
+            System.setErr(PrintStream(NullOutputStream()))
+            Assert.assertNull(compileScript("fib_ext_ann2.kts", ScriptWithIntParamAndDummyResolver::class, null, includeKotlinRuntime = false))
+        }
+        finally {
+            System.setErr(savedErr)
+        }
 
         val aClass = compileScript("fib_ext_ann2.kts", ScriptWithIntParam::class, null, includeKotlinRuntime = false)
         Assert.assertNotNull(aClass)
@@ -324,13 +333,13 @@ class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesRe
         val cp = script.annotations.flatMap {
             when (it) {
                 is DependsOn -> if (it.path == "@{runtime}") listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath) else listOf(File(it.path))
-                is DependsOnTwo -> listOf(it.path1, it.path2).flatMap {
+                is DependsOnTwo -> listOf(it.path1, it.path2).flatMap { it?.let {
                     when {
                         it.isBlank() -> emptyList()
                         it == "@{runtime}" -> listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
                         else -> listOf(File(it))
                     }
-                }
+                }}
                 is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
                 else -> throw Exception("Unknown annotation ${it.javaClass}")
             }
@@ -394,3 +403,9 @@ annotation class DependsOn(val path: String)
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class DependsOnTwo(val unused: String = "", val path1: String = "", val path2: String = "")
+
+private class NullOutputStream : OutputStream() {
+    override fun write(b: Int) { }
+    override fun write(b: ByteArray) { }
+    override fun write(b: ByteArray, off: Int, len: Int) { }
+}
