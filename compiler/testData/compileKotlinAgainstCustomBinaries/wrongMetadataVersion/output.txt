@@ -43,8 +43,4 @@ compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersion/source
 The class is loaded from $TMP_DIR$/library-after.jar!/a/AKt.class
     bar = 239
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersion/source.kt:14:12: error: class 'a.AKt' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
-The class is loaded from $TMP_DIR$/library-after.jar!/a/AKt.class
-    val z: TA = ""
-           ^
 COMPILATION_ERROR

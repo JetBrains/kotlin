@@ -7,7 +7,4 @@ compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMeta
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata2/source.kt:13:5: error: unresolved reference: bar
     bar = 239
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata2/source.kt:14:12: error: unresolved reference: TA
-    val z: TA = ""
-           ^
 COMPILATION_ERROR

@@ -8,4 +8,3 @@ open class A {
 
 fun foo() {}
 var bar = 42
-typealias TA = String

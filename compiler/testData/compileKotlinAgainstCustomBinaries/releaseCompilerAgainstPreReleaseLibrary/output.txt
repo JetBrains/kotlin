@@ -35,7 +35,4 @@ compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreRe
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:13:5: error: class 'a.AKt' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
     bar = 239
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:14:12: error: class 'a.AKt' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
-    val z: TA = ""
-           ^
 COMPILATION_ERROR

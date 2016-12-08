@@ -11,5 +11,4 @@ fun baz(param: A) {
     val x = foo()
     val y = bar
     bar = 239
-    val z: TA = ""
 }
