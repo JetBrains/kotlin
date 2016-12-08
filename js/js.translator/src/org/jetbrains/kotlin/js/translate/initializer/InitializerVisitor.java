@@ -16,18 +16,20 @@
 
 package org.jetbrains.kotlin.js.translate.initializer;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.declaration.PropertyTranslatorKt;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.*;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded;
 import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForProperty;
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor;
 
 public final class InitializerVisitor extends TranslatorVisitor<Void> {
     @Override
@@ -37,18 +39,23 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public final Void visitProperty(@NotNull KtProperty property, @NotNull TranslationContext context) {
+        PropertyDescriptor descriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), property);
+        JsExpression value = PropertyTranslatorKt.translateDelegateOrInitializerExpression(context, property);
+        JsStatement statement = null;
+
         KtExpression initializer = property.getInitializer();
+        KtExpression delegate = property.getDelegateExpression();
         if (initializer != null) {
-            JsStatement statement = generateInitializerForProperty(context, getPropertyDescriptor(context.bindingContext(), property),
-                                                                   Translation.translateAsExpression(initializer, context));
-            if (!JsAstUtils.isEmptyStatement(statement)) {
-                context.addStatementsToCurrentBlock(JsAstUtils.flattenStatement(statement));
-            }
+            assert value != null;
+            statement = generateInitializerForProperty(context, descriptor, value);
+        }
+        if (delegate != null) {
+            assert value != null;
+            statement = generateInitializerForDelegate(descriptor, value);
         }
 
-        JsStatement delegate = generateInitializerForDelegate(context, property);
-        if (delegate != null) {
-            context.addStatementToCurrentBlock(delegate);
+        if (statement != null && !JsAstUtils.isEmptyStatement(statement)) {
+            context.addStatementsToCurrentBlock(JsAstUtils.flattenStatement(statement));
         }
 
         return null;

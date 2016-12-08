@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
@@ -36,7 +35,7 @@ class FileDeclarationVisitor(private val context: TranslationContext) : Abstract
         val innerName = context.getInnerNameForDescriptor(propertyDescriptor)
         val backingFieldRequired = context.bindingContext()[BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor] ?: false
         if (backingFieldRequired || expression.delegateExpression != null) {
-            val initializer = expression.delegateExpressionOrInitializer?.let { Translation.translateAsExpression(it, context) }
+            val initializer = context.translateDelegateOrInitializerExpression(expression)
             context.addDeclarationStatement(JsAstUtils.newVar(innerName, null))
             if (initializer != null) {
                 context.addTopLevelStatement(JsAstUtils.assignment(innerName.makeRef(), initializer).makeStmt())

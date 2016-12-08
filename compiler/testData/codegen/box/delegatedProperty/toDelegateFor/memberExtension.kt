@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS
 
 object Host {
     class StringDelegate(val s: String) {

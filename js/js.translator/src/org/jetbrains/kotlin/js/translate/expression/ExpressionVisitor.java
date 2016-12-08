@@ -204,10 +204,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (delegateExpression != null) {
             SmartList<JsPropertyInitializer> propertyInitializers = new SmartList<JsPropertyInitializer>();
             PropertyTranslatorKt.translateAccessors((VariableDescriptorWithAccessors) descriptor, propertyInitializers, context);
+            JsExpression initializerValue = PropertyTranslatorKt.translateDelegateOrInitializerExpression(context, expression);
+            assert initializerValue != null : "Initializer must be non-null for property with delegate";
             JsPropertyInitializer delegateInitializer = new JsPropertyInitializer(
-                    context.program().getStringLiteral(Namer.getDelegateName(descriptor.getName().asString())),
-                    Translation.translateAsExpression(delegateExpression, context)
-            );
+                    context.program().getStringLiteral(Namer.getDelegateName(descriptor.getName().asString())), initializerValue);
             propertyInitializers.add(delegateInitializer);
             initializer = new JsObjectLiteral(propertyInitializers, true);
         }

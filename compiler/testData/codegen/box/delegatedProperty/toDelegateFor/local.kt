@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS
 
 import kotlin.test.*
 
@@ -10,7 +9,7 @@ inline fun <T> runLogged(entry: String, action: () -> T): T {
     return action()
 }
 
-operator fun String.toDelegateFor(host: Any?, p: Any): String = 
+operator fun String.toDelegateFor(host: Any?, p: Any): String =
         runLogged("tdf($this);") { this }
 
 operator fun String.getValue(receiver: Any?, p: Any): String =
