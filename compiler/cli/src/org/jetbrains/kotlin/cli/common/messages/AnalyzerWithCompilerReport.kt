@@ -24,11 +24,8 @@ import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.util.PsiFormatUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.SimpleDiagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
@@ -143,16 +140,34 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
             return diagnostic.severity == Severity.ERROR
         }
 
-        fun reportDiagnostics(diagnostics: Diagnostics, reporter: DiagnosticMessageReporter): Boolean {
+        data class ReportDiagnosticsResult(val hasErrors: Boolean, val hasIncompatibleClassErrors: Boolean)
+
+        fun reportDiagnostics(unsortedDiagnostics: Diagnostics, reporter: DiagnosticMessageReporter): ReportDiagnosticsResult {
             var hasErrors = false
-            for (diagnostic in sortedDiagnostics(diagnostics.all())) {
+            var hasIncompatibleClassErrors = false
+            val diagnostics = sortedDiagnostics(unsortedDiagnostics.all())
+            for (diagnostic in diagnostics) {
                 hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter)
+                hasIncompatibleClassErrors = hasIncompatibleClassErrors or
+                        (diagnostic.factory == Errors.INCOMPATIBLE_CLASS || diagnostic.factory == Errors.PRE_RELEASE_CLASS)
             }
-            return hasErrors
+
+            return ReportDiagnosticsResult(hasErrors, hasIncompatibleClassErrors)
         }
 
         fun reportDiagnostics(diagnostics: Diagnostics, messageCollector: MessageCollector): Boolean {
-            return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
+            val (hasErrors, hasIncompatibleClassErrors) = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
+
+            if (hasIncompatibleClassErrors) {
+                messageCollector.report(
+                        CompilerMessageSeverity.ERROR,
+                        "Incompatible classes were found in dependencies. " +
+                        "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors",
+                        CompilerMessageLocation.NO_LOCATION
+                )
+            }
+
+            return hasErrors
         }
 
         fun reportSyntaxErrors(
