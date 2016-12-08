@@ -681,9 +681,15 @@ task initializers0(type: RunKonanTest) {
     source = "runtime/basic/initializers0.kt"
 }
 
+
 task initializers1(type: RunKonanTest) {
     goldValue = "Init Test\n" +
                 "Done\n"
     disabled = true
     source = "runtime/basic/initializers1.kt"
+}
+
+task concatenation(type: RunKonanTest) {
+    goldValue = "Hello world 1 2\nHello, a\nHello, b\n"
+    source = "codegen/basics/concatenation.kt"
 }
