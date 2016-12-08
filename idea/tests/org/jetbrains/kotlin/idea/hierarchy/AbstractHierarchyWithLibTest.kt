@@ -50,7 +50,7 @@ abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
                     TypeHierarchyTreeStructure(
                             project,
                             targetClass,
-                            HierarchyBrowserBaseEx.SCOPE_PROJECT)
+                            HierarchyBrowserBaseEx.SCOPE_ALL)
                 }, *filesToConfigure)
     }
 

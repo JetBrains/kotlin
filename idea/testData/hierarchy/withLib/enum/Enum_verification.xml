@@ -10,7 +10,20 @@
     <node text="State in Thread (java.lang)"/>
     <node text="RetentionPolicy (java.lang.annotation)"/>
     <node text="Type in Window (java.awt)"/>
+    <node text="FileWalkDirection (kotlin.io)"/>
+    <node text="OnErrorAction (kotlin.io)"/>
+    <node text="RegexOption (kotlin.text)"/>
+    <node text="CharCategory (kotlin.text)"/>
+    <node text="CharDirectionality (kotlin.text)"/>
+    <node text="KVariance (kotlin.reflect)"/>
+    <node text="KVisibility (kotlin.reflect)"/>
+    <node text="AnnotationTarget (kotlin.annotation)"/>
+    <node text="AnnotationRetention (kotlin.annotation)"/>
+    <node text="State (kotlin.collections)"/>
     <node text="One ()"/>
     <node text="G ()"/>
+    <node text="LazyThreadSafetyMode (kotlin)"/>
+    <node text="DeprecationLevel (kotlin)"/>
+    <node text="Kind in KParameter (kotlin.reflect)"/>
   </node>
 </node>
