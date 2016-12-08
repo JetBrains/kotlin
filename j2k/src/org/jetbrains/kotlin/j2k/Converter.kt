@@ -171,8 +171,8 @@ class Converter private constructor(
         val annotations = convertAnnotations(psiClass)
         var modifiers = convertModifiers(psiClass, false)
         val typeParameters = convertTypeParameterList(psiClass.typeParameterList)
-        val extendsTypes = convertToNotNullableTypes(psiClass.extendsListTypes)
-        val implementsTypes = convertToNotNullableTypes(psiClass.implementsListTypes)
+        val extendsTypes = convertToNotNullableTypes(psiClass.extendsList)
+        val implementsTypes = convertToNotNullableTypes(psiClass.implementsList)
         val name = psiClass.declarationIdentifier()
 
         val converted = when {
@@ -703,8 +703,11 @@ class Converter private constructor(
     fun convertTypeElement(element: PsiTypeElement?, nullability: Nullability): Type
             = (if (element == null) ErrorType() else typeConverter.convertType(element.type, nullability)).assignPrototype(element)
 
-    private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
-            = types.map { typeConverter.convertType(it, Nullability.NotNull) }
+    private fun convertToNotNullableTypes(refs: PsiReferenceList?): List<Type> {
+        if (refs == null) return emptyList()
+        val factory = JavaPsiFacade.getInstance(project).elementFactory
+        return refs.referenceElements.map { ref -> typeConverter.convertType(factory.createType(ref), Nullability.NotNull) }
+    }
 
     fun convertParameter(
             parameter: PsiParameter,
