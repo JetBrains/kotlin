@@ -693,3 +693,49 @@ task concatenation(type: RunKonanTest) {
     goldValue = "Hello world 1 2\nHello, a\nHello, b\n"
     source = "codegen/basics/concatenation.kt"
 }
+
+task lambda1(type: RunKonanTest) {
+    goldValue = "lambda\n"
+    source = "codegen/lambda/lambda1.kt"
+}
+
+task lambda2(type: RunKonanTest) {
+    arguments = ["arg0"]
+    goldValue = "arg0\n"
+    source = "codegen/lambda/lambda2.kt"
+}
+
+task lambda3(type: RunKonanTest) {
+    goldValue = "lambda\n"
+    source = "codegen/lambda/lambda3.kt"
+}
+
+task lambda4(type: RunKonanTest) {
+    goldValue = "1\n2\n3\n3\n4\n"
+    source = "codegen/lambda/lambda4.kt"
+}
+
+task lambda5(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/lambda/lambda5.kt"
+}
+
+task lambda6(type: RunKonanTest) {
+    goldValue = "42\ncaptured\n"
+    source = "codegen/lambda/lambda6.kt"
+}
+
+task lambda7(type: RunKonanTest) {
+    goldValue = "43\n"
+    source = "codegen/lambda/lambda7.kt"
+}
+
+task lambda8(type: RunKonanTest) {
+    goldValue = "first\n0\nsecond\n0\nfirst\n1\nsecond\n1\n"
+    source = "codegen/lambda/lambda8.kt"
+}
+
+task lambda9(type: RunKonanTest) {
+    goldValue = "0\n0\n1\n0\n0\n1\n1\n1\n"
+    source = "codegen/lambda/lambda9.kt"
+}
