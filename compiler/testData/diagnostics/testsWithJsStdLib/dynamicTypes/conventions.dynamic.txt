@@ -9,10 +9,6 @@ public final fun div(/*0*/ p0: dynamic): dynamic
 public final fun mod(/*0*/ p0: dynamic): dynamic
 public final fun rangeTo(/*0*/ p0: dynamic): dynamic
 public final fun and(/*0*/ p0: dynamic): dynamic
-public final fun contains(/*0*/ p0: dynamic): dynamic
-public final fun contains(/*0*/ p0: dynamic): dynamic
-public final fun contains(/*0*/ p0: dynamic): dynamic
-public final fun contains(/*0*/ p0: dynamic): dynamic
 public final fun get(/*0*/ p0: dynamic): dynamic
 public final fun set(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
 public final fun get(/*0*/ p0: dynamic): dynamic

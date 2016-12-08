@@ -1328,12 +1328,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("in.kt")
-        public void testIn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/dynamic/in.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("incrementAndDecrement.kt")
         public void testIncrementAndDecrement() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/dynamic/incrementAndDecrement.kt");

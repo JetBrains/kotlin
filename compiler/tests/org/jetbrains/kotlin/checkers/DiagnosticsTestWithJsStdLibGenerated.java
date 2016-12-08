@@ -146,6 +146,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("inExpression.kt")
+        public void testInExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/inExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("indexedAccess.kt")
         public void testIndexedAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/indexedAccess.kt");
