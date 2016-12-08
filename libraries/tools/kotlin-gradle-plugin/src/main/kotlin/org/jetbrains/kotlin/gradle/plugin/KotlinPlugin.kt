@@ -575,8 +575,15 @@ private fun Project.createAptConfiguration(sourceSetName: String, kotlinPluginVe
     val aptConfigurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
 
     val aptConfiguration = configurations.create(aptConfigurationName)
-    val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlinPluginVersion"
-    aptConfiguration.dependencies.add(dependencies.create(kotlinAnnotationProcessingDep))
+
+    // Add base kotlin-annotation-processing artifact for the main kapt configuration,
+    // All other configurations (such as kaptTest) should extend the main one
+    if (aptConfiguration.name == Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
+        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlinPluginVersion"
+        aptConfiguration.dependencies.add(dependencies.create(kotlinAnnotationProcessingDep))
+    } else {
+        Kapt3KotlinGradleSubplugin.findMainKaptConfiguration(this)?.let { aptConfiguration.extendsFrom(it) }
+    }
 
     return aptConfiguration
 }

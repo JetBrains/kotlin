@@ -45,9 +45,20 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     companion object {
         private val VERBOSE_OPTION_NAME = "kapt.verbose"
 
+        val MAIN_KAPT_CONFIGURATION_NAME = "kapt"
+
         fun getKaptConfigurationName(sourceSetName: String): String {
-            return if (sourceSetName != "main") "kapt${sourceSetName.capitalize()}" else "kapt"
+            return if (sourceSetName != "main")
+                "$MAIN_KAPT_CONFIGURATION_NAME${sourceSetName.capitalize()}"
+            else
+                MAIN_KAPT_CONFIGURATION_NAME
         }
+
+        fun Project.findKaptConfiguration(sourceSetName: String): Configuration? {
+            return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
+        }
+
+        fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(MAIN_KAPT_CONFIGURATION_NAME)
     }
 
     private val kotlinToKaptTasksMap = mutableMapOf<KotlinCompile, KaptTask>()
@@ -62,10 +73,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val dir = File(project.project.buildDir, "tmp/kapt3/stubs/$sourceSetName")
         dir.mkdirs()
         return dir
-    }
-
-    private fun Project.findKaptConfiguration(sourceSetName: String): Configuration? {
-        return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
     }
 
     private class Kapt3SubpluginContext(
