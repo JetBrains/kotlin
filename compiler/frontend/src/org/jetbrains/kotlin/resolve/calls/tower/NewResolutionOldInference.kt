@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.*
+import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSupport
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
@@ -67,7 +68,8 @@ class NewResolutionOldInference(
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val syntheticScopes: SyntheticScopes,
         private val syntheticConstructorsProvider: SyntheticConstructorsProvider,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val coroutineInferenceSupport: CoroutineInferenceSupport
 ) {
     sealed class ResolutionKind<D : CallableDescriptor> {
         abstract internal fun createTowerProcessor(
@@ -189,7 +191,9 @@ class NewResolutionOldInference(
             }
         }
 
-        return convertToOverloadResults(candidates, tracing, context)
+        val overloadResults = convertToOverloadResults(candidates, tracing, context)
+        coroutineInferenceSupport.checkCoroutineCalls(context, tracing, overloadResults)
+        return overloadResults
     }
 
     fun <D : CallableDescriptor> runResolutionForGivenCandidates(

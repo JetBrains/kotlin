@@ -1,0 +1,37 @@
+package
+
+public val test1: kotlin.Int
+public val test2: B
+public val test3: A
+public val test4: A
+public fun </*0*/ S> generate(/*0*/ g: suspend GenericController<S>.() -> kotlin.Unit): S
+public fun </*0*/ X> setOf(/*0*/ vararg x: X /*kotlin.Array<out X>*/): kotlin.collections.Set<X>
+public suspend fun </*0*/ S> GenericController<S>.yieldAll(/*0*/ s: kotlin.collections.Collection<S>): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object B : A {
+    private constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object C : A {
+    private constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class GenericController</*0*/ T> {
+    public constructor GenericController</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final suspend fun yield(/*0*/ t: T): kotlin.Unit
+}

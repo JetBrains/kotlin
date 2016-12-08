@@ -52,7 +52,10 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
-class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeResolver) {
+class GenericCandidateResolver(
+        private val argumentTypeResolver: ArgumentTypeResolver,
+        private val coroutineInferenceSupport: CoroutineInferenceSupport
+) {
     fun <D : CallableDescriptor> inferTypeArguments(context: CallCandidateResolutionContext<D>): ResolutionStatus {
         val candidateCall = context.candidateCall
         val candidate = candidateCall.candidateDescriptor
@@ -298,6 +301,10 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
+
+        if (isCoroutineCallWithAdditionalInference(valueParameterDescriptor, valueArgument)) {
+            coroutineInferenceSupport.analyzeCoroutine(functionLiteral, valueArgument, constraintSystem, context, effectiveExpectedType)
+        }
 
         val currentSubstitutor = constraintSystem.build().currentSubstitutor
         val newSubstitution = object : DelegatedTypeSubstitution(currentSubstitutor.substitution) {
