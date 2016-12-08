@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.AbstractClosureAnnotator
+import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.Closure
-import org.jetbrains.kotlin.backend.jvm.ClassLoweringPass
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LocalFunctionsLowering(val context: JvmBackendContext): ClassLoweringPass {
+class LocalFunctionsLowering(val context: BackendContext): ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         irClass.declarations.transformFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)

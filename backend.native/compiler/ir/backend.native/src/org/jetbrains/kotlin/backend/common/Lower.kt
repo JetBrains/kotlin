@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.jvm
+package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -25,27 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-
-class JvmLower(val context: JvmBackendContext) {
-    fun lower(irFile: IrFile) {
-        // TODO run lowering passes as callbacks in bottom-up visitor
-        FileClassLowering(context).lower(irFile)
-        ConstAndJvmFieldPropertiesLowering().lower(irFile)
-        PropertiesLowering().lower(irFile)
-        InterfaceLowering(context.state).runOnFilePostfix(irFile)
-        InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
-        SharedVariablesLowering(context).runOnFilePostfix(irFile)
-        InnerClassesLowering(context).runOnFilePostfix(irFile)
-        InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
-        LocalFunctionsLowering(context).runOnFilePostfix(irFile)
-        EnumClassLowering(context).runOnFilePostfix(irFile)
-        ObjectClassLowering(context).runOnFilePostfix(irFile)
-        InitializersLowering(context).runOnFilePostfix(irFile)
-        SingletonReferencesLowering(context).runOnFilePostfix(irFile)
-        SyntheticAccessorLowering(context.state).lower(irFile)
-        BridgeLowering(context.state).runOnFilePostfix(irFile)
-    }
-}
 
 interface FileLoweringPass {
     fun lower(irFile: IrFile)

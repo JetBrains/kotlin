@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.jvm
+package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
-import org.jetbrains.kotlin.backend.jvm.descriptors.SpecialDescriptorsFactory
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
+import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
-class JvmBackendContext(
-        val state: GenerationState,
-        val psiSourceManager: PsiSourceManager,
-        val irBuiltIns: IrBuiltIns
-) {
-    val builtIns = state.module.builtIns
-    val specialDescriptorsFactory = SpecialDescriptorsFactory(psiSourceManager, builtIns)
-    val sharedVariablesManager = JvmSharedVariablesManager(builtIns)
+interface BackendContext {
+    val builtIns: KotlinBuiltIns
+    val sharedVariablesManager: SharedVariablesManager
 }
