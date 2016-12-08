@@ -67,6 +67,8 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
                 }
 
                 override fun visitVariable(declaration: IrVariable) {
+                    declaration.acceptChildrenVoid(this)
+
                     val variableDescriptor = declaration.descriptor
                     if (variableDescriptor.isVar) {
                         relevantVars.add(variableDescriptor)
