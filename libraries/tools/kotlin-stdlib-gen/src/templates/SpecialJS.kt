@@ -21,57 +21,6 @@ import templates.Family.*
 fun specialJS(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
-        // TODO: Arguments checking as in java?
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns new array which is a copy of range of original array." }
-        inline(true)
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
-        body {
-            "return this.asDynamic().slice(fromIndex, toIndex)"
-        }
-    }
-
-    templates add f("copyOf()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns new array which is a copy of the original array." }
-        inline(true)
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
-        body {
-            "return this.asDynamic().slice()"
-        }
-    }
-
-    val allArrays = PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (ArraysOfObjects to null)
-    templates addAll allArrays.map {
-            val (family, primitive) = it
-            f("copyOf(newSize: Int)") {
-                only(family)
-                val defaultValue: String
-                if (primitive != null) {
-                    returns("SELF")
-                    only(primitive)
-                    defaultValue = when (primitive) {
-                        PrimitiveType.Boolean -> false.toString()
-                        PrimitiveType.Char -> "'\\u0000'"
-                        else -> "ZERO"
-                    }
-                } else {
-                    returns(ArraysOfObjects) { "Array<T?>" }
-                    defaultValue = "null"
-                }
-                doc { "Returns new array which is a copy of the original array." }
-                body {
-                    """
-                    return arrayCopyResize(this, newSize, $defaultValue)
-                    """
-                }
-            }
-        }
 
 
     templates add f("plusElement(element: T)") {

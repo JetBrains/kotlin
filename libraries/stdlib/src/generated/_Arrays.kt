@@ -12990,6 +12990,222 @@ public fun CharArray.asList(): List<Char> {
 }
 
 /**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(): Array<T> {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(): ByteArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(): ShortArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(): IntArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(): LongArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(): FloatArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(): DoubleArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(): BooleanArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(): CharArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(newSize: Int): ByteArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(newSize: Int): ShortArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(newSize: Int): IntArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(newSize: Int): LongArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(newSize: Int): FloatArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(newSize: Int): CharArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
  * Sorts the array in-place.
  */
 public fun IntArray.sort(): Unit {
@@ -13283,249 +13499,6 @@ public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex
 @kotlin.jvm.JvmVersion
 public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size): Int {
     return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<T>.copyOf(): Array<T> {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.copyOf(): ByteArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.copyOf(): ShortArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun IntArray.copyOf(): IntArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun LongArray.copyOf(): LongArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.copyOf(): FloatArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.copyOf(): DoubleArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.copyOf(): BooleanArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun CharArray.copyOf(): CharArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.copyOf(newSize: Int): ByteArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.copyOf(newSize: Int): ShortArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun IntArray.copyOf(newSize: Int): IntArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun LongArray.copyOf(newSize: Int): LongArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.copyOf(newSize: Int): FloatArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun CharArray.copyOf(newSize: Int): CharArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**

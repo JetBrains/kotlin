@@ -80,42 +80,6 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-
-    templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
-        inline(Inline.Only)
-
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns new array which is a copy of range of original array." }
-        returns("SELF")
-        body {
-            "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)"
-        }
-    }
-
-    templates add f("copyOf()") {
-        inline(Inline.Only)
-
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns new array which is a copy of the original array." }
-        returns("SELF")
-        body {
-            "return java.util.Arrays.copyOf(this, size)"
-        }
-    }
-
-    // This overload can cause nulls if array size is expanding, hence different return overload
-    templates add f("copyOf(newSize: Int)") {
-        inline(Inline.Only)
-
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns new array which is a copy of the original array." }
-        returns("SELF")
-        returns(InvariantArraysOfObjects) { "Array<T?>" }
-        body {
-            "return java.util.Arrays.copyOf(this, newSize)"
-        }
-    }
-
     templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value." }
@@ -250,6 +214,83 @@ fun specialJVM(): List<GenericFunction> {
 }
 
 object CommonArrays {
+    // TODO: plus
+    fun f_copyOfRange() = f("copyOfRange(fromIndex: Int, toIndex: Int)") {
+        inline(Platform.JVM, Inline.Only)
+        inline(Platform.JS, Inline.Yes)
+        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+
+        doc { "Returns new array which is a copy of range of original array." }
+        returns("SELF")
+        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+        body(Platform.JVM) {
+            "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)"
+        }
+        body(Platform.JS) {
+            // TODO: Arguments checking as in java?
+            "return this.asDynamic().slice(fromIndex, toIndex)"
+        }
+    }
+
+    fun f_copyOf() = f("copyOf()") {
+        inline(Platform.JVM, Inline.Only)
+        inline(Platform.JS, Inline.Yes)
+        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns new array which is a copy of the original array." }
+        returns("SELF")
+        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+
+        body(Platform.JVM) {
+            "return java.util.Arrays.copyOf(this, size)"
+        }
+        body(Platform.JS) {
+            "return this.asDynamic().slice()"
+        }
+    }
+
+    fun f_copyOfResized() =
+        (PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (InvariantArraysOfObjects to null)).map {
+            val (family, primitive) = it
+            f("copyOf(newSize: Int)") {
+                only(family)
+                if (family == InvariantArraysOfObjects) {
+                    only(Platform.JS, ArraysOfObjects)
+                }
+
+                inline(Platform.JVM, Inline.Only)
+                doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
+                val defaultValue: String
+                if (primitive != null) {
+                    only(primitive)
+                    returns("SELF")
+                    defaultValue = when (primitive) {
+                        PrimitiveType.Boolean -> false.toString()
+                        PrimitiveType.Char -> "'\\u0000'"
+                        else -> "ZERO"
+                    }
+                } else {
+                    returns { "Array<T?>" }
+                    defaultValue = "null"
+                }
+                body(Platform.JVM) {
+                    "return java.util.Arrays.copyOf(this, newSize)"
+                }
+                body(Platform.JS) {
+                    """
+                    return arrayCopyResize(this, newSize, $defaultValue)
+                    """
+                }
+            }
+        }
+
     fun f_sortPrimitives() =
         (PrimitiveType.numericPrimitives + PrimitiveType.Char).map { primitive ->
             f("sort()") {
@@ -372,5 +413,9 @@ object CommonArrays {
     }
 
     // TODO: use reflection later to get all functions of matching type
-    fun templates() = f_sortPrimitives() + listOf(f_sort(), f_sortWith(), f_asList(), f_toTypedArray())
+    fun templates() =
+            listOf(f_copyOf(), f_copyOfRange()) +
+            f_copyOfResized() +
+            f_sortPrimitives() +
+            listOf(f_sort(), f_sortWith(), f_asList(), f_toTypedArray())
 }

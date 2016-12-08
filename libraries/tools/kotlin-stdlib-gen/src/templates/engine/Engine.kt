@@ -233,6 +233,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         buildFamilies(families.toSet())
     }
 
+    fun only(platform: Platform, vararg families: Family) {
+        require(families.isNotEmpty()) { "Need to specify families" }
+        buildFamilies(families.toSet(), platform)
+    }
+
     fun only(vararg primitives: PrimitiveType) {
         only(primitives.asList())
     }
