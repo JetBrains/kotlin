@@ -33,6 +33,7 @@ internal open class KotlinTasksProvider {
 
     fun createKotlinJSTask(project: Project, name: String, sourceSetName: String): Kotlin2JsCompile =
             project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
+                this.sourceSetName = sourceSetName
                 friendTaskName = taskToFriendTaskMapper[this]
             }
 

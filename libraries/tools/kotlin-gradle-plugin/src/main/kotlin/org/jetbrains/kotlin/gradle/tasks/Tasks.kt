@@ -20,6 +20,7 @@ import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -299,6 +300,9 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
     var compilerJarFile: File? = null
 
+    private val defaultOutputFile: File
+            get() = File(destinationDir, "$moduleName.js")
+
     @Suppress("unused")
     val outputFile: String?
         get() = kotlinOptions.outputFile
@@ -340,7 +344,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
 
         if (args.outputFile == null) {
-            throw GradleException("$name.kotlinOptions.outputFile should be specified.")
+            args.outputFile = defaultOutputFile.canonicalPath
         }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
