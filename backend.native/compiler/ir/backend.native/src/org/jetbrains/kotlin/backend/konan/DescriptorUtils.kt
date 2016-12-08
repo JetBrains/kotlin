@@ -1,6 +1,10 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 
@@ -66,6 +70,18 @@ internal val ClassDescriptor.isArray: Boolean
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
+private val konanInternal = FqName.fromSegments(listOf("konan", "internal"))
+
+/**
+ * @return built-in class `konan.internal.$name`
+ */
+internal fun KonanBuiltIns.getKonanInternalClass(name: String): ClassDescriptor {
+    val classifier = this.builtInsModule
+            .getPackage(konanInternal).memberScope
+            .getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+
+    return classifier as ClassDescriptor
+}
 
 internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
     get() {

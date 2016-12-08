@@ -184,4 +184,9 @@ KConstRef Kotlin_getCurrentStackTrace() {
   return GetCurrentStackTrace();
 }
 
+// TODO: consider handling it with compiler magic instead.
+KRef Kotlin_internal_undefined() {
+  return nullptr;
+}
+
 }  // extern "C"
