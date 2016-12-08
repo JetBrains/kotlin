@@ -62,6 +62,8 @@ public interface ErrorsJs {
     DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_NATIVE_INTERFACE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> UNCHECKED_CAST_TO_NATIVE_INTERFACE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<PsiElement, KotlinType> NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<KtElement> EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE = DiagnosticFactory0.create(
+            ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory1<PsiElement, String> WRONG_OPERATION_WITH_DYNAMIC = DiagnosticFactory1.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
