@@ -618,6 +618,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (objectPtr == null) {
             objectPtr = LLVMAddGlobal(context.llvmModule, codegen.getLLVMType(value.type), objName)
             LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
+            // Backing storage for this global is common between all modules.
+            LLVMSetLinkage(objectPtr, LLVMLinkage.LLVMCommonLinkage)
         }
 
         val bbCurrent = codegen.currentBlock
