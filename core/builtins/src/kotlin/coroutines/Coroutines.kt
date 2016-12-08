@@ -43,9 +43,16 @@ public interface Continuation<in P> {
 public annotation class AllowSuspendExtensions
 
 /**
- * This object can be used as a return value of [kotlin.coroutines.suspendWithCurrentContinuation] lambda-argument to state that
- * the continuation will be resumed at some moment in the future, that means that suspend-function cannot return a value immediately,
- * i.e. it's literally suspends continuation, so no stack-unwinding will be performed by the continuation.
+ * This value can be used as a return value of [kotlin.coroutines.maySuspendWithCurrentContinuation] `body` argument to state that
+ * the execution was suspended and will not return any result immediately.
  */
 @SinceKotlin("1.1")
-public object Suspend
+public val SUSPENDED: Any? = Any()
+
+/**
+ * Classes and interfaces marked with this annotation are restricted when used as receivers for extension
+ * `suspend` functions. These `suspend` extensions can only invoke other member or extension `suspend` functions on this parcitular
+ * receiver only and are restricted from calling arbitrary suspension functions.
+ */
+@SinceKotlin("1.1")
+public annotation class RestrictSuspension

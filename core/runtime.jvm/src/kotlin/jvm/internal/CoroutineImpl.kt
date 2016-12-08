@@ -16,27 +16,183 @@
 
 package kotlin.jvm.internal
 
-abstract class CoroutineImpl(arity: Int) : Lambda(arity), Continuation<Any?> {
-    @JvmField
-    protected var _controller: Any? = null
+import kotlin.coroutines.*
 
-    // It's not protected because can be used from noinline lambdas inside coroutine (when calling non-suspend functions)
-    // Also there might be needed a way to access a controller by Continuation instance when it's inherited from CoroutineImpl
-    val controller: Any? get() = _controller
+private const val INTERCEPT_BIT_SET = 1 shl 31
+private const val INTERCEPT_BIT_CLEAR = INTERCEPT_BIT_SET.inv()
 
-    // Any label state less then zero indicates that coroutine is not run and can't be resumed in any way.
-    // Specific values do not matter by now, but currently -2 used for uninitialized coroutine (no controller is assigned),
-    // and -1 will mean that coroutine execution is over (does not work yet).
-    @JvmField
-    protected var label: Int = -2
+@SinceKotlin("1.1")
+abstract class CoroutineImpl : RestrictedCoroutineImpl, InterceptableContinuation<Any?> {
+    private val _resumeInterceptor: ResumeInterceptor?
+
+    override val resumeInterceptor: ResumeInterceptor?
+        get() = _resumeInterceptor
+
+    // this constructor is used to create initial "factory" lambda object
+    constructor(arity: Int) : super(arity) {
+        _resumeInterceptor = null
+    }
+
+    // this constructor is used to create a continuation instance for coroutine
+    constructor(arity: Int, resultContinuation: Continuation<Any?>?) : super(arity, resultContinuation) {
+        _resumeInterceptor = (resultContinuation as? InterceptableContinuation<*>)?.resumeInterceptor
+    }
+
+    // coroutine factory implementation for unrestricted coroutines, it will implement Function1.invoke
+    // in the actual coroutine implementation
+    fun invoke(resultContinuation: Continuation<*>): Any? {
+        // create and run it until first suspension
+        return (doCreate(null, resultContinuation) as CoroutineImpl).doResume(Unit, null)
+    }
 
     override fun resume(data: Any?) {
-        doResume(data, null)
+        if (_resumeInterceptor != null) {
+            if (label and INTERCEPT_BIT_SET == 0) {
+                label = label or INTERCEPT_BIT_SET
+                if (_resumeInterceptor.interceptResume(data, this)) return
+            }
+            label = label and INTERCEPT_BIT_CLEAR
+        }
+        super.resume(data)
     }
 
     override fun resumeWithException(exception: Throwable) {
-        doResume(null, exception)
+        if (_resumeInterceptor != null) {
+            if (label and INTERCEPT_BIT_SET == 0) {
+                label = label or INTERCEPT_BIT_SET
+                if (_resumeInterceptor.interceptResumeWithException(exception, this)) return
+            }
+            label = label and INTERCEPT_BIT_CLEAR
+        }
+        super.resumeWithException(exception)
+    }
+}
+
+@SinceKotlin("1.1")
+abstract class RestrictedCoroutineImpl : Lambda, Continuation<Any?> {
+    @JvmField
+    protected val resultContinuation: Continuation<Any?>?
+
+    // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
+    // label == 0 in initial part of the coroutine
+    @JvmField
+    protected var label: Int
+
+    // this constructor is used to create initial "factory" lambda object
+    constructor(arity: Int) : super(arity) {
+        resultContinuation = null
+        label = -1 // don't use this object as coroutine
     }
 
-    protected abstract fun doResume(data: Any?, exception: Throwable?)
+    // this constructor is used to create a continuation instance for coroutine
+    constructor(arity: Int, resultContinuation: Continuation<Any?>?) : super(arity) {
+        this.resultContinuation = resultContinuation
+        label = 0
+    }
+
+    // coroutine factory implementation for restricted coroutines, it will implement Function2.invoke
+    // in the actual restricted coroutine implementation
+    fun invoke(receiver: Any, resultContinuation: Continuation<*>): Any? {
+        // create and run it until first suspension
+        return (doCreate(receiver, resultContinuation) as RestrictedCoroutineImpl).doResume(Unit, null)
+    }
+
+    protected abstract fun doCreate(receiver: Any?, resultContinuation: Continuation<*>): Continuation<Unit>
+
+    internal fun doCreateInternal(receiver: Any?, resultContinuation: Continuation<*>) =
+            doCreate(receiver, resultContinuation)
+
+    override fun resume(data: Any?) {
+        try {
+            val result = doResume(data, null)
+            if (result != SUSPENDED)
+                resultContinuation!!.resume(result)
+        } catch (e: Throwable) {
+            resultContinuation!!.resumeWithException(e)
+        }
+    }
+
+    override fun resumeWithException(exception: Throwable) {
+        try {
+            val result = doResume(null, exception)
+            if (result != SUSPENDED)
+                resultContinuation!!.resume(result)
+        } catch (e: Throwable) {
+            resultContinuation!!.resumeWithException(e)
+        }
+    }
+
+    protected abstract fun doResume(data: Any?, exception: Throwable?): Any?
 }
+
+/*
+===========================================================================================================================
+Showcase of coroutine compilation strategy.
+
+Given this following "sample" suspend function code:
+
+---------------------------------------------------------------------------------------------
+@RestrictSuspension
+class Receiver {
+    suspend fun yield(): SomeResult
+}
+
+suspend fun Receiver.sample(): String {
+    doSomethingBefore()
+    val yieldResult = yield() // suspension point
+    doSomethingAfter(yieldResult)
+    return "Done"
+}
+---------------------------------------------------------------------------------------------
+
+The compiler emits the class with the following logic:
+
+---------------------------------------------------------------------------------------------
+
+class XXXCoroutine : RestrictedCoroutineImpl, Function2<Receiver, Continuation<*>, Any?> {
+    //               ^^^^^^^^^^^^^^^^^^^^^^^
+    //          Replace with CoroutineImpl if the coroutine is non-restricted
+
+    val receiver: Receiver?
+    //  ^^^^^^^^^^^^^^^^^^^
+    //    receiver is just a part of the captured scope and is only declared here is coroutine has it
+
+    // this constructor is used to create initial "factory" lambda object
+    constructor() : super(2, null) {
+        this.receiver = null
+    }
+
+    // this constructor is used to create a continuation instance for coroutine
+    constructor(receiver: Receiver, resultContinuation: Continuation<Any?>) : super(2, resultContinuation) {
+    //         ^^^^^^^^^^^^^^^^^^^^
+    // no receiver parameter when compiling coroutine that does not have one
+        this.receiver = receiver
+    }
+
+    override fun doCreate(receiver: Any, resultContinuation: Continuation<*>): Continuation<Unit> {
+        return XXXCoroutine(receiver as Receiver, resultContinuation) // create the actual instance
+    //                      ^^^^^^^^^^^^^^^^^^^^
+    // ignore receiver parameter when compiling coroutine that does not have one,
+    // check that it is not null as check its proper type for coroutine that has a receiver
+    }
+
+    override fun doResume(data: Any?, exception: Throwable?): Any? {
+        var suspensionResult = data
+        switch (label) {
+        default:
+            throw IllegalStateException()
+        case 0:
+            doSomethingBefore()
+            label = 1 // set next label before calling suspend function
+            suspensionResult = receiver.yield(this)
+            if (suspensionResult == SUSPENDED) return SUSPENDED
+            // falls through with yeild result if it is available
+        case 1:
+            doSomethingAfter(supensionResult)
+            label = -1 // execution is over
+            return "Done" // we have result of execution
+        }
+    }
+}
+---------------------------------------------------------------------------------------------
+*/
