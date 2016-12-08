@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.psi.KtConstantExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.isFlexible
@@ -69,6 +66,7 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
             else -> {
                 getResolvedCall(analyze())?.candidateDescriptor?.returnType?.let {
                     if (it.isFlexible()) null
+                    else if (it.isMarkedNullable && parent !is KtSafeQualifiedExpression) null
                     else it.getJetTypeFqName(false)
                 }
             }
