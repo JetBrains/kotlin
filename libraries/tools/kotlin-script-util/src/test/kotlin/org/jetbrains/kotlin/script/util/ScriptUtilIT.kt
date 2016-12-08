@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLoca
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_RUNTIME_JAR
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
@@ -99,8 +100,7 @@ done
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
         if (scriptClass == null) {
-            val resolver = FilesAndMavenResolver()
-            System.err.println(resolver.baseClassPath)
+            System.err.println(contextClasspath(KOTLIN_JAVA_RUNTIME_JAR, Thread.currentThread().contextClassLoader)?.joinToString())
         }
         Assert.assertNotNull(scriptClass)
         captureOut {
@@ -131,13 +131,9 @@ done
         try {
             val configuration = CompilerConfiguration().apply {
                 addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
-                fun addJarFromSystemProperty(key: String) {
-                    val jarFile = File(System.getProperty(key) ?: fail("'$key' property is not set"))
-                    assertTrue(jarFile.exists())
-                    addJvmClasspathRoot(jarFile)
+                contextClasspath(KOTLIN_JAVA_RUNTIME_JAR, Thread.currentThread().contextClassLoader)?.let {
+                    addJvmClasspathRoots(it)
                 }
-                addJarFromSystemProperty("kotlin.java.runtime.jar")
-                addJarFromSystemProperty("kotlin.java.stdlib.jar")
 
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
@@ -208,3 +204,15 @@ private class NullOutputStream : OutputStream() {
     override fun write(b: ByteArray) { }
     override fun write(b: ByteArray, off: Int, len: Int) { }
 }
+
+private fun <T> Iterable<T>.anyOrNull(predicate: (T) -> Boolean) = if (any(predicate)) this else null
+
+private fun File.matchMaybeVersionedFile(baseName: String) =
+        name == baseName ||
+                name == baseName.removeSuffix(".jar") || // for classes dirs
+                name.startsWith(baseName.removeSuffix(".jar") + "-")
+
+private fun contextClasspath(keyName: String, classLoader: ClassLoader): List<File>? =
+        ( classpathFromClassloader(classLoader)?.anyOrNull { it.matchMaybeVersionedFile(keyName) }
+          ?: manifestClassPath(classLoader)?.anyOrNull { it.matchMaybeVersionedFile(keyName) }
+        )?.toList()
