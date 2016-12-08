@@ -1,5 +1,45 @@
 package kotlin.collections
 
+internal object EmptyIterator : ListIterator<Nothing> {
+    override fun hasNext(): Boolean = false
+    override fun hasPrevious(): Boolean = false
+    override fun nextIndex(): Int = 0
+    override fun previousIndex(): Int = -1
+    override fun next(): Nothing = throw NoSuchElementException()
+    override fun previous(): Nothing = throw NoSuchElementException()
+}
+
+internal object EmptyList : List<Nothing>/*, RandomAccess */ {
+
+    override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()
+    override fun hashCode(): Int = 1
+    override fun toString(): String = "[]"
+
+    override val size: Int get() = 0
+    override fun isEmpty(): Boolean = true
+    override fun contains(element: Nothing): Boolean = false
+    override fun containsAll(elements: Collection<Nothing>): Boolean = elements.isEmpty()
+
+    override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Empty list doesn't contain element at index $index.")
+    override fun indexOf(element: Nothing): Int = -1
+    override fun lastIndexOf(element: Nothing): Int = -1
+
+    override fun iterator(): Iterator<Nothing> = EmptyIterator
+    override fun listIterator(): ListIterator<Nothing> = EmptyIterator
+    override fun listIterator(index: Int): ListIterator<Nothing> {
+        if (index != 0) throw IndexOutOfBoundsException("Index: $index")
+        return EmptyIterator
+    }
+
+    override fun subList(fromIndex: Int, toIndex: Int): List<Nothing> {
+        if (fromIndex == 0 && toIndex == 0) return this
+        throw IndexOutOfBoundsException("fromIndex: $fromIndex, toIndex: $toIndex")
+    }
+
+    private fun readResolve(): Any = EmptyList
+}
+
+
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over.
@@ -48,24 +88,13 @@ public fun <T> arrayListOf(vararg args: T): MutableList<T> {
     return result
 }
 
-public fun <T> hashSetOf(vararg args: T): HashSet<T> {
-    val result = HashSet<T>(args.size)
-    for (arg in args) {
-        result.add(arg)
-    }
-    return result
-}
-
-// TODO: implement EmptySet and EmptyList objects.
-
-/*
- * TODO: in Big Kotlin this function is following: (see libraries/stdlib/src/kotlin/collections/Collections.kt)
- * public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
- */
-public fun <T> listOf(): List<T> = ArrayList(0)
+public fun <T> listOf(): List<T> = EmptyList
 
 public fun <T> listOf(vararg args: T): List<T> = args.asList()
 
-public fun <T> setOf(vararg args: T): Set<T> = args.toSet()
-
-public fun <T> mutableSetOf(vararg args: T): MutableSet<T> = HashSet<T>(args.asList())
+public fun <T, C : MutableCollection</*in */T>> Iterable<T>.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}

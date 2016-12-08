@@ -39,3 +39,16 @@ private class IteratorImpl<T>(val collection: Array<T>) : Iterator<T> {
         return index < collection.size
     }
 }
+
+public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+public inline operator fun <T> Array<T>.plus(elements: Array<T>): Array<T> {
+    val result = copyOfUninitializedElements(this.size + elements.size)
+    elements.copyRangeTo(result, 0, elements.size, this.size)
+    return result
+}

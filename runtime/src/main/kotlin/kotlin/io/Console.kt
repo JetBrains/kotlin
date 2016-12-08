@@ -42,7 +42,6 @@ public fun print(message: Boolean) {
 @SymbolName("Kotlin_io_Console_println")
 external public fun println(message: String)
 
-// TODO: enable, once override by name is implemented.
 public fun println(message: Byte) {
     println(message.toString())
 }
@@ -83,4 +82,4 @@ public fun<T> println(message: T) {
 external public fun println()
 
 @SymbolName("Kotlin_io_Console_readLine")
-external public fun readLine(): String
+external public fun readLine(): String?
