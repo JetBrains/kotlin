@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -155,7 +156,14 @@ class NewResolutionOldInference(
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
         val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, syntheticConstructorsProvider, context.call.createLookupLocation())
 
-        val processor = kind.createTowerProcessor(this, name, tracing, scopeTower, detailedReceiver, context)
+        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
+        val isBinaryRemOperator = isBinaryRemOperator(context.call)
+        val nameToResolve = if (isBinaryRemOperator && !shouldUseOperatorRem)
+            OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]!!
+        else
+            name
+
+        val processor = kind.createTowerProcessor(this, nameToResolve, tracing, scopeTower, detailedReceiver, context)
 
         if (context.collectAllCandidates) {
             return allCandidatesResult(towerResolver.collectAllCandidates(scopeTower, processor))
@@ -168,14 +176,14 @@ class NewResolutionOldInference(
                                             candidates.all {
                                                 it.candidateStatus.resultingApplicability == ResolutionCandidateApplicability.INAPPLICABLE
                                             }
-        if (emptyOrInapplicableCandidates && isBinaryRemOperator(context.call)) {
+        if (isBinaryRemOperator && shouldUseOperatorRem && emptyOrInapplicableCandidates) {
             val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]
             val processorForDeprecatedName = kind.createTowerProcessor(this, deprecatedName!!, tracing, scopeTower, detailedReceiver, context)
             candidates = towerResolver.runResolve(scopeTower, processorForDeprecatedName, useOrder = kind != ResolutionKind.CallableReference)
         }
 
         if (candidates.isEmpty()) {
-            if (reportAdditionalDiagnosticIfNoCandidates(context, name, kind, scopeTower, detailedReceiver)) {
+            if (reportAdditionalDiagnosticIfNoCandidates(context, nameToResolve, kind, scopeTower, detailedReceiver)) {
                 return OverloadResolutionResultsImpl.nameNotFound()
             }
         }
