@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
 import org.junit.Assert
@@ -151,5 +152,12 @@ class GradleInspectionTest : GradleImportingTestCase() {
         }
 
         return resultRef.get()
+    }
+
+
+    override fun invokeTestRunnable(runnable: Runnable) {
+        runInEdtAndWait {
+            runnable.run()
+        }
     }
 }
