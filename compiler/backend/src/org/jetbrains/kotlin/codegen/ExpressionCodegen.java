@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
-import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -4080,13 +4079,52 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         initializer.put(initializer.type, v);
 
         markLineNumber(variableDeclaration, false);
-
-        storeTo.storeSelector(initializer.type, v);
+        Type resultType = initializer.type;
 
         if (isDelegatedLocalVariable(variableDescriptor)) {
             StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
             initializePropertyMetadata((KtProperty) variableDeclaration, variableDescriptor, metadataValue);
+
+            ResolvedCall<FunctionDescriptor> toDelegateForResolvedCall = bindingContext.get(TO_DELEGATE_FOR_RESOLVED_CALL, variableDescriptor);
+            if (toDelegateForResolvedCall != null) {
+                resultType = generateToDelegateForCallForLocalVariable(initializer, metadataValue, toDelegateForResolvedCall);
+            }
         }
+
+        storeTo.storeSelector(resultType, v);
+
+    }
+
+    @NotNull
+    private Type generateToDelegateForCallForLocalVariable(
+            @NotNull StackValue initializer,
+            final StackValue metadataValue,
+            ResolvedCall<FunctionDescriptor> toDelegateForResolvedCall
+    ) {
+        StackValue toDelegateForReceiver = StackValue.onStack(initializer.type);
+
+        List<? extends ValueArgument> arguments = toDelegateForResolvedCall.getCall().getValueArguments();
+        assert arguments.size() == 2 :
+                "Resolved call for '" +
+                OperatorNameConventions.TO_DELEGATE_FOR.asString() +
+                "' should have exactly 2 value parameters";
+
+        tempVariables.put(arguments.get(0).asElement(), StackValue.constant(null, AsmTypes.OBJECT_TYPE));
+        tempVariables.put(
+                arguments.get(1).asElement(),
+                new StackValue(K_PROPERTY_TYPE) {
+                    @Override
+                    public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+                        metadataValue.put(type, v);
+                    }
+                }
+        );
+
+        StackValue result = invokeFunction(toDelegateForResolvedCall, toDelegateForReceiver);
+        result.put(result.type, v);
+        tempVariables.remove(arguments.get(0).asElement());
+        tempVariables.remove(arguments.get(1).asElement());
+        return result.type;
     }
 
     @NotNull
@@ -4305,7 +4343,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof CallableDescriptor) {
             return generateExtensionReceiver((CallableDescriptor) descriptor);
         }
-        throw new UnsupportedOperationException("Neither this nor receiver: " + descriptor);
+        throw new UnsupportedOperationException("Neither this nor receiver: " + descriptor + expression.getParent().getContainingFile().getText());
     }
 
     @Override

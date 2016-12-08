@@ -6049,6 +6049,24 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localCaptured.kt")
+            public void testLocalCaptured() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/localCaptured.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localDifferentReceivers.kt")
+            public void testLocalDifferentReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/localDifferentReceivers.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("memberExtension.kt")
             public void testMemberExtension() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/memberExtension.kt");

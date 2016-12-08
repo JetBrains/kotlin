@@ -6986,6 +6986,42 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/local.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("localCaptured.kt")
+            public void testLocalCaptured() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/localCaptured.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("localDifferentReceivers.kt")
+            public void testLocalDifferentReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/localDifferentReceivers.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
             @TestMetadata("memberExtension.kt")
             public void testMemberExtension() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/memberExtension.kt");
