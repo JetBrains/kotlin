@@ -775,14 +775,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateStringConcatenation(tmpVariableName: String, value: IrStringConcatenation): LLVMValueRef? {
         val stringPlus = KonanPlatform.builtIns.stringType.memberScope.getContributedFunctions(
                 Name.identifier("plus"), NoLookupLocation.FROM_BACKEND).first()
-        var res:LLVMValueRef? = null
         val strings:List<LLVMValueRef> = value.arguments.map {
             val descriptor = getToString(it.type)
 
             val args = listOf(evaluateExpression(codegen.newVar(), it)!!)
             return@map evaluateSimpleFunctionCall(codegen.newVar(), descriptor, args)
         }
-        val concatResult = strings.take(1).fold(strings.first()) {res, it -> evaluateSimpleFunctionCall(codegen.newVar(), stringPlus, listOf(res, it))}
+        val concatResult = strings.drop(1).fold(strings.first()) {res, it -> evaluateSimpleFunctionCall(codegen.newVar(), stringPlus, listOf(res, it))}
         return concatResult
     }
 
