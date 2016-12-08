@@ -36,6 +36,8 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     val context = Context(
             module, runtime, llvmModule, BindingContext.EMPTY) // TODO: dispose
 
+    KonanLower(context).lower(module)
+
     module.acceptVoid(RTTIGeneratorVisitor(context))
     println("\n--- Generate bitcode ------------------------------------------------------\n")
     module.acceptVoid(CodeGeneratorVisitor(context))
