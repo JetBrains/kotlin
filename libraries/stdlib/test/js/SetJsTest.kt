@@ -102,7 +102,7 @@ abstract class SetJsTest {
     }
 
     @Test
-    fun equals() {
+    fun equalsMethod() {
         assertNotEquals(createEmptyMutableSet(), data)
         assertNotEquals(data, empty)
         assertEquals(createEmptyMutableSet(), empty)
