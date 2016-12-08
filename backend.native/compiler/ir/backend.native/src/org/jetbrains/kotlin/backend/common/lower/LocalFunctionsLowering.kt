@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.AbstractClosureAnnotator
-import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.Closure
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -27,6 +24,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -42,9 +40,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LocalFunctionsLowering(val context: BackendContext): ClassLoweringPass {
-    override fun lower(irClass: IrClass) {
-        irClass.declarations.transformFlat { memberDeclaration ->
+class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerLoweringPass {
+    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
+        irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
                 LocalFunctionsTransformer(memberDeclaration).lowerLocalFunctions()
             else
