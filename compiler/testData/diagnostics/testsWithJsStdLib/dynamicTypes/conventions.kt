@@ -27,10 +27,8 @@ fun test(d: dynamic) {
     1 <!DEBUG_INFO_DYNAMIC!>!in<!> d
 
     <!DEBUG_INFO_DYNAMIC!>d[1]<!>
-    <!DEBUG_INFO_DYNAMIC!>d[1, 2]<!>
 
     <!DEBUG_INFO_DYNAMIC!>d[1]<!> = 2
-    <!DEBUG_INFO_DYNAMIC!>d[1, 2]<!> = 3
 
     <!DEBUG_INFO_DYNAMIC!>d[1]<!><!DEBUG_INFO_DYNAMIC!>++<!>
     <!DEBUG_INFO_DYNAMIC!>++<!><!DEBUG_INFO_DYNAMIC!>d[1]<!>
