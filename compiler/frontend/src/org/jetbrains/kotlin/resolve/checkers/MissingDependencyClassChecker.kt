@@ -62,7 +62,6 @@ object MissingDependencyClassChecker : CallChecker {
                 return INCOMPATIBLE_CLASS.on(reportOn, source.presentableFqName, incompatibility)
             }
             if (source.isPreReleaseInvisible) {
-                // TODO: if at least one PRE_RELEASE_CLASS is reported, display a hint to disable the diagnostic
                 return PRE_RELEASE_CLASS.on(reportOn, source.presentableFqName)
             }
         }
