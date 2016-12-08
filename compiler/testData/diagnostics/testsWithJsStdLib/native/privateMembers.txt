@@ -1,33 +1,29 @@
 package
 
-public final class C {
+public external final class C {
     public constructor C()
     private final val b: kotlin.String
     private final var c: kotlin.Float
     private final var d: kotlin.Float
     public final var e: kotlin.Float
-    private final val inline_prop: kotlin.Int
     private final fun a(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    private final inline fun inline_a(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public object O {
+public external object O {
     private constructor O()
     private final val b: kotlin.String
     private final var c: kotlin.Float
     private final var d: kotlin.Float
-    private final val inline_prop: kotlin.Int
     private final fun a(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    private final inline fun inline_a(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Outer {
+public external final class Outer {
     public constructor Outer()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -38,11 +34,9 @@ public final class Outer {
         private final val b: kotlin.String
         private final var c: kotlin.Float
         private final var d: kotlin.Float
-        private final val inline_prop: kotlin.Int
         private final fun a(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        private final inline fun inline_a(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 

@@ -17,10 +17,12 @@ external class C {
         get
         <!WRONG_EXTERNAL_DECLARATION!>private set<!>
 
+    /*
     private inline fun inline_a(): Int = 23
 
     private inline val inline_prop: Int
         get() = 42
+    */
 }
 
 external object O {
@@ -34,10 +36,12 @@ external object O {
         get
         set
 
+    /*
     private inline fun inline_a(): Int = 23
 
     private inline val inline_prop: Int
         get() = 42
+    */
 }
 
 external class Outer {
@@ -52,10 +56,12 @@ external class Outer {
             get
             set
 
+        /*
         private inline fun inline_a(): Int = 23
 
         private inline val inline_prop: Int
             get() = 42
+        */
     }
 
     private class <!WRONG_EXTERNAL_DECLARATION!>PrivateInner<!>
