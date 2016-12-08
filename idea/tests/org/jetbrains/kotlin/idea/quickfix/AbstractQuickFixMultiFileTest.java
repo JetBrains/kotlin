@@ -50,6 +50,7 @@ import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
@@ -64,6 +65,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzerTestCase {
 
@@ -445,8 +447,12 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
     @SuppressWarnings({"HardCodedStringLiteral"})
     public void doAction(String text, boolean actionShouldBeAvailable, String testFilePath) throws Exception {
+        Pattern pattern = text.startsWith("/")
+                          ? Pattern.compile(text.substring(1, text.length()-1))
+                          : Pattern.compile(StringUtil.escapeToRegexp(text));
+
         List<IntentionAction> availableActions = getAvailableActions();
-        IntentionAction action = LightQuickFixTestCase.findActionWithText(availableActions, text);
+        IntentionAction action = findActionByPattern(pattern, availableActions);
 
         if (action == null) {
             if (actionShouldBeAvailable) {
@@ -475,7 +481,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
             //noinspection ConstantConditions
             if (!shouldBeAvailableAfterExecution()) {
-                IntentionAction afterAction = LightQuickFixTestCase.findActionWithText(getAvailableActions(), text);
+                IntentionAction afterAction = findActionByPattern(pattern, getAvailableActions());
 
                 if (afterAction != null) {
                     fail("Action '" + text + "' is still available after its invocation in test " + testFilePath);
@@ -483,6 +489,17 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             }
         }
     }
+
+    @Nullable
+    private static IntentionAction findActionByPattern(Pattern pattern, List<IntentionAction> availableActions) {
+        for (IntentionAction availableAction : availableActions) {
+            if (pattern.matcher(availableAction.getText()).matches()) {
+                return availableAction;
+            }
+        }
+        return null;
+    }
+
 
     private List<IntentionAction> getAvailableActions() {
         doHighlighting();

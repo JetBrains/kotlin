@@ -1,5 +1,5 @@
 // FILE: bar/Foo.before.java
-// "Static import constant 'foo.Bar.foobar'" "true"
+// "/(Static import|Import static) constant 'foo.Bar.foobar'/" "true"
 // ERROR: Unresolved reference: foobar
 // ACTION: Rename reference
 // ACTION: Create field 'foobar'
@@ -24,7 +24,7 @@ object Bar {
 }
 
 // FILE: bar/Foo.after.java
-// "Static import constant 'foo.Bar.foobar'" "true"
+// "/(Static import|Import static) constant 'foo.Bar.foobar'/" "true"
 // ERROR: Unresolved reference: foobar
 // ACTION: Rename reference
 // ACTION: Create field 'foobar'
