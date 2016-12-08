@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.isUnboundCallableReference
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -8,6 +9,7 @@ internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
     return when {
         // Nullable types must be represented as objects for boxing.
         type.isMarkedNullable -> this.kObjHeaderPtr
+        type.isUnboundCallableReference() -> int8TypePtr
         KotlinBuiltIns.isBoolean(type) -> LLVMInt1Type()
         KotlinBuiltIns.isByte(type) -> LLVMInt8Type()
         KotlinBuiltIns.isShort(type) || KotlinBuiltIns.isChar(type) -> LLVMInt16Type()

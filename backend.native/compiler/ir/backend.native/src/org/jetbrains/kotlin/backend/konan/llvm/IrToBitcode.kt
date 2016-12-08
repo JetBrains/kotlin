@@ -4,6 +4,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -607,12 +608,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrTry                 -> return evaluateTry                (                 value)
             is IrStringConcatenation -> return evaluateStringConcatenation(tmpVariableName, value)
             is IrBlockBody           -> return evaluateBlock              (tmpVariableName, value as IrStatementContainer)
+            is IrComposite           -> return evaluateBlock              (tmpVariableName, value)
             is IrWhileLoop           -> return evaluateWhileLoop          (                 value)
             is IrDoWhileLoop         -> return evaluateDoWhileLoop        (                 value)
             is IrVararg              -> return evaluateVararg             (tmpVariableName, value)
             is IrBreak               -> return evaluateBreak              (                 value)
             is IrContinue            -> return evaluateContinue           (                 value)
             is IrGetObjectValue      -> return evaluateGetObjectValue     (tmpVariableName, value)
+            is IrCallableReference   -> return evaluateCallableReference  (tmpVariableName, value)
             null                     -> return null
             else                     -> {
                 TODO("${ir2string(value)}")
@@ -1549,13 +1552,52 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
+    private fun evaluateCallableReference(tmpVariableName: String, expression: IrCallableReference): LLVMValueRef {
+        assert (expression.type.isUnboundCallableReference())
+        assert (expression.getArguments().isEmpty())
+        val entry = codegen.functionEntryPointAddress(expression.descriptor as FunctionDescriptor)
+        return entry
+    }
+
+    //-------------------------------------------------------------------------//
+
     private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
         when (descriptor) {
+            is FunctionInvokeDescriptor        -> return evaluateFunctionInvoke    (tmpVariableName, descriptor, args)
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (tmpVariableName, callee,     args)
             is ClassConstructorDescriptor      -> return evaluateConstructorCall   (tmpVariableName, callee,     args)
             else                               -> return evaluateSimpleFunctionCall(tmpVariableName, descriptor, args)
         }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private val functionImplUnboundRefGetter by lazy {
+        context.builtIns.getKonanInternalClass("FunctionImpl")
+                .unsubstitutedMemberScope.getContributedDescriptors()
+                .filterIsInstance<PropertyDescriptor>()
+                .single { it.name.asString() == "unboundRef" }
+                .getter!!
+    }
+
+    private fun evaluateFunctionInvoke(tmpVariableName: String,
+                                       descriptor: FunctionInvokeDescriptor,
+                                       args: List<LLVMValueRef>): LLVMValueRef {
+
+        // Note: the whole function code below is written in the assumption that
+        // `invoke` method receiver is passed as first argument.
+
+        val functionImpl = args[0]
+
+        val unboundRefType = codegen.getLlvmFunctionType(descriptor)
+
+        val unboundRef = evaluateSimpleFunctionCall(codegen.newVar(),
+                functionImplUnboundRefGetter, listOf(functionImpl))
+
+        val entryPtr = codegen.bitcast(pointerType(unboundRefType), unboundRef, "entry")
+
+        return call(descriptor, entryPtr, args, tmpVariableName)
     }
 
     //-------------------------------------------------------------------------//

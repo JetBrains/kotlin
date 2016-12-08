@@ -154,6 +154,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction)
 
     fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction
+    fun functionEntryPointAddress(descriptor: FunctionDescriptor) = descriptor.entryPointAddress.llvm
     fun functionHash(descriptor: FunctionDescriptor): LLVMValueRef = descriptor.functionName.localHash.llvm
 
     fun br(bbLabel: LLVMBasicBlockRef): LLVMValueRef {
