@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.kotlin.KtNodeTypes.SELF_TYPE;
-
 public interface KtStubElementTypes {
     KtFileElementType FILE = new KtFileElementType();
 
@@ -124,7 +122,7 @@ public interface KtStubElementTypes {
 
     TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
 
-    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, SELF_TYPE);
+    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE);
 
     TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 }
