@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import java.util.*
 
 
-class PlainTextPasteImportResolver(dataForConversion: DataForConversion, val targetFile: KtFile) {
+class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val targetFile: KtFile) {
 
     private val file = dataForConversion.file
     private val project = targetFile.project
@@ -91,21 +91,22 @@ class PlainTextPasteImportResolver(dataForConversion: DataForConversion, val tar
 
                 if (importPath.isAllUnder) {
                     if (isClassReceiver)
-                        psiElementFactory.createImportStaticStatement(receiver as PsiClass, "*")
+                        addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, "*"))
                     else if (isPackageReceiver)
-                        psiElementFactory.createImportStatementOnDemand((receiver as PsiPackage).qualifiedName)
+                        addImport(psiElementFactory.createImportStatementOnDemand((receiver as PsiPackage).qualifiedName))
                 }
                 else {
-                    if (isPackageReceiver && isClassSelector)
-                        psiElementFactory.createImportStatement(selector as PsiClass)
+                    if (isClassSelector)
+                        addImport(psiElementFactory.createImportStatement(selector as PsiClass))
                     else if (isClassReceiver)
-                        psiElementFactory.createImportStaticStatement(receiver as PsiClass, importPath.importedName!!.asString())
+                        addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, importPath.importedName!!.asString()))
                 }
             }
         }
-        runWriteAction {
-            targetFile.importDirectives.forEach(::tryConvertKotlinImport)
-        }
+        if (importList !in dataForConversion.elementsAndTexts.toList())
+            runWriteAction {
+                targetFile.importDirectives.forEach(::tryConvertKotlinImport)
+            }
     }
 
     fun tryResolveReferences() {
@@ -163,7 +164,7 @@ class PlainTextPasteImportResolver(dataForConversion: DataForConversion, val tar
         }
 
         runWriteAction {
-            elementsWithUnresolvedRef.forEach {
+            elementsWithUnresolvedRef.reversed().forEach {
                 val reference = it.reference as PsiQualifiedReference
                 if (!tryResolveReference(reference)) failedToResolveReferenceNames += reference.referenceName!!
             }

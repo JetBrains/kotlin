@@ -1,9 +1,9 @@
-import java.util.ArrayList
+import test.ToBeImportedJava.staticMethod
+import test.ToBeImportedJava.TO_BE_IMPORTED_CONST
 import test.ToBeImportedJava
 import test.ToBeImportedKotlin
 import java.util.HashMap
-import test.ToBeImportedJava.TO_BE_IMPORTED_CONST
-import test.ToBeImportedJava.staticMethod
+import java.util.ArrayList
 
 class Target {
     var listOfPlatformType: List<String> = ArrayList()

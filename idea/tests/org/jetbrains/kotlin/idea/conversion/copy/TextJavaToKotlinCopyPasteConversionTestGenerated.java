@@ -48,6 +48,12 @@ public class TextJavaToKotlinCopyPasteConversionTestGenerated extends AbstractTe
         doTest(fileName);
     }
 
+    @TestMetadata("ImportFromTarget.txt")
+    public void testImportFromTarget() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/ImportFromTarget.txt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImportResolve.txt")
     public void testImportResolve() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/ImportResolve.txt");
