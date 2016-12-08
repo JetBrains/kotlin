@@ -128,8 +128,8 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: return
 
         val apOptions = (configuration.get(APT_OPTIONS) ?: listOf())
-                .map { it.split(':') }
-                .filter { it.isNotEmpty() && it.size <= 2 }
+                .map { it.split(':', limit = 2) }
+                .filter { it.isNotEmpty() }
                 .map { it[0] to it.getOrElse(1) { "" } }
                 .toMap()
 
