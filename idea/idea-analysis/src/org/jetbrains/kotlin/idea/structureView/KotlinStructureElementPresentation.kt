@@ -79,6 +79,10 @@ internal class KotlinStructureElementPresentation(
             return KotlinDescriptorIconProvider.getIcon(descriptor, navigatablePsiElement, Iconable.ICON_FLAG_VISIBILITY)
         }
 
+        if (!navigatablePsiElement.isValid) {
+            return null
+        }
+
         return PsiIconUtil.getProvidersIcon(navigatablePsiElement, Iconable.ICON_FLAG_VISIBILITY)
     }
 
