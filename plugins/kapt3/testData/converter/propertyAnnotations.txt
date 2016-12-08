@@ -1,0 +1,21 @@
+public abstract @interface Anno {
+}
+
+////////////////////
+
+
+public final class Test {
+    private final java.lang.String prop = "A";
+
+    @Anno()
+    private static final void prop$annotations() {
+    }
+
+    public final java.lang.String getProp() {
+        return null;
+    }
+
+    public Test() {
+        super();
+    }
+}

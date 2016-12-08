@@ -12,6 +12,9 @@ public final class Test {
 
     public static final class A {
 
+        private static final void test$annotations() {
+        }
+
         public final java.lang.String getTest() {
             return null;
         }

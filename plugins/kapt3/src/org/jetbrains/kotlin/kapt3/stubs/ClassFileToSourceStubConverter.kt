@@ -218,8 +218,13 @@ class ClassFileToSourceStubConverter(
     }
 
     private fun convertMethod(method: MethodNode, containingClass: ClassNode, packageFqName: String): JCMethodDecl? {
-        if (isSynthetic(method.access)) return null
         val descriptor = kaptContext.origins[method]?.descriptor as? CallableDescriptor ?: return null
+
+        val isAnnotationHolderForProperty = descriptor is PropertyDescriptor && isSynthetic(method.access)
+                                            && isPrivate(method.access) && isStatic(method.access) && isFinal(method.access)
+                                            && method.name.endsWith("\$annotations")
+
+        if (isSynthetic(method.access) && !isAnnotationHolderForProperty) return null
 
         val isOverridden = descriptor.overriddenDescriptors.isNotEmpty()
         val visibleAnnotations = if (isOverridden) {

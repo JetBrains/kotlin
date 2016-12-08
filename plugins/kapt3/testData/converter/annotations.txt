@@ -71,6 +71,10 @@ public final class TestAnno2 {
     java.lang.String param) {
     }
 
+    @Anno3(value = "property")
+    private static final void b$annotations() {
+    }
+
     @Anno3(value = "getter")
     public final java.lang.String getB() {
         return null;

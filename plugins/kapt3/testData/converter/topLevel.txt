@@ -38,6 +38,10 @@ public final class TopLevelKt {
     java.lang.String b) {
     }
 
+    @Anno(value = "extpr")
+    private static final void extensionProperty$annotations(java.lang.Object p0) {
+    }
+
     public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@Anno(value = "propRec")
     T $receiver) {
         return null;
