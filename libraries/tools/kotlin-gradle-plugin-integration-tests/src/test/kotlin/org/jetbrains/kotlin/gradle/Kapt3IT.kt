@@ -106,6 +106,8 @@ class Kapt3IT : BaseGradleIT() {
         Project("arguments", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
+            assertContains("Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
+                    "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, endsWithEquals=a:}")
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassCustomized.class")

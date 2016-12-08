@@ -23,5 +23,13 @@ dependencies {
 kapt {
     arguments {
         arg("suffix", "Customized")
+        arg("justColon", ":")
+        arg("justEquals", "=")
+        arg("containsColon", "a:b")
+        arg("containsEquals", "a=b")
+        arg("startsWithColon", ":a")
+        arg("startsWithEquals", "=a")
+        arg("endsWithColon", "a:")
+        arg("endsWithEquals", "a:")
     }
 }
