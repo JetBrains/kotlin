@@ -37,35 +37,6 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.lang.reflect.Method
 import java.util.*
 
-// TODO used reflection to be compatible with IDEA from both 143 and 144 branches,
-// TODO switch to directly using when "since-build" will be >= 144.3357.4
-private val getRelatedProductionModule: (Module) -> Module? = run {
-    val klass =
-            try {
-                Class.forName("com.intellij.openapi.roots.TestModuleProperties")
-            } catch (e: ClassNotFoundException) {
-                return@run alwaysNull()
-            }
-
-
-    val getInstanceMethod: Method
-    val getProductionModuleMethod: Method
-
-    try {
-        getInstanceMethod = klass.getDeclaredMethod("getInstance", Module::class.java)
-        getProductionModuleMethod = klass.getDeclaredMethod("getProductionModule")
-    }
-    catch (e: NoSuchMethodException) {
-        return@run alwaysNull()
-    }
-
-    return@run { module ->
-        getInstanceMethod(null, module)?.let {
-            getProductionModuleMethod(it) as Module?
-        }
-    }
-}
-
 interface IdeaModuleInfo : ModuleInfo {
     fun contentScope(): GlobalSearchScope
 
@@ -153,7 +124,7 @@ data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo 
     override fun modulesWhoseInternalsAreVisible() = module.cached(CachedValueProvider {
         val list = SmartList<ModuleInfo>(module.productionSourceInfo())
 
-        getRelatedProductionModule(module)?.let {
+        TestModuleProperties.getInstance(module).productionModule?.let {
             list.add(it.productionSourceInfo())
         }
 
