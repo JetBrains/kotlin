@@ -26,6 +26,10 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     val builtIns: KotlinBuiltIns
 
+    val platformKind: PlatformKind
+
+    val sourceKind: SourceKind
+
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 
     override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {

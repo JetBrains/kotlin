@@ -48,10 +48,7 @@ import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.SimpleGlobalContext;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.PackagePartProvider;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.*;
@@ -562,7 +559,9 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
                 ? Collections.emptyMap()
                 : Collections.singletonMap(MultiTargetPlatform.CAPABILITY, platform);
         return new ModuleDescriptorImpl(
-                Name.special("<" + moduleName + ">"), storageManager, new JvmBuiltIns(storageManager), capabilities
+                Name.special("<" + moduleName + ">"), storageManager, new JvmBuiltIns(storageManager),
+                platform == MultiTargetPlatform.Common.INSTANCE ? PlatformKind.DEFAULT : PlatformKind.JVM,
+                SourceKind.TEST, capabilities
         );
     }
 

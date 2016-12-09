@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.PlatformKind
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -29,4 +30,8 @@ object JsPlatform : TargetPlatform("JS") {
 
     val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
+
+    override val kind: PlatformKind
+        get() = PlatformKind.JS
+
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.descriptors.PlatformKind
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -47,4 +48,7 @@ object JvmPlatform : TargetPlatform("JVM") {
     }
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
+
+    override val kind: PlatformKind
+        get() = PlatformKind.JVM
 }

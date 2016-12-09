@@ -49,6 +49,18 @@ public class ErrorUtils {
     private static final ModuleDescriptor ERROR_MODULE;
     static {
         ERROR_MODULE = new ModuleDescriptor() {
+            @NotNull
+            @Override
+            public PlatformKind getPlatformKind() {
+                return PlatformKind.DEFAULT;
+            }
+
+            @NotNull
+            @Override
+            public SourceKind getSourceKind() {
+                return SourceKind.NONE;
+            }
+
             @Nullable
             @Override
             public <T> T getCapability(@NotNull Capability<T> capability) {

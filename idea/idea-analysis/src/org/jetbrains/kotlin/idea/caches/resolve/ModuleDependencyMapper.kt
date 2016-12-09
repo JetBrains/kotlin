@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
+import org.jetbrains.kotlin.descriptors.PlatformKind
+import org.jetbrains.kotlin.descriptors.SourceKind
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.psi.KtFile
@@ -72,7 +75,19 @@ fun createModuleResolverProvider(
                 debugName, globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
                 jvmPlatformParameters, IdeaEnvironment, builtIns,
                 delegateResolver, { m, c -> IDEPackagePartProvider(c.moduleContentScope) },
-                sdk?.let { SdkInfo(project, it) }
+                sdk?.let { SdkInfo(project, it) },
+                modulePlatforms = { moduleInfo ->
+                    val module = (moduleInfo as? ModuleSourceInfo)?.module
+                    module?.let { TargetPlatformDetector.getPlatform(module).kind } ?: PlatformKind.DEFAULT
+                },
+                moduleSources = { moduleInfo ->
+                    when (moduleInfo) {
+                        is ModuleProductionSourceInfo -> SourceKind.PRODUCTION
+                        is ModuleTestSourceInfo -> SourceKind.TEST
+                        else -> SourceKind.NONE
+                    }
+                }
+
         )
         return resolverForProject
     }
