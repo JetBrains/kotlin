@@ -18,7 +18,7 @@
 internal abstract class BaseOutput {
     @JsName("println")
     open fun println(a: Any?) {
-        if (js("typeof a") !== "undefined") {
+        if (jsTypeOf(a) != "undefined") {
             print(a)
         }
         print("\n")
@@ -43,7 +43,7 @@ internal class OutputToConsoleLog : BaseOutput() {
     }
 
     override fun println(a: Any?) {
-        console.log(if (js("typeof a") !== "undefined") a else "")
+        console.log(if (jsTypeOf(a) != "undefined") a else "")
     }
 }
 
@@ -85,4 +85,4 @@ internal var `out` = {
     if (isNode) NodeJsOutput(js("process.stdout")) else BufferedOutputToConsoleLog()
 }()
 
-private inline fun String(value: Any?): String = js("String(value)")
+private inline fun String(value: Any?): String = js("String")(value)

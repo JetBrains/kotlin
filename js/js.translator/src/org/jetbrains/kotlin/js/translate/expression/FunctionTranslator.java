@@ -149,7 +149,7 @@ public final class FunctionTranslator extends AbstractTranslator {
                 jsParameters.add(new JsParameter(paramNameForType));
 
                 String suggestedName = Namer.isInstanceSuggestedName(type);
-                JsName paramName = functionObject.getScope().declareName(suggestedName);
+                JsName paramName = functionObject.getScope().declareTemporaryName(suggestedName);
                 jsParameters.add(new JsParameter(paramName));
                 aliases.put(type, paramName.makeRef());
             }

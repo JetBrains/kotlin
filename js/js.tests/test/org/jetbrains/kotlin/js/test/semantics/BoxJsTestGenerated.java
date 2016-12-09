@@ -3788,18 +3788,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("jsCode.kt")
-        public void testJsCode() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/jsCode.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jsCodeVarDeclared.kt")
-        public void testJsCodeVarDeclared() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/jsCodeVarDeclared.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("lambdaInLambda.kt")
         public void testLambdaInLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/lambdaInLambda.kt");
@@ -5575,6 +5563,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/propertyAndNativeMethod.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("topLevelFunctionAndParameter.kt")
+        public void testTopLevelFunctionAndParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/topLevelFunctionAndParameter.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/native")
@@ -5654,6 +5648,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("inheritanceInNativeClass.kt")
         public void testInheritanceInNativeClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/inheritanceInNativeClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsTypeOf.kt")
+        public void testJsTypeOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/jsTypeOf.kt");
             doTest(fileName);
         }
 

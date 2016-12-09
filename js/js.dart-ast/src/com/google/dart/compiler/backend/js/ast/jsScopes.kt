@@ -95,7 +95,7 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsScope(paren
                 "eval", "arguments",
 
                 // global identifiers usually declared in a typical JS interpreter
-                "NaN", "Infinity", "undefined",
+                "NaN", "isNaN", "Infinity", "undefined",
                 "Error", "Object", "Math", "String", "Number", "Boolean", "Date", "Array", "RegExp", "JSON",
 
                 // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)

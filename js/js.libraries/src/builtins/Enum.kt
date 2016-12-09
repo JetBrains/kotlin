@@ -30,7 +30,7 @@ public class Enum<T : Enum<T>> : Comparable<Enum<T>> {
 
     override fun equals(other: Any?) = this === other
 
-    override fun hashCode(): Int = js("Kotlin.identityHashCode(this)")
+    override fun hashCode(): Int = js("Kotlin.identityHashCode")(this)
 
     override fun toString() = name
 

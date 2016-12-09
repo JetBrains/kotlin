@@ -369,7 +369,9 @@ public final class StaticContext {
             JsName name = nameCache.get(suggested.getDescriptor());
             if (name == null) {
                 String baseName = suggested.getNames().get(0);
-                if (suggested.getDescriptor() instanceof LocalVariableDescriptor) {
+                if (suggested.getDescriptor() instanceof LocalVariableDescriptor ||
+                    suggested.getDescriptor() instanceof ValueParameterDescriptor
+                ) {
                     name = scope.declareTemporaryName(baseName);
                 }
                 else {

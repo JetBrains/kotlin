@@ -270,6 +270,7 @@
         return cache.value;
     }
 
+    Kotlin.jsTypeOf = function(a) { return typeof a; };
 
 ////////////////////////////////// packages & modules //////////////////////////////
 

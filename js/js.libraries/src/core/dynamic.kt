@@ -30,7 +30,7 @@ public operator fun dynamic.iterator(): Iterator<dynamic> {
     return when {
         this["iterator"] != null ->
             this["iterator"]()
-        js("Array.isArray(r)") ->
+        js("Array").isArray(r) ->
             r.unsafeCast<Array<*>>().iterator()
 
         else ->
