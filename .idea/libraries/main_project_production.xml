@@ -69,6 +69,8 @@
       <root url="file://$PROJECT_DIR$/../out/production/allopen-ide" />
       <root url="file://$PROJECT_DIR$/../out/production/noarg-ide" />
       <root url="file://$PROJECT_DIR$/../out/production/noarg-cli" />
+      <root url="file://$PROJECT_DIR$/../out/production/sam-with-receiver-cli" />
+      <root url="file://$PROJECT_DIR$/../out/production/sam-with-receiver-ide" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
