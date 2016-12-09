@@ -1,6 +1,6 @@
 public abstract interface EntryHolder {
 
-    public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> entry(java.util.Map.Entry<? extends java.lang.CharSequence, ? extends java.util.Map.Entry<java.lang.String, java.lang.Integer>> p);
+    public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> entry(java.util.Map.Entry<? extends java.lang.CharSequence, ? extends java.util.Map.Entry<java.lang.String, java.lang.Integer>> p0);
 
     public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> getEntryProperty();
 }

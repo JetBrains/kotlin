@@ -1,8 +1,8 @@
 public abstract class Base {
 
-    protected abstract void doJob(java.lang.String job, int delay);
+    protected abstract void doJob(java.lang.String p0, int p1);
 
-    protected abstract <T extends java.lang.CharSequence>void doJobGeneric(T job, int delay);
+    protected abstract <T extends java.lang.CharSequence>void doJobGeneric(T p0, int p1);
 
     public Base() {
         super();
