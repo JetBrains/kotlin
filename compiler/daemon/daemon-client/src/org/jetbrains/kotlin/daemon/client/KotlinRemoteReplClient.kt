@@ -106,6 +106,7 @@ class KotlinRemoteReplCompiler(
     }
 }
 
+// TODO: consider removing daemon eval completely - it is not required now and has questionable security. This will simplify daemon interface as well
 class KotlinRemoteReplEvaluator(
         disposable: Disposable,
         compileService: CompileService,
@@ -137,6 +138,8 @@ class KotlinRemoteReplEvaluator(
         port = port,
         operationsTracer = operationsTracer
 ), ReplEvaluator {
+
+    override val lastEvaluatedScript: ClassWithInstance? = null // not implemented, no need so far
 
     // TODO: invokeWrapper is ignored here, and in the daemon the session wrapper is used instead; So consider to make it per call (avoid performance penalties though)
     override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, invokeWrapper: InvokeWrapper?): ReplEvalResult {

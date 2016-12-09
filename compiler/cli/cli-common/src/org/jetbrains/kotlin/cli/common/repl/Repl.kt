@@ -28,6 +28,8 @@ data class ReplCodeLine(val no: Int, val code: String) : Serializable {
     }
 }
 
+data class ClassWithInstance(val klass: KClass<*>, val instance: Any)
+
 // TODO: consider storing code hash where source is not needed
 
 data class CompiledClassData(val path: String, val bytes: ByteArray) : Serializable {
@@ -73,22 +75,6 @@ sealed class ReplCompileResult(val updatedHistory: List<ReplCodeLine>) : Seriali
     }
 }
 
-sealed class ReplScriptInvokeResult : Serializable {
-    class ValueResult(val value: Any?) : ReplScriptInvokeResult() {
-        override fun toString(): String = "Result: $value"
-    }
-    object UnitResult : ReplScriptInvokeResult()
-    sealed class Error(val message: String) : ReplScriptInvokeResult() {
-        class Runtime(message: String, val cause: Exception? = null) : Error(message)
-        class NoSuchEntity(message: String) : Error(message)
-        class CompileTime(message: String, val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(message)
-        override fun toString(): String = "${this::class.simpleName}Error(message = \"$message\""
-    }
-    companion object {
-        private val serialVersionUID: Long = 8228357578L
-    }
-}
-
 sealed class ReplEvalResult(val updatedHistory: List<ReplCodeLine>) : Serializable {
     class ValueResult(updatedHistory: List<ReplCodeLine>, val value: Any?) : ReplEvalResult(updatedHistory) {
         override fun toString(): String = "Result: $value"
@@ -117,19 +103,11 @@ interface ReplCompiler : ReplChecker {
     fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult
 }
 
-interface ReplScriptInvoker {
-    fun <T: Any> getInterface(clasz: KClass<T>): ReplScriptInvokeResult
-    fun <T: Any> getInterface(receiver: Any, clasz: KClass<T>): ReplScriptInvokeResult
-    fun invokeMethod(receiver: Any, name: String, vararg args: Any?, invokeWrapper: InvokeWrapper? = null): ReplScriptInvokeResult
-    fun invokeFunction(name: String, vararg args: Any?, invokeWrapper: InvokeWrapper? = null): ReplScriptInvokeResult
+interface ReplEvaluatorBase {
+    val lastEvaluatedScript: ClassWithInstance?
 }
 
-// TODO this is a bit cumbersome, consider some other ways to access an invoker
-interface ReplScriptInvokerProxy {
-    val scriptInvoker: ReplScriptInvoker
-}
-
-interface ReplCompiledEvaluator {
+interface ReplCompiledEvaluator : ReplEvaluatorBase {
 
     fun eval(codeLine: ReplCodeLine,
              history: List<ReplCodeLine>,
@@ -141,7 +119,7 @@ interface ReplCompiledEvaluator {
 }
 
 
-interface ReplEvaluator : ReplChecker {
+interface ReplEvaluator : ReplChecker, ReplEvaluatorBase {
 
     fun eval(codeLine: ReplCodeLine,
              history: List<ReplCodeLine>,

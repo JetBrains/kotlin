@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
-import java.io.File
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
+import java.io.File
 
 private val logger = Logger.getInstance(GenericRepl::class.java)
 
@@ -184,11 +184,11 @@ open class GenericRepl(
         baseClassloader: ClassLoader?,
         scriptArgs: Array<Any?>? = null,
         scriptArgsTypes: Array<Class<*>>? = null
-) : ReplEvaluator, ReplScriptInvokerProxy, GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector) {
+) : ReplEvaluator, GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector) {
 
     private val compiledEvaluator = GenericReplCompiledEvaluator(compilerConfiguration.jvmClasspathRoots, baseClassloader, scriptArgs, scriptArgsTypes)
 
-    override val scriptInvoker: ReplScriptInvoker get() = compiledEvaluator
+    override val lastEvaluatedScript: ClassWithInstance? get() = compiledEvaluator.lastEvaluatedScript
 
     @Synchronized
     override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, invokeWrapper: InvokeWrapper?): ReplEvalResult =

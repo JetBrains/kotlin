@@ -51,9 +51,8 @@ class KotlinJsr223JvmLocalScriptEngine(
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
     val localEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
 
-    override val replScriptInvoker: ReplScriptInvoker get() = localEvaluator
-
     override val replEvaluator: ReplCompiledEvaluator get() = localEvaluator
+    override val replScriptEvaluator: ReplEvaluatorBase get() = localEvaluator
 
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)

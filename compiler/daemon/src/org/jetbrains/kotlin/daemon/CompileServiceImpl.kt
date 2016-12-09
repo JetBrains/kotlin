@@ -324,7 +324,7 @@ class CompileServiceImpl(
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
         else {
             val disposable = Disposer.newDisposable()
-            val repl = KotlinJvmReplService(disposable, templateClasspath, templateClassName, scriptArgs, scriptArgsTypes, compilerMessagesOutputStream, evalOutputStream, evalErrorStream, evalInputStream, operationsTracer)
+            val repl = KotlinJvmReplService(disposable, templateClasspath, templateClassName, scriptArgs, scriptArgsTypes, compilerMessagesOutputStream, operationsTracer)
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
 
             CompileService.CallResult.Good(sessionId)

@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.cli.jvm.repl.compileAndEval
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.RemoteInputStream
 import org.jetbrains.kotlin.daemon.common.RemoteOperationsTracer
 import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
-import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -45,9 +43,6 @@ open class KotlinJvmReplService(
         scriptArgs: Array<Any?>?,
         scriptArgsTypes: Array<Class<*>>?,
         compilerOutputStreamProxy: RemoteOutputStream,
-        evalOutputStream: RemoteOutputStream?,
-        evalErrorStream: RemoteOutputStream?,
-        evalInputStream: RemoteInputStream?,
         val operationsTracer: RemoteOperationsTracer?
 ) : ReplCompiler, ReplEvaluator {
 
@@ -115,31 +110,11 @@ open class KotlinJvmReplService(
         else GenericReplCompiler(disposable, scriptDef, configuration, messageCollector)
     }
 
-    private val invokeWrapper : InvokeWrapper? by lazy {
-        if (evalOutputStream == null && evalErrorStream == null && evalInputStream == null) null
-        else object : InvokeWrapper {
-            val out = evalOutputStream?.let { PrintStream(BufferedOutputStream(RemoteOutputStreamClient(it, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE)) }
-            val err = evalErrorStream?.let { PrintStream(BufferedOutputStream(RemoteOutputStreamClient(it, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE)) }
-            val `in` = evalInputStream?.let { BufferedInputStream(RemoteInputStreamClient(it, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE) }
-            override operator fun<T> invoke(body: () -> T): T {
-                val prevOut = swapOrNull(out, { System.out }, { System.setOut(it) })
-                val prevErr = swapOrNull(err, { System.err }, { System.setErr(it) })
-                val prevIn = swapOrNull(`in`, { System.`in` }, { System.setIn(it) })
-                try {
-                    return body()
-                }
-                finally {
-                    prevIn?.let { System.setIn(prevIn) }
-                    prevErr?.let { System.setErr(prevErr) }
-                    prevOut?.let { System.setOut(prevOut) }
-                }
-            }
-        }
-    }
-
     private val compiledEvaluator : GenericReplCompiledEvaluator by lazy {
         GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, scriptArgs, scriptArgsTypes)
     }
+
+    override val lastEvaluatedScript: ClassWithInstance? get() = compiledEvaluator.lastEvaluatedScript
 
     override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
         operationsTracer?.before("check")
@@ -180,10 +155,3 @@ open class KotlinJvmReplService(
         }
     }
 }
-
-private inline fun<T> swapOrNull(value: T?, get: () -> T, set: (T) -> Unit): T? =
-        value?.let {
-            val prevValue = get()
-            set(value)
-            prevValue
-        }
