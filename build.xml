@@ -874,7 +874,7 @@
             </withKotlin>
             <skip pattern="kotlin/Metadata"/>
             <src>
-                <pathelement path="plugins/sam-with-receiver/src"/>
+                <pathelement path="plugins/sam-with-receiver/sam-with-receiver-cli/src"/>
             </src>
             <classpath>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
@@ -885,7 +885,7 @@
         <jar destfile="${kotlin-home}/lib/sam-with-receiver-compiler-plugin.jar">
             <fileset dir="${output}/classes/sam-with-receiver-compiler-plugin"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <fileset dir="${basedir}/plugins/sam-with-receiver/src" includes="META-INF/services/**"/>
+            <fileset dir="${basedir}/plugins/sam-with-receiver/sam-with-receiver-cli/src" includes="META-INF/services/**"/>
         </jar>
     </target>
     
