@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.lang.reflect.Method
 import java.util.*
 
-private val LIBRARY_NAME_PREFIX: String = "library "
-
 // TODO used reflection to be compatible with IDEA from both 143 and 144 branches,
 // TODO switch to directly using when "since-build" will be >= 144.3357.4
 private val getRelatedProductionModule: (Module) -> Module? = run {
@@ -210,7 +208,7 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
-    override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${library.name}>")
+    override val name: Name = Name.special("<library ${library.name}>")
 
     override fun contentScope(): GlobalSearchScope = LibraryWithoutSourceScope(project, library)
 
@@ -266,7 +264,7 @@ data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
-    override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${sdk.name}>")
+    override val name: Name = Name.special("<sdk ${sdk.name}>")
 
     override fun contentScope(): GlobalSearchScope = SdkScope(project, sdk)
 
