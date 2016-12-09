@@ -13426,30 +13426,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("resolveToModWhenNoOperatorRemFeature.kt")
-            public void testResolveToModWhenNoOperatorRemFeature() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/resolveToModWhenNoOperatorRemFeature.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("remAndRemAssignAmbiguity.kt")
-            public void testRemAndRemAssignAmbiguity() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/remAndRemAssignAmbiguity.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("remWithModAndModAssign.kt")
-            public void testRemWithModAndModAssign() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/remWithModAndModAssign.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("remWithModAssign.kt")
-            public void testRemWithModAssign() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/remWithModAssign.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("resolveModIfRemIsHidden.kt")
             public void testResolveModIfRemIsHidden() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/resolveModIfRemIsHidden.kt");
