@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-private val SCRIPT_NAME_PREFIX: String = "script "
-
 class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
     override fun equals(other: Any?) = other is ScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
 
@@ -48,7 +46,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
         KotlinScriptExternalImportsProvider.getInstance(project)?.getExternalImports(scriptFile)
     }
 
-    override val name: Name = Name.special("<$SCRIPT_NAME_PREFIX${scriptDefinition.name}>")
+    override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
 
     override fun contentScope() = GlobalSearchScope.fileScope(project, scriptFile)
 
