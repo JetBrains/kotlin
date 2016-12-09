@@ -19,8 +19,8 @@ class Sample
 operator fun Sample.rem(x: Int) {}
 
 class IntAndUnit {
-    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int): Int = 0
-    operator fun rem(x: Int) {}
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int) = 0
+    operator fun rem(x: Int): Int = 0
 }
 
 fun test() {
@@ -29,7 +29,7 @@ fun test() {
     OnlyNew() % 1
     Sample() % 1
 
-    takeInt(<!TYPE_MISMATCH!>IntAndUnit() % 1<!>)
+    takeInt(IntAndUnit() % 1)
 }
 
 fun takeInt(x: Int) {}

@@ -9,8 +9,16 @@ class Bar {
     <!UNSUPPORTED_FEATURE!>operator<!> fun remAssign(x: Int) {}
 }
 
-fun baz() {
-    val f = Foo() % 1
-    val b = Bar()
-    b %= 1
+class Baz {
+    companion object {
+        <!UNSUPPORTED_FEATURE!>operator<!> fun rem(x: Int) {}
+        <!UNSUPPORTED_FEATURE!>operator<!> fun Int.rem(x: Int) {}
+    }
+}
+
+<!UNSUPPORTED_FEATURE!>operator<!> fun Baz.rem(x: Int) {}
+
+fun local() {
+    <!UNSUPPORTED_FEATURE!>operator<!> fun Int.rem(x: Int) {}
+    <!UNSUPPORTED_FEATURE!>operator<!> fun String.remAssign(x: Int) {}
 }

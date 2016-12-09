@@ -37,5 +37,5 @@ fun test() {
     sample %= 1
 
     var modAndRemAssign = ModAndRemAssign()
-    modAndRemAssign <!ASSIGN_OPERATOR_AMBIGUITY!>%=<!> 1
+    modAndRemAssign %= 1
 }
