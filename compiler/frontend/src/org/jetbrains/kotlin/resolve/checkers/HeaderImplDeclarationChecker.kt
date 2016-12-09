@@ -92,7 +92,8 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(reportOn, descriptor, incompatibility))
+            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(
+                    reportOn, descriptor, moduleToCheck ?: descriptor.module, incompatibility))
         }
     }
 

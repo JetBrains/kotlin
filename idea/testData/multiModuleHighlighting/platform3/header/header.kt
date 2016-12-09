@@ -1,3 +1,3 @@
-header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] No implementation is found for header declaration 'My'"><error descr="[HEADER_WITHOUT_IMPLEMENTATION] No implementation is found for header declaration 'My'">My</error></error> {
+header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'My' has no implementation in module for JS"><error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'My' has no implementation in module for JVM">My</error></error> {
 
 }

@@ -510,9 +510,9 @@ public interface Errors {
     DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory2<KtDeclaration, MemberDescriptor,
+    DiagnosticFactory3<KtDeclaration, MemberDescriptor, ModuleDescriptor,
             Map<HeaderImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>> HEADER_WITHOUT_IMPLEMENTATION =
-            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE);
+            DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<PsiElement> IMPLEMENTATION_WITHOUT_HEADER = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

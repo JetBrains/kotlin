@@ -75,6 +75,10 @@ object Renderers {
 
     @JvmField val NAME = Renderer<Named> { it.name.asString() }
 
+    @JvmField val PLATFORM = Renderer<ModuleDescriptor> {
+        if (it.platformKind == PlatformKind.DEFAULT) "" else "for " + it.platformKind.name
+    }
+
     @JvmField val VISIBILITY = Renderer<Visibility> {
         if (it == Visibilities.INVISIBLE_FAKE)
             "invisible (private in a supertype)"
