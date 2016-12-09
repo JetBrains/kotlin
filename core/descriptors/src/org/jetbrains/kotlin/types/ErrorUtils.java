@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
 import static kotlin.collections.CollectionsKt.emptyList;
 import static kotlin.collections.CollectionsKt.joinToString;
 
@@ -95,6 +96,12 @@ public class ErrorUtils {
             @Override
             public List<ModuleDescriptor> getAllDependentModules() {
                 return emptyList();
+            }
+
+            @NotNull
+            @Override
+            public Set<ModuleDescriptor> getAllImplementingModules() {
+                return emptySet();
             }
 
             @Override
@@ -205,13 +212,13 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Set<Name> getFunctionNames() {
-            return Collections.emptySet();
+            return emptySet();
         }
 
         @NotNull
         @Override
         public Set<Name> getVariableNames() {
-            return Collections.emptySet();
+            return emptySet();
         }
 
         @NotNull

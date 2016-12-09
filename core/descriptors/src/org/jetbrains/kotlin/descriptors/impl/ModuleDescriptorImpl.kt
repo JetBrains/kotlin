@@ -52,6 +52,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     override val allDependentModules: List<ModuleDescriptor>
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
+    override val allImplementingModules: MutableSet<ModuleDescriptor> = mutableSetOf()
+
     override fun getPackage(fqName: FqName): PackageViewDescriptor = packages(fqName)
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
@@ -79,6 +81,12 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     fun setDependencies(dependencies: ModuleDependencies) {
         assert(this.dependencies == null) { "Dependencies of $id were already set" }
         this.dependencies = dependencies
+        if (platformKind == PlatformKind.DEFAULT) return
+        for (dependentModule in allDependentModules) {
+            if (dependentModule.platformKind != PlatformKind.DEFAULT) continue
+            if (dependentModule.sourceKind != sourceKind) continue
+            (dependentModule as? ModuleDescriptorImpl)?.allImplementingModules?.add(this)
+        }
     }
 
     fun setDependencies(vararg descriptors: ModuleDescriptorImpl) {
