@@ -78,6 +78,9 @@ fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
 fun <T: Any> T.check(predicate: (T) -> Boolean): T? = if (predicate(this)) this else null
 
+inline fun <reified T : Any> Any?.safeAs(): T? = this as? T
+inline fun <reified T : Any> Any?.cast(): T = this as T
+
 fun <T : Any> constant(calculator: () -> T): T {
     val cached = constantMap[calculator]
     @Suppress("UNCHECKED_CAST")

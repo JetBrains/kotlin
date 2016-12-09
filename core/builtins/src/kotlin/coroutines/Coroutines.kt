@@ -49,6 +49,11 @@ public annotation class AllowSuspendExtensions
 @SinceKotlin("1.1")
 public val SUSPENDED: Any? = Any()
 
+@SinceKotlin("1.1")
+@Target(AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.BINARY)
+public annotation class Suspend
+
 /**
  * Classes and interfaces marked with this annotation are restricted when used as receivers for extension
  * `suspend` functions. These `suspend` extensions can only invoke other member or extension `suspend` functions on this parcitular

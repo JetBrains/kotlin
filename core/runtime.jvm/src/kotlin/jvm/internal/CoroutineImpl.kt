@@ -16,8 +16,6 @@
 
 package kotlin.jvm.internal
 
-import kotlin.coroutines.*
-
 private const val INTERCEPT_BIT_SET = 1 shl 31
 private const val INTERCEPT_BIT_CLEAR = INTERCEPT_BIT_SET.inv()
 
@@ -28,21 +26,9 @@ abstract class CoroutineImpl : RestrictedCoroutineImpl, InterceptableContinuatio
     override val resumeInterceptor: ResumeInterceptor?
         get() = _resumeInterceptor
 
-    // this constructor is used to create initial "factory" lambda object
-    constructor(arity: Int) : super(arity) {
-        _resumeInterceptor = null
-    }
-
     // this constructor is used to create a continuation instance for coroutine
     constructor(arity: Int, resultContinuation: Continuation<Any?>?) : super(arity, resultContinuation) {
         _resumeInterceptor = (resultContinuation as? InterceptableContinuation<*>)?.resumeInterceptor
-    }
-
-    // coroutine factory implementation for unrestricted coroutines, it will implement Function1.invoke
-    // in the actual coroutine implementation
-    fun invoke(resultContinuation: Continuation<*>): Any? {
-        // create and run it until first suspension
-        return (doCreate(null, resultContinuation) as CoroutineImpl).doResume(Unit, null)
     }
 
     override fun resume(data: Any?) {
@@ -71,36 +57,18 @@ abstract class CoroutineImpl : RestrictedCoroutineImpl, InterceptableContinuatio
 @SinceKotlin("1.1")
 abstract class RestrictedCoroutineImpl : Lambda, Continuation<Any?> {
     @JvmField
-    protected val resultContinuation: Continuation<Any?>?
+    protected var resultContinuation: Continuation<Any?>?
 
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
     // label == 0 in initial part of the coroutine
     @JvmField
     protected var label: Int
 
-    // this constructor is used to create initial "factory" lambda object
-    constructor(arity: Int) : super(arity) {
-        resultContinuation = null
-        label = -1 // don't use this object as coroutine
-    }
-
     // this constructor is used to create a continuation instance for coroutine
     constructor(arity: Int, resultContinuation: Continuation<Any?>?) : super(arity) {
         this.resultContinuation = resultContinuation
-        label = 0
+        label = if (resultContinuation != null) 0 else -1
     }
-
-    // coroutine factory implementation for restricted coroutines, it will implement Function2.invoke
-    // in the actual restricted coroutine implementation
-    fun invoke(receiver: Any, resultContinuation: Continuation<*>): Any? {
-        // create and run it until first suspension
-        return (doCreate(receiver, resultContinuation) as RestrictedCoroutineImpl).doResume(Unit, null)
-    }
-
-    protected abstract fun doCreate(receiver: Any?, resultContinuation: Continuation<*>): Continuation<Unit>
-
-    internal fun doCreateInternal(receiver: Any?, resultContinuation: Continuation<*>) =
-            doCreate(receiver, resultContinuation)
 
     override fun resume(data: Any?) {
         try {

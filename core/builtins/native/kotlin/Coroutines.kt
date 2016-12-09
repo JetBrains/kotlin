@@ -37,4 +37,4 @@ package kotlin.coroutines
  * Use [runWithCurrentContinuation] as a safer way to obtain current continuation instance.
  */
 @SinceKotlin("1.1")
-public inline suspend fun <T> maySuspendWithCurrentContinuation(body: (Continuation<T>) -> Any?): T
+public inline suspend fun <T> suspendWithCurrentContinuation(body: (Continuation<T>) -> Any?): T

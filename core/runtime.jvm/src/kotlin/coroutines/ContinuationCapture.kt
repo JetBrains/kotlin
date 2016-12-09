@@ -16,8 +16,8 @@
 
 package kotlin.coroutines
 
+import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-import kotlin.IllegalStateException
 
 /**
  * This function allows to obtain the current continuation instance inside suspend functions and suspend
@@ -32,12 +32,12 @@ import kotlin.IllegalStateException
  * Repeated invocation of any resume function on continuation produces unspecified behavior.
  * Use [runWithCurrentContinuation] as a safer way to obtain current continuation instance.
  */
-@SinceKotlin("1.1")
-public inline suspend fun <T> suspendWithCurrentContinuation(crossinline body: (Continuation<T>) -> Unit): T =
-    maySuspendWithCurrentContinuation<T> { c: Continuation<T> ->
-        body(c)
-        SUSPENDED
-    }
+//@SinceKotlin("1.1")
+//public inline suspend fun <T> suspendWithCurrentContinuation(crossinline body: (Continuation<T>) -> Unit): T =
+//    maySuspendWithCurrentContinuation<T> { c: Continuation<T> ->
+//        body(c)
+//        SUSPENDED
+//    }
 
 /**
  * This function allows to safely obtain the current continuation instance inside suspend functions and suspend
@@ -50,8 +50,8 @@ public inline suspend fun <T> suspendWithCurrentContinuation(crossinline body: (
  * Repeated invocation of any resume function produces [IllegalStateException].
  */
 @SinceKotlin("1.1")
-public inline suspend fun <T> runWithCurrentContinuation(body: (Continuation<T>) -> Unit): T =
-    maySuspendWithCurrentContinuation<T> { c: Continuation<T> ->
+public inline suspend fun <T> runWithCurrentContinuation(crossinline body: (Continuation<T>) -> Unit): T =
+    suspendWithCurrentContinuation { c: Continuation<T> ->
         val safe = SafeContinuation(c)
         body(safe)
         safe.getResult()
@@ -65,7 +65,8 @@ private class Fail(val exception: Throwable)
 private val RESULT_UPDATER = AtomicReferenceFieldUpdater.newUpdater<SafeContinuation<*>, Any?>(
         SafeContinuation::class.java, Any::class.java as Class<Any?>, "result")
 
-internal class SafeContinuation<T> @PublishedApi constructor(private val delegate: Continuation<T>) : Continuation<T> {
+@PublishedApi
+internal class SafeContinuation<T> @PublishedApi internal constructor(private val delegate: Continuation<T>) : Continuation<T> {
     @Volatile
     private var result: Any? = UNDECIDED
 
@@ -100,7 +101,8 @@ internal class SafeContinuation<T> @PublishedApi constructor(private val delegat
         }
     }
 
-    fun getResult(): Any? {
+    @PublishedApi
+    internal fun getResult(): Any? {
         val result = this.result // atomic read
         if (result == UNDECIDED && cas(UNDECIDED, SUSPENDED)) return SUSPENDED
         when (result) {

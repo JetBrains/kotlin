@@ -16,9 +16,6 @@
 
 package kotlin.coroutines
 
-import kotlin.jvm.internal.CoroutineImpl
-import kotlin.jvm.internal.RestrictedCoroutineImpl
-
 /**
  * A strategy to intercept resumptions inside coroutine.
  * Interceptor may shift resumption into another execution frame by scheduling asynchronous execution
@@ -47,24 +44,11 @@ public interface ResumeInterceptor {
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <R, T> (/*suspend*/ R.() -> T).createCoroutine(
+public fun <R, T> (@Suspend() (R.() -> T)).createCoroutine(
         receiver: R,
-        resultHandler: Continuation<T>
-): Continuation<Unit> {
-    // check if the RestrictedCoroutineImpl was passed and do efficient creation
-    if (this is RestrictedCoroutineImpl)
-        return doCreateInternal(receiver, resultHandler)
-    // otherwise, it is just a callable reference to some suspend function
-    return object : Continuation<Unit> {
-        override fun resume(data: Unit) {
-            startCoroutine(receiver, resultHandler)
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            resultHandler.resumeWithException(exception)
-        }
-    }
-}
+        resultHandler: Continuation<T>,
+        resumeInterceptor: ResumeInterceptor? = null
+): Continuation<Unit> = (this as (R, Continuation<T>) -> Continuation<Unit>).invoke(receiver, withInterceptor(resultHandler, resumeInterceptor))
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -73,17 +57,12 @@ public fun <R, T> (/*suspend*/ R.() -> T).createCoroutine(
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <R, T> (/*suspend*/ R.() -> T).startCoroutine(
+public fun <R, T> (@Suspend() (R.() -> T)).startCoroutine(
         receiver: R,
-        resultHandler: Continuation<T>
+        resultHandler: Continuation<T>,
+        resumeInterceptor: ResumeInterceptor? = null
 ) {
-    try {
-        val result = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, resultHandler)
-        if (result == SUSPENDED) return
-        resultHandler.resume(result as T)
-    } catch (e: Throwable) {
-        resultHandler.resumeWithException(e)
-    }
+    createCoroutine(receiver, resultHandler, resumeInterceptor).resume(Unit)
 }
 
 /**
@@ -95,24 +74,10 @@ public fun <R, T> (/*suspend*/ R.() -> T).startCoroutine(
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <T> (/*suspend*/ () -> T).createCoroutine(
+public fun <T> (@Suspend() (() -> T)).createCoroutine(
         resultHandler: Continuation<T>,
         resumeInterceptor: ResumeInterceptor? = null
-): Continuation<Unit> {
-    // check if the CoroutineImpl was passed and do efficient creation
-    if (this is CoroutineImpl)
-        return doCreateInternal(null, withInterceptor(resultHandler, resumeInterceptor))
-    // otherwise, it is just a callable reference to some suspend function
-    return object : Continuation<Unit> {
-        override fun resume(data: Unit) {
-            startCoroutine(resultHandler, resumeInterceptor)
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            resultHandler.resumeWithException(exception)
-        }
-    }
-}
+): Continuation<Unit> = (this as (Continuation<T>) -> Continuation<Unit>).invoke(withInterceptor(resultHandler, resumeInterceptor))
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -122,17 +87,11 @@ public fun <T> (/*suspend*/ () -> T).createCoroutine(
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <T> (/*suspend*/ () -> T).startCoroutine(
+public fun <T> (@Suspend() (() -> T)).startCoroutine(
         resultHandler: Continuation<T>,
         resumeInterceptor: ResumeInterceptor? = null
 ) {
-    try {
-        val result = (this as Function1<Continuation<T>, Any?>).invoke(withInterceptor(resultHandler, resumeInterceptor))
-        if (result == SUSPENDED) return
-        resultHandler.resume(result as T)
-    } catch (e: Throwable) {
-        resultHandler.resumeWithException(e)
-    }
+    createCoroutine(resultHandler, resumeInterceptor).resume(Unit)
 }
 
 // ------- internal stuff -------
