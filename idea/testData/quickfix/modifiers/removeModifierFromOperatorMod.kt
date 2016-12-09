@@ -1,4 +1,4 @@
-// Remove 'operator' modifier
+// "Remove 'operator' modifier" "true"
 
 object A {
     operator<caret> fun mod(x: Int) {}
