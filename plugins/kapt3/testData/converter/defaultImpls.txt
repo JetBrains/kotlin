@@ -1,27 +1,3 @@
-public abstract interface IntfWithoutDefaultImpls {
-}
-
-////////////////////
-
-
-public abstract interface IntfWithDefaultImpls {
-
-    public abstract void a();
-
-    public static final class DefaultImpls {
-
-        public DefaultImpls() {
-            super();
-        }
-
-        public static void a(IntfWithDefaultImpls $this) {
-        }
-    }
-}
-
-////////////////////
-
-
 public abstract interface Intf {
     public static final Intf.Companion Companion = null;
     public static final int WHITE = 2;
@@ -51,4 +27,28 @@ public abstract interface Intf {
             super();
         }
     }
+}
+
+////////////////////
+
+
+public abstract interface IntfWithDefaultImpls {
+
+    public abstract void a();
+
+    public static final class DefaultImpls {
+
+        public DefaultImpls() {
+            super();
+        }
+
+        public static void a(IntfWithDefaultImpls $this) {
+        }
+    }
+}
+
+////////////////////
+
+
+public abstract interface IntfWithoutDefaultImpls {
 }

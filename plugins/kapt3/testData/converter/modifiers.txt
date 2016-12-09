@@ -1,44 +1,5 @@
 package modifiers;
 
-public final class PublicClass {
-
-    public PublicClass() {
-        super();
-    }
-}
-
-////////////////////
-
-package modifiers;
-
-public class PublicClassProtectedConstructor {
-
-    protected PublicClassProtectedConstructor() {
-        super();
-    }
-
-    protected static abstract interface ProtectedInterface {
-    }
-
-    private static abstract interface PrivateInterface {
-    }
-}
-
-////////////////////
-
-package modifiers;
-
-public abstract class PublicClassPrivateConstructor {
-
-    private PublicClassPrivateConstructor() {
-        super();
-    }
-}
-
-////////////////////
-
-package modifiers;
-
 public final class InternalClass {
 
     public InternalClass() {
@@ -50,71 +11,7 @@ public final class InternalClass {
 
 package modifiers;
 
-final class PrivateClass {
-
-    public PrivateClass() {
-        super();
-    }
-}
-
-////////////////////
-
-package modifiers;
-
-public abstract interface PublicInterface {
-}
-
-////////////////////
-
-package modifiers;
-
 public abstract interface InternalInterface {
-}
-
-////////////////////
-
-package modifiers;
-
-abstract interface PrivateInterface {
-}
-
-////////////////////
-
-package modifiers;
-
-public abstract class SealedClass {
-
-    private SealedClass() {
-        super();
-    }
-
-    public static final class One extends modifiers.SealedClass {
-
-        public One() {
-            super();
-        }
-    }
-
-    public static class Two extends modifiers.SealedClass {
-
-        public Two() {
-            super();
-        }
-    }
-
-    public static abstract class Three extends modifiers.SealedClass.Two {
-
-        public Three() {
-            super();
-        }
-    }
-
-    public static final class Four extends modifiers.SealedClass.Three {
-
-        public Four() {
-            super();
-        }
-    }
 }
 
 ////////////////////
@@ -153,5 +50,108 @@ public final class Modifiers {
 
     public Modifiers() {
         super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+final class PrivateClass {
+
+    public PrivateClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+abstract interface PrivateInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+public final class PublicClass {
+
+    public PublicClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public abstract class PublicClassPrivateConstructor {
+
+    private PublicClassPrivateConstructor() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public class PublicClassProtectedConstructor {
+
+    protected PublicClassProtectedConstructor() {
+        super();
+    }
+
+    protected static abstract interface ProtectedInterface {
+    }
+
+    private static abstract interface PrivateInterface {
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+public abstract interface PublicInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+public abstract class SealedClass {
+
+    private SealedClass() {
+        super();
+    }
+
+    public static final class One extends modifiers.SealedClass {
+
+        public One() {
+            super();
+        }
+    }
+
+    public static class Two extends modifiers.SealedClass {
+
+        public Two() {
+            super();
+        }
+    }
+
+    public static abstract class Three extends modifiers.SealedClass.Two {
+
+        public Three() {
+            super();
+        }
+    }
+
+    public static final class Four extends modifiers.SealedClass.Three {
+
+        public Four() {
+            super();
+        }
     }
 }

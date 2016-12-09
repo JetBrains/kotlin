@@ -1,20 +1,3 @@
-public abstract interface Context {
-}
-
-////////////////////
-
-
-public enum Result {
-    /*public static final*/ SUCCESS /* = null */,
-    /*public static final*/ ERROR /* = null */;
-
-    Result() {
-    }
-}
-
-////////////////////
-
-
 public abstract class BaseClass {
 
     public abstract Result doJob();
@@ -22,6 +5,12 @@ public abstract class BaseClass {
     public BaseClass(Context context, int num, boolean bool) {
         super();
     }
+}
+
+////////////////////
+
+
+public abstract interface Context {
 }
 
 ////////////////////
@@ -36,5 +25,16 @@ public final class Inheritor extends BaseClass {
 
     public Inheritor(Context context) {
         super(null, 0, false);
+    }
+}
+
+////////////////////
+
+
+public enum Result {
+    /*public static final*/ SUCCESS /* = null */,
+    /*public static final*/ ERROR /* = null */;
+
+    Result() {
     }
 }

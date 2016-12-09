@@ -83,7 +83,7 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
         val javaFiles = convert(kaptRunner, typeMapper, generateNonExistentClass)
         kaptRunner.compiler.enterTrees(javaFiles)
 
-        val actualRaw = javaFiles.joinToString (FILE_SEPARATOR)
+        val actualRaw = javaFiles.sortedBy { it.sourceFile.name }.joinToString (FILE_SEPARATOR)
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
 
         if (kaptRunner.compiler.shouldStop(CompileStates.CompileState.ENTER)) {

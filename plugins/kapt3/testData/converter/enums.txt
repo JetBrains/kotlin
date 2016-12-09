@@ -1,17 +1,17 @@
+public abstract @interface Anno1 {
+
+    public abstract java.lang.String value();
+}
+
+////////////////////
+
+
 public enum Enum1 {
     /*public static final*/ BLACK /* = null */,
     /*public static final*/ WHITE /* = null */;
 
     Enum1() {
     }
-}
-
-////////////////////
-
-
-public abstract @interface Anno1 {
-
-    public abstract java.lang.String value();
 }
 
 ////////////////////

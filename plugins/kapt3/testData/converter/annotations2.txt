@@ -10,6 +10,51 @@ public abstract @interface Anno {
 
 package test;
 
+public final class AnnotationsTest {
+
+    public AnnotationsTest() {
+        super();
+    }
+
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
+    java.lang.String $receiver) {
+    }
+
+    @Anno(value = "top-level-val")
+    private static void topLevelVal$annotations(int p0) {
+    }
+
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    int $receiver) {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+@Anno(value = "enum")
+public enum Enum {
+    /*public static final*/ WHITE /* = null */,
+    /*public static final*/ BLACK /* = null */;
+    private final int x = 0;
+
+    public final int getX() {
+        return 0;
+    }
+
+    @Anno(value = "enum-constructor")
+    Enum(@Anno(value = "x")
+    int x) {
+    }
+}
+
+////////////////////
+
+package test;
+
 @Anno(value = "clazz")
 public abstract class Test {
     private java.lang.String v;
@@ -41,50 +86,5 @@ public abstract class Test {
     protected Test(@Anno(value = "v-param")
     java.lang.String v) {
         super();
-    }
-}
-
-////////////////////
-
-package test;
-
-@Anno(value = "enum")
-public enum Enum {
-    /*public static final*/ WHITE /* = null */,
-    /*public static final*/ BLACK /* = null */;
-    private final int x = 0;
-
-    public final int getX() {
-        return 0;
-    }
-
-    @Anno(value = "enum-constructor")
-    Enum(@Anno(value = "x")
-    int x) {
-    }
-}
-
-////////////////////
-
-package test;
-
-public final class AnnotationsTest {
-
-    public AnnotationsTest() {
-        super();
-    }
-
-    @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
-    java.lang.String $receiver) {
-    }
-
-    @Anno(value = "top-level-val")
-    private static void topLevelVal$annotations(int p0) {
-    }
-
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
-    int $receiver) {
-        return null;
     }
 }
