@@ -181,7 +181,8 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
              )
 
         // TODO: eliminate this dependency on JavaScript compiler
-        val blobString =  KotlinJavascriptSerializationUtil.metadataAsString(description)
+        val blobString =  KotlinJavascriptSerializationUtil.metadataAsString(
+                context.bindingContext, description)
         if (false) {
             debug_blob(blobString)
         }

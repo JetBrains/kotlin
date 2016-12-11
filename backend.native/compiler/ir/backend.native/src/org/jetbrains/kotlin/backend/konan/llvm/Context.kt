@@ -3,8 +3,12 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.ModuleIndex
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class Context(val irModule: IrModuleFragment, val runtime: Runtime, val llvmModule: LLVMModuleRef) {
+internal class Context(val irModule: IrModuleFragment,
+                       val runtime: Runtime,
+                       val llvmModule: LLVMModuleRef,
+                       val bindingContext: BindingContext) {
     val moduleIndex = ModuleIndex(irModule)
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LLVMValueRef {

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -31,7 +32,9 @@ fun emitLLVM(module: IrModuleFragment, runtimeFile: String, outFile: String) {
     LLVMSetDataLayout(llvmModule, runtime.dataLayout)
     LLVMSetTarget(llvmModule, runtime.target)
 
-    val context = Context(module, runtime, llvmModule) // TODO: dispose
+    // TODO: shall we provide better binding context?
+    val context = Context(
+            module, runtime, llvmModule, BindingContext.EMPTY) // TODO: dispose
 
     module.acceptVoid(RTTIGeneratorVisitor(context))
     println("\n--- Generate bitcode ------------------------------------------------------\n")
