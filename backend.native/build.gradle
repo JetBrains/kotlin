@@ -2,7 +2,7 @@ buildscript {
    repositories {
        mavenCentral()
        maven {
-           url  "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+           url "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
        }
    }
 
@@ -24,7 +24,8 @@ apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 allprojects {
     repositories {
         maven {
-            url 'http://oss.sonatype.org/content/repositories/snapshots'
+            // url 'http://oss.sonatype.org/content/repositories/snapshots'
+            url 'http://dl.bintray.com/kotlin/kotlin-dev'
         }
     }
 
