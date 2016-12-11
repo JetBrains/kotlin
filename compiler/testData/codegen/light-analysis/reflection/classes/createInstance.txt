@@ -7,7 +7,7 @@ public final class CreateInstanceKt {
 
 public final class DefaultPrimaryAndDefaultSecondary {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
-    public method <init>(): void
+    public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
@@ -40,7 +40,7 @@ public final class Object {
 public final class PrimaryWithDefaults {
     private final @org.jetbrains.annotations.NotNull field d1: java.lang.String
     private final field d2: int
-    public method <init>(): void
+    public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getD1(): java.lang.String
