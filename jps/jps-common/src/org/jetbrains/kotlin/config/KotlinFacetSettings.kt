@@ -31,12 +31,8 @@ sealed class TargetPlatformKind<out Version : DescriptionAware>(
 ) : DescriptionAware {
     override val description = "$name ${version.description}"
 
-    class Jvm(version: JvmTarget) : TargetPlatformKind<JvmTarget>(version, "JVM") {
-        companion object {
-            val JVM_PLATFORMS by lazy { JvmTarget.values().map(::Jvm) }
-
-            operator fun get(version: JvmTarget) = JVM_PLATFORMS[version.ordinal]
-        }
+    sealed class Jvm(version: JvmTarget) : TargetPlatformKind<JvmTarget>(version, "JVM") {
+        object JVM_1_6 : Jvm(JvmTarget.JVM_1_6)
     }
 
     object JavaScript : TargetPlatformKind<NoVersion>(NoVersion, "JavaScript")
@@ -44,7 +40,7 @@ sealed class TargetPlatformKind<out Version : DescriptionAware>(
     object Default : TargetPlatformKind<NoVersion>(NoVersion, "Default (experimental)")
 
     companion object {
-        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { Jvm.JVM_PLATFORMS + JavaScript + Default }
+        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { listOf(Jvm.JVM_1_6, JavaScript, Default) }
     }
 }
 
