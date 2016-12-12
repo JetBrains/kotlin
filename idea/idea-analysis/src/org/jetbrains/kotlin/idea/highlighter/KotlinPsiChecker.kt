@@ -56,7 +56,7 @@ import java.util.*
 open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        if (!(ProjectRootsUtil.isInProjectOrLibraryContent(element) || element.containingFile is KtCodeFragment)) return
+        if (!(ProjectRootsUtil.isInProjectOrLibraryContent(element) || isInCodeFragmentWithContext(element))) return
 
         val file = element.containingFile as KtFile
 
@@ -70,6 +70,11 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
         getAfterAnalysisVisitor(holder, bindingContext).forEach { visitor -> element.accept(visitor) }
 
         annotateElement(element, holder, bindingContext.getDiagnostics())
+    }
+
+    private fun isInCodeFragmentWithContext(element: PsiElement): Boolean {
+        val ktFile = element.containingFile
+        return ktFile is KtCodeFragment && ktFile.context != null
     }
 
     override fun isForceHighlightParents(file: PsiFile): Boolean {
@@ -88,7 +93,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
         if (diagnosticsForElement.isEmpty()) return
 
-        if (ProjectRootsUtil.isInProjectSource(element) || element.containingFile is KtCodeFragment) {
+        if (ProjectRootsUtil.isInProjectSource(element) || isInCodeFragmentWithContext(element)) {
             ElementAnnotator(element, holder, { param -> shouldSuppressUnusedParameter(param) }).registerDiagnosticsAnnotations(diagnosticsForElement)
         }
     }
