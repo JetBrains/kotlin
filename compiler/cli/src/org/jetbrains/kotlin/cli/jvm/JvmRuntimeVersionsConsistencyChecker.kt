@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -106,9 +107,9 @@ object JvmRuntimeVersionsConsistencyChecker {
     fun checkCompilerClasspathConsistency(
             messageCollector: MessageCollector,
             languageVersionSettings: LanguageVersionSettings?,
-            classpathJars: List<VirtualFile>
+            classpathJarRoots: List<VirtualFile>
     ) {
-        val runtimeJarsInfo = collectRuntimeJarsInfo(classpathJars)
+        val runtimeJarsInfo = collectRuntimeJarsInfo(classpathJarRoots)
         if (!runtimeJarsInfo.hasAnyJarsToCheck) return
 
         val languageVersion =
@@ -128,13 +129,13 @@ object JvmRuntimeVersionsConsistencyChecker {
 
     private fun checkNotNewerThanCompiler(messageCollector: MessageCollector, jar: KotlinLibraryFile) {
         if (jar.version > CURRENT_COMPILER_VERSION) {
-            messageCollector.issue("Run-time JAR file $jar is newer than compiler version $CURRENT_COMPILER_VERSION")
+            messageCollector.issue(jar.file, "Runtime JAR file has version ${jar.version} which is newer than compiler version $CURRENT_COMPILER_VERSION")
         }
     }
 
     private fun checkCompatibleWithLanguageVersion(messageCollector: MessageCollector, jar: KotlinLibraryFile, languageVersion: MavenComparableVersion) {
         if (jar.version < languageVersion) {
-            messageCollector.issue("Run-time JAR file $jar is older than required for language version $languageVersion")
+            messageCollector.issue(jar.file, "Runtime JAR file has version ${jar.version} which is older than required for language version $languageVersion")
         }
     }
 
@@ -143,31 +144,37 @@ object JvmRuntimeVersionsConsistencyChecker {
         val newestCoreJar = runtimeJarsInfo.coreJars.maxBy { it.version } ?: return
 
         if (oldestCoreJar.version != newestCoreJar.version) {
-            messageCollector.issue("Run-time JAR file $oldestCoreJar is not compatible with JAR file $newestCoreJar")
+            messageCollector.issue(null, buildString {
+                appendln("Runtime JAR files in the classpath must have the same version. These files were found in the classpath:")
+                for (jar in runtimeJarsInfo.coreJars) {
+                    appendln("    ${jar.file.path} (version ${jar.version})")
+                }
+            }.trimEnd())
         }
     }
 
-    private fun MessageCollector.issue(message: String) {
-        report(VERSION_ISSUE_SEVERITY, message, CompilerMessageLocation.NO_LOCATION)
+    private fun MessageCollector.issue(file: VirtualFile?, message: String) {
+        report(VERSION_ISSUE_SEVERITY, message, CompilerMessageLocation.create(file?.let(VfsUtilCore::virtualToIoFile)?.path))
     }
 
-    private fun collectRuntimeJarsInfo(classpathJars: List<VirtualFile>): RuntimeJarsInfo {
+    private fun collectRuntimeJarsInfo(classpathJarRoots: List<VirtualFile>): RuntimeJarsInfo {
         val kotlinCoreJars = ArrayList<KotlinLibraryFile>(2)
 
-        for (jar in classpathJars) {
+        for (jarRoot in classpathJarRoots) {
             val manifest = try {
-                val manifestFile = jar.findFileByRelativePath(MANIFEST_MF) ?: continue
+                val manifestFile = jarRoot.findFileByRelativePath(MANIFEST_MF) ?: continue
                 Manifest(manifestFile.inputStream)
             }
             catch (e: Exception) {
                 continue
             }
 
-            val runtimeComponent = getKotlinRuntimeComponent(jar, manifest) ?: continue
+            val runtimeComponent = getKotlinRuntimeComponent(jarRoot, manifest) ?: continue
             val version = manifest.getKotlinLanguageVersion()
 
             if (runtimeComponent == KOTLIN_RUNTIME_COMPONENT_CORE) {
-                kotlinCoreJars.add(KotlinLibraryFile(runtimeComponent, jar, version))
+                val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
+                kotlinCoreJars.add(KotlinLibraryFile(runtimeComponent, jarFile, version))
             }
         }
 

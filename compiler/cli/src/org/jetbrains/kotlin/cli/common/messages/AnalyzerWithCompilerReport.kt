@@ -229,9 +229,8 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
                     severity,
                     "Class '" + JvmClassName.byClassId(data.classId) + "' was compiled with an incompatible version of Kotlin. " +
                     "The binary version of its bytecode is " + data.actualVersion + ", expected version is " + data.expectedVersion,
-                    CompilerMessageLocation.create(toSystemDependentName(data.filePath), -1, -1, null)
+                    CompilerMessageLocation.create(toSystemDependentName(data.filePath))
             )
         }
-
     }
 }

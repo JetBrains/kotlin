@@ -149,8 +149,8 @@ class KotlinCoreEnvironment private constructor(
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (messageCollector != null) {
             val languageVersionSettings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
-            val classpathJars = javaClasspathRoots.mapNotNull { if (it.type == JavaRoot.RootType.BINARY) it.file else null }
-            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(messageCollector, languageVersionSettings, classpathJars)
+            val classpathJarRoots = javaClasspathRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
+            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(messageCollector, languageVersionSettings, classpathJarRoots)
         }
 
         ExpressionCodegenExtension.registerExtensionPoint(project)
@@ -202,14 +202,10 @@ class KotlinCoreEnvironment private constructor(
                 StringUtil.getLineBreakCount(it.text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
 
-    private fun fillClasspath(configuration: CompilerConfiguration): List<JavaRoot> {
-        val javaRoots = ArrayList<JavaRoot>()
-        for (root in configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)) {
-            val javaRoot = root as? JvmContentRoot ?: continue
-            addJavaRoot(javaRoot)?.let { javaRoots.add(it) }
-        }
-        return javaRoots
-    }
+    private fun fillClasspath(configuration: CompilerConfiguration): List<JavaRoot> =
+            configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
+                if (root is JvmContentRoot) addJavaRoot(root) else null
+            }
 
     private fun addJavaRoot(javaRoot: JvmContentRoot): JavaRoot? {
         val virtualFile = contentRootToVirtualFile(javaRoot) ?: return null
@@ -232,10 +228,9 @@ class KotlinCoreEnvironment private constructor(
             else -> throw IllegalStateException()
         }
 
-        val javaRoot1 = JavaRoot(virtualFile, rootType, prefixPackageFqName)
-        javaRoots.add(javaRoot1)
-
-        return javaRoot1
+        return JavaRoot(virtualFile, rootType, prefixPackageFqName).apply {
+            javaRoots.add(this)
+        }
     }
 
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
