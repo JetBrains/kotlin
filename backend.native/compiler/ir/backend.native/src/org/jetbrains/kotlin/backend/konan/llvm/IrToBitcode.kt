@@ -858,8 +858,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val landingpadResult =
                         LLVMBuildLandingPad(codegen.builder, landingpadType, personalityFunctionRaw, numClauses, "lp")
 
-                // Configure landingpad to catch C++ exception with type `KotlinException`:
-                LLVMAddClause(landingpadResult, externalGlobal("_ZTI15KotlinException", int8Type))
+                LLVMAddClause(landingpadResult, LLVMConstNull(kInt8Ptr))
 
                 // FIXME: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
                 // bypassing the finally block.
