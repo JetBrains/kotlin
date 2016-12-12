@@ -19,8 +19,13 @@ fun test() {
     fooLong(1 <!INFIX_MODIFIER_REQUIRED!>div<!> 1)
     fooShort(1 <!INFIX_MODIFIER_REQUIRED!>div<!> 1)
 
-    fooInt(1 <!INFIX_MODIFIER_REQUIRED!>mod<!> 1)
-    fooByte(1 <!INFIX_MODIFIER_REQUIRED!>mod<!> 1)
-    fooLong(1 <!INFIX_MODIFIER_REQUIRED!>mod<!> 1)
-    fooShort(1 <!INFIX_MODIFIER_REQUIRED!>mod<!> 1)
+    fooInt(1 <!DEPRECATION, INFIX_MODIFIER_REQUIRED!>mod<!> 1)
+    fooByte(1 <!DEPRECATION, INFIX_MODIFIER_REQUIRED!>mod<!> 1)
+    fooLong(1 <!DEPRECATION, INFIX_MODIFIER_REQUIRED!>mod<!> 1)
+    fooShort(1 <!DEPRECATION, INFIX_MODIFIER_REQUIRED!>mod<!> 1)
+
+    fooInt(1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1)
+    fooByte(1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1)
+    fooLong(1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1)
+    fooShort(1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1)
 }
