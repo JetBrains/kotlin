@@ -110,38 +110,51 @@ object JvmRuntimeVersionsConsistencyChecker {
             classpathJarRoots: List<VirtualFile>
     ) {
         val runtimeJarsInfo = collectRuntimeJarsInfo(classpathJarRoots)
-        if (!runtimeJarsInfo.hasAnyJarsToCheck) return
+        if (runtimeJarsInfo.hasAnyJarsToCheck) {
+            val languageVersion = languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
 
-        val languageVersion =
-                languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
-
-        // Even if language version option was explicitly specified, the JAR files SHOULD NOT be newer than the compiler.
-        runtimeJarsInfo.coreJars.forEach {
-            checkNotNewerThanCompiler(messageCollector, it)
+            checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)
         }
-
-        runtimeJarsInfo.coreJars.forEach {
-            checkCompatibleWithLanguageVersion(messageCollector, it, languageVersion)
-        }
-
-        checkMatchingVersions(messageCollector, runtimeJarsInfo)
     }
 
-    private fun checkNotNewerThanCompiler(messageCollector: MessageCollector, jar: KotlinLibraryFile) {
+    private fun checkCompilerClasspathConsistency(
+            messageCollector: MessageCollector,
+            languageVersion: MavenComparableVersion,
+            runtimeJarsInfo: RuntimeJarsInfo
+    ): Boolean {
+        // Even if language version option was explicitly specified, the JAR files SHOULD NOT be newer than the compiler.
+        if (runtimeJarsInfo.coreJars.map {
+            checkNotNewerThanCompiler(messageCollector, it)
+        }.any { it }) return true
+
+        if (runtimeJarsInfo.coreJars.map {
+            checkCompatibleWithLanguageVersion(messageCollector, it, languageVersion)
+        }.any { it }) return true
+
+        return checkMatchingVersions(messageCollector, runtimeJarsInfo)
+    }
+
+    private fun checkNotNewerThanCompiler(messageCollector: MessageCollector, jar: KotlinLibraryFile): Boolean {
         if (jar.version > CURRENT_COMPILER_VERSION) {
             messageCollector.issue(jar.file, "Runtime JAR file has version ${jar.version} which is newer than compiler version $CURRENT_COMPILER_VERSION")
+            return true
         }
+        return false
     }
 
-    private fun checkCompatibleWithLanguageVersion(messageCollector: MessageCollector, jar: KotlinLibraryFile, languageVersion: MavenComparableVersion) {
+    private fun checkCompatibleWithLanguageVersion(
+            messageCollector: MessageCollector, jar: KotlinLibraryFile, languageVersion: MavenComparableVersion
+    ): Boolean {
         if (jar.version < languageVersion) {
             messageCollector.issue(jar.file, "Runtime JAR file has version ${jar.version} which is older than required for language version $languageVersion")
+            return true
         }
+        return false
     }
 
-    private fun checkMatchingVersions(messageCollector: MessageCollector, runtimeJarsInfo: RuntimeJarsInfo) {
-        val oldestCoreJar = runtimeJarsInfo.coreJars.minBy { it.version } ?: return
-        val newestCoreJar = runtimeJarsInfo.coreJars.maxBy { it.version } ?: return
+    private fun checkMatchingVersions(messageCollector: MessageCollector, runtimeJarsInfo: RuntimeJarsInfo): Boolean {
+        val oldestCoreJar = runtimeJarsInfo.coreJars.minBy { it.version } ?: return false
+        val newestCoreJar = runtimeJarsInfo.coreJars.maxBy { it.version } ?: return false
 
         if (oldestCoreJar.version != newestCoreJar.version) {
             messageCollector.issue(null, buildString {
@@ -150,7 +163,10 @@ object JvmRuntimeVersionsConsistencyChecker {
                     appendln("    ${jar.file.path} (version ${jar.version})")
                 }
             }.trimEnd())
+            return true
         }
+
+        return false
     }
 
     private fun MessageCollector.issue(file: VirtualFile?, message: String) {
