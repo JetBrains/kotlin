@@ -57,9 +57,11 @@ class KotlinScriptConfigurationManager(
         reloadScriptDefinitions()
 
         StartupManager.getInstance(project).runWhenProjectIsInitialized {
-            cacheAllScriptsExtraImports()
-            invalidateLocalCaches()
-            notifyRootsChanged()
+            DumbService.getInstance(project).smartInvokeLater {
+                cacheAllScriptsExtraImports()
+                invalidateLocalCaches()
+                notifyRootsChanged()
+            }
         }
 
         project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
