@@ -1,14 +1,15 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
 
 if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
     JAVACMD="$JAVA_HOME/bin/java"
-else 
+else
     JAVACMD=java
 fi
 
 declare -a java_args
 declare -a konan_args
 declare -a clang_args
+declare -a clang_opt_args
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -21,7 +22,7 @@ while [ $# -gt 0 ]; do
       shift
       ;;
     -library)
-      clang_args=("${libraries[@]}" "$2")
+      clang_args=("${clang_args[@]}" "${libraries[@]}" "$2")
       konan_args=("${konan_args[@]}" "$1" "$2")
       shift
       shift
@@ -54,6 +55,8 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# TODO: support -opt on Linux hosts as well.
+clang_opt_args=("-O3" "-flto" "-Wl,-dead_strip")
 
 [ -n "$KONAN_COMPILER" ] || KONAN_COMPILER=org.jetbrains.kotlin.cli.bc.K2NativeKt
 [ -n "$JAVACMD" ] || JAVACMD=java
@@ -63,9 +66,9 @@ done
 findHome() {
     local source="${BASH_SOURCE[0]}"
     while [ -h "$source" ] ; do
-        local linked="$(readlink "$source")"
-        local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
-        source="$dir/$(basename "$linked")"
+	local linked="$(readlink "$source")"
+	local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
+	source="$dir/$(basename "$linked")"
     done
     (cd -P "$(dirname "$source")/.." && pwd)
 }
@@ -98,16 +101,16 @@ konan_args=("-runtime" $RUNTIME "${konan_args[@]}")
 
 if [ -z $OUTPUT_NAME ] ; then
     if [ -z $NOLINK ] ; then
-        OUTPUT_NAME="program.kexe"
-        KTBC_NAME="program.kt.bc"
+	OUTPUT_NAME="program.kexe"
+	KTBC_NAME="program.kt.bc"
     else
-        KTBC_NAME="program.kt.bc"
+	KTBC_NAME="program.kt.bc"
     fi
 else
     if [ -z $NOLINK ] ; then
-        KTBC_NAME="${OUTPUT_NAME}.kt.bc"
-    else 
-        KTBC_NAME="${OUTPUT_NAME}"
+	KTBC_NAME="${OUTPUT_NAME}.kt.bc"
+    else
+	KTBC_NAME="${OUTPUT_NAME}"
     fi
 fi
 
@@ -136,10 +139,9 @@ CLANG="$CLANG_BIN_PATH/clang"
 # TODO: Compilation without stdlib.kt.bc doesn't work because 'start' requires stdlib, for example.
 # Probably, we need a .klib compilation mode.
 # [ -z $NOSTDLIB ] && clang_args=($STDLIB "${clang_args[@]}")
-[ "$OPTIMIZE" == "YES" ] && clang_args=("-flto -O3 ${clang_args[@]}")
+[ "$OPTIMIZE" == "YES" ] && clang_args=("${clang_opt_args[@]} ${clang_args[@]}")
 clang_args=($STDLIB "${clang_args[@]}")
 clang_args=($LAUNCHER $START $RUNTIME "${clang_args[@]}")
 clang_args=("${clang_args[@]} $CLANG_PLATFORM_ARGS")
 
-$CLANG $KTBC_NAME -o $OUTPUT_NAME ${clang_args[@]} 
-
+$CLANG $KTBC_NAME -o $OUTPUT_NAME ${clang_args[@]}
