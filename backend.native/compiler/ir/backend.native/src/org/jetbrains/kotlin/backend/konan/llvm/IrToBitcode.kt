@@ -283,6 +283,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 constructorDeclaration.acceptChildrenVoid(this)
 
             if (constructorDescriptor.isPrimary) {
+                if (DescriptorUtils.isObject(classDescriptor)) {
+                    val objectPtr = objectPtrByName(classDescriptor)
+
+                    LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
+                }
                 val irOfCurrentClass = context.moduleIndex.classes[classDescriptor.classId]
                 irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
                     override fun visitElement(element: IrElement) {
@@ -616,15 +621,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateGetObjectValue(tmpVariableName: String, value: IrGetObjectValue): LLVMValueRef? {
-        val objName = value.descriptor.fqNameSafe.asString()
-        var objectPtr = LLVMGetNamedGlobal(context.llvmModule, objName)
-        if (objectPtr == null) {
-            objectPtr = LLVMAddGlobal(context.llvmModule, codegen.getLLVMType(value.type), objName)
-            LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
-            // Backing storage for this global is common between all modules.
-            LLVMSetLinkage(objectPtr, LLVMLinkage.LLVMCommonLinkage)
-        }
-
+        var objectPtr = objectPtrByName(value.descriptor)
         val bbCurrent = codegen.currentBlock
         val bbInit    = codegen.basicBlock("label_init")
         val bbExit    = codegen.basicBlock("label_continue")
@@ -650,6 +647,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         return valuePhi
     }
+
 
     //-------------------------------------------------------------------------//
 
@@ -1317,6 +1315,20 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return codegen.load(ptr, codegen.newVar())
         }
     }
+
+    //-------------------------------------------------------------------------//
+
+    private fun objectPtrByName(descriptor: ClassDescriptor): LLVMValueRef? {
+        val objName = descriptor.fqNameSafe.asString()
+        var objectPtr = LLVMGetNamedGlobal(context.llvmModule, objName)
+        if (objectPtr == null) {
+            val llvmType = codegen.getLLVMType(descriptor.defaultType)
+            objectPtr = LLVMAddGlobal(context.llvmModule, llvmType, objName)
+        }
+        return objectPtr
+    }
+
+    //-------------------------------------------------------------------------//
 
     private fun instanceFieldAccessReceiver(expression: IrFieldAccessExpression): LLVMValueRef {
         val receiverExpression = expression.receiver
