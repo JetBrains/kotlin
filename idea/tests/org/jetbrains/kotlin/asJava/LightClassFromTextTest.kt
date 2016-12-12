@@ -23,7 +23,9 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 // see KtFileLightClassTest
@@ -92,6 +94,14 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val f = syntheticClass.findMethodsByName("f", false).single()
         assertEquals(exampleClass, (f.returnType as PsiClassType).resolve())
+    }
+
+    fun testHeaderDeclarations() {
+        val contextFile = myFixture.configureByText("Header.kt", "platform class Foo\n\nplatform fun foo()\n") as KtFile
+        val headerClass = contextFile.declarations.single { it is KtClassOrObject }
+        assertEquals(0, headerClass.toLightElements().size)
+        val headerFunction = contextFile.declarations.single { it is KtNamedFunction }
+        assertEquals(0, headerFunction.toLightElements().size)
     }
 
     private fun classesFromText(text: String, fileName: String = "A.kt"): Array<out PsiClass> {

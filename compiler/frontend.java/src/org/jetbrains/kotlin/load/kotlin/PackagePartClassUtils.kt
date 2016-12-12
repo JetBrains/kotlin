@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -69,10 +70,10 @@ object PackagePartClassUtils {
 
     @JvmStatic fun fileHasTopLevelCallables(file: KtFile): Boolean =
             file.declarations.any {
-                it is KtProperty ||
+                (it is KtProperty ||
                 it is KtNamedFunction ||
                 it is KtScript ||
-                it is KtTypeAlias
+                it is KtTypeAlias) && !it.hasModifier(KtTokens.PLATFORM_KEYWORD)
             }
 
     @JvmStatic fun getFilePartShortName(fileName: String): String =
