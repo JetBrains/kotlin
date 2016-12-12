@@ -28,14 +28,15 @@ data class CompilerMessageLocation private constructor(
             path + (if (line != -1 || column != -1) " ($line:$column)" else "")
 
     companion object {
-        @JvmField val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1, null)
+        @JvmField
+        val NO_LOCATION: CompilerMessageLocation = create(null)
 
-        @JvmStatic fun create(
-                path: String?,
-                line: Int,
-                column: Int,
-                lineContent: String?
-        ): CompilerMessageLocation =
+        @JvmStatic
+        fun create(path: String?): CompilerMessageLocation =
+                CompilerMessageLocation(path, -1, -1, null)
+
+        @JvmStatic
+        fun create(path: String?, line: Int, column: Int, lineContent: String?): CompilerMessageLocation =
                 if (path == null) NO_LOCATION else CompilerMessageLocation(path, line, column, lineContent)
 
         private val serialVersionUID: Long = 8228357578L

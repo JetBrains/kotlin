@@ -158,8 +158,8 @@ class KotlinCoreEnvironment private constructor(
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (messageCollector != null) {
             val languageVersionSettings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
-            val classpathJars = initialRoots.mapNotNull { if (it.type == JavaRoot.RootType.BINARY) it.file else null }
-            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(messageCollector, languageVersionSettings, classpathJars)
+            val classpathJarRoots = initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
+            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(messageCollector, languageVersionSettings, classpathJarRoots)
         }
 
         // REPL and kapt2 update classpath dynamically
@@ -206,27 +206,26 @@ class KotlinCoreEnvironment private constructor(
             }
 
     private fun Iterable<ContentRoot>.classpathRoots(): List<JavaRoot> =
-            filterIsInstance(JvmContentRoot::class.java).mapNotNull {
-                javaRoot -> contentRootToVirtualFile(javaRoot)?.let { virtualFile ->
-
-                val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
-                    if (isValidJavaFqName(it)) {
-                        FqName(it)
+            filterIsInstance(JvmContentRoot::class.java).mapNotNull { javaRoot ->
+                contentRootToVirtualFile(javaRoot)?.let { virtualFile ->
+                    val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
+                        if (isValidJavaFqName(it)) {
+                            FqName(it)
+                        }
+                        else {
+                            report(WARNING, "Invalid package prefix name is ignored: $it")
+                            null
+                        }
                     }
-                    else {
-                        report(WARNING, "Invalid package prefix name is ignored: $it")
-                        null
+
+                    val rootType = when (javaRoot) {
+                        is JavaSourceRoot -> JavaRoot.RootType.SOURCE
+                        is JvmClasspathRoot -> JavaRoot.RootType.BINARY
+                        else -> throw IllegalStateException()
                     }
-                }
 
-                val rootType = when (javaRoot) {
-                    is JavaSourceRoot -> JavaRoot.RootType.SOURCE
-                    is JvmClasspathRoot -> JavaRoot.RootType.BINARY
-                    else -> throw IllegalStateException()
+                    JavaRoot(virtualFile, rootType, prefixPackageFqName)
                 }
-
-                JavaRoot(virtualFile, rootType, prefixPackageFqName)
-            }
             }
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
