@@ -36,12 +36,10 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
-import org.jetbrains.kotlin.config.CompilerSettings;
-import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.LanguageVersion;
-import org.jetbrains.kotlin.config.TargetPlatformKind;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
+import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -51,6 +49,14 @@ import java.util.Map;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<String, String>();
+
+    static {
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, "AMD");
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, "CommonJS");
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
+    }
+
     private final CommonCompilerArguments commonCompilerArguments;
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final K2JVMCompilerArguments k2jvmCompilerArguments;
@@ -83,13 +89,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JComboBox jvmVersionComboBox;
     private JComboBox languageVersionComboBox;
     private JPanel languageVersionPanel;
-
-    static {
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, "AMD");
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, "CommonJS");
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
-    }
+    private JComboBox coroutineSupportComboBox;
 
     public KotlinCompilerConfigurableTab(
             Project project,
@@ -131,11 +131,62 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         fillModuleKindList();
         fillJvmVersionList();
         fillLanguageVersionList();
+        fillCoroutineSupportList();
 
         if (compilerWorkspaceSettings == null) {
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public KotlinCompilerConfigurableTab(Project project) {
+        this(project,
+             KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings(),
+             Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings(),
+             KotlinCompilerSettings.getInstance(project).getSettings(),
+             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
+             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings(),
+             true);
+    }
+
+    @NotNull
+    private static String getModuleKindDescription(@NotNull String moduleKind) {
+        String result = moduleKindDescriptions.get(moduleKind);
+        assert result != null : "Module kind " + moduleKind + " was not added to combobox, therefore it should not be here";
+        return result;
+    }
+
+    @NotNull
+    private static String getModuleKindOrDefault(@Nullable String moduleKindId) {
+        if (moduleKindId == null) {
+            moduleKindId = K2JsArgumentConstants.MODULE_PLAIN;
+        }
+        return moduleKindId;
+    }
+
+    private static String getJvmVersionOrDefault(@Nullable String jvmVersion) {
+        return jvmVersion != null ? jvmVersion : JvmTarget.DEFAULT.getDescription();
+    }
+
+    private static String getLanguageVersionOrDefault(@Nullable String languageVersion) {
+        return languageVersion != null ? languageVersion : LanguageVersion.LATEST.getVersionString();
+    }
+
+    private static void setupFileChooser(
+            @NotNull JLabel label,
+            @NotNull TextFieldWithBrowseButton fileChooser,
+            @NotNull String title
+    ) {
+        label.setLabelFor(fileChooser);
+
+        fileChooser.addBrowseFolderListener(title, null, null,
+                                            new FileChooserDescriptor(true, false, false, false, false, false),
+                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT, false);
+    }
+
+    private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
+        return !StringUtil.equals(StringUtil.nullize(chooser.getText(), true), currentValue);
     }
 
     @SuppressWarnings("unchecked")
@@ -152,19 +203,16 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         }
     }
 
-    public void setTargetPlatform(@Nullable TargetPlatformKind<?> targetPlatform) {
-        k2jsPanel.setVisible(TargetPlatformKind.JavaScript.INSTANCE.equals(targetPlatform));
+    @SuppressWarnings("unchecked")
+    private void fillCoroutineSupportList() {
+        for (CoroutineSupport coroutineSupport : CoroutineSupport.values()) {
+            coroutineSupportComboBox.addItem(coroutineSupport);
+        }
+        coroutineSupportComboBox.setRenderer(new DescriptionListCellRenderer());
     }
 
-    @SuppressWarnings("unused")
-    public KotlinCompilerConfigurableTab(Project project) {
-        this(project,
-             KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings(),
-             Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings(),
-             KotlinCompilerSettings.getInstance(project).getSettings(),
-             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
-             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings(),
-             true);
+    public void setTargetPlatform(@Nullable TargetPlatformKind<?> targetPlatform) {
+        k2jsPanel.setVisible(TargetPlatformKind.JavaScript.INSTANCE.equals(targetPlatform));
     }
 
     @SuppressWarnings("unchecked")
@@ -178,13 +226,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                 setText(getModuleKindDescription(value));
             }
         });
-    }
-
-    @NotNull
-    private static String getModuleKindDescription(@NotNull String moduleKind) {
-        String result = moduleKindDescriptions.get(moduleKind);
-        assert result != null : "Module kind " + moduleKind + " was not added to combobox, therefore it should not be here";
-        return result;
     }
 
     @NotNull
@@ -209,6 +250,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
                (showLanguageVersion && !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion))) ||
+               !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArgument(k2jsCompilerArguments.moduleKind)) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
                ComparingUtils.isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
                ComparingUtils.isModified(scriptTemplatesClasspathField, compilerSettings.getScriptTemplatesClasspath()) ||
@@ -247,6 +289,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         if (showLanguageVersion) {
             commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
         }
+        commonCompilerArguments.coroutineSupport = ((CoroutineSupport) coroutineSupportComboBox.getSelectedItem()).getCompilerArgument();
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
         compilerSettings.setScriptTemplates(scriptTemplatesField.getText());
         compilerSettings.setScriptTemplatesClasspath(scriptTemplatesClasspathField.getText());
@@ -275,28 +318,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         BuildManager.getInstance().clearState(project);
     }
 
-    @NotNull
-    private static String getModuleKindOrDefault(@Nullable String moduleKindId) {
-        if (moduleKindId == null) {
-            moduleKindId = K2JsArgumentConstants.MODULE_PLAIN;
-        }
-        return moduleKindId;
-    }
-
-    private static String getJvmVersionOrDefault(@Nullable String jvmVersion) {
-        return jvmVersion != null ? jvmVersion : JvmTarget.DEFAULT.getDescription();
-    }
-
-    private static String getLanguageVersionOrDefault(@Nullable String languageVersion) {
-        return languageVersion != null ? languageVersion : LanguageVersion.LATEST.getVersionString();
-    }
-
     @Override
     public void reset() {
         generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
         if (showLanguageVersion) {
             languageVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion));
         }
+        coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArgument(commonCompilerArguments.coroutineSupport));
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
         scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
         scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());
@@ -333,21 +361,5 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public String getHelpTopic() {
         return "reference.compiler.kotlin";
-    }
-
-    private static void setupFileChooser(
-            @NotNull JLabel label,
-            @NotNull TextFieldWithBrowseButton fileChooser,
-            @NotNull String title
-    ) {
-        label.setLabelFor(fileChooser);
-
-        fileChooser.addBrowseFolderListener(title, null, null,
-                                            new FileChooserDescriptor(true, false, false, false, false, false),
-                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT, false);
-    }
-
-    private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
-        return !StringUtil.equals(StringUtil.nullize(chooser.getText(), true), currentValue);
     }
 }

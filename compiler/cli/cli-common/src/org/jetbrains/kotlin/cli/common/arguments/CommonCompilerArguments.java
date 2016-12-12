@@ -70,6 +70,10 @@ public abstract class CommonCompilerArguments {
     @Argument(value = "Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
     public boolean noCheckImpl;
 
+    @Argument(value = "Xcoroutine-support", description = "Coroutines: produce error/warning/compile silently")
+    // Possible values: "enabled", "warning", "disabled"
+    public String coroutineSupport;
+
     @Argument(value = "P", description = "Pass an option to a plugin")
     @ValueDescription(PLUGIN_OPTION_FORMAT)
     public String[] pluginOptions;
