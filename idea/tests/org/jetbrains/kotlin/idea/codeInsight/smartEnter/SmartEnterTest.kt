@@ -1111,6 +1111,19 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testSetter7() = doFileTest(
+            """
+            var a : Int = 0
+                set(value){<caret>}
+            """
+            ,
+            """
+            var a : Int = 0
+                set(value) {}
+            <caret>
+            """
+    )
+
     fun testSetterPrivate1() = doFileTest(
             """
             var a : Int = 0

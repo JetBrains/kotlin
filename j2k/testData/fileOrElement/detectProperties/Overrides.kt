@@ -26,18 +26,15 @@ internal open class B {
 
     open var fromB2: String
         get() = ""
-        set(value) {
-        }
+        set(value) {}
 
     open var fromB3: String
         get() = ""
-        set(value) {
-        }
+        set(value) {}
 
     open var fromB4: String
         get() = ""
-        set(value) {
-        }
+        set(value) {}
 
     open fun setFromB5(value: String) {}
 }
@@ -50,8 +47,7 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override var something3: Int
         get() = 0
-        set(value) {
-        }
+        set(value) {}
 
     override var something4: Int
         get() = 0

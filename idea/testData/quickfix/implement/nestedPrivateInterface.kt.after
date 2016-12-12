@@ -9,7 +9,6 @@ class Container {
     class BaseImpl : Base {
         override var z: Double
             get() = throw UnsupportedOperationException()
-            set(value) {
-            }
+            set(value) {}
     }
 }

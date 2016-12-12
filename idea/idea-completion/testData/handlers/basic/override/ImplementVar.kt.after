@@ -5,8 +5,7 @@ interface I {
 class A : I {
     override var someVar: String
         get() = <caret><selection>throw UnsupportedOperationException()</selection>
-        set(value) {
-        }
+        set(value) {}
 }
 
 // ELEMENT_TEXT: "override var someVar: String"

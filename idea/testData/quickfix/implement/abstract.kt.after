@@ -10,8 +10,7 @@ private abstract class Base {
 private class BaseImpl : Base() {
     override var x: Int
         get() = throw UnsupportedOperationException()
-        set(value) {
-        }
+        set(value) {}
 
     override fun toInt(arg: String): Int {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.

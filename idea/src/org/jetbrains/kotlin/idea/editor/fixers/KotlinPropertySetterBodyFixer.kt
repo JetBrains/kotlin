@@ -54,6 +54,6 @@ class KotlinPropertySetterBodyFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
             endOffset--
         }
 
-        doc.insertString(endOffset, "{}")
+        doc.insertString(endOffset, "{\n}")
     }
 }

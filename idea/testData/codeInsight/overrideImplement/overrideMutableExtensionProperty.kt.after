@@ -5,6 +5,5 @@ interface A {
 class B : A {
     override var Int.foo: Double
         get() = <selection><caret>throw UnsupportedOperationException()</selection>
-        set(value) {
-        }
+        set(value) {}
 }
