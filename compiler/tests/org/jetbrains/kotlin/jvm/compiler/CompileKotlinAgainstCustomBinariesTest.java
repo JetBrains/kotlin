@@ -546,24 +546,6 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         );
     }
 
-    public void testTarget6Inheritance() throws Exception {
-        target6Inheritance();
-    }
-
-    public void testTarget6MultiInheritance() throws Exception {
-        target6Inheritance();
-    }
-
-    private void target6Inheritance() {
-        compileKotlin("target6.kt", tmpdir);
-
-        Pair<String, ExitCode> outputMain = compileKotlin("main.kt", tmpdir, Arrays.asList("-jvm-target", "1.8"), tmpdir);
-
-        KotlinTestUtils.assertEqualsToFile(
-                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
-        );
-    }
-
     public void testTypeAliasesAreInvisibleInCompatibilityMode() {
         compileKotlin("typeAliases.kt", tmpdir);
 

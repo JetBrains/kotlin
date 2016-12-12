@@ -12,7 +12,6 @@ where advanced options include:
   -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
-  -Xinterface-compatibility  Generate DefaultImpls classes for interfaces in JVM target bytecode version 1.8 for binary compatibility with 1.6
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)
   -Xplugin <path>            Load plugins from the given classpath

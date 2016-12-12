@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/jvm8Target.kt
+-d
+$TEMP_DIR$
+-jvm-target
+1.8
+

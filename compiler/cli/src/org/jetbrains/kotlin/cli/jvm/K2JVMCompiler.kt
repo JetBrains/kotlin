@@ -133,7 +133,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (arguments.jvmTarget != null) {
             val jvmTarget = JvmTarget.fromString(arguments.jvmTarget)
             if (jvmTarget != null) {
-                configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+                if (jvmTarget == JvmTarget.JVM_1_8) {
+                    val warning = "The -jvm-target option has no effect yet"
+                    messageCollector.report(CompilerMessageSeverity.WARNING, warning, CompilerMessageLocation.NO_LOCATION)
+                }
+                //use default target for now
+                //configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
             }
             else {
                 val errorMessage = "Unknown JVM target version: ${arguments.jvmTarget}\n" +
@@ -143,17 +148,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         configuration.put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
-
-        if (arguments.interfaceCompatibility) {
-            val target = configuration.get(JVMConfigurationKeys.JVM_TARGET)
-            if (target != JvmTarget.JVM_1_8) {
-                val errorMessage = "The -Xinterface-compatibility option has effect only for JVM target bytecode version 1.8."
-                messageCollector.report(CompilerMessageSeverity.WARNING, errorMessage, CompilerMessageLocation.NO_LOCATION)
-            }
-            else {
-                configuration.put(JVMConfigurationKeys.INTERFACE_COMPATIBILITY, true)
-            }
-        }
 
         putAdvancedOptions(configuration, arguments)
 
