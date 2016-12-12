@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_RESULT
 import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_INTERCEPT_RESUME
-import org.jetbrains.kotlin.util.OperatorNameConventions.PROVIDE_DELEGATE
 import org.jetbrains.kotlin.util.OperatorNameConventions.DEC
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET
@@ -47,7 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.INC
 import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
 import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
-import org.jetbrains.kotlin.util.OperatorNameConventions.PROPERTY_DELEGATED
+import org.jetbrains.kotlin.util.OperatorNameConventions.PROVIDE_DELEGATE
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
@@ -226,8 +225,7 @@ object OperatorChecks : AbstractModifierChecks() {
                 ensure(parameterType.isNonExtensionFunctionType && parameterType.getValueParameterTypesFromFunctionType().isEmpty() &&
                             parameterType.getReturnTypeFromFunctionType().isUnit()
                 ) { "Value parameter must have a functional type '() -> Unit'" }
-            },
-            Checks(PROPERTY_DELEGATED, Member, ValueParameterCountCheck.Equals(1)) //TODO: more checks required!
+            }
     )
 
     private fun FunctionDescriptor.checkHandleSecondParameter(): String? {

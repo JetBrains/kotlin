@@ -657,7 +657,7 @@ class ControlFlowInformationProvider private constructor(
                     || DescriptorUtils.isEffectivelyExternal(functionDescriptor)
                     || OperatorNameConventions.GET_VALUE == functionName
                     || OperatorNameConventions.SET_VALUE == functionName
-                    || OperatorNameConventions.PROPERTY_DELEGATED == functionName) {
+                    || OperatorNameConventions.PROVIDE_DELEGATE == functionName) {
                     return
                 }
                 report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
