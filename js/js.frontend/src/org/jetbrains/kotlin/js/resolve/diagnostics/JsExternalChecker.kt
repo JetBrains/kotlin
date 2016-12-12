@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-class JsExternalChecker : SimpleDeclarationChecker {
+object JsExternalChecker : SimpleDeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext) {
         if (!AnnotationsUtils.isNativeObject(descriptor)) return

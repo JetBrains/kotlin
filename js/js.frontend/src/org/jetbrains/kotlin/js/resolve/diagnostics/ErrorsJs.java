@@ -68,6 +68,8 @@ public interface ErrorsJs {
     DiagnosticFactory0<PsiElement> RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> RUNTIME_ANNOTATION_NOT_SUPPORTED = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS =
+            DiagnosticFactory0.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

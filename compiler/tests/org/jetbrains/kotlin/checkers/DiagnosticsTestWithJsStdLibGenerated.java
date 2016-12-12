@@ -581,6 +581,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("overrideOptionalParam.kt")
+        public void testOverrideOptionalParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/overrideOptionalParam.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateMembers.kt")
         public void testPrivateMembers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/privateMembers.kt");

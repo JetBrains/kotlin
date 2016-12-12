@@ -68,6 +68,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION, "Runtime annotation can't be put on external declaration")
         put(ErrorsJs.RUNTIME_ANNOTATION_NOT_SUPPORTED, "Reflection is not supported in JavaScript target, therefore you won't be able " +
                                                        "to read this annotation in run-time")
+        put(ErrorsJs.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, "Overriding `external` function with optional parameters")
 
         this
     }
