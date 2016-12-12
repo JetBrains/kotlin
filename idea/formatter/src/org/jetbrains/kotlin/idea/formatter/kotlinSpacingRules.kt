@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 
@@ -406,19 +407,33 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(parent = CLASS_BODY, right = RBRACE).lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
 
             inPosition(parent = BLOCK, right = RBRACE).customRule { block, left, right ->
-                val funNode = block.node.treeParent.psi as? KtFunction ?: return@customRule null
+                val psiElement = block.node.treeParent.psi
+
                 val empty = left.node.elementType == LBRACE
-                if (funNode.name != null && !empty) return@customRule null
+
+                when (psiElement) {
+                    is KtFunction -> {
+                        if (psiElement.name != null && !empty) return@customRule null
+                    }
+                    is KtPropertyAccessor ->
+                        if (!empty) return@customRule null
+                    else ->
+                        return@customRule null
+                }
 
                 val spaces = if (empty) 0 else spacesInSimpleFunction
-                Spacing.createDependentLFSpacing(spaces, spaces, funNode.textRange,
+                Spacing.createDependentLFSpacing(spaces, spaces, psiElement.textRange,
                                                  codeStyleSettings.KEEP_LINE_BREAKS,
                                                  codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
             }
 
             inPosition(parent = BLOCK, left = LBRACE).customRule { parent, left, right ->
-                val funNode = parent.node.treeParent.psi as? KtFunction ?: return@customRule null
+                val psiElement = parent.node.treeParent.psi
+                val funNode = psiElement as? KtFunction ?: return@customRule null
+
                 if (funNode.name != null) return@customRule null
+
+                // Empty block is covered in above rule
                 Spacing.createDependentLFSpacing(spacesInSimpleFunction, spacesInSimpleFunction, funNode.textRange,
                                                  codeStyleSettings.KEEP_LINE_BREAKS,
                                                  codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)

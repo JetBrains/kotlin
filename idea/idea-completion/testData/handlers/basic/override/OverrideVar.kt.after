@@ -5,8 +5,7 @@ open class B {
 class A : B {
     override var someVar: String
         get() = <caret><selection>super.someVar</selection>
-        set(value) {
-        }
+        set(value) {}
 }
 
 // ELEMENT_TEXT: "override var someVar: String"

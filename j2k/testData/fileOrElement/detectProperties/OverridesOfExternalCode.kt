@@ -90,7 +90,6 @@ internal class D : JavaClassDerivedFromKotlinClassWithProperties() {
 
     override var someVar2: String
         get() = super.someVar2
-        set(value) {
-        }
+        set(value) {}
 
 }
