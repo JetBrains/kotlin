@@ -30,16 +30,15 @@ public final class AccessTranslationUtils {
     }
 
     @NotNull
-    public static AccessTranslator getAccessTranslator(@NotNull KtExpression referenceExpression,
-                                                       @NotNull TranslationContext context) {
+    public static AccessTranslator getAccessTranslator(@NotNull KtExpression referenceExpression, @NotNull TranslationContext context) {
         return getAccessTranslator(referenceExpression, context, false);
     }
 
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull KtExpression referenceExpression,
             @NotNull TranslationContext context, boolean forceOrderOfEvaluation) {
-        assert ((referenceExpression instanceof KtReferenceExpression) ||
-                (referenceExpression instanceof KtQualifiedExpression));
+        referenceExpression = KtPsiUtil.deparenthesize(referenceExpression);
+        assert referenceExpression != null;
         if (referenceExpression instanceof KtQualifiedExpression) {
             return QualifiedExpressionTranslator.getAccessTranslator((KtQualifiedExpression) referenceExpression, context, forceOrderOfEvaluation);
         }
@@ -75,8 +74,7 @@ public final class AccessTranslationUtils {
     }
 
     @NotNull
-    public static JsExpression translateAsGet(@NotNull KtExpression expression,
-                                              @NotNull TranslationContext context) {
+    public static JsExpression translateAsGet(@NotNull KtExpression expression, @NotNull TranslationContext context) {
         return (getAccessTranslator(expression, context)).translateAsGet();
     }
 }

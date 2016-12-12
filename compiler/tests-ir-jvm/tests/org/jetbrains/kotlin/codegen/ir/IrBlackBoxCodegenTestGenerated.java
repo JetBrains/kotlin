@@ -10487,6 +10487,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("annotatedAssignment.kt")
+        public void testAnnotatedAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/annotatedAssignment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignmentOperations.kt")
         public void testAssignmentOperations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");
