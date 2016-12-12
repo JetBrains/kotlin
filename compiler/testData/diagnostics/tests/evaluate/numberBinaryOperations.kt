@@ -19,8 +19,8 @@ fun test() {
     fooLong(1 / 1)
     fooShort(1 / 1)
 
-    fooInt(1 <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 1)
-    fooByte(1 <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 1)
-    fooLong(1 <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 1)
-    fooShort(1 <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 1)
+    fooInt(1 % 1)
+    fooByte(1 % 1)
+    fooLong(1 % 1)
+    fooShort(1 % 1)
 }

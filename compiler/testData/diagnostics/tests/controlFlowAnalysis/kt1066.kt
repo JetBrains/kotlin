@@ -24,8 +24,8 @@ fun test() {
         if (second > 4000000)
             break
 
-        if (second <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 2 == 0)
-        sum += second
+        if (second % 2 == 0)
+            sum += second
 
         temp = second
         second = first + second

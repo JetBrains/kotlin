@@ -2,13 +2,13 @@
 // !CHECK_TYPE
 class Controller {
     suspend fun noParams(): Unit = suspendWithCurrentContinuation {
-        if (hashCode() <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 2 == 0) {
-        it.resume(Unit)
-        Suspend
-    }
+        if (hashCode() % 2 == 0) {
+            it.resume(Unit)
+            Suspend
+        }
         else {
-        Unit
-    }
+            Unit
+        }
     }
     suspend fun yieldString(value: String) = suspendWithCurrentContinuation<Int> {
         it.resume(1)
