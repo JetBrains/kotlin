@@ -61,6 +61,22 @@ data class KotlinVersionInfo(
         }
 }
 
+enum class CoroutineSupport(
+        override val description: String,
+        val compilerArgument: String
+) : DescriptionAware {
+    ENABLED("Enabled", "enabled"),
+    ENABLED_WITH_WARNING("Enabled with warning", "warning"),
+    DISABLED("Disabled", "disabled");
+
+    companion object {
+        val DEFAULT = ENABLED_WITH_WARNING
+
+        @JvmStatic fun byCompilerArgument(value: String?) = CoroutineSupport.values().firstOrNull { it.compilerArgument == value }
+                                                            ?: CoroutineSupport.DEFAULT
+    }
+}
+
 class KotlinCompilerInfo {
     // To be serialized
     @Property private var _commonCompilerArguments: CommonCompilerArguments.DummyImpl? = null
@@ -71,6 +87,12 @@ class KotlinCompilerInfo {
         }
     var k2jsCompilerArguments: K2JSCompilerArguments? = null
     var compilerSettings: CompilerSettings? = null
+
+    @get:Transient var coroutineSupport: CoroutineSupport
+        get() = CoroutineSupport.byCompilerArgument(commonCompilerArguments?.coroutineSupport)
+        set(value) {
+            commonCompilerArguments?.coroutineSupport = value.compilerArgument
+        }
 }
 
 class KotlinFacetSettings {
