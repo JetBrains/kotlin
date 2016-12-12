@@ -141,3 +141,18 @@ public inline fun Char.isLowSurrogate(): Boolean = Character.isLowSurrogate(this
 // * Returns the Unicode name of this character, or `null` if the code point of this character is unassigned.
 // */
 //public fun Char.name(): String? = Character.getName(this.toInt())
+
+
+
+internal fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
+
+/**
+ * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
+ */
+@PublishedApi
+internal fun checkRadix(radix: Int): Int {
+    if(radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
+        throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
+    }
+    return radix
+}

@@ -10,29 +10,28 @@ package kotlin.text
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
+public inline fun Byte.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun Short.toString(radix: Int): String = this.toInt().toString(radix)
+public inline fun Short.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-// TODO: use checkRadix(radix) when PublishedApi is available
-public inline fun Int.toString(radix: Int): String = java.lang.Integer.toString(this, radix)
+public inline fun Int.toString(radix: Int): String = java.lang.Integer.toString(this, checkRadix(radix))
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun Long.toString(radix: Int): String = java.lang.Long.toString(this, radix)
+public inline fun Long.toString(radix: Int): String = java.lang.Long.toString(this, checkRadix(radix))
 
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
@@ -53,8 +52,7 @@ public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-// TODO: use checkRadix(radix) when PublishedApi is available
-public inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseByte(this, radix)
+public inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseByte(this, checkRadix(radix))
 
 
 /**
@@ -70,7 +68,7 @@ public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun String.toShort(radix: Int): Short = java.lang.Short.parseShort(this, radix)
+public inline fun String.toShort(radix: Int): Short = java.lang.Short.parseShort(this, checkRadix(radix))
 
 /**
  * Parses the string as an [Int] number and returns the result.
@@ -85,7 +83,7 @@ public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun String.toInt(radix: Int): Int = java.lang.Integer.parseInt(this, radix)
+public inline fun String.toInt(radix: Int): Int = java.lang.Integer.parseInt(this, checkRadix(radix))
 
 /**
  * Parses the string as a [Long] number and returns the result.
@@ -100,7 +98,7 @@ public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun String.toLong(radix: Int): Long = java.lang.Long.parseLong(this, radix)
+public inline fun String.toLong(radix: Int): Long = java.lang.Long.parseLong(this, checkRadix(radix))
 
 /**
  * Parses the string as a [Float] number and returns the result.
@@ -321,14 +319,4 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
     } catch(e: NumberFormatException) {  // overflow
         null
     }
-}
-
-internal fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
-
-// TODO: @PublishedApi
-internal fun checkRadix(radix: Int): Int {
-    if(radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
-        throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
-    }
-    return radix
 }

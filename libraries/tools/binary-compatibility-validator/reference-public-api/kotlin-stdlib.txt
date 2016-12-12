@@ -2195,6 +2195,7 @@ public final class kotlin/text/CharDirectionality$Companion {
 }
 
 public final class kotlin/text/CharsKt {
+	public static final fun checkRadix (I)I
 	public static final fun equals (CCZ)Z
 	public static synthetic fun equals$default (CCZILjava/lang/Object;)Z
 	public static final fun getCategory (C)Lkotlin/text/CharCategory;

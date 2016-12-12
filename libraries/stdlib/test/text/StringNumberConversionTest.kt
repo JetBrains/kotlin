@@ -161,7 +161,9 @@ class StringNumberConversionTest {
         assertEquals("-80", Byte.MIN_VALUE.toString(radix = 16))
         assertEquals("3v", Byte.MAX_VALUE.toString(radix = 32))
         assertEquals("-40", Byte.MIN_VALUE.toString(radix = 32))
-        // TODO: IllegalArgumentException on incorrect radix
+
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37.toByte().toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toByte().toString(radix = 1) }
     }
 
     @Test fun shortToStringWithRadix() {
@@ -169,14 +171,16 @@ class StringNumberConversionTest {
         assertEquals("-8000", (-0x8000).toShort().toString(radix = 16))
         assertEquals("-sfs", (-29180).toShort().toString(radix = 32))
 
-        // TODO: IllegalArgumentException on incorrect radix
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37.toShort().toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toShort().toString(radix = 1) }
     }
 
     @Test fun intToStringWithRadix() {
         assertEquals("-ff", (-255).toString(radix = 16))
         assertEquals("1100110", 102.toString(radix = 2))
         assertEquals("kona", 411787.toString(radix = 27))
-        // TODO: IllegalArgumentException on incorrect radix
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37.toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toString(radix = 1) }
 
     }
 
@@ -185,9 +189,8 @@ class StringNumberConversionTest {
         assertEquals("hazelnut", 1356099454469L.toString(radix = 36))
         assertEquals("-8000000000000000", Long.MIN_VALUE.toString(radix = 16))
 
-        // TODO: IllegalArgumentException on incorrect radix
-//        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37.toString(radix = 37) }
-//        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toString(radix = 1) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37L.toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1L.toString(radix = 1) }
     }
 }
 
