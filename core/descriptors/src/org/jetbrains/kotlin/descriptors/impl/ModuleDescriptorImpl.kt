@@ -49,7 +49,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     @Deprecated("This method is not going to be supported. Please do not use it")
     val testOnly_AllDependentModules: List<ModuleDescriptorImpl> get() = this.dependencies!!.allDependencies
 
-    override val allDependentModules: List<ModuleDescriptor>
+    override val allDependencyModules: List<ModuleDescriptor>
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
     override val allImplementingModules: MutableSet<ModuleDescriptor> = mutableSetOf()
@@ -82,10 +82,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         assert(this.dependencies == null) { "Dependencies of $id were already set" }
         this.dependencies = dependencies
         if (platformKind == PlatformKind.DEFAULT) return
-        for (dependentModule in allDependentModules) {
-            if (dependentModule.platformKind != PlatformKind.DEFAULT) continue
-            if (dependentModule.sourceKind != sourceKind) continue
-            (dependentModule as? ModuleDescriptorImpl)?.allImplementingModules?.add(this)
+        for (dependencyModule in allDependencyModules) {
+            if (dependencyModule.platformKind != PlatformKind.DEFAULT) continue
+            if (dependencyModule.sourceKind != sourceKind) continue
+            (dependencyModule as? ModuleDescriptorImpl)?.allImplementingModules?.add(this)
         }
     }
 

@@ -43,9 +43,9 @@ class DefaultImportProvider(
 
     val excludedImports: List<FqName> by storageManager.createLazyValue {
         val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
-        val builtinTypeAliases = moduleDescriptor.allDependentModules
-                .flatMap { dependentModule ->
-                    packagesWithAliases.map(dependentModule::getPackage).flatMap {
+        val builtinTypeAliases = moduleDescriptor.allDependencyModules
+                .flatMap { dependencyModule ->
+                    packagesWithAliases.map(dependencyModule::getPackage).flatMap {
                         it.memberScope.getContributedDescriptors(DescriptorKindFilter.TYPE_ALIASES).filterIsInstance<TypeAliasDescriptor>()
                     }
                 }

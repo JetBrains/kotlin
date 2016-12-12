@@ -94,7 +94,7 @@ public class ErrorUtils {
 
             @NotNull
             @Override
-            public List<ModuleDescriptor> getAllDependentModules() {
+            public List<ModuleDescriptor> getAllDependencyModules() {
                 return emptyList();
             }
 

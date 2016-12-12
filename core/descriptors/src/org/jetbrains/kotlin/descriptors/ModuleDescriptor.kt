@@ -45,10 +45,11 @@ interface ModuleDescriptor : DeclarationDescriptor {
     fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
     /**
-     * @return dependent modules in the same order in which this module depends on them. Does not include `this`
+     * @return dependency modules in the same order in which this module depends on them. Does not include `this`
      */
-    val allDependentModules: List<ModuleDescriptor>
+    val allDependencyModules: List<ModuleDescriptor>
 
+    // All platform-specific modules depending on common 'this' module (result is empty if this is platform-specific itself)
     val allImplementingModules: Set<ModuleDescriptor>
 
     fun <T> getCapability(capability: Capability<T>): T?
