@@ -32,6 +32,13 @@ public inline operator fun BigInteger.times(other: BigInteger) : BigInteger = th
 public inline operator fun BigInteger.div(other: BigInteger) : BigInteger = this.divide(other)
 
 /**
+ * Enables the use of the `%` operator for [BigInteger] instances.
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline operator fun BigInteger.rem(other: BigInteger) : BigInteger = this.remainder(other)
+
+/**
  * Enables the use of the unary `-` operator for [BigInteger] instances.
  */
 @kotlin.internal.InlineOnly

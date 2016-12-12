@@ -17,7 +17,8 @@ class MathTest {
         assertEquals(BigInteger("6"), a * b)
         assertEquals(BigInteger("0"), a / b)
         assertEquals(BigInteger("-2"), -a)
-        assertEquals(BigInteger("1"), -a % b)
+        assertEquals(BigInteger("-2"), -a % b)
+        assertEquals(BigInteger("1"), (-a).mod(b))
         assertEquals(BigInteger("-2"), (-a).remainder(b))
     }
 
