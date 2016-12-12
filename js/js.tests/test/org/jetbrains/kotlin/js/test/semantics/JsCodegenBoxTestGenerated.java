@@ -6888,59 +6888,59 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
         }
 
-        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor")
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ToDelegateFor extends AbstractJsCodegenBoxTest {
-            public void testAllFilesPresentInToDelegateFor() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/toDelegateFor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+        public static class ProvideDelegate extends AbstractJsCodegenBoxTest {
+            public void testAllFilesPresentInProvideDelegate() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("differentReceivers.kt")
             public void testDifferentReceivers() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/differentReceivers.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/differentReceivers.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("evaluationOrder.kt")
             public void testEvaluationOrder() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/evaluationOrder.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/evaluationOrder.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("evaluationOrderVar.kt")
             public void testEvaluationOrderVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/evaluationOrderVar.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/evaluationOrderVar.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("extensionDelegated.kt")
             public void testExtensionDelegated() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/extensionDelegated.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/extensionDelegated.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("generic.kt")
             public void testGeneric() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/generic.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/generic.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("inClass.kt")
             public void testInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/inClass.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inClass.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("inlineToDelegateFor.kt")
-            public void testInlineToDelegateFor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/inlineToDelegateFor.kt");
+            @TestMetadata("inlineProvideDelegate.kt")
+            public void testInlineProvideDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inlineProvideDelegate.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("jvmStaticInObject.kt")
             public void testJvmStaticInObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/jvmStaticInObject.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/jvmStaticInObject.kt");
                 try {
                     doTest(fileName);
                 }
@@ -6952,31 +6952,31 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/local.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/local.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("localCaptured.kt")
             public void testLocalCaptured() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/localCaptured.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/localCaptured.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("localDifferentReceivers.kt")
             public void testLocalDifferentReceivers() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/localDifferentReceivers.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/localDifferentReceivers.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("memberExtension.kt")
             public void testMemberExtension() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/memberExtension.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/memberExtension.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("propertyMetadata.kt")
             public void testPropertyMetadata() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/toDelegateFor/propertyMetadata.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/propertyMetadata.kt");
                 doTest(fileName);
             }
         }

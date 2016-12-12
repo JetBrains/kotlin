@@ -40,7 +40,7 @@ class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMult
         return (descriptor.accessors.mapNotNull {
             accessor ->
             context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.candidateDescriptor
-        } + listOfNotNull(context.get(BindingContext.TO_DELEGATE_FOR_RESOLVED_CALL, descriptor)?.candidateDescriptor))
+        } + listOfNotNull(context.get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, descriptor)?.candidateDescriptor))
     }
 
     override val resolvesByNames: Collection<Name> get() = NAMES

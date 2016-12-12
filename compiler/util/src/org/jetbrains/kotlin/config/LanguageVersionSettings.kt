@@ -36,7 +36,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     DivisionByZeroInConstantExpressions(KOTLIN_1_1),
     InlineConstVals(KOTLIN_1_1),
     OperatorRem(KOTLIN_1_1),
-    OperatorToDelegateFor(KOTLIN_1_1),
+    OperatorProvideDelegate(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null),

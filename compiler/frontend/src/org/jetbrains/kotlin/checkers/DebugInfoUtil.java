@@ -118,7 +118,7 @@ public class DebugInfoUtil {
                 VariableDescriptor descriptor = bindingContext.get(VARIABLE, property);
                 if (descriptor instanceof PropertyDescriptor && property.getDelegate() != null) {
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor, TO_DELEGATE_FOR_RESOLVED_CALL);
+                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor, PROVIDE_DELEGATE_RESOLVED_CALL);
                     reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getGetter(), DELEGATED_PROPERTY_RESOLVED_CALL);
                     reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getSetter(), DELEGATED_PROPERTY_RESOLVED_CALL);
                 }

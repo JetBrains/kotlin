@@ -1,0 +1,12 @@
+package
+
+public object T1 {
+    private constructor T1()
+    public final val test2: [ERROR : Type from delegate]
+    public final val kotlin.String.test1: kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final operator fun kotlin.Long.getValue(/*0*/ receiver: kotlin.String, /*1*/ p: kotlin.Any): kotlin.Double
+    public final operator fun kotlin.Int.provideDelegate(/*0*/ host: T1, /*1*/ p: kotlin.Any): kotlin.Long
+}

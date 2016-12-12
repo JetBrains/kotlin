@@ -1,0 +1,19 @@
+package
+
+public object CommonCase {
+    private constructor CommonCase()
+    public final val kotlin.Long.test1: kotlin.String
+    public final val kotlin.Long.test2: kotlin.String
+    public final fun </*0*/ D, /*1*/ E, /*2*/ R> delegate(): CommonCase.Fas<D, E, R>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final operator fun </*0*/ D, /*1*/ E, /*2*/ R> CommonCase.Fas<D, E, R>.getValue(/*0*/ receiver: E, /*1*/ p: kotlin.Any?): R
+    public final operator fun </*0*/ D, /*1*/ E, /*2*/ R> CommonCase.Fas<D, E, R>.provideDelegate(/*0*/ host: D, /*1*/ p: kotlin.Any?): CommonCase.Fas<D, E, R>
+
+    public interface Fas</*0*/ D, /*1*/ E, /*2*/ R> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

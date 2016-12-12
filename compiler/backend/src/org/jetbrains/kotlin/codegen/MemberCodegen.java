@@ -67,7 +67,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
-import static org.jetbrains.kotlin.resolve.BindingContext.TO_DELEGATE_FOR_RESOLVED_CALL;
+import static org.jetbrains.kotlin.resolve.BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_ALIAS;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -467,23 +467,23 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         StackValue.Property propValue = codegen.intermediateValueForProperty(
                 propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null);
 
-        ResolvedCall<FunctionDescriptor> toDelegateForResolvedCall = bindingContext.get(TO_DELEGATE_FOR_RESOLVED_CALL, propertyDescriptor);
-        if (toDelegateForResolvedCall == null) {
+        ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
+        if (provideDelegateResolvedCall == null) {
             propValue.store(codegen.gen(initializer), codegen.v);
             return;
         }
 
-        StackValue toDelegateForReceiver = codegen.gen(initializer);
+        StackValue provideDelegateReceiver = codegen.gen(initializer);
 
         int indexOfDelegatedProperty = PropertyCodegen.indexOfDelegatedProperty(property);
 
-        List<? extends ValueArgument> arguments = toDelegateForResolvedCall.getCall().getValueArguments();
+        List<? extends ValueArgument> arguments = provideDelegateResolvedCall.getCall().getValueArguments();
         assert arguments.size() == 2 :
-                "Resolved call for '" + OperatorNameConventions.TO_DELEGATE_FOR.asString() + "' should have exactly 2 value parameters";
+                "Resolved call for '" + OperatorNameConventions.PROVIDE_DELEGATE.asString() + "' should have exactly 2 value parameters";
         codegen.tempVariables.put(arguments.get(0).asElement(), StackValue.LOCAL_0);
 
         StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethodWithReceiver(
-                codegen, typeMapper, toDelegateForResolvedCall, indexOfDelegatedProperty, 1, toDelegateForReceiver);
+                codegen, typeMapper, provideDelegateResolvedCall, indexOfDelegatedProperty, 1, provideDelegateReceiver);
 
         propValue.store(delegateValue, codegen.v);
 

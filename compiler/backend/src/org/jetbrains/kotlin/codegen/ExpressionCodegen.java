@@ -4085,9 +4085,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StackValue metadataValue = getVariableMetadataValue(variableDescriptor);
             initializePropertyMetadata((KtProperty) variableDeclaration, variableDescriptor, metadataValue);
 
-            ResolvedCall<FunctionDescriptor> toDelegateForResolvedCall = bindingContext.get(TO_DELEGATE_FOR_RESOLVED_CALL, variableDescriptor);
-            if (toDelegateForResolvedCall != null) {
-                resultType = generateToDelegateForCallForLocalVariable(initializer, metadataValue, toDelegateForResolvedCall);
+            ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, variableDescriptor);
+            if (provideDelegateResolvedCall != null) {
+                resultType = generateProvideDelegateCallForLocalVariable(initializer, metadataValue, provideDelegateResolvedCall);
             }
         }
 
@@ -4096,17 +4096,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private Type generateToDelegateForCallForLocalVariable(
+    private Type generateProvideDelegateCallForLocalVariable(
             @NotNull StackValue initializer,
             final StackValue metadataValue,
-            ResolvedCall<FunctionDescriptor> toDelegateForResolvedCall
+            ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall
     ) {
-        StackValue toDelegateForReceiver = StackValue.onStack(initializer.type);
+        StackValue provideDelegateReceiver = StackValue.onStack(initializer.type);
 
-        List<? extends ValueArgument> arguments = toDelegateForResolvedCall.getCall().getValueArguments();
+        List<? extends ValueArgument> arguments = provideDelegateResolvedCall.getCall().getValueArguments();
         assert arguments.size() == 2 :
                 "Resolved call for '" +
-                OperatorNameConventions.TO_DELEGATE_FOR.asString() +
+                OperatorNameConventions.PROVIDE_DELEGATE.asString() +
                 "' should have exactly 2 value parameters";
 
         tempVariables.put(arguments.get(0).asElement(), StackValue.constant(null, AsmTypes.OBJECT_TYPE));
@@ -4120,7 +4120,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
         );
 
-        StackValue result = invokeFunction(toDelegateForResolvedCall, toDelegateForReceiver);
+        StackValue result = invokeFunction(provideDelegateResolvedCall, provideDelegateReceiver);
         result.put(result.type, v);
         tempVariables.remove(arguments.get(0).asElement());
         tempVariables.remove(arguments.get(1).asElement());

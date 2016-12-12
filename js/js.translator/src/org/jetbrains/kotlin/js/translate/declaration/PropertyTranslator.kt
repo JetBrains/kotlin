@@ -141,10 +141,10 @@ fun TranslationContext.translateDelegateOrInitializerExpression(expression: KtPr
     val expressionPsi = expression.delegateExpressionOrInitializer ?: return null
 
     val initializer = Translation.translateAsExpression(expressionPsi, this)
-    val toDelegateForCall = bindingContext()[BindingContext.TO_DELEGATE_FOR_RESOLVED_CALL, propertyDescriptor]
-    return if (toDelegateForCall != null) {
-        val innerContext = this.contextWithPropertyMetadataCreationIntrinsified(toDelegateForCall, propertyDescriptor, JsLiteral.THIS)
-        CallTranslator.translate(innerContext, toDelegateForCall, initializer)
+    val provideDelegateCall = bindingContext()[BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor]
+    return if (provideDelegateCall != null) {
+        val innerContext = this.contextWithPropertyMetadataCreationIntrinsified(provideDelegateCall, propertyDescriptor, JsLiteral.THIS)
+        CallTranslator.translate(innerContext, provideDelegateCall, initializer)
     }
     else {
         initializer

@@ -1,0 +1,6 @@
+package
+
+public val test1: kotlin.String
+public val test2: kotlin.String
+public operator fun kotlin.String.getValue(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): kotlin.String
+public operator fun kotlin.String.provideDelegate(/*0*/ a: kotlin.Any?, /*1*/ p: kotlin.reflect.KProperty<*>): kotlin.String

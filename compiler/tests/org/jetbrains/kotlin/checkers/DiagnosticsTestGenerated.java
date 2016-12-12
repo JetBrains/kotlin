@@ -5809,89 +5809,89 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
-            @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor")
+            @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class ToDelegateFor extends AbstractDiagnosticsTest {
-                public void testAllFilesPresentInToDelegateFor() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            public static class ProvideDelegate extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInProvideDelegate() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("commonCaseForInference.kt")
                 public void testCommonCaseForInference() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/commonCaseForInference.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/commonCaseForInference.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("genericToDelegateFor.kt")
-                public void testGenericToDelegateFor() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/genericToDelegateFor.kt");
+                @TestMetadata("genericProvideDelegate.kt")
+                public void testGenericProvideDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/genericProvideDelegate.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("hostAndReceiver1.kt")
                 public void testHostAndReceiver1() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/hostAndReceiver1.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/hostAndReceiver1.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("hostAndReceiver2.kt")
                 public void testHostAndReceiver2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/hostAndReceiver2.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/hostAndReceiver2.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("hostAndReceiver3.kt")
                 public void testHostAndReceiver3() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/hostAndReceiver3.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/hostAndReceiver3.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("inferenceFromReceiver1.kt")
                 public void testInferenceFromReceiver1() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/inferenceFromReceiver1.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/inferenceFromReceiver1.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("inferenceFromReceiver2.kt")
                 public void testInferenceFromReceiver2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/inferenceFromReceiver2.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/inferenceFromReceiver2.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("localDelegatedProperty.kt")
                 public void testLocalDelegatedProperty() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/localDelegatedProperty.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/localDelegatedProperty.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("noOperatorModifierOnToDelegateFor.kt")
-                public void testNoOperatorModifierOnToDelegateFor() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/noOperatorModifierOnToDelegateFor.kt");
+                @TestMetadata("noOperatorModifierOnProvideDelegate.kt")
+                public void testNoOperatorModifierOnProvideDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/noOperatorModifierOnProvideDelegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("provideDelegateOperatorDeclaration.kt")
+                public void testProvideDelegateOperatorDeclaration() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateOperatorDeclaration.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("setValue.kt")
                 public void testSetValue() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/setValue.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/setValue.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("simpleToDelegateFor.kt")
-                public void testSimpleToDelegateFor() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/simpleToDelegateFor.kt");
+                @TestMetadata("simpleProvideDelegate.kt")
+                public void testSimpleProvideDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/simpleProvideDelegate.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("toDelegateForOperatorDeclaration.kt")
-                public void testToDelegateForOperatorDeclaration() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/toDelegateForOperatorDeclaration.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("unsupportedOperatorToDelegateFor.kt")
-                public void testUnsupportedOperatorToDelegateFor() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/toDelegateFor/unsupportedOperatorToDelegateFor.kt");
+                @TestMetadata("unsupportedOperatorProvideDelegate.kt")
+                public void testUnsupportedOperatorProvideDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/unsupportedOperatorProvideDelegate.kt");
                     doTest(fileName);
                 }
             }

@@ -48,8 +48,8 @@ object OperatorModifierChecker {
                     checkSupportsFeature(LanguageFeature.Coroutines, languageVersionSettings, diagnosticHolder, modifier)
                 in REM_TO_MOD_OPERATION_NAMES.keys ->
                     checkSupportsFeature(LanguageFeature.OperatorRem, languageVersionSettings, diagnosticHolder, modifier)
-                OperatorNameConventions.TO_DELEGATE_FOR ->
-                    checkSupportsFeature(LanguageFeature.OperatorToDelegateFor, languageVersionSettings, diagnosticHolder, modifier)
+                OperatorNameConventions.PROVIDE_DELEGATE ->
+                    checkSupportsFeature(LanguageFeature.OperatorProvideDelegate, languageVersionSettings, diagnosticHolder, modifier)
             }
 
             if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values

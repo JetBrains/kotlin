@@ -375,12 +375,12 @@ public class PropertyCodegen {
     private KotlinType getDelegateTypeForProperty(@NotNull KtProperty p, @NotNull PropertyDescriptor propertyDescriptor) {
         KotlinType delegateType = null;
 
-        ResolvedCall<FunctionDescriptor> toDelegateForResolvedCall =
-                bindingContext.get(BindingContext.TO_DELEGATE_FOR_RESOLVED_CALL, propertyDescriptor);
+        ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall =
+                bindingContext.get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
         KtExpression delegateExpression = p.getDelegateExpression();
 
-        if (toDelegateForResolvedCall != null) {
-            delegateType = toDelegateForResolvedCall.getResultingDescriptor().getReturnType();
+        if (provideDelegateResolvedCall != null) {
+            delegateType = provideDelegateResolvedCall.getResultingDescriptor().getReturnType();
         }
         else if (delegateExpression != null) {
             delegateType = bindingContext.getType(delegateExpression);

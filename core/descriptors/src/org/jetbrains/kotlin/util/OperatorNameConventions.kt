@@ -22,7 +22,7 @@ object OperatorNameConventions {
     @JvmField val GET_VALUE = Name.identifier("getValue")
     @JvmField val SET_VALUE = Name.identifier("setValue")
     @JvmField val PROPERTY_DELEGATED = Name.identifier("propertyDelegated")
-    @JvmField val TO_DELEGATE_FOR = Name.identifier("toDelegateFor")
+    @JvmField val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 
     @JvmField val EQUALS = Name.identifier("equals")
     @JvmField val COMPARE_TO = Name.identifier("compareTo")

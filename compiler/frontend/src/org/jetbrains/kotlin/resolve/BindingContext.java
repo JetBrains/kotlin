@@ -141,8 +141,8 @@ public interface BindingContext {
 
     WritableSlice<VariableAccessorDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<VariableAccessorDescriptor, Call> DELEGATED_PROPERTY_CALL = Slices.createSimpleSlice();
-    WritableSlice<VariableDescriptorWithAccessors, ResolvedCall<FunctionDescriptor>> TO_DELEGATE_FOR_RESOLVED_CALL = Slices.createSimpleSlice();
-    WritableSlice<VariableDescriptorWithAccessors, Call> TO_DELEGATE_FOR_CALL = Slices.createSimpleSlice();
+    WritableSlice<VariableDescriptorWithAccessors, ResolvedCall<FunctionDescriptor>> PROVIDE_DELEGATE_RESOLVED_CALL = Slices.createSimpleSlice();
+    WritableSlice<VariableDescriptorWithAccessors, Call> PROVIDE_DELEGATE_CALL = Slices.createSimpleSlice();
 
     WritableSlice<KtDestructuringDeclarationEntry, ResolvedCall<FunctionDescriptor>> COMPONENT_RESOLVED_CALL = Slices.createSimpleSlice();
 
