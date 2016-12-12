@@ -413,16 +413,20 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
             Thread.sleep(200)
 
-            val exception: Exception? = try {
-                daemon!!.getUsedMemory()
-                null
-            }
-            catch (e: java.rmi.ConnectException) {
-                e
-            }
-            catch (e: java.rmi.UnmarshalException) {
-                e
-            }
+            val exception: Exception? =
+                    try {
+                        daemon!!.getUsedMemory()
+                        null
+                    }
+                    catch (e: java.rmi.ConnectException) {
+                        e
+                    }
+                    catch (e: java.rmi.UnmarshalException) {
+                        e
+                    }
+                    catch (e: java.rmi.ConnectIOException) {
+                        e
+                    }
             assertNotNull(exception)
         }
     }
