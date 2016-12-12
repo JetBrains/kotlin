@@ -73,7 +73,7 @@ private inline fun File.existsAndCheckOrNull(check: (File.() -> Boolean)): File?
 private val kotlinCompilerJar: File by lazy {
     // highest prio - explicit property
     System.getProperty("kotlin.compiler.jar")?.let(::File)?.existsOrNull()
-    // search classpath from context classloader and `java.calss.path` property
+    // search classpath from context classloader and `java.class.path` property
     ?: (classpathFromClass(Thread.currentThread().contextClassLoader, K2JVMCompiler::class)
         ?: contextClasspath(KOTLIN_COMPILER_JAR, Thread.currentThread().contextClassLoader)
         ?: classpathFromClasspathProperty()

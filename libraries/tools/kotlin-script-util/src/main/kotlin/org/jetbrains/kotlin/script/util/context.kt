@@ -1,14 +1,11 @@
 package org.jetbrains.kotlin.script.util
 
-import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
-import org.jetbrains.kotlin.script.util.resolvers.MavenResolver
 import java.io.File
 import java.net.URI
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.jar.Manifest
 import kotlin.reflect.KClass
-
 
 private fun URL.toFile() =
         try {
