@@ -4,6 +4,6 @@ public final class cases/inline/InlineExposedKt {
 
 public final class cases/inline/InternalClassExposed {
 	public fun <init> ()V
-	public final fun funExposed$binary_compatibility_validator ()V
+	public final fun funExposed ()V
 }
 

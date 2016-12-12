@@ -37,6 +37,9 @@ public abstract interface annotation class kotlin/ParameterName : java/lang/anno
 	public abstract fun name ()Ljava/lang/String;
 }
 
+public abstract interface annotation class kotlin/PublishedApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ReplaceWith : java/lang/annotation/Annotation {
 	public abstract fun expression ()Ljava/lang/String;
 	public abstract fun imports ()[Ljava/lang/String;
