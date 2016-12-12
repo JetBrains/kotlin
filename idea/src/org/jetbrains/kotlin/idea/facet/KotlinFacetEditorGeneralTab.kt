@@ -22,10 +22,10 @@ import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
 import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.utils.DescriptionAware
 import java.awt.BorderLayout
-import java.awt.Component
-import javax.swing.*
+import javax.swing.JComboBox
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 class KotlinFacetEditorGeneralTab(
         private val configuration: KotlinFacetConfiguration,
@@ -33,14 +33,6 @@ class KotlinFacetEditorGeneralTab(
         validatorsManager: FacetValidatorsManager,
         private val compilerTab: KotlinFacetEditorCompilerTab
 ) : FacetEditorTab() {
-    class DescriptionListCellRenderer : DefaultListCellRenderer() {
-        override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus).apply {
-                text = (value as? DescriptionAware)?.description ?: ""
-            }
-        }
-    }
-
     inner class VersionValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
             val apiLevel = apiVersionComboBox.selectedItem as? LanguageVersion? ?: return ValidationResult.OK
