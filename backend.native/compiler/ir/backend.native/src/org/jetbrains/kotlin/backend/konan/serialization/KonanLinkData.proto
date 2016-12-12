@@ -1,0 +1,73 @@
+
+syntax = "proto2";
+package org.jetbrains.kotlin.serialization;
+
+// This, an all the rest of the included proto files have ".proto1" extension.
+// That allows us to construct the current file,
+// but protoc will skip .class files for them.
+// The issue here is that we need to co-exist with the big Kotlin,
+// in the same namespace of renamed org.jetbrains.kotlin.protobuf packages.
+// In case we merge to the main Kotlin workspace the scheme will be simplified.
+import "org/jetbrains/kotlin/backend/konan/serialization/descriptors.proto1";
+
+option java_outer_classname = "KonanLinkData";
+option optimize_for = LITE_RUNTIME;
+
+// Konan extensions to the "descriptors" protobuf.
+
+extend Class {
+    repeated Annotation class_annotation = 170;
+}
+
+extend Constructor {
+    repeated Annotation constructor_annotation = 170;
+}
+
+extend Function {
+    repeated Annotation function_annotation = 170;
+}
+
+extend Property {
+    repeated Annotation property_annotation = 170;
+    optional Annotation.Argument.Value compile_time_value = 171;
+}
+
+extend EnumEntry {
+    repeated Annotation enum_entry_annotation = 170;
+}
+
+extend ValueParameter {
+    repeated Annotation parameter_annotation = 170;
+}
+
+extend Type {
+    repeated Annotation type_annotation = 170;
+}
+
+extend TypeParameter {
+    repeated Annotation type_parameter_annotation = 170;
+}
+
+// Konan Binary Linkdata structures.
+
+message PackageFragment {
+    // Make if an index?
+    required string fq_name = 1;
+    required Package package = 4;
+    required Classes classes = 5;
+
+    // To construct name resolver
+    required QualifiedNameTable name_table = 2;
+    required StringTable string_table = 3;
+}
+
+message Classes {
+    // Index in the QualifiedNameIndex table.
+    repeated int32 class_name = 1;
+    repeated Class classes = 2;
+}
+
+message Library {
+    repeated PackageFragment package_fragment = 2;
+}
+

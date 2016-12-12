@@ -11,3 +11,8 @@ package konan.internal
 //@Target(AnnotationTarget.FUNCTION)
 //@Retention(AnnotationRetention.SOURCE)
 annotation class ExportForCppRuntime(val name: String = "")
+
+// This one is used internally to mark the presence of a backing field
+// in the absence of IR.
+annotation class HasBackingField
+

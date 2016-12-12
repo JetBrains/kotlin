@@ -7,10 +7,10 @@
 extern "C" {
 #endif
 
-int Base64Encode(
+int EncodeBase64(
     const void* input, uint32_t inputLen, void* output, uint32_t outputLen);
 
-int Base64Decode(
+int DecodeBase64(
     const char* input, uint32_t inputLen, void* output, uint32_t* outputLen);
 
 #ifdef __cplusplus

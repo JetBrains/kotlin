@@ -1,20 +1,20 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.ir.Ir
+import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.backend.konan.llvm.Runtime
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctionType
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanPhase
-import org.jetbrains.kotlin.backend.konan.ModuleIndex
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.backend.konan.DeepPrintVisitor
-import org.jetbrains.kotlin.backend.konan.PrintVisitor
+import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import java.lang.System.out
@@ -32,10 +32,10 @@ internal final class Context(val config: KonanConfig,
             }
             field = module!!
 
-            moduleIndex = ModuleIndex(irModule!!)
+            ir = Ir(this, module)
         }
 
-    lateinit var moduleIndex: ModuleIndex
+    lateinit var ir: Ir
 
     var llvmModule: LLVMModuleRef? = null
         set(module: LLVMModuleRef?) {
@@ -61,7 +61,7 @@ internal final class Context(val config: KonanConfig,
 
     fun printDescriptors() {
         separator("Descriptors after: ${phase?.description}")
-        moduleDescriptor!!.accept(DeepPrintVisitor(PrintVisitor()), 0)     
+        moduleDescriptor!!.deepPrint()
     }
 
     fun verifyIr() {

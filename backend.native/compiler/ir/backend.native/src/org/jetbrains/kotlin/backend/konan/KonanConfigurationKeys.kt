@@ -11,6 +11,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("runtime file path");
         val OUTPUT_FILE: CompilerConfigurationKey<String> 
                 = CompilerConfigurationKey.create("output file path");
+        val ABI_VERSION: CompilerConfigurationKey<Int> 
+                = CompilerConfigurationKey.create("current abi version");
 
         val SOURCE_MAP: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("generate source map");

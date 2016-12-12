@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.llvm.loadMetadata
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -9,61 +10,41 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-
-import org.jetbrains.kotlin.backend.konan.llvm.KotlinKonanMetadata
-import org.jetbrains.kotlin.backend.konan.llvm.KotlinKonanMetadataUtils
+import java.io.File
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
-    private val storageManager = LockBasedStorageManager()
-
     private val libraries = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
-    private val metadata = KotlinKonanMetadataUtils.loadLibMetadata(libraries)
+    private val loadedDescriptors = loadLibMetadata(libraries)
 
     val moduleId: String
         get() = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
 
-    val moduleKind: ModuleKind
-        get() = configuration.get(KonanConfigKeys.MODULE_KIND)!!
+    fun loadLibMetadata(libraries: List<String>): List<ModuleDescriptorImpl> {
 
-    // We reuse JsModuleDescriptor for serialization for now, as we haven't got one for Konan yet.
-    internal val moduleDescriptors: MutableList<JsModuleDescriptor<ModuleDescriptorImpl>> by lazy {
+        val allMetadata = mutableListOf<ModuleDescriptorImpl>()
 
-        val jsDescriptors = mutableListOf<JsModuleDescriptor<ModuleDescriptorImpl>>()
-        val descriptors = mutableListOf<ModuleDescriptorImpl>()
+        for (path in libraries) {
+            val filePath = File(path)
+            if (!filePath.exists()) {
+                error("Path '" + path + "' does not exist");
+            }
 
-        for (metadataEntry in metadata) {
-            val descriptor = createModuleDescriptor(metadataEntry)
-            jsDescriptors.add(descriptor)
-            descriptors.add(descriptor.data)
+            val moduleDescriptor = loadMetadata(configuration, filePath);
+
+            allMetadata.add(moduleDescriptor);
         }
-
-        for (module in jsDescriptors) {
-            setDependencies(module.data, descriptors)
-        }
-
-        jsDescriptors 
+        return allMetadata;
     }
 
-    private fun createModuleDescriptor(metadata: KotlinKonanMetadata): JsModuleDescriptor<ModuleDescriptorImpl> {
+    internal val moduleDescriptors: List<ModuleDescriptorImpl> by lazy {
+        for (module in loadedDescriptors) {
+            // Yes, just to all of them.
+            setDependencies(module, loadedDescriptors)
+        }
 
-        val moduleDescriptor = ModuleDescriptorImpl(
-                Name.special("<" + metadata.moduleName + ">"), storageManager, KonanPlatform.builtIns)
-
-        val rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
-                metadata.body, storageManager, moduleDescriptor, CompilerDeserializationConfiguration(
-                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)))
-
-        val provider = rawDescriptor.data
-        moduleDescriptor.initialize(provider ?: PackageFragmentProvider.Empty)
-
-        return rawDescriptor.copy(moduleDescriptor)
+        loadedDescriptors 
     }
 
     companion object {

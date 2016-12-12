@@ -2,28 +2,52 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.backend.konan.ir.Ir
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.llvm.BinaryLinkdata.*
-import org.jetbrains.kotlin.types.KotlinType
-
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.js.*
-import org.jetbrains.kotlin.utils.*
 import java.io.*
 
-fun readModuleMetadata(file: File): String {
+fun loadMetadata(configuration: CompilerConfiguration, file: File): ModuleDescriptorImpl {
 
     val reader = MetadataReader(file)
 
+    var metadataAsString: String? = null
+    var moduleName: String? = null
+    val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)
+
     reader.use {
-        val metadataNode = reader.namedMetadataNode("kmetadata", 0);
-        val stringNode = reader.metadataOperand(metadataNode, 0)
-        return reader.string(stringNode)
+        val (nodeCount, kmetadataNodeArg) = reader.namedMetadataNode("kmetadata")
+
+        if (nodeCount != 1) {
+            throw Error("Unknown metadata format. The 'kmetadata' node has ${nodeCount} arguments. Don't know what to do.")
+        }
+
+        val operands = reader.metadataNodeOperands(kmetadataNodeArg)
+
+        val abiNode = operands[0]
+        val nameNode = operands[1]
+        val dataNode = operands[2]
+
+        val abiVersion = reader.string(abiNode).toInt()
+
+        if (abiVersion != currentAbiVersion) {
+            throw Error("Expected ABI version ${currentAbiVersion}, but the binary is ${abiVersion}")
+        }
+        moduleName = reader.string(nameNode)
+
+        metadataAsString = reader.string(dataNode)
     }
+
+    val moduleDescriptor = 
+        deserializeModule(configuration, metadataAsString!!, moduleName!!)
+
+    return moduleDescriptor
 }
 
 class MetadataReader(file: File) : Closeable {
@@ -62,25 +86,25 @@ class MetadataReader(file: File) : Closeable {
         }
     }
 
-    fun namedMetadataNode(name: String, index: Int): LLVMValueRef {
+    fun namedMetadataNode(name: String): Pair<Int, LLVMValueRef> {
         memScoped {
-            val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, "kmetadata")
+            val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, name)
             val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
 
             LLVMGetNamedMetadataOperands(llvmModule, "kmetadata", nodeArray[0].ptr)
 
-            return nodeArray[0].value!!
+            return Pair(nodeCount, nodeArray[0].value!!)
         }
     }
 
-    fun metadataOperand(metadataNode: LLVMValueRef, index: Int): LLVMValueRef {
+    fun metadataNodeOperands(metadataNode: LLVMValueRef): Array<LLVMValueRef> {
         memScoped {
             val operandCount = LLVMGetMDNodeNumOperands(metadataNode)
             val operandArray = allocArray<LLVMValueRefVar>(operandCount)
 
             LLVMGetMDNodeOperands(metadataNode, operandArray[0].ptr)
 
-            return operandArray[0].value!!
+            return Array(operandCount, {index -> operandArray[index].value!!})
         }
     }
 
@@ -90,12 +114,7 @@ class MetadataReader(file: File) : Closeable {
     }
 }
 
-
 internal class MetadataGenerator(override val context: Context): ContextUtils {
-
-    private fun metadataString(str: String): LLVMValueRef {
-        return LLVMMDString(str, str.length)!!
-    }
 
     private fun metadataNode(args: List<LLVMValueRef?>): LLVMValueRef {
         memScoped {
@@ -110,92 +129,33 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         return md
     }
 
+    internal fun property(declaration: IrProperty) {
+        if (declaration.backingField == null) return
+        assert(declaration.backingField!!.descriptor == declaration.descriptor)
+            
+        context.ir.propertiesWithBackingFields.add(declaration.descriptor)
+    }
+
     private fun emitModuleMetadata(name: String, md: LLVMValueRef?) {
         LLVMAddNamedMetadataOperand(context.llvmModule, name, md)
     }
 
-    private fun protobufType(type:KotlinType): TypeLinkdata {
-        val builder = TypeLinkdata.newBuilder()
-        val name = type.toString()
-        val proto = builder
-            .setName(name)
-            .build()
-
-        return proto
-    }
-
-    private fun serializeFunSignature(declaration: IrFunction): String {
-        val func = declaration.descriptor
-
-        val hash = "0x123456 some hash"
-        val name = func.name.asString()
-
-        val kotlinType = func.getReturnType()!!
-        val returnType = protobufType(kotlinType)
-
-        val parameters = func.getValueParameters()
-        val argumentTypes = parameters.map{ protobufType(it.getType()) }
-
-        val proto = FunLinkdata.newBuilder()
-            .setHash(hash)
-            .setName(name)
-            .setReturnType(returnType)
-            .addAllArg(argumentTypes)
-            .build()
-
-        // Convert it to ProtoBuf's TextFormat representation.
-        // Use TextFormat.merge(str, builder) to parse it back
-        val str = proto.toString()
-
-        return str
-    }
-
-    internal fun function(declaration: IrFunction) {
-        val fn = declaration.descriptor.llvmFunction!!
-
-        val proto = serializeFunSignature(declaration)
-
-        val md = metadataFun(fn, proto)
-        emitModuleMetadata("kfun", md);
-    }
-
-    // Quick check consistency
-    private fun debug_blob(blob: String) {
-        val metadataList = mutableListOf<KotlinKonanMetadata>()
-        KotlinKonanMetadataUtils.parseMetadata(blob, metadataList)
-
-        val body = metadataList.first().body
-        val gzipInputStream = java.util.zip.GZIPInputStream(ByteArrayInputStream(body))
-        val content = JsProtoBuf.Library.parseFrom(gzipInputStream)
-        gzipInputStream.close()
-
-        println(content.toString())
-        println(blob)
-    }
-
-    private fun serializeModule(moduleDescriptor: ModuleDescriptor): String {
-
-        val description = JsModuleDescriptor(
-                name = "foo",
-                kind = ModuleKind.PLAIN,
-                imported = listOf(),
-                data = moduleDescriptor
-             )
-
-        // TODO: eliminate this dependency on JavaScript compiler
-        val blobString =  KotlinJavascriptSerializationUtil.metadataAsString(
-                context.bindingContext, description)
-        if (false) {
-            debug_blob(blobString)
-        }
-        return blobString
-
+    private fun metadataString(str: String): LLVMValueRef {
+        return LLVMMDString(str, str.length)!!
     }
 
     internal fun endModule(module: IrModuleFragment) {
-        val moduleAsString = serializeModule(module.descriptor)
-        val stringNode = metadataString(moduleAsString)
-        emitModuleMetadata("kmetadata", stringNode)
+        val abiVersion = context.config.configuration.get(KonanConfigKeys.ABI_VERSION)
+        val abiNode = metadataString("$abiVersion")
+
+        val moduleName = metadataString(module.descriptor.name.asString())
+
+        val serializer = KonanSerializationUtil(context)
+        val moduleAsString = serializer.serializeModule(module.descriptor)
+        val dataNode = metadataString(moduleAsString)
+
+        val kmetadataArg  = metadataNode(listOf(abiNode, moduleName, dataNode))
+        emitModuleMetadata("kmetadata", kmetadataArg)
     }
 }
 

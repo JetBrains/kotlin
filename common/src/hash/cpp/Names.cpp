@@ -26,7 +26,7 @@ constexpr uint32_t PrintableBase64Size(uint32_t input_length) {
 }
 
 void PrintableBase64(const uint8_t* data, uint32_t data_length, char* base64) {
-  int rv = Base64Encode(data, data_length, base64, PrintableBase64Size(data_length));
+  int rv = EncodeBase64(data, data_length, base64, PrintableBase64Size(data_length));
   assert(rv == 0);
 }
 

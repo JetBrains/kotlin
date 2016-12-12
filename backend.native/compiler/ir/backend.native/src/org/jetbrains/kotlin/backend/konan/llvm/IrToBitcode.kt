@@ -103,9 +103,15 @@ internal class MetadatorVisitor(val context: Context) : IrElementVisitorVoid {
         element.acceptChildrenVoid(this)
     }
 
+    override fun visitProperty(declaration: IrProperty) {
+        declaration.acceptChildrenVoid(this)
+        metadator.property(declaration)
+
+    }
+
     override fun visitModuleFragment(module: IrModuleFragment) {
         module.acceptChildrenVoid(this)
-       metadator.endModule(module)
+        metadator.endModule(module)
     }
 }
 
@@ -399,7 +405,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
                     LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
                 }
-                val irOfCurrentClass = context.moduleIndex.classes[classDescriptor.classId]
+                val irOfCurrentClass = context.ir.moduleIndex.classes[classDescriptor.classId]
                 irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)

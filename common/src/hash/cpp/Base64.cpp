@@ -35,7 +35,7 @@ static const unsigned char kDecode[] = {
 extern "C" {
 #endif
 
-int Base64Encode(
+int EncodeBase64(
     const void* dataBuf, uint32_t dataLength, void* resultBuf, uint32_t resultSize) {
   char *result = reinterpret_cast<char*>(resultBuf);
   const uint8_t *data = reinterpret_cast<const uint8_t*>(dataBuf);
@@ -113,7 +113,7 @@ int Base64Encode(
    return 0;   /* indicate success */
 }
 
-int Base64Decode(
+int DecodeBase64(
     const char *in, uint32_t inLen, void* outBuf, uint32_t* outLen) {
   uint8_t* out = reinterpret_cast<uint8_t*>(outBuf);
   const char* end = in + inLen;

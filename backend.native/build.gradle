@@ -13,6 +13,7 @@ buildscript {
 
 }
 
+String protobufVersion = '2.6.1'
 apply plugin: "com.google.protobuf"
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -45,7 +46,10 @@ allprojects {
 sourceSets {
     compiler {
       proto.srcDir 'compiler/ir/backend.native/src/'
-      java.srcDirs 'compiler/ir/backend.native/src/', 'build/generated/source/proto/compiler/java/'
+      java {
+          srcDir 'compiler/ir/backend.native/src/'
+          srcDir 'build/renamed/source/proto/compiler/java'
+      }
       kotlin.srcDir 'compiler/ir/backend.native/src/'
     }
     cli_bc {
@@ -58,10 +62,26 @@ sourceSets {
    }
 }
 
-// The protobuf plugin specifies this dependency for java by itself,
-// but not for Kotlin.
 compileCompilerKotlin {
+    dependsOn('renamePackage')
+    // The protobuf plugin specifies this dependency for java by itself,
+    // but not for Kotlin.
     dependsOn('generateCompilerProto')
+}
+
+compileCompilerJava {
+    doFirst {
+        delete 'build/generated'
+    }
+    dependsOn('renamePackage')
+}
+
+task renamePackage(type: Copy) {
+    dependsOn('generateCompilerProto')
+    from 'build/generated/source/proto/compiler/java'
+    into 'build/renamed/source/proto/compiler/java'
+    filter {line -> line.replaceAll("com.google.protobuf", "org.jetbrains.kotlin.protobuf")}
+    outputs.files('build/renamed')
 }
 
 List<String> llvmLinkerOpts() {
@@ -145,7 +165,7 @@ configurations {
 
 dependencies {
 
-   compilerCompile "com.google.protobuf:protobuf-java:3.0.0"
+   compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
    compilerCompile kotlinCompilerModule
    compilerCompile kotlinNativeInterop['llvm'].configuration
@@ -239,7 +259,7 @@ task jars(type: Jar) {
 task external_jars(type: Copy) {
     from configurations.compilerCompile {
 
-        include 'protobuf-java-3.0.0.jar'
+        include "protobuf-java-${protobufVersion}.jar"
 
         include 'kotlin-compiler*.jar'
         rename 'kotlin-compiler(.*).jar', 'kotlin-compiler.jar'
@@ -250,7 +270,7 @@ task external_jars(type: Copy) {
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0'
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
 }
 

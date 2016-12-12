@@ -1,9 +1,11 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
 
 fun ClassDescriptor?.getter2Descriptor(methodName: Name) = this?.let {
@@ -26,4 +28,18 @@ fun ClassDescriptor?.signature2Descriptor(methodName: Name, signature:Array<Kotl
                     return@any p.type == signature[index]
         })
     }
+}
+
+val PropertyDescriptor.backingField: PropertyDescriptor? 
+    get() {
+        val backingFieldAnnotation = FqName("konan.internal.HasBackingField")
+        if (this.annotations.findAnnotation(backingFieldAnnotation) != null) {
+            return this
+        } else {
+            return null
+        }
+    }
+
+fun DeclarationDescriptor.deepPrint() {
+    this!!.accept(DeepPrintVisitor(PrintVisitor()), 0)
 }

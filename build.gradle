@@ -22,6 +22,7 @@ allprojects {
         }
     }
 
+
     convention.plugins.clangFlags = new ClangFlags(new PlatformInfo(), "$llvmDir")
     ext.clangPath = ["$llvmDir/bin"]
     ext.clangArgs = []

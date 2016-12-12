@@ -21,14 +21,27 @@ internal fun globalHash(data: ByteArray, retValPlacement: NativePlacement): Glob
     return res
 }
 
-internal fun base64Encode(data: ByteArray): String {
+public fun base64Encode(data: ByteArray): String {
     memScoped {
         val resultSize = 4 * data.size / 3 + 3 + 1
         val result = allocArray<CInt8Var>(resultSize)
         val bytes = allocArrayOf(data)
-        Base64Encode(bytes.ptr, data.size, result.ptr, resultSize)
+        EncodeBase64(bytes.ptr, data.size, result.ptr, resultSize)
         // TODO: any better way to do that without two copies?
         return CString.fromArray(result).toString()
+    }
+}
+
+public fun base64Decode(encoded: String): ByteArray {
+    memScoped {
+        val bufferSize: Int = 3 * encoded.length / 4
+        val result = allocArray<CInt8Var>(bufferSize)
+        val resultSize = allocArray<uint32_tVar>(1)
+        resultSize[0].value = bufferSize
+        val errorCode = DecodeBase64(encoded, encoded.length, result[0].ptr, resultSize[0].ptr)
+        if (errorCode != 0) throw Error("Non-zero exit code of DecodeBase64: ${errorCode}")
+        val realSize = resultSize[0].value!!
+        return ByteArray(realSize, {i -> result[i].value!!})
     }
 }
 

@@ -1,0 +1,387 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+syntax = "proto2";
+package org.jetbrains.kotlin.serialization;
+
+import "org/jetbrains/kotlin/backend/konan/serialization/ext_options.proto1";
+
+option java_outer_classname = "ProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+message StringTable {
+  repeated string string = 1;
+}
+
+message QualifiedNameTable {
+  message QualifiedName {
+    optional int32 parent_qualified_name = 1 [default = -1];
+    // id in the StringTable
+    required int32 short_name = 2;
+    optional Kind kind = 3 [default = PACKAGE];
+
+    enum Kind {
+      CLASS = 0;
+      PACKAGE = 1;
+      LOCAL = 2;
+    }
+  }
+
+  repeated QualifiedName qualified_name = 1;
+}
+
+message Annotation {
+  message Argument {
+    message Value {
+      enum Type {
+        BYTE = 0;
+        CHAR = 1;
+        SHORT = 2;
+        INT = 3;
+        LONG = 4;
+        FLOAT = 5;
+        DOUBLE = 6;
+        BOOLEAN = 7;
+
+        STRING = 8;
+        CLASS = 9;
+        ENUM = 10;
+        ANNOTATION = 11;
+        ARRAY = 12;
+      }
+
+      // Note: a *Value* has a Type, not an Argument! This is done for future language features which may involve using arrays
+      // of elements of different types. Such entries are allowed in the constant pool of JVM class files.
+      // However, to save space, this field is optional: in case of homogeneous arrays, only the type of the first element is required
+      optional Type type = 1;
+
+      // Only one of the following values should be present
+
+      optional sint64 int_value = 2;
+      optional float float_value = 3;
+      optional double double_value = 4;
+
+      optional int32 string_value = 5 [(string_id_in_table) = true];
+
+      // If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
+      optional int32 class_id = 6 [(fq_name_id_in_table) = true];
+
+      optional int32 enum_value_id = 7 [(name_id_in_table) = true];
+
+      optional Annotation annotation = 8;
+
+      repeated Value array_element = 9;
+    }
+
+    required int32 name_id = 1 [(name_id_in_table) = true];
+    required Value value = 2;
+  }
+
+  required int32 id = 1 [(fq_name_id_in_table) = true];
+
+  repeated Argument argument = 2;
+}
+
+message Type {
+  message Argument {
+    enum Projection {
+      IN = 0;
+      OUT = 1;
+      INV = 2;
+      STAR = 3;
+    }
+
+    optional Projection projection = 1 [default = INV];
+
+    // When projection is STAR, no type is written, otherwise type must be specified
+    optional Type type = 2;
+    optional int32 type_id = 3;
+  }
+
+  repeated Argument argument = 2;
+
+  optional bool nullable = 3 [default = false];
+
+  // If this field is set, the type is flexible.
+  // All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+  optional int32 flexible_type_capabilities_id = 4 [(string_id_in_table) = true];
+
+  optional Type flexible_upper_bound = 5;
+  optional int32 flexible_upper_bound_id = 8;
+
+  // Only one of the following values should be present
+
+  optional int32 class_name = 6 [(fq_name_id_in_table) = true];
+  optional int32 type_parameter = 7; // id of the type parameter
+  // Name of the type parameter in the immediate owner
+  optional int32 type_parameter_name = 9 [(name_id_in_table) = true];
+
+  // Note that this may be present only for abbreviated_type
+  // Top level types are always fully expanded
+  optional int32 type_alias_name = 12 [(fq_name_id_in_table) = true];
+
+  optional Type outer_type = 10;
+  optional int32 outer_type_id = 11;
+
+  optional Type abbreviated_type = 13;
+  optional int32 abbreviated_type_id = 14;
+
+  extensions 100 to 199;
+}
+
+message TypeParameter {
+  required int32 id = 1;
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional bool reified = 3 [default = false];
+
+  enum Variance {
+    IN = 0;
+    OUT = 1;
+    INV = 2;
+  }
+  optional Variance variance = 4 [default = INV];
+
+  repeated Type upper_bound = 5;
+  repeated int32 upper_bound_id = 6;
+
+  extensions 100 to 999;
+}
+
+message Class {
+  enum Kind {
+    // 3 bits
+    CLASS = 0;
+    INTERFACE = 1;
+    ENUM_CLASS = 2;
+    ENUM_ENTRY = 3;
+    ANNOTATION_CLASS = 4;
+    OBJECT = 5;
+    COMPANION_OBJECT = 6;
+  }
+
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    ClassKind
+    isInner
+    isData
+  */
+  optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
+
+  required int32 fq_name = 3 [(fq_name_id_in_table) = true];
+
+  optional int32 companion_object_name = 4 [(name_id_in_table) = true];
+
+  repeated TypeParameter type_parameter = 5;
+
+  repeated Type supertype = 6;
+  repeated int32 supertype_id = 2 [packed = true];
+
+  repeated int32 nested_class_name = 7 [packed = true, (name_id_in_table) = true];
+
+  repeated Constructor constructor = 8;
+  repeated Function function = 9;
+  repeated Property property = 10;
+  repeated TypeAlias type_alias = 11;
+
+  repeated EnumEntry enum_entry = 13;
+
+  optional TypeTable type_table = 30;
+
+  extensions 100 to 199;
+}
+
+message Package {
+  repeated Function function = 3;
+  repeated Property property = 4;
+  repeated TypeAlias type_alias = 5;
+
+  optional TypeTable type_table = 30;
+
+  extensions 100 to 199;
+}
+
+message TypeTable {
+  repeated Type type = 1;
+
+  // Index starting from which all types are nullable, or nothing if all types in this table are non-null.
+  // Note that the 'nullable' field of Type messages is ignored and shouldn't be written because it wastes too much space
+  optional int32 first_nullable = 2 [default = -1];
+}
+
+message Constructor {
+  /*
+    hasAnnotations
+    Visibility
+    isSecondary
+  */
+  optional int32 flags = 1 [default = 6 /* public constructor, no annotations */];
+
+  repeated ValueParameter value_parameter = 2;
+
+  extensions 100 to 199;
+}
+
+message Function {
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    MemberKind
+    isOperator
+    isInfix
+    isInline
+    isTailrec
+    isExternal
+  */
+  optional int32 flags = 9 [default = 6 /* public final function, no annotations */];
+  optional int32 old_flags = 1 [default = 6];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional Type return_type = 3;
+  optional int32 return_type_id = 7;
+
+  repeated TypeParameter type_parameter = 4;
+
+  optional Type receiver_type = 5;
+  optional int32 receiver_type_id = 8;
+
+  repeated ValueParameter value_parameter = 6;
+
+  optional TypeTable type_table = 30;
+
+  extensions 100 to 199;
+}
+
+message Property {
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    MemberKind
+    isVar
+    hasGetter
+    hasSetter
+    isConst
+    lateinit
+    hasConstant
+  */
+  optional int32 flags = 11 [default = 518 /* public (6) final property with getter (512) */];
+  optional int32 old_flags = 1 [default = 2054];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional Type return_type = 3;
+  optional int32 return_type_id = 9;
+
+  repeated TypeParameter type_parameter = 4;
+
+  optional Type receiver_type = 5;
+  optional int32 receiver_type_id = 10;
+
+  optional ValueParameter setter_value_parameter = 6;
+
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    isNotDefault
+    isExternal
+    isInline
+  */
+  optional int32 getter_flags = 7 /* absent => same as property */;
+  optional int32 setter_flags = 8 /* absent => same as property */;
+
+  extensions 100 to 199;
+}
+
+message ValueParameter {
+  /*
+    declaresDefault
+    hasAnnotations
+    isCrossinline
+    isNoinline
+  */
+  optional int32 flags = 1 [default = 0];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional Type type = 3;
+  optional int32 type_id = 5;
+
+  optional Type vararg_element_type = 4;
+  optional int32 vararg_element_type_id = 6;
+
+  extensions 100 to 199;
+}
+
+message TypeAlias {
+  /*
+    hasAnnotations
+    Visibility
+  */
+  optional int32 flags = 1 [default = 6 /* public, no annotations */];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  repeated TypeParameter type_parameter = 3;
+
+  optional Type underlying_type = 4;
+  optional int32 underlying_type_id = 5;
+
+  optional Type expanded_type = 6;
+  optional int32 expanded_type_id = 7;
+
+  repeated Annotation annotation = 8;
+
+  extensions 100 to 199;
+}
+
+message EnumEntry {
+  optional int32 name = 1 [(name_id_in_table) = true];
+
+  extensions 100 to 199;
+}
+
+enum Modality {
+  // 2 bits
+  FINAL = 0;
+  OPEN = 1;
+  ABSTRACT = 2;
+  SEALED = 3;
+}
+
+enum Visibility {
+  // 3 bits
+  INTERNAL = 0;
+  PRIVATE = 1;
+  PROTECTED = 2;
+  PUBLIC = 3;
+  PRIVATE_TO_THIS = 4;
+  LOCAL = 5;
+}
+
+enum MemberKind {
+  // 2 bits
+  DECLARATION = 0;
+  FAKE_OVERRIDE = 1;
+  DELEGATION = 2;
+  SYNTHESIZED = 3;
+}

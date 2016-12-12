@@ -56,13 +56,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         configuration.addKotlinSourceRoots(arguments.freeArgs)
 
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, "main")
+        // This is a decision we could change
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.outputFile)
 
-        val libraries = arguments.libraries.toNonNullList()
         configuration.put(KonanConfigKeys.LIBRARY_FILES, 
             arguments.libraries.toNonNullList())
         configuration.put(KonanConfigKeys.RUNTIME_FILE, arguments.runtimeFile)
         configuration.put(KonanConfigKeys.OUTPUT_FILE, arguments.outputFile)
+
+        configuration.put(KonanConfigKeys.ABI_VERSION, 1)
 
         configuration.put(KonanConfigKeys.PRINT_IR, arguments.printIr)
         configuration.put(KonanConfigKeys.PRINT_DESCRIPTORS, arguments.printDescriptors)

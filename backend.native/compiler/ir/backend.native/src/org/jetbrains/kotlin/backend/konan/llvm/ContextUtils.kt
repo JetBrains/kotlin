@@ -5,11 +5,13 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.descriptors.backingField
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -55,11 +57,35 @@ internal interface ContextUtils {
      */
     val ClassDescriptor.declaredFields: List<PropertyDescriptor>
         get() {
-            // TODO: do not use IR to get fields
-            val irClass = context.moduleIndex.classes[this.classId] ?:
-                          throw IllegalArgumentException("Class ${this.fqNameSafe} is not found in current module")
+            // TODO: Here's what is going on here:
+            // The existence of a backing field for a property is only described in the IR, 
+            // but not in the property descriptor.
+            // That works, while we process the IR, but not for deserialized descriptors.
+            //
+            // So to have something in deserialized descriptors, 
+            // while we still see the IR, we mark the property with an annotation.
+            //
+            // We could apply the annotation during IR rewite, but we still are not
+            // that far in the rewriting infrastructure. So we postpone
+            // the annotation until the serializer.
+            //
+            // In this function we check the presence of the backing filed
+            // two ways: first we check IR, then we check the annotation.
 
-            return irClass.declarations.mapNotNull { (it as? IrProperty)?.backingField?.descriptor }
+            val irClass = context.ir.moduleIndex.classes[this.classId]
+            if (irClass != null) {
+                val irProperties = irClass.declarations
+
+                return irProperties.mapNotNull { 
+                    (it as? IrProperty)?.backingField?.descriptor 
+                }
+            } else {
+                val properties = this.unsubstitutedMemberScope.
+                    getContributedDescriptors().
+                    filterIsInstance<PropertyDescriptor>()
+
+                return properties.mapNotNull{ it.backingField }
+            }
         }
 
     /**
@@ -164,7 +190,6 @@ internal interface ContextUtils {
     val FqName.localHash: LocalHash
         get() = this.toString().localHash
 }
-
 
 internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 

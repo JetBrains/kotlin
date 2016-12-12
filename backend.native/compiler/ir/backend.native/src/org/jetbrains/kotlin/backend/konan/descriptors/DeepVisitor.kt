@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
