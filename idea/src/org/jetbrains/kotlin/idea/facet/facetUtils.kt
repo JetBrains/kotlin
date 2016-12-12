@@ -69,13 +69,7 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
     if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).isNotEmpty()) {
         return TargetPlatformKind.JavaScript
     }
-
-    val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
-    val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
-    return when {
-        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_8]
-        else -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
-    }
+    return TargetPlatformKind.Jvm.JVM_1_6
 }
 
 private fun getDefaultLanguageLevel(
@@ -98,7 +92,7 @@ internal fun getLibraryLanguageLevel(
         rootModel: ModuleRootModel?,
         targetPlatform: TargetPlatformKind<*>?
 ): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.Jvm.JVM_1_6)
             .minWith(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion)
 }
