@@ -100,7 +100,7 @@ KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex);
 
 KConstRef Kotlin_getCurrentStackTrace();
 
-KRef Kotlin_internal_undefined();
+KRef Kotlin_konan_internal_undefined();
 
 #ifdef __cplusplus
 }

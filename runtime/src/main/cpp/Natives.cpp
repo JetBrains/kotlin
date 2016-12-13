@@ -185,7 +185,7 @@ KConstRef Kotlin_getCurrentStackTrace() {
 }
 
 // TODO: consider handling it with compiler magic instead.
-KRef Kotlin_internal_undefined() {
+KRef Kotlin_konan_internal_undefined() {
   return nullptr;
 }
 

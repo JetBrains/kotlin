@@ -1588,13 +1588,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         // Note: the whole function code below is written in the assumption that
         // `invoke` method receiver is passed as first argument.
 
-        val functionImpl = args[0]
+        val functionImpl = args[0] // Instance of `konan.internal.FunctionImpl`.
 
+        // `functionImpl.unboundRef` is the pointer to (static) function of type
+        // `(FunctionImpl, Arg_1, ..., Arg_n): Ret`. See [CallableReferenceLowering] for details.
+        // LLVM type for such function is equal to type for `FunctionImpl.invoke(Arg_1, ..., Arg_n): Ret`.
+        // So we can use the latter for simplicity:
         val unboundRefType = codegen.getLlvmFunctionType(descriptor)
 
+        // Get `functionImpl.unboundRef`:
         val unboundRef = evaluateSimpleFunctionCall(codegen.newVar(),
                 functionImplUnboundRefGetter, listOf(functionImpl))
 
+        // Cast `functionImpl.unboundRef` to pointer to function:
         val entryPtr = codegen.bitcast(pointerType(unboundRefType), unboundRef, "entry")
 
         return call(descriptor, entryPtr, args, tmpVariableName)
