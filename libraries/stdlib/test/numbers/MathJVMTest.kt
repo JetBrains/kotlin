@@ -32,6 +32,8 @@ class MathTest {
         assertEquals(BigDecimal("2"), BigDecimal("4") / a)
         assertEquals(BigDecimal("-2"), -a)
         assertEquals(BigDecimal("-2"), -a % b)
+        assertEquals(BigDecimal("-2"), (-a).mod(b))
+        assertEquals(BigDecimal("-2"), (-a).rem(b))
     }
 }
 
