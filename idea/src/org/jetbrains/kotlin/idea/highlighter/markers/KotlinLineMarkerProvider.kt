@@ -31,8 +31,9 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -78,6 +79,15 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
                     }
                 }
             }
+
+            if (element is KtNamedDeclaration) {
+                if (element.hasModifier(KtTokens.HEADER_KEYWORD)) {
+                    collectImplementationMarkers(element, result)
+                }
+                else if (element.hasModifier(KtTokens.IMPL_KEYWORD)) {
+                    collectHeaderMarkers(element, result)
+                }
+            }
         }
 
         collectOverriddenFunctions(functions, result)
@@ -113,6 +123,26 @@ private val OVERRIDDEN_PROPERTY = MarkerType(
                 element?.let { navigateToPropertyOverriddenDeclarations(e, it.parent as KtProperty) }
             }
         })
+
+private val PLATFORM_IMPLEMENTATION = MarkerType(
+        "PLATFORM_IMPLEMENTATION",
+        { it?.let { getPlatformImplementationTooltip(it.parent as KtDeclaration) } },
+        object : LineMarkerNavigator() {
+            override fun browse(e: MouseEvent?, element: PsiElement?) {
+                element?.let { navigateToPlatformImplementation(e, it.parent as KtDeclaration) }
+            }
+        }
+)
+
+private val HEADER_DECLARATION = MarkerType(
+        "HEADER_DECLARATION",
+        { it?.let { getHeaderDeclarationTooltip(it.parent as KtDeclaration) } },
+        object : LineMarkerNavigator() {
+            override fun browse(e: MouseEvent?, element: PsiElement?) {
+                element?.let { navigateToHeaderDeclaration(it.parent as KtDeclaration) }
+            }
+        }
+)
 
 private fun isImplementsAndNotOverrides(descriptor: CallableMemberDescriptor, overriddenMembers: Collection<CallableMemberDescriptor>): Boolean {
     return descriptor.modality != Modality.ABSTRACT && overriddenMembers.all { it.modality == Modality.ABSTRACT }
@@ -194,6 +224,48 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
                 GutterIconRenderer.Alignment.RIGHT
         ))
     }
+}
+
+private fun collectImplementationMarkers(declaration: KtNamedDeclaration,
+                                         result: MutableCollection<LineMarkerInfo<*>>) {
+
+    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
+    val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
+
+    if (commonModuleDescriptor.allImplementingModules.none { it.hasImplementationsOf(descriptor) }) return
+
+    val anchor = declaration.nameIdentifier ?: declaration
+
+    result.add(LineMarkerInfo(
+            anchor,
+            anchor.textRange,
+            IMPLEMENTED_MARK,
+            Pass.UPDATE_OVERRIDDEN_MARKERS,
+            PLATFORM_IMPLEMENTATION.tooltip,
+            PLATFORM_IMPLEMENTATION.navigationHandler,
+            GutterIconRenderer.Alignment.RIGHT
+    ))
+}
+
+private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
+                                 result: MutableCollection<LineMarkerInfo<*>>) {
+
+    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
+    val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
+    val commonModuleDescriptor = platformModuleDescriptor.commonModuleOrNull() ?: return
+    if (!commonModuleDescriptor.hasDeclarationOf(descriptor)) return
+
+    val anchor = declaration.nameIdentifier ?: declaration
+
+    result.add(LineMarkerInfo(
+            anchor,
+            anchor.textRange,
+            IMPLEMENTING_MARK,
+            Pass.UPDATE_OVERRIDDEN_MARKERS,
+            HEADER_DECLARATION.tooltip,
+            HEADER_DECLARATION.navigationHandler,
+            GutterIconRenderer.Alignment.RIGHT
+    ))
 }
 
 fun KtNamedDeclaration.getAccessorLightMethods(): LightClassUtil.PropertyAccessorsPsiMethods {

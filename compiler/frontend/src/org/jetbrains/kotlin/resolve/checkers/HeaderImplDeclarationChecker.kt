@@ -131,7 +131,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
     }
 
-    private fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
+    fun CallableMemberDescriptor.findNamesakesFromTheSameModule(): Collection<CallableMemberDescriptor> {
         val packageFqName = (containingDeclaration as? PackageFragmentDescriptor)?.fqName ?: return emptyList()
         val myModule = moduleToCheck ?: module
         val scope = myModule.getPackage(packageFqName).memberScope
@@ -145,7 +145,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
     }
 
-    private fun ClassifierDescriptor.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptor> {
+    fun ClassifierDescriptor.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptor> {
         val myModule = moduleToCheck ?: module
         // TODO: support nested classes
         return myModule.getPackage(fqNameSafe.parent()).memberScope
