@@ -51,7 +51,7 @@ public abstract class AbstractReferenceResolveWithLibTest extends AbstractRefere
             @Nullable
             @Override
             public PsiElement resolve() {
-                return AstAccessControl.INSTANCE.execute(false, myTestRootDisposable, myFixture, new Function0<PsiElement>() {
+                return AstAccessControl.INSTANCE.execute(false, getTestRootDisposable(), myFixture, new Function0<PsiElement>() {
                     @Override
                     public PsiElement invoke() {
                         return reference.resolve();
