@@ -57,7 +57,7 @@ val Module.languageVersionSettings: LanguageVersionSettings
 
 val KtElement.languageVersionSettings: LanguageVersionSettings
     get() {
-        if (ServiceManager.getService(ProjectFileIndex::class.java) == null) {
+        if (ServiceManager.getService(containingKtFile.project, ProjectFileIndex::class.java) == null) {
             return LanguageVersionSettingsImpl.DEFAULT
         }
         return ModuleUtilCore.findModuleForPsiElement(this)?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
