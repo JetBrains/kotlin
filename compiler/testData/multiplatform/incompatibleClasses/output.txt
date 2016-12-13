@@ -5,96 +5,96 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleClasses/common.kt:1:16: error: no definition is found for platform declaration 'PClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:1:14: error: no implementation is found for header declaration 'PClass'
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public impl interface PClass
 
-platform class PClass
-               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:2:20: error: no definition is found for platform declaration 'PInterface'
+header class PClass
+             ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:2:18: error: no implementation is found for header declaration 'PInterface'
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public impl object PInterface
 
-platform interface PInterface
-                   ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:3:10: error: no definition is found for platform declaration 'PObject'
+header interface PInterface
+                 ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:3:8: error: no implementation is found for header declaration 'PObject'
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final impl enum class PObject : Enum<PObject>
 
-platform object PObject
-         ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:4:21: error: no definition is found for platform declaration 'PEnumClass'
+header object PObject
+       ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:4:19: error: no implementation is found for header declaration 'PEnumClass'
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final impl annotation class PEnumClass : Annotation
 
-platform enum class PEnumClass
-                    ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:5:27: error: no definition is found for platform declaration 'PAnnotationClass'
+header enum class PEnumClass
+                  ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:5:25: error: no implementation is found for header declaration 'PAnnotationClass'
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final impl class PAnnotationClass
 
-platform annotation class PAnnotationClass
-                          ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:7:19: error: no definition is found for platform declaration 'InternalObject'
+header annotation class PAnnotationClass
+                        ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:7:17: error: no implementation is found for header declaration 'InternalObject'
 The following declaration is incompatible because visibility is different:
     private impl object InternalObject
 
-internal platform object InternalObject
-                  ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:8:17: error: no definition is found for platform declaration 'PublicObject'
+internal header object InternalObject
+                ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:8:15: error: no implementation is found for header declaration 'PublicObject'
 The following declaration is incompatible because visibility is different:
     internal impl object PublicObject
 
-public platform object PublicObject
-                ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:9:18: error: no definition is found for platform declaration 'PrivateObject'
+public header object PublicObject
+              ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:9:16: error: no implementation is found for header declaration 'PrivateObject'
 The following declaration is incompatible because visibility is different:
     public impl object PrivateObject
 
-private platform object PrivateObject
-                 ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:11:21: error: no definition is found for platform declaration 'OpenClass'
+private header object PrivateObject
+               ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:11:19: error: no implementation is found for header declaration 'OpenClass'
 The following declaration is incompatible because modality is different:
     public final impl class OpenClass
 
-open platform class OpenClass
-                    ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:12:25: error: no definition is found for platform declaration 'AbstractClass'
+open header class OpenClass
+                  ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:12:23: error: no implementation is found for header declaration 'AbstractClass'
 The following declaration is incompatible because modality is different:
     public open impl class AbstractClass
 
-abstract platform class AbstractClass
-                        ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:13:22: error: no definition is found for platform declaration 'FinalClass'
+abstract header class AbstractClass
+                      ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:13:20: error: no implementation is found for header declaration 'FinalClass'
 The following declaration is incompatible because modality is different:
     public abstract impl class FinalClass
 
-final platform class FinalClass
-                     ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:16:16: error: no definition is found for platform declaration 'NonDataClass'
+final header class FinalClass
+                   ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:16:14: error: no implementation is found for header declaration 'NonDataClass'
 The following declaration is incompatible because modifiers are different (data):
     public final impl data class NonDataClass
 
-platform class NonDataClass(x: Int)
-               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:18:16: error: no definition is found for platform declaration 'C1'
+header class NonDataClass(x: Int)
+             ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:18:14: error: no implementation is found for header declaration 'C1'
 The following declaration is incompatible because number of type parameters is different:
     public final impl class C1<A, Extra>
 
-platform class C1<A>
-               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:19:16: error: no definition is found for platform declaration 'C2'
+header class C1<A>
+             ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:19:14: error: no implementation is found for header declaration 'C2'
 The following declaration is incompatible because declaration-site variances of type parameters are different:
     public final impl class C2<out B>
 
-platform class C2<B>
-               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:25:25: error: no definition is found for platform declaration 'ExtendsNumber'
+header class C2<B>
+             ^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:25:23: error: no implementation is found for header declaration 'ExtendsNumber'
 The following declaration is incompatible because some supertypes are missing in the implementation:
     public abstract impl class ExtendsNumber
 
-platform abstract class ExtendsNumber : Number
-                        ^
+header abstract class ExtendsNumber : Number
+                      ^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl interface PClass
 ^

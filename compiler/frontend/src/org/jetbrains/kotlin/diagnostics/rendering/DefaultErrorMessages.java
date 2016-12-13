@@ -259,19 +259,19 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless");
         MAP.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited");
 
-        MAP.put(PLATFORM_DECLARATION_WITH_BODY, "Platform declaration must not have a body");
-        MAP.put(PLATFORM_DECLARATION_WITH_DEFAULT_PARAMETER, "Platform declaration cannot have parameters with default values");
-        MAP.put(PLATFORM_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of a platform class is not allowed");
-        MAP.put(PLATFORM_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Platform class constructor cannot have a property parameter");
-        MAP.put(PLATFORM_PROPERTY_INITIALIZER, "Platform property cannot have an initializer");
+        MAP.put(HEADER_DECLARATION_WITH_BODY, "Header declaration must not have a body");
+        MAP.put(HEADER_DECLARATION_WITH_DEFAULT_PARAMETER, "Header declaration cannot have parameters with default values");
+        MAP.put(HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of a header class is not allowed");
+        MAP.put(HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Header class constructor cannot have a property parameter");
+        MAP.put(HEADER_PROPERTY_INITIALIZER, "Header property cannot have an initializer");
 
         MAP.put(IMPL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of 'impl' type alias should be a class, not another type alias");
         MAP.put(IMPL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE, "Aliased class should not have type parameters with declaration-site variance");
         MAP.put(IMPL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, "Right-hand side of 'impl' type alias cannot contain use-site variance or star projections");
         MAP.put(IMPL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, "Type arguments in the right-hand side of 'impl' type alias should be its type parameters in the same order, e.g. 'impl typealias Foo<A, B> = Bar<A, B>'");
 
-        MAP.put(PLATFORM_DECLARATION_WITHOUT_DEFINITION, "No definition is found for platform declaration ''{0}''{1}", NAME, PlatformIncompatibilityDiagnosticRenderer.INSTANCE);
-        MAP.put(PLATFORM_DEFINITION_WITHOUT_DECLARATION, "Modifier 'impl' is only applicable to members that are initially declared in platform-independent code");
+        MAP.put(HEADER_WITHOUT_IMPLEMENTATION, "No implementation is found for header declaration ''{0}''{1}", NAME, PlatformIncompatibilityDiagnosticRenderer.INSTANCE);
+        MAP.put(IMPLEMENTATION_WITHOUT_HEADER, "Modifier 'impl' is only applicable to members that are initially declared in platform-independent code");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");

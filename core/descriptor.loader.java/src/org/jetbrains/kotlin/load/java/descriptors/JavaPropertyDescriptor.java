@@ -46,7 +46,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             boolean isStaticFinal
     ) {
         super(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
-              /* lateInit = */ false, /* isConst = */ false, /* isPlatform = */ false, /* isImpl = */ false, /* isExternal = */ false);
+              /* lateInit = */ false, /* isConst = */ false, /* isHeader = */ false, /* isImpl = */ false, /* isExternal = */ false);
 
         this.isStaticFinal = isStaticFinal;
     }

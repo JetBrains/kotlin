@@ -6,7 +6,7 @@ interface I
 open class C
 interface J
 
-platform class Foo : I, C, J
+header class Foo : I, C, J
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt

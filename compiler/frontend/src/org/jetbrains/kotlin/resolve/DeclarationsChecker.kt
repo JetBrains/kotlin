@@ -264,20 +264,20 @@ class DeclarationsChecker(
         identifierChecker.checkDeclaration(declaration, trace)
         checkVarargParameters(trace, constructorDescriptor)
         checkConstructorVisibility(constructorDescriptor, declaration)
-        checkPlatformClassConstructor(constructorDescriptor, declaration)
+        checkHeaderClassConstructor(constructorDescriptor, declaration)
     }
 
-    private fun checkPlatformClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
-        if (!constructorDescriptor.isPlatform) return
+    private fun checkHeaderClassConstructor(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
+        if (!constructorDescriptor.isHeader) return
 
         if (declaration.hasBody()) {
-            trace.report(PLATFORM_DECLARATION_WITH_BODY.on(declaration))
+            trace.report(HEADER_DECLARATION_WITH_BODY.on(declaration))
         }
 
         if (declaration is KtPrimaryConstructor && !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass)) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {
-                    trace.report(PLATFORM_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))
+                    trace.report(HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))
                 }
             }
         }
@@ -285,7 +285,7 @@ class DeclarationsChecker(
         if (declaration is KtSecondaryConstructor) {
             val delegationCall = declaration.getDelegationCall()
             if (!delegationCall.isImplicit) {
-                trace.report(PLATFORM_CLASS_CONSTRUCTOR_DELEGATION_CALL.on(delegationCall))
+                trace.report(HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL.on(delegationCall))
             }
         }
     }
@@ -703,13 +703,13 @@ class DeclarationsChecker(
 
         val initializer = property.initializer
         val delegate = property.delegate
-        val isPlatform = propertyDescriptor.isPlatform
+        val isHeader = propertyDescriptor.isHeader
         if (initializer != null) {
             if (inTrait) {
                 trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
             }
-            else if (isPlatform) {
-                trace.report(PLATFORM_PROPERTY_INITIALIZER.on(initializer))
+            else if (isHeader) {
+                trace.report(HEADER_PROPERTY_INITIALIZER.on(initializer))
             }
             else if (!backingFieldRequired) {
                 trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
@@ -726,7 +726,7 @@ class DeclarationsChecker(
         else {
             val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
             val isExternal = DescriptorUtils.isEffectivelyExternal(propertyDescriptor)
-            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && !isPlatform && isUninitialized && !isExternal) {
+            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && !isHeader && isUninitialized && !isExternal) {
                 if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
                     trace.report(MUST_BE_INITIALIZED.on(property))
                 }
@@ -766,7 +766,7 @@ class DeclarationsChecker(
 
         if (containingDescriptor is ClassDescriptor) {
             val inInterface = containingDescriptor.kind == ClassKind.INTERFACE
-            val isPlatformClass = containingDescriptor.isPlatform
+            val isHeaderClass = containingDescriptor.isHeader
             if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
             }
@@ -782,29 +782,29 @@ class DeclarationsChecker(
                     trace.report(REDUNDANT_OPEN_IN_INTERFACE.on(function))
                 }
             }
-            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isPlatformClass) {
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inInterface && !isHeaderClass) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
             }
         }
         else /* top-level only */ {
-            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isPlatform) {
+            if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier && !functionDescriptor.isHeader) {
                 trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
             }
         }
 
-        if (functionDescriptor.isPlatform) {
-            checkPlatformFunction(function)
+        if (functionDescriptor.isHeader) {
+            checkHeaderFunction(function)
         }
     }
 
-    private fun checkPlatformFunction(function: KtNamedFunction) {
+    private fun checkHeaderFunction(function: KtNamedFunction) {
         if (function.hasBody()) {
-            trace.report(PLATFORM_DECLARATION_WITH_BODY.on(function))
+            trace.report(HEADER_DECLARATION_WITH_BODY.on(function))
         }
 
         for (parameter in function.valueParameters) {
             if (parameter.hasDefaultValue()) {
-                trace.report(PLATFORM_DECLARATION_WITH_DEFAULT_PARAMETER.on(parameter))
+                trace.report(HEADER_DECLARATION_WITH_DEFAULT_PARAMETER.on(parameter))
             }
         }
     }
@@ -858,8 +858,8 @@ class DeclarationsChecker(
             accessorDescriptor: PropertyAccessorDescriptor?
     ) {
         if (accessor == null || accessorDescriptor == null) return
-        if (propertyDescriptor.isPlatform && accessor.hasBody()) {
-            trace.report(PLATFORM_DECLARATION_WITH_BODY.on(accessor))
+        if (propertyDescriptor.isHeader && accessor.hasBody()) {
+            trace.report(HEADER_DECLARATION_WITH_BODY.on(accessor))
         }
 
         val accessorModifierList = accessor.modifierList ?: return

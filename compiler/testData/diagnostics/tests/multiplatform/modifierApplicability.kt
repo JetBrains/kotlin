@@ -2,28 +2,28 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!WRONG_MODIFIER_TARGET!>platform<!> typealias Foo = String
+<!WRONG_MODIFIER_TARGET!>header<!> typealias Foo = String
 
-class Outer <!WRONG_MODIFIER_TARGET!>platform<!> constructor() {
-    platform class Nested
+class Outer <!WRONG_MODIFIER_TARGET!>header<!> constructor() {
+    header class Nested
 
-    <!WRONG_MODIFIER_TARGET!>platform<!> init {}
+    <!WRONG_MODIFIER_TARGET!>header<!> init {}
 
-    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!><!WRONG_MODIFIER_TARGET!>platform<!> fun foo()<!>
-    <!WRONG_MODIFIER_TARGET!>platform<!> val bar: Int
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!><!WRONG_MODIFIER_TARGET!>header<!> fun foo()<!>
+    <!WRONG_MODIFIER_TARGET!>header<!> val bar: Int
 }
 
 fun foo() {
-    <!WRONG_MODIFIER_TARGET!>platform<!> fun localFun()
-    <!WRONG_MODIFIER_TARGET!>platform<!> var <!UNUSED_VARIABLE!>x<!> = 42
-    <!WRONG_MODIFIER_TARGET!>platform<!> class Bar
+    <!WRONG_MODIFIER_TARGET!>header<!> fun localFun()
+    <!WRONG_MODIFIER_TARGET!>header<!> var <!UNUSED_VARIABLE!>x<!> = 42
+    <!WRONG_MODIFIER_TARGET!>header<!> class Bar
 }
 
 // MODULE: m2-jvm
 // FILE: jvm.kt
 
 class Outer impl constructor() {
-    <!PLATFORM_DEFINITION_WITHOUT_DECLARATION!>impl<!> class Nested
+    <!IMPLEMENTATION_WITHOUT_HEADER!>impl<!> class Nested
 
     <!WRONG_MODIFIER_TARGET!>impl<!> init {}
 }
@@ -31,5 +31,5 @@ class Outer impl constructor() {
 fun foo() {
     <!WRONG_MODIFIER_TARGET!>impl<!> fun localFun() {}
     <!WRONG_MODIFIER_TARGET!>impl<!> var <!UNUSED_VARIABLE!>x<!> = 42
-    <!PLATFORM_DEFINITION_WITHOUT_DECLARATION, WRONG_MODIFIER_TARGET!>impl<!> class Bar
+    <!IMPLEMENTATION_WITHOUT_HEADER, WRONG_MODIFIER_TARGET!>impl<!> class Bar
 }

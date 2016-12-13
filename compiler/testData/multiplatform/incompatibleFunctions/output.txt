@@ -5,65 +5,65 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:1:1: error: no definition is found for platform declaration 'plus'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:1:1: error: no implementation is found for header declaration 'plus'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public impl fun Int.plus(s: CharSequence): Int
 
-platform infix fun Int.plus(s: CharSequence): Int
+header infix fun Int.plus(s: CharSequence): Int
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:2:1: error: no definition is found for platform declaration 'minus'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:2:1: error: no implementation is found for header declaration 'minus'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public infix impl fun Int.minus(s: String): Int
 
-platform fun Int.minus(s: String): Int
+header fun Int.minus(s: String): Int
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:4:1: error: no definition is found for platform declaration 'times'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:4:1: error: no implementation is found for header declaration 'times'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public impl fun Double.times(x: CharArray): Unit
 
-platform operator fun Double.times(x: CharArray)
+header operator fun Double.times(x: CharArray)
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:5:1: error: no definition is found for platform declaration 'divide'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:5:1: error: no implementation is found for header declaration 'divide'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public operator impl fun Double.divide(x: ByteArray): Unit
 
-platform fun Double.divide(x: ByteArray)
+header fun Double.divide(x: ByteArray)
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:7:1: error: no definition is found for platform declaration 'f1'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:7:1: error: no implementation is found for header declaration 'f1'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public impl fun f1(): Unit
 
-platform external fun f1()
+header external fun f1()
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:8:1: error: no definition is found for platform declaration 'g1'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:8:1: error: no implementation is found for header declaration 'g1'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public external impl fun g1(): Unit
 
-platform fun g1()
+header fun g1()
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:10:1: error: no definition is found for platform declaration 'f2'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:10:1: error: no implementation is found for header declaration 'f2'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public impl fun f2(): Unit
 
-platform inline fun f2()
+header inline fun f2()
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:11:1: error: no definition is found for platform declaration 'g2'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:11:1: error: no implementation is found for header declaration 'g2'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public inline impl fun g2(): Unit
 
-platform fun g2()
+header fun g2()
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:13:1: error: no definition is found for platform declaration 'f3'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:13:1: error: no implementation is found for header declaration 'f3'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public impl fun f3(): Unit
 
-platform tailrec fun f3()
+header tailrec fun f3()
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:14:1: error: no definition is found for platform declaration 'g3'
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:14:1: error: no implementation is found for header declaration 'g3'
 The following declaration is incompatible because modifiers are different (external, infix, inline, operator, suspend, tailrec):
     public tailrec impl fun g3(): Unit
 
-platform fun g3()
+header fun g3()
 ^
 compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun Int.plus(s: CharSequence): Int = 0

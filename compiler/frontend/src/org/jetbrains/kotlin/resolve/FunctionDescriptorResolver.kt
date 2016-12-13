@@ -186,8 +186,8 @@ class FunctionDescriptorResolver(
         functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
         functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
-        functionDescriptor.isPlatform = function.hasModifier(KtTokens.PLATFORM_KEYWORD) ||
-                                        containingDescriptor is ClassDescriptor && containingDescriptor.isPlatform
+        functionDescriptor.isHeader = function.hasModifier(KtTokens.HEADER_KEYWORD) ||
+                                        containingDescriptor is ClassDescriptor && containingDescriptor.isHeader
         functionDescriptor.isImpl = function.hasModifier(KtTokens.IMPL_KEYWORD)
 
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
@@ -299,8 +299,8 @@ class FunctionDescriptorResolver(
                 isPrimary,
                 declarationToTrace.toSourceElement()
         )
-        if (classDescriptor.isPlatform) {
-            constructorDescriptor.isPlatform = true
+        if (classDescriptor.isHeader) {
+            constructorDescriptor.isHeader = true
         }
         if (classDescriptor.isImpl) {
             constructorDescriptor.isImpl = true

@@ -1,1 +1,1 @@
-platform class Foo
+header class Foo

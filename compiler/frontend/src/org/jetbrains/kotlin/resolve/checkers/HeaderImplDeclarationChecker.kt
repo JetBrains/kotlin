@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker.Compatibility.Compatible
-import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker.Compatibility.Incompatible
+import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Compatible
+import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
-class PlatformImplDeclarationChecker : DeclarationChecker {
+class HeaderImplDeclarationChecker : DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -55,16 +55,16 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
 
         if (descriptor !is MemberDescriptor) return
 
-        if (descriptor.isPlatform && declaration.hasModifier(KtTokens.PLATFORM_KEYWORD)) {
+        if (descriptor.isHeader && declaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
             val checkImpl = !languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformDoNotCheckImpl)
-            checkPlatformDeclarationHasDefinition(declaration, descriptor, diagnosticHolder, checkImpl)
+            checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, checkImpl)
         }
         else if (descriptor.isImpl && declaration.hasModifier(KtTokens.IMPL_KEYWORD)) {
-            checkImplementationHasPlatformDeclaration(declaration, descriptor, diagnosticHolder)
+            checkImplementationHasHeaderDeclaration(declaration, descriptor, diagnosticHolder)
         }
     }
 
-    private fun checkPlatformDeclarationHasDefinition(
+    private fun checkHeaderDeclarationHasImplementation(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink, checkImpl: Boolean
     ) {
         val compatibility = when (descriptor) {
@@ -92,17 +92,17 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            diagnosticHolder.report(Errors.PLATFORM_DECLARATION_WITHOUT_DEFINITION.on(reportOn, descriptor, incompatibility))
+            diagnosticHolder.report(Errors.HEADER_WITHOUT_IMPLEMENTATION.on(reportOn, descriptor, incompatibility))
         }
     }
 
-    private fun checkImplementationHasPlatformDeclaration(
+    private fun checkImplementationHasHeaderDeclaration(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink
     ) {
         fun ClassifierDescriptor.findDeclarationForClass(): ClassDescriptor? =
                 findClassifiersFromTheSameModule().firstOrNull { declaration ->
                     this != declaration &&
-                    declaration is ClassDescriptor && declaration.isPlatform &&
+                    declaration is ClassDescriptor && declaration.isHeader &&
                     areCompatibleClassifiers(declaration, this, checkImpl = false) == Compatible
                 } as? ClassDescriptor
 
@@ -116,7 +116,7 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
                 }
                 candidates.any { declaration ->
                     descriptor != declaration &&
-                    declaration.isPlatform &&
+                    declaration.isHeader &&
                     areCompatibleCallables(declaration, descriptor, checkImpl = false) == Compatible
                 }
             }
@@ -125,8 +125,8 @@ class PlatformImplDeclarationChecker : DeclarationChecker {
         }
 
         if (!hasDeclaration) {
-            // TODO: do not report this error for members which are "almost compatible" with some platform declarations
-            diagnosticHolder.report(Errors.PLATFORM_DEFINITION_WITHOUT_DECLARATION.on(reportOn.modifierList!!.getModifier(KtTokens.IMPL_KEYWORD)!!))
+            // TODO: do not report this error for members which are "almost compatible" with some header declarations
+            diagnosticHolder.report(Errors.IMPLEMENTATION_WITHOUT_HEADER.on(reportOn.modifierList!!.getModifier(KtTokens.IMPL_KEYWORD)!!))
         }
     }
 

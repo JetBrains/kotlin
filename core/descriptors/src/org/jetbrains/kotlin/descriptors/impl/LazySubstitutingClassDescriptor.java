@@ -227,8 +227,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public boolean isPlatform() {
-        return original.isPlatform();
+    public boolean isHeader() {
+        return original.isHeader();
     }
 
     @Override

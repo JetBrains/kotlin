@@ -352,7 +352,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.getContainingKtFile().isScript || classOrObject.hasModifier(KtTokens.PLATFORM_KEYWORD))  {
+            if (classOrObject.getContainingKtFile().isScript || classOrObject.hasModifier(KtTokens.HEADER_KEYWORD))  {
                 return null
             }
 

@@ -2,8 +2,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!CONFLICTING_OVERLOADS!>platform fun foo()<!>
+<!CONFLICTING_OVERLOADS!>header fun foo()<!>
 
-<!CONFLICTING_OVERLOADS, PLATFORM_DECLARATION_WITH_BODY!>platform fun foo()<!> {}
+<!CONFLICTING_OVERLOADS, HEADER_DECLARATION_WITH_BODY!>header fun foo()<!> {}
 
-<!PLATFORM_DECLARATION_WITH_BODY!>platform fun bar()<!> {}
+<!HEADER_DECLARATION_WITH_BODY!>header fun bar()<!> {}

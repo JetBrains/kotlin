@@ -2,7 +2,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-platform fun foo(x: Int): Int
+header fun foo(x: Int): Int
 
 fun callFromCommonCode(x: Int) = foo(x)
 

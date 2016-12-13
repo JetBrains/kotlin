@@ -90,7 +90,7 @@ object ModifierCheckerCore {
             CONST_KEYWORD     to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY),
             OPERATOR_KEYWORD  to EnumSet.of(FUNCTION),
             INFIX_KEYWORD     to EnumSet.of(FUNCTION),
-            PLATFORM_KEYWORD  to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS),
+            HEADER_KEYWORD    to EnumSet.of(TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE, CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS),
             IMPL_KEYWORD      to EnumSet.of(TOP_LEVEL_FUNCTION, MEMBER_FUNCTION, TOP_LEVEL_PROPERTY, MEMBER_PROPERTY, CONSTRUCTOR, CLASS_ONLY, OBJECT, INTERFACE, INNER_CLASS, ENUM_CLASS, ANNOTATION_CLASS, TYPEALIAS)
     )
 
@@ -98,7 +98,7 @@ object ModifierCheckerCore {
             COROUTINE_KEYWORD to LanguageFeature.Coroutines,
             SUSPEND_KEYWORD   to LanguageFeature.Coroutines,
             INLINE_KEYWORD    to LanguageFeature.InlineProperties,
-            PLATFORM_KEYWORD  to LanguageFeature.MultiPlatformProjects,
+            HEADER_KEYWORD    to LanguageFeature.MultiPlatformProjects,
             IMPL_KEYWORD      to LanguageFeature.MultiPlatformProjects
     )
 

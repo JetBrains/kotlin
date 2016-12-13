@@ -1,7 +1,7 @@
 // -- Module: <m1-common> --
 package
 
-public final platform class Foo {
+public final header class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

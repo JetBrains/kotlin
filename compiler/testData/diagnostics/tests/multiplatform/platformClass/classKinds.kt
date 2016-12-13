@@ -2,15 +2,15 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-platform interface Interface
+header interface Interface
 
-platform annotation class Anno(val prop: String)
+header annotation class Anno(val prop: String)
 
-platform object Object
+header object Object
 
-platform class Class
+header class Class
 
-platform enum class En { ENTRY }
+header enum class En { ENTRY }
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt

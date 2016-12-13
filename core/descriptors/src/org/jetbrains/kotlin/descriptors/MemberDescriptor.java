@@ -26,7 +26,7 @@ public interface MemberDescriptor extends DeclarationDescriptorNonRoot, Declarat
     @NotNull
     Visibility getVisibility();
 
-    boolean isPlatform();
+    boolean isHeader();
 
     boolean isImpl();
 

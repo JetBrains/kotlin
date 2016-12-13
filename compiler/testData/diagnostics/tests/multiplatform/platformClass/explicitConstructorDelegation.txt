@@ -1,6 +1,6 @@
 package
 
-public open platform class A {
+public open header class A {
     public constructor A(/*0*/ n: kotlin.Number)
     public constructor A(/*0*/ s: kotlin.String)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -8,7 +8,7 @@ public open platform class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final platform class B : A {
+public final header class B : A {
     public constructor B()
     public constructor B(/*0*/ i: kotlin.Int)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

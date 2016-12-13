@@ -5,17 +5,17 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleProperties/common.kt:1:1: error: no definition is found for platform declaration 'pval'
+compiler/testData/multiplatform/incompatibleProperties/common.kt:1:1: error: no implementation is found for header declaration 'pval'
 The following declaration is incompatible because property kinds are different (val vs var):
     public var pval: String
 
-platform val pval: String
+header val pval: String
 ^
-compiler/testData/multiplatform/incompatibleProperties/common.kt:2:1: error: no definition is found for platform declaration 'pvar'
+compiler/testData/multiplatform/incompatibleProperties/common.kt:2:1: error: no implementation is found for header declaration 'pvar'
 The following declaration is incompatible because property kinds are different (val vs var):
     public val pvar: String
 
-platform var pvar: String
+header var pvar: String
 ^
 compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl var pval: String = ""

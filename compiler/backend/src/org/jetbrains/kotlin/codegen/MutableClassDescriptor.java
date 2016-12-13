@@ -112,7 +112,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     }
 
     @Override
-    public boolean isPlatform() {
+    public boolean isHeader() {
         return false;
     }
 

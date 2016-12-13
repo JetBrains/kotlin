@@ -41,6 +41,6 @@ class Some {
 // EXIST:  const
 // EXIST:  suspend
 // EXIST:  typealias
-// EXIST:  platform
+// EXIST:  header
 // EXIST:  impl
 // NOTHING_ELSE

@@ -1,7 +1,7 @@
 // -- Module: <m1-common> --
 package
 
-public platform fun foo(): kotlin.Unit
+public header fun foo(): kotlin.Unit
 
 
 // -- Module: <m2-jvm> --

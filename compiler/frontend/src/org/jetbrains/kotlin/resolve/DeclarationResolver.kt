@@ -78,12 +78,12 @@ class DeclarationResolver(
         for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
             if (fqName.isRoot) continue
 
-            // TODO: report error on platform class and impl val, or vice versa
-            val (platform, impl) =
+            // TODO: report error on header class and impl val, or vice versa
+            val (header, impl) =
                     getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
-                    .partition { it is MemberDescriptor && it.isPlatform }
+                    .partition { it is MemberDescriptor && it.isHeader }
 
-            for (descriptors in listOf(platform, impl)) {
+            for (descriptors in listOf(header, impl)) {
                 if (descriptors.size > 1) {
                     for (directive in declarationsOrPackageDirectives) {
                         val reportAt = (directive as? KtPackageDirective)?.nameIdentifier ?: directive

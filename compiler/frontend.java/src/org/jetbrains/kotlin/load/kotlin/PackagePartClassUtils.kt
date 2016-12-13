@@ -73,7 +73,7 @@ object PackagePartClassUtils {
                 (it is KtProperty ||
                 it is KtNamedFunction ||
                 it is KtScript ||
-                it is KtTypeAlias) && !it.hasModifier(KtTokens.PLATFORM_KEYWORD)
+                it is KtTypeAlias) && !it.hasModifier(KtTokens.HEADER_KEYWORD)
             }
 
     @JvmStatic fun getFilePartShortName(fileName: String): String =

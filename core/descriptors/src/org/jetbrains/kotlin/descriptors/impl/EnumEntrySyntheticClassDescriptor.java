@@ -155,7 +155,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isPlatform() {
+    public boolean isHeader() {
         return false;
     }
 

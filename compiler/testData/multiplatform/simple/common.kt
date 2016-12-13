@@ -1,4 +1,4 @@
-platform class Printer {
+header class Printer {
     fun print(message: String)
 }
 

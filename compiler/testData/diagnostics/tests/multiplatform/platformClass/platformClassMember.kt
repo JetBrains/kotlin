@@ -1,7 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
-platform class Foo {
+header class Foo {
     val foo: String
 
     fun bar(x: Int): Int

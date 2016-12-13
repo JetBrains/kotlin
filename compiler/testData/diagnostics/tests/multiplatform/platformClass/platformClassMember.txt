@@ -1,10 +1,10 @@
 // -- Module: <m1-common> --
 package
 
-public final platform class Foo {
+public final header class Foo {
     public constructor Foo()
     public final val foo: kotlin.String
-    public final platform fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    public final header fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

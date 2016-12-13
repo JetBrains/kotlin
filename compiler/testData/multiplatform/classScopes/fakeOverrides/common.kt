@@ -1,7 +1,7 @@
-platform open class Base {
+header open class Base {
     fun base()
 }
 
-platform class Derived : Base {
+header class Derived : Base {
     fun derived()
 }

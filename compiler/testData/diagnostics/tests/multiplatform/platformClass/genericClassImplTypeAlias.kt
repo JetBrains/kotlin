@@ -1,18 +1,18 @@
-// !DIAGNOSTICS: -PLATFORM_DEFINITION_WITHOUT_DECLARATION
+// !DIAGNOSTICS: -IMPLEMENTATION_WITHOUT_HEADER
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 
-platform class C1
-platform class C2<A>
-platform class C3<B>
-platform class C4<D, E>
-platform class C5<F, G>
-platform class C6<H>
-platform class C7<I>
-platform class C8<J>
-platform class C9<K>
-platform class C10<L>
+header class C1
+header class C2<A>
+header class C3<B>
+header class C4<D, E>
+header class C5<F, G>
+header class C6<H>
+header class C7<I>
+header class C8<J>
+header class C9<K>
+header class C10<L>
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt

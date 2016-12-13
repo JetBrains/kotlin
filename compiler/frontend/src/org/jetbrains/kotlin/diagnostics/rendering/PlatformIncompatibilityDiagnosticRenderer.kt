@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.resolve.checkers.PlatformImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
 
 object PlatformIncompatibilityDiagnosticRenderer :
-        DiagnosticParameterRenderer<Map<PlatformImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>> {
+        DiagnosticParameterRenderer<Map<HeaderImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>> {
     private val INDENTATION_UNIT = "    "
 
     override fun render(
-            obj: Map<PlatformImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>,
+            obj: Map<HeaderImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>,
             renderingContext: RenderingContext
     ): String {
         if (obj.isEmpty()) return ""
@@ -39,7 +39,7 @@ object PlatformIncompatibilityDiagnosticRenderer :
     }
 
     private fun StringBuilder.render(
-            map: Map<PlatformImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>,
+            map: Map<HeaderImplDeclarationChecker.Compatibility.Incompatible, Collection<MemberDescriptor>>,
             indent: String,
             renderDescriptor: (DeclarationDescriptor) -> String
     ) {

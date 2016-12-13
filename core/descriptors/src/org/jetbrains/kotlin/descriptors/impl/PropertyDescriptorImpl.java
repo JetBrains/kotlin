@@ -44,7 +44,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final Kind kind;
     private final boolean lateInit;
     private final boolean isConst;
-    private final boolean isPlatform;
+    private final boolean isHeader;
     private final boolean isImpl;
     private final boolean isExternal;
 
@@ -67,7 +67,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull SourceElement source,
             boolean lateInit,
             boolean isConst,
-            boolean isPlatform,
+            boolean isHeader,
             boolean isImpl,
             boolean isExternal
     ) {
@@ -78,7 +78,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.kind = kind;
         this.lateInit = lateInit;
         this.isConst = isConst;
-        this.isPlatform = isPlatform;
+        this.isHeader = isHeader;
         this.isImpl = isImpl;
         this.isExternal = isExternal;
     }
@@ -95,13 +95,13 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull SourceElement source,
             boolean lateInit,
             boolean isConst,
-            boolean isPlatform,
+            boolean isHeader,
             boolean isImpl,
             boolean isExternal
     ) {
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
                                           modality, visibility, isVar, name, kind, source, lateInit, isConst,
-                                          isPlatform, isImpl, isExternal);
+                                          isHeader, isImpl, isExternal);
     }
 
     public void setType(
@@ -352,7 +352,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     ) {
         return new PropertyDescriptorImpl(
                 newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, SourceElement.NO_SOURCE,
-                isLateInit(), isConst(), isPlatform(), isImpl(), isExternal()
+                isLateInit(), isConst(), isHeader(), isImpl(), isExternal()
         );
     }
 
@@ -374,8 +374,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     @Override
-    public boolean isPlatform() {
-        return isPlatform;
+    public boolean isHeader() {
+        return isHeader;
     }
 
     @Override

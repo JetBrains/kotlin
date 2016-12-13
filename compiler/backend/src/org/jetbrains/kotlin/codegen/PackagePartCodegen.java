@@ -92,7 +92,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     @Override
     protected void generateBody() {
         for (KtDeclaration declaration : element.getDeclarations()) {
-            if (declaration.hasModifier(KtTokens.PLATFORM_KEYWORD)) continue;
+            if (declaration.hasModifier(KtTokens.HEADER_KEYWORD)) continue;
 
             if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty || declaration instanceof KtTypeAlias) {
                 genSimpleMember(declaration);

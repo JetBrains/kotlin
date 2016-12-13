@@ -2,7 +2,7 @@
 package
 
 public fun callFromCommonCode(/*0*/ x: kotlin.Int): kotlin.Int
-public platform fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+public header fun foo(/*0*/ x: kotlin.Int): kotlin.Int
 
 
 // -- Module: <m2-jvm> --

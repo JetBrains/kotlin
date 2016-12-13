@@ -1,14 +1,14 @@
-platform infix fun Int.plus(s: CharSequence): Int
-platform fun Int.minus(s: String): Int
+header infix fun Int.plus(s: CharSequence): Int
+header fun Int.minus(s: String): Int
 
-platform operator fun Double.times(x: CharArray)
-platform fun Double.divide(x: ByteArray)
+header operator fun Double.times(x: CharArray)
+header fun Double.divide(x: ByteArray)
 
-platform external fun f1()
-platform fun g1()
+header external fun f1()
+header fun g1()
 
-platform inline fun f2()
-platform fun g2()
+header inline fun f2()
+header fun g2()
 
-platform tailrec fun f3()
-platform fun g3()
+header tailrec fun f3()
+header fun g3()

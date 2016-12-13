@@ -368,7 +368,7 @@ public class ErrorUtils {
                 SourceElement.NO_SOURCE,
                 /* lateInit = */ false,
                 /* isConst = */ false,
-                /* isPlatform = */ false,
+                /* isHeader = */ false,
                 /* isImpl = */ false,
                 /* isExternal = */ false
         );

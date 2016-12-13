@@ -5,5 +5,5 @@ p<caret>
 // EXIST:  package
 // EXIST:  private
 // EXIST:  public
-// EXIST:  platform
+// EXIST:  header
 // NOTHING_ELSE

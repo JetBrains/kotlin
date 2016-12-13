@@ -241,8 +241,8 @@ class OverloadingConflictResolver<C : Any>(
             if (isGeneric1 && isGeneric2) return false
         }
 
-        if (!call1.isPlatform && call2.isPlatform) return true
-        if (call1.isPlatform && !call2.isPlatform) return false
+        if (!call1.isHeader && call2.isHeader) return true
+        if (call1.isHeader && !call2.isHeader) return false
 
         return createEmptyConstraintSystem().isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, specificityComparator)
     }

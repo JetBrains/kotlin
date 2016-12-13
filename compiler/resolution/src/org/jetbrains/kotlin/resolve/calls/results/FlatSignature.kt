@@ -44,7 +44,7 @@ class FlatSignature<out T> private constructor(
         val hasExtensionReceiver: Boolean,
         val hasVarargs: Boolean,
         val numDefaults: Int,
-        val isPlatform: Boolean,
+        val isHeader: Boolean,
         val isSyntheticMember: Boolean
 ) {
     val isGeneric = typeParameters.isNotEmpty()
@@ -65,7 +65,7 @@ class FlatSignature<out T> private constructor(
                                  hasExtensionReceiver = extensionReceiverType != null,
                                  hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                                  numDefaults = numDefaults,
-                                 isPlatform = descriptor is MemberDescriptor && descriptor.isPlatform,
+                                 isHeader = descriptor is MemberDescriptor && descriptor.isHeader,
                                  isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
             )
         }

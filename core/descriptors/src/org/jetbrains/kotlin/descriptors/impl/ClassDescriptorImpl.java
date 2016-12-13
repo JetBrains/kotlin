@@ -115,7 +115,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
-    public boolean isPlatform() {
+    public boolean isHeader() {
         return false;
     }
 

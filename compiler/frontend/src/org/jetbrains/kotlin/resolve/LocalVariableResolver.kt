@@ -147,7 +147,7 @@ class LocalVariableResolver(
                     variable.toSourceElement(),
                     /* lateInit = */ false,
                     /* isConst = */ false,
-                    /* isPlatform = */ false,
+                    /* isHeader = */ false,
                     /* isImpl = */ false,
                     /* isExternal = */ false
             )

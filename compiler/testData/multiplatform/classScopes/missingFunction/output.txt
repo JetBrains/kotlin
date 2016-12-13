@@ -5,14 +5,14 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/missingFunction/common.kt:1:16: error: no definition is found for platform declaration 'Foo'
+compiler/testData/multiplatform/classScopes/missingFunction/common.kt:1:14: error: no implementation is found for header declaration 'Foo'
 The following declaration is incompatible because some members are not implemented.
 No implementations are found for members listed below:
 
-    public final platform fun function(s: String): Unit
+    public final header fun function(s: String): Unit
 
-platform class Foo {
-               ^
+header class Foo {
+             ^
 compiler/testData/multiplatform/classScopes/missingFunction/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl class Foo
 ^

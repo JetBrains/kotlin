@@ -2,7 +2,7 @@
 package
 
 package common {
-    public platform fun foo(): kotlin.Unit
+    public header fun foo(): kotlin.Unit
 }
 
 

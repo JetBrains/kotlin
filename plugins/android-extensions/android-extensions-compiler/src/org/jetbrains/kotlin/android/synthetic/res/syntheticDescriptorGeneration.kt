@@ -103,7 +103,7 @@ private fun genProperty(
             sourceElement,
             /* lateinit = */ false,
             /* isConst = */ false,
-            /* isPlatform = */ false,
+            /* isHeader = */ false,
             /* isImpl = */ false,
             /* isExternal = */ false
     ) {

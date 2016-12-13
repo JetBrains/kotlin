@@ -103,7 +103,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     }
 
     @Override
-    public boolean isPlatform() {
+    public boolean isHeader() {
         return false;
     }
 

@@ -1,5 +1,5 @@
 package
 
-public platform fun foo(): kotlin.Unit
-public platform fun foo(): kotlin.Unit
-public platform fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+public header fun foo(): kotlin.Unit
+public header fun foo(): kotlin.Unit
+public header fun foo(/*0*/ x: kotlin.Int): kotlin.Unit

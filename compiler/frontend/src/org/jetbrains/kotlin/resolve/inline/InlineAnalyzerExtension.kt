@@ -141,7 +141,7 @@ object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
 
         if (InlineUtil.containsReifiedTypeParameters(functionDescriptor) ||
             functionDescriptor.isInlineOnlyOrReified() ||
-            functionDescriptor.isPlatform) return
+            functionDescriptor.isHeader) return
 
         val reportOn = function.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: function
         trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor))

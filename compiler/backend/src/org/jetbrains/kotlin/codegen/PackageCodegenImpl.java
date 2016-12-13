@@ -101,7 +101,7 @@ public class PackageCodegenImpl implements PackageCodegen {
         List<KtClassOrObject> classOrObjects = new ArrayList<KtClassOrObject>();
 
         for (KtDeclaration declaration : file.getDeclarations()) {
-            if (declaration.hasModifier(KtTokens.PLATFORM_KEYWORD)) continue;
+            if (declaration.hasModifier(KtTokens.HEADER_KEYWORD)) continue;
 
             if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
                 generatePackagePart = true;

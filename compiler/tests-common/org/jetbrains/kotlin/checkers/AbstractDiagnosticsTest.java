@@ -417,7 +417,7 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
         List<ModuleDescriptorImpl> dependencies = moduleDescriptor.getTestOnly_AllDependentModules();
 
         // TODO: diagnostics on common code reported during the platform module analysis should be distinguished somehow
-        // E.g. "<!JVM:PLATFORM_DEFINITION_WITHOUT_DECLARATION!>...<!>
+        // E.g. "<!JVM:IMPLEMENTATION_WITHOUT_HEADER!>...<!>
         List<KtFile> result = new ArrayList<KtFile>(0);
         for (ModuleDescriptorImpl dependency : dependencies) {
             if (dependency.getCapability(MultiTargetPlatform.CAPABILITY) == MultiTargetPlatform.Common.INSTANCE) {

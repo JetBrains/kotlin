@@ -1,3 +1,3 @@
-platform class Foo {
+header class Foo {
     constructor(s: String)
 }

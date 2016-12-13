@@ -820,8 +820,8 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(property),
                 modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
-                modifierList != null && modifierList.hasModifier(KtTokens.PLATFORM_KEYWORD) ||
-                containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isPlatform(),
+                modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) ||
+                containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader(),
                 modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD)
         );
@@ -1141,7 +1141,7 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(parameter),
                 /* lateInit = */ false,
                 /* isConst = */ false,
-                /* isPlatform = */ false,
+                /* isHeader = */ false,
                 /* isImpl = */ false,
                 /* isExternal = */ false
         );

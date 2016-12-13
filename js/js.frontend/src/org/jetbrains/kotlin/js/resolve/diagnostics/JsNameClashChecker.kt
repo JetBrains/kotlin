@@ -55,7 +55,7 @@ class JsNameClashChecker : SimpleDeclarationChecker {
             val scope = getScope(suggested.scope)
             val name = suggested.names.last()
             val existing = scope[name]
-            if (existing != null && existing != suggested.descriptor && !(existing is MemberDescriptor && existing.isPlatform)) {
+            if (existing != null && existing != suggested.descriptor && !(existing is MemberDescriptor && existing.isHeader)) {
                 diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(declaration, name, existing))
                 val existingDeclaration = existing.findPsi()
                 if (clashedDescriptors.add(existing) && existingDeclaration is KtDeclaration && existingDeclaration != declaration) {

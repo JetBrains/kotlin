@@ -1,2 +1,2 @@
-platform val pval: String
-platform var pvar: String
+header val pval: String
+header var pvar: String

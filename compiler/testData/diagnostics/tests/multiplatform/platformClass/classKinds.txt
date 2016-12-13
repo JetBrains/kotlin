@@ -1,7 +1,7 @@
 // -- Module: <m1-common> --
 package
 
-public final platform annotation class Anno : kotlin.Annotation {
+public final header annotation class Anno : kotlin.Annotation {
     public constructor Anno(/*0*/ prop: kotlin.String)
     public final val prop: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -9,14 +9,14 @@ public final platform annotation class Anno : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final platform class Class {
+public final header class Class {
     public constructor Class()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final platform enum class En : kotlin.Enum<En> {
+public final header enum class En : kotlin.Enum<En> {
     enum entry ENTRY
 
     private constructor En()
@@ -33,13 +33,13 @@ public final platform enum class En : kotlin.Enum<En> {
     public final /*synthesized*/ fun values(): kotlin.Array<En>
 }
 
-public platform interface Interface {
+public header interface Interface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public platform object Object {
+public header object Object {
     private constructor Object()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
