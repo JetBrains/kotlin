@@ -8,6 +8,6 @@ public open class InnerClassTypeAnnotation {
     }
 
     public open inner class Inner {
-        public constructor Inner(/*0*/ @test.InnerClassTypeAnnotation.Foo p0: @test.InnerClassTypeAnnotation.Foo kotlin.String!)
+        public constructor Inner(/*0*/ @test.InnerClassTypeAnnotation.Foo() p0: @test.InnerClassTypeAnnotation.Foo() kotlin.String!)
     }
 }
