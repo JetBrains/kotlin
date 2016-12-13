@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -104,13 +105,15 @@ fun generate(): String {
     val binaryOperationsMapIterator = binaryOperationsMap.iterator()
     while (binaryOperationsMapIterator.hasNext()) {
         val (funcName, parameters) = binaryOperationsMapIterator.next()
+        // TODO: remove this when 'rem' will be added into the stdlib
+        val funcCall = if (OperatorNameConventions.REM.asString() == funcName) OperatorNameConventions.MOD.asString() else funcName
         p.println(
                 "binaryOperation(",
                 parameters.map { it.asString() }.joinToString(", "),
                 ", ",
                 "\"$funcName\"",
-                ", { a, b -> a.${funcName}(b) }, ",
-                renderCheckBinaryOperation(funcName, parameters),
+                ", { a, b -> a.${funcCall}(b) }, ",
+                renderCheckBinaryOperation(funcCall, parameters),
                 ")",
                 if (binaryOperationsMapIterator.hasNext()) "," else ""
         )

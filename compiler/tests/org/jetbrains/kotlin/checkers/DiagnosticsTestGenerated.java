@@ -13429,6 +13429,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("numberRemConversions.kt")
+            public void testNumberRemConversions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/numberRemConversions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("operatorRem.kt")
             public void testOperatorRem() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/operatorRem.kt");
