@@ -28,7 +28,6 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaFile
-import com.intellij.util.messages.Topic
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
@@ -44,7 +43,7 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.ACTIVITY) {
 
     companion object {
         internal fun attachGradleSyncListener(project: Project) {
-            subscribe(project, gradleSyncListener)
+            GradleSyncState.subscribe(project, gradleSyncListener)
         }
 
         internal fun willBeConvertedToKotlin(file: VirtualFile): Boolean {
@@ -79,25 +78,6 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.ACTIVITY) {
                         javaFilesToKotlin = null
                     }
                 }
-            }
-        }
-
-        private fun subscribe(project: Project, listener: GradleSyncListener) {
-            try {
-                val subscribeFun = GradleSyncState::class.functions.find { it.name == "subscribe" && it.parameters.count() == 2 }
-                if (subscribeFun != null) {
-                    // AS 2.0
-                    subscribeFun.call(project, listener)
-                }
-                else {
-                    // AS 1.5
-                    val connection = project.messageBus.connect(project)
-                    val gradleSyncTopic = (GradleSyncState::class.java).getDeclaredField("GRADLE_SYNC_TOPIC").get(null) as Topic<GradleSyncListener>
-                    connection.subscribe(gradleSyncTopic, gradleSyncListener)
-                }
-            }
-            catch(e: Throwable) {
-                LOG.error(e)
             }
         }
     }
