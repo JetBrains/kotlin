@@ -107,6 +107,7 @@ public class IntrinsicMethods {
         declareBinaryOp("times", IMUL);
         declareBinaryOp("div", IDIV);
         declareBinaryOp("mod", IREM);
+        declareBinaryOp("rem", IREM);
         declareBinaryOp("shl", ISHL);
         declareBinaryOp("shr", ISHR);
         declareBinaryOp("ushr", IUSHR);
