@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.JeAnnotationMirror
 import org.jetbrains.kotlin.java.model.elements.JeMethodExecutableElement
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
@@ -47,7 +46,7 @@ import javax.lang.model.element.*
 class AnnotationProcessingExtensionForTests(
         val processors: List<Processor>
 ) : AbstractAnnotationProcessingExtension(createTempDir(), createTempDir(), listOf(), true,
-                                          createIncrementalDataFile(), SourceRetentionAnnotationHandlerImpl()) {
+                                          createIncrementalDataFile()) {
     override fun loadAnnotationProcessors() = processors
 
     override val options: Map<String, String>

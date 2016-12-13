@@ -23,7 +23,6 @@ import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
-import org.jetbrains.kotlin.bytecode.AnnotationsRemover
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.io.ObjectInputStream
@@ -58,12 +57,6 @@ internal open class SyncOutputTask : DefaultTask() {
     var kotlinOutputDir: File by Delegates.notNull()
     var javaOutputDir: File by Delegates.notNull()
     var kotlinTask: KotlinCompile by Delegates.notNull()
-    private val sourceAnnotations: Set<String> by lazy {
-        kotlinTask.sourceAnnotationsRegistry?.annotations ?: emptySet()
-    }
-    private val annotationsRemover by lazy {
-        AnnotationsRemover(sourceAnnotations)
-    }
 
     // OutputDirectory needed for task to be incremental
     @get:OutputDirectory
@@ -144,13 +137,7 @@ internal open class SyncOutputTask : DefaultTask() {
         if (!fileInKotlinDir.isFile) return
 
         fileInJavaDir.parentFile.mkdirs()
-        if (sourceAnnotations.isNotEmpty() && fileInKotlinDir.extension.toLowerCase() == "class") {
-            logger.kotlinDebug { "Removing source annotations from class: $fileInKotlinDir" }
-            annotationsRemover.transformClassFile(fileInKotlinDir, fileInJavaDir)
-        }
-        else {
-            fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
-        }
+        fileInKotlinDir.copyTo(fileInJavaDir, overwrite = true)
 
         timestamps[fileInJavaDir] = fileInJavaDir.lastModified()
 

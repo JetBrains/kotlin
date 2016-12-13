@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
-import org.jetbrains.kotlin.annotation.SourceAnnotationsRegistry
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -97,7 +96,6 @@ internal class IncrementalJvmCompilerRunner(
         private val cacheVersions: List<CacheVersion>,
         private val reporter: IncReporter,
         private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
-        private val sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null,
         private val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
         private val artifactFile: File? = null
 ) {
@@ -394,7 +392,6 @@ internal class IncrementalJvmCompilerRunner(
         }
 
         if (exitCode == ExitCode.OK) {
-            sourceAnnotationsRegistry?.flush()
             cacheVersions.forEach { it.saveIfNeeded() }
         }
 
@@ -462,7 +459,6 @@ internal class IncrementalJvmCompilerRunner(
         val outputItemCollector = OutputItemsCollectorImpl()
         @Suppress("NAME_SHADOWING")
         val messageCollector = MessageCollectorWrapper(messageCollector, outputItemCollector)
-        sourceAnnotationsRegistry?.clear()
 
         try {
             val incrementalCaches = makeIncrementalCachesMap(targets, { listOf<TargetId>() }, getIncrementalCache, { this })
@@ -473,7 +469,7 @@ internal class IncrementalJvmCompilerRunner(
 
             reporter.report { "compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}" }
             reporter.report { "compiling with classpath: ${classpath.toList().sorted().joinToString()}" }
-            val compileServices = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus, sourceAnnotationsRegistry)
+            val compileServices = makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus)
             val exitCode = compiler.exec(messageCollector, compileServices, args)
             val generatedFiles = outputItemCollector.generatedFiles(targets, targets.first(), {sourcesToCompile}, {outputDir})
             reporter.reportCompileIteration(sourcesToCompile, exitCode)

@@ -38,7 +38,7 @@ public class ClassBuilderMode {
     }
     
     public static ClassBuilderMode full(boolean generateSourceRetentionAnnotations) {
-        return generateSourceRetentionAnnotations ? KAPT2 : FULL;
+        return generateSourceRetentionAnnotations ? KAPT : FULL;
     }
 
     /**
@@ -51,16 +51,6 @@ public class ClassBuilderMode {
             /* generateMethodParameters = */ false,
             /* generateMultiFileFacadePartClasses = */ true);
 
-    /**
-     * Full function bodies, write annotations with the "source" retention.
-     */
-    private final static ClassBuilderMode KAPT2 = new ClassBuilderMode(
-            /* bodies = */ true, 
-            /* metadata = */ true,
-            /* sourceRetention = */ true,
-            /* generateMethodParameters = */ false,
-            /* generateMultiFileFacadePartClasses = */ false);
-    
     /**
      * Generating light classes: Only function signatures
      */
