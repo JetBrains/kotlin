@@ -24,11 +24,14 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +43,7 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
+import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -64,7 +68,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Nullable
     private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
     private final Project project;
-    private final boolean showLanguageVersion;
+    private final boolean isProjectSettings;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
@@ -98,7 +102,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             CompilerSettings compilerSettings,
             @Nullable KotlinCompilerWorkspaceSettings compilerWorkspaceSettings,
             @Nullable K2JVMCompilerArguments k2jvmCompilerArguments,
-            boolean showLanguageVersion
+            boolean isProjectSettings
     ) {
         this.project = project;
         this.commonCompilerArguments = commonCompilerArguments;
@@ -106,9 +110,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.compilerSettings = compilerSettings;
         this.compilerWorkspaceSettings = compilerWorkspaceSettings;
         this.k2jvmCompilerArguments = k2jvmCompilerArguments;
-        this.showLanguageVersion = showLanguageVersion;
+        this.isProjectSettings = isProjectSettings;
 
-        if (!showLanguageVersion) {
+        if (!isProjectSettings) {
             languageVersionPanel.setVisible(false);
         }
 
@@ -247,7 +251,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
-               (showLanguageVersion && !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion))) ||
+               (isProjectSettings && !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion))) ||
                !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments)) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
                ComparingUtils.isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
@@ -284,8 +288,20 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public void apply() throws ConfigurationException {
         commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
-        if (showLanguageVersion) {
+        if (isProjectSettings) {
+            boolean languageVersionChanged = commonCompilerArguments.languageVersion != getSelectedLanguageVersion();
             commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
+            if (languageVersionChanged) {
+                ApplicationUtilsKt.runWriteAction(
+                        new Function0<Object>() {
+                            @Override
+                            public Object invoke() {
+                                ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.INSTANCE, false, true);
+                                return null;
+                            }
+                        }
+                );
+            }
         }
         CoroutineSupport coroutineSupport = (CoroutineSupport) coroutineSupportComboBox.getSelectedItem();
         commonCompilerArguments.coroutinesEnable = coroutineSupport == CoroutineSupport.ENABLED;
@@ -322,7 +338,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public void reset() {
         generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
-        if (showLanguageVersion) {
+        if (isProjectSettings) {
             languageVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion));
         }
         coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
@@ -362,5 +378,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public String getHelpTopic() {
         return "reference.compiler.kotlin";
+    }
+
+    public JPanel getContentPane() {
+        return contentPane;
     }
 }

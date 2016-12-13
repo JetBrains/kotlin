@@ -113,6 +113,8 @@ class KotlinFacetSettings {
         val DEFAULT_VERSION = 0
     }
 
+    var useProjectSettings: Boolean = false
+
     var versionInfo = KotlinVersionInfo()
     var compilerInfo = KotlinCompilerInfo()
 }
