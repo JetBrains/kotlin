@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -258,7 +259,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
             else -> throw AssertionError("Unsupported declarations: $a, $b")
         }
 
-        if (checkImpl && !b.isImpl) return Incompatible.NoImpl
+        if (checkImpl && !b.isImpl && b.kind == CallableMemberDescriptor.Kind.DECLARATION) return Incompatible.NoImpl
 
         return Compatible
     }
@@ -323,7 +324,11 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
 
-        if (!b.typeConstructor.supertypes.containsAll(a.typeConstructor.supertypes.map(substitutor))) return Incompatible.Supertypes
+        // Subtract kotlin.Any from supertypes because it's implicitly added if no explicit supertype is specified,
+        // and not added if an explicit supertype _is_ specified
+        val aSupertypes = a.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
+        val bSupertypes = b.typeConstructor.supertypes.filterNot(KotlinBuiltIns::isAny)
+        if (!bSupertypes.containsAll(aSupertypes.map(substitutor))) return Incompatible.Supertypes
 
         areCompatibleClassScopes(a, b, checkImpl && !implTypealias, substitutor).let { if (it != Compatible) return it }
 
