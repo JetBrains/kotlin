@@ -22,7 +22,7 @@ allprojects {
         }
     }
 
-    convention.plugins.clangFlags = new ClangFlags(isLinux(), "$llvmDir")
+    convention.plugins.clangFlags = new ClangFlags(new PlatformInfo(), "$llvmDir")
     ext.clangPath = ["$llvmDir/bin"]
     ext.clangArgs = []
     final String binDir
@@ -43,6 +43,7 @@ allprojects {
     ext.jvmArgs = ["-ea"]
 
     ext.clangLinkArgs = libLink()
+    ext.clangOptArgs = optArgs()
 
     convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
@@ -68,31 +69,43 @@ allprojects {
 
 class ClangFlags {
 
-    protected Boolean isLinux
+    protected PlatformInfo platform
     protected String llvmDir
 
-    ClangFlags(linux, llvm) {
-        isLinux = linux
+    private List<String> linkCppAbi, linkPlatform, optArgs
+
+    ClangFlags(platformInfo, llvm) {
+        platform = platformInfo
         llvmDir = llvm
+
+        if (platform.isLinux()) {
+            linkCppAbi= ["-Wl,-Bstatic", "-lc++abi", "-Wl,-Bdynamic"]
+            linkPlatform= ["-ldl", "-lpthread", "-lm", "-rdynamic"]
+            optArgs = ["-O3"]
+        } else if (platform.isMac()) {
+            // Life is hard. MacOS linker is harder.
+            // This is how we force the linker to link statically.
+            linkCppAbi= ["${llvmDir}/lib/libc++abi.a"]
+            linkPlatform= []
+            optArgs = ["-O3", "-flto", "-Wl,-dead_strip"]
+        } else {
+            throw unsupportedPlatformException()
+        }
+
     }
 
     public List<String> linkCppAbi() {
-        if (isLinux) {
-            return ["-Wl,-Bstatic", "-lc++abi", "-Wl,-Bdynamic"]
-        } else {
-            // Life is hard. MacOS linker is harder.
-            // This is how we force the linker to link statically.
-            return ["${llvmDir}/lib/libc++abi.a"]
-        }
+        return linkCppAbi
     }
 
     public List<String> linkPlatform() {
-       if (isLinux) {
-         return ["-ldl", "-lpthread", "-lm", "-rdynamic"]
-       } else {
-         return []
-       }
+        return linkPlatform
     }
+
+    public List<String> optArgs() {
+        return optArgs
+    }
+
 
     public List<String> libLink() {
         def libs = []
@@ -160,7 +173,9 @@ task dist_compiler(type: Copy) {
         include('kotlinc-native')
 
         def allClangArgs = "${clangArgs.join(' ')} ${clangLinkArgs.join(' ')}"
+
         filter { line -> line.replaceAll("FILTER_CLANG_PLATFORM_ARGS", allClangArgs) }
+        filter { line -> line.replaceAll("FILTER_CLANG_PLATFORM_OPT", "${clangOptArgs.join(' ')}") }
         filter { line -> line.replaceAll("FILTER_CLANG_BIN_PATH", "${project.llvmDir}/bin") }
 
         into('bin')

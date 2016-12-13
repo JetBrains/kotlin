@@ -55,9 +55,6 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-# TODO: support -opt on Linux hosts as well.
-clang_opt_args=("-O3" "-flto" "-Wl,-dead_strip")
-
 [ -n "$KONAN_COMPILER" ] || KONAN_COMPILER=org.jetbrains.kotlin.cli.bc.K2NativeKt
 [ -n "$JAVACMD" ] || JAVACMD=java
 [ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
@@ -132,7 +129,10 @@ START="${KONAN_HOME}/lib/start.kt.bc"
 # We filter this script during installation
 # substituting the proper platform dependent arguments here.
 CLANG_PLATFORM_ARGS="FILTER_CLANG_PLATFORM_ARGS"
+CLANG_PLATFORM_OPT="FILTER_CLANG_PLATFORM_OPT"
 CLANG_BIN_PATH="FILTER_CLANG_BIN_PATH"
+
+clang_opt_args=("$CLANG_PLATFORM_OPT")
 
 CLANG="$CLANG_BIN_PATH/clang"
 
