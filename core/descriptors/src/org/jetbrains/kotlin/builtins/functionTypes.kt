@@ -17,14 +17,19 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.DFS
@@ -140,4 +145,33 @@ fun getFunctionTypeArgumentProjections(
     arguments.add(returnType.asTypeProjection())
 
     return arguments
+}
+
+fun createFunctionType(
+        builtIns: KotlinBuiltIns,
+        annotations: Annotations,
+        receiverType: KotlinType?,
+        parameterTypes: List<KotlinType>,
+        parameterNames: List<Name>?,
+        returnType: KotlinType
+): SimpleType {
+    val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
+    val size = parameterTypes.size
+    val classDescriptor = builtIns.getFunction(if (receiverType == null) size else size + 1)
+
+    val typeAnnotations =
+            if (receiverType == null || annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null) {
+                annotations
+            }
+            else {
+                val extensionFunctionAnnotation = AnnotationDescriptorImpl(
+                        builtIns.getBuiltInClassByName(KotlinBuiltIns.FQ_NAMES.extensionFunctionType.shortName()).defaultType,
+                        emptyMap(), SourceElement.NO_SOURCE
+                )
+
+                // TODO: preserve laziness of given annotations
+                AnnotationsImpl(annotations + extensionFunctionAnnotation)
+            }
+
+    return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
 }

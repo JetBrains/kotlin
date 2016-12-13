@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.sam;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElement;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.util.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
@@ -122,7 +122,7 @@ public class SingleAbstractMethodUtils {
             parameterNames.add(function.hasSynthesizedParameterNames() ? SpecialNames.NO_NAME_PROVIDED : parameter.getName());
         }
 
-        return FunctionTypeResolveUtilsKt.createFunctionType(
+        return FunctionTypesKt.createFunctionType(
                 DescriptorUtilsKt.getBuiltIns(function), Annotations.Companion.getEMPTY(),
                 receiverType, parameterTypes, parameterNames, returnType
         );

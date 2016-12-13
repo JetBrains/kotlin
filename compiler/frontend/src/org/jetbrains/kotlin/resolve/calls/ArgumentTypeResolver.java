@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
-import org.jetbrains.kotlin.resolve.calls.util.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -271,7 +271,7 @@ public class ArgumentTypeResolver {
             return functionPlaceholders.createFunctionPlaceholderType(Collections.<KotlinType>emptyList(), false);
         }
 
-        return FunctionTypeResolveUtilsKt.createFunctionType(
+        return FunctionTypesKt.createFunctionType(
                 builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), null, TypeUtils.DONT_CARE
         );
     }
@@ -302,7 +302,7 @@ public class ArgumentTypeResolver {
             return expectedTypeIsUnknown
                    ? functionPlaceholders
                            .createFunctionPlaceholderType(Collections.<KotlinType>emptyList(), /* hasDeclaredArguments = */ false)
-                   : FunctionTypeResolveUtilsKt.createFunctionType(
+                   : FunctionTypesKt.createFunctionType(
                            builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), null, DONT_CARE
                    );
         }
@@ -325,7 +325,7 @@ public class ArgumentTypeResolver {
 
         return expectedTypeIsUnknown && isFunctionLiteral
                ? functionPlaceholders.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
-               : FunctionTypeResolveUtilsKt.createFunctionType(
+               : FunctionTypesKt.createFunctionType(
                        builtIns, Annotations.Companion.getEMPTY(), receiverType, parameterTypes, parameterNames, returnType
                );
     }
