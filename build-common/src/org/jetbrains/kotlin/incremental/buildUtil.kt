@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
@@ -70,17 +69,13 @@ fun makeModuleFile(name: String, isTest: Boolean, outputDir: File, sourcesToComp
 fun makeCompileServices(
         incrementalCaches: Map<TargetId, IncrementalCache>,
         lookupTracker: LookupTracker,
-        compilationCanceledStatus: CompilationCanceledStatus?,
-        sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler? = null
+        compilationCanceledStatus: CompilationCanceledStatus?
 ): Services =
     with(Services.Builder()) {
         register(IncrementalCompilationComponents::class.java, 
                  IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
         compilationCanceledStatus?.let {
             register(CompilationCanceledStatus::class.java, it)
-        }
-        sourceRetentionAnnotationHandler?.let {
-            register(SourceRetentionAnnotationHandler::class.java, it)
         }
         build()
     }

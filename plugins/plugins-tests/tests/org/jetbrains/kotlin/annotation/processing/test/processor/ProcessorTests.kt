@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.annotation.processing.test.processor
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.annotation.processing.impl.DisposableRef
 import org.jetbrains.kotlin.annotation.processing.impl.KotlinProcessingEnvironment
-import org.jetbrains.kotlin.incremental.SourceRetentionAnnotationHandlerImpl
 import org.jetbrains.kotlin.java.model.elements.*
 import org.jetbrains.kotlin.java.model.types.JeDeclaredType
 import org.jetbrains.kotlin.java.model.types.JeMethodExecutableTypeMirror
@@ -253,14 +252,6 @@ class ProcessorTests : AbstractProcessorTest() {
         assertNotNull(incrementalDataFile)
         val text = incrementalDataFile!!.readText().lines().sorted().joinToString(", ")
         assertEquals(expectedText, text)
-    }
-    
-    fun testSourceRetention() {
-        test("SourceRetention", "*") { set, roundEnv, env -> }
-        val ext = getKapt2Extension()
-        val annotationHandler = ext.sourceRetentionAnnotationHandler as SourceRetentionAnnotationHandlerImpl
-        val annotations = annotationHandler.sourceRetentionAnnotations.sorted()
-        assertEquals("Source1, Source2, Source3, Source4, Test5\$Source5", annotations.joinToString())
     }
     
     fun testKotlinAnnotationDefaultValueFromBinary() = test("DefaultValueFromBinary", "*") { set, roundEnv, env ->

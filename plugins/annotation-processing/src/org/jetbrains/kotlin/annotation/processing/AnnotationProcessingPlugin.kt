@@ -141,12 +141,10 @@ class AnnotationProcessingComponentRegistrar : ComponentRegistrar {
         
         // Annotations with the "SOURCE" retention will be written to class files
         project.putUserData(IS_KAPT2_ENABLED_KEY, true)
-        
-        val sourceRetentionAnnotationHandler = configuration[JVMConfigurationKeys.SOURCE_RETENTION_ANNOTATION_HANDLER]
-        
+
         val annotationProcessingExtension = ClasspathBasedAnnotationProcessingExtension(
                 classpath, apOptions, generatedOutputDirFile, classesOutputDir, javaRoots, verboseOutput,
-                incrementalDataFile, sourceRetentionAnnotationHandler)
+                incrementalDataFile)
 
         project.registerService(JeElementRegistry::class.java, JeElementRegistry())
         
