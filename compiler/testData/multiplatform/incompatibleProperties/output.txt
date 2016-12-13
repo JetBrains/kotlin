@@ -5,13 +5,13 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleProperties/common.kt:1:1: error: no implementation is found for header declaration 'pval'
+compiler/testData/multiplatform/incompatibleProperties/common.kt:1:1: error: header declaration 'pval' has no implementation in module
 The following declaration is incompatible because property kinds are different (val vs var):
     public var pval: String
 
 header val pval: String
 ^
-compiler/testData/multiplatform/incompatibleProperties/common.kt:2:1: error: no implementation is found for header declaration 'pvar'
+compiler/testData/multiplatform/incompatibleProperties/common.kt:2:1: error: header declaration 'pvar' has no implementation in module
 The following declaration is incompatible because property kinds are different (val vs var):
     public val pvar: String
 

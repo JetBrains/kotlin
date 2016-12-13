@@ -97,7 +97,7 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testHeaderDeclarations() {
-        val contextFile = myFixture.configureByText("Header.kt", "platform class Foo\n\nplatform fun foo()\n") as KtFile
+        val contextFile = myFixture.configureByText("Header.kt", "header class Foo\n\nheader fun foo()\n") as KtFile
         val headerClass = contextFile.declarations.single { it is KtClassOrObject }
         assertEquals(0, headerClass.toLightElements().size)
         val headerFunction = contextFile.declarations.single { it is KtNamedFunction }

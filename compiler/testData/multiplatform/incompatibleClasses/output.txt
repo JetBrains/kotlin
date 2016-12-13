@@ -5,91 +5,91 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleClasses/common.kt:1:14: error: no implementation is found for header declaration 'PClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:1:14: error: header declaration 'PClass' has no implementation in module
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public impl interface PClass
 
 header class PClass
              ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:2:18: error: no implementation is found for header declaration 'PInterface'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:2:18: error: header declaration 'PInterface' has no implementation in module
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public impl object PInterface
 
 header interface PInterface
                  ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:3:8: error: no implementation is found for header declaration 'PObject'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:3:8: error: header declaration 'PObject' has no implementation in module
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final impl enum class PObject : Enum<PObject>
 
 header object PObject
        ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:4:19: error: no implementation is found for header declaration 'PEnumClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:4:19: error: header declaration 'PEnumClass' has no implementation in module
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final impl annotation class PEnumClass : Annotation
 
 header enum class PEnumClass
                   ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:5:25: error: no implementation is found for header declaration 'PAnnotationClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:5:25: error: header declaration 'PAnnotationClass' has no implementation in module
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final impl class PAnnotationClass
 
 header annotation class PAnnotationClass
                         ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:7:17: error: no implementation is found for header declaration 'InternalObject'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:7:17: error: header declaration 'InternalObject' has no implementation in module
 The following declaration is incompatible because visibility is different:
     private impl object InternalObject
 
 internal header object InternalObject
                 ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:8:15: error: no implementation is found for header declaration 'PublicObject'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:8:15: error: header declaration 'PublicObject' has no implementation in module
 The following declaration is incompatible because visibility is different:
     internal impl object PublicObject
 
 public header object PublicObject
               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:9:16: error: no implementation is found for header declaration 'PrivateObject'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:9:16: error: header declaration 'PrivateObject' has no implementation in module
 The following declaration is incompatible because visibility is different:
     public impl object PrivateObject
 
 private header object PrivateObject
                ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:11:19: error: no implementation is found for header declaration 'OpenClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:11:19: error: header declaration 'OpenClass' has no implementation in module
 The following declaration is incompatible because modality is different:
     public final impl class OpenClass
 
 open header class OpenClass
                   ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:12:23: error: no implementation is found for header declaration 'AbstractClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:12:23: error: header declaration 'AbstractClass' has no implementation in module
 The following declaration is incompatible because modality is different:
     public open impl class AbstractClass
 
 abstract header class AbstractClass
                       ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:13:20: error: no implementation is found for header declaration 'FinalClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:13:20: error: header declaration 'FinalClass' has no implementation in module
 The following declaration is incompatible because modality is different:
     public abstract impl class FinalClass
 
 final header class FinalClass
                    ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:16:14: error: no implementation is found for header declaration 'NonDataClass'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:16:14: error: header declaration 'NonDataClass' has no implementation in module
 The following declaration is incompatible because modifiers are different (data):
     public final impl data class NonDataClass
 
 header class NonDataClass(x: Int)
              ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:18:14: error: no implementation is found for header declaration 'C1'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:18:14: error: header declaration 'C1' has no implementation in module
 The following declaration is incompatible because number of type parameters is different:
     public final impl class C1<A, Extra>
 
 header class C1<A>
              ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:19:14: error: no implementation is found for header declaration 'C2'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:19:14: error: header declaration 'C2' has no implementation in module
 The following declaration is incompatible because declaration-site variances of type parameters are different:
     public final impl class C2<out B>
 
 header class C2<B>
              ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:25:23: error: no implementation is found for header declaration 'ExtendsNumber'
+compiler/testData/multiplatform/incompatibleClasses/common.kt:25:23: error: header declaration 'ExtendsNumber' has no implementation in module
 The following declaration is incompatible because some supertypes are missing in the implementation:
     public abstract impl class ExtendsNumber
 

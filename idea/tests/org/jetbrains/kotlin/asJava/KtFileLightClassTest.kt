@@ -63,7 +63,7 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testNoFacadeForHeaderClass() {
-        val file = myFixture.configureByText("foo.kt", "platform fun foo(): Int") as KtFile
+        val file = myFixture.configureByText("foo.kt", "header fun foo(): Int") as KtFile
         assertEquals(0, file.classes.size)
         val facadeFiles = LightClassGenerationSupport.getInstance(project).findFilesForFacade(FqName("foo.FooKt"), GlobalSearchScope.allScope(project))
         assertEquals(0, facadeFiles.size)
