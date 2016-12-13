@@ -62,7 +62,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private val kotlinToKaptTasksMap = mutableMapOf<KotlinCompile, KaptTask>()
-    
+
     override fun isApplicable(project: Project, task: KotlinCompile) = Kapt3GradleSubplugin.isEnabled(project)
 
     fun getKaptGeneratedDir(project: Project, sourceSetName: String): File {

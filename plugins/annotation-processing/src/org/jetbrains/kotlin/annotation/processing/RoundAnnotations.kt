@@ -22,14 +22,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAnnotation
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.java.model.internal.getAnnotationsWithInherited
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class RoundAnnotations(
-        val sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?,
         val bindingContext: BindingContext,
         val typeMapper: KotlinTypeMapper
 ) {
@@ -51,7 +49,7 @@ internal class RoundAnnotations(
     val analyzedClasses: Set<String>
         get() = mutableAnalyzedClasses
     
-    fun copy() = RoundAnnotations(sourceRetentionAnnotationHandler, bindingContext, typeMapper)
+    fun copy() = RoundAnnotations(bindingContext, typeMapper)
 
     fun analyzeFiles(files: Collection<KtFile>) = files.forEach { analyzeFile(it) }
     
@@ -101,15 +99,6 @@ internal class RoundAnnotations(
 
         for (annotation in declaration.getAnnotationsWithInherited()) {
             val fqName = annotation.qualifiedName ?: continue
-            
-            val ktLightAnnotation = annotation as? KtLightAnnotation
-            if (ktLightAnnotation != null && sourceRetentionAnnotationHandler != null && ktLightAnnotation.hasSourceRetention) { 
-                val type = bindingContext[BindingContext.ANNOTATION, ktLightAnnotation.kotlinOrigin]?.type
-                if (type != null) {
-                    val internalName = typeMapper.mapType(type).internalName
-                    sourceRetentionAnnotationHandler.register(internalName)
-                }
-            }
             
             if (BLACKLISTED_ANNOTATATIONS.any { fqName.startsWith(it) }) continue
             mutableAnnotationsMap.getOrPut(fqName, { mutableListOf() }).add(declaration)

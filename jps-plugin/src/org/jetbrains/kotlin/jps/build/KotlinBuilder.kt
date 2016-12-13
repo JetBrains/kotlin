@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.SourceRetentionAnnotationHandler
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -206,8 +205,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project)
         val incrementalCaches = getIncrementalCaches(chunk, context)
-        val sourceRetentionAnnotationHandler = SourceRetentionAnnotationHandlerImpl()
-        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, sourceRetentionAnnotationHandler, context)
+        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
             return ABORT
@@ -410,7 +408,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun createCompileEnvironment(
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>,
             lookupTracker: LookupTracker,
-            sourceRetentionAnnotationHandler: SourceRetentionAnnotationHandler?,
             context: CompileContext
     ): JpsCompilerEnvironment {
         val compilerServices = with(Services.Builder()) {
@@ -422,9 +419,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     if (context.cancelStatus.isCanceled) throw CompilationCanceledException()
                 }
             })
-            sourceRetentionAnnotationHandler?.let {
-                register(SourceRetentionAnnotationHandler::class.java, it)
-            }
             build()
         }
 
