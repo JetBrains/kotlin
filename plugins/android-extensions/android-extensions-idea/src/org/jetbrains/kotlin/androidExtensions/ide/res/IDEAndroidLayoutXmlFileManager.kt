@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.androidExtensions.ide.res
 
 import com.android.builder.model.SourceProvider
-import com.android.tools.idea.gradle.AndroidGradleModel
+import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -121,7 +121,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
                 sourceProviders?.map { it.toVariant() } ?: listOf()
             }
             else {
-                val model = AndroidGradleModel.get(module)
+                val model = AndroidModuleModel.get(module)
                 model?.flavorSourceProviders?.map { it.toVariant() } ?: listOf(this.mainSourceProvider.toVariant())
             }
 
