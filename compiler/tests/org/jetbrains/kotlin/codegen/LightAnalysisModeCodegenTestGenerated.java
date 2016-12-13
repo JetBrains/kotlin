@@ -5768,6 +5768,18 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             doTest(fileName);
         }
 
+        @TestMetadata("extensionDelegatesWithSameNames.kt")
+        public void testExtensionDelegatesWithSameNames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/extensionDelegatesWithSameNames.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionPropertyAndExtensionGetValue.kt")
+        public void testExtensionPropertyAndExtensionGetValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/extensionPropertyAndExtensionGetValue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("genericDelegate.kt")
         public void testGenericDelegate() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/genericDelegate.kt");
