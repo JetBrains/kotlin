@@ -44,6 +44,8 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable optimization");
     public static final CompilerConfigurationKey<Boolean> INHERIT_MULTIFILE_PARTS =
             CompilerConfigurationKey.create("compile multifile classes to a hierarchy of parts and facade");
+    public static final CompilerConfigurationKey<Boolean> SKIP_RUNTIME_VERSION_CHECK =
+            CompilerConfigurationKey.create("do not perform checks on runtime versions consistency");
 
     public static final CompilerConfigurationKey<JvmTarget> JVM_TARGET =
             CompilerConfigurationKey.create("JVM bytecode target version");

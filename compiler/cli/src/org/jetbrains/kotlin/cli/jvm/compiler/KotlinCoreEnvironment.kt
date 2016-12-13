@@ -146,11 +146,15 @@ class KotlinCoreEnvironment private constructor(
 
         project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(index))
 
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (messageCollector != null) {
-            val languageVersionSettings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
-            val classpathJarRoots = javaClasspathRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
-            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(messageCollector, languageVersionSettings, classpathJarRoots)
+        if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK)) {
+            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            if (messageCollector != null) {
+                JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
+                        messageCollector,
+                        configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS),
+                        javaClasspathRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
+                )
+            }
         }
 
         ExpressionCodegenExtension.registerExtensionPoint(project)
