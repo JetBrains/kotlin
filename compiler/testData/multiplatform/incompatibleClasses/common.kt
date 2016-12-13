@@ -12,9 +12,6 @@ open header class OpenClass
 abstract header class AbstractClass
 final header class FinalClass
 
-// header data class DataClass(val x: Int)
-header class NonDataClass(x: Int)
-
 header class C1<A>
 header class C2<B>
 header class C3<D, E : D>

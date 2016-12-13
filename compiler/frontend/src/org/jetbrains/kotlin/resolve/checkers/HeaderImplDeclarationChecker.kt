@@ -186,8 +186,6 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
 
             object ClassKind : Incompatible("class kinds are different (class, interface, object, enum, annotation)")
 
-            object ClassModifiers : Incompatible("modifiers are different (data)")
-
             object Supertypes : Incompatible("some supertypes are missing in the implementation")
 
             class ClassScopes(
@@ -322,8 +320,6 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
-
-        if (!equalBy(a, b) { it.isData }) return Incompatible.ClassModifiers
 
         if (!b.typeConstructor.supertypes.containsAll(a.typeConstructor.supertypes.map(substitutor))) return Incompatible.Supertypes
 

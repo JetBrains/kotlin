@@ -12,9 +12,6 @@ final impl class OpenClass
 open impl class AbstractClass
 abstract impl class FinalClass
 
-// impl class DataClass(val x: Int)
-impl data class NonDataClass(val x: Int)
-
 impl class C1<A, Extra>
 impl class C2<out B>
 impl class C3<D, E : D?>
