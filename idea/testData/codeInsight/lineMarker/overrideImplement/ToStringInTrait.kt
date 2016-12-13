@@ -1,5 +1,5 @@
 public interface Foo {
-    override fun <lineMarker descr="Overrides function in 'Any'"></lineMarker>toString() = "str"
+    override fun <lineMarker descr="Overrides function in 'Any'">toString</lineMarker>() = "str"
 }
 
 /*

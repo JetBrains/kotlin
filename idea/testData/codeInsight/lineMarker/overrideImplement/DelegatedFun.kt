@@ -1,13 +1,13 @@
-interface <lineMarker></lineMarker>A {
-    fun <lineMarker></lineMarker>f() {
+interface <lineMarker>A</lineMarker> {
+    fun <lineMarker>f</lineMarker>() {
     }
 }
 
-interface <lineMarker></lineMarker>B : A
+interface <lineMarker>B</lineMarker> : A
 
-open class <lineMarker></lineMarker>C(b : B) : B by b, A {
+open class <lineMarker>C</lineMarker>(b : B) : B by b, A {
 }
 
 class D(b : B) : C(b) {
-  override fun <lineMarker descr="Overrides function in 'A'"></lineMarker>f() {}
+  override fun <lineMarker descr="Overrides function in 'A'">f</lineMarker>() {}
 }

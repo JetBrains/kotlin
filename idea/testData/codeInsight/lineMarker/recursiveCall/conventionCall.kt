@@ -5,7 +5,7 @@ operator fun Any.get(a: Int) {
 }
 
 class A {
-    override fun <lineMarker descr="Overrides function in 'Any'"></lineMarker>equals(other: Any?): Boolean {
+    override fun <lineMarker descr="Overrides function in 'Any'">equals</lineMarker>(other: Any?): Boolean {
         this <lineMarker descr="Recursive call">==</lineMarker> other
         return true
     }

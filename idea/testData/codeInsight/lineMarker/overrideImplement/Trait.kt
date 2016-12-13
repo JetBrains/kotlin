@@ -1,9 +1,9 @@
-interface <lineMarker></lineMarker>A {
-  fun <lineMarker></lineMarker>a(){
+interface <lineMarker>A</lineMarker> {
+  fun <lineMarker>a</lineMarker>(){
   }
 }
 
-class B :A {
-  override fun <lineMarker></lineMarker>a(){
+class B : A {
+  override fun <lineMarker>a</lineMarker>(){
   }
 }

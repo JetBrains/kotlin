@@ -1,12 +1,12 @@
-interface <lineMarker></lineMarker>A {
-    val <lineMarker></lineMarker>f: Int
+interface <lineMarker>A</lineMarker> {
+    val <lineMarker>f</lineMarker>: Int
         get() = 2
 }
 
-interface <lineMarker></lineMarker>B : A
+interface <lineMarker>B</lineMarker> : A
 
-interface <lineMarker></lineMarker>C : B, A
+interface <lineMarker>C</lineMarker> : B, A
 
 class SomeClass() : C {
-    override val <lineMarker descr="Overrides property in 'A'"></lineMarker>f: Int = 4
+    override val <lineMarker descr="Overrides property in 'A'">f</lineMarker>: Int = 4
 }
