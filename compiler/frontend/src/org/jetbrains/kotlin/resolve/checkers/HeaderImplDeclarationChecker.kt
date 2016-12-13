@@ -319,7 +319,8 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
 
         val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
 
-        if (a.modality != b.modality) return Incompatible.Modality
+        if (a.modality != b.modality && !(a.modality == Modality.FINAL && b.modality == Modality.OPEN)) return Incompatible.Modality
+
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
