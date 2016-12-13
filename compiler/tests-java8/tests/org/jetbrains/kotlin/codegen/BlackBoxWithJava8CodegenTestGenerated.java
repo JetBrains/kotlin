@@ -120,6 +120,57 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
+    @TestMetadata("compiler/testData/codegen/java8/box/delegationBy")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DelegationBy extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInDelegationBy() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/delegationBy"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("byMiddleInterface.kt")
+        public void testByMiddleInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/byMiddleInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultOverride.kt")
+        public void testDefaultOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/defaultOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("diamond.kt")
+        public void testDiamond() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/diamond.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("diamond2.kt")
+        public void testDiamond2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/diamond2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inClassDeclaration.kt")
+        public void testInClassDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/inClassDeclaration.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mixed.kt")
+        public void testMixed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/mixed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/java8/box/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

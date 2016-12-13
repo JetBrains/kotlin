@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -32,8 +33,9 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         private val ownerDescriptor: ClassDescriptor,
         private val existingMembers: Collection<CallableDescriptor>,
         private val trace: BindingTrace,
-        private val memberExtractor: DelegationResolver.MemberExtractor<T>,
-        private val typeResolver: DelegationResolver.TypeResolver
+        private val memberExtractor: MemberExtractor<T>,
+        private val typeResolver: TypeResolver,
+        private val delegationFilter: DelegationFilter
 ) {
 
     private fun generateDelegatedMembers(): Collection<T> {
@@ -86,7 +88,9 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                     memberExtractor.getMembersByType(it)
                 } ?: emptyList<CallableMemberDescriptor>()
         return memberExtractor.getMembersByType(interfaceType).filter { descriptor ->
-            descriptor.isOverridable && !classSupertypeMembers.any { isOverridableBy(it, descriptor)  }
+            descriptor.isOverridable &&
+            !classSupertypeMembers.any { isOverridableBy(it, descriptor) } &&
+            delegationFilter.filter(descriptor)
         }
     }
 
@@ -105,9 +109,10 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                 existingMembers: Collection<CallableDescriptor>,
                 trace: BindingTrace,
                 memberExtractor: MemberExtractor<T>,
-                typeResolver: TypeResolver
+                typeResolver: TypeResolver,
+                delegationFilter: DelegationFilter
         ): Collection<T> =
-                DelegationResolver(classOrObject, ownerDescriptor, existingMembers, trace, memberExtractor, typeResolver)
+                DelegationResolver(classOrObject, ownerDescriptor, existingMembers, trace, memberExtractor, typeResolver, delegationFilter)
                         .generateDelegatedMembers()
 
         private fun isOverridingAnyOf(

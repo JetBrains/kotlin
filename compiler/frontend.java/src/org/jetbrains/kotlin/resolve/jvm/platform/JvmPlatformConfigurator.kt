@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.jvm.JvmDelegationFilter
 import org.jetbrains.kotlin.resolve.jvm.JvmOverloadFilter
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
+import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.synthetic.JavaSyntheticConstructorsProvider
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -82,7 +84,9 @@ object JvmPlatformConfigurator : PlatformConfigurator(
 
         overloadFilter = JvmOverloadFilter,
 
-        platformToKotlinClassMap = JavaToKotlinClassMap.INSTANCE
+        platformToKotlinClassMap = JavaToKotlinClassMap.INSTANCE,
+
+        delegationFilter = JvmDelegationFilter
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JvmReflectionAPICallChecker>()

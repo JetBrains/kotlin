@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
@@ -45,7 +46,8 @@ object JsPlatformConfigurator : PlatformConfigurator(
         additionalAnnotationCheckers = listOf(),
         identifierChecker = IdentifierChecker.DEFAULT,
         overloadFilter = OverloadFilter.DEFAULT,
-        platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY
+        platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
+        delegationFilter = DelegationFilter.DEFAULT
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JsCallChecker>()

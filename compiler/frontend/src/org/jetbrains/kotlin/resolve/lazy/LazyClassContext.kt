@@ -40,4 +40,5 @@ interface LazyClassContext {
     val supertypeLoopChecker: SupertypeLoopChecker
     val languageVersionSettings: LanguageVersionSettings
     val syntheticResolveExtension: SyntheticResolveExtension
+    val delegationFilter: DelegationFilter
 }

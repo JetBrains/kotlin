@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
+import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticConstructorsProvider
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -50,8 +51,10 @@ abstract class TargetPlatform(val platformName: String) {
         }
 
         override val platformConfigurator =
-                object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
-                                              IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY) {
+                object : PlatformConfigurator(
+                        DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
+                        IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY, DelegationFilter.DEFAULT
+                ) {
                     override fun configureModuleComponents(container: StorageComponentContainer) {
                         container.useInstance(SyntheticScopes.Empty)
                         container.useInstance(SyntheticConstructorsProvider.Empty)
@@ -94,7 +97,8 @@ abstract class PlatformConfigurator(
         private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
         private val identifierChecker: IdentifierChecker,
         private val overloadFilter: OverloadFilter,
-        private val platformToKotlinClassMap: PlatformToKotlinClassMap
+        private val platformToKotlinClassMap: PlatformToKotlinClassMap,
+        private val delegationFilter: DelegationFilter
 ) {
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
@@ -113,6 +117,7 @@ abstract class PlatformConfigurator(
         useInstance(identifierChecker)
         useInstance(overloadFilter)
         useInstance(platformToKotlinClassMap)
+        useInstance(delegationFilter)
     }
 }
 

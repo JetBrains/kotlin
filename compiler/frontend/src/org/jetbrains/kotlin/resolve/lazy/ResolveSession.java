@@ -81,6 +81,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LocalDescriptorResolver localDescriptorResolver;
     private SupertypeLoopChecker supertypeLoopsResolver;
     private LanguageVersionSettings languageVersionSettings;
+    private DelegationFilter delegationFilter;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -132,6 +133,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setLanguageVersionSettings(@NotNull LanguageVersionSettings languageVersionSettings) {
         this.languageVersionSettings = languageVersionSettings;
+    }
+
+
+    @Inject
+    public void setDelegationFilter(@NotNull  DelegationFilter delegationFilter) {
+        this.delegationFilter = delegationFilter;
     }
 
     // Only calls from injectors expected
@@ -443,6 +450,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public LanguageVersionSettings getLanguageVersionSettings() {
         return languageVersionSettings;
+    }
+
+    @NotNull
+    @Override
+    public DelegationFilter getDelegationFilter() {
+        return delegationFilter;
     }
 
     @NotNull

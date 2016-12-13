@@ -60,7 +60,8 @@ class LocalClassifierAnalyzer(
         private val platform: TargetPlatform,
         private val lookupTracker: LookupTracker,
         private val supertypeLoopChecker: SupertypeLoopChecker,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val delegationFilter: DelegationFilter
 ) {
     fun processClassOrObject(
             scope: LexicalWritableScope?,
@@ -91,7 +92,8 @@ class LocalClassifierAnalyzer(
                         annotationResolver,
                         supertypeLoopChecker,
                         languageVersionSettings,
-                        SyntheticResolveExtension.getInstance(project)
+                        SyntheticResolveExtension.getInstance(project),
+                        delegationFilter
                 )
         )
 
@@ -116,7 +118,8 @@ class LocalClassDescriptorHolder(
         val annotationResolver: AnnotationResolver,
         val supertypeLoopChecker: SupertypeLoopChecker,
         val languageVersionSettings: LanguageVersionSettings,
-        val syntheticResolveExtension: SyntheticResolveExtension
+        val syntheticResolveExtension: SyntheticResolveExtension,
+        val delegationFilter: DelegationFilter
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -154,6 +157,7 @@ class LocalClassDescriptorHolder(
                         override val supertypeLoopChecker = this@LocalClassDescriptorHolder.supertypeLoopChecker
                         override val languageVersionSettings = this@LocalClassDescriptorHolder.languageVersionSettings
                         override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
+                        override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
                     }
                     ,
                     containingDeclaration,

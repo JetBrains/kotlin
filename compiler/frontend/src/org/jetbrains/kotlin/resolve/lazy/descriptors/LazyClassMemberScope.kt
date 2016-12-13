@@ -295,7 +295,9 @@ open class LazyClassMemberScope(
             override fun getMembersByType(type: KotlinType): Collection<T> =
                     extractor.extract(type, name)
         }
-        return DelegationResolver.generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor, lazyTypeResolver)
+        return DelegationResolver.generateDelegatedMembers(
+                classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor, lazyTypeResolver, c.delegationFilter
+        )
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
