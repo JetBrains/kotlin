@@ -113,7 +113,10 @@ object JvmRuntimeVersionsConsistencyChecker {
         if (runtimeJarsInfo.hasAnyJarsToCheck) {
             val languageVersion = languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
 
-            checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)
+            if (checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)) {
+                messageCollector.issue(null, "Some runtime JAR files in the classpath have an incompatible version. " +
+                                             "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors")
+            }
         }
     }
 

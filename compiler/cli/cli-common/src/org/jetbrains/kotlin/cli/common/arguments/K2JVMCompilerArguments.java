@@ -98,6 +98,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xskip-metadata-version-check", description = "Load classes with bad metadata version anyway (incl. pre-release classes)")
     public boolean skipMetadataVersionCheck;
 
+    @Argument(value = "Xskip-runtime-version-check", description = "Allow Kotlin runtime libraries of incompatible versions in the classpath")
+    public boolean skipRuntimeVersionCheck;
+
     @Argument(value = "Xdump-declarations-to", description = "Path to JSON file to dump Java to Kotlin declaration mappings")
     @ValueDescription("<path>")
     public String declarationsOutputPath;

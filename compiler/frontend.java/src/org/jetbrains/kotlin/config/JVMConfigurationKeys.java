@@ -76,6 +76,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES =
             CompilerConfigurationKey.create("create built-ins from resources found in the module dependencies");
 
+    public static final CompilerConfigurationKey<Boolean> SKIP_RUNTIME_VERSION_CHECK =
+            CompilerConfigurationKey.create("do not perform checks on runtime versions consistency");
+
     public static final CompilerConfigurationKey<JvmTarget> JVM_TARGET =
             CompilerConfigurationKey.create("JVM bytecode target version");
 
