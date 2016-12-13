@@ -7,7 +7,7 @@ class B() {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun modAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun remAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun divAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
