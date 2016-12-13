@@ -43,7 +43,7 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
                       hasResult: Boolean,
                       classpathAddendum: List<File>,
                       invokeWrapper: InvokeWrapper?
-    ): ReplEvalResult /*= evalStateLock.write*/ {
+    ): ReplEvalResult = evalStateLock.write {
         checkAndUpdateReplHistoryCollection(compiledLoadedClassesHistory, history)?.let {
             return@eval ReplEvalResult.HistoryMismatch(compiledLoadedClassesHistory.lines, it)
         }
@@ -52,12 +52,7 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
 
         fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.replaceFirst("\\.class$".toRegex(), ""))
 
-        classLoaderLock.read {
-            if (classpathAddendum.isNotEmpty()) {
-                classLoaderLock.write {
-                    classLoader = makeReplClassLoader(classLoader, classpathAddendum)
-                }
-            }
+        fun processCompiledClasses() {
             compiledClasses.filter { it.path.endsWith(".class") }
                     .forEach {
                         val className = classNameFromPath(it.path)
@@ -68,21 +63,35 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
                     }
         }
 
+        classLoaderLock.read {
+            if (classpathAddendum.isNotEmpty()) {
+                classLoaderLock.write {
+                    classLoader = makeReplClassLoader(classLoader, classpathAddendum)
+                }
+            }
+            processCompiledClasses()
+        }
+
+        fun compiledClassesNames() = compiledClasses.map { classNameFromPath(it.path).fqNameForClassNameWithoutDollars.asString() }
+
         val scriptClass = classLoaderLock.read {
             try {
                 classLoader.loadClass(mainLineClassName!!)
             }
             catch (e: Throwable) {
-                return ReplEvalResult.Error.Runtime(compiledLoadedClassesHistory.lines, "Error loading class $mainLineClassName: known classes: ${compiledClasses.map { classNameFromPath(it.path).fqNameForClassNameWithoutDollars.asString() }}",
+                return ReplEvalResult.Error.Runtime(compiledLoadedClassesHistory.lines, "Error loading class $mainLineClassName: known classes: ${compiledClassesNames()}",
                                                     e as? Exception)
             }
         }
 
-        val constructorParams: Array<Class<*>> =
+        fun getConstructorParams(): Array<Class<*>> =
                 (compiledLoadedClassesHistory.values.map { it.klass.java } +
                  (scriptArgs?.mapIndexed { i, it -> scriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: emptyList())
                 ).toTypedArray()
-        val constructorArgs: Array<Any?> = (compiledLoadedClassesHistory.values.map { it.instance } + scriptArgs.orEmpty()).toTypedArray()
+        fun getConstructorArgs() = (compiledLoadedClassesHistory.values.map { it.instance } + scriptArgs.orEmpty()).toTypedArray()
+
+        val constructorParams: Array<Class<*>> = getConstructorParams()
+        val constructorArgs: Array<Any?> = getConstructorArgs()
 
         val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
         val scriptInstance =
