@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.generators.builtins.ranges
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
@@ -26,7 +27,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "minus" to "Subtracts the other value from this value.",
             "times" to "Multiplies this value by the other value.",
             "div" to "Divides this value by the other value.",
-            "mod" to "Calculates the remainder of dividing this value by the other value."
+            "mod" to "Calculates the remainder of dividing this value by the other value.",
+            "rem" to "Calculates the remainder of dividing this value by the other value."
     )
     private val unaryOperators: Map<String, String> = mapOf(
             "inc" to "Increments this value.",
@@ -162,7 +164,15 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateOperator(name: String, doc: String, thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
             val returnType = getOperatorReturnType(thisKind, otherKind)
+
             out.println("    /** $doc */")
+            when (name) {
+                OperatorNameConventions.REM.asString() ->
+                    out.println("    @SinceKotlin(\"1.1\")")
+
+                OperatorNameConventions.MOD.asString() ->
+                    out.println("    @Deprecated(\"Use rem(other) instead\", ReplaceWith(\"rem(other)\"), DeprecationLevel.WARNING)")
+            }
             out.println("    public operator fun $name(other: ${otherKind.capitalized}): ${returnType.capitalized}")
         }
         out.println()

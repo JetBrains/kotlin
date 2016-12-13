@@ -26,7 +26,7 @@ FILE /simpleOperators.kt
   FUN public fun test5(a: kotlin.Int, b: kotlin.Int): kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5(Int, Int): Int'
-        CALL 'mod(Int): Int' type=kotlin.Int origin=PERC
+        CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun test6(a: kotlin.Int, b: kotlin.Int): kotlin.ranges.IntRange

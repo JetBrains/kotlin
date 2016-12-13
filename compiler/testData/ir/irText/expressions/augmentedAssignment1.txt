@@ -32,7 +32,7 @@ FILE /augmentedAssignment1.kt
           $this: GET_VAR 'x: Int' type=kotlin.Int origin=DIVEQ
           other: CONST Int type=kotlin.Int value='4'
       SET_VAR 'x: Int' type=kotlin.Unit origin=PERCEQ
-        CALL 'mod(Int): Int' type=kotlin.Int origin=PERCEQ
+        CALL 'rem(Int): Int' type=kotlin.Int origin=PERCEQ
           $this: GET_VAR 'x: Int' type=kotlin.Int origin=PERCEQ
           other: CONST Int type=kotlin.Int value='5'
   FUN public fun testProperty(): kotlin.Unit
@@ -59,6 +59,6 @@ FILE /augmentedAssignment1.kt
             other: CONST Int type=kotlin.Int value='4'
       BLOCK type=kotlin.Unit origin=PERCEQ
         CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=PERCEQ
-          <set-?>: CALL 'mod(Int): Int' type=kotlin.Int origin=PERCEQ
+          <set-?>: CALL 'rem(Int): Int' type=kotlin.Int origin=PERCEQ
             $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PERCEQ
             other: CONST Int type=kotlin.Int value='5'

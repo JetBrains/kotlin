@@ -18,7 +18,7 @@ CONTENT
       2 GET_VAR 'value-parameter m: Int' type=kotlin.Int origin=null
       3 GET_VAR 'number: Int' type=kotlin.Int origin=null
       4 CONST Int type=kotlin.Int value='10'
-      5 CALL 'mod(Int): Int' type=kotlin.Int origin=PERC
+      5 CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
 OUTGOING -> BB 2
     CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
 BB 2

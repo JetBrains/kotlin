@@ -32,7 +32,7 @@ CONTENT
       4 WHEN type=kotlin.Unit origin=null
       5 GET_VAR 'value-parameter n: Int' type=kotlin.Int origin=null
       6 GET_VAR 'm: Int' type=kotlin.Int origin=null
-      7 CALL 'mod(Int): Int' type=kotlin.Int origin=PERC
+      7 CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
       8 CONST Int type=kotlin.Int value='0'
       9 CALL 'compareTo(Int): Int' type=kotlin.Int origin=GT
 OUTGOING -> BB 3, 4
