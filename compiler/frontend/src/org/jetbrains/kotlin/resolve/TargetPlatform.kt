@@ -72,7 +72,6 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         UnderscoreChecker,
         InlineParameterChecker,
         InfixModifierChecker(),
-        CoroutineModifierChecker,
         SinceKotlinAnnotationValueChecker,
         ReifiedTypeParameterAnnotationChecker(),
         DynamicReceiverChecker
