@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,14 +30,13 @@ public abstract class BaseKotlinCompilerSettings<T> implements PersistentStateCo
     public static final String KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
 
     private static final SkipDefaultValuesSerializationFilters SKIP_DEFAULT_VALUES = new SkipDefaultValuesSerializationFilters();
+    @NotNull
+    private T settings;
 
     protected BaseKotlinCompilerSettings() {
         //noinspection AbstractMethodCallInConstructor
         this.settings = createSettings();
     }
-
-    @NotNull
-    private T settings;
 
     @NotNull
     public T getSettings() {

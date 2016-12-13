@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,27 +19,27 @@ package org.jetbrains.kotlin.idea.compiler.configuration;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.config.CompilerSettings;
 
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
 import static org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH;
+import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
 
 @State(
-    name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION,
+    name = KOTLIN_COMPILER_SETTINGS_SECTION,
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_FILE),
         @Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
-public class KotlinCommonCompilerArgumentsHolder extends BaseKotlinCompilerSettings<CommonCompilerArguments> {
+public class KotlinCompilerSettings extends BaseKotlinCompilerSettings<CompilerSettings> {
+
+    public static KotlinCompilerSettings getInstance(Project project) {
+        return ServiceManager.getService(project, KotlinCompilerSettings.class);
+    }
 
     @NotNull
     @Override
-    protected CommonCompilerArguments createSettings() {
-        return new CommonCompilerArguments.DummyImpl();
-    }
-
-    public static KotlinCommonCompilerArgumentsHolder getInstance(Project project) {
-        return ServiceManager.getService(project, KotlinCommonCompilerArgumentsHolder.class);
+    protected CompilerSettings createSettings() {
+        return new CompilerSettings();
     }
 }

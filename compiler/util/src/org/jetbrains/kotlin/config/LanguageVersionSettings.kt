@@ -67,7 +67,7 @@ enum class LanguageVersion(val versionString: String) : DescriptionAware {
 
     companion object {
         @JvmStatic
-        fun fromVersionString(str: String) = values().find { it.versionString == str }
+        fun fromVersionString(str: String?) = values().find { it.versionString == str }
 
         @JvmStatic
         fun fromFullVersionString(str: String) = str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }

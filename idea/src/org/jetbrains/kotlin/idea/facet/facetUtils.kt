@@ -98,23 +98,31 @@ internal fun getLibraryLanguageLevel(
 fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: ModuleRootModel?) {
     val project = module.project
 
+    val commonArguments = KotlinCommonCompilerArgumentsHolder.getInstance(module.project).settings
+
     with(versionInfo) {
         if (targetPlatformKind == null) {
             targetPlatformKind = getDefaultTargetPlatform(module, rootModel)
         }
 
         if (languageLevel == null) {
-            languageLevel = getDefaultLanguageLevel(module)
+            languageLevel = (if (useProjectSettings) LanguageVersion.fromVersionString(commonArguments.languageVersion) else null)
+                            ?: getDefaultLanguageLevel(module)
         }
 
         if (apiLevel == null) {
-            apiLevel = languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+            apiLevel = if (useProjectSettings) {
+                LanguageVersion.fromVersionString(commonArguments.apiVersion) ?: languageLevel
+            }
+            else {
+                languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind!!))
+            }
         }
     }
 
     with(compilerInfo) {
         if (commonCompilerArguments == null) {
-            commonCompilerArguments = copyBean(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings)
+            commonCompilerArguments = copyBean(commonArguments)
         }
 
         if (compilerSettings == null) {
@@ -141,6 +149,7 @@ fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): Kotlin
 
     val facet = with(KotlinFacetType.INSTANCE) { createFacet(this@getOrCreateFacet, defaultFacetName, createDefaultConfiguration(), null) }
     facetModel.addFacet(facet)
+    facet.configuration.settings.useProjectSettings = true
     return facet
 }
 
