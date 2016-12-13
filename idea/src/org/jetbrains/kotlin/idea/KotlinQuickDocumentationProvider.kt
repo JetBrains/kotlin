@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecatedByAnnotationReplaceWithExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.getDeprecations
@@ -163,7 +164,9 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
             }
 
-            var renderedDecl = DESCRIPTOR_RENDERER.render(declarationDescriptor)
+            var renderedDecl = DESCRIPTOR_RENDERER.withOptions {
+                withDefinedIn = !DescriptorUtils.isLocal(declarationDescriptor)
+            }.render(declarationDescriptor)
 
             if (!quickNavigation) {
                 renderedDecl = "<pre>$renderedDecl</pre>"

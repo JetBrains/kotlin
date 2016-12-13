@@ -54,6 +54,12 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("AtLocalFunction.kt")
+    public void testAtLocalFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtLocalFunction.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AtTypeParameter.kt")
     public void testAtTypeParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/AtTypeParameter.kt");

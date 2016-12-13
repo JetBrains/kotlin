@@ -5,4 +5,4 @@ fun test() {
 }
 
 
-//INFO: <pre><b>val</b> test: String? <i>defined in</i> test</pre>
+//INFO: <pre><b>val</b> test: String?</pre>
