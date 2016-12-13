@@ -754,3 +754,8 @@ task lambda12(type: RunKonanTest) {
     goldValue = "one\ntwo\n"
     source = "codegen/lambda/lambda12.kt"
 }
+
+task lambda13(type: RunKonanTest) {
+    goldValue = "foo\n"
+    source = "codegen/lambda/lambda13.kt"
+}
