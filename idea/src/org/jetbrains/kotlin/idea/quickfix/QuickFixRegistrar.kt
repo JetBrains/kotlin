@@ -467,5 +467,7 @@ class QuickFixRegistrar : QuickFixContributor {
         CAST_NEVER_SUCCEEDS.registerFactory(ReplacePrimitiveCastWithNumberConversionFix)
 
         ErrorsJs.WRONG_EXTERNAL_DECLARATION.registerFactory(MigrateExternalExtensionFix)
+
+        UNSUPPORTED_FEATURE.registerFactory(EnableUnsupportedFeatureFix)
     }
 }
