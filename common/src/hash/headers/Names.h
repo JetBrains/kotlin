@@ -11,7 +11,7 @@
 // Generic guideline is that global hash is being used in global persistent
 // context, while local hashes are more local in scope.
 // Local hash.
-typedef uint64_t LocalHash;
+typedef int64_t LocalHash;
 // Hash of field name.
 typedef LocalHash FieldNameHash;
 // Hash of open method name.
