@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.search.GlobalSearchScope
@@ -197,10 +198,20 @@ class KtLightClassForFacade private constructor(
 
     override val clsDelegate: PsiClass
         get() {
-            return LightClassUtil.findClass(lightClassDataCache.value.javaFileStub) {
+            val javaFileStub = lightClassDataCache.value.javaFileStub
+            return LightClassUtil.findClass(javaFileStub) {
                 facadeClassFqName.asString() == it.qualifiedName
-            } ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
+            } ?: throw IllegalStateException("Facade class $facadeClassFqName not found; classes in Java file stub: ${collectClassNames(javaFileStub)}")
         }
+
+    private fun collectClassNames(javaFileStub: PsiJavaFileStub): String {
+        val names = mutableListOf<String>()
+        LightClassUtil.findClass(javaFileStub) { cls ->
+            names.add(cls.qualifiedName ?: "<null>")
+            false
+        }
+        return names.joinToString(prefix = "[", postfix = "]")
+    }
 
     override fun getNavigationElement() = files.iterator().next()
 
