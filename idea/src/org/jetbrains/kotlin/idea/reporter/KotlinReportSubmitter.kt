@@ -33,9 +33,9 @@ class KotlinReportSubmitter : ITNReporter() {
     private var hasUpdate = false
     private var hasLatestVersion = false
 
-    override fun showErrorInRelease(event: IdeaLoggingEvent?) = !hasUpdate
+    override fun showErrorInRelease(event: IdeaLoggingEvent) = !hasUpdate
 
-    override fun submit(events: Array<out IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component, consumer: Consumer<SubmittedReportInfo>): Boolean {
+    override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component, consumer: Consumer<SubmittedReportInfo>): Boolean {
         if (hasUpdate) {
             return true
         }
