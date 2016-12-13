@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBuiltIns
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -9,6 +10,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -111,4 +113,12 @@ internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
                 this.extensionReceiverParameter).filterNotNull()
 
         return receivers + this.valueParameters
+    }
+
+internal val FunctionDescriptor.isFunctionInvoke: Boolean
+    get() {
+        val dispatchReceiver = dispatchReceiverParameter ?: return false
+
+        return dispatchReceiver.type.isFunctionType &&
+                this.isOperator && this.name == OperatorNameConventions.INVOKE
     }

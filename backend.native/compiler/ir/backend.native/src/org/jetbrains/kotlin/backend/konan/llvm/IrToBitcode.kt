@@ -4,7 +4,6 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -1563,8 +1562,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateFunctionCall(tmpVariableName: String, callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         val descriptor:FunctionDescriptor = callee.descriptor as FunctionDescriptor
+
+        if (descriptor.isFunctionInvoke) {
+            return evaluateFunctionInvoke(tmpVariableName, descriptor, args)
+        }
+
         when (descriptor) {
-            is FunctionInvokeDescriptor        -> return evaluateFunctionInvoke    (tmpVariableName, descriptor, args)
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (tmpVariableName, callee,     args)
             is ClassConstructorDescriptor      -> return evaluateConstructorCall   (tmpVariableName, callee,     args)
             else                               -> return evaluateSimpleFunctionCall(tmpVariableName, descriptor, args)
@@ -1582,7 +1585,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     private fun evaluateFunctionInvoke(tmpVariableName: String,
-                                       descriptor: FunctionInvokeDescriptor,
+                                       descriptor: FunctionDescriptor,
                                        args: List<LLVMValueRef>): LLVMValueRef {
 
         // Note: the whole function code below is written in the assumption that
