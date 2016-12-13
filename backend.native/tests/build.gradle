@@ -739,3 +739,18 @@ task lambda9(type: RunKonanTest) {
     goldValue = "0\n0\n1\n0\n0\n1\n1\n1\n"
     source = "codegen/lambda/lambda9.kt"
 }
+
+task lambda10(type: RunKonanTest) {
+    goldValue = "original\nchanged\n"
+    source = "codegen/lambda/lambda10.kt"
+}
+
+task lambda11(type: RunKonanTest) {
+    goldValue = "first\nsecond\n"
+    source = "codegen/lambda/lambda11.kt"
+}
+
+task lambda12(type: RunKonanTest) {
+    goldValue = "one\ntwo\n"
+    source = "codegen/lambda/lambda12.kt"
+}
