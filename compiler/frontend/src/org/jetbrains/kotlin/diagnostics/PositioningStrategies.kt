@@ -492,4 +492,11 @@ object PositioningStrategies {
             return markElement(element.returnKeyword)
         }
     }
+
+    @JvmField val RECEIVER: PositioningStrategy<KtCallableDeclaration> = object : DeclarationHeader<KtCallableDeclaration>() {
+        override fun mark(element: KtCallableDeclaration): List<TextRange> {
+            element.receiverTypeReference?.let { return markElement(it) }
+            return DEFAULT.mark(element)
+        }
+    }
 }

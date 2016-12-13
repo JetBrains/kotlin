@@ -1,0 +1,6 @@
+package
+
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.DynamicExtension public var dynamic.onDynamicProperty: kotlin.String
+public fun </*0*/ T> eatT(/*0*/ t: T): kotlin.Unit
+public fun test(/*0*/ d: dynamic, /*1*/ a: kotlin.Any?): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.DynamicExtension public fun dynamic.onDynamicFun(): kotlin.Int

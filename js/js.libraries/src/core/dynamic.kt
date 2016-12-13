@@ -24,6 +24,7 @@ public inline fun Any?.asDynamic(): dynamic = this
 public inline fun <T> Any?.unsafeCast(): @kotlin.internal.NoInfer T = this.asDynamic()
 
 // TODO add the support ES6 iterators
+@kotlin.internal.DynamicExtension
 public operator fun dynamic.iterator(): Iterator<dynamic> {
     val r: Any? = this
 

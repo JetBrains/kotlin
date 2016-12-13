@@ -828,6 +828,8 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> ABBREVIATED_NOTHING_PROPERTY_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> IMPLICIT_INTERSECTION_TYPE = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<KtCallableDeclaration> DYNAMIC_RECEIVER_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, PositioningStrategies.RECEIVER);
+
     // Context tracking
 
     DiagnosticFactory1<KtExpression, KtExpression> EXPRESSION_EXPECTED = DiagnosticFactory1.create(ERROR);

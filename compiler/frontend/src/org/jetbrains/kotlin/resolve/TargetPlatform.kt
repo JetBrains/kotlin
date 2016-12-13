@@ -75,7 +75,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         InfixModifierChecker(),
         CoroutineModifierChecker,
         SinceKotlinAnnotationValueChecker,
-        ReifiedTypeParameterAnnotationChecker()
+        ReifiedTypeParameterAnnotationChecker(),
+        DynamicReceiverChecker
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

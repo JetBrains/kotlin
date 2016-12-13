@@ -50,6 +50,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("allowedDynamicFunctionType.kt")
+        public void testAllowedDynamicFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/allowedDynamicFunctionType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignment.kt")
         public void testAssignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/assignment.kt");
@@ -107,6 +113,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("dynamicCastTarget.kt")
         public void testDynamicCastTarget() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicCastTarget.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dynamicExtension.kt")
+        public void testDynamicExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicExtension.kt");
             doTest(fileName);
         }
 
@@ -239,6 +251,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("staticCallsInDynamicContext.kt")
         public void testStaticCallsInDynamicContext() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/staticCallsInDynamicContext.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("staticExtensions.kt")
+        public void testStaticExtensions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/staticExtensions.kt");
             doTest(fileName);
         }
 

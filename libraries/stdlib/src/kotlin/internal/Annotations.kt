@@ -58,3 +58,10 @@ internal annotation class OnlyInputTypes
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class InlineOnly
+
+/**
+ * Specifies that this declaration can have dynamic receiver type.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class DynamicExtension

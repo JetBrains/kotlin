@@ -7,7 +7,7 @@ fun test() {
     }
 }
 
-fun <T> dynamic(body: dynamic.() -> T): T {
+fun <T> dynamic(<!UNUSED_PARAMETER!>body<!>: dynamic.() -> T): T {
     val topLevel = null
-    return topLevel.body()
+    return topLevel.<!UNRESOLVED_REFERENCE!>body<!>()
 }

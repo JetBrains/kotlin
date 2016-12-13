@@ -635,6 +635,8 @@ public class DefaultErrorMessages {
         MAP.put(IMPLICIT_INTERSECTION_TYPE, "Inferred type {0} is an intersection, please specify the required type explicitly", RENDER_TYPE);
         MAP.put(EXPECTED_CONDITION, "Expected condition of type Boolean");
 
+        MAP.put(DYNAMIC_RECEIVER_NOT_ALLOWED, "Dynamic receiver is prohibited");
+
         MAP.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE);
         MAP.put(UNCHECKED_CAST, "Unchecked cast: {0} to {1}", RENDER_TYPE, RENDER_TYPE);
 

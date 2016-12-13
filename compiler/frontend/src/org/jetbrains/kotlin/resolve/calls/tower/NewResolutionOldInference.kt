@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -347,10 +348,21 @@ class NewResolutionOldInference(
                     basicCallContext.dataFlowInfoForArguments // todo may be we should create new mutable info for arguments
             )
 
-            // see spec-docs/dynamic-types.md
-            if (extensionReceiver != null && extensionReceiver.receiverValue.type.isDynamic()
-                && !towerCandidate.descriptor.extensionReceiverParameter!!.value.type.isDynamic()) {
-                return MyCandidate(ResolutionCandidateStatus(listOf(ExtensionWithStaticTypeWithDynamicReceiver)), candidateCall)
+            /**
+             * See https://jetbrains.quip.com/qcTDAFcgFLEM
+             *
+             * For now we have only 2 functions with dynamic receivers: iterator() and unsafeCast()
+             * Both this function are marked via @kotlin.internal.DynamicExtension.
+             */
+            if (extensionReceiver != null) {
+                val parameterIsDynamic = towerCandidate.descriptor.extensionReceiverParameter!!.value.type.isDynamic()
+                val argumentIsDynamic = extensionReceiver.receiverValue.type.isDynamic()
+
+                if (parameterIsDynamic != argumentIsDynamic ||
+                    (parameterIsDynamic && !towerCandidate.descriptor.hasDynamicExtensionAnnotation())
+                ) {
+                    return MyCandidate(ResolutionCandidateStatus(listOf(HiddenExtensionRelatedToDynamicTypes)), candidateCall)
+                }
             }
 
             if (towerCandidate.descriptor.isHiddenInResolution(languageVersionSettings, basicCallContext.isSuperCall)) {
