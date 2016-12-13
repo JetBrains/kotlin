@@ -222,16 +222,17 @@ JetFile: FunctionsWithoutName.kt
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       USER_TYPE
         REFERENCE_EXPRESSION
@@ -249,16 +250,17 @@ JetFile: FunctionsWithoutName.kt
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       USER_TYPE
         REFERENCE_EXPRESSION
@@ -292,19 +294,20 @@ JetFile: FunctionsWithoutName.kt
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       USER_TYPE
         REFERENCE_EXPRESSION
@@ -363,19 +366,20 @@ JetFile: FunctionsWithoutName.kt
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       USER_TYPE
         REFERENCE_EXPRESSION
@@ -389,16 +393,17 @@ JetFile: FunctionsWithoutName.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          ANNOTATION
-            PsiElement(AT)('@')
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+          MODIFIER_LIST
+            ANNOTATION
+              PsiElement(AT)('@')
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+              PsiElement(RBRACKET)(']')
           PsiWhiteSpace('  ')
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST

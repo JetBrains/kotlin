@@ -800,6 +800,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("TypeModifiers.kt")
+        public void testTypeModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeModifiers.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("TypeModifiers_ERR.kt")
+        public void testTypeModifiers_ERR() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeModifiers_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("TypeParametersBeforeName.kt")
         public void testTypeParametersBeforeName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeParametersBeforeName.kt");

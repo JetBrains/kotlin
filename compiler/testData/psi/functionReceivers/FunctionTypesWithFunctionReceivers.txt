@@ -266,32 +266,34 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
       FUNCTION_TYPE
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            ANNOTATION
-              PsiElement(AT)('@')
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
             FUNCTION_TYPE
               FUNCTION_TYPE_RECEIVER
@@ -334,32 +336,34 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
       FUNCTION_TYPE
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            ANNOTATION
-              PsiElement(AT)('@')
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
             FUNCTION_TYPE
               FUNCTION_TYPE_RECEIVER
@@ -400,32 +404,34 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
       FUNCTION_TYPE
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            ANNOTATION
-              PsiElement(AT)('@')
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
             FUNCTION_TYPE
               FUNCTION_TYPE_RECEIVER
@@ -481,32 +487,34 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
       FUNCTION_TYPE
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
-            ANNOTATION
-              PsiElement(AT)('@')
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
             FUNCTION_TYPE
               FUNCTION_TYPE_RECEIVER

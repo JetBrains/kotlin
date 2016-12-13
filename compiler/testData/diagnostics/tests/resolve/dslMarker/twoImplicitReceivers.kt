@@ -17,9 +17,9 @@ class B {
 
 class D
 
-fun foo(x: @Ann1 A.() -> Unit) {}
-fun bar(x: @Ann2 B.() -> Unit) {}
-fun baz(x: @Ann1 D.() -> Unit) {}
+fun foo(x: (@Ann1 A).() -> Unit) {}
+fun bar(x: (@Ann2 B).() -> Unit) {}
+fun baz(x: (@Ann1 D).() -> Unit) {}
 
 fun test() {
     foo {

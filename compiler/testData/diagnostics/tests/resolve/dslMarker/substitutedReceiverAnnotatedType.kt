@@ -11,8 +11,8 @@ class B {
     fun b() = 2
 }
 
-fun <T> foo(x: @Ann T.() -> Unit) {}
-fun <E> bar(x: @Ann E.() -> Unit) {}
+fun <T> foo(x: (@Ann T).() -> Unit) {}
+fun <E> bar(x: (@Ann E).() -> Unit) {}
 
 fun test() {
     foo<A> {

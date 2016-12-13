@@ -286,13 +286,14 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiWhiteSpace(' ')
     PsiErrorElement:Receiver type is not allowed on a destructuring declaration
       TYPE_REFERENCE
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         USER_TYPE
           REFERENCE_EXPRESSION
@@ -325,16 +326,17 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(AT)('@')
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -394,16 +396,17 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiWhiteSpace(' ')
     PsiErrorElement:Receiver type is not allowed on a destructuring declaration
       TYPE_REFERENCE
-        ANNOTATION
-          PsiElement(AT)('@')
-          PsiElement(LBRACKET)('[')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
+        MODIFIER_LIST
+          ANNOTATION
+            PsiElement(AT)('@')
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE
           VALUE_PARAMETER_LIST

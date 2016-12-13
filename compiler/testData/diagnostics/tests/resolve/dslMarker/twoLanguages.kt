@@ -15,10 +15,10 @@ class B {
     fun b() = 2
 }
 
-fun foo1(x: @L1 A.() -> Unit) {}
-fun foo2(x: @L2 A.() -> Unit) {}
-fun bar1(x: @L1 B.() -> Unit) {}
-fun bar2(x: @L2 B.() -> Unit) {}
+fun foo1(x: (@L1 A).() -> Unit) {}
+fun foo2(x: (@L2 A).() -> Unit) {}
+fun bar1(x: (@L1 B).() -> Unit) {}
+fun bar2(x: (@L2 B).() -> Unit) {}
 
 fun test() {
     foo1 {

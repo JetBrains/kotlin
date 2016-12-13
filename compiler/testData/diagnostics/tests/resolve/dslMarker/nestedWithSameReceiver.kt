@@ -11,8 +11,8 @@ class B {
     fun b() = 2
 }
 
-fun foo(x: @Ann A.() -> Unit) {}
-fun bar(x: @Ann B.() -> Unit) {}
+fun foo(x: (@Ann A).() -> Unit) {}
+fun bar(x: (@Ann B).() -> Unit) {}
 
 fun test() {
     foo {

@@ -70,7 +70,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             else parent
 
     private fun createTypeParameterStub(parent: KotlinStubBaseImpl<*>, type: Type, name: Name, annotations: List<ClassId>) {
-        createTypeAnnotationStubs(parent, annotations)
+        createTypeAnnotationStubs(parent, type, annotations)
         createStubForTypeName(ClassId.topLevel(FqName.topLevel(name)), nullableTypeParent(parent, type))
     }
 
@@ -96,7 +96,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     annotations.partition { it.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
 
 
-            createTypeAnnotationStubs(parent, notExtensionAnnotations)
+            createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
 
             val isExtension = extensionAnnotations.isNotEmpty()
             createFunctionTypeStub(nullableTypeParent(parent, type), type, isExtension)
@@ -104,7 +104,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             return
         }
 
-        createTypeAnnotationStubs(parent, annotations)
+        createTypeAnnotationStubs(parent, type, annotations)
 
         val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
 
@@ -114,8 +114,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
     }
 
-    private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, annotations: List<ClassId>) {
-        createAnnotationStubs(annotations, parent)
+    private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassId>) {
+        // TODO Calculate type modifiers mask, see 'ModifierMaskUtils.computeMask'
+        val typeModifiersMask = 0
+        if (annotations.isEmpty()) return
+        val modifiersList = KotlinModifierListStubImpl(parent, typeModifiersMask, KtStubElementTypes.MODIFIER_LIST)
+        createAnnotationStubs(annotations, modifiersList)
     }
 
     private fun createTypeArgumentListStub(typeStub: KotlinUserTypeStub, typeArgumentProtoList: List<Type.Argument>) {

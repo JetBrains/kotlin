@@ -458,13 +458,30 @@ public class KotlinParsing extends AbstractKotlinParsing {
             @NotNull AnnotationParsingMode annotationParsingMode,
             @NotNull TokenSet noModifiersBefore
     ) {
+        return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, annotationParsingMode, noModifiersBefore);
+    }
+
+    private boolean parseTypeModifierList() {
+        return doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, DEFAULT, TokenSet.EMPTY);
+    }
+
+    private boolean parseTypeArgumentModifierList() {
+        return doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS, TokenSet.create(COMMA, COLON, GT));
+    }
+
+    private boolean doParseModifierList(
+            @Nullable Consumer<IElementType> tokenConsumer,
+            @NotNull TokenSet modifierKeywords,
+            @NotNull AnnotationParsingMode annotationParsingMode,
+            @NotNull TokenSet noModifiersBefore
+    ) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
             if (at(AT) && annotationParsingMode.allowAnnotations) {
                 parseAnnotationOrList(annotationParsingMode);
             }
-            else if (tryParseModifier(tokenConsumer, noModifiersBefore)) {
+            else if (tryParseModifier(tokenConsumer, noModifiersBefore, modifierKeywords)) {
                 // modifier advanced
             }
             else {
@@ -481,10 +498,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return !empty;
     }
 
-    private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer, @NotNull TokenSet noModifiersBefore) {
+    private boolean tryParseModifier(
+            @Nullable Consumer<IElementType> tokenConsumer,
+            @NotNull TokenSet noModifiersBefore,
+            @NotNull TokenSet modifierKeywords
+    ) {
         PsiBuilder.Marker marker = mark();
 
-        if (atSet(MODIFIER_KEYWORDS)) {
+        if (atSet(modifierKeywords)) {
             IElementType lookahead = lookahead(1);
             if (lookahead != null && !noModifiersBefore.contains(lookahead)) {
                 IElementType tt = tt();
@@ -1865,7 +1886,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
     // on expression-indicating symbols or not
     private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet) {
         PsiBuilder.Marker typeRefMarker = mark();
-        parseAnnotations(DEFAULT);
+
+        parseTypeModifierList();
 
         PsiBuilder.Marker typeElementMarker = mark();
 
@@ -1930,9 +1952,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
             //  A.(B) -> C
             //   ^
 
-            PsiBuilder.Marker functionType = typeRefMarker.precede();
-            PsiBuilder.Marker receiverType = typeRefMarker.precede();
-            typeRefMarker.done(TYPE_REFERENCE);
+            PsiBuilder.Marker functionType = typeElementMarker.precede();
+
+            PsiBuilder.Marker receiverTypeRef = typeElementMarker.precede();
+            PsiBuilder.Marker receiverType = receiverTypeRef.precede();
+            receiverTypeRef.done(TYPE_REFERENCE);
             receiverType.done(FUNCTION_TYPE_RECEIVER);
 
             advance(); // DOT
@@ -1943,7 +1967,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
             else {
                 error("Expecting function type");
             }
-            typeRefMarker = functionType.precede();
 
             functionType.done(FUNCTION_TYPE);
         }
@@ -2089,7 +2112,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             // Currently we do not allow annotations on star projections and probably we should not
             // Annotations on other kinds of type arguments should be parsed as common type annotations (within parseTypeRef call)
-            parseModifierList(NO_ANNOTATIONS, TokenSet.create(COMMA, COLON, GT));
+            parseTypeArgumentModifierList();
 
             if (at(MUL)) {
                 advance(); // MUL

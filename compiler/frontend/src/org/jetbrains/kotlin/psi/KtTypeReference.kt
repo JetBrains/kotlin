@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
  * Type reference element.
  * Underlying token is [org.jetbrains.kotlin.KtNodeTypes.TYPE_REFERENCE]
  */
-class KtTypeReference : KtElementImplStub<KotlinPlaceHolderStub<KtTypeReference>>, KtAnnotated, KtAnnotationsContainer {
+class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeReference>>,
+        KtAnnotated, KtAnnotationsContainer {
 
     constructor(node: ASTNode) : super(node)
 
@@ -41,11 +42,11 @@ class KtTypeReference : KtElementImplStub<KotlinPlaceHolderStub<KtTypeReference>
         get() = KtStubbedPsiUtil.getStubOrPsiChild(this, KtStubElementTypes.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY)
 
     override fun getAnnotations(): List<KtAnnotation> {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.ANNOTATION)
+        return modifierList?.annotations.orEmpty()
     }
 
     override fun getAnnotationEntries(): List<KtAnnotationEntry> {
-        return this.collectAnnotationEntriesFromStubOrPsi()
+        return modifierList?.annotationEntries.orEmpty()
     }
 
     fun hasParentheses(): Boolean {

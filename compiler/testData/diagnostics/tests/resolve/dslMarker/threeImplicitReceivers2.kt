@@ -23,12 +23,12 @@ class C {
 
 class D
 
-fun foo(x: @Ann1 A.() -> Unit) {}
-fun bar(x: @Ann2 B.() -> Unit) {}
-fun baz(x: @Ann3 C.() -> Unit) {}
-fun foo1(x: @Ann1 D.() -> Unit) {}
-fun foo2(x: @Ann2 D.() -> Unit) {}
-fun foo3(x: @Ann3 D.() -> Unit) {}
+fun foo(x: (@Ann1 A).() -> Unit) {}
+fun bar(x: (@Ann2 B).() -> Unit) {}
+fun baz(x: (@Ann3 C).() -> Unit) {}
+fun foo1(x: (@Ann1 D).() -> Unit) {}
+fun foo2(x: (@Ann2 D).() -> Unit) {}
+fun foo3(x: (@Ann3 D).() -> Unit) {}
 
 fun test() {
     foo {

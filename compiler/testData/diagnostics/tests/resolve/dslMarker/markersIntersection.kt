@@ -15,15 +15,15 @@ class B {
     fun b() = 2
 }
 
-fun foo1(x: @L1 A.() -> Unit) {}
-fun foo2(x: @L2 A.() -> Unit) {}
+fun foo1(x: (@L1 A).() -> Unit) {}
+fun foo2(x: (@L2 A).() -> Unit) {}
 
-fun foo12(x: @L1 @L2 A.() -> Unit) {}
+fun foo12(x: (@L1 @L2 A).() -> Unit) {}
 
-fun bar1(x: @L1 B.() -> Unit) {}
-fun bar2(x: @L2 B.() -> Unit) {}
+fun bar1(x: (@L1 B).() -> Unit) {}
+fun bar2(x: (@L2 B).() -> Unit) {}
 
-fun <T> bar1t(q: T, x: @L1 T.() -> Unit) {}
+fun <T> bar1t(q: T, x: (@L1 T).() -> Unit) {}
 
 fun test() {
     foo12 {

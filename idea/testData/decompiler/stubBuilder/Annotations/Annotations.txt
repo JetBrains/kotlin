@@ -191,16 +191,17 @@ PsiJetFileStubImpl[package=]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param]
             TYPE_REFERENCE
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=a]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=b]
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=a]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=b]
               USER_TYPE
                 USER_TYPE
                   USER_TYPE
@@ -208,16 +209,17 @@ PsiJetFileStubImpl[package=]
                   REFERENCE_EXPRESSION[referencedName=ranges]
                 REFERENCE_EXPRESSION[referencedName=LongRange]
         TYPE_REFERENCE
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=a]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=b]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=b]
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]

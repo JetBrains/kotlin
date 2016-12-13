@@ -266,13 +266,14 @@ PsiJetFileStubImpl[package=test]
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
-                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExtensionFunctionType]
-                    CONSTRUCTOR_CALLEE
-                      TYPE_REFERENCE
-                        USER_TYPE
+                  MODIFIER_LIST[]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExtensionFunctionType]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
                           USER_TYPE
-                            REFERENCE_EXPRESSION[referencedName=kotlin]
-                          REFERENCE_EXPRESSION[referencedName=ExtensionFunctionType]
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=ExtensionFunctionType]
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
