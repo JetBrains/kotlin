@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.Interner
 import java.io.OutputStream
 
-class StringTableImpl : StringTable {
+open class StringTableImpl : StringTable {
     private class FqNameProto(val fqName: QualifiedName.Builder) {
         override fun hashCode(): Int {
             var result = 13
@@ -72,12 +72,16 @@ class StringTableImpl : StringTable {
             is ClassDescriptor -> {
                 builder.parentQualifiedName = getFqNameIndex(containingDeclaration)
             }
-            else -> throw IllegalStateException("Cannot get FQ name of local class: " + descriptor)
+            else -> return getFqNameIndexOfLocalAnonymousClass(descriptor)
         }
 
         builder.shortName = getStringIndex(descriptor.name.asString())
 
         return qualifiedNames.intern(FqNameProto(builder))
+    }
+
+    open fun getFqNameIndexOfLocalAnonymousClass(descriptor: ClassifierDescriptorWithTypeParameters): Int {
+        throw IllegalStateException("Cannot get FQ name of local class: " + descriptor)
     }
 
     fun getPackageFqNameIndex(fqName: FqName): Int {

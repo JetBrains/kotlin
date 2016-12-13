@@ -5240,6 +5240,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("localClassMetadata.kt")
+        public void testLocalClassMetadata() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/localClassMetadata.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("moduleAndVariableNameClash.kt")
         public void testModuleAndVariableNameClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/moduleAndVariableNameClash.kt");
