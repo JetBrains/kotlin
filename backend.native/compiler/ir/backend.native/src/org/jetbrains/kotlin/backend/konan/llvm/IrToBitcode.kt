@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.getter2Descriptor
+import org.jetbrains.kotlin.backend.konan.descriptors.signature2Descriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -805,17 +807,55 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateStringConcatenation(tmpVariableName: String, value: IrStringConcatenation): LLVMValueRef? {
-        val stringPlus = KonanPlatform.builtIns.stringType.memberScope.getContributedFunctions(
-                Name.identifier("plus"), NoLookupLocation.FROM_BACKEND).first()
-        val strings:List<LLVMValueRef> = value.arguments.map {
-            val descriptor = getToString(it.type)
+    val kNameToString = Name.identifier("toString")
+    val kNameStringBuilder = Name.identifier("StringBuilder")
+    val kNameAppend  = Name.identifier("append")
+    val kKotlinTextFqName = FqName.fromSegments(listOf("kotlin", "text"))
+    val kNameLength = Name.identifier("length")
+    val kStringBuilder = context.irModule?.let {
+        it.descriptor.getPackage(kKotlinTextFqName)
+            .memberScope.getContributedClassifier(kNameStringBuilder, NoLookupLocation.FROM_BACKEND) as? ClassDescriptor
+    }
+    val kStringBuilderAppendStringFn = kStringBuilder.signature2Descriptor(kNameAppend, arrayOf(KonanPlatform.builtIns.stringType))
+    val kStringLength = KonanPlatform.builtIns.string.getter2Descriptor(kNameLength)
+    val kStringBuilderToString = kStringBuilder.signature2Descriptor(kNameToString)
 
-            val args = listOf(evaluateExpression(codegen.newVar(), it)!!)
-            return@map evaluateSimpleFunctionCall(codegen.newVar(), descriptor, args)
+    private fun evaluateStringConcatenation(tmpVariableName: String, value: IrStringConcatenation): LLVMValueRef? {
+        data class Element(val string: LLVMValueRef, val llvmLenght: LLVMValueRef?, val length: Int)
+
+        val stringsWithLengths = value.arguments.map {
+            val evaluationResult = evaluateExpression(codegen.newVar(), it)!!
+            if (it is IrConst<*> && it.kind == IrConstKind.String) {
+                val string = it.value as String
+                return@map Element(codegen.staticData.kotlinStringLiteral(it as IrConst<String>).llvm, null, string.length)
+            } else {
+                val toStringDescriptor = getToString(it.type)
+                val string = if (KotlinBuiltIns.isString(it.type)) evaluationResult
+                             else evaluateSimpleFunctionCall(codegen.newVar(), toStringDescriptor, listOf(evaluationResult))
+                val length = currentCodeContext.genCall(codegen.llvmFunction(kStringLength!!), listOf(string), codegen.newVar())
+                return@map Element(string, length, -1)
+            }
         }
-        val concatResult = strings.drop(1).fold(strings.first()) {res, it -> evaluateSimpleFunctionCall(codegen.newVar(), stringPlus, listOf(res, it))}
-        return concatResult
+        val constLen = stringsWithLengths
+                .filter { it.length != -1 }
+                .fold(0) { sum, (_, _, length) -> sum + length }
+        val totalLength = stringsWithLengths
+                .filter { it.length == -1 }
+                .fold(Int32(constLen).llvm) { sum, (_, length, _) -> codegen.plus(sum, length!!, codegen.newVar()) }
+
+        val constructor = kStringBuilder!!.constructors
+                .firstOrNull { it -> it.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.valueParameters[0].type) }!!
+        val stringBuilderObjPtr = currentCodeContext.genCall(context.llvm.allocInstanceFunction,
+                listOf(codegen.typeInfoValue(kStringBuilder.defaultType)!!, kImmOne),
+                codegen.newVar())
+        val stringBuilderObj = currentCodeContext.genCall(codegen.llvmFunction(constructor), listOf(stringBuilderObjPtr, totalLength), codegen.newVar())
+
+        stringsWithLengths.fold(stringBuilderObj) { sum, (string, _, _) ->
+            currentCodeContext.genCall(codegen.llvmFunction(kStringBuilderAppendStringFn!!), listOf(sum, string), "")
+            return@fold sum
+        }
+
+        return evaluateSimpleFunctionCall(tmpVariableName, kStringBuilderToString!!, listOf(stringBuilderObj))
     }
 
     //-------------------------------------------------------------------------//
@@ -1728,10 +1768,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun getToString(type: KotlinType): SimpleFunctionDescriptor {
-        val name = Name.identifier("toString")
-        val descriptor = type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).first()
+        val descriptor = type.memberScope.getContributedFunctions(kNameToString, NoLookupLocation.FROM_BACKEND).first()
         return descriptor
     }
+
+    //-------------------------------------------------------------------------//
 
     private fun getThrowNpe(): SimpleFunctionDescriptor {
         val name = Name.identifier("ThrowNullPointerException")
