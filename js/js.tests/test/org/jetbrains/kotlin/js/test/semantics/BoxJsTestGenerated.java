@@ -1753,6 +1753,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("explicitUpcast.kt")
+            public void testExplicitUpcast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/cast/explicitUpcast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implicitCastToLong.kt")
             public void testImplicitCastToLong() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/cast/implicitCastToLong.kt");
@@ -6885,6 +6891,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
     public static class SafeCall extends AbstractBoxJsTest {
         public void testAllFilesPresentInSafeCall() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/safeCall"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("redundantSafeAccess.kt")
+        public void testRedundantSafeAccess() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/safeCall/redundantSafeAccess.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("safeAccess.kt")

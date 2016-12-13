@@ -29,12 +29,10 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCompileTimeValue;
@@ -55,9 +53,8 @@ public final class UnaryOperationTranslator {
         IElementType operationToken = expression.getOperationReference().getReferencedNameElementType();
         if (operationToken == KtTokens.EXCLEXCL) {
             KtExpression baseExpression = getBaseExpression(expression);
-            KotlinType type = BindingContextUtils.getTypeNotNull(context.bindingContext(), baseExpression);
             JsExpression translatedExpression = translateAsExpression(baseExpression, context);
-            return type.isMarkedNullable() ? sure(translatedExpression, context) : translatedExpression;
+            return sure(translatedExpression, context);
         }
 
         if (operationToken == KtTokens.MINUS) {
