@@ -203,7 +203,7 @@ class ConstructorConverter(
                         FunctionParameter(propertyInfo.identifier,
                                           type,
                                           if (propertyInfo.isVar) FunctionParameter.VarValModifier.Var else FunctionParameter.VarValModifier.Val,
-                                          converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
+                                          converter.convertAnnotations(parameter, AnnotationUseTarget.Param) + converter.convertAnnotations(field),
                                           propertyInfo.modifiers,
                                           default)
                                 .assignPrototypes(

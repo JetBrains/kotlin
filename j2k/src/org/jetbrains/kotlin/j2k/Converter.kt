@@ -160,8 +160,8 @@ class Converter private constructor(
         return File(convertedChildren).assignPrototype(javaFile)
     }
 
-    fun convertAnnotations(owner: PsiModifierListOwner): Annotations
-            = annotationConverter.convertAnnotations(owner)
+    fun convertAnnotations(owner: PsiModifierListOwner, target: AnnotationUseTarget? = null): Annotations
+            = annotationConverter.convertAnnotations(owner, target)
 
     fun convertClass(psiClass: PsiClass): Class {
         if (psiClass.isAnnotationType) {
@@ -320,10 +320,19 @@ class Converter private constructor(
         val getMethod = propertyInfo.getMethod
         val setMethod = propertyInfo.setMethod
 
-        //TODO: annotations from getter/setter?
-        val annotations = field?.let { convertAnnotations(it) } ?: Annotations.Empty
 
-        val modifiers = (propertyInfo.modifiers + (field?.let{ specialModifiersCase(field) } ?: Modifiers.Empty))
+        var annotations = Annotations.Empty
+
+        field?.let { annotations += convertAnnotations(it) }
+
+        if (!propertyInfo.needExplicitGetter)
+            getMethod?.let { annotations += convertAnnotations(it, AnnotationUseTarget.Get) }
+
+        if (!propertyInfo.needExplicitSetter)
+            setMethod?.let { annotations += convertAnnotations(it, AnnotationUseTarget.Set) }
+
+
+        val modifiers = (propertyInfo.modifiers + (field?.let { specialModifiersCase(field) } ?: Modifiers.Empty))
 
         val name = propertyInfo.identifier
         if (field is PsiEnumConstant) {

@@ -37,15 +37,15 @@ class AnnotationConverter(private val converter: Converter) {
         return nameAsString in annotationsToRemove || nameAsString == Target::class.java.name
     }
 
-    fun convertAnnotations(owner: PsiModifierListOwner): Annotations
-            = convertAnnotationsOnly(owner) + convertModifiersToAnnotations(owner)
+    fun convertAnnotations(owner: PsiModifierListOwner, target: AnnotationUseTarget? = null): Annotations
+            = convertAnnotationsOnly(owner, target) + convertModifiersToAnnotations(owner, target)
 
-    private fun convertAnnotationsOnly(owner: PsiModifierListOwner): Annotations {
+    private fun convertAnnotationsOnly(owner: PsiModifierListOwner, target: AnnotationUseTarget?): Annotations {
         val modifierList = owner.modifierList
         val annotations = modifierList?.annotations?.filter { it.qualifiedName !in annotationsToRemove }
 
         var convertedAnnotations: List<Annotation> = if (annotations != null && annotations.isNotEmpty()) {
-            val newLines = if (!modifierList!!.isInSingleLine()) {
+            val newLines = if (!modifierList.isInSingleLine()) {
                 true
             }
             else {
@@ -57,14 +57,14 @@ class AnnotationConverter(private val converter: Converter) {
                 if (child is PsiWhiteSpace) !child.isInSingleLine() else false
             }
 
-            annotations.mapNotNull { convertAnnotation(it, newLineAfter = newLines) }
+            annotations.mapNotNull { convertAnnotation(it, newLineAfter = newLines, target = target) }
         }
         else {
             listOf()
         }
 
         if (owner is PsiDocCommentOwner) {
-            val deprecatedAnnotation = convertDeprecatedJavadocTag(owner)
+            val deprecatedAnnotation = convertDeprecatedJavadocTag(owner, target)
             if (deprecatedAnnotation != null) {
                 convertedAnnotations += deprecatedAnnotation
             }
@@ -73,20 +73,29 @@ class AnnotationConverter(private val converter: Converter) {
         return Annotations(convertedAnnotations).assignNoPrototype()
     }
 
-    private fun convertDeprecatedJavadocTag(element: PsiDocCommentOwner): Annotation? {
+    private fun convertDeprecatedJavadocTag(element: PsiDocCommentOwner, target: AnnotationUseTarget?): Annotation? {
         val deprecatedTag = element.docComment?.findTagByName("deprecated") ?: return null
         val deferredExpression = converter.deferredElement<Expression> {
             LiteralExpression("\"" + StringUtil.escapeStringCharacters(deprecatedTag.content()) + "\"").assignNoPrototype()
         }
-        return Annotation(Identifier("Deprecated").assignPrototype(deprecatedTag.nameElement),
-                          listOf(null to deferredExpression), newLineAfter = true)
+        val identifier = Identifier("Deprecated").assignPrototype(deprecatedTag.nameElement)
+        return Annotation(identifier,
+                          listOf(null to deferredExpression),
+                          true,
+                          effectiveAnnotationUseTarget(identifier.name, target))
                 .assignPrototype(deprecatedTag)
     }
 
-    private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
+    private fun convertModifiersToAnnotations(owner: PsiModifierListOwner, target: AnnotationUseTarget?): Annotations {
         val list = MODIFIER_TO_ANNOTATION
                 .filter { owner.hasModifierProperty(it.first) }
-                .map { Annotation(Identifier.withNoPrototype(it.second), listOf(), newLineAfter = false).assignNoPrototype() }
+                .map {
+                    Annotation(Identifier.withNoPrototype(it.second),
+                               listOf(),
+                               newLineAfter = false,
+                               target = target
+                    ).assignNoPrototype()
+                }
         return Annotations(list).assignNoPrototype()
     }
 
@@ -101,9 +110,15 @@ class AnnotationConverter(private val converter: Converter) {
         return expr.referenceName?.let { JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(it) } ?: emptySet()
     }
 
-    fun convertAnnotation(annotation: PsiAnnotation, newLineAfter: Boolean): Annotation? {
+    private fun effectiveAnnotationUseTarget(name: String, target: AnnotationUseTarget?): AnnotationUseTarget? =
+            when (name) {
+                "Deprecated" -> if (target == AnnotationUseTarget.Param) null else target
+                else -> target
+            }
+
+    fun convertAnnotation(annotation: PsiAnnotation, newLineAfter: Boolean, target: AnnotationUseTarget? = null): Annotation? {
         val (name, arguments) = convertAnnotationValue(annotation) ?: return null
-        return Annotation(name, arguments, newLineAfter).assignPrototype(annotation)
+        return Annotation(name, arguments, newLineAfter, effectiveAnnotationUseTarget(name.name, target)).assignPrototype(annotation, CommentsAndSpacesInheritance.NO_SPACES)
     }
 
     private fun convertAnnotationValue(annotation: PsiAnnotation): Pair<Identifier, List<Pair<Identifier?, DeferredElement<Expression>>>>? {

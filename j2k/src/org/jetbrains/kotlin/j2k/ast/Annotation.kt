@@ -20,9 +20,20 @@ import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
 import org.jetbrains.kotlin.j2k.buildList
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, DeferredElement<Expression>>>, val newLineAfter: Boolean) : Element() {
+enum class AnnotationUseTarget(val id: String) {
+    File("file"), Param("param"), Get("get"), Set("set")
+}
+
+class Annotation(val name: Identifier,
+                 val arguments: List<Pair<Identifier?, DeferredElement<Expression>>>,
+                 val newLineAfter: Boolean,
+                 val target: AnnotationUseTarget? = null) : Element() {
+
     override fun generateCode(builder: CodeBuilder) {
         builder.append("@")
+        target?.let {
+            builder.append("${it.id}:")
+        }
         if (arguments.isEmpty()) {
             builder.append(name)
         }
