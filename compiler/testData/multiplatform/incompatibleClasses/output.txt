@@ -71,25 +71,19 @@ The following declaration is incompatible because modality is different:
 
 final header class FinalClass
                    ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:16:14: error: header declaration 'NonDataClass' has no implementation in module
-The following declaration is incompatible because modifiers are different (data):
-    public final impl data class NonDataClass
-
-header class NonDataClass(x: Int)
-             ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:18:14: error: header declaration 'C1' has no implementation in module
+compiler/testData/multiplatform/incompatibleClasses/common.kt:15:14: error: header declaration 'C1' has no implementation in module
 The following declaration is incompatible because number of type parameters is different:
     public final impl class C1<A, Extra>
 
 header class C1<A>
              ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:19:14: error: header declaration 'C2' has no implementation in module
+compiler/testData/multiplatform/incompatibleClasses/common.kt:16:14: error: header declaration 'C2' has no implementation in module
 The following declaration is incompatible because declaration-site variances of type parameters are different:
     public final impl class C2<out B>
 
 header class C2<B>
              ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:25:23: error: header declaration 'ExtendsNumber' has no implementation in module
+compiler/testData/multiplatform/incompatibleClasses/common.kt:22:23: error: header declaration 'ExtendsNumber' has no implementation in module
 The following declaration is incompatible because some supertypes are missing in the implementation:
     public abstract impl class ExtendsNumber
 
@@ -128,16 +122,13 @@ open impl class AbstractClass
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:13:10: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 abstract impl class FinalClass
          ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-impl data class NonDataClass(val x: Int)
-^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:18:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl class C1<A, Extra>
 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:19:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl class C2<out B>
 ^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:25:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:22:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl abstract class ExtendsNumber : Any()
 ^
 
