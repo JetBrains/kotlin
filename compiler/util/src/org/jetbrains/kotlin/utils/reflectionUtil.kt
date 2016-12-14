@@ -95,8 +95,7 @@ private fun <T> tryCreateCallableMapping(callable: KCallable<*>, args: Iterator<
                     }
                     res.put(par, cvtRes.v)
                 }
-                // TODO: check if second part of the condition is necessary
-                else if ((par.type.classifier as? KClass<*>)?.let { it.java.isArray || it.qualifiedName == Array<Any>::class.qualifiedName } ?: false) {
+                else if ((par.type.classifier as? KClass<*>)?.java?.isArray ?: false) {
                     // try vararg
                     val cvtVRes = converter.tryConvertVararg(par, arg, argIt)
                     if (cvtVRes is ArgsConverter.Result.Success) {
@@ -197,8 +196,7 @@ private class StringArgsConverter : ArgsConverter<String> {
                 }
 
         try {
-            // TODO: check if second part of the condition is necessary
-            if ((parameter.type.classifier as? KClass<*>)?.let { it.java.isArray || it.qualifiedName == Array<Any>::class.qualifiedName } ?: false) {
+            if ((parameter.type.classifier as? KClass<*>)?.java?.isArray ?: false) {
                 val argsSequence = sequenceOf(firstArg.value) + restArgsIt.asSequence().map { it.value }
                 val primArrayArgCandidate = convertPrimitivesArray(parameter.type, argsSequence)
                 if (primArrayArgCandidate != null)

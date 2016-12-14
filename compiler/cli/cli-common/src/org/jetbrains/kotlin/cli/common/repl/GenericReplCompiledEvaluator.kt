@@ -53,11 +53,12 @@ open class GenericReplCompiledEvaluator(baseClasspath: Iterable<File>,
         fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.replaceFirst("\\.class$".toRegex(), ""))
 
         fun processCompiledClasses() {
+            val expectedClassName = "Line${codeLine.no}"
             compiledClasses.filter { it.path.endsWith(".class") }
                     .forEach {
                         val className = classNameFromPath(it.path)
-                        if (className.fqNameForClassNameWithoutDollars.shortName().asString() == "Line${codeLine.no}") {
-                            mainLineClassName = className.fqNameForClassNameWithoutDollars.asString()
+                        if (className.internalName == expectedClassName || className.internalName.endsWith("/$expectedClassName")) {
+                            mainLineClassName = className.internalName.replace('/', '.')
                         }
                         classLoader.addClass(className, it.bytes)
                     }

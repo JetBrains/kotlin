@@ -102,7 +102,7 @@ class GenericReplTest : TestCase() {
         TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
         TestCase.assertEquals(3, res11e!!.value)
         
-        val codeLine2 = ReplCodeLine(0, "x+4")
+        val codeLine2 = ReplCodeLine(1, "x+4")
         val res2 = repl.replCompiler?.compile(codeLine2, listOf(codeLine1))
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
