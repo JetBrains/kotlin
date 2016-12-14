@@ -4318,6 +4318,57 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class SuspendFunctionType extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInSuspendFunctionType() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("functionVsSuspendFunction.kt")
+                public void testFunctionVsSuspendFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/functionVsSuspendFunction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inference1.kt")
+                public void testInference1() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/inference1.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inference2.kt")
+                public void testInference2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/inference2.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("lambdaInOverriddenValInitializer.kt")
+                public void testLambdaInOverriddenValInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/lambdaInOverriddenValInitializer.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("lambdaInValInitializer.kt")
+                public void testLambdaInValInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/lambdaInValInitializer.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("modifierApplicability.kt")
+                public void testModifierApplicability() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/modifierApplicability.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noInvokeForSuspendFunction.kt")
+                public void testNoInvokeForSuspendFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/noInvokeForSuspendFunction.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
