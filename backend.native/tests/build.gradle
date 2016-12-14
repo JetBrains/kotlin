@@ -461,7 +461,12 @@ task statements0(type: RunKonanTest) {
 task boxing0(type: RunKonanTest) {
     disabled = true
     goldValue = "17\n"
-    source = "runtime/basic/boxing0.kt"
+    source = "codegen/boxing/boxing0.kt"
+}
+
+task boxing1 (type:RunKonanTest) {
+    disabled = true
+    source = "codegen/boxing/boxing1.kt"
 }
 
 task interface0(type: RunKonanTest) {

@@ -1,11 +1,8 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.PhaseManager
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.common.lower.LocalFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.backend.konan.lower.CallableReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -28,6 +25,9 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase("Lower_callables") {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase("Autobox") {
+            Autoboxing(context).runOnFilePostfix(irFile)
         }
     }
 }

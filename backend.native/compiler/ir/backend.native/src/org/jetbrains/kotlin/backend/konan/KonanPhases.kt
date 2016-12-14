@@ -13,6 +13,7 @@ object KonanPhases {
         "Lower_shared_variables" to KonanPhase("Shared Variable Lowering"),
         "Lower_local_functions" to KonanPhase("Local Function Lowering"),
         "Lower_callables" to KonanPhase("Callable references Lowering"),
+        "Autobox" to KonanPhase("Autoboxing of primitive types"),
         "Lower" to KonanPhase("IR Lowering"),
         "Bitcode" to KonanPhase("LLVM BitCode Generation"),
         "RTTI" to KonanPhase("RTTI Generation"),
