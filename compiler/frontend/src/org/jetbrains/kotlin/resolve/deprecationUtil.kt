@@ -88,17 +88,17 @@ private data class DeprecatedByOverridden(private val deprecations: Collection<D
     internal fun additionalMessage() = "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
 }
 
-fun DeclarationDescriptor.getDeprecation(): Deprecation? {
+fun DeclarationDescriptor.getDeprecations(): List<Deprecation> {
     val deprecation = this.getDeprecationByAnnotation()
     if (deprecation != null) {
-        return deprecation
+        return listOf(deprecation)
     }
 
     if (this is CallableMemberDescriptor) {
-        return deprecationByOverridden(this)
+        return listOfNotNull(deprecationByOverridden(this))
     }
 
-    return null
+    return emptyList()
 }
 
 private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation? {
@@ -194,9 +194,8 @@ enum class DeprecationLevelValue {
     WARNING, ERROR, HIDDEN
 }
 
-fun DeclarationDescriptor.isDeprecatedHidden(): Boolean {
-    return getDeprecation()?.deprecationLevel == HIDDEN
-}
+fun DeclarationDescriptor.isDeprecatedHidden(): Boolean =
+        getDeprecations().any { it.deprecationLevel == HIDDEN }
 
 fun DeclarationDescriptor.isHiddenInResolution(): Boolean {
     if (this is FunctionDescriptor && this.isHiddenToOvercomeSignatureClash) return true
