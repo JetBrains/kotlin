@@ -41,11 +41,13 @@ private fun StaticData.staticContainerHeader(): Struct {
     return Struct(header, padding)
 }
 
-internal fun StaticData.createKotlinStringLiteral(value: IrConst<String>): ConstPointer {
-    val name = "kstr:" + value.value.globalHashBase64
-    val elements = value.value.toByteArray(Charsets.UTF_8).map { Int8(it) }
+internal fun StaticData.createKotlinStringLiteral(value: IrConst<String>) = createKotlinStringLiteral(value.value)
 
-    val objRef = createKotlinArray(value.type, elements)
+internal fun StaticData.createKotlinStringLiteral(value: String): ConstPointer {
+    val name = "kstr:" + value.globalHashBase64
+    val elements = value.toByteArray(Charsets.UTF_8).map(::Int8)
+
+    val objRef = createKotlinArray(KonanPlatform.builtIns.stringType, elements)
 
     val res = createAlias(name, objRef)
     LLVMSetLinkage(res.llvm, LLVMLinkage.LLVMWeakAnyLinkage)
