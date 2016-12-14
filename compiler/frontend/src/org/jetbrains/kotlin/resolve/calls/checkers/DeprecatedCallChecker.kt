@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
-import org.jetbrains.kotlin.resolve.getDeprecation
+import org.jetbrains.kotlin.resolve.getDeprecations
 
 object DeprecatedCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -42,13 +42,17 @@ object DeprecatedCallChecker : CallChecker {
         // Objects will be checked by DeprecatedClassifierUsageChecker
         if (targetDescriptor is FakeCallableDescriptorForObject) return
 
-        val deprecation = targetDescriptor.getDeprecation()
+        val deprecations = targetDescriptor.getDeprecations().toMutableList()
 
         // avoid duplicating diagnostic when deprecation for property effectively deprecates setter
-        if (targetDescriptor is PropertySetterDescriptor && targetDescriptor.correspondingProperty.getDeprecation() == deprecation) return
+        if (targetDescriptor is PropertySetterDescriptor) {
+            deprecations -= targetDescriptor.correspondingProperty.getDeprecations()
+        }
 
-        if (deprecation != null) {
-            trace.report(createDeprecationDiagnostic(element, deprecation))
+        if (deprecations.isNotEmpty()) {
+            for (deprecation in deprecations) {
+                trace.report(createDeprecationDiagnostic(element, deprecation))
+            }
         }
         else if (targetDescriptor is PropertyDescriptor && shouldCheckPropertyGetter(element)) {
             targetDescriptor.getter?.let { check(it, trace, element) }

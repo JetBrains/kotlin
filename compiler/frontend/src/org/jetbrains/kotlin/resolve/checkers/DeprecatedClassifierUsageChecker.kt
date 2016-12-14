@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
-import org.jetbrains.kotlin.resolve.getDeprecation
+import org.jetbrains.kotlin.resolve.getDeprecations
 
 class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
     override fun check(
@@ -30,8 +30,8 @@ class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
             element: PsiElement,
             languageVersionSettings: LanguageVersionSettings
     ) {
-        val deprecation = targetDescriptor.getDeprecation()
-        if (deprecation != null) {
+        val deprecations = targetDescriptor.getDeprecations()
+        for (deprecation in deprecations) {
             trace.report(createDeprecationDiagnostic(element, deprecation))
         }
     }
