@@ -6209,6 +6209,99 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/delegationBy")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DelegationBy extends AbstractDiagnosticsTest {
+            @TestMetadata("abstractOverride.kt")
+            public void testAbstractOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/abstractOverride.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInDelegationBy() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegationBy"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("delegationToSubType.kt")
+            public void testDelegationToSubType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/delegationToSubType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("delegationToSubTypeProperty.kt")
+            public void testDelegationToSubTypeProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/delegationToSubTypeProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("delegationToSubTypeWithOverride.kt")
+            public void testDelegationToSubTypeWithOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/delegationToSubTypeWithOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("delegationToSubTypeWithOverrideProperty.kt")
+            public void testDelegationToSubTypeWithOverrideProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/delegationToSubTypeWithOverrideProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("diamond.kt")
+            public void testDiamond() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/diamond.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("explicitOverride.kt")
+            public void testExplicitOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/explicitOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("generic.kt")
+            public void testGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/generic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("sameDelegationInHierarchy.kt")
+            public void testSameDelegationInHierarchy() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/sameDelegationInHierarchy.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("sameDelegationInHierarchy2.kt")
+            public void testSameDelegationInHierarchy2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/sameDelegationInHierarchy2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("severalDelegates.kt")
+            public void testSeveralDelegates() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/severalDelegates.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleNoOverride.kt")
+            public void testSimpleNoOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/simpleNoOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleProp.kt")
+            public void testSimpleProp() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/simpleProp.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/deparenthesize")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
