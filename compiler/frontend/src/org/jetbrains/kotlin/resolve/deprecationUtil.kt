@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import java.util.*
+import org.jetbrains.kotlin.utils.SmartList
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
@@ -90,9 +90,9 @@ private data class DeprecatedByOverridden(private val deprecations: Collection<D
 }
 
 fun DeclarationDescriptor.getDeprecations(): List<Deprecation> {
-    val deprecation = this.getDeprecationByAnnotation()
-    if (deprecation != null) {
-        return listOf(deprecation)
+    val deprecations = this.getDeprecationsByAnnotation()
+    if (deprecations.isNotEmpty()) {
+        return deprecations
     }
 
     if (this is CallableMemberDescriptor) {
@@ -112,11 +112,11 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
 
         visited.add(node)
 
-        val deprecatedAnnotation = node.getDeprecationByAnnotation()
+        val deprecationsByAnnotation = node.getDeprecationsByAnnotation()
         val overriddenDescriptors = node.original.overriddenDescriptors
         when {
-            deprecatedAnnotation != null -> {
-                deprecations.add(deprecatedAnnotation)
+            deprecationsByAnnotation.isNotEmpty() -> {
+                deprecations.addAll(deprecationsByAnnotation)
             }
             overriddenDescriptors.isEmpty() -> {
                 hasUndeprecatedOverridden = true
@@ -135,58 +135,51 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
     return DeprecatedByOverridden(deprecations)
 }
 
-private fun DeclarationDescriptor.getDeprecationByAnnotation(): DeprecatedByAnnotation? {
-    val ownAnnotation = getDeclaredDeprecatedAnnotation(AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this), true)
-    if (ownAnnotation != null)
-        return DeprecatedByAnnotation(ownAnnotation, this)
+private fun DeclarationDescriptor.getDeprecationsByAnnotation(): List<Deprecation> {
+    if (this is TypeAliasConstructorDescriptor) {
+        // Constructor of type alias has no annotations by itself, all its annotations come from the aliased constructor
+        // and from the typealias declaration
+        return underlyingConstructorDescriptor.getDeprecationsByAnnotation() + typeAliasDescriptor.getDeprecationsByAnnotation()
+    }
+
+    val result = SmartList<Deprecation>()
+
+    fun addDeprecationIfPresent(target: DeclarationDescriptor) {
+        val annotation = target.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
+                         ?: target.annotations.findAnnotation(JAVA_DEPRECATED)
+        if (annotation != null) {
+            result.add(DeprecatedByAnnotation(annotation, target))
+        }
+    }
+
+    fun addUseSiteTargetedDeprecationIfPresent(annotatedDescriptor: DeclarationDescriptor, useSiteTarget: AnnotationUseSiteTarget?) {
+        if (useSiteTarget != null) {
+            val annotation = Annotations.findUseSiteTargetedAnnotation(annotatedDescriptor.annotations, useSiteTarget, KotlinBuiltIns.FQ_NAMES.deprecated)
+                             ?: Annotations.findUseSiteTargetedAnnotation(annotatedDescriptor.annotations, useSiteTarget, JAVA_DEPRECATED)
+            if (annotation != null) {
+                result.add(DeprecatedByAnnotation(annotation, this))
+            }
+        }
+    }
+
+    addDeprecationIfPresent(this)
+    addUseSiteTargetedDeprecationIfPresent(this, AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this))
 
     when (this) {
         is ConstructorDescriptor -> {
-            val classDescriptor = containingDeclaration
-            val classAnnotation = classDescriptor.getDeclaredDeprecatedAnnotation()
-            if (classAnnotation != null)
-                return DeprecatedByAnnotation(classAnnotation, classDescriptor)
-            if (this is TypeAliasConstructorDescriptor) {
-                val underlyingConstructorDeprecation = underlyingConstructorDescriptor.getDeprecationByAnnotation()
-                if (underlyingConstructorDeprecation != null)
-                    return underlyingConstructorDeprecation
-            }
+            addDeprecationIfPresent(containingDeclaration)
         }
         is PropertyAccessorDescriptor -> {
-            val propertyDescriptor = correspondingProperty
+            addDeprecationIfPresent(correspondingProperty)
 
-            val target = if (this is PropertyGetterDescriptor) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
-            val useSiteAnnotationOnProperty = propertyDescriptor.getDeclaredDeprecatedAnnotation(target, false)
-            if (useSiteAnnotationOnProperty != null)
-                return DeprecatedByAnnotation(useSiteAnnotationOnProperty, this)
-
-            val propertyAnnotation = propertyDescriptor.getDeclaredDeprecatedAnnotation()
-            if (propertyAnnotation != null)
-                return DeprecatedByAnnotation(propertyAnnotation, propertyDescriptor)
+            addUseSiteTargetedDeprecationIfPresent(
+                    correspondingProperty,
+                    if (this is PropertyGetterDescriptor) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
+            )
         }
     }
-    return null
-}
 
-private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(): AnnotationDescriptor? {
-    return annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
-}
-
-private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(
-        target: AnnotationUseSiteTarget?,
-        findAnnotationsWithoutTarget: Boolean
-): AnnotationDescriptor? {
-    if (findAnnotationsWithoutTarget) {
-        val annotations = getDeclaredDeprecatedAnnotation()
-        if (annotations != null) return annotations
-    }
-
-    if (target != null) {
-        return Annotations.findUseSiteTargetedAnnotation(annotations, target, KotlinBuiltIns.FQ_NAMES.deprecated)
-               ?: Annotations.findUseSiteTargetedAnnotation(annotations, target, JAVA_DEPRECATED)
-    }
-
-    return null
+    return result.distinct()
 }
 
 internal fun createDeprecationDiagnostic(element: PsiElement, deprecation: Deprecation): Diagnostic {

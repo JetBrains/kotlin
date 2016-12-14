@@ -6240,6 +6240,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/unusedImport.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("warningOnConstructorErrorOnClass.kt")
+            public void testWarningOnConstructorErrorOnClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/warningOnConstructorErrorOnClass.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature")
