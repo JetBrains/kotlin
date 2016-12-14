@@ -1,22 +1,17 @@
-class Controller {
-    var wasHandleResultCalled = false
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
-        x.resume("OK")
-        Suspend
-    }
-
-    operator fun handleResult(x: Unit, y: Continuation<Nothing>) {
-        wasHandleResultCalled = true
-    }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
+// WITH_RUNTIME
+// WITH_COROUTINES
+suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    x.resume("OK")
+    SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    val controller = Controller()
-    c(controller).resume(Unit)
+fun builder(c: @Suspend() (() -> Unit)) {
+    var wasHandleResultCalled = false
+    c.startCoroutine(handleResultContinuation {
+        wasHandleResultCalled = true
+    })
 
-    if (!controller.wasHandleResultCalled) throw RuntimeException("fail 1")
+    if (!wasHandleResultCalled) throw RuntimeException("fail 1")
 }
 
 var varWithCustomSetter: String = ""

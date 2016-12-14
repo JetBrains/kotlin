@@ -1,24 +1,26 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 class Controller {
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("K")
-        Suspend
+        SUSPENDED
     }
 
     suspend fun suspendWithArgument(v: String): String = suspendWithCurrentContinuation { x ->
         x.resume(v)
-        Suspend
+        SUSPENDED
     }
 
     suspend fun suspendWithDouble(v: Double): Double = suspendWithCurrentContinuation { x ->
         x.resume(v)
-        Suspend
+        SUSPENDED
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 class A(val first: String, val second: String) {

@@ -50,8 +50,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
-import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
@@ -78,7 +78,6 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
-import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
@@ -128,6 +127,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public final FrameMap myFrameMap;
     public final MethodContext context;
     private final Type returnType;
+    private final Type boxedReturnTypeForCoroutine;
 
     private final CodegenStatementVisitor statementVisitor = new CodegenStatementVisitor(this);
     private final MemberCodegen<?> parentCodegen;
@@ -160,9 +160,35 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.v = new InstructionAdapter(mv);
         this.myFrameMap = frameMap;
         this.context = context;
-        this.returnType = returnType;
+
+        FunctionDescriptor descriptorForCoroutine = getOriginalLambdaDescriptorForCoroutine(context);
+        if (descriptorForCoroutine != null && descriptorForCoroutine.getReturnType() != null) {
+            this.returnType = typeMapper.mapReturnType(descriptorForCoroutine);
+            this.boxedReturnTypeForCoroutine = getBoxedReturnTypeForCoroutine(descriptorForCoroutine);
+        }
+        else {
+            this.returnType = returnType;
+            this.boxedReturnTypeForCoroutine = null;
+        }
+
         this.parentCodegen = parentCodegen;
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
+    }
+
+    @NotNull
+    private Type getBoxedReturnTypeForCoroutine(FunctionDescriptor descriptorForCoroutine) {
+        assert descriptorForCoroutine.getReturnType() != null : "Uninitialized coroutine return type";
+        return AsmUtil.boxType(typeMapper.mapType(descriptorForCoroutine.getReturnType()));
+    }
+
+    @Nullable
+    private static FunctionDescriptor getOriginalLambdaDescriptorForCoroutine(MethodContext context) {
+        if ((context.getParentContext() instanceof ClosureContext) &&
+            (context.getParentContext().closure != null) &&
+            context.getParentContext().closure.isCoroutine()) {
+            return ((ClosureContext) context.getParentContext()).getCoroutineDescriptor();
+        }
+        return null;
     }
 
     static class BlockStackElement {
@@ -569,7 +595,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             statements.add(condition);
 
             //Need to split leave task and condition cause otherwise BranchedValue optimizations wouldn't work
-            leaveTask = generateBlock((KtBlockExpression) body, statements, false, continueLabel, null);
+            leaveTask = generateBlock(statements, false, continueLabel, null);
             conditionValue = leaveTask.getStackValue();
         }
         else {
@@ -1718,10 +1744,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType captureReceiver = closure.getCaptureReceiverType();
         if (captureReceiver != null) {
-            Type asmType = typeMapper.mapType(captureReceiver);
             StackValue capturedReceiver =
                     functionReferenceReceiver != null ? functionReferenceReceiver :
-                    StackValue.local(AsmUtil.getReceiverIndex(context, context.getContextDescriptor()), asmType);
+                    generateExtensionReceiver(unwrapOriginalLambdaDescriptorForCoroutine(context));
             callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
         }
 
@@ -1741,14 +1766,26 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     superClass, putThis && closure.getCaptureThis() == null, callGenerator, /* functionReferenceReceiver = */ null
             );
         }
+
+        if (closure.isCoroutine()) {
+            // resultContinuation
+            v.aconst(null);
+        }
+    }
+
+    @NotNull
+    private static CallableDescriptor unwrapOriginalLambdaDescriptorForCoroutine(@NotNull MethodContext context) {
+        FunctionDescriptor coroutine = getOriginalLambdaDescriptorForCoroutine(context);
+        if (coroutine != null) return coroutine;
+        return context.getFunctionDescriptor();
     }
 
     /* package */ StackValue generateBlock(@NotNull KtBlockExpression expression, boolean isStatement) {
         if (expression.getParent() instanceof KtNamedFunction) {
             // For functions end of block should be end of function label
-            return generateBlock(expression, expression.getStatements(), isStatement, null, context.getMethodEndLabel());
+            return generateBlock(expression.getStatements(), isStatement, null, context.getMethodEndLabel());
         }
-        return generateBlock(expression, expression.getStatements(), isStatement, null, null);
+        return generateBlock(expression.getStatements(), isStatement, null, null);
     }
 
     @NotNull
@@ -1763,7 +1800,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private StackValueWithLeaveTask generateBlock(
-            @NotNull KtBlockExpression block,
             @NotNull List<KtExpression> statements,
             boolean isStatement,
             @Nullable Label labelBeforeLastExpression,
@@ -1800,13 +1836,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StackValue statementResult = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
 
             if (!iterator.hasNext()) {
-                StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, possiblyLabeledStatement);
-                if (handleResultValue != null) {
-                    blockResult = handleResultValue;
-                }
-                else {
-                    blockResult = statementResult;
-                }
+                blockResult = statementResult;
             }
             else {
                 statementResult.put(Type.VOID_TYPE, v);
@@ -1816,13 +1846,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (statements.isEmpty()) {
-            StackValue handleResultValue = genControllerHandleResultForLastStatementInCoroutine(block, null);
-            if (handleResultValue != null) {
-                blockResult = handleResultValue;
-            }
-            else {
-                blockResult = StackValue.none();
-            }
+            blockResult = StackValue.none();
         }
 
         assert blockResult != null : "Block result should be initialized in the loop or the condition above";
@@ -1842,106 +1866,21 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
-    private StackValue genControllerHandleResultForLastStatementInCoroutine(
-            @NotNull KtBlockExpression block,
-            @Nullable KtExpression lastStatement
-    ) {
-        if (!(block.getParent() instanceof KtFunctionLiteral)) return null;
-        KtFunctionLiteral functionLiteral = (KtFunctionLiteral) block.getParent();
-
-        return genControllerHandleResultCallIfNeeded(functionLiteral, lastStatement);
-    }
-
-    @Nullable
-    private StackValue genControllerHandleResultCallIfNeeded(@NotNull KtExpression callOwner, @Nullable KtExpression returnValue) {
-        ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(RETURN_HANDLE_RESULT_RESOLVED_CALL, callOwner);
-
-        if (resolvedCall != null) {
-            assert resolvedCall.getValueArgumentsByIndex() != null : "Arguments were not resolved for call element: " + callOwner.getText();
-            KtExpression argumentExpression =
-                    resolvedCall.getValueArgumentsByIndex().get(0).getArguments().get(0).getArgumentExpression();
-
-            final StackValue putValueBeforeCall;
-            // This condition may be true in cases like return-statement without value or for last statement in a lambda block that
-            // has a type different from Unit, while 'handleResult' method accepts exactly the latter
-            // (see org.jetbrains.kotlin.coroutines.resolveCoroutineHandleResultCallIfNeeded for clarifications)
-            if (argumentExpression != returnValue) {
-                assert KotlinBuiltIns.isUnit(resolvedCall.getResultingDescriptor().getValueParameters().get(0).getType())
-                        : "If handleResult argument is different from returnValue, handleResult's first parameter must accept Unit, but " +
-                          resolvedCall.getResultingDescriptor() + " was found";
-
-                // generate last statement in the coroutine lambda
-                putValueBeforeCall = returnValue != null ? genStatement(returnValue) : null;
-
-                // Here 'argumentExpression' is a special fake one that used as an expression of Unit type
-                // when 'handleResult' call was resolved
-                tempVariables.put(argumentExpression, StackValue.unit());
-            }
-            else {
-                putValueBeforeCall = null;
-            }
-
-            tempVariables.put(
-                    resolvedCall.getValueArgumentsByIndex().get(1).getArguments().get(0).getArgumentExpression(),
-                    genCoroutineInstanceValueFromResolvedCall(resolvedCall));
-
-
-            final StackValue handleResultCallValue = invokeFunction(resolvedCall, StackValue.none());
-            if (putValueBeforeCall == null) return handleResultCallValue;
-
-            return new StackValue(handleResultCallValue.type) {
-                @Override
-                public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-                    putValueBeforeCall.put(type, v);
-                    handleResultCallValue.putSelector(type, v);
-                }
-
-                @Override
-                public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
-                    handleResultCallValue.putReceiver(v, isRead);
-                }
-            };
-        }
-        return null;
-    }
-
-    @NotNull
-    public StackValue genCoroutineInstanceValueFromResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
-        return getCoroutineInstanceValueByReceiver(getControllerReceiverFromResolvedCall(resolvedCall));
-    }
-
-    @NotNull
-    private StackValue getCoroutineInstanceValueByReceiver(
-            @NotNull ExtensionReceiver descriptor
-    ) {
-        ClassDescriptor coroutineClassDescriptor =
-                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, descriptor.getDeclarationDescriptor());
-        assert coroutineClassDescriptor != null : "Coroutine class descriptor should not be null";
-        return StackValue.thisOrOuter(this, coroutineClassDescriptor, false, false);
-    }
-
-    @Nullable
     private StackValue getCoroutineInstanceValueForSuspensionPoint(@NotNull ResolvedCall<?> resolvedCall) {
-        CoroutineReceiverValue coroutineReceiverValue =
-                bindingContext.get(COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, resolvedCall.getCall());
+        CallableDescriptor enclosingSuspendLambdaForSuspensionPoint =
+                bindingContext.get(ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, resolvedCall.getCall());
 
-        if (coroutineReceiverValue == null) return null;
-
-        return getCoroutineInstanceValueByReceiver(coroutineReceiverValue);
+        if (enclosingSuspendLambdaForSuspensionPoint == null) return null;
+        return genCoroutineInstanceByLambda(enclosingSuspendLambdaForSuspensionPoint);
     }
 
-    private static ExtensionReceiver getControllerReceiverFromResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
-        ReceiverValue controllerReceiver =
-                resolvedCall.getDispatchReceiver() != null
-                ? resolvedCall.getDispatchReceiver()
-                : resolvedCall.getExtensionReceiver();
+    @NotNull
+    private StackValue genCoroutineInstanceByLambda(@NotNull CallableDescriptor suspendLambda) {
+        ClassDescriptor suspendLambdaClassDescriptor =
+                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, suspendLambda);
+        assert suspendLambdaClassDescriptor != null : "Coroutine class descriptor should not be null";
 
-        assert controllerReceiver != null : "Both dispatch and extension receivers are null for handleResult/suspend to " + resolvedCall.getResultingDescriptor();
-        assert controllerReceiver instanceof ExtensionReceiver
-                : "Argument for handleResult call to " + resolvedCall.getResultingDescriptor() +
-                  " should be a coroutine receiver parameter, but " + controllerReceiver + " found";
-
-        return (ExtensionReceiver) controllerReceiver;
+        return StackValue.thisOrOuter(this, suspendLambdaClassDescriptor, false, false);
     }
 
     @NotNull
@@ -2204,7 +2143,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
-    public StackValue visitReturnExpression(@NotNull final KtReturnExpression expression, StackValue receiver) {
+    public StackValue visitReturnExpression(@NotNull final KtReturnExpression expression, final StackValue receiver) {
         return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter adapter) {
@@ -2221,13 +2160,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : ExpressionCodegen.this.returnType;
                 StackValue valueToReturn = returnedExpression != null ? gen(returnedExpression) : null;
-                StackValue handleResultValue = genControllerHandleResultCallIfNeeded(expression, returnedExpression);
 
-                if (handleResultValue != null) {
-                    handleResultValue.put(Type.VOID_TYPE, v);
-                    returnType = Type.VOID_TYPE;
-                }
-                else if (returnedExpression != null && valueToReturn != null) {
+                if (returnedExpression != null && valueToReturn != null) {
                     putStackValue(returnedExpression, returnType, valueToReturn);
                 }
 
@@ -2235,9 +2169,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 generateFinallyBlocksIfNeeded(returnType, afterReturnLabel);
 
                 if (isNonLocalReturn) {
+                    if (nonLocalReturn.boxedCoroutineReturnType != null && !nonLocalReturn.boxedCoroutineReturnType.equals(returnType)) {
+                        StackValue.coerce(nonLocalReturn.returnType, nonLocalReturn.boxedCoroutineReturnType, v);
+                        returnType = nonLocalReturn.boxedCoroutineReturnType;
+                    }
+
                     InlineCodegenUtil.generateGlobalReturnFlag(v, nonLocalReturn.labelName);
+                    v.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
                 }
-                v.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
+                else {
+                    emitLocalReturnInsn();
+                }
+
                 v.mark(afterReturnLabel);
                 return Unit.INSTANCE;
             }
@@ -2270,7 +2213,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     FunctionDescriptor containingFunction =
                             BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
-                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL);
+                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL, null);
                 } else {
                     //local
                     return null;
@@ -2282,7 +2225,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 DeclarationDescriptor elementDescriptor = typeMapper.getBindingContext().get(DECLARATION_TO_DESCRIPTOR, element);
                 assert element != null : "Expression should be not null " + expression.getText();
                 assert elementDescriptor != null : "Descriptor should be not null: " + element.getText();
-                return new NonLocalReturnInfo(typeMapper.mapReturnType((CallableDescriptor) elementDescriptor), expression.getLabelName());
+                Type boxedCoroutineReturnType =
+                        elementDescriptor instanceof AnonymousFunctionDescriptor
+                            && ((AnonymousFunctionDescriptor) elementDescriptor).isCoroutine()
+                        ? getBoxedReturnTypeForCoroutine((FunctionDescriptor) elementDescriptor)
+                        : null;
+                return new NonLocalReturnInfo(
+                        typeMapper.mapReturnType((CallableDescriptor) elementDescriptor), expression.getLabelName(),
+                        boxedCoroutineReturnType
+                );
             }
         }
         return null;
@@ -2307,6 +2258,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 StackValue.none().put(returnType, v);
             }
 
+            emitLocalReturnInsn();
+        }
+    }
+
+    private void emitLocalReturnInsn() {
+        if (boxedReturnTypeForCoroutine != null && !boxedReturnTypeForCoroutine.equals(returnType)) {
+            StackValue.coerce(returnType, boxedReturnTypeForCoroutine, v);
+            v.areturn(boxedReturnTypeForCoroutine);
+        }
+        else {
             v.areturn(returnType);
         }
     }
@@ -3098,46 +3059,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     private StackValue generateExtensionReceiver(@NotNull CallableDescriptor descriptor) {
-        KotlinType coroutineControllerType = CoroutineUtilKt.getControllerTypeIfCoroutine(descriptor);
-        if (coroutineControllerType != null) {
-            ClassDescriptor classDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, descriptor);
-            assert classDescriptor != null : "class descriptor for coroutine " + descriptor + " should not be null";
-
-            final StackValue coroutineReceiver = StackValue.thisOrOuter(this, classDescriptor, /* isSuper =*/ false, /* castReceiver */ false);
-
-            StackValue controllerValue;
-            if (InlineUtil.checkNonLocalReturnUsage(
-                    context.getFunctionDescriptor(),
-                    descriptor, DescriptorToSourceUtils.descriptorToDeclaration(descriptor), bindingContext
-            )) {
-                // This branch should work for major part of cases and it's needed mostly for optimizations purpose
-                // else branch must have just the same semantics
-                controllerValue = StackValue.field(
-                        FieldInfo.createForHiddenField(
-                                AsmTypes.COROUTINE_IMPL,
-                                AsmTypes.OBJECT_TYPE,
-                                CoroutineCodegenUtilKt.COROUTINE_CONTROLLER_FIELD_NAME
-                        ),
-                        coroutineReceiver
-                );
-            }
-            else {
-                controllerValue = StackValue.functionCall(AsmTypes.OBJECT_TYPE, new Function1<InstructionAdapter, Unit>() {
-                    @Override
-                    public Unit invoke(InstructionAdapter adapter) {
-                        coroutineReceiver.put(AsmTypes.COROUTINE_IMPL, adapter);
-                        adapter.invokevirtual(
-                                AsmTypes.COROUTINE_IMPL.getInternalName(),
-                                CoroutineCodegenUtilKt.COROUTINE_CONTROLLER_GETTER_NAME,
-                                "()" + AsmTypes.OBJECT_TYPE,
-                                false
-                        );
-                        return Unit.INSTANCE;
-                    }
-                });
-            }
-
-            return StackValue.coercion(controllerValue, typeMapper.mapType(coroutineControllerType));
+        if (myFrameMap.getIndex(descriptor.getExtensionReceiverParameter()) != -1) {
+            return StackValue.local(
+                    myFrameMap.getIndex(descriptor.getExtensionReceiverParameter()),
+                    typeMapper.mapType(descriptor.getExtensionReceiverParameter())
+            );
         }
 
         return context.generateReceiver(descriptor, state, false);
@@ -4784,13 +4710,15 @@ The "returned" value of try expression with no finally is either the last expres
 
     private static class NonLocalReturnInfo {
 
-        final Type returnType;
+        private final Type returnType;
 
-        final String labelName;
+        private final String labelName;
+        private final Type boxedCoroutineReturnType;
 
-        private NonLocalReturnInfo(Type type, String name) {
+        private NonLocalReturnInfo(@NotNull Type type, @NotNull String name, @Nullable Type boxedCoroutineReturnType) {
             returnType = type;
             labelName = name;
+            this.boxedCoroutineReturnType = boxedCoroutineReturnType;
         }
     }
 

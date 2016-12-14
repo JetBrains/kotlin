@@ -457,9 +457,18 @@ public class AsmUtil {
     }
 
     public static int genAssignInstanceFieldFromParam(FieldInfo info, int index, InstructionAdapter iv) {
+        return genAssignInstanceFieldFromParam(info, index, iv, 0);
+    }
+
+    public static int genAssignInstanceFieldFromParam(
+            FieldInfo info,
+            int index,
+            InstructionAdapter iv,
+            int ownerIndex
+    ) {
         assert !info.isStatic();
         Type fieldType = info.getFieldType();
-        iv.load(0, info.getOwnerType());//this
+        iv.load(ownerIndex, info.getOwnerType());//this
         iv.load(index, fieldType); //param
         iv.visitFieldInsn(PUTFIELD, info.getOwnerInternalName(), info.getFieldName(), fieldType.getDescriptor());
         index += fieldType.getSize();

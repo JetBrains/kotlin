@@ -1,15 +1,17 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 class Controller {
     var i = 0
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume((i++).toString())
-        Suspend
+        SUSPENDED
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 fun box(): String {

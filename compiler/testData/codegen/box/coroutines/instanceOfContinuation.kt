@@ -1,24 +1,25 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
 // WITH_REFLECT
 
 class Controller {
     suspend fun runInstanceOf(): Boolean = suspendWithCurrentContinuation { x ->
         val y: Any = x
         x.resume(x is Continuation<*>)
-        Suspend
+        SUSPENDED
     }
 
     suspend fun runCast(): Boolean = suspendWithCurrentContinuation { x ->
         val y: Any = x
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
-        Suspend
+        SUSPENDED
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 fun box(): String {

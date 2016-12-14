@@ -16,16 +16,21 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
 
@@ -65,6 +70,26 @@ fun <T : Any> mapType(
         descriptorTypeWriter: JvmDescriptorTypeWriter<T>?,
         writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3
 ): T {
+    if (kotlinType.isSuspendFunctionType) {
+        return mapType(
+                createFunctionType(
+                        kotlinType.builtIns,
+                        FilteredAnnotations(kotlinType.annotations) { it != DescriptorUtils.SUSPEND_ANNOTATION_FQ_NAME },
+                        kotlinType.getReceiverTypeFromFunctionType(),
+                        kotlinType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
+                            KotlinTypeFactory.simpleType(
+                                    Annotations.EMPTY, kotlinType.builtIns.continuationClassDescriptor.typeConstructor,
+                                    listOf(kotlinType.getReturnTypeFromFunctionType().asTypeProjection()), nullable = false
+                            ),
+                        // TODO: names
+                        null,
+                        kotlinType.builtIns.nullableAnyType
+                ),
+                factory, mode, typeMappingConfiguration, descriptorTypeWriter,
+                writeGenericType
+        )
+    }
+
     mapBuiltInType(kotlinType, factory, typeMappingConfiguration)?.let { builtInType ->
         val jvmType = factory.boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
         writeGenericType(kotlinType, jvmType, mode)

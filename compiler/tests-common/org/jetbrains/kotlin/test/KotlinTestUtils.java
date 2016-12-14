@@ -92,6 +92,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
 
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
@@ -639,6 +640,37 @@ public class KotlinTestUtils {
                                                              " to " +
                                                              (expectedText.length() - 1);
         }
+
+        if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
+            testFiles.add(factory.createFile(null,
+                                             "CoroutineUtil.kt",
+                                             "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
+                                             "    override fun resumeWithException(exception: Throwable) {\n" +
+                                             "        throw exception\n" +
+                                             "    }\n" +
+                                             "\n" +
+                                             "    override fun resume(data: T) = x(data)\n" +
+                                             "}\n" +
+                                             "\n" +
+                                             "fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {\n" +
+                                             "    override fun resumeWithException(exception: Throwable) {\n" +
+                                             "        x(exception)\n" +
+                                             "    }\n" +
+                                             "\n" +
+                                             "    override fun resume(data: Any?) { }\n" +
+                                             "}\n" +
+                                             "\n" +
+                                             "object EmptyContinuation : Continuation<Any?> {\n" +
+                                             "    override fun resume(data: Any?) {}\n" +
+                                             "\n" +
+                                             "    override fun resumeWithException(exception: Throwable) {\n" +
+                                             "        throw exception\n" +
+                                             "    }\n" +
+                                             "}",
+                                             directives
+            ));
+        }
+
         return testFiles;
     }
 

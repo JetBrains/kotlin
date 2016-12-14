@@ -144,12 +144,6 @@ public class AdditionalCoroutineBlackBoxCodegenTestGenerated extends AbstractAdd
         doTest(fileName);
     }
 
-    @TestMetadata("lambdaParameters.kt")
-    public void testLambdaParameters() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lambdaParameters.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("lastExpressionIsLoop.kt")
     public void testLastExpressionIsLoop() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
@@ -171,12 +165,6 @@ public class AdditionalCoroutineBlackBoxCodegenTestGenerated extends AbstractAdd
     @TestMetadata("lastUnitExpression.kt")
     public void testLastUnitExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lastUnitExpression.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("manualContinuationImpl.kt")
-    public void testManualContinuationImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/manualContinuationImpl.kt");
         doTest(fileName);
     }
 
@@ -332,6 +320,71 @@ public class AdditionalCoroutineBlackBoxCodegenTestGenerated extends AbstractAdd
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("breakFinally.kt")
+        public void testBreakFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/breakFinally.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("breakStatement.kt")
+        public void testBreakStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/breakStatement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doWhileStatement.kt")
+        public void testDoWhileStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forContinue.kt")
+        public void testForContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/forContinue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forStatement.kt")
+        public void testForStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/forStatement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifStatement.kt")
+        public void testIfStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnFromFinally.kt")
+        public void testReturnFromFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("switchLikeWhen.kt")
+        public void testSwitchLikeWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/switchLikeWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("throwFromCatch.kt")
+        public void testThrowFromCatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/throwFromCatch.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("throwInTryWithHandleResult.kt")
+        public void testThrowInTryWithHandleResult() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/throwInTryWithHandleResult.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whileStatement.kt")
+        public void testWhileStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/whileStatement.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")

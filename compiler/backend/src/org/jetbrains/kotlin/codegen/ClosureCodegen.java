@@ -77,12 +77,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     private final FunctionDescriptor functionReferenceTarget;
     private final FunctionGenerationStrategy strategy;
     protected final CalculatedClosure closure;
-    private final Type asmType;
-    private final int visibilityFlag;
+    protected final Type asmType;
+    protected final int visibilityFlag;
     private final boolean shouldHaveBoundReferenceReceiver;
 
     private Method constructor;
-    private Type superClassAsmType;
+    protected Type superClassAsmType;
 
     public ClosureCodegen(
             @NotNull GenerationState state,
@@ -406,7 +406,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     }
 
     @NotNull
-    private Method generateConstructor() {
+    protected Method generateConstructor() {
         List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, asmType);
 
         Type[] argTypes = fieldListToTypeArray(args);
@@ -430,9 +430,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             String superClassConstructorDescriptor;
             if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) || superClassAsmType.equals(COROUTINE_IMPL)) {
-                int arity = funDescriptor.getValueParameters().size();
-                if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
-                if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
+                int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {
                     CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(iv, boundReferenceReceiverParameterIndex, boundReferenceReceiverType);
@@ -453,6 +451,13 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             FunctionCodegen.endVisit(iv, "constructor", element);
         }
         return constructor;
+    }
+
+    protected int calculateArity() {
+        int arity = funDescriptor.getValueParameters().size();
+        if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
+        if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
+        return arity;
     }
 
     @NotNull

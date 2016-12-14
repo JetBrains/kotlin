@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 // MODULE: controller
 // FILE: controller.kt
 package lib
@@ -6,7 +8,7 @@ package lib
 class Controller {
     suspend fun String.suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume(this)
-        Suspend
+        SUSPENDED
     }
 
     inline suspend fun String.inlineSuspendHere(): String = suspendHere()
@@ -26,8 +28,8 @@ suspend fun Controller.localSuspendExtension(v: String) = v.suspendHere()
 
 inline suspend fun Controller.localInlineSuspendExtension(v: String) = v.inlineSuspendHere()
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 fun box(): String {

@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
 var globalResult = ""
 var wasCalled = false
 class Controller {
@@ -9,7 +10,7 @@ class Controller {
             x.resume(v)
         }
 
-        Suspend
+        SUSPENDED
     }
 
     suspend fun suspendWithException(e: Exception): String = suspendWithCurrentContinuation { x ->
@@ -17,25 +18,21 @@ class Controller {
             x.resumeWithException(e)
         }
 
-        Suspend
+        SUSPENDED
     }
 
-    operator fun handleResult(x: String, c: Continuation<Nothing>) {
-        globalResult = x
-    }
-
-    fun run(c: Controller.() -> Continuation<Unit>) {
-        c(this).resume(Unit)
+    fun run(c: @Suspend() (Controller.() -> String)) {
+        c.startCoroutine(this, handleResultContinuation {
+            globalResult = it
+        })
         while (postponedActions.isNotEmpty()) {
             postponedActions[0]()
             postponedActions.removeAt(0)
         }
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(expectException: Boolean = false, coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(expectException: Boolean = false, c: @Suspend() (Controller.() -> String)) {
     val controller = Controller()
 
     globalResult = "#"

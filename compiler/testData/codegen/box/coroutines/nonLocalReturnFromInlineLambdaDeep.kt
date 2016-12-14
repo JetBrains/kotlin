@@ -1,22 +1,19 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
 
 class Controller {
     var cResult = 0
     suspend fun suspendHere(v: Int): Int = suspendWithCurrentContinuation { x ->
         x.resume(v * 2)
-        Suspend
+        SUSPENDED
     }
-
-    operator fun handleResult(x: Int, y: Continuation<Nothing>) {
-        cResult = x
-    }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): Controller {
+fun builder(c: @Suspend() (Controller.() -> Int)): Controller {
     val controller = Controller()
-    c(controller).resume(Unit)
+    c.startCoroutine(controller, handleResultContinuation {
+        controller.cResult = it
+    })
 
     return controller
 }

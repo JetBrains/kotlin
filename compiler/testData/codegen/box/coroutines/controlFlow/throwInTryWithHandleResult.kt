@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// NO_INTERCEPT_RESUME_TESTS
+// WITH_COROUTINES
 
 class Controller {
     var result = ""
@@ -7,17 +7,19 @@ class Controller {
     suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { c ->
         result += "suspend($value);"
         c.resume(value)
-        Suspend
-    }
-
-    operator fun handleException(exception: Throwable, c: Continuation<Nothing>) {
-        result += "ignoreCaught(${exception.message});"
+        SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
+fun builder(c: @Suspend() (Controller.() -> Unit)): String {
     val controller = Controller()
-    c(controller).resume(Unit)
+    c.startCoroutine(controller, object : Continuation<Unit> {
+        override fun resume(data: Unit) {}
+
+        override fun resumeWithException(exception: Throwable) {
+            controller.result += "ignoreCaught(${exception.message});"
+        }
+    })
     return controller.result
 }
 

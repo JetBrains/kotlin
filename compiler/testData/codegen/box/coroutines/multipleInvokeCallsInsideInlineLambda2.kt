@@ -1,9 +1,11 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 class Controller {
     var lastSuspension: Continuation<String>? = null
     var result = "fail"
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         lastSuspension = x
-        Suspend
+        SUSPENDED
     }
 
     fun hasNext() = lastSuspension != null
@@ -16,26 +18,26 @@ class Controller {
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
     val controller1 = Controller()
     val controller2 = Controller()
 
-    c(controller1).resume(Unit)
-    c(controller2).resume(Unit)
+    c.startCoroutine(controller1, EmptyContinuation)
+    c.startCoroutine(controller2, EmptyContinuation)
 
     runControllers(controller1, controller2)
 }
 
-fun builder2(coroutine c: Controller.(Long, String) -> Continuation<Unit>) {
-    val controller1 = Controller()
-    val controller2 = Controller()
-
-    c(controller1, 1234567890123456789L, "Q").resume(Unit)
-    c(controller2, 1234567890123456789L, "Q").resume(Unit)
-
-    runControllers(controller1, controller2)
-}
-
+// TODO: additional parameters are not supported yet
+//fun builder2(coroutine c: Controller.(Long, String) -> Continuation<Unit>) {
+//    val controller1 = Controller()
+//    val controller2 = Controller()
+//
+//    c(controller1, 1234567890123456789L, "Q").resume(Unit)
+//    c(controller2, 1234567890123456789L, "Q").resume(Unit)
+//
+//    runControllers(controller1, controller2)
+//}
 
 private fun runControllers(controller1: Controller, controller2: Controller) {
     while (controller1.hasNext()) {
@@ -83,28 +85,6 @@ fun box(): String {
                 suspendHere()
                 result = "OK"
             }
-
-            // no suspension
-            builder2 { a, b ->
-                if (a != 1234567890123456789L || b != "Q" ) return@builder2
-                result = x + y
-            }
-
-            // 1 suspension
-            builder2 { a, b ->
-                if (a != 1234567890123456789L || b != "Q" ) return@builder2
-                if (suspendHere() != "56") return@builder2
-                result = x + y
-            }
-
-            // 2 suspensions
-            builder2 { a, b ->
-                if (a != 1234567890123456789L || b != "Q" ) return@builder2
-                if (suspendHere() != "56") return@builder2
-                suspendHere()
-                result = x + y
-            }
-
         }()
     }
 

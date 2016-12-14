@@ -1,20 +1,19 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
 // TARGET_BACKEND: JVM
 // NO_INTERCEPT_RESUME_TESTS
-class Controller {
-    suspend fun suspendHere(): Unit = suspendWithCurrentContinuation { x ->
-        x.resume(Unit)
-        Suspend
-    }
+suspend fun suspendHere(): Unit = suspendWithCurrentContinuation { x ->
+    x.resume(Unit)
+    SUSPENDED
 }
 
-fun builder1(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder1(c: @Suspend() (() -> Unit)) {
     (c as Continuation<Unit>).resume(Unit)
 }
 
-fun builder2(coroutine c: Controller.() -> Continuation<Unit>) {
-    val continuation = c(Controller())
-    val declaredField = continuation.javaClass.superclass.getDeclaredField("label")
+fun builder2(c: @Suspend() (() -> Unit)) {
+    val continuation = c.createCoroutine(EmptyContinuation)
+    val declaredField = continuation.javaClass.superclass.superclass.getDeclaredField("label")
     declaredField.setAccessible(true)
     declaredField.set(continuation, -3)
     continuation.resume(Unit)
@@ -27,8 +26,7 @@ fun box(): String {
             suspendHere()
         }
         return "fail 1"
-    } catch (e: java.lang.IllegalStateException) {
-        if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 2: ${e.message!!}"
+    } catch (e: kotlin.KotlinNullPointerException) {
     }
 
     try {
@@ -47,8 +45,7 @@ fun box(): String {
             result = "fail 5"
         }
         return "fail 6"
-    } catch (e: java.lang.IllegalStateException) {
-        if (e.message != "call to 'resume' before 'invoke' with coroutine") return "fail 7: ${e.message!!}"
+    } catch (e: kotlin.KotlinNullPointerException) {
     }
 
     try {

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 // MODULE: controller
 // FILE: controller.kt
 package lib
@@ -5,7 +7,7 @@ package lib
 class Controller {
     suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume("OK")
-        Suspend
+        SUSPENDED
     }
 
     // INTERCEPT_RESUME_PLACEHOLDER
@@ -15,8 +17,8 @@ class Controller {
 // FILE: main.kt
 import lib.*
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 fun box(): String {

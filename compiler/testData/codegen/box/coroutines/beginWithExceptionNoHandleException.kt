@@ -1,14 +1,10 @@
 // WITH_RUNTIME
-class Controller {
-    suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x ->}
+// WITH_COROUTINES
+suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x ->}
 
-    // INTERCEPT_RESUME_PLACEHOLDER
-}
-
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(c: @Suspend() (() -> Unit)) {
     try {
-        val controller = Controller()
-        c(controller).resumeWithException(RuntimeException("OK"))
+        c.createCoroutine(EmptyContinuation).resumeWithException(RuntimeException("OK"))
     }
     catch(e: Exception) {
         if (e?.message != "OK") {

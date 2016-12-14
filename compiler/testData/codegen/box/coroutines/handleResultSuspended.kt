@@ -1,22 +1,20 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 class Controller {
     var log = ""
 
     suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { x ->
         log += "suspend($value);"
         x.resume(value)
-        Suspend
+        SUSPENDED
     }
-
-    operator fun handleResult(value: String, y: Continuation<Nothing>) {
-        log += "return($value);"
-    }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
+fun builder(c: @Suspend() (Controller.() -> String)): String {
     val controller = Controller()
-    c(controller).resume(Unit)
+    c.startCoroutine(controller, handleResultContinuation {
+        controller.log += "return($it);"
+    })
     return controller.log
 }
 

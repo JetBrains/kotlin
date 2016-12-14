@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
 // WITH_REFLECT
 // CHECK_NOT_CALLED: suspendInline_61zpoe$
 // CHECK_NOT_CALLED: suspendInline_6r51u9$
@@ -10,7 +11,7 @@ class Controller {
 
     suspend inline fun suspendInline(v: String): String = suspendWithCurrentContinuation { x ->
         withValue(v, x)
-        Suspend
+        SUSPENDED
     }
 
     suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())
@@ -20,8 +21,8 @@ class Controller {
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 class OK

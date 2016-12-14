@@ -1,17 +1,13 @@
-class Controller {
+// WITH_RUNTIME
+// WITH_COROUTINES
+
+fun builder(c: @Suspend() (() -> Int)): Int {
     var res = 0
-    operator fun handleResult(x: Int, y: Continuation<Nothing>) {
-        res = x
-    }
+    c.startCoroutine(handleResultContinuation {
+        res = it
+    })
 
-    // INTERCEPT_RESUME_PLACEHOLDER
-}
-
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): Int {
-    val controller = Controller()
-    c(controller).resume(Unit)
-
-    return controller.res
+    return res
 }
 
 fun box(): String {

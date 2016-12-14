@@ -18,20 +18,18 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.SUSPEND_WITH_CURRENT_CONTINUATION_NAME
-import org.jetbrains.kotlin.backend.common.findInterceptResume
 import org.jetbrains.kotlin.backend.common.getBuiltInSuspendWithCurrentContinuation
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -42,13 +40,14 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 // These classes do not actually exist at runtime
@@ -61,8 +60,6 @@ const val HANDLE_EXCEPTION_MARKER_NAME = "handleException"
 const val HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME = "handleExceptionArgument"
 const val ACTUAL_COROUTINE_START_MARKER_NAME = "actualCoroutineStart"
 
-const val COROUTINE_CONTROLLER_FIELD_NAME = "_controller"
-const val COROUTINE_CONTROLLER_GETTER_NAME = "getController"
 const val COROUTINE_LABEL_FIELD_NAME = "label"
 
 data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeContinuationExpression: KtExpression)
@@ -188,7 +185,7 @@ fun createResolvedCallForInterceptResume(
 }
 
 fun ResolvedCall<*>.isSuspensionPoint(bindingContext: BindingContext) =
-        bindingContext[BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, call] != null
+        bindingContext[BindingContext.ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, call] != null
 
 // Suspend functions have irregular signatures on JVM, containing an additional last parameter with type `Continuation<return-type>`,
 // and return type Any?
@@ -237,12 +234,6 @@ private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction() =
                 arguments = listOf(returnType!!.asTypeProjection())
         )
 
-val KotlinBuiltIns.continuationClassDescriptor get() = getBuiltInClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)
-
-fun KotlinType.hasInlineInterceptResume() = findInterceptResume()?.isInline == true
-
-fun KotlinType.hasNoinlineInterceptResume() = findInterceptResume()?.isInline == false
-
 fun FunctionDescriptor.isBuiltInSuspendWithCurrentContinuation(): Boolean {
     if (name != SUSPEND_WITH_CURRENT_CONTINUATION_NAME) return false
 
@@ -286,3 +277,10 @@ fun createMethodNodeForSuspendWithCurrentContinuation(
 
 fun CallableDescriptor?.unwrapInitialDescriptorForSuspendFunction() =
         (this as? SimpleFunctionDescriptor)?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) ?: this
+
+fun InstructionAdapter.loadSuspendMarker() = invokestatic(
+        AsmTypes.COROUTINES_SUSPEND_MARKER_OWNER.internalName,
+        "getSUSPENDED",
+        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
+        false
+)

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 // NO_INTERCEPT_RESUME_TESTS
 
 class Controller {
@@ -7,26 +9,40 @@ class Controller {
     suspend fun <T> suspendWithValue(value: T): T = suspendWithCurrentContinuation { continuation ->
         log += "suspend($value);"
         continuation.resume(value)
-        Suspend
+        SUSPENDED
     }
 
     suspend fun suspendWithException(value: String): Unit = suspendWithCurrentContinuation { continuation ->
         log += "error($value);"
         continuation.resumeWithException(RuntimeException(value))
-        Suspend
-    }
-
-    operator fun interceptResume(block: () -> Unit) {
-        var id = resumeIndex++
-        log += "before $id;"
-        block()
-        log += "after $id;"
+        SUSPENDED
     }
 }
 
-fun test(coroutine c: Controller.() -> Continuation<Unit>): String {
+fun test(c: @Suspend() (Controller.() -> Unit)): String {
     val controller = Controller()
-    c(controller).resume(Unit)
+    c.startCoroutine(controller, EmptyContinuation, object: ResumeInterceptor {
+        private fun interceptResume(block: () -> Unit) {
+            val id = controller.resumeIndex++
+            controller.log += "before $id;"
+            block()
+            controller.log += "after $id;"
+        }
+
+        override fun <P> interceptResume(data: P, continuation: Continuation<P>): Boolean {
+            interceptResume {
+                continuation.resume(data)
+            }
+            return true
+        }
+
+        override fun interceptResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean {
+            interceptResume {
+                continuation.resumeWithException(exception)
+            }
+            return true
+        }
+    })
     return controller.log
 }
 

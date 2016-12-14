@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// NO_INTERCEPT_RESUME_TESTS
+// WITH_COROUTINES
 
 // Does not work in JVM backend, probably due to bug. It's not clear which behaviour is right.
 // TODO: fix the bug and enable for JVM backend
@@ -11,17 +11,15 @@ class Controller {
     suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { c ->
         result += "suspend($value);"
         c.resume(value)
-        Suspend
-    }
-
-    operator fun handleResult(value: String, c: Continuation<Nothing>) {
-        result += "return($value);"
+        SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
+fun builder(coroutine c: () -> String): String {
     val controller = Controller()
-    c(controller).resume(Unit)
+    c.startCoroutine(handleResult {
+        controller.result += "return($value);"
+    })
     return controller.result
 }
 

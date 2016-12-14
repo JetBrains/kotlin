@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
 class Controller {
     var exception: Throwable? = null
     val postponedActions = ArrayList<() -> Unit>()
@@ -8,7 +9,7 @@ class Controller {
             x.resume(v)
         }
 
-        Suspend
+        SUSPENDED
     }
 
     suspend fun suspendWithException(e: Exception): String = suspendWithCurrentContinuation { x ->
@@ -16,25 +17,21 @@ class Controller {
             x.resumeWithException(e)
         }
 
-        Suspend
+        SUSPENDED
     }
 
-    operator fun handleException(t: Throwable, c: Continuation<Nothing>) {
-        exception = t
-    }
-
-    fun run(c: Controller.() -> Continuation<Unit>) {
-        c(this).resume(Unit)
+    fun run(c: @Suspend() (Controller.() -> Unit)) {
+        c.startCoroutine(this, handleExceptionContinuation {
+            exception = it
+        })
         while (postponedActions.isNotEmpty()) {
             postponedActions[0]()
             postponedActions.removeAt(0)
         }
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
     val controller = Controller()
     controller.run(c)
 

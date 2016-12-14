@@ -1,22 +1,22 @@
 // WITH_RUNTIME
-class Controller {
+// WITH_COROUTINES
+
+suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x -> }
+
+fun builder(c: @Suspend() (() -> Unit)) {
     var exception: Throwable? = null
 
-    operator fun handleException(t: Throwable, c: Continuation<Nothing>) {
-        exception = t
-    }
+    c.createCoroutine(object : Continuation<Unit> {
+        override fun resume(data: Unit) {
+        }
 
-    suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x -> }
+        override fun resumeWithException(e: Throwable) {
+            exception = e
+        }
+    }).resumeWithException(RuntimeException("OK"))
 
-    // INTERCEPT_RESUME_PLACEHOLDER
-}
-
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    val controller = Controller()
-    c(controller).resumeWithException(RuntimeException("OK"))
-
-    if (controller.exception?.message != "OK") {
-        throw RuntimeException("Unexpected result: ${controller.exception?.message}")
+    if (exception?.message != "OK") {
+        throw RuntimeException("Unexpected result: ${exception?.message}")
     }
 }
 

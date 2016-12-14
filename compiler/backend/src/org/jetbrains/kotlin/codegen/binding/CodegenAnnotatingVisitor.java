@@ -33,11 +33,9 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
@@ -290,31 +288,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         classStack.push(classDescriptor);
         nameStack.push(name);
 
-        KotlinType controllerTypeIfCoroutine = CoroutineUtilKt.getControllerTypeIfCoroutine(functionDescriptor);
-        if (controllerTypeIfCoroutine != null) {
+        if (CoroutineUtilKt.isSuspendLambda(functionDescriptor)) {
             closure.setCoroutine(true);
-
-            if (CoroutineCodegenUtilKt.hasInlineInterceptResume(controllerTypeIfCoroutine)) {
-                // for inline interceptResume we create a descriptor for fake lambda that must be inlined when generating interceptRun call
-                // See org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegen.processInterceptResume() for details
-                AnonymousFunctionDescriptor fakeDescriptorForInlineLambda =
-                        new AnonymousFunctionDescriptor(functionDescriptor, Annotations.Companion.getEMPTY(),
-                                                        CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE, false
-                        );
-
-                fakeDescriptorForInlineLambda.initialize(
-                        null, null,
-                        Collections.<TypeParameterDescriptor>emptyList(),
-                        Collections.<ValueParameterDescriptor>emptyList(),
-                        DescriptorUtilsKt.getBuiltIns(functionDescriptor).getUnitType(),
-                        Modality.FINAL, Visibilities.PUBLIC
-                );
-
-                bindingTrace.record(CUSTOM_DESCRIPTOR_FOR_INLINE_LAMBDA, functionLiteral, fakeDescriptorForInlineLambda);
-
-                recordClosure(recordClassForCallable(functionLiteral, fakeDescriptorForInlineLambda, supertypes, name),
-                              inventAnonymousClassName());
-            }
         }
 
         super.visitLambdaExpression(lambdaExpression);

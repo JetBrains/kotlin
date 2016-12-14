@@ -40,31 +40,26 @@ fun box(): String {
     return "No exception"
 }
 
-fun <T> async(coroutine c: FutureController<T>.() -> Continuation<Unit>): CompletableFuture<T> {
-    val controller = FutureController<T>()
-    c(controller).resume(Unit)
-    return controller.future
-}
-
-class FutureController<T> {
+fun <T> async(c: @Suspend() (() -> T)): CompletableFuture<T> {
     val future = CompletableFuture<T>()
-
-    suspend fun <V> await(f: CompletableFuture<V>) = suspendWithCurrentContinuation<V> { machine ->
-        f.whenComplete { value, throwable ->
-            if (throwable == null)
-                machine.resume(value)
-            else
-                machine.resumeWithException(throwable)
+    c.startContinuation(object : Continuation<T> {
+        override fun resume(data: T) {
+            future.complete(data)
         }
 
-        Suspend
-    }
+        override fun resumeWithException(exception: Throwable) {
+            future.completeExceptionally(exception)
+        }
+    })
+    return future
+}
 
-    operator fun handleResult(value: T, c: Continuation<Nothing>) {
-        future.complete(value)
+suspend fun <V> await(f: CompletableFuture<V>) = suspendWithCurrentContinuation<V> { machine ->
+    f.whenComplete { value, throwable ->
+        if (throwable == null)
+            machine.resume(value)
+        else
+            machine.resumeWithException(throwable)
     }
-
-    operator fun handleException(t: Throwable, c: Continuation<Nothing>) {
-        future.completeExceptionally(t)
-    }
+    SUSPENDED
 }

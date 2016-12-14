@@ -1,21 +1,17 @@
-class Controller {
-    var isCompleted = false
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
-        x.resume("OK")
-        Suspend
-    }
+// WITH_RUNTIME
+// WITH_COROUTINES
 
-    operator fun handleResult(x: Unit, y: Continuation<Nothing>) {
-        isCompleted = true
-    }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
+suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    x.resume("OK")
+    SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    val controller = Controller()
-    c(controller).resume(Unit)
-    if (!controller.isCompleted) throw RuntimeException("fail")
+fun builder(c: @Suspend() (() -> Unit)) {
+    var isCompleted = false
+    c.startCoroutine(handleResultContinuation {
+        isCompleted = true
+    })
+    if (!isCompleted) throw RuntimeException("fail")
 }
 
 fun box(): String {

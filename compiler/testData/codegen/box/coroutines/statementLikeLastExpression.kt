@@ -1,19 +1,15 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 var globalResult = ""
-class Controller {
-    suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->
-        x.resume(v)
-        Suspend
-    }
-
-    operator fun handleResult(x: String, c: Continuation<Nothing>) {
-        globalResult = x
-    }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
+suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->
+    x.resume(v)
+    SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (() -> String)) {
+    c.startCoroutine(handleResultContinuation {
+        globalResult = it
+    })
 }
 
 fun box(): String {

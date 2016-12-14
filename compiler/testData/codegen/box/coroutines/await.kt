@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// WITH_COROUTINES
 // NO_INTERCEPT_RESUME_TESTS
 // FILE: promise.kt
 class Promise<T>(private val executor: ((T) -> Unit) -> Unit) {
@@ -48,12 +49,6 @@ fun processQueue() {
 // FILE: await.kt
 private var log = ""
 
-class Controller<T>(private val resolve: (T) -> Unit) {
-    operator fun handleResult(result: T, c: Continuation<Nothing>) {
-        resolve(result)
-    }
-}
-
 private var inAwait = false
 
 suspend fun <S> await(value: Promise<S>): S = suspendWithCurrentContinuation { continuation: Continuation<S> ->
@@ -67,7 +62,7 @@ suspend fun <S> await(value: Promise<S>): S = suspendWithCurrentContinuation { c
         }
     }
     inAwait = false
-    Suspend
+    SUSPENDED
 }
 
 suspend fun <S> awaitAndLog(value: Promise<S>): S {
@@ -78,10 +73,9 @@ suspend fun <S> awaitAndLog(value: Promise<S>): S {
     })
 }
 
-fun <T> async(coroutine c: Controller<T>.() -> Continuation<Unit>): Promise<T> {
+fun <T> async(c: @Suspend() (() -> T)): Promise<T> {
     return Promise { resolve ->
-        val controller = Controller<T> { resolve(it) }
-        c(controller).resume(Unit)
+        c.startCoroutine(handleResultContinuation(resolve))
     }
 }
 

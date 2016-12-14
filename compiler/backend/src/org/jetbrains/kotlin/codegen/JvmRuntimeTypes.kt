@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.codegen.coroutines.continuationClassDescriptor
-import org.jetbrains.kotlin.codegen.coroutines.hasNoinlineInterceptResume
-import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
+import org.jetbrains.kotlin.codegen.coroutines.createJvmSuspendFunctionView
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -28,11 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeConstructorSubstitution
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
@@ -53,19 +48,6 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
         (0..2).map { i -> createClass(kotlinJvmInternalPackage, "MutablePropertyReference$i") }
     }
 
-    val continuationOfAny: KotlinType by lazy { createNullableAnyContinuation(module) }
-
-    /**
-     * @return `Continuation<Any?>` type
-     */
-    private fun createNullableAnyContinuation(module: ModuleDescriptor): KotlinType {
-        val classDescriptor = module.builtIns.continuationClassDescriptor
-
-        return TypeConstructorSubstitution.createByParametersMap(
-                mapOf(classDescriptor.declaredTypeParameters.single() to TypeProjectionImpl(module.builtIns.nullableAnyType))
-        ).buildSubstitutor().substitute(classDescriptor.defaultType, Variance.INVARIANT)!!
-    }
-
     private fun createClass(packageFragment: PackageFragmentDescriptor, name: String): ClassDescriptor =
             MutableClassDescriptor(packageFragment, ClassKind.CLASS, /* isInner = */ false, /* isExternal = */ false,
                                    Name.identifier(name), SourceElement.NO_SOURCE).apply {
@@ -76,33 +58,24 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
             }
 
     fun getSupertypesForClosure(descriptor: FunctionDescriptor): Collection<KotlinType> {
+
+        val actualFunctionDescriptor =
+                if (descriptor.isSuspendLambda)
+                    createJvmSuspendFunctionView(descriptor)
+                else
+                    descriptor
+
         val functionType = createFunctionType(
                 descriptor.builtIns,
                 Annotations.EMPTY,
-                descriptor.extensionReceiverParameter?.type,
-                ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters),
+                actualFunctionDescriptor.extensionReceiverParameter?.type,
+                ExpressionTypingUtils.getValueParametersTypes(actualFunctionDescriptor.valueParameters),
                 null,
-                descriptor.returnType!!
+                actualFunctionDescriptor.returnType!!
         )
 
-        val coroutineControllerType = descriptor.controllerTypeIfCoroutine
-        if (coroutineControllerType != null) {
-            val additionalType: KotlinType?
-            if (coroutineControllerType.hasNoinlineInterceptResume()) {
-                // for non-inline interceptResume we use coroutine instance as an argument for interceptRun call, i.e. it must be a Function0<Unit>
-                // See org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegen.processInterceptResume() for details
-                additionalType =
-                        createFunctionType(
-                                descriptor.builtIns, Annotations.EMPTY,
-                                /* recieverParameter = */ null, /* parameterTypes = */ emptyList(), /* parameterNames = */ emptyList(),
-                                /* returnType = */ descriptor.builtIns.unitType
-                        )
-            }
-            else {
-                additionalType = null
-            }
-
-            return listOf(coroutineImplClass.defaultType, functionType) + additionalType.singletonOrEmptyList()
+        if (descriptor.isSuspendLambda) {
+            return listOf(coroutineImplClass.defaultType, functionType)
         }
 
         return listOf(lambda.defaultType, functionType)

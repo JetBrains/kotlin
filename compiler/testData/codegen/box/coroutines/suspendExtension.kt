@@ -1,8 +1,10 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
 @AllowSuspendExtensions
 class Controller {
     suspend fun String.suspendHere(): String = suspendWithCurrentContinuation { x ->
         x.resume(this)
-        Suspend
+        SUSPENDED
     }
 
     inline suspend fun String.inlineSuspendHere(): String = suspendHere()
@@ -14,8 +16,8 @@ suspend fun Controller.suspendExtension(v: String): String = v.suspendHere()
 
 inline suspend fun Controller.inlineSuspendExtension(v: String): String = v.inlineSuspendHere()
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() (Controller.() -> Unit)) {
+    c.startCoroutine(Controller(), EmptyContinuation)
 }
 
 fun box(): String {

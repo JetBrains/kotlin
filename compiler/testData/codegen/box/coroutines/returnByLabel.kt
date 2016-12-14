@@ -1,22 +1,17 @@
-class Controller {
-    var res = 0
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
-        x.resume("OK")
-        Suspend
-    }
-
-    operator fun handleResult(x: Int, y: Continuation<Nothing>) {
-        res = x
-    }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
+// WITH_RUNTIME
+// WITH_COROUTINES
+suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    x.resume("OK")
+    SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): Int {
-    val controller = Controller()
-    c(controller).resume(Unit)
+fun builder(c: @Suspend() (() -> Int)): Int {
+    var res = 0
+    c.startCoroutine(handleResultContinuation {
+        res = it
+    })
 
-    return controller.res
+    return res
 }
 
 fun box(): String {

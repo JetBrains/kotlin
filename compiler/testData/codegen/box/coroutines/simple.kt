@@ -1,14 +1,14 @@
-class Controller {
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
-        x.resume("OK")
-        Suspend
-    }
+// IGNORE_BACKEND: JS
+// WITH_RUNTIME
+// WITH_COROUTINES
 
-    // INTERCEPT_RESUME_PLACEHOLDER
+suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    x.resume("OK")
+    SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: @Suspend() () -> Unit) {
+    c.startCoroutine(EmptyContinuation)
 }
 
 fun box(): String {

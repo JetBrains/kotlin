@@ -1,18 +1,18 @@
 // WITH_RUNTIME
-// NO_INTERCEPT_RESUME_TESTS
+// WITH_COROUTINES
 
 class Controller {
     var result = ""
 
     suspend fun <T> suspendWithResult(value: T): T = suspendWithCurrentContinuation { c ->
         c.resume(value)
-        Suspend
+        SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
+fun builder(c: @Suspend() (Controller.() -> Unit)): String {
     val controller = Controller()
-    c(controller).resume(Unit)
+    c.startCoroutine(controller, EmptyContinuation)
     return controller.result
 }
 

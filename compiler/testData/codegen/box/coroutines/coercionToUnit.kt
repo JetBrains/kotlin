@@ -1,21 +1,17 @@
-class Controller {
-    var result = "fail"
-    operator fun handleResult(u: Unit, c: Continuation<Nothing>) {
-        result = "OK"
-    }
+// WITH_RUNTIME
+// WITH_COROUTINES
 
-    suspend fun <T> await(t: T): T = suspendWithCurrentContinuation { c ->
-        c.resume(t)
-        Suspend
-    }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
+suspend fun <T> await(t: T): T = suspendWithCurrentContinuation { c ->
+    c.resume(t)
+    SUSPENDED
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>): String {
-    val controller = Controller()
-    c(controller).resume(Unit)
-    return controller.result
+fun builder(c: @Suspend() (() -> Unit)): String {
+    var result = "fail"
+    c.startCoroutine(handleResultContinuation {
+        result = "OK"
+    })
+    return result
 }
 
 var TRUE = true
