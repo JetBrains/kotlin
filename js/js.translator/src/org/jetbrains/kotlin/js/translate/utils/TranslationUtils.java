@@ -38,9 +38,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
@@ -357,14 +356,9 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsExpression translateContinuationArgument(@NotNull TranslationContext context, @NotNull ResolvedCall<?> resolvedCall) {
-        CoroutineReceiverValue coroutineReceiver = context.bindingContext().get(
-                BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT,
-                resolvedCall.getCall());
+        CallableDescriptor continuationDescriptor =
+                context.bindingContext().get(BindingContext.ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, resolvedCall.getCall());
 
-        CallableDescriptor continuationDescriptor = null;
-        if (coroutineReceiver != null) {
-            continuationDescriptor = coroutineReceiver.getDeclarationDescriptor();
-        }
         if (continuationDescriptor == null) {
             continuationDescriptor = getEnclosingContinuationParameter(context);
         }
