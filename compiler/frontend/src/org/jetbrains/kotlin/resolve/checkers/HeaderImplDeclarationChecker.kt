@@ -178,7 +178,8 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
 
             // Functions
 
-            object FunctionModifiers : Incompatible("modifiers are different (external, infix, inline, operator, suspend, tailrec)")
+            object FunctionModifiersDifferent : Incompatible("modifiers are different (suspend)")
+            object FunctionModifiersNotSubset : Incompatible("some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec)")
 
             // Properties
 
@@ -273,9 +274,13 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     }
 
     private fun areCompatibleFunctions(a: FunctionDescriptor, b: FunctionDescriptor): Compatibility {
-        if (!equalBy(a, b) { f ->
-            listOf(f.isExternal, f.isInfix, f.isInline, f.isOperator, f.isSuspend, f.isTailrec)
-        }) return Incompatible.FunctionModifiers
+        if (!equalBy(a, b) { f -> f.isSuspend }) return Incompatible.FunctionModifiersDifferent
+
+        if (a.isExternal && !b.isExternal ||
+            a.isInfix && !b.isInfix ||
+            a.isInline && !b.isInline ||
+            a.isOperator && !b.isOperator ||
+            a.isTailrec && !b.isTailrec) return Incompatible.FunctionModifiersNotSubset
 
         return Compatible
     }

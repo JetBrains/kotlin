@@ -13149,6 +13149,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("functionModifiers.kt")
+                public void testFunctionModifiers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/functionModifiers.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("headerAndImplInDIfferentPackages.kt")
                 public void testHeaderAndImplInDIfferentPackages() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/headerAndImplInDIfferentPackages.kt");

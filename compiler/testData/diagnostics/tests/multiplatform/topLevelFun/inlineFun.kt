@@ -15,4 +15,4 @@ impl fun nonInlineFun() { }
 // FILE: js.kt
 
 impl <!NOTHING_TO_INLINE!>inline<!> fun inlineFun() { }
-<!IMPLEMENTATION_WITHOUT_HEADER!>impl<!> <!NOTHING_TO_INLINE!>inline<!> fun nonInlineFun() { }
+impl <!NOTHING_TO_INLINE!>inline<!> fun nonInlineFun() { }
