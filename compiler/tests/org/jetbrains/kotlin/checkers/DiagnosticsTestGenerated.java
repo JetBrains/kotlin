@@ -13036,53 +13036,53 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass")
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class PlatformClass extends AbstractDiagnosticsTest {
-                public void testAllFilesPresentInPlatformClass() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/platformClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            public static class HeaderClass extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInHeaderClass() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/headerClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("classKinds.kt")
                 public void testClassKinds() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/classKinds.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/classKinds.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("explicitConstructorDelegation.kt")
                 public void testExplicitConstructorDelegation() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/explicitConstructorDelegation.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/explicitConstructorDelegation.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("genericClassImplTypeAlias.kt")
                 public void testGenericClassImplTypeAlias() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/genericClassImplTypeAlias.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/genericClassImplTypeAlias.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("platformClassMember.kt")
-                public void testPlatformClassMember() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/platformClassMember.kt");
+                @TestMetadata("headerClassMember.kt")
+                public void testHeaderClassMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/headerClassMember.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("platformClassWithFunctionBody.kt")
-                public void testPlatformClassWithFunctionBody() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/platformClassWithFunctionBody.kt");
+                @TestMetadata("headerClassWithFunctionBody.kt")
+                public void testHeaderClassWithFunctionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/headerClassWithFunctionBody.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("simplePlatformClass.kt")
-                public void testSimplePlatformClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/simplePlatformClass.kt");
+                @TestMetadata("simpleHeaderClass.kt")
+                public void testSimpleHeaderClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/simpleHeaderClass.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("superClass.kt")
                 public void testSuperClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/platformClass/superClass.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass/superClass.kt");
                     doTest(fileName);
                 }
             }
@@ -13095,33 +13095,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/topLevelFun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
-                @TestMetadata("callPlatformFun.kt")
-                public void testCallPlatformFun() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/callPlatformFun.kt");
+                @TestMetadata("callHeaderFun.kt")
+                public void testCallHeaderFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/callHeaderFun.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("conflictingPlatformDeclarations.kt")
-                public void testConflictingPlatformDeclarations() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingPlatformDeclarations.kt");
+                @TestMetadata("conflictingHeaderDeclarations.kt")
+                public void testConflictingHeaderDeclarations() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingHeaderDeclarations.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("conflictingPlatformDefinitions.kt")
-                public void testConflictingPlatformDefinitions() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingPlatformDefinitions.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("declarationAndDefinitionInDIfferentPackages.kt")
-                public void testDeclarationAndDefinitionInDIfferentPackages() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/declarationAndDefinitionInDIfferentPackages.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("declarationWithoutDefinition.kt")
-                public void testDeclarationWithoutDefinition() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/declarationWithoutDefinition.kt");
+                @TestMetadata("conflictingImplDeclarations.kt")
+                public void testConflictingImplDeclarations() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/conflictingImplDeclarations.kt");
                     doTest(fileName);
                 }
 
@@ -13131,9 +13119,33 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("definitionWithoutDeclaration.kt")
-                public void testDefinitionWithoutDeclaration() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/definitionWithoutDeclaration.kt");
+                @TestMetadata("headerAndImplInDIfferentPackages.kt")
+                public void testHeaderAndImplInDIfferentPackages() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/headerAndImplInDIfferentPackages.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("headerDeclarationWithBody.kt")
+                public void testHeaderDeclarationWithBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/headerDeclarationWithBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("headerWithoutImpl.kt")
+                public void testHeaderWithoutImpl() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/headerWithoutImpl.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("implDeclarationWithoutBody.kt")
+                public void testImplDeclarationWithoutBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/implDeclarationWithoutBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("implWithoutHeader.kt")
+                public void testImplWithoutHeader() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/implWithoutHeader.kt");
                     doTest(fileName);
                 }
 
@@ -13143,21 +13155,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("platformDeclarationWithBody.kt")
-                public void testPlatformDeclarationWithBody() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/platformDeclarationWithBody.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("platformDefinitionWithoutBody.kt")
-                public void testPlatformDefinitionWithoutBody() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/platformDefinitionWithoutBody.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("simplePlatformFun.kt")
-                public void testSimplePlatformFun() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/simplePlatformFun.kt");
+                @TestMetadata("simpleHeaderFun.kt")
+                public void testSimpleHeaderFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun/simpleHeaderFun.kt");
                     doTest(fileName);
                 }
             }
@@ -13176,9 +13176,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("simplePlatformVar.kt")
-                public void testSimplePlatformVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/simplePlatformVar.kt");
+                @TestMetadata("simpleHeaderVar.kt")
+                public void testSimpleHeaderVar() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/simpleHeaderVar.kt");
                     doTest(fileName);
                 }
             }
