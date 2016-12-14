@@ -167,6 +167,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public TranslationContext inner(@NotNull MemberDescriptor descriptor) {
+        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext.inner(), usageTracker, descriptor);
+    }
+
+    @NotNull
     public TranslationContext innerBlock(@NotNull JsBlock block) {
         return new TranslationContext(this, staticContext, dynamicContext.innerBlock(block), aliasingContext, usageTracker,
                                       this.declarationDescriptor);
@@ -379,7 +384,7 @@ public class TranslationContext {
 
     @Nullable
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        JsNameRef nameRef = captureIfNeedAndGetCapturedName(descriptor);
+        JsExpression nameRef = captureIfNeedAndGetCapturedName(descriptor);
         if (nameRef != null) {
             return nameRef;
         }
@@ -459,21 +464,48 @@ public class TranslationContext {
     }
 
     @Nullable
-    private JsNameRef captureIfNeedAndGetCapturedName(DeclarationDescriptor descriptor) {
+    private JsExpression captureIfNeedAndGetCapturedName(DeclarationDescriptor descriptor) {
         if (usageTracker != null) {
             usageTracker.used(descriptor);
 
             JsName name = getNameForCapturedDescriptor(usageTracker, descriptor);
             if (name != null) {
-                JsNameRef result = name.makeRef();
+                JsExpression result;
                 if (shouldCaptureViaThis()) {
-                    result.setQualifier(JsLiteral.THIS);
+                    result = JsLiteral.THIS;
+                    int depth = getOuterLocalClassDepth();
+                    for (int i = 0; i < depth; ++i) {
+                        result = new JsNameRef(Namer.OUTER_FIELD_NAME, result);
+                    }
+                    result = new JsNameRef(name, result);
+                }
+                else {
+                    result = name.makeRef();
                 }
                 return result;
             }
         }
 
         return null;
+    }
+
+    private int getOuterLocalClassDepth() {
+        if (usageTracker == null) return 0;
+        MemberDescriptor capturingDescriptor = usageTracker.getContainingDescriptor();
+        if (!(capturingDescriptor instanceof ClassDescriptor)) return 0;
+
+        ClassDescriptor capturingClassDescriptor = (ClassDescriptor) capturingDescriptor;
+        ClassDescriptor currentDescriptor = classDescriptor;
+        if (currentDescriptor == null) return 0;
+
+        int depth = 0;
+        while (currentDescriptor != capturingClassDescriptor) {
+            DeclarationDescriptor container = currentDescriptor.getContainingDeclaration();
+            if (!(container instanceof ClassDescriptor)) return 0;
+            currentDescriptor = (ClassDescriptor) container;
+            depth++;
+        }
+        return depth;
     }
 
     private boolean shouldCaptureViaThis() {

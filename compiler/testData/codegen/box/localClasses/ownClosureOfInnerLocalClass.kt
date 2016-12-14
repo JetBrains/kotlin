@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS
-// Enable when KT-12566 gets fixed
-
 fun box(): String {
     var log = ""
 

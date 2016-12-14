@@ -79,7 +79,7 @@ class ClassTranslator private constructor(
         context.addDeclarationStatement(constructorFunction.makeStmt())
         val enumInitFunction = if (descriptor.kind == ClassKind.ENUM_CLASS) createEnumInitFunction() else null
 
-        val nonConstructorContext = context.innerWithUsageTracker(scope, descriptor)
+        val nonConstructorContext = context.withUsageTrackerIfNecessary(scope, descriptor)
         nonConstructorContext.startDeclaration()
         val delegationTranslator = DelegationTranslator(classDeclaration, nonConstructorContext)
         translatePropertiesAsConstructorParameters(nonConstructorContext)
@@ -93,7 +93,7 @@ class ClassTranslator private constructor(
         addMetadataType()
         context.addClass(descriptor)
         addSuperclassReferences()
-        classDeclaration.getSecondaryConstructors().forEach { generateSecondaryConstructor(context, it) }
+        classDeclaration.secondaryConstructors.forEach { generateSecondaryConstructor(context, it) }
 
         generatedBridgeMethods()
 
@@ -114,6 +114,18 @@ class ClassTranslator private constructor(
             generateEnumStandardMethods(bodyVisitor.enumEntries)
         }
     }
+
+    private fun TranslationContext.withUsageTrackerIfNecessary(scope: JsScope, innerDescriptor: MemberDescriptor): TranslationContext {
+        return if (isLocalClass) {
+            innerWithUsageTracker(scope, innerDescriptor)
+        }
+        else {
+            inner(innerDescriptor)
+        }
+    }
+
+    private val isLocalClass
+        get() = descriptor.containingDeclaration !is ClassOrPackageFragmentDescriptor
 
     private fun translatePrimaryConstructor(
             constructorFunction: JsFunction,
@@ -303,10 +315,10 @@ class ClassTranslator private constructor(
         for (constructor in sortedConstructors) {
             constructor.superCallGenerator()
 
-            val nonConstructorUsageTracker = nonConstructorContext.usageTracker()!!
+            val nonConstructorUsageTracker = nonConstructorContext.usageTracker()
             val usageTracker = constructor.context.usageTracker()!!
 
-            val nonConstructorCapturedVars = nonConstructorUsageTracker.capturedDescriptors
+            val nonConstructorCapturedVars = if (isLocalClass) nonConstructorUsageTracker!!.capturedDescriptors else setOf()
             val constructorCapturedVars = usageTracker.capturedDescriptors
 
             val capturedVars = (nonConstructorCapturedVars + constructorCapturedVars).distinct()
@@ -319,9 +331,9 @@ class ClassTranslator private constructor(
 
             for (callSite in constructorCallSites) {
                 val closureQualifier = callSite.context.getArgumentForClosureConstructor(classDescriptor.thisAsReceiverParameter)
-                capturedVars.forEach { nonConstructorUsageTracker.used(it) }
+                capturedVars.forEach { nonConstructorUsageTracker!!.used(it) }
                 val closureArgs = capturedVars.map {
-                    val name = nonConstructorUsageTracker.getNameForCapturedDescriptor(it)!!
+                    val name = nonConstructorUsageTracker!!.getNameForCapturedDescriptor(it)!!
                     JsAstUtils.pureFqn(name, closureQualifier)
                 }
                 callSite.invocationArgs.addAll(0, closureArgs)
@@ -332,12 +344,12 @@ class ClassTranslator private constructor(
     private fun addClosureParameters(constructor: ConstructorInfo, nonConstructorContext: TranslationContext) {
         val usageTracker = constructor.context.usageTracker()!!
         val capturedVars = context().getClassOrConstructorClosure(constructor.descriptor) ?: return
-        val nonConstructorUsageTracker = nonConstructorContext.usageTracker()!!
+        val nonConstructorUsageTracker = nonConstructorContext.usageTracker()
 
         val function = constructor.function
         val additionalStatements = mutableListOf<JsStatement>()
         for ((i, capturedVar) in capturedVars.withIndex()) {
-            val fieldName = nonConstructorUsageTracker.capturedDescriptorToJsName[capturedVar]
+            val fieldName = nonConstructorUsageTracker?.capturedDescriptorToJsName?.get(capturedVar)
             val name = usageTracker.capturedDescriptorToJsName[capturedVar] ?: fieldName!!
 
             function.parameters.add(i, JsParameter(name))

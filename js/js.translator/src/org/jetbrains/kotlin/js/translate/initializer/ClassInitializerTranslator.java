@@ -192,11 +192,11 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 List<DeclarationDescriptor> superclassClosure = context.getClassOrConstructorClosure(superDescriptor);
                 if (superclassClosure != null) {
                     UsageTracker tracker = context.usageTracker();
-                    assert tracker != null : "Closure exists, therefore UsageTracker must exist too. Translating constructor of " +
-                                             classDescriptor;
-                    for (DeclarationDescriptor capturedValue : superclassClosure) {
-                        tracker.used(capturedValue);
-                        arguments.add(tracker.getCapturedDescriptorToJsName().get(capturedValue).makeRef());
+                    if (tracker != null) {
+                        for (DeclarationDescriptor capturedValue : superclassClosure) {
+                            tracker.used(capturedValue);
+                            arguments.add(tracker.getCapturedDescriptorToJsName().get(capturedValue).makeRef());
+                        }
                     }
                 }
 
