@@ -6,6 +6,8 @@ dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
+
+
 abstract class KonanTest extends DefaultTask {
     protected String source
     def backendNative = project.project(":backend.native")
@@ -47,10 +49,11 @@ abstract class KonanTest extends DefaultTask {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
             jvmArgs "-ea"
-            args "-output", "${sourceBc.absolutePath}",
+            args("-output", "${sourceBc.absolutePath}",
                  "-runtime", "${runtimeBc.absolutePath}",
                  "-library", "${stdlibKtBc.absolutePath}",
-                 "${sourceKt.absolutePath}"
+                 "${sourceKt.absolutePath}", 
+                 *project.globalArgs)
 
             String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
             environment 'LD_LIBRARY_PATH'   : libraryPath
@@ -144,11 +147,11 @@ class LinkKonanTest extends KonanTest {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
             jvmArgs "-ea"
-            args "-output", "${libPath}",
+            args("-output", "${libPath}",
                  "-runtime", "${runtimeBc.absolutePath}",
-                 sourcesKt
+                 sourcesKt, *project.globalArgs)
 
-            String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
+             libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
             environment 'LD_LIBRARY_PATH'   : libraryPath
             environment 'DYLD_LIBRARY_PATH' : libraryPath
 
@@ -165,11 +168,12 @@ class LinkKonanTest extends KonanTest {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
             jvmArgs "-ea"
-            args "-output", outPath,
+            args("-output", outPath,
                  "-runtime", "${runtimeBc.absolutePath}",
                  "-library", "${stdlibKtBc.absolutePath}",
                  "-library", "${libBc.absolutePath}",
-                 "${sourceKt.absolutePath}"
+                 "${sourceKt.absolutePath}",
+                 *project.globalArgs)
 
             String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
             environment 'LD_LIBRARY_PATH'   : libraryPath

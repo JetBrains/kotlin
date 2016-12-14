@@ -170,6 +170,8 @@ task stdlib(type: JavaExec) {
 
     args '-output', project(':runtime').file('build/stdlib.kt.bc')
 
+    args project.globalArgs
+
     jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
 
     dependsOn ':runtime:build'
@@ -190,6 +192,8 @@ task start(type: JavaExec) {
     args '-library', project(':runtime').file('build/stdlib.kt.bc')
 
     args '-output', project(':runtime').file('build/start.kt.bc')
+
+    args project.globalArgs
 
     jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
 

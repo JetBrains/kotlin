@@ -39,12 +39,10 @@ allprojects {
     }
     ext.clangArgs << "-B$binDir"
     ext.clangPath << binDir
-
     ext.jvmArgs = ["-ea"]
-
     ext.clangLinkArgs = libLink()
     ext.clangOptArgs = optArgs()
-
+    ext.globalArgs = project.hasProperty("konanc_flags") ? ext.konanc_flags.split(' ') : []
     convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
     plugins.withType(NativeComponentPlugin) {
@@ -185,9 +183,10 @@ task dist_compiler(type: Copy) {
 task stdlib(type: Exec) {
     dependsOn 'dist_compiler', 'list_dist'
 
-    commandLine './dist/bin/konanc', 
+    commandLine('./dist/bin/konanc', 
         "-J${jvmArgs.join(' ')}",
-        '-nolink', '-nostdlib', 'runtime/src/main/kotlin', '-o', 'dist/lib/stdlib.kt.bc'
+        '-nolink', '-nostdlib', 'runtime/src/main/kotlin', '-o', 
+        'dist/lib/stdlib.kt.bc', *globalArgs)
 
     outputs.file(project.file('dist/lib/stdlib.kt.bc'))
 }
@@ -199,9 +198,10 @@ task list_dist(type: Exec) {
 task start(type: Exec) {
     dependsOn 'dist_compiler', 'stdlib'
 
-    commandLine './dist/bin/konanc', 
+    commandLine('./dist/bin/konanc', 
         "-J${jvmArgs.join(' ')}",
-        '-nolink', 'runtime/src/launcher/kotlin', '-o', 'dist/lib/start.kt.bc'
+        '-nolink', 'runtime/src/launcher/kotlin', '-o', 
+        'dist/lib/start.kt.bc', *globalArgs)
 
     outputs.file(project.file('dist/lib/start.kt.bc'))
 }
