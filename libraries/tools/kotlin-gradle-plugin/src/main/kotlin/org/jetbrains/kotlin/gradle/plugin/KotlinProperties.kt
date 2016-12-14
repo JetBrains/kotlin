@@ -33,7 +33,8 @@ fun mapKotlinTaskProperties(project: Project, task: KotlinCompile) {
 }
 
 private val propertyMappings = listOf(
-        KotlinPropertyMapping("kotlin.incremental", KotlinCompile::incremental, String::toBoolean)
+        KotlinPropertyMapping("kotlin.incremental", KotlinCompile::incremental, String::toBoolean),
+        KotlinPropertyMapping("kotlin.coroutines", KotlinCompile::coroutines) { CoroutineSupport.byCompilerArgument(it) }
 )
 
 private class KotlinPropertyMapping<T>(
@@ -56,5 +57,19 @@ private class KotlinPropertyMapping<T>(
 
         val transformedValue = transform(value) ?: return
         taskProperty.set(task, transformedValue)
+    }
+}
+
+enum class CoroutineSupport(val compilerArgument: String) {
+    ENABLED("enable"),
+    ENABLED_WITH_WARNING("warn"),
+    DISABLED("error");
+
+    companion object {
+        val DEFAULT = ENABLED_WITH_WARNING
+
+        fun byCompilerArgument(argument: String): CoroutineSupport {
+            return CoroutineSupport.values().find { it.compilerArgument == argument } ?: DEFAULT
+        }
     }
 }

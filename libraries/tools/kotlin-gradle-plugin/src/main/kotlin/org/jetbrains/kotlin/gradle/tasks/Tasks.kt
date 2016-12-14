@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.CoroutineSupport
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
@@ -68,6 +69,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             logger.kotlinDebug { "Set $this.incremental=$value" }
             System.setProperty("kotlin.incremental.compilation", value.toString())
             System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
+        }
+
+    var coroutines: CoroutineSupport = CoroutineSupport.DEFAULT
+        get() = field
+        set(value) {
+            field = value
+            logger.kotlinDebug { "Set $this.coroutines=${value.compilerArgument}" }
         }
 
     internal var compilerCalled: Boolean = false
@@ -177,6 +185,10 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         sourceRoots as SourceRoots.ForJvm
 
         val outputDir = destinationDir
+
+        args.coroutinesEnable = coroutines == CoroutineSupport.ENABLED
+        args.coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
+        args.coroutinesError = coroutines == CoroutineSupport.DISABLED
 
         if (!incremental) {
             anyClassesCompiled = true
@@ -342,6 +354,10 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
         args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
+
+        args.coroutinesEnable = coroutines == CoroutineSupport.ENABLED
+        args.coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
+        args.coroutinesError = coroutines == CoroutineSupport.DISABLED
 
         if (args.outputFile == null) {
             args.outputFile = defaultOutputFile.canonicalPath
