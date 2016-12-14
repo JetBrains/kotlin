@@ -51,6 +51,7 @@ fun KaptContext.doAnnotationProcessing(
         put(Option.PROCESSORPATH, annotationProcessingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
         put(Option.S, sourcesOutputDir.canonicalPath)
         put(Option.D, classesOutputDir.canonicalPath)
+        put(Option.ENCODING, "UTF-8")
     }
 
     val fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
