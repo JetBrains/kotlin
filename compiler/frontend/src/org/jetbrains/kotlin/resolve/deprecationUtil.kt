@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -182,15 +183,15 @@ private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: La
             result.add(DeprecatedByAnnotation(annotation, target))
         }
 
-        if (target is DeserializedCallableMemberDescriptor) {
-            val sinceKotlinInfo = target.sinceKotlinInfo
-            if (sinceKotlinInfo != null) {
-                // We're using ApiVersion because it's convenient to compare versions, "-api-version" is not involved in any way
-                // TODO: usage of ApiVersion is confusing here, refactor
-                if (ApiVersion.createBySinceKotlinInfo(sinceKotlinInfo) >
-                    ApiVersion.createByLanguageVersion(languageVersionSettings.languageVersion)) {
-                    result.add(DeprecatedBySinceKotlinInfo(sinceKotlinInfo, target))
-                }
+        val sinceKotlinInfo =
+                (target as? DeserializedCallableMemberDescriptor)?.sinceKotlinInfo
+                ?: (target as? DeserializedClassDescriptor)?.sinceKotlinInfo
+        if (sinceKotlinInfo != null) {
+            // We're using ApiVersion because it's convenient to compare versions, "-api-version" is not involved in any way
+            // TODO: usage of ApiVersion is confusing here, refactor
+            if (ApiVersion.createBySinceKotlinInfo(sinceKotlinInfo) >
+                ApiVersion.createByLanguageVersion(languageVersionSettings.languageVersion)) {
+                result.add(DeprecatedBySinceKotlinInfo(sinceKotlinInfo, target))
             }
         }
     }

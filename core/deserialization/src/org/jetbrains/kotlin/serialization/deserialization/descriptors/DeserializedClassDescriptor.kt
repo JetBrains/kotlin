@@ -73,6 +73,9 @@ class DeserializedClassDescriptor(
             (containingDeclaration as? DeserializedClassDescriptor)?.thisAsProtoContainer
     )
 
+    val sinceKotlinInfo: SinceKotlinInfo?
+        get() = SinceKotlinInfo.create(classProto, c.nameResolver, c.sinceKotlinInfoTable)
+
     private val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
                 Annotations.EMPTY
