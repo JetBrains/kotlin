@@ -2233,6 +2233,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/expression/function"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("anonymousWithLambda.kt")
+            public void testAnonymousWithLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/function/anonymousWithLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("callFunInInit.kt")
             public void testCallFunInInit() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/function/callFunInInit.kt");
