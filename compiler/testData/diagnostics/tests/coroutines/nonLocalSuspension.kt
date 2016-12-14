@@ -3,7 +3,7 @@
 suspend fun suspendHere() = 1
 suspend fun <T> another(a: T) = 1
 
-fun <T> builder(c: @Suspend() (() -> Unit)) { }
+fun <T> builder(c: suspend () -> Unit) { }
 
 inline fun run(x: () -> Unit) {}
 

@@ -8,7 +8,7 @@ class A {
     suspend fun suspendHere(a: Int) = 1
 }
 
-fun builder(c: @Suspend() (Controller.() -> Unit)) {}
+fun builder(c: suspend Controller.() -> Unit) {}
 
 fun test() {
     builder {

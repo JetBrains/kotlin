@@ -1,26 +1,26 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
 
-fun builder(c: @Suspend() (() -> Int)) = 1
-fun <T> genericBuilder(c: @Suspend() (() -> T)): T = null!!
-fun unitBuilder(c: @Suspend() (() -> Unit)) = 1
-fun emptyBuilder(c: @Suspend() (() -> Unit)) = 1
+fun builder(c: suspend () -> Int) = 1
+fun <T> genericBuilder(c: suspend () -> T): T = null!!
+fun unitBuilder(c: suspend () -> Unit) = 1
+fun emptyBuilder(c: suspend () -> Unit) = 1
 
 fun <T> manyArgumentsBuilder(
-        c1: @Suspend() (() -> Unit),
-        c2: @Suspend() (() -> T),
-        c3: @Suspend() (() -> Int)
+        c1: suspend () -> Unit,
+        c2: suspend () -> T,
+        c3: suspend () -> Int
 ):T = null!!
 
-fun severalParamsInLambda(c: @Suspend() ((String, Int) -> Unit)) {}
+fun severalParamsInLambda(c: suspend (String, Int) -> Unit) {}
 
 fun foo() {
     builder({ 1 })
     builder { 1 }
 
     val x = { 1 }
-    builder(x)
-    builder({1} <!USELESS_CAST!>as (@Suspend() (() -> Int))<!>)
+    builder(<!TYPE_MISMATCH!>x<!>)
+    builder(<!UNCHECKED_CAST!>{1} as (suspend () -> Int)<!>)
 
     var i: Int = 1
     i = genericBuilder({ 1 })
@@ -30,7 +30,7 @@ fun foo() {
     genericBuilder<Int> { <!TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
-    genericBuilder(y)
+    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
 
     unitBuilder {}
     unitBuilder { <!UNUSED_EXPRESSION!>1<!> }

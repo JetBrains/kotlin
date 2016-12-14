@@ -15,7 +15,7 @@ suspend fun String.stringReceiver(y: Int) = 1.0
 
 suspend fun Any.anyReceiver(y: Int) = 1.0
 
-fun builder(c: @Suspend() (() -> Unit)) {}
+fun builder(c: suspend () -> Unit) {}
 
 fun test() {
     builder {

@@ -2,9 +2,9 @@
 // !CHECK_TYPE
 class Controller {
     suspend fun noParams(): Unit = suspendWithCurrentContinuation {
-        if (hashCode() <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 2 == 0) {
+        if (hashCode() % 2 == 0) {
             it.resume(Unit)
-            Suspend
+            SUSPENDED
         }
         else {
             Unit
@@ -21,7 +21,7 @@ class Controller {
     }
 }
 
-fun builder(c: @Suspend() (Controller.() -> Unit)) {}
+fun builder(c: suspend Controller.() -> Unit) {}
 
 fun test() {
     builder {
