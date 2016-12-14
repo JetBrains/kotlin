@@ -56,11 +56,11 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
 
         if (descriptor !is MemberDescriptor) return
 
+        val checkImpl = !languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformDoNotCheckImpl)
         if (descriptor.isHeader && declaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
-            val checkImpl = !languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformDoNotCheckImpl)
             checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, checkImpl)
         }
-        else if (descriptor.isImpl && declaration.hasModifier(KtTokens.IMPL_KEYWORD)) {
+        else if (checkImpl && descriptor.isImpl && declaration.hasModifier(KtTokens.IMPL_KEYWORD)) {
             checkImplementationHasHeaderDeclaration(declaration, descriptor, diagnosticHolder)
         }
     }
