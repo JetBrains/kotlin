@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -106,11 +107,13 @@ private fun translateCall(context: TranslationContext,
             translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(newReceiver))
         } else {
             val dispatchReceiver = CallTranslator.translateGet(context, variableCall, null)
+            val isFunctionType = resolvedCall.variableCall.resultingDescriptor.type.isFunctionTypeOrSubtype
+            val inlineCall = if (isFunctionType) resolvedCall.variableCall else resolvedCall
             if (explicitReceivers.extensionOrDispatchReceiver == null) {
-                translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(dispatchReceiver))
+                translateFunctionCall(context, resolvedCall.functionCall, inlineCall, ExplicitReceivers(dispatchReceiver))
             }
             else {
-                translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall,
+                translateFunctionCall(context, resolvedCall.functionCall, inlineCall,
                                       ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver))
             }
         }
