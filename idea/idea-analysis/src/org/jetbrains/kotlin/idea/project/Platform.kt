@@ -45,12 +45,18 @@ val Module.languageVersionSettings: LanguageVersionSettings
         val languageVersion = versionInfo.languageLevel ?: LanguageVersion.LATEST
         val apiVersion = versionInfo.apiLevel ?: languageVersion
 
-        val extraLanguageFeatures =
-                if (versionInfo.targetPlatformKind == TargetPlatformKind.Default ||
-                    // TODO: this is a dirty hack, parse arguments correctly here
-                    facetSettings.compilerInfo.compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true)
-                    listOf(LanguageFeature.MultiPlatformProjects)
-                else emptyList()
+        val extraLanguageFeatures = mutableListOf<LanguageFeature>().apply {
+            when (facetSettings.compilerInfo.coroutineSupport) {
+                CoroutineSupport.ENABLED -> {}
+                CoroutineSupport.ENABLED_WITH_WARNING -> add(LanguageFeature.WarnOnCoroutines)
+                CoroutineSupport.DISABLED -> add(LanguageFeature.ErrorOnCoroutines)
+            }
+
+            if (versionInfo.targetPlatformKind == TargetPlatformKind.Default ||
+                // TODO: this is a dirty hack, parse arguments correctly here
+                facetSettings.compilerInfo.compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true)
+                add(LanguageFeature.MultiPlatformProjects)
+        }
 
         return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
     }
