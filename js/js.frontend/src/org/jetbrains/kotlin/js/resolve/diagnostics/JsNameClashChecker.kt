@@ -55,7 +55,11 @@ class JsNameClashChecker : SimpleDeclarationChecker {
             val scope = getScope(suggested.scope)
             val name = suggested.names.last()
             val existing = scope[name]
-            if (existing != null && existing != suggested.descriptor && !(existing is MemberDescriptor && existing.isHeader)) {
+            if (existing != null &&
+                existing != descriptor &&
+                existing.isImpl == descriptor.isImpl &&
+                existing.isHeader == descriptor.isHeader
+            ) {
                 diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(declaration, name, existing))
                 val existingDeclaration = existing.findPsi()
                 if (clashedDescriptors.add(existing) && existingDeclaration is KtDeclaration && existingDeclaration != declaration) {
@@ -89,9 +93,15 @@ class JsNameClashChecker : SimpleDeclarationChecker {
         }
     }
 
+    private val DeclarationDescriptor.isImpl: Boolean
+        get() = this is MemberDescriptor && this.isImpl
+
+    private val DeclarationDescriptor.isHeader: Boolean
+        get() = this is MemberDescriptor && this.isHeader
+
     private fun isFakeOverridingNative(descriptor: CallableMemberDescriptor): Boolean {
         return descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               descriptor.overriddenDescriptors.all { !presentsInGeneratedCode(it) }
+                descriptor.overriddenDescriptors.all { !presentsInGeneratedCode(it) }
     }
 
     private fun getScope(descriptor: DeclarationDescriptor) = scopes.getOrPut(descriptor) {
