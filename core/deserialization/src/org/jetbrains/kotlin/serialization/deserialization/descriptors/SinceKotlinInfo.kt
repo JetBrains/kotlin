@@ -44,11 +44,14 @@ class SinceKotlinInfo(
         fun encode(
                 writeVersion: (Int) -> Unit,
                 writeVersionFull: (Int) -> Unit
-        ) {
-            if (major > MAJOR_MASK || minor > MINOR_MASK || patch > PATCH_MASK) {
+        ) = when {
+            this == INFINITY -> {
+                // Do nothing: absence of version means INFINITY
+            }
+            major > MAJOR_MASK || minor > MINOR_MASK || patch > PATCH_MASK -> {
                 writeVersionFull(major or (minor shl 8) or (patch shl 16))
             }
-            else if (this != DEFAULT) {
+            else -> {
                 writeVersion(major or (minor shl MAJOR_BITS) or (patch shl (MAJOR_BITS + MINOR_BITS)))
             }
         }
@@ -56,7 +59,8 @@ class SinceKotlinInfo(
         override fun toString(): String = asString()
 
         companion object {
-            val DEFAULT = Version(1, 0, 0)
+            @JvmField
+            val INFINITY = Version(256, 256, 256)
 
             // Number of bits used for major, minor and patch components in "version" field
             private const val MAJOR_BITS = 3
@@ -77,7 +81,7 @@ class SinceKotlinInfo(
                         minor = (version shr MAJOR_BITS) and MINOR_MASK,
                         patch = (version shr (MAJOR_BITS + MINOR_BITS)) and PATCH_MASK
                 )
-                else -> Version.DEFAULT
+                else -> Version.INFINITY
             }
         }
     }
