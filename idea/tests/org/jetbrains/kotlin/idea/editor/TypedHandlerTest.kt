@@ -545,6 +545,18 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
                 """)
     }
 
+    fun testSpaceAroundRange() {
+        doCharTypeTest(
+                '.',
+                """
+                | val test = 1 <caret>
+                """,
+                """
+                | val test = 1 .<caret>
+                """
+        )
+    }
+
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
         EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
