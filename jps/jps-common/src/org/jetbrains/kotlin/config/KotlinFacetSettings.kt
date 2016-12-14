@@ -72,8 +72,13 @@ enum class CoroutineSupport(
     companion object {
         val DEFAULT = ENABLED_WITH_WARNING
 
-        @JvmStatic fun byCompilerArgument(value: String?) = CoroutineSupport.values().firstOrNull { it.compilerArgument == value }
-                                                            ?: CoroutineSupport.DEFAULT
+        @JvmStatic fun byCompilerArguments(arguments: CommonCompilerArguments?) = when {
+            arguments == null -> DEFAULT
+            arguments.coroutinesEnable -> ENABLED
+            arguments.coroutinesWarn -> ENABLED_WITH_WARNING
+            arguments.coroutinesError -> DISABLED
+            else -> DEFAULT
+        }
     }
 }
 
@@ -89,9 +94,11 @@ class KotlinCompilerInfo {
     var compilerSettings: CompilerSettings? = null
 
     @get:Transient var coroutineSupport: CoroutineSupport
-        get() = CoroutineSupport.byCompilerArgument(commonCompilerArguments?.coroutineSupport)
+        get() = CoroutineSupport.byCompilerArguments(commonCompilerArguments)
         set(value) {
-            commonCompilerArguments?.coroutineSupport = value.compilerArgument
+            commonCompilerArguments?.coroutinesEnable = value == CoroutineSupport.ENABLED
+            commonCompilerArguments?.coroutinesWarn = value == CoroutineSupport.ENABLED_WITH_WARNING
+            commonCompilerArguments?.coroutinesError = value == CoroutineSupport.DISABLED
         }
 }
 
