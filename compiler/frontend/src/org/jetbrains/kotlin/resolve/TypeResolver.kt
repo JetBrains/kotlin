@@ -134,7 +134,7 @@ class TypeResolver(
 
         val typeElement = typeReference.typeElement
 
-        val type = resolveTypeElement(c, annotations, typeElement)
+        val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeElement)
         c.trace.recordScope(c.scope, typeReference)
 
         if (!type.isBare) {
@@ -175,8 +175,14 @@ class TypeResolver(
         }
     }
 
-    private fun resolveTypeElement(c: TypeResolutionContext, annotations: Annotations, typeElement: KtTypeElement?): PossiblyBareType {
+    private fun resolveTypeElement(c: TypeResolutionContext, annotations: Annotations, modifiers: KtModifierList?, typeElement: KtTypeElement?): PossiblyBareType {
         var result: PossiblyBareType? = null
+
+        val hasSuspendModifier = modifiers?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
+        if (hasSuspendModifier && typeElement !is KtFunctionType) {
+            c.trace.report(Errors.WRONG_MODIFIER_TARGET.on(modifiers!!.getModifier(KtTokens.SUSPEND_KEYWORD)!!, KtTokens.SUSPEND_KEYWORD, "non-functional type"))
+        }
+
         typeElement?.accept(object : KtVisitorVoid() {
             override fun visitUserType(type: KtUserType) {
                 val qualifierResolutionResult = resolveDescriptorForType(c.scope, type, c.trace, c.isDebuggerContext)
@@ -198,7 +204,7 @@ class TypeResolver(
 
             override fun visitNullableType(nullableType: KtNullableType) {
                 val innerType = nullableType.getInnerType()
-                val baseType = resolveTypeElement(c, annotations, innerType)
+                val baseType = resolveTypeElement(c, annotations, modifiers, innerType)
                 if (baseType.isNullable || innerType is KtNullableType || innerType is KtDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
@@ -219,7 +225,8 @@ class TypeResolver(
                         moduleDescriptor.builtIns, annotations, receiverType,
                         parameterDescriptors.map { it.type },
                         parameterDescriptors.map { it.name },
-                        returnType
+                        returnType,
+                        suspendFunction = hasSuspendModifier
                 ))
             }
 

@@ -38,10 +38,9 @@ class BuiltInFictitiousFunctionClassFactory(
 
     companion object {
         private fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
-            val kind = FunctionClassDescriptor.Kind.byPackage(packageFqName) ?: return null
+            val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return null
 
             val prefix = kind.classNamePrefix
-            if (!className.startsWith(prefix)) return null
 
             val arity = toInt(className.substring(prefix.length)) ?: return null
 
@@ -49,8 +48,14 @@ class BuiltInFictitiousFunctionClassFactory(
             return KindWithArity(kind, arity)
         }
 
+        @JvmStatic fun getFunctionalClassKind(className: String, packageFqName: FqName) =
+                parseClassName(className, packageFqName)?.kind
+
         @JvmStatic fun isFunctionClassName(className: String, packageFqName: FqName) =
-                parseClassName(className, packageFqName) != null
+                getFunctionalClassKind(className, packageFqName) == Kind.Function
+
+        @JvmStatic fun isSuspendFunctionClassName(className: String, packageFqName: FqName) =
+                getFunctionalClassKind(className, packageFqName) == Kind.SuspendFunction
 
         private fun toInt(s: String): Int? {
             if (s.isEmpty()) return null
@@ -67,7 +72,7 @@ class BuiltInFictitiousFunctionClassFactory(
 
     override fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean {
         val string = name.asString()
-        return (string.startsWith("Function") || string.startsWith("KFunction")) // an optimization
+        return (string.startsWith("Function") || string.startsWith("KFunction") || string.startsWith("SuspendFunction")) // an optimization
                && parseClassName(string, packageFqName) != null
     }
 

@@ -196,7 +196,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun shouldRenderAsPrettyFunctionType(type: KotlinType): Boolean {
-        return type.isFunctionType && type.arguments.none { it.isStarProjection }
+        return type.isBuiltinFunctionalType && type.arguments.none { it.isStarProjection }
     }
 
     override fun renderFlexibleType(lowerRendered: String, upperRendered: String, builtIns: KotlinBuiltIns): String {
@@ -321,6 +321,10 @@ internal class DescriptorRendererImpl(
         }
 
         if (needParenthesis) append("(")
+
+        if (type.isSuspendFunctionType) {
+            append("suspend ") // anything special about modifier?
+        }
 
         if (receiverType != null) {
             val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -49,6 +50,7 @@ class FunctionClassDescriptor(
 
     enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
         Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
+        SuspendFunction(BUILT_INS_PACKAGE_FQ_NAME, "SuspendFunction"),
         KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction");
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
@@ -59,6 +61,9 @@ class FunctionClassDescriptor(
                 KOTLIN_REFLECT_FQ_NAME -> KFunction
                 else -> null
             }
+
+            fun byClassNamePrefix(packageFqName: FqName, className: String) =
+                    Kind.values().firstOrNull { it.packageFqName == packageFqName && className.startsWith(it.classNamePrefix) }
         }
     }
 
@@ -128,8 +133,15 @@ class FunctionClassDescriptor(
                 result.add(KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, descriptor, arguments))
             }
 
-            // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
-            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
+
+            if (functionKind == Kind.SuspendFunction) {
+                // SuspendFunction$N<...> <: Any
+                result.add(containingDeclaration.builtIns.anyType)
+            }
+            else {
+                // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
+                add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
+            }
 
             // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
             if (functionKind == Kind.KFunction) {
