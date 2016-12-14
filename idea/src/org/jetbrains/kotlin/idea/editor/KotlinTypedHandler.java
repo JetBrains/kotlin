@@ -39,11 +39,15 @@ import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtQualifiedExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {
     private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
@@ -293,12 +297,25 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
     private static boolean autoIndentCase(Editor editor, Project project, PsiFile file, Class<?> kclass) {
         int offset = editor.getCaretModel().getOffset();
+
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+
         PsiElement currElement = file.findElementAt(offset - 1);
         if (currElement != null) {
+
+            // Should be applied only if there's nothing but the whitespace in line before the element
+            PsiElement prevLeaf = PsiTreeUtil.prevLeaf(currElement);
+            if (!(prevLeaf instanceof PsiWhiteSpace && prevLeaf.getText().contains("\n"))) {
+                return false;
+            }
+
             PsiElement parent = currElement.getParent();
             if (parent != null && kclass.isInstance(parent)) {
-                CodeStyleManager.getInstance(project).adjustLineIndent(file, offset - currElement.getText().length());
+                int curElementLength = currElement.getText().length();
+                if (offset < curElementLength) return false;
+
+                CodeStyleManager.getInstance(project).adjustLineIndent(file, offset - curElementLength);
+
                 return true;
             }
         }
