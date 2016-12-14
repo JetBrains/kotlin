@@ -20,7 +20,7 @@ import com.google.common.collect.Lists
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -126,14 +126,15 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         }
     }
 
-    private fun SimpleFunctionDescriptor.createFunctionType(): KotlinType? {
+    private fun SimpleFunctionDescriptor.createFunctionType(suspendFunction: Boolean = false): KotlinType? {
         return createFunctionType(
                 components.builtIns,
                 Annotations.EMPTY,
                 extensionReceiverParameter?.type,
                 valueParameters.map { it.type },
                 null,
-                returnType ?: return null
+                returnType ?: return null,
+                suspendFunction = suspendFunction
         )
     }
 
@@ -141,7 +142,8 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType
-        val functionTypeExpected = !noExpectedType(expectedType) && expectedType.isFunctionType
+        val functionTypeExpected = !noExpectedType(expectedType) && expectedType.isBuiltinFunctionalType
+        val suspendFunctionTypeExpected = !noExpectedType(expectedType) && expectedType.isSuspendFunctionType
 
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
         expression.valueParameters.forEach {
@@ -151,7 +153,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
-        val resultType = functionDescriptor.createFunctionType()!!
+        val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)!!
         if (functionTypeExpected) {
             // all checks were done before
             return createTypeInfo(resultType, context)
