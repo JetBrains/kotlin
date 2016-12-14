@@ -1,0 +1,6 @@
+apply plugin: 'kotlin-platform-jvm'
+
+dependencies {
+    implement project(":lib")
+    compile 'com.google.guava:guava:20.0'
+}

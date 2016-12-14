@@ -291,4 +291,26 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
         }
     }
+
+
+    @Test
+    fun testMultiplatformCompile() {
+        val project = Project("multiplatformProject", GRADLE_VERSION)
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(":lib:compileKotlinCommon",
+                    ":lib:compileTestKotlinCommon",
+                    ":libJvm:compileKotlin",
+                    ":libJvm:compileTestKotlin",
+                    ":libJs:compileKotlin2Js",
+                    ":libJs:compileTestKotlin2Js")
+            assertFileExists("lib/build/classes/main/foo/PlatformClass.kotlin_metadata")
+            assertFileExists("lib/build/classes/test/foo/PlatformTest.kotlin_metadata")
+            assertFileExists("libJvm/build/classes/main/foo/PlatformClass.class")
+            assertFileExists("libJvm/build/classes/test/foo/PlatformTest.class")
+            assertFileExists("libJs/build/classes/main/libJs_main.js")
+            assertFileExists("libJs/build/classes/test/libJs_test.js")
+        }
+    }
 }

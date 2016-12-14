@@ -209,6 +209,35 @@ internal class Kotlin2JsSourceSetProcessor(
     }
 }
 
+internal class KotlinCommonSourceSetProcessor(
+        project: Project,
+        javaBasePlugin: JavaBasePlugin,
+        sourceSet: SourceSet,
+        tasksProvider: KotlinTasksProvider,
+        kotlinSourceSetProvider: KotlinSourceSetProvider
+) : KotlinSourceSetProcessor<KotlinCompileCommon>(
+        project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
+        dslExtensionName = KOTLIN_DSL_NAME,
+        taskDescription = "Compiles the kotlin sources in $sourceSet to Metadata.",
+        compileTaskNameSuffix = "kotlinCommon"
+) {
+    override fun doTargetSpecificProcessing() {
+        project.afterEvaluate { project ->
+            kotlinTask.source(kotlinSourceSet.kotlin)
+            project.tasks.findByName(sourceSet.classesTaskName).dependsOn(kotlinTask)
+            // can be missing (e.g. in case of tests)
+            project.tasks.findByName(sourceSet.jarTaskName)?.dependsOn(kotlinTask)
+            val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
+            project.tasks.remove(javaTask)
+        }
+    }
+
+    override val defaultKotlinDestinationDir: File
+        get() = sourceSet.output.classesDir
+
+    override fun doCreateTask(project: Project, taskName: String): KotlinCompileCommon =
+            tasksProvider.createKotlinCommonTask(project, taskName, sourceSet.name)
+}
 
 internal abstract class AbstractKotlinPlugin(
         val tasksProvider: KotlinTasksProvider,
@@ -252,6 +281,14 @@ internal open class KotlinPlugin(
     }
 }
 
+internal open class KotlinCommonPlugin(
+        tasksProvider: KotlinTasksProvider,
+        kotlinSourceSetProvider: KotlinSourceSetProvider,
+        kotlinPluginVersion: String
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
+    override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
+            KotlinCommonSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider)
+}
 
 internal open class Kotlin2JsPlugin(
         tasksProvider: KotlinTasksProvider,

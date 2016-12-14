@@ -37,8 +37,19 @@ internal open class KotlinTasksProvider {
                 friendTaskName = taskToFriendTaskMapper[this]
             }
 
+    fun createKotlinCommonTask(project: Project, name: String, sourceSetName: String): KotlinCompileCommon =
+            project.tasks.create(name, KotlinCompileCommon::class.java).apply {
+                this.sourceSetName = sourceSetName
+                friendTaskName = taskToFriendTaskMapper[this]
+            }
+
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
             RegexTaskToFriendTaskMapper.Default()
+}
+
+internal class KotlinCommonTasksProvider : KotlinTasksProvider() {
+    override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
+            RegexTaskToFriendTaskMapper.Common()
 }
 
 internal class Kotlin2JsTasksProvider : KotlinTasksProvider() {
