@@ -5,7 +5,7 @@ suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
     SUSPENDED
 }
 
-fun builder(c: @Suspend() (() -> Int)): Int {
+fun builder(c: suspend () -> Int): Int {
     var res = 0
     c.startCoroutine(handleResultContinuation {
         res = it

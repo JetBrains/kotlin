@@ -6,7 +6,7 @@ class Controller {
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(c: @Suspend() (Controller.() -> Unit)) {
+fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), EmptyContinuation)
 }
 

@@ -10,7 +10,7 @@ class Controller {
     }
 }
 
-fun builder(c: @Suspend() (Controller.() -> String)): String {
+fun builder(c: suspend Controller.() -> String): String {
     val controller = Controller()
     c.startCoroutine(controller, handleResultContinuation {
         controller.log += "return($it);"

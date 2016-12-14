@@ -8,7 +8,7 @@ class Controller {
     }
 }
 
-fun builder(c: @Suspend() (Controller.() -> Int)): Controller {
+fun builder(c: suspend Controller.() -> Int): Controller {
     val controller = Controller()
     c.startCoroutine(controller, handleResultContinuation {
         controller.cResult = it

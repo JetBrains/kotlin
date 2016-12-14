@@ -14,7 +14,7 @@ class Controller {
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(c: @Suspend() (Controller.() -> Unit)) {
+fun builder(c: suspend Controller.() -> Unit) {
     val controller = Controller()
     c.startCoroutine(controller, EmptyContinuation)
     if (!controller.result) throw RuntimeException("fail")

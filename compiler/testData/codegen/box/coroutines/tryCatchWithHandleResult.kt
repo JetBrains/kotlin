@@ -21,7 +21,7 @@ class Controller {
         SUSPENDED
     }
 
-    fun run(c: @Suspend() (Controller.() -> String)) {
+    fun run(c: suspend Controller.() -> String) {
         c.startCoroutine(this, handleResultContinuation {
             globalResult = it
         })
@@ -32,7 +32,7 @@ class Controller {
     }
 }
 
-fun builder(expectException: Boolean = false, c: @Suspend() (Controller.() -> String)) {
+fun builder(expectException: Boolean = false, c: suspend Controller.() -> String) {
     val controller = Controller()
 
     globalResult = "#"

@@ -6,7 +6,7 @@ suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation
     SUSPENDED
 }
 
-fun builder(c: @Suspend() (() -> String)) {
+fun builder(c: suspend () -> String) {
     c.startCoroutine(handleResultContinuation {
         globalResult = it
     })

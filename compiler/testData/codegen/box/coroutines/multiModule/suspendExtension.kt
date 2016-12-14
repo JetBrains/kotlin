@@ -28,7 +28,7 @@ suspend fun Controller.localSuspendExtension(v: String) = v.suspendHere()
 
 inline suspend fun Controller.localInlineSuspendExtension(v: String) = v.inlineSuspendHere()
 
-fun builder(c: @Suspend() (Controller.() -> Unit)) {
+fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), EmptyContinuation)
 }
 

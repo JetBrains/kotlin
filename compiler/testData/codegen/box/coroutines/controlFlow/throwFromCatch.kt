@@ -18,7 +18,7 @@ class Controller {
     }
 }
 
-fun builder(c: @Suspend() (Controller.() -> Unit)): String {
+fun builder(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
     c.startCoroutine(controller, object : Continuation<Unit> {
         override fun resume(data: Unit) {

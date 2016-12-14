@@ -3,7 +3,7 @@
 
 suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x -> }
 
-fun builder(c: @Suspend() (() -> Unit)) {
+fun builder(c: suspend () -> Unit) {
     var exception: Throwable? = null
 
     c.createCoroutine(object : Continuation<Unit> {

@@ -20,7 +20,7 @@ class Controller {
         SUSPENDED
     }
 
-    fun run(c: @Suspend() (Controller.() -> Unit)) {
+    fun run(c: suspend Controller.() -> Unit) {
         c.startCoroutine(this, handleExceptionContinuation {
             exception = it
         })
@@ -31,7 +31,7 @@ class Controller {
     }
 }
 
-fun builder(c: @Suspend() (Controller.() -> Unit)) {
+fun builder(c: suspend Controller.() -> Unit) {
     val controller = Controller()
     controller.run(c)
 

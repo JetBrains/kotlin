@@ -6,7 +6,7 @@ suspend fun <T> await(t: T): T = suspendWithCurrentContinuation { c ->
     SUSPENDED
 }
 
-fun builder(c: @Suspend() (() -> Unit)): String {
+fun builder(c: suspend () -> Unit): String {
     var result = "fail"
     c.startCoroutine(handleResultContinuation {
         result = "OK"

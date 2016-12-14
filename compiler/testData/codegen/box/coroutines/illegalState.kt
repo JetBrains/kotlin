@@ -7,11 +7,11 @@ suspend fun suspendHere(): Unit = suspendWithCurrentContinuation { x ->
     SUSPENDED
 }
 
-fun builder1(c: @Suspend() (() -> Unit)) {
+fun builder1(c: suspend () -> Unit) {
     (c as Continuation<Unit>).resume(Unit)
 }
 
-fun builder2(c: @Suspend() (() -> Unit)) {
+fun builder2(c: suspend () -> Unit) {
     val continuation = c.createCoroutine(EmptyContinuation)
     val declaredField = continuation.javaClass.superclass.superclass.getDeclaredField("label")
     declaredField.setAccessible(true)

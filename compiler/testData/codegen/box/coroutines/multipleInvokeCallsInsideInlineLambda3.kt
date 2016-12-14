@@ -18,7 +18,7 @@ class Controller {
     // INTERCEPT_RESUME_PLACEHOLDER
 }
 
-fun builder(c: @Suspend() (Controller.() -> Unit)) {
+fun builder(c: suspend Controller.() -> Unit) {
     val controller1 = Controller()
     val controller2 = Controller()
 

@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 
-fun builder(c: @Suspend() (() -> Int)): Int {
+fun builder(c: suspend () -> Int): Int {
     var res = 0
     c.startCoroutine(handleResultContinuation {
         res = it

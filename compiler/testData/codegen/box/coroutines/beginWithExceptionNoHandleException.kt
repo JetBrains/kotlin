@@ -2,7 +2,7 @@
 // WITH_COROUTINES
 suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x ->}
 
-fun builder(c: @Suspend() (() -> Unit)) {
+fun builder(c: suspend () -> Unit) {
     try {
         c.createCoroutine(EmptyContinuation).resumeWithException(RuntimeException("OK"))
     }

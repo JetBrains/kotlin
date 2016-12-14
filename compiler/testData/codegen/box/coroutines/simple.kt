@@ -7,7 +7,7 @@ suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
     SUSPENDED
 }
 
-fun builder(c: @Suspend() () -> Unit) {
+fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 

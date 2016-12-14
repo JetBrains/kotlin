@@ -6,7 +6,7 @@ suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
     SUSPENDED
 }
 
-fun builder(c: @Suspend() (() -> Unit)) {
+fun builder(c: suspend () -> Unit) {
     var isCompleted = false
     c.startCoroutine(handleResultContinuation {
         isCompleted = true

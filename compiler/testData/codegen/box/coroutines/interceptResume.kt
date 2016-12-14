@@ -19,7 +19,7 @@ class Controller {
     }
 }
 
-fun test(c: @Suspend() (Controller.() -> Unit)): String {
+fun test(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
     c.startCoroutine(controller, EmptyContinuation, object: ResumeInterceptor {
         private fun interceptResume(block: () -> Unit) {

@@ -73,7 +73,7 @@ suspend fun <S> awaitAndLog(value: Promise<S>): S {
     })
 }
 
-fun <T> async(c: @Suspend() (() -> T)): Promise<T> {
+fun <T> async(c: suspend () -> T): Promise<T> {
     return Promise { resolve ->
         c.startCoroutine(handleResultContinuation(resolve))
     }
