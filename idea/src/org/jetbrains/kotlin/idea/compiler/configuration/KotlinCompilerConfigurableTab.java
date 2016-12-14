@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,7 +248,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
                (showLanguageVersion && !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion))) ||
-               !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArgument(k2jsCompilerArguments.moduleKind)) ||
+               !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments)) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
                ComparingUtils.isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
                ComparingUtils.isModified(scriptTemplatesClasspathField, compilerSettings.getScriptTemplatesClasspath()) ||
@@ -287,7 +287,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         if (showLanguageVersion) {
             commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
         }
-        commonCompilerArguments.coroutineSupport = ((CoroutineSupport) coroutineSupportComboBox.getSelectedItem()).getCompilerArgument();
+        CoroutineSupport coroutineSupport = (CoroutineSupport) coroutineSupportComboBox.getSelectedItem();
+        commonCompilerArguments.coroutinesEnable = coroutineSupport == CoroutineSupport.ENABLED;
+        commonCompilerArguments.coroutinesWarn = coroutineSupport == CoroutineSupport.ENABLED_WITH_WARNING;
+        commonCompilerArguments.coroutinesError = coroutineSupport == CoroutineSupport.DISABLED;
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
         compilerSettings.setScriptTemplates(scriptTemplatesField.getText());
         compilerSettings.setScriptTemplatesClasspath(scriptTemplatesClasspathField.getText());
@@ -322,7 +325,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         if (showLanguageVersion) {
             languageVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion));
         }
-        coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArgument(commonCompilerArguments.coroutineSupport));
+        coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
         scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
         scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());
