@@ -1,0 +1,18 @@
+// -- Module: <m1-common> --
+package
+
+public header fun external(): kotlin.Unit
+public header fun inline(): kotlin.Unit
+public header fun tailrec(): kotlin.Unit
+public header fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
+public header fun kotlin.String.unaryMinus(): kotlin.String
+
+
+// -- Module: <m2-jvm> --
+package
+
+public external impl fun external(): kotlin.Unit
+public inline impl fun inline(): kotlin.Unit
+public tailrec impl fun tailrec(): kotlin.Unit
+public infix impl fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
+public operator impl fun kotlin.String.unaryMinus(): kotlin.String
