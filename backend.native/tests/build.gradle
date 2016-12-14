@@ -151,7 +151,7 @@ class LinkKonanTest extends KonanTest {
                  "-runtime", "${runtimeBc.absolutePath}",
                  sourcesKt, *project.globalArgs)
 
-             libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
+            String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
             environment 'LD_LIBRARY_PATH'   : libraryPath
             environment 'DYLD_LIBRARY_PATH' : libraryPath
 
