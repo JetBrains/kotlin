@@ -5581,6 +5581,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Native extends AbstractBoxJsTest {
+        @TestMetadata("accessToCompanionObjectFromInlineFun.kt")
+        public void testAccessToCompanionObjectFromInlineFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/accessToCompanionObjectFromInlineFun.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInNative() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
@@ -5786,6 +5792,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("undefined.kt")
         public void testUndefined() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/undefined.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useClassFromInlineFun.kt")
+        public void testUseClassFromInlineFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/useClassFromInlineFun.kt");
             doTest(fileName);
         }
 

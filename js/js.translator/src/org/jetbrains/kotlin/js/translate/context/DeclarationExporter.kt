@@ -20,6 +20,8 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
@@ -37,6 +39,7 @@ internal class DeclarationExporter(val context: StaticContext) {
     fun export(descriptor: MemberDescriptor, force: Boolean) {
         if (exportedDeclarations.contains(descriptor)) return
         if (descriptor is ConstructorDescriptor && descriptor.isPrimary) return
+        if (isNativeObject(descriptor) || isLibraryObject(descriptor)) return
 
         val suggestedName = context.nameSuggestion.suggest(descriptor) ?: return
 
