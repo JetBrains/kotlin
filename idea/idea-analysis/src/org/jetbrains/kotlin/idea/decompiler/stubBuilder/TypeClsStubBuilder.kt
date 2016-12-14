@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
@@ -89,7 +91,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
 
         val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
-        val shouldBuildAsFunctionType = isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
+        val shouldBuildAsFunctionType = isBuiltinFunctionClass(classId)
                                         && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
             val (extensionAnnotations, notExtensionAnnotations) =
@@ -114,11 +116,22 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassId>) {
-        // TODO Calculate type modifiers mask, see 'ModifierMaskUtils.computeMask'
-        val typeModifiersMask = 0
-        if (annotations.isEmpty()) return
+        val typeModifiers = getTypeModifiersAsWritten(type)
+        if (annotations.isEmpty() && typeModifiers.isEmpty()) return
+        val typeModifiersMask = ModifierMaskUtils.computeMask { it in typeModifiers }
         val modifiersList = KotlinModifierListStubImpl(parent, typeModifiersMask, KtStubElementTypes.MODIFIER_LIST)
         createAnnotationStubs(annotations, modifiersList)
+    }
+
+    private fun getTypeModifiersAsWritten(type: Type): Set<KtModifierKeywordToken> {
+        val result = hashSetOf<KtModifierKeywordToken>()
+        val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
+
+        if (classId.asSingleFqName().toUnsafe().getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction) {
+            result.add(KtTokens.SUSPEND_KEYWORD)
+        }
+
+        return result
     }
 
     private fun createTypeArgumentListStub(typeStub: KotlinUserTypeStub, typeArgumentProtoList: List<Type.Argument>) {

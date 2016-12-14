@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
@@ -72,6 +73,12 @@ val KotlinType.isBuiltinFunctionalType: Boolean
                kind == FunctionClassDescriptor.Kind.SuspendFunction
     }
 
+fun isBuiltinFunctionClass(classId: ClassId): Boolean {
+    val kind = classId.asSingleFqName().toUnsafe().getFunctionalClassKind()
+    return kind == FunctionClassDescriptor.Kind.Function ||
+           kind == FunctionClassDescriptor.Kind.SuspendFunction
+}
+
 val KotlinType.isNonExtensionFunctionType: Boolean
     get() = isBuiltinFunctionalType && !isTypeAnnotatedWithExtensionFunctionType
 
@@ -99,8 +106,12 @@ fun DeclarationDescriptor.getFunctionalClassKind(): FunctionClassDescriptor.Kind
     if (this !is ClassDescriptor) return null
 
     val fqNameUnsafe = this.fqNameUnsafe
-    if (!fqNameUnsafe.isSafe || fqNameUnsafe.isRoot) return null
-    val fqName = fqNameUnsafe.toSafe()
+    return fqNameUnsafe.getFunctionalClassKind()
+}
+
+fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassDescriptor.Kind? {
+    if (!isSafe || isRoot) return null
+    val fqName = toSafe()
 
     return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(fqName.shortName().asString(), fqName.parent())
 }
