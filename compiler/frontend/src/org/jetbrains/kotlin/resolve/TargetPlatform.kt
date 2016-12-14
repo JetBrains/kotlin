@@ -43,7 +43,6 @@ abstract class TargetPlatform(val platformName: String) {
             add(ImportPath("kotlin.*"))
             add(ImportPath("kotlin.annotation.*"))
             add(ImportPath("kotlin.collections.*"))
-            add(ImportPath("kotlin.coroutines.*"))
             add(ImportPath("kotlin.ranges.*"))
             add(ImportPath("kotlin.sequences.*"))
             add(ImportPath("kotlin.text.*"))

@@ -42,7 +42,7 @@ object JvmPlatform : TargetPlatform("JVM") {
         }
 
         val builtIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
-        for (builtinPackageFragment in builtIns.builtInsPackageFragments) {
+        for (builtinPackageFragment in builtIns.builtInsPackageFragmentsImportedByDefault) {
             addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
         }
     }

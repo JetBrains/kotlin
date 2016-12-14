@@ -92,11 +92,11 @@ public abstract class KotlinBuiltIns {
                 PackageFragmentDescriptor kotlinCollections = createPackage(provider, nameToFragment, COLLECTIONS_PACKAGE_FQ_NAME);
                 createPackage(provider, nameToFragment, RANGES_PACKAGE_FQ_NAME);
                 PackageFragmentDescriptor kotlinAnnotation = createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
-                createPackage(provider, nameToFragment, COROUTINES_PACKAGE_FQ_NAME);
+                PackageFragmentDescriptor coroutinePackage = createPackage(provider, null, COROUTINES_PACKAGE_FQ_NAME);
 
-                Set<PackageFragmentDescriptor> all = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
+                Set<PackageFragmentDescriptor> allImportedByDefault = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
 
-                return new PackageFragments(kotlin, kotlinCollections, kotlinAnnotation, all);
+                return new PackageFragments(kotlin, kotlinCollections, kotlinAnnotation, coroutinePackage, allImportedByDefault);
             }
         });
 
@@ -174,7 +174,7 @@ public abstract class KotlinBuiltIns {
     @NotNull
     private PackageFragmentDescriptor createPackage(
             @NotNull PackageFragmentProvider fragmentProvider,
-            @NotNull Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment,
+            @Nullable Map<FqName, PackageFragmentDescriptor> packageNameToPackageFragment,
             @NotNull final FqName packageFqName
     ) {
         final List<PackageFragmentDescriptor> packageFragments = fragmentProvider.getPackageFragments(packageFqName);
@@ -203,7 +203,7 @@ public abstract class KotlinBuiltIns {
                     }
                 };
 
-        packageNameToPackageFragment.put(packageFqName, result);
+        if (packageNameToPackageFragment != null) packageNameToPackageFragment.put(packageFqName, result);
         return result;
     }
 
@@ -232,18 +232,21 @@ public abstract class KotlinBuiltIns {
         public final PackageFragmentDescriptor builtInsPackageFragment;
         public final PackageFragmentDescriptor collectionsPackageFragment;
         public final PackageFragmentDescriptor annotationPackageFragment;
-        public final Set<PackageFragmentDescriptor> builtInsPackageFragments;
+        public final PackageFragmentDescriptor coroutinePackageFragment;
+        public final Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments;
 
         private PackageFragments(
                 @NotNull PackageFragmentDescriptor builtInsPackageFragment,
                 @NotNull PackageFragmentDescriptor collectionsPackageFragment,
                 @NotNull PackageFragmentDescriptor annotationPackageFragment,
-                @NotNull Set<PackageFragmentDescriptor> builtInsPackageFragments
+                @NotNull PackageFragmentDescriptor coroutinePackageFragment,
+                @NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments
         ) {
             this.builtInsPackageFragment = builtInsPackageFragment;
             this.collectionsPackageFragment = collectionsPackageFragment;
             this.annotationPackageFragment = annotationPackageFragment;
-            this.builtInsPackageFragments = builtInsPackageFragments;
+            this.coroutinePackageFragment = coroutinePackageFragment;
+            this.allImportedByDefaultBuiltInsPackageFragments = allImportedByDefaultBuiltInsPackageFragments;
         }
     }
 
@@ -368,8 +371,13 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public Set<PackageFragmentDescriptor> getBuiltInsPackageFragments() {
-        return packageFragments.invoke().builtInsPackageFragments;
+    public Set<PackageFragmentDescriptor> getBuiltInsPackageFragmentsImportedByDefault() {
+        return packageFragments.invoke().allImportedByDefaultBuiltInsPackageFragments;
+    }
+
+    @NotNull
+    public PackageFragmentDescriptor getBuiltInsCoroutinePackageFragment() {
+        return packageFragments.invoke().coroutinePackageFragment;
     }
 
     @NotNull

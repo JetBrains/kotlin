@@ -4276,6 +4276,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noDefaultCoroutineImports.kt")
+            public void testNoDefaultCoroutineImports() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/noDefaultCoroutineImports.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nonLocalSuspension.kt")
             public void testNonLocalSuspension() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/nonLocalSuspension.kt");
