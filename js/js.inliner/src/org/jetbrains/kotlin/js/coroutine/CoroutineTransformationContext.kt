@@ -16,16 +16,14 @@
 
 package org.jetbrains.kotlin.js.coroutine
 
+import com.google.dart.compiler.backend.js.ast.JsFunction
 import com.google.dart.compiler.backend.js.ast.JsScope
+import com.google.dart.compiler.backend.js.ast.metadata.coroutineMetadata
 
-class CoroutineTransformationContext(private val scope: JsScope, private val stackUnwinding: Boolean) {
+class CoroutineTransformationContext(private val scope: JsScope, function: JsFunction) {
     val entryBlock = CoroutineBlock()
     val globalCatchBlock = CoroutineBlock()
-    val resultFieldName by lazy { scope.declareFreshName("\$result") }
-    val exceptionFieldName by lazy { scope.declareFreshName("\$exception") }
-    val stateFieldName by lazy { scope.declareFreshName("\$state") }
+    val metadata = function.coroutineMetadata!!
     val controllerFieldName by lazy { scope.declareFreshName("\$controller") }
-    val exceptionStateName by lazy { scope.declareFreshName("\$exceptionState") }
-    val finallyPathFieldName by lazy { scope.declareFreshName("\$finallyPath") }
-    val suspendObjectVar by lazy { if (stackUnwinding) scope.declareFreshName("\$suspendObject") else null }
+    val returnValueFieldName by lazy { scope.declareFreshName("\$returnValue") }
 }

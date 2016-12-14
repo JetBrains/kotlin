@@ -174,8 +174,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsInvocation createObjectWithPrototypeFrom(JsNameRef referenceToClass) {
-        return new JsInvocation(JS_OBJECT_CREATE_FUNCTION, JsAstUtils.prototypeOf(referenceToClass));
+    public static JsInvocation createObjectWithPrototypeFrom(@NotNull JsExpression referenceToClass) {
+        return new JsInvocation(JS_OBJECT_CREATE_FUNCTION.deepCopy(), JsAstUtils.prototypeOf(referenceToClass));
     }
 
     @NotNull

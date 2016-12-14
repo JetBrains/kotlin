@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.coroutine
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.controllerType
 import com.google.dart.compiler.backend.js.ast.metadata.coroutineType
 
 class CoroutineTransformer(private val program: JsProgram) : JsVisitorWithContextImpl() {
@@ -32,7 +31,7 @@ class CoroutineTransformer(private val program: JsProgram) : JsVisitorWithContex
     override fun endVisit(x: JsFunction, ctx: JsContext<in JsStatement>) {
         val coroutineType = x.coroutineType
         if (coroutineType != null) {
-            additionalStatements += CoroutineFunctionTransformer(program, x, coroutineType, x.controllerType!!).transform()
+            additionalStatements += CoroutineFunctionTransformer(program, x).transform()
         }
     }
 }

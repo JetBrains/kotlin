@@ -17,10 +17,10 @@ class Controller {
     }
 }
 
-fun builder(coroutine c: () -> String): String {
+fun builder(c: suspend Controller.() -> String): String {
     val controller = Controller()
-    c.startCoroutine(handleResult {
-        controller.result += "return($value);"
+    c.startCoroutine(controller, handleResultContinuation {
+        controller.result += "return($it);"
     })
     return controller.result
 }

@@ -112,7 +112,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
         override fun endVisit(x: JsDebugger, ctx: JsContext<in JsStatement>) {
             val target = x.targetBlock
             if (target != null) {
-                val lhs = JsNameRef(context.stateFieldName, JsLiteral.THIS)
+                val lhs = JsNameRef(context.metadata.stateName, JsLiteral.THIS)
                 val rhs = program.getNumberLiteral(blockIndexes[target]!!)
                 ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
                     targetBlock = true
@@ -121,7 +121,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
 
             val exceptionTarget = x.targetExceptionBlock
             if (exceptionTarget != null) {
-                val lhs = JsNameRef(context.exceptionStateName, JsLiteral.THIS)
+                val lhs = JsNameRef(context.metadata.exceptionStateName, JsLiteral.THIS)
                 val rhs = program.getNumberLiteral(blockIndexes[exceptionTarget]!!)
                 ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
                     targetExceptionBlock = true
@@ -131,7 +131,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
             val finallyPath = x.finallyPath
             if (finallyPath != null) {
                 if (finallyPath.isNotEmpty()) {
-                    val lhs = JsNameRef(context.finallyPathFieldName, JsLiteral.THIS)
+                    val lhs = JsNameRef(context.metadata.finallyPathName, JsLiteral.THIS)
                     val rhs = JsArrayLiteral(finallyPath.map { program.getNumberLiteral(blockIndexes[it]!!) })
                     ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
                         this.finallyPath = true
@@ -209,7 +209,7 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
                 }
 
                 x.coroutineResult -> {
-                    ctx.replaceMe(JsNameRef(context.resultFieldName, x.qualifier).apply {
+                    ctx.replaceMe(JsNameRef(context.metadata.resultName, x.qualifier).apply {
                         sideEffects = SideEffectKind.DEPENDS_ON_STATE
                     })
                 }

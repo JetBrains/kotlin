@@ -602,6 +602,7 @@ public class KotlinTestUtils {
 
         List<F> testFiles = Lists.newArrayList();
         Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
+        boolean hasModules = false;
         if (!matcher.find()) {
             // One file
             testFiles.add(factory.createFile(null, testFileName, expectedText, directives));
@@ -614,6 +615,7 @@ public class KotlinTestUtils {
                 String moduleName = matcher.group(1);
                 String moduleDependencies = matcher.group(2);
                 if (moduleName != null) {
+                    hasModules = true;
                     module = factory.createModule(moduleName, parseDependencies(moduleDependencies));
                 }
 
@@ -642,7 +644,8 @@ public class KotlinTestUtils {
         }
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
-            testFiles.add(factory.createFile(null,
+            M supportModule = hasModules ? factory.createModule("support", Collections.<String>emptyList()) : null;
+            testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
                                              "import kotlin.coroutines.*\n" +
                                              "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +

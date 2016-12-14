@@ -20,9 +20,9 @@ package com.google.dart.compiler.backend.js.ast.metadata
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
+import org.jetbrains.kotlin.types.KotlinType
 
 var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
@@ -64,9 +64,7 @@ var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
 var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEffectKind.AFFECTS_STATE)
 
-var JsFunction.coroutineType: ClassDescriptor? by MetadataProperty(default = null)
-
-var JsFunction.controllerType: ClassDescriptor? by MetadataProperty(default = null)
+var JsFunction.coroutineType: KotlinType? by MetadataProperty(default = null)
 
 /**
  * Denotes a suspension call-site that is to be processed by coroutine transformer.
@@ -87,29 +85,31 @@ var JsInvocation.isPreSuspend: Boolean by MetadataProperty(default = false)
 var JsInvocation.isFakeSuspend: Boolean by MetadataProperty(default = false)
 
 /**
- * Denotes a call to coroutine's controller `handleResult` function.
- * See coroutine spec for explanation.
- */
-var JsInvocation.isHandleResult: Boolean by MetadataProperty(default = false)
-
-/**
  * Denotes a reference to coroutine's `result` field that contains result of
  * last suspended invocation.
  */
 var JsNameRef.coroutineResult by MetadataProperty(default = false)
 
 /**
- * Denotes a reference to coroutine's `controller` field that contains coroutines's controller
+ * Denotes a reference to coroutine's `interceptor` field that contains coroutines's interceptor
  */
 var JsNameRef.coroutineController by MetadataProperty(default = false)
 
-var JsFunction.suspendObjectRef: JsExpression? by MetadataProperty(default = null)
-
-var JsFunction.continuationInterfaceRef: JsExpression? by MetadataProperty(default = null)
-
 var JsName.imported by MetadataProperty(default = false)
 
-var JsFunction.interceptResumeRef: JsExpression? by MetadataProperty(default = null)
+var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default = null)
+
+class CoroutineMetadata(
+        val doResumeName: JsName,
+        val stateName: JsName,
+        val exceptionStateName: JsName,
+        val finallyPathName: JsName,
+        val resultName: JsName,
+        val exceptionName: JsName,
+        val baseClassRef: JsExpression,
+        val suspendObjectRef: JsExpression,
+        val hasController: Boolean
+)
 
 enum class TypeCheck {
     TYPEOF,

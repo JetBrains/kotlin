@@ -20,7 +20,8 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -31,10 +32,8 @@ import org.jetbrains.kotlin.js.translate.expression.LiteralFunctionTranslator
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
+import org.jetbrains.kotlin.js.translate.utils.*
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -206,17 +205,19 @@ class CallArgumentTranslator private constructor(
             val parenthesizedArgumentExpression = valueArguments[0].getArgumentExpression()!!
             val argumentExpression = KtPsiUtil.deparenthesize(parenthesizedArgumentExpression)
 
-            result += if (/*parameterDescriptor.isCoroutine=*/false && argumentExpression is KtLambdaExpression) {
-                val continuationType = parameterDescriptor.type.arguments.last().type
-                val continuationDescriptor = continuationType.constructor.declarationDescriptor as ClassDescriptor
-                val controllerType = parameterDescriptor.type.arguments[0].type
-                val controllerDescriptor = controllerType.constructor.declarationDescriptor as ClassDescriptor
-                LiteralFunctionTranslator(context).translate(
-                        argumentExpression.functionLiteral, continuationDescriptor, controllerDescriptor)
+            val lambdaDescriptor = argumentExpression?.let { context.extractLambda(it) }
+            if (lambdaDescriptor?.isSuspendLambda == true) {
+                val lambdaExpression = (argumentExpression as KtLambdaExpression).functionLiteral
+                result += LiteralFunctionTranslator(context).translate(lambdaExpression, parameterDescriptor.type)
             }
             else {
-                Translation.translateAsExpression(parenthesizedArgumentExpression, context)
+                result += Translation.translateAsExpression(parenthesizedArgumentExpression, context)
             }
+        }
+
+        private fun TranslationContext.extractLambda(expression: KtExpression): CallableDescriptor? {
+            val lambdaExpression = expression as? KtLambdaExpression ?: return null
+            return BindingUtils.getFunctionDescriptor(bindingContext(), lambdaExpression.functionLiteral)
         }
 
         private fun translateVarargArgument(arguments: List<ValueArgument>, result: MutableList<JsExpression>,

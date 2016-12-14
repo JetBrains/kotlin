@@ -13,7 +13,7 @@ class Controller {
     }
 }
 
-// MODULE: main(controller)
+// MODULE: main(controller, support)
 // FILE: main.kt
 import lib.*
 import kotlin.coroutines.*

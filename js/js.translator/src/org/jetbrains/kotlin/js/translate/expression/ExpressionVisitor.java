@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.reference.*;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -128,11 +127,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         JsReturn jsReturn;
-        JsExpression handleResultExpression = TranslationUtils.tryTranslateHandleResult(context, jetReturnExpression, returned);
-        if (handleResultExpression != null) {
-            jsReturn = new JsReturn(handleResultExpression);
-        }
-        else if (returned == null) {
+        if (returned == null) {
             jsReturn = new JsReturn(null);
         }
         else {
@@ -451,13 +446,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitLambdaExpression(@NotNull KtLambdaExpression expression, @NotNull TranslationContext context) {
-        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral(), null, null);
+        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral(), null);
     }
 
     @Override
     @NotNull
     public JsNode visitNamedFunction(@NotNull KtNamedFunction expression, @NotNull TranslationContext context) {
-        JsExpression alias = new LiteralFunctionTranslator(context).translate(expression, null, null);
+        JsExpression alias = new LiteralFunctionTranslator(context).translate(expression, null);
 
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsNameRef nameRef = (JsNameRef) ReferenceTranslator.translateAsValueReference(descriptor, context);

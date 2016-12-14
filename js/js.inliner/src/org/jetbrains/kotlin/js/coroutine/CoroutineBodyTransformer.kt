@@ -21,13 +21,8 @@ import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.js.inline.util.collectBreakContinueTargets
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-class CoroutineBodyTransformer(
-        private val program: JsProgram,
-        private val context: CoroutineTransformationContext,
-        private val throwFunctionName: JsName?
-) : RecursiveJsVisitor() {
+class CoroutineBodyTransformer(private val program: JsProgram,private val context: CoroutineTransformationContext) : RecursiveJsVisitor() {
     private val entryBlock = context.entryBlock
     private val globalCatchBlock = context.globalCatchBlock
     private var currentBlock = entryBlock
@@ -254,7 +249,7 @@ class CoroutineBodyTransformer(
         }
 
         if (catchNode != null) {
-            currentStatements += JsAstUtils.newVar(catchNode.parameter.name, JsNameRef(context.exceptionFieldName, JsLiteral.THIS))
+            currentStatements += JsAstUtils.newVar(catchNode.parameter.name, JsNameRef(context.metadata.exceptionName, JsLiteral.THIS))
             catchNode.body.statements.forEach { it.accept(this) }
 
             if (finallyNode == null) {
@@ -283,8 +278,8 @@ class CoroutineBodyTransformer(
     // for simple `when` statement, we will need to support JsSwitch here
 
     private fun generateFinallyExit() {
-        val finallyPathRef = JsNameRef(context.finallyPathFieldName, JsLiteral.THIS)
-        val stateRef = JsNameRef(context.stateFieldName, JsLiteral.THIS)
+        val finallyPathRef = JsNameRef(context.metadata.finallyPathName, JsLiteral.THIS)
+        val stateRef = JsNameRef(context.metadata.stateName, JsLiteral.THIS)
         val nextState = JsInvocation(JsNameRef("shift", finallyPathRef))
         currentStatements += JsAstUtils.assignment(stateRef, nextState).makeStmt()
         currentStatements += jump()
@@ -310,11 +305,12 @@ class CoroutineBodyTransformer(
         if (isInFinally) {
             val returnBlock = CoroutineBlock()
             jumpWithFinally(0, returnBlock)
+            val returnFieldRef = JsNameRef(context.returnValueFieldName, JsLiteral.THIS)
+            currentStatements += JsAstUtils.assignment(returnFieldRef, x.expression).makeStmt()
             currentStatements += jump()
 
             currentBlock = returnBlock
-            currentStatements += x.expression?.makeStmt().singletonOrEmptyList()
-            currentStatements += JsReturn()
+            currentStatements += JsReturn(returnFieldRef.deepCopy())
         }
         else {
             currentStatements += x
@@ -322,16 +318,7 @@ class CoroutineBodyTransformer(
     }
 
     override fun visitThrow(x: JsThrow) {
-        if (throwFunctionName != null && tryStack.isEmpty()) {
-            val methodRef = JsNameRef(throwFunctionName, JsNameRef(context.controllerFieldName, JsLiteral.THIS))
-            val invocation = JsInvocation(methodRef, x.expression).apply {
-                source = x.source
-            }
-            currentStatements += JsReturn(invocation)
-        }
-        else {
-            currentStatements += x
-        }
+        currentStatements += x
     }
 
     private fun handleExpression(expression: JsExpression): JsExpression? {
@@ -361,15 +348,14 @@ class CoroutineBodyTransformer(
 
     private fun handleSuspend(invocation: JsInvocation) {
         val invokeExpression = if (invocation.isFakeSuspend) invocation.arguments.getOrNull(0) else invocation
-        val suspendObjectVar = context.suspendObjectVar
-        val statements = if (invokeExpression == null || suspendObjectVar == null) {
-            listOf(JsReturn(invokeExpression))
+        val statements = if (invokeExpression == null) {
+            listOf(JsReturn(context.metadata.suspendObjectRef.deepCopy()))
         }
         else {
-            val resultRef = JsNameRef(context.resultFieldName, JsLiteral.THIS).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE }
+            val resultRef = JsNameRef(context.metadata.resultName, JsLiteral.THIS).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE }
             val invocationStatement = JsAstUtils.assignment(resultRef, invokeExpression).makeStmt()
-            val suspendCondition = JsAstUtils.equality(resultRef.deepCopy(), JsAstUtils.pureFqn(suspendObjectVar, null))
-            val suspendIfNeeded = JsIf(suspendCondition, JsReturn())
+            val suspendCondition = JsAstUtils.equality(resultRef.deepCopy(), context.metadata.suspendObjectRef.deepCopy())
+            val suspendIfNeeded = JsIf(suspendCondition, JsReturn(context.metadata.suspendObjectRef.deepCopy()))
             listOf(invocationStatement, suspendIfNeeded, JsBreak())
         }
         currentStatements += statements

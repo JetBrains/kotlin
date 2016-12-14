@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
@@ -32,25 +32,24 @@ import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.types.KotlinType
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
     companion object {
-        private val SUSPEND_FQ_NAME = "kotlin.coroutines.Suspend"
+        private val SUSPEND_FQ_NAME = FqName("kotlin.coroutines.SUSPENDED")
     }
 
     fun translate(
             declaration: KtDeclarationWithBody,
-            continuationType: ClassDescriptor? = null,
-            controllerType: ClassDescriptor? = null
+            continuationType: KotlinType? = null
     ): JsExpression {
         val invokingContext = context()
         val descriptor = getFunctionDescriptor(invokingContext.bindingContext(), declaration)
@@ -88,39 +87,48 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             invokingContext.getInnerNameForDescriptor(descriptor)
         }
 
-        val suspendObjectRef = if (descriptor.isCoroutineLambda && KotlinBuiltIns.isUnit(descriptor.returnType!!)) {
-            val suspendObjectDescriptor = context().currentModule.builtIns.getBuiltInClassByFqName(FqName(SUSPEND_FQ_NAME))
-            ReferenceTranslator.translateAsValueReference(suspendObjectDescriptor, context())
-        }
-        else {
-            null
-        }
-
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
             lambdaCreator.name = invokingContext.getInnerNameForDescriptor(descriptor)
             lambdaCreator.isLocal = true
-            lambdaCreator.coroutineType = continuationType
-            lambdaCreator.controllerType = controllerType
             if (!isRecursive || descriptor.isCoroutineLambda) {
                 lambda.name = null
             }
             lambdaCreator.name.staticRef = lambdaCreator
-            lambdaCreator.continuationInterfaceRef = invokingContext.getContinuationInterfaceReference()
-            lambdaCreator.suspendObjectRef = suspendObjectRef
+            lambdaCreator.fillCoroutineMetadata(invokingContext, continuationType)
             return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
                                                         invokingContext)
         }
 
         lambda.isLocal = true
-        lambda.coroutineType = continuationType
-        lambda.controllerType = controllerType
 
         invokingContext.addDeclarationStatement(lambda.makeStmt())
+        lambda.fillCoroutineMetadata(invokingContext, continuationType)
         lambda.name.staticRef = lambda
-        lambda.continuationInterfaceRef = invokingContext.getContinuationInterfaceReference()
-        lambda.suspendObjectRef = suspendObjectRef
         return getReferenceToLambda(invokingContext, descriptor, lambda.name)
+    }
+
+    fun JsFunction.fillCoroutineMetadata(context: TranslationContext, continuationType: KotlinType?) {
+        if (continuationType == null) return
+
+        val suspendObjectDescriptor = context().currentModule.getPackage(SUSPEND_FQ_NAME.parent())
+                .memberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES)
+                .first { it is PropertyDescriptor && it.name == SUSPEND_FQ_NAME.shortName() }
+
+        val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
+
+        coroutineMetadata = CoroutineMetadata(
+                doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
+                suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendObjectDescriptor, context()),
+                baseClassRef = coroutineBaseClassRef,
+                stateName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "state")),
+                exceptionStateName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "exceptionState")),
+                finallyPathName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "finallyPath")),
+                resultName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "result")),
+                exceptionName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "exception")),
+                hasController = continuationType.isBuiltinExtensionFunctionalType
+        )
+        coroutineType = continuationType
     }
 
     fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {
@@ -131,12 +139,6 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         val jsParameter = JsParameter(context.getNameForDescriptor(this))
         return DestructuringDeclarationTranslator.translate(destructuringDeclaration, jsParameter.name, null, context)
     }
-}
-
-private fun TranslationContext.getContinuationInterfaceReference(): JsExpression {
-    val coroutineClassId = ClassId.topLevel(KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation")))
-    val classDescriptor = currentModule.findClassAcrossModuleDependencies(coroutineClassId)!!
-    return ReferenceTranslator.translateAsTypeReference(classDescriptor, this)
 }
 
 private fun CallableMemberDescriptor.wrapContextForCoroutineIfNecessary(context: TranslationContext): TranslationContext {
@@ -254,7 +256,7 @@ private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName:
     val alias = JsInvocation(localFunAlias.qualifier, aliasCallArguments)
     declareAliasInsideFunction(capturingFunction, capturedName, alias)
 
-    val capturedParameters = freshNames.map {JsParameter(it)}
+    val capturedParameters = freshNames.map(::JsParameter)
     return CapturedArgsParams(capturedArgs, capturedParameters)
 }
 

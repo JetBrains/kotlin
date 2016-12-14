@@ -18,34 +18,34 @@ package org.jetbrains.kotlin.js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
@@ -130,7 +130,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation isNotNullCheck(@NotNull JsExpression expressionToCheck) {
+    private static JsBinaryOperation isNotNullCheck(@NotNull JsExpression expressionToCheck) {
         return nullCheck(expressionToCheck, true);
     }
 
@@ -312,48 +312,6 @@ public final class TranslationUtils {
         return false;
     }
 
-    @Nullable
-    public static JsExpression tryTranslateHandleResult(
-            @NotNull TranslationContext context,
-            @NotNull KtExpression expression,
-            @Nullable KtExpression returnExpression
-    ) {
-        ResolvedCall<? extends FunctionDescriptor> returnCall = context.bindingContext().get(
-                BindingContext.RETURN_HANDLE_RESULT_RESOLVED_CALL, expression);
-        if (returnCall == null) return null;
-
-        Map<KtExpression, JsExpression> aliases = new HashMap<KtExpression, JsExpression>();
-        List<ResolvedValueArgument> arguments = returnCall.getValueArgumentsByIndex();
-        assert arguments != null : "Arguments should be defined here: " + PsiUtilsKt.getTextWithLocation(expression);
-
-        KotlinType returnType = returnCall.getResultingDescriptor().getValueParameters().get(0).getType();
-
-        ValueArgument returnValueArgument = arguments.get(0).getArguments().get(0);
-        if (returnExpression != null) {
-            aliases.put(returnValueArgument.getArgumentExpression(), Translation.translateAsExpression(returnExpression, context));
-        }
-        else if (KotlinBuiltIns.isUnit(returnType)) {
-            aliases.put(returnValueArgument.getArgumentExpression(), JsLiteral.NULL);
-        }
-
-        ValueArgument continuationArgument = arguments.get(1).getArguments().get(0);
-        aliases.put(continuationArgument.getArgumentExpression(), JsLiteral.THIS);
-
-        TranslationContext returnContext = context.innerContextWithAliasesForExpressions(aliases);
-
-        ImplicitReceiver receiver = (ImplicitReceiver) returnCall.getDispatchReceiver();
-        assert receiver != null;
-        FunctionDescriptor lambdaDescriptor = (FunctionDescriptor) receiver.getDeclarationDescriptor();
-        ReceiverParameterDescriptor receiverParameter = lambdaDescriptor.getExtensionReceiverParameter();
-        assert receiverParameter != null;
-        JsExpression jsReceiver = returnContext.getDispatchReceiver(receiverParameter);
-
-        JsInvocation handleResultInvocation = (JsInvocation) CallTranslator.translate(returnContext, returnCall, jsReceiver);
-        MetadataProperties.setHandleResult(handleResultInvocation, true);
-
-        return handleResultInvocation;
-    }
-
     @NotNull
     public static JsExpression translateContinuationArgument(@NotNull TranslationContext context, @NotNull ResolvedCall<?> resolvedCall) {
         CallableDescriptor continuationDescriptor =
@@ -374,5 +332,29 @@ public final class TranslationUtils {
             result = getEnclosingContinuationParameter(context.getParent());
         }
         return result;
+    }
+
+    @NotNull
+    public static ClassDescriptor getCoroutineBaseClass(@NotNull TranslationContext context) {
+        FqName className = KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl"));
+        ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(
+                context.getCurrentModule(), ClassId.topLevel(className));
+        assert descriptor != null;
+        return descriptor;
+    }
+
+    @NotNull
+    public static PropertyDescriptor getCoroutineProperty(@NotNull TranslationContext context, @NotNull String name) {
+        return getCoroutineBaseClass(context).getUnsubstitutedMemberScope()
+                .getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_DESERIALIZATION)
+                .iterator().next();
+    }
+
+
+    @NotNull
+    public static FunctionDescriptor getCoroutineDoResumeFunction(@NotNull TranslationContext context) {
+        return getCoroutineBaseClass(context).getUnsubstitutedMemberScope()
+                .getContributedFunctions(Name.identifier("doResume"), NoLookupLocation.FROM_DESERIALIZATION)
+                .iterator().next();
     }
 }

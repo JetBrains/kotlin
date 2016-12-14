@@ -33,9 +33,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.continuationInterfaceRef
-import com.google.dart.compiler.backend.js.ast.metadata.interceptResumeRef
-import com.google.dart.compiler.backend.js.ast.metadata.suspendObjectRef
+import com.google.dart.compiler.backend.js.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.inline.util.collectReferencedTemporaryNames
 
 fun JsNode.resolveTemporaryNames() {
@@ -59,9 +57,10 @@ fun JsNode.resolveTemporaryNames() {
         }
 
         override fun visitFunction(x: JsFunction) {
-            x.continuationInterfaceRef?.let { accept(it) }
-            x.interceptResumeRef?.let { accept(it) }
-            x.suspendObjectRef?.let { accept(it) }
+            x.coroutineMetadata?.apply {
+                accept(suspendObjectRef)
+                accept(baseClassRef)
+            }
             super.visitFunction(x)
         }
     })
@@ -86,7 +85,7 @@ private fun Map<JsScope, Set<JsScope>>.resolveNames(knownNames: Set<JsName>): Ma
     return replacements
 }
 
-private class ScopeCollector() : RecursiveJsVisitor() {
+private class ScopeCollector : RecursiveJsVisitor() {
     val scopeTree = mutableMapOf<JsScope, MutableSet<JsScope>>()
 
     override fun visitCatch(x: JsCatch) {
