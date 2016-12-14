@@ -1,5 +1,4 @@
 // See KT-9246 IllegalAccessError when trying to access protected nested class from parent class
-// TARGET_BACKEND: JVM
 // FILE: a.kt
 
 package a

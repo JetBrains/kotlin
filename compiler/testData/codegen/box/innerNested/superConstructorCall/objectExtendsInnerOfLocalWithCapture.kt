@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM
-
 fun box(): String {
     class Local {
         open inner class Inner(val s: String) {

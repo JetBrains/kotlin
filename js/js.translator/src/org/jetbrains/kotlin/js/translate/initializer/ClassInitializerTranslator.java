@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
@@ -200,8 +201,10 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                     }
                 }
 
-                if (superDescriptor.getConstructedClass().isInner() && classDescriptor.isInner()) {
-                    arguments.add(pureFqn(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
+                if (superCall.getDispatchReceiver() != null) {
+                    JsExpression receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForReceiver(
+                             superCall.getDispatchReceiver()));
+                    arguments.add(receiver);
                 }
 
                 if (!DescriptorUtils.isAnonymousObject(classDescriptor)) {
