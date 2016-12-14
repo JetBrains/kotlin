@@ -12,3 +12,6 @@ typealias Test5 = List<suspend () -> Unit>
 typealias Test6 = <!WRONG_MODIFIER_TARGET!>suspend<!> List<() -> Unit>
 typealias Test7 = <!WRONG_MODIFIER_TARGET!>suspend<!> SAM
 typealias Test8 = SuspendFunction0<Unit>
+typealias Test9 = suspend (() -> Unit) -> Unit
+typealias Test10 = suspend (<!UNSUPPORTED!>suspend<!> () -> Unit) -> Unit
+typealias Test11 = suspend () -> (suspend () -> Unit)
