@@ -1,0 +1,4 @@
+package
+
+public val test1: kotlin.String
+public fun </*0*/ T1, /*1*/ T2> withS2(/*0*/ x: T1, /*1*/ sfn1: suspend (T1) -> T2, /*2*/ sfn2: suspend (T2) -> kotlin.Unit): T2

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
@@ -239,7 +236,7 @@ class FunctionDescriptorResolver(
         return replaceAnnotations(AnnotationsImpl(annotations.filter { it != parameterNameAnnotation }))
     }
 
-    private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isFunctionType
+    private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isBuiltinFunctionalType
     private fun KotlinType.getReceiverType(): KotlinType? =
             if (functionTypeExpected()) this.getReceiverTypeFromFunctionType() else null
 

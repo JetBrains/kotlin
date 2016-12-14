@@ -41,24 +41,31 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-val KotlinType.isFunctionTypeOrSubtype: Boolean
-    get() = isFunctionType || DFS.dfsFromNode(
-            this,
-            DFS.Neighbors { it.constructor.supertypes },
-            DFS.VisitedWithSet(),
-            object : DFS.AbstractNodeHandler<KotlinType, Boolean>() {
-                private var result = false
+private fun KotlinType.isTypeOrSubtypeOf(predicate: (KotlinType) -> Boolean): Boolean =
+        predicate(this) ||
+        DFS.dfsFromNode(
+                this,
+                DFS.Neighbors { it.constructor.supertypes },
+                DFS.VisitedWithSet(),
+                object : DFS.AbstractNodeHandler<KotlinType, Boolean>() {
+                    private var result = false
 
-                override fun beforeChildren(current: KotlinType): Boolean {
-                    if (current.isFunctionType) {
-                        result = true
+                    override fun beforeChildren(current: KotlinType): Boolean {
+                        if (predicate(current)) {
+                            result = true
+                        }
+                        return !result
                     }
-                    return !result
-                }
 
-                override fun result() = result
-            }
-    )
+                    override fun result() = result
+                }
+        )
+
+val KotlinType.isFunctionTypeOrSubtype: Boolean
+    get() = isTypeOrSubtypeOf { it.isFunctionType }
+
+val KotlinType.isBuiltinFunctionalTypeOrSubtype: Boolean
+    get() = isTypeOrSubtypeOf { it.isBuiltinFunctionalType }
 
 val KotlinType.isFunctionType: Boolean
     get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
