@@ -95,7 +95,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val (extensionAnnotations, notExtensionAnnotations) =
                     annotations.partition { it.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
 
-
             createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
 
             val isExtension = extensionAnnotations.isNotEmpty()

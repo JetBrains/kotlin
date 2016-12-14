@@ -1,11 +1,11 @@
 package
 
-public fun bar1(/*0*/ x: @L1 B.() -> kotlin.Unit): kotlin.Unit
-public fun </*0*/ T> bar1t(/*0*/ q: T, /*1*/ x: @L1 T.() -> kotlin.Unit): kotlin.Unit
-public fun bar2(/*0*/ x: @L2 B.() -> kotlin.Unit): kotlin.Unit
-public fun foo1(/*0*/ x: @L1 A.() -> kotlin.Unit): kotlin.Unit
-public fun foo12(/*0*/ x: @L1 @L2 A.() -> kotlin.Unit): kotlin.Unit
-public fun foo2(/*0*/ x: @L2 A.() -> kotlin.Unit): kotlin.Unit
+public fun bar1(/*0*/ x: (@L1 B).() -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> bar1t(/*0*/ q: T, /*1*/ x: (@L1 T).() -> kotlin.Unit): kotlin.Unit
+public fun bar2(/*0*/ x: (@L2 B).() -> kotlin.Unit): kotlin.Unit
+public fun foo1(/*0*/ x: (@L1 A).() -> kotlin.Unit): kotlin.Unit
+public fun foo12(/*0*/ x: (@L1 @L2 A).() -> kotlin.Unit): kotlin.Unit
+public fun foo2(/*0*/ x: (@L2 A).() -> kotlin.Unit): kotlin.Unit
 public fun test(): kotlin.Unit
 
 public final class A {

@@ -2,7 +2,9 @@ val p1: suspend a
 val p2: suspend (a) -> a
 val p3: suspend (a) -> suspend a
 val p4: suspend a.() -> a
+val p4a: @a a.() -> a
 val p5: (suspend a).() -> a
+val p5a: (@a a).() -> a
 val p6: a<in suspend a>
 val p7: a<out suspend @a a>
 val p8: a<out @a suspend @a a>

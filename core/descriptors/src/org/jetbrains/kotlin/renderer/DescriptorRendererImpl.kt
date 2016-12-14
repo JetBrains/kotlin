@@ -327,7 +327,8 @@ internal class DescriptorRendererImpl(
         }
 
         if (receiverType != null) {
-            val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable
+            val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable ||
+                                   receiverType.hasModifiersOrAnnotations()
             if (surroundReceiver) {
                 append("(")
             }
@@ -361,6 +362,8 @@ internal class DescriptorRendererImpl(
         if (isNullable) append("?")
     }
 
+    private fun KotlinType.hasModifiersOrAnnotations() =
+            isSuspendFunctionType || !annotations.isEmpty()
 
     /* METHODS FOR ALL KINDS OF DESCRIPTORS */
     private fun StringBuilder.appendDefinedIn(descriptor: DeclarationDescriptor) {

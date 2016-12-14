@@ -1,6 +1,6 @@
 package
 
-public fun bar(/*0*/ x: @Ann B.() -> kotlin.Unit): kotlin.Unit
+public fun bar(/*0*/ x: (@Ann B).() -> kotlin.Unit): kotlin.Unit
 public fun @Ann A.test(): kotlin.Unit
 
 public final class A {

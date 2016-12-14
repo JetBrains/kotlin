@@ -198,6 +198,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("TypeModifiers")
+    public void testTypeModifiers() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeModifiers/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeParams")
     public void testTypeParams() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeParams/");

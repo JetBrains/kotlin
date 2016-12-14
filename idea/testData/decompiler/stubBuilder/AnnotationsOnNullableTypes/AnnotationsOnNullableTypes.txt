@@ -23,15 +23,15 @@ PsiJetFileStubImpl[package=]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=A]
           FUNCTION_TYPE
             FUNCTION_TYPE_RECEIVER
               TYPE_REFERENCE
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=A]
                 NULLABLE_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
@@ -69,6 +69,25 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaTypeWithNullableReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=C]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=C]
       FUN[fqName=AnnotationsOnNullableTypes.parameter, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=parameter]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST

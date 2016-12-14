@@ -105,6 +105,40 @@ JetFile: TypeModifiers.kt
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p4a')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+        PsiElement(DOT)('.')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('p5')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
@@ -115,6 +149,42 @@ JetFile: TypeModifiers.kt
             PsiElement(LPAR)('(')
             MODIFIER_LIST
               PsiElement(suspend)('suspend')
+            PsiWhiteSpace(' ')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
+        PsiElement(DOT)('.')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p5a')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            PsiElement(LPAR)('(')
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
             USER_TYPE
               REFERENCE_EXPRESSION
