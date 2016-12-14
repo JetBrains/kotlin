@@ -589,6 +589,20 @@ public class DefaultErrorMessages {
                        : "experimental and should be turned on explicitly via a command line option or in IDE settings: " + feature.getPresentableText();
             }
         });
+        MAP.put(EXPERIMENTAL_FEATURE_WARNING, "The feature is experimental: {0}", new DiagnosticParameterRenderer<LanguageFeature>() {
+            @NotNull
+            @Override
+            public String render(LanguageFeature feature, @NotNull RenderingContext renderingContext) {
+                return feature.getPresentableText();
+            }
+        });
+        MAP.put(EXPERIMENTAL_FEATURE_ERROR, "The experimental feature is disabled: {0}", new DiagnosticParameterRenderer<LanguageFeature>() {
+            @NotNull
+            @Override
+            public String render(LanguageFeature feature, @NotNull RenderingContext renderingContext) {
+                return feature.getPresentableText();
+            }
+        });
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);
         MAP.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");

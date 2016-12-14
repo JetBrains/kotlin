@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/simple.kt
+-Xcoroutines=warn
+-Xcoroutines=enable

@@ -66,6 +66,9 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, LanguageFeature> UNSUPPORTED_FEATURE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Throwable> EXCEPTION_FROM_ANALYZER = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory1<PsiElement, LanguageFeature> EXPERIMENTAL_FEATURE_WARNING = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, LanguageFeature> EXPERIMENTAL_FEATURE_ERROR = DiagnosticFactory1.create(ERROR);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Generic errors/warnings: applicable in many contexts

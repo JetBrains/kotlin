@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,22 @@ class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
+    private static final String coroutinesKeyDescription = "Enable coroutines or report warnings or report errors on declarations and use sites of suspend modifier";
+
     public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments, boolean extraHelp) {
         target.println("Usage: " + arguments.executableScriptFileName() + " <options> <source files>");
         target.println("where " + (extraHelp ? "advanced" : "possible") + " options include:");
+        boolean coroutinesUsagePrinted = false;
         for (Class<?> clazz = arguments.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
             for (Field field : clazz.getDeclaredFields()) {
                 String usage = fieldUsage(field, extraHelp);
                 if (usage != null) {
+                    boolean coroutinesUsage = usage.contains("Xcoroutines");
+                    if (coroutinesUsage && coroutinesUsagePrinted) {
+                        continue;
+                    } else if (coroutinesUsage) {
+                        coroutinesUsagePrinted = true;
+                    }
                     target.println(usage);
                 }
             }
@@ -51,9 +60,13 @@ class Usage {
     private static String fieldUsage(@NotNull Field field, boolean extraHelp) {
         Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return null;
+
         ValueDescription description = field.getAnnotation(ValueDescription.class);
 
-        String value = argument.value();
+        String argumentValue = argument.value();
+        // TODO: this is a dirty hack, provide better mechanism for keys that can have several values
+        boolean isXCoroutinesKey = argumentValue.contains("Xcoroutines");
+        String value = isXCoroutinesKey ? "Xcoroutines={enable|warn|error}" : argument.value();
         boolean extraOption = value.startsWith("X") && value.length() > 1;
         if (extraHelp != extraOption) return null;
 
@@ -71,6 +84,11 @@ class Usage {
         if (description != null) {
             sb.append(" ");
             sb.append(description.value());
+        }
+
+        if (isXCoroutinesKey) {
+            sb.append(" ");
+            sb.append(coroutinesKeyDescription);
         }
 
         int width = OPTION_NAME_PADDING_WIDTH - 1;

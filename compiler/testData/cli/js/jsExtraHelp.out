@@ -5,6 +5,8 @@ where advanced options include:
   -Xplugin <path>            Load plugins from the given classpath
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
+  -Xcoroutines={enable|warn|error} Enable coroutines or report warnings or report errors on declarations and use sites of suspend modifier
+
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

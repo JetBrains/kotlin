@@ -285,10 +285,39 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             extraLanguageFeatures.add(LanguageFeature.MultiPlatformDoNotCheckImpl);
         }
 
+        LanguageFeature coroutinesApplicabilityLevel = chooseCoroutinesApplicabilityLevel(configuration, arguments);
+        if (coroutinesApplicabilityLevel != null) {
+            extraLanguageFeatures.add(coroutinesApplicabilityLevel);
+        }
+
         configuration.put(
                 CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
                 new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
         );
+    }
+
+    @Nullable
+    private static LanguageFeature chooseCoroutinesApplicabilityLevel(
+            @NotNull CompilerConfiguration configuration, @NotNull CommonCompilerArguments arguments) {
+        if (!arguments.coroutinesEnable && !arguments.coroutinesError && !arguments.coroutinesWarn) {
+            return LanguageFeature.WarnOnCoroutines;
+        }
+        else if (arguments.coroutinesError && !arguments.coroutinesWarn && !arguments.coroutinesEnable) {
+            return LanguageFeature.ErrorOnCoroutines;
+        }
+        else if (arguments.coroutinesWarn && !arguments.coroutinesError && !arguments.coroutinesEnable) {
+            return LanguageFeature.WarnOnCoroutines;
+        }
+        else if (arguments.coroutinesEnable && !arguments.coroutinesWarn && !arguments.coroutinesError) {
+            return null;
+        } else {
+            String message = "The -Xcoroutines can only have one value";
+            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION
+            );
+
+            return null;
+        }
     }
 
     @Nullable

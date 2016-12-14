@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,6 +98,14 @@ object ModifierCheckerCore {
             INLINE_KEYWORD    to LanguageFeature.InlineProperties,
             HEADER_KEYWORD    to LanguageFeature.MultiPlatformProjects,
             IMPL_KEYWORD      to LanguageFeature.MultiPlatformProjects
+    )
+
+    val errorOnFeature = mapOf(
+            LanguageFeature.Coroutines to LanguageFeature.ErrorOnCoroutines
+    )
+
+    val warningOnFeature = mapOf(
+            LanguageFeature.Coroutines to LanguageFeature.WarnOnCoroutines
     )
 
     val featureDependenciesTargets = mapOf(
@@ -266,13 +274,27 @@ object ModifierCheckerCore {
 
         val dependency = featureDependencies[modifier] ?: return true
 
-        if (!languageVersionSettings.supportsFeature(dependency)) {
+        val errorOnDependencyFeature = errorOnFeature[dependency]?.let { languageVersionSettings.supportsFeature(it) } ?: false
+        val supportsFeature = languageVersionSettings.supportsFeature(dependency)
+
+        if (!supportsFeature || errorOnDependencyFeature) {
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
                 return true
             }
-            trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, dependency))
+
+            if (!supportsFeature) {
+                trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, dependency))
+            }
+            else if (errorOnDependencyFeature) {
+                trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, dependency))
+            }
             return false
+        }
+
+        val pairedWarningFeature = warningOnFeature[dependency]
+        if (pairedWarningFeature != null && languageVersionSettings.supportsFeature(pairedWarningFeature)) {
+            trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, dependency))
         }
 
         return true

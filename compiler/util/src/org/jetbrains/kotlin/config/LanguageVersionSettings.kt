@@ -41,6 +41,9 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     // Experimental features
     MultiPlatformProjects(null),
     MultiPlatformDoNotCheckImpl(null),
+
+    WarnOnCoroutines(null),
+    ErrorOnCoroutines(null)
     ;
 
     val presentableText: String

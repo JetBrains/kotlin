@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,15 @@ public abstract class CommonCompilerArguments {
 
     @Argument(value = "Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
     public boolean noCheckImpl;
+
+    @Argument(value = "Xcoroutines=warn")
+    public boolean coroutinesWarn;
+
+    @Argument(value = "Xcoroutines=error")
+    public boolean coroutinesError;
+
+    @Argument(value = "Xcoroutines=enable")
+    public boolean coroutinesEnable;
 
     @Argument(value = "P", description = "Pass an option to a plugin")
     @ValueDescription(PLUGIN_OPTION_FORMAT)

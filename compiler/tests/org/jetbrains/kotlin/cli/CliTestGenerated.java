@@ -116,6 +116,30 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("coroutinesEnableWarnAndErrorClash.args")
+        public void testCoroutinesEnableWarnAndErrorClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesEnableWarnAndErrorClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("coroutinesErrorAndEnableClash.args")
+        public void testCoroutinesErrorAndEnableClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesErrorAndEnableClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("coroutinesWarnAndEnableClash.args")
+        public void testCoroutinesWarnAndEnableClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarnAndEnableClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("coroutinesWarnAndErrorClash.args")
+        public void testCoroutinesWarnAndErrorClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarnAndErrorClash.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("diagnosticsOrder.args")
         public void testDiagnosticsOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/diagnosticsOrder.args");

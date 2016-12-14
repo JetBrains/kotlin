@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -80,9 +82,20 @@ object CoroutineSuspendCallChecker : CallChecker {
 object BuilderFunctionsCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
-        if (descriptor.valueParameters.any { it.hasSuspendFunctionType } &&
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
-            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.Coroutines))
+        if (descriptor.valueParameters.any { it.hasSuspendFunctionType }) {
+            checkCoroutinesFeature(context.languageVersionSettings, context.trace, reportOn)
         }
+    }
+}
+
+private fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+    if (!languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
+        diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.Coroutines))
+    }
+    else if (languageVersionSettings.supportsFeature(LanguageFeature.ErrorOnCoroutines)) {
+        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(reportOn, LanguageFeature.Coroutines))
+    }
+    else if (languageVersionSettings.supportsFeature(LanguageFeature.WarnOnCoroutines)) {
+        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(reportOn, LanguageFeature.Coroutines))
     }
 }
