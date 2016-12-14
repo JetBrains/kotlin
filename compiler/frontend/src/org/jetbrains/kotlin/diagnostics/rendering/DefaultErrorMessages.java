@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtTypeConstraint;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -296,7 +297,7 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATION, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
         MAP.put(DEPRECATION_ERROR, "Using ''{0}'' is an error. {1}", DEPRECATION_RENDERER, STRING);
 
-        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> sinceKotlinInfoRenderer = new DiagnosticParameterRenderer<Pair<LanguageVersion, String>>() {
+        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> sinceKotlinInfoMessage = new DiagnosticParameterRenderer<Pair<LanguageVersion, String>>() {
             @NotNull
             @Override
             public String render(@NotNull Pair<LanguageVersion, String> pair, @NotNull RenderingContext renderingContext) {
@@ -304,8 +305,20 @@ public class DefaultErrorMessages {
                 return pair.getFirst().getVersionString() + (message != null ? ". " + message : "");
             }
         };
-        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION, "''{0}'' is only supported since Kotlin {1} and should not be used in Kotlin {2}", DEPRECATION_RENDERER, STRING, sinceKotlinInfoRenderer);
-        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION_ERROR, "''{0}'' is only available since Kotlin {1} and cannot be used in Kotlin {2}", DEPRECATION_RENDERER, STRING, sinceKotlinInfoRenderer);
+        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION, "''{0}''{1} should not be used in Kotlin {2}", DEPRECATION_RENDERER, new DiagnosticParameterRenderer<SinceKotlinInfo.Version>() {
+            @NotNull
+            @Override
+            public String render(@NotNull SinceKotlinInfo.Version obj, @NotNull RenderingContext renderingContext) {
+                return obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and";
+            }
+        }, sinceKotlinInfoMessage);
+        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}", DEPRECATION_RENDERER, new DiagnosticParameterRenderer<SinceKotlinInfo.Version>() {
+            @NotNull
+            @Override
+            public String render(@NotNull SinceKotlinInfo.Version obj, @NotNull RenderingContext renderingContext) {
+                return obj.equals(SinceKotlinInfo.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and";
+            }
+        }, sinceKotlinInfoMessage);
 
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 

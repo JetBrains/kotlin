@@ -123,8 +123,8 @@ private data class DeprecatedBySinceKotlinInfo(
             }
         }
 
-    val sinceKotlinVersion: String
-        get() = sinceKotlinInfo.version.asString()
+    val sinceKotlinVersion: SinceKotlinInfo.Version
+        get() = sinceKotlinInfo.version
 }
 
 fun DeclarationDescriptor.getDeprecations(languageVersionSettings: LanguageVersionSettings): List<Deprecation> {
