@@ -19,12 +19,10 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -74,7 +72,7 @@ fun <T : Any> mapType(
         return mapType(
                 createFunctionType(
                         kotlinType.builtIns,
-                        FilteredAnnotations(kotlinType.annotations) { it != DescriptorUtils.SUSPEND_ANNOTATION_FQ_NAME },
+                        kotlinType.annotations,
                         kotlinType.getReceiverTypeFromFunctionType(),
                         kotlinType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
                             KotlinTypeFactory.simpleType(

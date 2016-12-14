@@ -44,7 +44,7 @@ public interface ResumeInterceptor {
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <R, T> (@Suspend() (R.() -> T)).createCoroutine(
+public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         resultHandler: Continuation<T>,
         resumeInterceptor: ResumeInterceptor? = null
@@ -57,7 +57,7 @@ public fun <R, T> (@Suspend() (R.() -> T)).createCoroutine(
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <R, T> (@Suspend() (R.() -> T)).startCoroutine(
+public fun <R, T> (suspend R.() -> T).startCoroutine(
         receiver: R,
         resultHandler: Continuation<T>,
         resumeInterceptor: ResumeInterceptor? = null
@@ -74,7 +74,7 @@ public fun <R, T> (@Suspend() (R.() -> T)).startCoroutine(
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <T> (@Suspend() (() -> T)).createCoroutine(
+public fun <T> (suspend () -> T).createCoroutine(
         resultHandler: Continuation<T>,
         resumeInterceptor: ResumeInterceptor? = null
 ): Continuation<Unit> = (this as (Continuation<T>) -> Continuation<Unit>).invoke(withInterceptor(resultHandler, resumeInterceptor))
@@ -87,7 +87,7 @@ public fun <T> (@Suspend() (() -> T)).createCoroutine(
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <T> (@Suspend() (() -> T)).startCoroutine(
+public fun <T> (suspend  () -> T).startCoroutine(
         resultHandler: Continuation<T>,
         resumeInterceptor: ResumeInterceptor? = null
 ) {

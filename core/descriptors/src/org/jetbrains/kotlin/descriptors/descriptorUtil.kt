@@ -34,6 +34,4 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
             ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
 }
 
-val KotlinType.isSuspendFunctionType get() = isFunctionType && annotations.hasAnnotation(DescriptorUtils.SUSPEND_ANNOTATION_FQ_NAME)
-
 val KotlinBuiltIns.continuationClassDescriptor get() = getBuiltInClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)
