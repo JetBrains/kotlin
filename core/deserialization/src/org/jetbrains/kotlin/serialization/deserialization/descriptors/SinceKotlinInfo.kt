@@ -37,9 +37,21 @@ class SinceKotlinInfo(
         val errorCode: Int?,
         val message: String?
 ) {
-    class Version(val major: Int, val minor: Int, val patch: Int) {
+    data class Version(val major: Int, val minor: Int, val patch: Int = 0) {
         fun asString(): String =
                 if (patch == 0) "$major.$minor" else "$major.$minor.$patch"
+
+        fun encode(
+                writeVersion: (Int) -> Unit,
+                writeVersionFull: (Int) -> Unit
+        ) {
+            if (major > MAJOR_MASK || minor > MINOR_MASK || patch > PATCH_MASK) {
+                writeVersionFull(major or (minor shl 8) or (patch shl 16))
+            }
+            else if (this != DEFAULT) {
+                writeVersion(major or (minor shl MAJOR_BITS) or (patch shl (MAJOR_BITS + MINOR_BITS)))
+            }
+        }
 
         override fun toString(): String = asString()
 
