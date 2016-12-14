@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 
 class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
-        val deprecations = targetDescriptor.getDeprecations()
-        for (deprecation in deprecations) {
+        for (deprecation in targetDescriptor.getDeprecations(LanguageVersionSettingsImpl.DEFAULT)) {
             trace.report(createDeprecationDiagnostic(element, deprecation, LanguageVersionSettingsImpl.DEFAULT))
         }
     }

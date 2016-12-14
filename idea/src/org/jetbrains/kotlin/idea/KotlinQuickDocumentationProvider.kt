@@ -26,6 +26,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.idea.kdoc.isBoringBuiltinClass
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.*
@@ -137,16 +139,21 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 return "No documentation available"
             }
 
-            return renderKotlin(context, declarationDescriptor, quickNavigation)
+            return renderKotlin(context, declarationDescriptor, quickNavigation, declaration.languageVersionSettings)
         }
 
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val target = element.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return null
-            return renderKotlin(context, target, quickNavigation)
+            return renderKotlin(context, target, quickNavigation, element.languageVersionSettings)
         }
 
-        private fun renderKotlin(context: BindingContext, declarationDescriptor: DeclarationDescriptor, quickNavigation: Boolean): String {
+        private fun renderKotlin(
+                context: BindingContext,
+                declarationDescriptor: DeclarationDescriptor,
+                quickNavigation: Boolean,
+                languageVersionSettings: LanguageVersionSettings
+        ): String {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
             if (declarationDescriptor is ValueParameterDescriptor) {
@@ -162,7 +169,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 renderedDecl = "<pre>$renderedDecl</pre>"
             }
 
-            renderedDecl += renderDeprecationInfo(declarationDescriptor)
+            renderedDecl += renderDeprecationInfo(declarationDescriptor, languageVersionSettings)
 
             if (!quickNavigation) {
                 val comment = declarationDescriptor.findKDoc()
@@ -192,8 +199,11 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             return renderedDecl
         }
 
-        private fun renderDeprecationInfo(declarationDescriptor: DeclarationDescriptor): String {
-            val deprecation = declarationDescriptor.getDeprecations().firstOrNull() ?: return ""
+        private fun renderDeprecationInfo(
+                declarationDescriptor: DeclarationDescriptor,
+                languageVersionSettings: LanguageVersionSettings
+        ): String {
+            val deprecation = declarationDescriptor.getDeprecations(languageVersionSettings).firstOrNull() ?: return ""
 
             return buildString {
                 wrapTag("DL") {

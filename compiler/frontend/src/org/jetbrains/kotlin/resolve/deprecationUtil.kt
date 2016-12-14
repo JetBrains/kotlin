@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
@@ -125,20 +126,20 @@ private data class DeprecatedBySinceKotlinInfo(
         get() = sinceKotlinInfo.version.asString()
 }
 
-fun DeclarationDescriptor.getDeprecations(): List<Deprecation> {
-    val deprecations = this.getOwnDeprecations()
+fun DeclarationDescriptor.getDeprecations(languageVersionSettings: LanguageVersionSettings): List<Deprecation> {
+    val deprecations = this.getOwnDeprecations(languageVersionSettings)
     if (deprecations.isNotEmpty()) {
         return deprecations
     }
 
     if (this is CallableMemberDescriptor) {
-        return listOfNotNull(deprecationByOverridden(this))
+        return listOfNotNull(deprecationByOverridden(this, languageVersionSettings))
     }
 
     return emptyList()
 }
 
-private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation? {
+private fun deprecationByOverridden(root: CallableMemberDescriptor, languageVersionSettings: LanguageVersionSettings): Deprecation? {
     val visited = HashSet<CallableMemberDescriptor>()
     val deprecations = LinkedHashSet<Deprecation>()
     var hasUndeprecatedOverridden = false
@@ -148,7 +149,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
 
         visited.add(node)
 
-        val deprecationsByAnnotation = node.getOwnDeprecations()
+        val deprecationsByAnnotation = node.getOwnDeprecations(languageVersionSettings)
         val overriddenDescriptors = node.original.overriddenDescriptors
         when {
             deprecationsByAnnotation.isNotEmpty() -> {
@@ -171,7 +172,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
     return DeprecatedByOverridden(deprecations)
 }
 
-private fun DeclarationDescriptor.getOwnDeprecations(): List<Deprecation> {
+private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: LanguageVersionSettings): List<Deprecation> {
     val result = SmartList<Deprecation>()
 
     fun addDeprecationIfPresent(target: DeclarationDescriptor) {
@@ -184,7 +185,12 @@ private fun DeclarationDescriptor.getOwnDeprecations(): List<Deprecation> {
         if (target is DeserializedCallableMemberDescriptor) {
             val sinceKotlinInfo = target.sinceKotlinInfo
             if (sinceKotlinInfo != null) {
-                result.add(DeprecatedBySinceKotlinInfo(sinceKotlinInfo, target))
+                // We're using ApiVersion because it's convenient to compare versions, "-api-version" is not involved in any way
+                // TODO: usage of ApiVersion is confusing here, refactor
+                if (ApiVersion.createBySinceKotlinInfo(sinceKotlinInfo) >
+                    ApiVersion.createByLanguageVersion(languageVersionSettings.languageVersion)) {
+                    result.add(DeprecatedBySinceKotlinInfo(sinceKotlinInfo, target))
+                }
             }
         }
     }
@@ -244,13 +250,13 @@ enum class DeprecationLevelValue {
     WARNING, ERROR, HIDDEN
 }
 
-fun DeclarationDescriptor.isDeprecatedHidden(): Boolean =
-        getDeprecations().any { it.deprecationLevel == HIDDEN }
+fun DeclarationDescriptor.isDeprecatedHidden(languageVersionSettings: LanguageVersionSettings): Boolean =
+        getDeprecations(languageVersionSettings).any { it.deprecationLevel == HIDDEN }
 
 fun DeclarationDescriptor.isHiddenInResolution(): Boolean {
     if (this is FunctionDescriptor && this.isHiddenToOvercomeSignatureClash) return true
 
     if (!checkSinceKotlinVersionAccessibility(LanguageVersionSettingsImpl.DEFAULT)) return true
 
-    return isDeprecatedHidden()
+    return isDeprecatedHidden(LanguageVersionSettingsImpl.DEFAULT)
 }
