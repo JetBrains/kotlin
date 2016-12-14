@@ -16,90 +16,11 @@
 
 package org.jetbrains.kotlin.coroutines
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.types.expressions.FakeCallKind
-import org.jetbrains.kotlin.types.expressions.FakeCallResolver
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.descriptors.isSuspendFunctionType
 
-/**
- * @returns type of first value parameter if function is 'operator handleResult' in coroutines controller
- */
-fun SimpleFunctionDescriptor.getExpectedTypeForCoroutineControllerHandleResult(): KotlinType? {
-    if (!isOperator || name != OperatorNameConventions.COROUTINE_HANDLE_RESULT) return null
+val CallableDescriptor.isSuspendLambda get() = this is AnonymousFunctionDescriptor && this.isCoroutine
 
-    return valueParameters.getOrNull(0)?.type
-}
-
-val CallableDescriptor.controllerTypeIfCoroutine: KotlinType?
-    get() {
-        if (this !is AnonymousFunctionDescriptor || !this.isCoroutine) return null
-
-        return this.extensionReceiverParameter?.returnType
-    }
-
-fun FakeCallResolver.resolveCoroutineHandleResultCallIfNeeded(
-        callElement: KtExpression,
-        expressionToReturn: KtExpression?,
-        functionDescriptor: FunctionDescriptor,
-        context: ResolutionContext<*>
-) {
-    functionDescriptor.controllerTypeIfCoroutine ?: return
-
-    val info = if (expressionToReturn != null)
-        context.trace.bindingContext.get(BindingContext.EXPRESSION_TYPE_INFO, expressionToReturn)
-    else
-        null
-
-    val temporaryBindingTrace = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", "continuation")
-
-    val continuation =
-            ExpressionTypingUtils.createFakeExpressionOfType(
-                    callElement.project, temporaryBindingTrace, "continuation",
-                    // should be Continuation<Nothing>
-                    functionDescriptor.builtIns.nothingType)
-
-    fun tryToResolveCall(firstArgument: KtExpression): Boolean {
-        val resolutionResults = resolveFakeCall(
-                context.replaceBindingTrace(temporaryBindingTrace), functionDescriptor.extensionReceiverParameter!!.value,
-                OperatorNameConventions.COROUTINE_HANDLE_RESULT, callElement, callElement, FakeCallKind.OTHER,
-                listOf(firstArgument, continuation))
-
-        if (resolutionResults.isSuccess && resolutionResults.resultingDescriptor.isOperator) {
-            context.trace.record(BindingContext.RETURN_HANDLE_RESULT_RESOLVED_CALL, callElement, resolutionResults.resultingCall)
-            return true
-        }
-
-        return false
-    }
-
-    val unitExpression = ExpressionTypingUtils.createFakeExpressionOfType(
-            callElement.project, temporaryBindingTrace, "unit", functionDescriptor.builtIns.unitType)
-    val firstArgument =
-            if (expressionToReturn == null || info != null && info.type != null && KotlinBuiltIns.isUnit(info.type))
-                unitExpression
-            else
-                expressionToReturn
-
-    if (!tryToResolveCall(firstArgument) && firstArgument === expressionToReturn) {
-        tryToResolveCall(unitExpression)
-    }
-}
-
-
-
-fun KotlinType.isValidContinuation() =
-        (constructor.declarationDescriptor as? ClassDescriptor)?.fqNameUnsafe == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.toUnsafe()
+val ValueParameterDescriptor.hasSuspendFunctionType get() = returnType?.isSuspendFunctionType == true

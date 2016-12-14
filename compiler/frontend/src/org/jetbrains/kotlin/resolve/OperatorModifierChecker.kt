@@ -44,8 +44,6 @@ object OperatorModifierChecker {
         val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) {
             when (functionDescriptor.name) {
-                in COROUTINE_OPERATOR_NAMES ->
-                    checkSupportsFeature(LanguageFeature.Coroutines, languageVersionSettings, diagnosticHolder, modifier)
                 in REM_TO_MOD_OPERATION_NAMES.keys ->
                     checkSupportsFeature(LanguageFeature.OperatorRem, languageVersionSettings, diagnosticHolder, modifier)
                 OperatorNameConventions.PROVIDE_DELEGATE ->
@@ -72,9 +70,3 @@ object OperatorModifierChecker {
         }
     }
 }
-
-private val COROUTINE_OPERATOR_NAMES =
-        setOf(OperatorNameConventions.COROUTINE_HANDLE_RESULT,
-              OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION,
-              OperatorNameConventions.COROUTINE_INTERCEPT_RESUME
-        )

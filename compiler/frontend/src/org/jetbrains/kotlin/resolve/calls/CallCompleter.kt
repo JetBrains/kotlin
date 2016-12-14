@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.coroutines.controllerTypeIfCoroutine
-import org.jetbrains.kotlin.coroutines.resolveCoroutineHandleResultCallIfNeeded
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
@@ -100,35 +98,12 @@ class CallCompleter(
                     callChecker.check(resolvedCall, reportOn, callCheckerContext)
                 }
             }
-
-            resolveHandleResultCallForCoroutineLambdaExpressions(context, resolvedCall)
         }
 
         if (results.isSingleResult && results.resultingCall.status.isSuccess) {
             return results.changeStatusToSuccess()
         }
         return results
-    }
-
-    private fun <D : CallableDescriptor> resolveHandleResultCallForCoroutineLambdaExpressions(
-            context: BasicCallResolutionContext,
-            resolvedCall: ResolvedCall<D>
-    ) {
-        resolvedCall.valueArguments.values
-                .flatMap { it.arguments.map { it.getArgumentExpression() } }
-                .filterIsInstance<KtLambdaExpression>()
-                .forEach {
-                    val function = context.trace.bindingContext[BindingContext.FUNCTION, it.functionLiteral] ?: return@forEach
-
-                    function.controllerTypeIfCoroutine ?: return@forEach
-
-                    val lastBlockStatement = it.functionLiteral.bodyExpression?.statements?.lastOrNull()
-
-                    // Already resolved
-                    if (lastBlockStatement is KtReturnExpression) return@forEach
-
-                    fakeCallResolver.resolveCoroutineHandleResultCallIfNeeded(it.functionLiteral, lastBlockStatement, function, context)
-                }
     }
 
     private fun <D : CallableDescriptor> completeAllCandidates(

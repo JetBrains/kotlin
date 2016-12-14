@@ -20,12 +20,8 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.*;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
@@ -71,16 +67,6 @@ public class FunctionDescriptorUtil {
             @NotNull LocalRedeclarationChecker redeclarationChecker
     ) {
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-
-        if (descriptor instanceof AnonymousFunctionDescriptor
-                && (((AnonymousFunctionDescriptor) descriptor).isCoroutine())
-                && receiver != null && receiver.getValue() instanceof ExtensionReceiver) {
-            receiver =
-                    new ReceiverParameterDescriptorImpl(
-                            descriptor,
-                            new CoroutineReceiverValue(
-                                    ((ExtensionReceiver) receiver.getValue()).getDeclarationDescriptor(), receiver.getValue().getType()));
-        }
 
         return new LexicalScopeImpl(outerScope, descriptor, true, receiver, LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {

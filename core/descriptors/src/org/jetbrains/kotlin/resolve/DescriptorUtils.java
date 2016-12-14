@@ -54,6 +54,9 @@ public class DescriptorUtils {
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME =
             KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"));
 
+    public static final FqName SUSPEND_ANNOTATION_FQ_NAME =
+            KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Suspend"));
+
     private DescriptorUtils() {
     }
 

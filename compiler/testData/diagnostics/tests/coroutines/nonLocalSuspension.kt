@@ -1,12 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-class Controller<T> {
-    suspend fun suspendHere() = 1
+suspend fun suspendHere() = 1
+suspend fun <T> another(a: T) = 1
 
-    suspend fun another(a: T) = 1
-}
-
-fun <T> builder(coroutine c: Controller<T>.() -> Continuation<Unit>) { }
+fun <T> builder(c: @Suspend() (() -> Unit)) { }
 
 inline fun run(x: () -> Unit) {}
 
@@ -19,7 +16,7 @@ fun foo() {
     builder<String> {
         suspendHere()
         another("")
-        another(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+        another(1)
 
         result += suspendHere()
 

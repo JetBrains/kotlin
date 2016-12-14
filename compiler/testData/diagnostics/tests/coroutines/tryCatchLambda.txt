@@ -1,13 +1,5 @@
 package
 
+public suspend fun </*0*/ V> await(/*0*/ f: V): V
 public fun foo(): kotlin.Unit
-public fun </*0*/ T> genericBuilder(/*0*/ coroutine c: GenericController<T>.() -> kotlin.coroutines.Continuation<kotlin.Unit>): T
-
-public final class GenericController</*0*/ T> {
-    public constructor GenericController</*0*/ T>()
-    public final suspend fun </*0*/ V> await(/*0*/ f: V): V
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final operator fun handleResult(/*0*/ x: T, /*1*/ c: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
+public fun </*0*/ T> genericBuilder(/*0*/ c: @kotlin.coroutines.Suspend () -> T): T

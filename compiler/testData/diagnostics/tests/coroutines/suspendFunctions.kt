@@ -13,7 +13,7 @@ class Controller {
     suspend fun severalParams(x: String, y: Int) = 1.0
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {}
+fun builder(c: @Suspend() (Controller.() -> Unit)) {}
 
 fun test() {
     builder {

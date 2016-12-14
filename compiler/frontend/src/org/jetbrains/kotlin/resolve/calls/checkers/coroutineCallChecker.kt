@@ -18,32 +18,40 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.coroutine.CoroutineReceiverValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object CoroutineSuspendCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor as? SimpleFunctionDescriptor ?: return
         if (!descriptor.isSuspend) return
 
-        val closestCoroutineReceiver =
-                context.scope.getImplicitReceiversHierarchy().firstOrNull { it.value is CoroutineReceiverValue }?.value as CoroutineReceiverValue?
+        val (closestSuspendLambdaScope, closestSuspensionLambdaDescriptor) =
+                context.scope
+                        .parentsWithSelf.firstOrNull {
+                                it is LexicalScope && it.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE &&
+                                    it.ownerDescriptor.safeAs<CallableDescriptor>()?.isSuspendLambda == true
+                        }?.let { it to it.cast<LexicalScope>().ownerDescriptor.cast<CallableDescriptor>() }
+                ?: null to null
 
         val enclosingSuspendFunction =
-                context.scope.parentsWithSelf.filterIsInstance<LexicalScope>().takeWhile {
-                    closestCoroutineReceiver == null || it.implicitReceiver?.value != closestCoroutineReceiver
-                }.firstOrNull {
-                    (it.ownerDescriptor as? FunctionDescriptor)?.isSuspend == true
-                }?.ownerDescriptor as? SimpleFunctionDescriptor
+                context.scope.parentsWithSelf.filterIsInstance<LexicalScope>().takeWhile { it != closestSuspendLambdaScope }
+                        .firstOrNull {
+                            (it.ownerDescriptor as? FunctionDescriptor)?.isSuspend == true
+                        }?.ownerDescriptor as? SimpleFunctionDescriptor
 
         when {
             enclosingSuspendFunction != null -> {
@@ -51,14 +59,16 @@ object CoroutineSuspendCallChecker : CallChecker {
                 // Here we only record enclosing function mapping (for backends purposes)
                 context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
             }
-            closestCoroutineReceiver != null -> {
+            closestSuspensionLambdaDescriptor != null -> {
                 val callElement = resolvedCall.call.callElement as KtExpression
 
-                if (!InlineUtil.checkNonLocalReturnUsage(closestCoroutineReceiver.declarationDescriptor, callElement, context.resolutionContext)) {
+                if (!InlineUtil.checkNonLocalReturnUsage(closestSuspensionLambdaDescriptor, callElement, context.resolutionContext)) {
                     context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
                 }
 
-                context.trace.record(BindingContext.COROUTINE_RECEIVER_FOR_SUSPENSION_POINT, resolvedCall.call, closestCoroutineReceiver)
+                context.trace.record(
+                        BindingContext.ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, resolvedCall.call, closestSuspensionLambdaDescriptor
+                )
             }
             else -> {
                 context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn))
@@ -70,7 +80,7 @@ object CoroutineSuspendCallChecker : CallChecker {
 object BuilderFunctionsCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
-        if (descriptor.valueParameters.any { it.isCoroutine } &&
+        if (descriptor.valueParameters.any { it.hasSuspendFunctionType } &&
             !context.languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
             context.trace.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.Coroutines))
         }

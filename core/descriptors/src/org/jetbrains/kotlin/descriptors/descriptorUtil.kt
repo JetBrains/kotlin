@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.KotlinType
 
 fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: LookupLocation): ClassDescriptor? {
     if (fqName.isRoot) return null
@@ -29,3 +33,7 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
             ?.unsubstitutedInnerClassesScope
             ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
 }
+
+val KotlinType.isSuspendFunctionType get() = isFunctionType && annotations.hasAnnotation(DescriptorUtils.SUSPEND_ANNOTATION_FQ_NAME)
+
+val KotlinBuiltIns.continuationClassDescriptor get() = getBuiltInClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)

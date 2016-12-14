@@ -4258,21 +4258,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("coroutineApplicability.kt")
-            public void testCoroutineApplicability() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/coroutineApplicability.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("illegalSuspendCalls.kt")
             public void testIllegalSuspendCalls() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/illegalSuspendCalls.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("interceptResume.kt")
-            public void testInterceptResume() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/interceptResume.kt");
                 doTest(fileName);
             }
 
@@ -4285,12 +4273,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("lambdaExpectedType.kt")
             public void testLambdaExpectedType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/lambdaExpectedType.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("manyHandleResults.kt")
-            public void testManyHandleResults() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/manyHandleResults.kt");
                 doTest(fileName);
             }
 
@@ -4333,18 +4315,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("unsupported.kt")
             public void testUnsupported() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/unsupported.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("wrongHandleException.kt")
-            public void testWrongHandleException() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/wrongHandleException.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("wrongHandleResult.kt")
-            public void testWrongHandleResult() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/wrongHandleResult.kt");
                 doTest(fileName);
             }
 

@@ -16,17 +16,18 @@
 
 package org.jetbrains.kotlin.util
 
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.MemberKindCheck.Member
 import org.jetbrains.kotlin.util.MemberKindCheck.MemberOrExtension
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
@@ -34,9 +35,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
 import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
-import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_EXCEPTION
-import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_HANDLE_RESULT
-import org.jetbrains.kotlin.util.OperatorNameConventions.COROUTINE_INTERCEPT_RESUME
 import org.jetbrains.kotlin.util.OperatorNameConventions.DEC
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET
@@ -206,38 +204,8 @@ object OperatorChecks : AbstractModifierChecks() {
                 }
             },
             Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
-            Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters),
-            Checks(COROUTINE_HANDLE_RESULT, Member, ValueParameterCountCheck.Equals(2), ReturnsUnit, NoDefaultAndVarargsCheck,
-                   NoTypeParametersCheck) {
-                checkHandleSecondParameter()
-            },
-            Checks(COROUTINE_HANDLE_EXCEPTION, Member, ValueParameterCountCheck.Equals(2), ReturnsUnit, NoDefaultAndVarargsCheck,
-                   NoTypeParametersCheck) {
-                checkHandleSecondParameter()
-                ?: ensure(valueParameters[0].type.isThrowable()) {
-                    "First parameter should be 'Throwable'"
-                }
-            },
-            Checks(COROUTINE_INTERCEPT_RESUME, Member, ValueParameterCountCheck.Equals(1), ReturnsUnit, NoDefaultAndVarargsCheck,
-                   NoTypeParametersCheck
-            ) {
-                val parameterType = valueParameters.single().type
-                ensure(parameterType.isNonExtensionFunctionType && parameterType.getValueParameterTypesFromFunctionType().isEmpty() &&
-                            parameterType.getReturnTypeFromFunctionType().isUnit()
-                ) { "Value parameter must have a functional type '() -> Unit'" }
-            }
-    )
-
-    private fun FunctionDescriptor.checkHandleSecondParameter(): String? {
-        val secondParameter = valueParameters[1]
-        return ensure(
-                secondParameter.type.isConstructedFromClassWithGivenFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)
-                && secondParameter.type.arguments[0].type.isNothing()
-        ) {
-            "Second parameter should be Continuation<Nothing>"
-        }
-    }
-}
+            Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
+    ) }
 
 object InfixChecks : AbstractModifierChecks() {
     override val checks = listOf(
