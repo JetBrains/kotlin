@@ -191,6 +191,7 @@ KInt    Kotlin_Int_dec              (KInt a           ) { return --a; }
 KInt    Kotlin_Int_unaryPlus        (KInt a           ) { return  +a; }
 KInt    Kotlin_Int_unaryMinus       (KInt a           ) { return  -a; }
 
+KInt    Kotlin_Int_or_Int           (KInt a, KInt   b)  { return a | b; }
 KInt    Kotlin_Int_xor_Int          (KInt a, KInt   b)  { return a ^ b; }
 KInt    Kotlin_Int_and_Int          (KInt a, KInt   b)  { return a & b; }
 KInt    Kotlin_Int_shl_Int          (KInt a, KInt   b)  { return a << b; }
@@ -257,6 +258,8 @@ KLong   Kotlin_Long_unaryPlus        (KLong a           ) { return  +a; }
 KLong   Kotlin_Long_unaryMinus       (KLong a           ) { return  -a; }
 
 KLong   Kotlin_Long_xor_Long         (KLong a, KLong   b) { return a ^ b; }
+KLong   Kotlin_Long_or_Long          (KLong a, KLong   b) { return a | b; }
+KLong   Kotlin_Long_and_Long         (KLong a, KLong   b) { return a & b; }
 KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) {
   return a >> b;
 }

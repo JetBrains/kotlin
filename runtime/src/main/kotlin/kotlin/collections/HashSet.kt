@@ -64,7 +64,8 @@ class HashSet<K> internal constructor(
     override fun equals(other: Any?): Boolean {
         return other === this ||
                 (other is Set<*>) &&
-                        contentEquals(other as Set<K>)
+                        contentEquals(
+                                @Suppress("UNCHECKED_CAST") (other as Set<K>))
     }
 
     override fun hashCode(): Int {

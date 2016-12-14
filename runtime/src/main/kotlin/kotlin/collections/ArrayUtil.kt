@@ -34,7 +34,7 @@ fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 fun <E> Array<E>.resetAt(index: Int) {
-    (this as Array<Any?>)[index] = null
+    (@Suppress("UNCHECKED_CAST")(this as Array<Any?>))[index] = null
 }
 
 @SymbolName("Kotlin_Array_fillImpl")
@@ -51,7 +51,7 @@ external private fun fillImpl(array: IntArray, fromIndex: Int, toIndex: Int, val
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
-    fillImpl(this as Array<Any>, fromIndex, toIndex, null)
+    fillImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any>), fromIndex, toIndex, null)
 }
 
 fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
@@ -71,7 +71,9 @@ external private fun copyImpl(array: IntArray, fromIndex: Int,
  * to another [destination] array starting at [destinationIndex].
  */
 fun <E> Array<E>.copyRangeTo(destination: Array<E>, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
-    copyImpl(this as Array<Any>, fromIndex, destination as Array<Any>, destinationIndex, toIndex - fromIndex)
+    copyImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any>), fromIndex,
+             @Suppress("UNCHECKED_CAST") (destination as Array<Any>),
+             destinationIndex, toIndex - fromIndex)
 }
 
 fun IntArray.copyRangeTo(destination: IntArray, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {

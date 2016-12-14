@@ -4,7 +4,6 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
     abstract override val size: Int
     abstract override fun iterator(): Iterator<E>
 
-    /* TODO: uncomment, once can support lambdas.
     override fun contains(element: @UnsafeVariance E): Boolean = any { it == element }
 
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean =
@@ -12,8 +11,8 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
 
     override fun isEmpty(): Boolean = size == 0
 
+    /*
     override fun toString(): String = joinToString(", ", "[", "]") {
         if (it === this) "(this Collection)" else it.toString()
     } */
-
 }

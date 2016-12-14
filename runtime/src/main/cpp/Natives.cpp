@@ -149,7 +149,9 @@ KString Kotlin_String_plusImpl(KString thiz, KString other) {
 }
 
 KBoolean Kotlin_String_equals(KString thiz, KConstRef other) {
-  if (other == nullptr || other->type_info() != theStringTypeInfo) return 0;
+  if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
+  // Important, due to literal internalization.
+  if (thiz == other) return true;
   KString otherString = reinterpret_cast<KString>(other);
   return thiz->count_ == otherString->count_ &&
       memcmp(ByteArrayAddressOfElementAt(thiz, 0),

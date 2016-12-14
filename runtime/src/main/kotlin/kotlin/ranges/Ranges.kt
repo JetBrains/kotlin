@@ -324,3 +324,12 @@ public fun Long.coerceIn(range: ClosedRange<Long>): Long {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.endInclusive) range.endInclusive else this
 }
+
+
+// This part is from generated _Ranges.kt.
+/**
+ * Returns a progression that goes over the same range in the opposite direction with the same step.
+ */
+public fun IntProgression.reversed(): IntProgression {
+    return IntProgression.fromClosedRange(last, first, -step)
+}

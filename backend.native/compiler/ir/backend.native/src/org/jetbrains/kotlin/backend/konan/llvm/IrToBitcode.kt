@@ -51,12 +51,14 @@ internal fun emitLLVM(context: Context) {
         LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
 
-internal fun verifyModule(llvmModule: LLVMModuleRef) {
+internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {
     memScoped {
         val errorRef = allocPointerTo<CInt8Var>()
         // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
         if (LLVMVerifyModule(
                 llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef.ptr) == 1) {
+            if (current.length > 0)
+                println("Error in ${current}")
             LLVMDumpModule(llvmModule)
             throw Error("Invalid module");
         }
@@ -516,7 +518,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         codegen.epilogue(declaration)
 
-        verifyModule(context.llvmModule!!)
+        verifyModule(context.llvmModule!!, ir2string(declaration))
     }
 
     //-------------------------------------------------------------------------//

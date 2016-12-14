@@ -137,12 +137,3 @@ public class AssertionError : Error {
     constructor(message: String, cause: Throwable) : super(message, cause) {
     }
 }
-
-// TODO: does it belong here?
-fun TODO() {
-    throw UnsupportedOperationException()
-}
-
-fun TODO(message: String) {
-    throw UnsupportedOperationException(message)
-}

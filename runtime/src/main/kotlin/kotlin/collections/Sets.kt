@@ -25,7 +25,8 @@ public fun <T> emptySet(): Set<T> = EmptySet
  */
 public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
 
-/** Returns an empty read-only set.  The returned set is serializable (JVM). */
+/** Returns an empty read-only set. */
+@kotlin.internal.InlineOnly
 public inline fun <T> setOf(): Set<T> = emptySet()
 
 /**
@@ -44,6 +45,7 @@ public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection
 //public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */
+@kotlin.internal.InlineOnly
 public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 
 /**
