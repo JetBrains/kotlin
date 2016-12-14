@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariabl
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -194,12 +194,12 @@ fun computeExplicitReceiversForInvoke(
         }
     }
 
-    val dispatchReceiverExpression = translateReceiverAsExpression(dispatchReceiver)
-    return when (Pair(dispatchReceiver != null, extensionReceiver != null)) {
-        Pair(true, true)  -> ExplicitReceivers(dispatchReceiverExpression, explicitReceivers.extensionOrDispatchReceiver)
-        Pair(true, false) -> ExplicitReceivers(dispatchReceiverExpression)
-        Pair(false, true) -> ExplicitReceivers(translateReceiverAsExpression(extensionReceiver))
-        else -> throw AssertionError("'Invoke' resolved call without receivers: $callElement")
+    return when (resolvedCall.explicitReceiverKind) {
+        NO_EXPLICIT_RECEIVER -> ExplicitReceivers(null)
+        DISPATCH_RECEIVER -> ExplicitReceivers(translateReceiverAsExpression(dispatchReceiver))
+        EXTENSION_RECEIVER -> ExplicitReceivers(translateReceiverAsExpression(extensionReceiver))
+        BOTH_RECEIVERS -> ExplicitReceivers(translateReceiverAsExpression(dispatchReceiver),
+                                            translateReceiverAsExpression(extensionReceiver))
     }
 }
 
