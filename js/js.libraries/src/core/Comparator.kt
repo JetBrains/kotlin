@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.comparisons
+package kotlin
 
 
 public interface Comparator<T> {

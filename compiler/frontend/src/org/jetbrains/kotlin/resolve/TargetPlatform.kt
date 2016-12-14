@@ -47,7 +47,6 @@ abstract class TargetPlatform(val platformName: String) {
             add(ImportPath("kotlin.ranges.*"))
             add(ImportPath("kotlin.sequences.*"))
             add(ImportPath("kotlin.text.*"))
-            add(ImportPath("kotlin.comparisons.Comparator"))
         }
 
         override val platformConfigurator =

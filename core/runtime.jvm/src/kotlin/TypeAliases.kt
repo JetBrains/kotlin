@@ -31,3 +31,6 @@ package kotlin
 @SinceKotlin("1.1") public typealias AssertionError = java.lang.AssertionError
 
 @SinceKotlin("1.1") public typealias NoSuchElementException = java.util.NoSuchElementException
+
+
+@SinceKotlin("1.1") public typealias Comparator<T> = java.util.Comparator<T>
