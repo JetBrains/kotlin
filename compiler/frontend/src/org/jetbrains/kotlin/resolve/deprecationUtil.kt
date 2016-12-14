@@ -135,7 +135,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
 }
 
 private fun DeclarationDescriptor.getDeprecationByAnnotation(): DeprecatedByAnnotation? {
-    val ownAnnotation = getDeclaredDeprecatedAnnotation(AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this))
+    val ownAnnotation = getDeclaredDeprecatedAnnotation(AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this), true)
     if (ownAnnotation != null)
         return DeprecatedByAnnotation(ownAnnotation, this)
 
@@ -162,12 +162,16 @@ private fun DeclarationDescriptor.getDeprecationByAnnotation(): DeprecatedByAnno
     return null
 }
 
+private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(): AnnotationDescriptor? {
+    return annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
+}
+
 private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(
-        target: AnnotationUseSiteTarget? = null,
-        findAnnotationsWithoutTarget: Boolean = true
+        target: AnnotationUseSiteTarget?,
+        findAnnotationsWithoutTarget: Boolean
 ): AnnotationDescriptor? {
     if (findAnnotationsWithoutTarget) {
-        val annotations = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
+        val annotations = getDeclaredDeprecatedAnnotation()
         if (annotations != null) return annotations
     }
 
