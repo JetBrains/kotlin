@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.androidExtensions.ide.res
 
 import com.android.tools.idea.gradle.facet.AndroidGradleFacet
 import com.android.tools.idea.gradle.parser.GradleBuildFile
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
+import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.androidExtensions.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.androidExtensions.res.AndroidPackageFragmentProviderExtension
@@ -34,8 +36,12 @@ class IDEAndroidPackageFragmentProviderExtension(val project: Project) : Android
     override fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager? {
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return null
         val module = moduleSourceInfo.module
-        if (!isAndroidExtensionsEnabled(module)) return null
+        if (!isAndroidExtensionsEnabled(module) && !isTestMode(module)) return null
         return ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
+    }
+
+    private fun isTestMode(module: Module): Boolean {
+        return ApplicationManager.getApplication().isUnitTestMode && AndroidFacet.getInstance(module) != null
     }
 
     private fun isAndroidExtensionsEnabled(module: Module): Boolean {
