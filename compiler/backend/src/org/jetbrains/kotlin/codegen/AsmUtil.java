@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
@@ -236,9 +237,13 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DeprecationUtilKt.isDeprecatedHidden(functionDescriptor)
+        if (DeprecationUtilKt.isDeprecatedHidden(functionDescriptor, LanguageVersionSettingsImpl.DEFAULT)
             || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DeprecationUtilKt.isDeprecatedHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+               && DeprecationUtilKt.isDeprecatedHidden(
+                       ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty(),
+                       LanguageVersionSettingsImpl.DEFAULT
+               )
+        ) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;

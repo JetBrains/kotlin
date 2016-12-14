@@ -45,11 +45,11 @@ object DeprecatedCallChecker : CallChecker {
         // Objects will be checked by DeprecatedClassifierUsageChecker
         if (targetDescriptor is FakeCallableDescriptorForObject) return
 
-        val deprecations = targetDescriptor.getDeprecations().toMutableList()
+        val deprecations = targetDescriptor.getDeprecations(languageVersionSettings).toMutableList()
 
         // avoid duplicating diagnostic when deprecation for property effectively deprecates setter
         if (targetDescriptor is PropertySetterDescriptor) {
-            deprecations -= targetDescriptor.correspondingProperty.getDeprecations()
+            deprecations -= targetDescriptor.correspondingProperty.getDeprecations(languageVersionSettings)
         }
 
         if (deprecations.isNotEmpty()) {

@@ -30,8 +30,7 @@ class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
             element: PsiElement,
             languageVersionSettings: LanguageVersionSettings
     ) {
-        val deprecations = targetDescriptor.getDeprecations()
-        for (deprecation in deprecations) {
+        for (deprecation in targetDescriptor.getDeprecations(languageVersionSettings)) {
             trace.report(createDeprecationDiagnostic(element, deprecation, languageVersionSettings))
         }
     }
