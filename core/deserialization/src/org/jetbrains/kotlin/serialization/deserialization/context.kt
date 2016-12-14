@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.FlexibleTypeFactory
 
@@ -51,9 +52,10 @@ class DeserializationComponents(
             descriptor: PackageFragmentDescriptor,
             nameResolver: NameResolver,
             typeTable: TypeTable,
+            sinceKotlinInfoTable: SinceKotlinInfoTable,
             containerSource: DeserializedContainerSource?
     ): DeserializationContext =
-            DeserializationContext(this, nameResolver, descriptor, typeTable, containerSource,
+            DeserializationContext(this, nameResolver, descriptor, typeTable, sinceKotlinInfoTable, containerSource,
                                    parentTypeDeserializer = null, typeParameters = listOf())
 }
 
@@ -63,6 +65,7 @@ class DeserializationContext(
         val nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeTable: TypeTable,
+        val sinceKotlinInfoTable: SinceKotlinInfoTable,
         val containerSource: DeserializedContainerSource?,
         parentTypeDeserializer: TypeDeserializer?,
         typeParameters: List<ProtoBuf.TypeParameter>
@@ -80,7 +83,7 @@ class DeserializationContext(
             nameResolver: NameResolver = this.nameResolver,
             typeTable: TypeTable = this.typeTable
     ) = DeserializationContext(
-            components, nameResolver, descriptor, typeTable, this.containerSource,
+            components, nameResolver, descriptor, typeTable, sinceKotlinInfoTable, this.containerSource,
             parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
     )
 }

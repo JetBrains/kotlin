@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
 import org.jetbrains.kotlin.utils.SmartList
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
@@ -88,8 +91,42 @@ private data class DeprecatedByOverridden(private val deprecations: Collection<D
     internal fun additionalMessage() = "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
 }
 
+private data class DeprecatedBySinceKotlinInfo(
+        private val sinceKotlinInfo: SinceKotlinInfo,
+        override val target: DeclarationDescriptor
+) : Deprecation {
+    override val deprecationLevel: DeprecationLevelValue
+        get() = when (sinceKotlinInfo.level) {
+            DeprecationLevel.WARNING -> WARNING
+            DeprecationLevel.ERROR -> ERROR
+            DeprecationLevel.HIDDEN -> HIDDEN
+        }
+
+    override val message: String?
+        get() {
+            val message = sinceKotlinInfo.message
+            val errorCode = sinceKotlinInfo.errorCode
+            if (message == null && errorCode == null) return null
+
+            return buildString {
+                if (message != null) {
+                    append(message)
+                    if (errorCode != null) {
+                        append(" (error code $errorCode)")
+                    }
+                }
+                else {
+                    append("Error code $errorCode")
+                }
+            }
+        }
+
+    val sinceKotlinVersion: String
+        get() = sinceKotlinInfo.version.asString()
+}
+
 fun DeclarationDescriptor.getDeprecations(): List<Deprecation> {
-    val deprecations = this.getDeprecationsByAnnotation()
+    val deprecations = this.getOwnDeprecations()
     if (deprecations.isNotEmpty()) {
         return deprecations
     }
@@ -111,7 +148,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
 
         visited.add(node)
 
-        val deprecationsByAnnotation = node.getDeprecationsByAnnotation()
+        val deprecationsByAnnotation = node.getOwnDeprecations()
         val overriddenDescriptors = node.original.overriddenDescriptors
         when {
             deprecationsByAnnotation.isNotEmpty() -> {
@@ -134,7 +171,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
     return DeprecatedByOverridden(deprecations)
 }
 
-private fun DeclarationDescriptor.getDeprecationsByAnnotation(): List<Deprecation> {
+private fun DeclarationDescriptor.getOwnDeprecations(): List<Deprecation> {
     val result = SmartList<Deprecation>()
 
     fun addDeprecationIfPresent(target: DeclarationDescriptor) {
@@ -142,6 +179,13 @@ private fun DeclarationDescriptor.getDeprecationsByAnnotation(): List<Deprecatio
                          ?: target.annotations.findAnnotation(JAVA_DEPRECATED)
         if (annotation != null) {
             result.add(DeprecatedByAnnotation(annotation, target))
+        }
+
+        if (target is DeserializedCallableMemberDescriptor) {
+            val sinceKotlinInfo = target.sinceKotlinInfo
+            if (sinceKotlinInfo != null) {
+                result.add(DeprecatedBySinceKotlinInfo(sinceKotlinInfo, target))
+            }
         }
     }
 
@@ -175,14 +219,24 @@ private fun DeclarationDescriptor.getDeprecationsByAnnotation(): List<Deprecatio
     return result.distinct()
 }
 
-internal fun createDeprecationDiagnostic(element: PsiElement, deprecation: Deprecation): Diagnostic {
+internal fun createDeprecationDiagnostic(
+        element: PsiElement, deprecation: Deprecation, languageVersionSettings: LanguageVersionSettings
+): Diagnostic {
     val targetOriginal = deprecation.target.original
-    val diagnosticFactory = when (deprecation.deprecationLevel) {
-        WARNING -> Errors.DEPRECATION
-        ERROR -> Errors.DEPRECATION_ERROR
-        HIDDEN -> Errors.DEPRECATION_ERROR
+    if (deprecation is DeprecatedBySinceKotlinInfo) {
+        val factory = when (deprecation.deprecationLevel) {
+            WARNING -> Errors.SINCE_KOTLIN_INFO_DEPRECATION
+            ERROR, HIDDEN -> Errors.SINCE_KOTLIN_INFO_DEPRECATION_ERROR
+        }
+        return factory.on(element, targetOriginal, deprecation.sinceKotlinVersion,
+                          languageVersionSettings.languageVersion to deprecation.message)
     }
-    return diagnosticFactory.on(element, targetOriginal, deprecation.message ?: "")
+
+    val factory = when (deprecation.deprecationLevel) {
+        WARNING -> Errors.DEPRECATION
+        ERROR, HIDDEN -> Errors.DEPRECATION_ERROR
+    }
+    return factory.on(element, targetOriginal, deprecation.message ?: "")
 }
 
 // values from kotlin.DeprecationLevel

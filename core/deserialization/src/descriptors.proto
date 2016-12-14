@@ -195,6 +195,11 @@ message Class {
 
   optional TypeTable type_table = 30;
 
+  // Index into the SinceKotlinInfoTable
+  optional int32 sinceKotlinInfo = 31;
+
+  optional SinceKotlinInfoTable since_kotlin_info_table = 32;
+
   extensions 100 to 199;
 }
 
@@ -203,6 +208,8 @@ message Package {
   repeated Property property = 4;
 
   optional TypeTable type_table = 30;
+
+  optional SinceKotlinInfoTable since_kotlin_info_table = 32;
 
   extensions 100 to 199;
 }
@@ -224,6 +231,9 @@ message Constructor {
   optional int32 flags = 1 [default = 6 /* public constructor, no annotations */];
 
   repeated ValueParameter value_parameter = 2;
+
+  // Index into the SinceKotlinInfoTable
+  optional int32 sinceKotlinInfo = 31;
 
   extensions 100 to 199;
 }
@@ -256,6 +266,9 @@ message Function {
   repeated ValueParameter value_parameter = 6;
 
   optional TypeTable type_table = 30;
+
+  // Index into the SinceKotlinInfoTable
+  optional int32 sinceKotlinInfo = 31;
 
   extensions 100 to 199;
 }
@@ -297,6 +310,9 @@ message Property {
   */
   optional int32 getter_flags = 7 /* absent => same as property */;
   optional int32 setter_flags = 8 /* absent => same as property */;
+
+  // Index into the SinceKotlinInfoTable
+  optional int32 sinceKotlinInfo = 31;
 
   extensions 100 to 199;
 }
@@ -351,4 +367,34 @@ enum MemberKind {
   FAKE_OVERRIDE = 1;
   DELEGATION = 2;
   SYNTHESIZED = 3;
+}
+
+message SinceKotlinInfo {
+  enum Level {
+    WARNING = 0;
+    ERROR = 1;
+    HIDDEN = 2;
+  }
+
+  // Kotlin version, since which this declaration is accessible, in the following format (encoded version is "major.minor.patch"):
+  // (patch << 7) + (minor << 3) + major
+  // Compilers with version less than this value should report a diagnostic if this declaration is selected as the resolution result
+  optional int32 version = 1;
+
+  // Version in base 256, in case we run out of space to store the version in the optimized form. Has priority over 'version'.
+  // (patch << 16) + (minor << 8) + major
+  optional int32 version_full = 2;
+
+  // Level of the reported diagnostic
+  optional Level level = 3 [default = ERROR];
+
+  // Error code, to be looked up on the website
+  optional int32 error_code = 4;
+
+  // Diagnostic message
+  optional int32 message = 5 [(string_id_in_table) = true];
+}
+
+message SinceKotlinInfoTable {
+  repeated SinceKotlinInfo info = 1;
 }

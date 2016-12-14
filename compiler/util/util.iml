@@ -12,5 +12,6 @@
     <orderEntry type="library" exported="" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="Kotlin" exported="" />
     <orderEntry type="library" name="jps-model" level="project" />
+    <orderEntry type="module" module-name="descriptors" />
   </component>
 </module>

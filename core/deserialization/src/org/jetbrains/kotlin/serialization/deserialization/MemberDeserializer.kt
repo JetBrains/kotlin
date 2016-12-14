@@ -47,6 +47,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 proto,
                 c.nameResolver,
                 c.typeTable,
+                c.sinceKotlinInfoTable,
                 c.containerSource
         )
 
@@ -147,7 +148,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
         else Annotations.EMPTY
         val function = DeserializedSimpleFunctionDescriptor(
                 c.containingDeclaration, /* original = */ null, annotations, c.nameResolver.getName(proto.name),
-                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.containerSource
+                Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, c.sinceKotlinInfoTable,
+                c.containerSource
         )
         val local = c.childContext(function, proto.typeParameterList)
         function.initialize(
@@ -175,7 +177,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = DeserializedConstructorDescriptor(
                 classDescriptor, null, getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION),
-                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.containerSource
+                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.sinceKotlinInfoTable,
+                c.containerSource
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(

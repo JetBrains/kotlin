@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER") // kotlin.Metadata
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
 package kotlin.reflect.jvm
 
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -45,7 +46,7 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
     val context = DeserializationContext(
-            moduleData.deserialization, nameResolver, moduleData.module, TypeTable(proto.typeTable),
+            moduleData.deserialization, nameResolver, moduleData.module, TypeTable(proto.typeTable), SinceKotlinInfoTable.EMPTY,
             containerSource = null, parentTypeDeserializer = null, typeParameters = proto.typeParameterList
     )
     val descriptor = MemberDeserializer(context).loadFunction(proto)
