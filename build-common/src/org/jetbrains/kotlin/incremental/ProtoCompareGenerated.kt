@@ -46,6 +46,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
+        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) return false
+        if (old.hasSinceKotlinInfoTable()) {
+            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) return false
         if (old.hasExtension(JvmProtoBuf.packageModuleName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) return false
@@ -58,6 +63,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         PROPERTY_LIST,
         TYPE_ALIAS_LIST,
         TYPE_TABLE,
+        SINCE_KOTLIN_INFO_TABLE,
         PACKAGE_MODULE_NAME
     }
 
@@ -73,6 +79,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufPackageKind.TYPE_TABLE)
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufPackageKind.TYPE_TABLE)
+        }
+
+        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) result.add(ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE)
+        if (old.hasSinceKotlinInfoTable()) {
+            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) result.add(ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE)
         }
 
         if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) result.add(ProtoBufPackageKind.PACKAGE_MODULE_NAME)
@@ -119,6 +130,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
+        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
+        if (old.hasSinceKotlinInfo()) {
+            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        }
+
+        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) return false
+        if (old.hasSinceKotlinInfoTable()) {
+            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) return false
         if (old.hasExtension(JvmProtoBuf.classModuleName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) return false
@@ -140,6 +161,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         TYPE_ALIAS_LIST,
         ENUM_ENTRY_LIST,
         TYPE_TABLE,
+        SINCE_KOTLIN_INFO,
+        SINCE_KOTLIN_INFO_TABLE,
         CLASS_MODULE_NAME
     }
 
@@ -179,6 +202,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufClassKind.TYPE_TABLE)
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufClassKind.TYPE_TABLE)
+        }
+
+        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO)
+        if (old.hasSinceKotlinInfo()) {
+            if (old.sinceKotlinInfo != new.sinceKotlinInfo) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO)
+        }
+
+        if (old.hasSinceKotlinInfoTable() != new.hasSinceKotlinInfoTable()) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE)
+        if (old.hasSinceKotlinInfoTable()) {
+            if (!checkEquals(old.sinceKotlinInfoTable, new.sinceKotlinInfoTable)) result.add(ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE)
         }
 
         if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) result.add(ProtoBufClassKind.CLASS_MODULE_NAME)
@@ -229,6 +262,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasTypeTable() != new.hasTypeTable()) return false
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) return false
+        }
+
+        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
+        if (old.hasSinceKotlinInfo()) {
+            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
         }
 
         if (old.hasExtension(JvmProtoBuf.methodSignature) != new.hasExtension(JvmProtoBuf.methodSignature)) return false
@@ -289,6 +327,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.setterFlags != new.setterFlags) return false
         }
 
+        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
+        if (old.hasSinceKotlinInfo()) {
+            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
         if (old.hasExtension(JvmProtoBuf.propertySignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
@@ -329,6 +372,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
+        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
+        if (old.hasSinceKotlinInfo()) {
+            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        }
+
         return true
     }
 
@@ -339,6 +387,12 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasFirstNullable()) {
             if (old.firstNullable != new.firstNullable) return false
         }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.SinceKotlinInfoTable, new: ProtoBuf.SinceKotlinInfoTable): Boolean {
+        if (!checkEqualsSinceKotlinInfoTableInfo(old, new)) return false
 
         return true
     }
@@ -456,6 +510,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsConstructorValueParameter(old, new)) return false
 
+        if (old.hasSinceKotlinInfo() != new.hasSinceKotlinInfo()) return false
+        if (old.hasSinceKotlinInfo()) {
+            if (old.sinceKotlinInfo != new.sinceKotlinInfo) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
         if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
@@ -546,6 +605,35 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (!checkClassIdEquals(old.id, new.id)) return false
 
         if (!checkEqualsAnnotationArgument(old, new)) return false
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.SinceKotlinInfo, new: ProtoBuf.SinceKotlinInfo): Boolean {
+        if (old.hasVersion() != new.hasVersion()) return false
+        if (old.hasVersion()) {
+            if (old.version != new.version) return false
+        }
+
+        if (old.hasVersionFull() != new.hasVersionFull()) return false
+        if (old.hasVersionFull()) {
+            if (old.versionFull != new.versionFull) return false
+        }
+
+        if (old.hasLevel() != new.hasLevel()) return false
+        if (old.hasLevel()) {
+            if (old.level != new.level) return false
+        }
+
+        if (old.hasErrorCode() != new.hasErrorCode()) return false
+        if (old.hasErrorCode()) {
+            if (old.errorCode != new.errorCode) return false
+        }
+
+        if (old.hasMessage() != new.hasMessage()) return false
+        if (old.hasMessage()) {
+            if (!checkStringEquals(old.message, new.message)) return false
+        }
 
         return true
     }
@@ -817,6 +905,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsSinceKotlinInfoTableInfo(old: ProtoBuf.SinceKotlinInfoTable, new: ProtoBuf.SinceKotlinInfoTable): Boolean {
+        if (old.infoCount != new.infoCount) return false
+
+        for(i in 0..old.infoCount - 1) {
+            if (!checkEquals(old.getInfo(i), new.getInfo(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsTypeParameterUpperBound(old: ProtoBuf.TypeParameter, new: ProtoBuf.TypeParameter): Boolean {
         if (old.upperBoundCount != new.upperBoundCount) return false
 
@@ -927,6 +1025,10 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasSinceKotlinInfoTable()) {
+        hashCode = 31 * hashCode + sinceKotlinInfoTable.hashCode(stringIndexes, fqNameIndexes)
+    }
+
     if (hasExtension(JvmProtoBuf.packageModuleName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.packageModuleName))
     }
@@ -987,6 +1089,14 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasSinceKotlinInfo()) {
+        hashCode = 31 * hashCode + sinceKotlinInfo
+    }
+
+    if (hasSinceKotlinInfoTable()) {
+        hashCode = 31 * hashCode + sinceKotlinInfoTable.hashCode(stringIndexes, fqNameIndexes)
+    }
+
     if (hasExtension(JvmProtoBuf.classModuleName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.classModuleName))
     }
@@ -1033,6 +1143,10 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasTypeTable()) {
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasSinceKotlinInfo()) {
+        hashCode = 31 * hashCode + sinceKotlinInfo
     }
 
     if (hasExtension(JvmProtoBuf.methodSignature)) {
@@ -1087,6 +1201,10 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + setterFlags
     }
 
+    if (hasSinceKotlinInfo()) {
+        hashCode = 31 * hashCode + sinceKotlinInfo
+    }
+
     if (hasExtension(JvmProtoBuf.propertySignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
     }
@@ -1127,6 +1245,10 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasSinceKotlinInfo()) {
+        hashCode = 31 * hashCode + sinceKotlinInfo
+    }
+
     return hashCode
 }
 
@@ -1139,6 +1261,16 @@ fun ProtoBuf.TypeTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     if (hasFirstNullable()) {
         hashCode = 31 * hashCode + firstNullable
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.SinceKotlinInfoTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    for(i in 0..infoCount - 1) {
+        hashCode = 31 * hashCode + getInfo(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1251,6 +1383,10 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasSinceKotlinInfo()) {
+        hashCode = 31 * hashCode + sinceKotlinInfo
+    }
+
     if (hasExtension(JvmProtoBuf.constructorSignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes)
     }
@@ -1339,6 +1475,32 @@ fun ProtoBuf.Annotation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (In
 
     for(i in 0..argumentCount - 1) {
         hashCode = 31 * hashCode + getArgument(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.SinceKotlinInfo.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasVersion()) {
+        hashCode = 31 * hashCode + version
+    }
+
+    if (hasVersionFull()) {
+        hashCode = 31 * hashCode + versionFull
+    }
+
+    if (hasLevel()) {
+        hashCode = 31 * hashCode + level.hashCode()
+    }
+
+    if (hasErrorCode()) {
+        hashCode = 31 * hashCode + errorCode
+    }
+
+    if (hasMessage()) {
+        hashCode = 31 * hashCode + stringIndexes(message)
     }
 
     return hashCode

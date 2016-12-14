@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 
 class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
@@ -58,7 +59,12 @@ class ClassDeserializer(private val components: DeserializationComponents) {
                 if (!fragment.hasTopLevelClass(classId.shortClassName)) return null
             }
 
-            components.createContext(fragment, nameResolver, TypeTable(classProto.typeTable), containerSource = null)
+            components.createContext(
+                    fragment, nameResolver,
+                    TypeTable(classProto.typeTable),
+                    SinceKotlinInfoTable.create(classProto.sinceKotlinInfoTable),
+                    containerSource = null
+            )
         }
 
         return DeserializedClassDescriptor(outerContext, classProto, nameResolver, sourceElement)

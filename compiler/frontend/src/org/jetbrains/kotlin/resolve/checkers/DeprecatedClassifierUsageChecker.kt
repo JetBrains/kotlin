@@ -32,7 +32,7 @@ class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
     ) {
         val deprecations = targetDescriptor.getDeprecations()
         for (deprecation in deprecations) {
-            trace.report(createDeprecationDiagnostic(element, deprecation))
+            trace.report(createDeprecationDiagnostic(element, deprecation, languageVersionSettings))
         }
     }
 }

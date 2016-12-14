@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
@@ -35,10 +36,12 @@ import org.jetbrains.kotlin.resolve.getDeprecations
 
 object DeprecatedCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        check(resolvedCall.resultingDescriptor, context.trace, reportOn)
+        check(resolvedCall.resultingDescriptor, context.trace, reportOn, context.languageVersionSettings)
     }
 
-    private fun check(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
+    private fun check(
+            targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement, languageVersionSettings: LanguageVersionSettings
+    ) {
         // Objects will be checked by DeprecatedClassifierUsageChecker
         if (targetDescriptor is FakeCallableDescriptorForObject) return
 
@@ -51,11 +54,11 @@ object DeprecatedCallChecker : CallChecker {
 
         if (deprecations.isNotEmpty()) {
             for (deprecation in deprecations) {
-                trace.report(createDeprecationDiagnostic(element, deprecation))
+                trace.report(createDeprecationDiagnostic(element, deprecation, languageVersionSettings))
             }
         }
         else if (targetDescriptor is PropertyDescriptor && shouldCheckPropertyGetter(element)) {
-            targetDescriptor.getter?.let { check(it, trace, element) }
+            targetDescriptor.getter?.let { check(it, trace, element, languageVersionSettings) }
         }
     }
 

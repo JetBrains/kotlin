@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.diagnostics.rendering;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.io.FileUtil;
+import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -319,6 +320,17 @@ public class DefaultErrorMessages {
 
         MAP.put(DEPRECATION, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
         MAP.put(DEPRECATION_ERROR, "Using ''{0}'' is an error. {1}", DEPRECATION_RENDERER, STRING);
+
+        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> sinceKotlinInfoRenderer = new DiagnosticParameterRenderer<Pair<LanguageVersion, String>>() {
+            @NotNull
+            @Override
+            public String render(@NotNull Pair<LanguageVersion, String> pair, @NotNull RenderingContext renderingContext) {
+                String message = pair.getSecond();
+                return pair.getFirst().getVersionString() + (message != null ? ". " + message : "");
+            }
+        };
+        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION, "''{0}'' is only supported since Kotlin {1} and should not be used in Kotlin {2}", DEPRECATION_RENDERER, STRING, sinceKotlinInfoRenderer);
+        MAP.put(SINCE_KOTLIN_INFO_DEPRECATION_ERROR, "''{0}'' is only available since Kotlin {1} and cannot be used in Kotlin {2}", DEPRECATION_RENDERER, STRING, sinceKotlinInfoRenderer);
 
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
