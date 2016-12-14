@@ -260,29 +260,35 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] array.
  */
+@Fixme
 public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolean {
-    if (elements.isNotEmpty())
-        return retainAll(elements.toHashSet())
-    else
-        return retainNothing()
+    TODO()
+    //if (elements.isNotEmpty())
+    //    return retainAll(elements.toHashSet())
+    //else
+    //    return retainNothing()
 }
 
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] sequence.
  */
+@Fixme
 public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>): Boolean {
-    val set = elements.toHashSet()
-    if (set.isNotEmpty())
-        return retainAll(set)
-    else
-        return retainNothing()
+    TODO()
+    //val set = elements.toHashSet()
+    //if (set.isNotEmpty())
+    //    return retainAll(set)
+    //else
+    //    return retainNothing()
 }
 
+@Fixme
 private fun MutableCollection<*>.retainNothing(): Boolean {
-    val result = isNotEmpty()
-    clear()
-    return result
-} */
+    TODO()
+    //val result = isNotEmpty()
+    //clear()
+    //return result
+}
 
 /**
  * Sorts elements in the list in-place according to their natural sort order.
@@ -296,8 +302,6 @@ public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
  */
-@Fixme
-public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
-    TODO()
-    //if (size > 1) java.util.Collections.sort(this, comparator)
-}
+//public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
+//if (size > 1) java.util.Collections.sort(this, comparator)
+//}
