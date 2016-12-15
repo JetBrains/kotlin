@@ -2998,6 +2998,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("classAndObjectLiteralType.kt")
+            public void testClassAndObjectLiteralType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/classAndObjectLiteralType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classLiteralType.kt")
             public void testClassLiteralType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/classLiteralType.kt");

@@ -21,9 +21,9 @@ package test {
         public final fun </*0*/ T> kotlin.collections.List<T>.testCallable2(): () -> kotlin.Unit
         public final fun </*0*/ T> kotlin.collections.List<T>.testCallable3(): () -> kotlin.Unit
         public final fun </*0*/ T> kotlin.collections.List<T>.testCallable4(): () -> kotlin.Unit
-        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral1(): kotlin.reflect.KClass<kotlin.Int>
-        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral2(): kotlin.reflect.KClass<kotlin.Int?>
-        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral3(): kotlin.reflect.KClass<kotlin.Int?>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral1(): kotlin.reflect.KClass<out kotlin.Int>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral2(): kotlin.reflect.KClass<out kotlin.Int?>
+        public final fun </*0*/ T> kotlin.collections.List<T>.testClassLiteral3(): kotlin.reflect.KClass<out kotlin.Int?>
         public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved1(): [ERROR : Error function type]
         public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved2(): kotlin.reflect.KFunction0<kotlin.Unit>
         public final fun </*0*/ T> kotlin.collections.List<T>.testUnresolved3(): kotlin.reflect.KFunction0<kotlin.Unit>

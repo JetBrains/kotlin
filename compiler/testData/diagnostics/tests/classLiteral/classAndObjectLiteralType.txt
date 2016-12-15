@@ -1,0 +1,49 @@
+package
+
+public val test1: kotlin.reflect.KClass<DerivedClass>
+public val test2: kotlin.reflect.KClass<DerivedObject>
+public val test3: kotlin.reflect.KClass<TestEnum>
+public val test4: kotlin.reflect.KClass<out TestEnum>
+
+public abstract class Base</*0*/ T : kotlin.Any> {
+    public constructor Base</*0*/ T : kotlin.Any>(/*0*/ klass: kotlin.reflect.KClass<out T>)
+    public final val klass: kotlin.reflect.KClass<out T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class DerivedClass : Base<DerivedClass> {
+    public constructor DerivedClass()
+    public final override /*1*/ /*fake_override*/ val klass: kotlin.reflect.KClass<out DerivedClass>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object DerivedObject : Base<DerivedObject> {
+    private constructor DerivedObject()
+    public final override /*1*/ /*fake_override*/ val klass: kotlin.reflect.KClass<out DerivedObject>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class TestEnum : kotlin.Enum<TestEnum> {
+    enum entry TEST_ENTRY
+
+    private constructor TestEnum()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: TestEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<TestEnum!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<TestEnum>
+}

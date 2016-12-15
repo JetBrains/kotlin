@@ -59,13 +59,13 @@ class ReflectionTypes(module: ModuleDescriptor) {
     val kMutableProperty0: ClassDescriptor by ClassLookup
     val kMutableProperty1: ClassDescriptor by ClassLookup
 
-    fun getKClassType(annotations: Annotations, type: KotlinType): KotlinType {
+    fun getKClassType(annotations: Annotations, type: KotlinType, variance: Variance): KotlinType {
         val descriptor = kClass
         if (ErrorUtils.isError(descriptor)) {
             return descriptor.defaultType
         }
 
-        val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, type))
+        val arguments = listOf(TypeProjectionImpl(variance, type))
         return KotlinTypeFactory.simpleNotNullType(annotations, descriptor, arguments)
     }
 

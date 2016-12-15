@@ -2,7 +2,7 @@
 
 import kotlin.reflect.KClass
 
-fun f(<!UNUSED_PARAMETER!>x<!>: KClass<Int>) {}
+fun f(<!UNUSED_PARAMETER!>x<!>: KClass<out Int>) {}
 
 fun test() {
     f(42::class)

@@ -4,6 +4,10 @@ public val a1: kotlin.reflect.KClass<*>
 public val a2: kotlin.reflect.KClass<A>
 public val a3: kotlin.reflect.KClass<B>
 public val a4: B
+public val a5: kotlin.reflect.KClass<out kotlin.collections.List<kotlin.String>>
+public val a6: kotlin.reflect.KClass<out kotlin.Array<kotlin.String>>
+public val arrayOfString: kotlin.Array<kotlin.String>
+public val listOfString: kotlin.collections.List<kotlin.String>
 
 public final class A {
     public constructor A()

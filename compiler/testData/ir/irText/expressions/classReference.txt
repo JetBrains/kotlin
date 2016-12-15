@@ -9,12 +9,12 @@ FILE /classReference.kt
       TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
       TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_CLASS type=kotlin.reflect.KClass<A>
+        GET_CLASS type=kotlin.reflect.KClass<out A>
           CALL 'constructor A()' type=A origin=null
       TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL '<get-java>() on KClass<A>: Class<A>' type=java.lang.Class<A> origin=GET_PROPERTY
           $receiver: CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
       TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL '<get-java>() on KClass<A>: Class<A>' type=java.lang.Class<A> origin=GET_PROPERTY
-          $receiver: GET_CLASS type=kotlin.reflect.KClass<A>
+        CALL '<get-java>() on KClass<out A>: Class<out A>' type=java.lang.Class<out A> origin=GET_PROPERTY
+          $receiver: GET_CLASS type=kotlin.reflect.KClass<out A>
             CALL 'constructor A()' type=A origin=null

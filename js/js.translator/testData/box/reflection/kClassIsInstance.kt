@@ -2,7 +2,7 @@ package foo
 
 import kotlin.reflect.KClass
 
-fun <A : Any, B : A> check(k: KClass<A>, instance: B, nonInstance: Any) {
+fun check(k: KClass<*>, instance: Any, nonInstance: Any) {
     assertTrue(k.isInstance(instance))
     assertFalse(k.isInstance(nonInstance))
     assertFalse(k.isInstance(null))

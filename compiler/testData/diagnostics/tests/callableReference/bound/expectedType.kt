@@ -7,6 +7,8 @@ fun test(s: String) {
     val g: () -> String = s::toString
     val h: (Any?) -> Boolean = s::equals
 
-    val k: KClass<String> = s::class
+    val k: KClass<out String> = s::class
     val l: KClass<*> = s::class
+    val m: KClass<String> = String::class
+    val n: KClass<Unit> = Unit::class
 }

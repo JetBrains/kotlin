@@ -92,7 +92,8 @@ class DoubleColonExpressionResolver(
             val type = result?.type
             if (type != null && !type.isError) {
                 checkClassLiteral(c, expression, result)
-                val kClassType = reflectionTypes.getKClassType(Annotations.EMPTY, type)
+                val variance = if (result is DoubleColonLHS.Expression && !result.isObject) Variance.OUT_VARIANCE else Variance.INVARIANT
+                val kClassType = reflectionTypes.getKClassType(Annotations.EMPTY, type, variance)
                 val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
                 return dataFlowAnalyzer.checkType(createTypeInfo(kClassType, dataFlowInfo), expression, c)
             }
