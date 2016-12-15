@@ -30,7 +30,7 @@ class ConvertRangeCheckToTwoComparisonsIntention : SelfTargetingOffsetIndependen
         val rangeExpression = element.right as? KtBinaryExpression ?: return
         val min = rangeExpression.left?.text ?: return
         val arg = element.left?.text ?: return
-        val max: Any = rangeExpression.right?.text ?: return
+        val max = rangeExpression.right?.text ?: return
         val comparisonsExpression = KtPsiFactory(element).createExpressionByPattern("$0 <= $1 && $1 <= $2", min, arg, max)
         element.replace(comparisonsExpression)
     }
