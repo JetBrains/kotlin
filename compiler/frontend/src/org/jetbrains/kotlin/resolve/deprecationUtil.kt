@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
 import org.jetbrains.kotlin.utils.SmartList
+import java.util.*
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
