@@ -14,22 +14,40 @@ fun test() {
         member()
         extension()
 
-        // todo
-        this.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
-        this.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extension<!>()
+        this.member()
+        this.extension()
 
         val foo = this
         foo.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
         foo.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extension<!>()
 
-        // todo
-        this@l.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
-        this@l.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extension<!>()
+        this@l.member()
+        this@l.extension()
 
         with(1) {
-            // todo
-            this@l.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
-            this@l.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extension<!>()
+            this@l.member()
+            this@l.extension()
         }
     }
+}
+
+suspend fun RestrictedController.l() {
+    member()
+    extension()
+
+    this.member()
+    this.extension()
+
+    val foo = this
+    foo.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
+    foo.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extension<!>()
+
+    this@l.member()
+    this@l.extension()
+
+    with(1) {
+        this@l.member()
+        this@l.extension()
+    }
+
 }

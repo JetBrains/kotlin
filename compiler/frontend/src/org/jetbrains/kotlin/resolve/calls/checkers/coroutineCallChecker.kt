@@ -28,12 +28,14 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasRestrictSuspensionAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -65,7 +67,7 @@ object CoroutineSuspendCallChecker : CallChecker {
                 // Here we only record enclosing function mapping (for backends purposes)
                 context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
 
-                checkRestrictSuspension(enclosingSuspendFunction.extensionReceiverParameter, resolvedCall, reportOn, context)
+                checkRestrictSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
             }
             closestSuspensionLambdaDescriptor != null -> {
                 val callElement = resolvedCall.call.callElement as KtExpression
@@ -78,7 +80,7 @@ object CoroutineSuspendCallChecker : CallChecker {
                         BindingContext.ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, resolvedCall.call, closestSuspensionLambdaDescriptor
                 )
 
-                checkRestrictSuspension(closestSuspensionLambdaDescriptor.extensionReceiverParameter, resolvedCall, reportOn, context)
+                checkRestrictSuspension(closestSuspensionLambdaDescriptor, resolvedCall, reportOn, context)
             }
             else -> {
                 context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn))
@@ -109,20 +111,28 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
 }
 
 private fun checkRestrictSuspension(
-        enclosingSuspendReceiver: ReceiverParameterDescriptor?,
+        enclosingCallableDescriptor: CallableDescriptor,
         resolvedCall: ResolvedCall<*>,
         reportOn: PsiElement,
         context: CallCheckerContext
 ) {
-    if (enclosingSuspendReceiver == null) return
-    val enclosingSuspendReceiverValue = enclosingSuspendReceiver.value
+    val enclosingSuspendReceiverValue = enclosingCallableDescriptor.extensionReceiverParameter?.value ?: return
 
     fun ReceiverValue.isRestrictSuspensionReceiver() = (type.supertypes() + type).any {
         it.constructor.declarationDescriptor?.hasRestrictSuspensionAnnotation() == true
     }
 
-    // todo explicit this and implicit this is not equals now
-    infix fun ReceiverValue.sameInstance(other: ReceiverValue?) = this === other
+    infix fun ReceiverValue.sameInstance(other: ReceiverValue?): Boolean {
+        if (other == null) return false
+        if (this === other) return true
+
+        val referenceExpression = ((other as? ExpressionReceiver)?.expression as? KtThisExpression)?.instanceReference
+        val referenceTarget = referenceExpression?.let {
+            context.trace.get(BindingContext.REFERENCE_TARGET, referenceExpression)
+        }
+
+        return this === (referenceTarget as? CallableDescriptor)?.extensionReceiverParameter?.value
+    }
 
     if (!enclosingSuspendReceiverValue.isRestrictSuspensionReceiver()) return
 
