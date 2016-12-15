@@ -2,7 +2,7 @@
 
 interface SuperInterface
 
-@kotlin.coroutines.RestrictSuspension
+@kotlin.coroutines.RestrictsSuspendExtensions
 open class RestrictedController : SuperInterface
 
 class SubClass : RestrictedController()

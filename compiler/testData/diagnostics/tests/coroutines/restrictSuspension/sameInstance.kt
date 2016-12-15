@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE
 
-@kotlin.coroutines.RestrictSuspension
+@kotlin.coroutines.RestrictsSuspendExtensions
 class RestrictedController {
     suspend fun member() {}
 }

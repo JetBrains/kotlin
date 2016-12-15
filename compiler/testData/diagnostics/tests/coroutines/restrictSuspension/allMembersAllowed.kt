@@ -5,7 +5,7 @@ interface SuperInterface {
     suspend fun String.superExtFun() {}
 }
 
-@kotlin.coroutines.RestrictSuspension
+@kotlin.coroutines.RestrictsSuspendExtensions
 open class RestrictedController : SuperInterface {
     suspend fun memberFun() {}
     suspend fun String.memberExtFun() {}
