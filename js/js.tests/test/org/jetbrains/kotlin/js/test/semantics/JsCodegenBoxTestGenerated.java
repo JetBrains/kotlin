@@ -15096,6 +15096,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
             }
 
+            @TestMetadata("inlineReifiedFun.kt")
+            public void testInlineReifiedFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/inlineReifiedFun.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
             @TestMetadata("mappedClassIsEqualToClassLiteral.kt")
             public void testMappedClassIsEqualToClassLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/mappedClassIsEqualToClassLiteral.kt");
