@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -93,69 +94,71 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
             val javaRefsToReplaceWithCall = ArrayList<PsiReferenceExpression>()
 
             project.runSynchronouslyWithProgress("Looking for usages and conflicts...", true) {
-                val progressStep = 1.0/callables.size
-                for ((i, callable) in callables.withIndex()) {
-                    ProgressManager.getInstance().progressIndicator.fraction = (i + 1)*progressStep
+                runReadAction {
+                    val progressStep = 1.0/callables.size
+                    for ((i, callable) in callables.withIndex()) {
+                        ProgressManager.getInstance().progressIndicator.fraction = (i + 1)*progressStep
 
-                    if (callable !is PsiNamedElement) continue
+                        if (callable !is PsiNamedElement) continue
 
-                    if (!checkModifiable(callable)) {
-                        val renderedCallable = RefactoringUIUtil.getDescription(callable, true).capitalize()
-                        conflicts.putValue(callable, "Can't modify $renderedCallable")
-                    }
-
-                    if (callable is KtProperty) {
-                        callableDescriptor.getContainingScope()
-                                ?.findFunction(callableDescriptor.name, NoLookupLocation.FROM_IDE) { it.valueParameters.isEmpty() }
-                                ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                                ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
-                    }
-                    else if (callable is PsiMethod) {
-                        callable.containingClass
-                                ?.findMethodsByName(propertyName, true)
-                                // as is necessary here: see KT-10386
-                                ?.firstOrNull { it.parameterList.parametersCount == 0 && !callables.contains(it.namedUnwrappedElement as PsiElement?) }
-                                ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
-                    }
-
-                    val usages = ReferencesSearch.search(callable)
-                    for (usage in usages) {
-                        if (usage is KtReference) {
-                            if (usage is KtSimpleNameReference) {
-                                val expression = usage.expression
-                                if (expression.getCall(expression.analyze(BodyResolveMode.PARTIAL)) != null
-                                    && expression.getStrictParentOfType<KtCallableReferenceExpression>() == null) {
-                                    kotlinRefsToReplaceWithCall.add(expression)
-                                }
-                                else if (nameChanged) {
-                                    refsToRename.add(usage)
-                                }
-                            }
-                            else {
-                                val refElement = usage.element
-                                conflicts.putValue(
-                                        refElement,
-                                        "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.text)
-                                )
-                            }
-                            continue
+                        if (!checkModifiable(callable)) {
+                            val renderedCallable = RefactoringUIUtil.getDescription(callable, true).capitalize()
+                            conflicts.putValue(callable, "Can't modify $renderedCallable")
                         }
 
-                        val refElement = usage.element
-
-                        if (refElement.text.endsWith(getterName)) continue
-
-                        if (usage is PsiJavaReference) {
-                            if (usage.resolve() is PsiField && usage is PsiReferenceExpression) {
-                                javaRefsToReplaceWithCall.add(usage)
-                            }
-                            continue
+                        if (callable is KtProperty) {
+                            callableDescriptor.getContainingScope()
+                                    ?.findFunction(callableDescriptor.name, NoLookupLocation.FROM_IDE) { it.valueParameters.isEmpty() }
+                                    ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
+                                    ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
+                        }
+                        else if (callable is PsiMethod) {
+                            callable.containingClass
+                                    ?.findMethodsByName(propertyName, true)
+                                    // as is necessary here: see KT-10386
+                                    ?.firstOrNull { it.parameterList.parametersCount == 0 && !callables.contains(it.namedUnwrappedElement as PsiElement?) }
+                                    ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                         }
 
-                        conflicts.putValue(
-                                refElement,
-                                "Can't replace foreign reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
-                        )
+                        val usages = ReferencesSearch.search(callable)
+                        for (usage in usages) {
+                            if (usage is KtReference) {
+                                if (usage is KtSimpleNameReference) {
+                                    val expression = usage.expression
+                                    if (expression.getCall(expression.analyze(BodyResolveMode.PARTIAL)) != null
+                                        && expression.getStrictParentOfType<KtCallableReferenceExpression>() == null) {
+                                        kotlinRefsToReplaceWithCall.add(expression)
+                                    }
+                                    else if (nameChanged) {
+                                        refsToRename.add(usage)
+                                    }
+                                }
+                                else {
+                                    val refElement = usage.element
+                                    conflicts.putValue(
+                                            refElement,
+                                            "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.text)
+                                    )
+                                }
+                                continue
+                            }
+
+                            val refElement = usage.element
+
+                            if (refElement.text.endsWith(getterName)) continue
+
+                            if (usage is PsiJavaReference) {
+                                if (usage.resolve() is PsiField && usage is PsiReferenceExpression) {
+                                    javaRefsToReplaceWithCall.add(usage)
+                                }
+                                continue
+                            }
+
+                            conflicts.putValue(
+                                    refElement,
+                                    "Can't replace foreign reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
+                            )
+                        }
                     }
                 }
             }
