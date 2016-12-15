@@ -220,6 +220,10 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
+                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO,
+                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE -> {
+                    // TODO
+                }
                 ProtoBufClassKind.FLAGS,
                 ProtoBufClassKind.FQ_NAME,
                 ProtoBufClassKind.TYPE_PARAMETER_LIST,
