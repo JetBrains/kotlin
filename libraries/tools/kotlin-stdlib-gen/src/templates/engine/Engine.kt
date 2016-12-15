@@ -318,6 +318,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     fun build(builder: Appendable, f: Family, primitive: PrimitiveType?, platform: Platform) {
         val headerOnly: Boolean = platform == Platform.Common
+        val hasOptionalParams = (customSignature[platform, f] ?: signature).contains("=")
         val returnType = returns[platform, f] ?: throw RuntimeException("No return type specified for $signature")
 
         fun renderType(expression: String, receiver: String, self: String): String {
@@ -473,7 +474,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         }
 
         builder.append(visibility[f] ?: "public").append(' ')
-        if (headerOnly) {
+        if (headerOnly && !hasOptionalParams) {
             builder.append("header ")
         }
         if (external[platform, f] == true)
@@ -498,7 +499,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         if (receiverType.isNotEmpty()) builder.append('.')
         builder.append("${(customSignature[platform, f] ?: signature).renderType()}: ${returnType.renderType()}")
 
-        if (headerOnly) {
+        if (headerOnly && !hasOptionalParams) {
             builder.append("\n\n")
             return
         }
