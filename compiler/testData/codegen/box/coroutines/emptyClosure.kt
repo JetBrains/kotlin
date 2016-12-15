@@ -5,10 +5,10 @@ import kotlin.coroutines.*
 var result = 0
 
 class Controller {
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         result++
         x.resume("OK")
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 

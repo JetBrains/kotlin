@@ -4,13 +4,13 @@ import kotlin.coroutines.*
 
 class Controller {
     var i = 0
-    suspend fun suspendHere(): Int = suspendWithCurrentContinuation { x ->
+    suspend fun suspendHere(): Int = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         x.resume(i++)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
-    suspend fun suspendThere(): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendThere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         x.resume("?")
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 

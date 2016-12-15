@@ -6,38 +6,38 @@ class Controller {
     var log = ""
     var resumeIndex = 0
 
-    suspend fun <T> suspendWithValue(value: T): T = suspendWithCurrentContinuation { continuation ->
+    suspend fun <T> suspendWithValue(value: T): T = CoroutineIntrinsics.suspendCoroutineOrReturn { continuation ->
         log += "suspend($value);"
         continuation.resume(value)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
-    suspend fun suspendWithException(value: String): Unit = suspendWithCurrentContinuation { continuation ->
+    suspend fun suspendWithException(value: String): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn { continuation ->
         log += "error($value);"
         continuation.resumeWithException(RuntimeException(value))
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 
 fun test(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
-    c.startCoroutine(controller, EmptyContinuation, object: ResumeInterceptor {
-        private fun interceptResume(block: () -> Unit) {
+    c.startCoroutine(controller, EmptyContinuation, object: ContinuationDispatcher {
+        private fun dispatchResume(block: () -> Unit) {
             val id = controller.resumeIndex++
             controller.log += "before $id;"
             block()
             controller.log += "after $id;"
         }
 
-        override fun <P> interceptResume(data: P, continuation: Continuation<P>): Boolean {
-            interceptResume {
+        override fun <P> dispatchResume(data: P, continuation: Continuation<P>): Boolean {
+            dispatchResume {
                 continuation.resume(data)
             }
             return true
         }
 
-        override fun interceptResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean {
-            interceptResume {
+        override fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean {
+            dispatchResume {
                 continuation.resumeWithException(exception)
             }
             return true

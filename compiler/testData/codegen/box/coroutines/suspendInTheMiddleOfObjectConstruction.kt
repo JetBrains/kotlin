@@ -3,19 +3,19 @@
 import kotlin.coroutines.*
 
 class Controller {
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         x.resume("K")
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
-    suspend fun suspendWithArgument(v: String): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendWithArgument(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         x.resume(v)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
-    suspend fun suspendWithDouble(v: Double): Double = suspendWithCurrentContinuation { x ->
+    suspend fun suspendWithDouble(v: Double): Double = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         x.resume(v)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 

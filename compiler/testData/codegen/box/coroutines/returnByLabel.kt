@@ -2,9 +2,9 @@
 // WITH_COROUTINES
 import kotlin.coroutines.*
 
-suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
     x.resume("OK")
-    SUSPENDED
+    CoroutineIntrinsics.SUSPENDED
 }
 
 fun builder(c: suspend () -> Int): Int {

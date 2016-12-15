@@ -4,9 +4,9 @@ import kotlin.coroutines.*
 
 class Controller {
     var i = 0
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         x.resume((i++).toString())
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 

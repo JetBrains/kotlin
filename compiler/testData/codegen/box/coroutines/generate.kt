@@ -50,10 +50,10 @@ class GeneratedIterator<T>(block: suspend Generator<T>.() -> Unit) : AbstractIte
     override fun computeNext() {
         nextStep.resume(Unit)
     }
-    suspend override fun yield(value: T) = suspendWithCurrentContinuation<Unit> { c ->
+    suspend override fun yield(value: T) = CoroutineIntrinsics.suspendCoroutineOrReturn<Unit> { c ->
         setNext(value)
         nextStep = c
 
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }

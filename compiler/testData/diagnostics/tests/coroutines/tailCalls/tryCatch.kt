@@ -7,7 +7,7 @@ suspend fun baz(): Int = 1
 
 suspend fun tryCatch(): Int {
     return try {
-        <!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>suspendWithCurrentContinuation { x: Continuation<Int> -> }<!>
+        CoroutineIntrinsics.<!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>suspendCoroutineOrReturn { x: Continuation<Int> -> }<!>
     } catch (e: Exception) {
         <!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>baz()<!> // another suspend function
     }
@@ -15,7 +15,7 @@ suspend fun tryCatch(): Int {
 
 suspend fun tryFinally(): Int {
     return try {
-        <!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>suspendWithCurrentContinuation { x: Continuation<Int> -> }<!>
+        CoroutineIntrinsics.<!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>suspendCoroutineOrReturn { x: Continuation<Int> -> }<!>
     } finally {
         nonSuspend()
     }
@@ -31,7 +31,7 @@ suspend fun returnInFinally(): Int {
 
 suspend fun tryCatchFinally(): Int {
     return try {
-        <!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>suspendWithCurrentContinuation { x: Continuation<Int> -> }<!>
+        CoroutineIntrinsics.<!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>suspendCoroutineOrReturn { x: Continuation<Int> -> }<!>
     } catch (e: Exception) {
         <!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>baz()<!> // another suspend function
     } finally {

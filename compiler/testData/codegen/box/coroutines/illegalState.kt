@@ -3,9 +3,9 @@
 // TARGET_BACKEND: JVM
 import kotlin.coroutines.*
 
-suspend fun suspendHere(): Unit = suspendWithCurrentContinuation { x ->
+suspend fun suspendHere(): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
     x.resume(Unit)
-    SUSPENDED
+    CoroutineIntrinsics.SUSPENDED
 }
 
 fun builder1(c: suspend () -> Unit) {

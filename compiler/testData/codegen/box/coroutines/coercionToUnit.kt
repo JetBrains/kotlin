@@ -3,9 +3,9 @@
 import kotlin.coroutines.*
 
 
-suspend fun <T> await(t: T): T = suspendWithCurrentContinuation { c ->
+suspend fun <T> await(t: T): T = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
     c.resume(t)
-    SUSPENDED
+    CoroutineIntrinsics.SUSPENDED
 }
 
 fun builder(c: suspend () -> Unit): String {

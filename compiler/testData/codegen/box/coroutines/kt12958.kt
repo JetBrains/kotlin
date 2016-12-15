@@ -3,9 +3,9 @@
 // WITH_CONTINUATION
 import kotlin.coroutines.*
 
-suspend fun <V> suspendHere(v: V): V = suspendWithCurrentContinuation { x ->
+suspend fun <V> suspendHere(v: V): V = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
     x.resume(v)
-    SUSPENDED
+    CoroutineIntrinsics.SUSPENDED
 }
 
 fun builder(c: suspend () -> String): String {

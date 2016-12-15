@@ -57,12 +57,12 @@ fun <T> async(c: @Suspend() (() -> T)): CompletableFuture<T> {
     return future
 }
 
-suspend fun <V> await(f: CompletableFuture<V>) = suspendWithCurrentContinuation<V> { machine ->
+suspend fun <V> await(f: CompletableFuture<V>) = CoroutineIntrinsics.suspendCoroutineOrReturn<V> { machine ->
     f.whenComplete { value, throwable ->
         if (throwable == null)
             machine.resume(value)
         else
             machine.resumeWithException(throwable)
     }
-    SUSPENDED
+    CoroutineIntrinsics.SUSPENDED
 }

@@ -7,20 +7,20 @@ var wasCalled = false
 class Controller {
     val postponedActions = ArrayList<() -> Unit>()
 
-    suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendWithValue(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resume(v)
         }
 
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
-    suspend fun suspendWithException(e: Exception): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendWithException(e: Exception): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }
 
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
     fun run(c: suspend Controller.() -> String) {

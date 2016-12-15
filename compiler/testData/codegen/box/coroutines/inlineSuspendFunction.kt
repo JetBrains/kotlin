@@ -11,9 +11,9 @@ class Controller {
         x.resume(v)
     }
 
-    suspend inline fun suspendInline(v: String): String = suspendWithCurrentContinuation { x ->
+    suspend inline fun suspendInline(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         withValue(v, x)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
     suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())

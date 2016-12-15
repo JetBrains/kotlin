@@ -5,9 +5,9 @@ import kotlin.coroutines.*
 class Controller {
     var lastSuspension: Continuation<String>? = null
     var result = "fail"
-    suspend fun suspendHere(): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         lastSuspension = x
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
     fun hasNext() = lastSuspension != null

@@ -5,7 +5,7 @@ fun async(coroutine x: Controller.() -> Continuation<Unit>) {
 }
 
 class Controller {
-    suspend fun step(param: Int) = suspendWithCurrentContinuation<Int> { next ->
+    suspend fun step(param: Int) = CoroutineIntrinsics.suspendCoroutineOrReturn<Int> { next ->
         next.resume(param + 1)
     }
 }

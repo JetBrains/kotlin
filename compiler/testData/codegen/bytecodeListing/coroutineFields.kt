@@ -1,6 +1,6 @@
 import kotlin.coroutines.*
 class Controller {
-    suspend fun suspendHere() = suspendWithCurrentContinuation<String> { x ->
+    suspend fun suspendHere() = CoroutineIntrinsics.suspendCoroutineOrReturn<String> { x ->
         x.resume("OK")
     }
 }

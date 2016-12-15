@@ -4,16 +4,16 @@
 import kotlin.coroutines.*
 
 class Controller {
-    suspend fun runInstanceOf(): Boolean = suspendWithCurrentContinuation { x ->
+    suspend fun runInstanceOf(): Boolean = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         val y: Any = x
         x.resume(x is Continuation<*>)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
-    suspend fun runCast(): Boolean = suspendWithCurrentContinuation { x ->
+    suspend fun runCast(): Boolean = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         val y: Any = x
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 

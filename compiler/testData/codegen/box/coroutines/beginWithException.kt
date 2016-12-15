@@ -2,7 +2,7 @@
 // WITH_COROUTINES
 import kotlin.coroutines.*
 
-suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x -> }
+suspend fun suspendHere(): Any = CoroutineIntrinsics.suspendCoroutineOrReturn { x -> }
 
 fun builder(c: suspend () -> Unit) {
     var exception: Throwable? = null

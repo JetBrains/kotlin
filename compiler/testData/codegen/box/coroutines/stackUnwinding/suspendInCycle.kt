@@ -3,10 +3,10 @@
 import kotlin.coroutines.*
 
 class Controller {
-    suspend fun suspendHere(): Int = suspendWithCurrentContinuation { x ->
+    suspend fun suspendHere(): Int = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         1
     }
-    suspend fun suspendThere(): String = suspendWithCurrentContinuation { x ->
+    suspend fun suspendThere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
         "?"
     }
 }

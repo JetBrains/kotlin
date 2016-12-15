@@ -6,17 +6,17 @@ import kotlin.coroutines.*
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { c ->
+    suspend fun <T> suspendAndLog(value: T): T = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 
     // Tail calls are not allowed to be Nothing typed. See KT-15051
-    suspend fun suspendLogAndThrow(exception: Throwable): Any? = suspendWithCurrentContinuation { c ->
+    suspend fun suspendLogAndThrow(exception: Throwable): Any? = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
         result += "throw(${exception.message});"
         c.resumeWithException(exception)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 

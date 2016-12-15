@@ -6,10 +6,10 @@ import kotlin.coroutines.*
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = suspendWithCurrentContinuation { c ->
+    suspend fun <T> suspendAndLog(value: T): T = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
-        SUSPENDED
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 

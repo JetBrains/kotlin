@@ -3,9 +3,9 @@
 import kotlin.coroutines.*
 
 var globalResult = ""
-suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->
+suspend fun suspendWithValue(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
     x.resume(v)
-    SUSPENDED
+    CoroutineIntrinsics.SUSPENDED
 }
 
 fun builder(c: suspend () -> String) {
