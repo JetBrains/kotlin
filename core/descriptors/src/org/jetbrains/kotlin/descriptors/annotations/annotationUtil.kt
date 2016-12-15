@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -60,3 +63,14 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
 }
 
 private operator fun Collection<ValueParameterDescriptor>.get(parameterName: String) = single { it.name.asString() == parameterName }
+
+private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
+
+fun MemberDescriptor.isInlineOnlyOrReified(): Boolean =
+        this is FunctionDescriptor && (typeParameters.any { it.isReified } || hasInlineOnlyAnnotation())
+
+fun MemberDescriptor.hasInlineOnlyAnnotation(): Boolean {
+    if (this !is FunctionDescriptor || !annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) return false
+    assert(isInline) { "Function is not inline: $this" }
+    return true
+}

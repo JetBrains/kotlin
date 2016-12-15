@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.FunctionImportedFromObject;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -66,6 +65,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*;
+import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.hasInlineOnlyAnnotation;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
 public class InlineCodegen extends CallGenerator {
@@ -381,7 +381,7 @@ public class InlineCodegen extends CallGenerator {
                 node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
                 "Method inlining " + callElement.getText(),
                 createNestedSourceMapper(nodeAndSmap, sourceMapper), info.getCallSiteInfo(),
-                AnnotationUtilKt.hasInlineOnlyAnnotation(functionDescriptor) ? new InlineOnlySmapSkipper(codegen) : null
+                hasInlineOnlyAnnotation(functionDescriptor) ? new InlineOnlySmapSkipper(codegen) : null
         ); //with captured
 
         LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
