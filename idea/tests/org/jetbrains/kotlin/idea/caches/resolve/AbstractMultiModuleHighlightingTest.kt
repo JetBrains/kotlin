@@ -16,43 +16,47 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import com.intellij.openapi.module.StdModuleTypes
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
-import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
-import com.intellij.testFramework.PsiTestUtil
-import java.io.File
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.testFramework.PsiTestUtil
 import com.sampullara.cli.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
+import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.Assert
+import java.io.File
 
-abstract class AbstractMultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
+abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {
 
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
+    protected open val testPath = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
 
     protected fun checkHighlightingInAllFiles() {
         var atLeastOneFile = false
         PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
-            atLeastOneFile = true
-            configureByExistingFile(file.virtualFile!!)
-            checkHighlighting(myEditor, true, false)
+            if (!file.text.contains("// !CHECK_HIGHLIGHTING")) {
+                atLeastOneFile = true
+                configureByExistingFile(file.virtualFile!!)
+                checkHighlighting(myEditor, true, false)
+            }
         }
         Assert.assertTrue(atLeastOneFile)
     }
 
     protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
-        val srcDir = TEST_DATA_PATH + "${getTestName(true)}/$name"
+        val srcDir = testPath + "${getTestName(true)}/$name"
         val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)!!
         if (hasTestRoot) {
             setTestRoot(moduleWithSrcRootSet, name)
@@ -65,7 +69,7 @@ abstract class AbstractMultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
     }
 
     protected fun setTestRoot(module: Module, name: String) {
-        val testDir = TEST_DATA_PATH + "${getTestName(true)}/${name}Test"
+        val testDir = testPath + "${getTestName(true)}/${name}Test"
         val testRootDirInTestData = File(testDir)
         val testRootDir = createTempDirectory()!!
         FileUtil.copyDir(testRootDirInTestData, testRootDir)
