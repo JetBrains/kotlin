@@ -138,6 +138,11 @@ message Type {
   optional Type abbreviated_type = 13;
   optional int32 abbreviated_type_id = 14;
 
+  /*
+    suspend
+   */
+  optional int32 flags = 1;
+
   extensions 100 to 199;
 }
 

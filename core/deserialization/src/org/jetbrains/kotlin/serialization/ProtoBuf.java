@@ -4489,6 +4489,23 @@ public final class ProtoBuf {
      * <code>optional int32 abbreviated_type_id = 14;</code>
      */
     int getAbbreviatedTypeId();
+
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *suspend
+     * </pre>
+     */
+    boolean hasFlags();
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *suspend
+     * </pre>
+     */
+    int getFlags();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
@@ -4539,6 +4556,11 @@ public final class ProtoBuf {
                                      extensionRegistry, tag)) {
                 done = true;
               }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00001000;
+              flags_ = input.readInt32();
               break;
             }
             case 18: {
@@ -5601,6 +5623,29 @@ public final class ProtoBuf {
       return abbreviatedTypeId_;
     }
 
+    public static final int FLAGS_FIELD_NUMBER = 1;
+    private int flags_;
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *suspend
+     * </pre>
+     */
+    public boolean hasFlags() {
+      return ((bitField0_ & 0x00001000) == 0x00001000);
+    }
+    /**
+     * <code>optional int32 flags = 1;</code>
+     *
+     * <pre>
+     *suspend
+     * </pre>
+     */
+    public int getFlags() {
+      return flags_;
+    }
+
     private void initFields() {
       argument_ = java.util.Collections.emptyList();
       nullable_ = false;
@@ -5615,6 +5660,7 @@ public final class ProtoBuf {
       outerTypeId_ = 0;
       abbreviatedType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       abbreviatedTypeId_ = 0;
+      flags_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5660,6 +5706,9 @@ public final class ProtoBuf {
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite
         .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.Type>.ExtensionWriter extensionWriter =
           newExtensionWriter();
+      if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        output.writeInt32(1, flags_);
+      }
       for (int i = 0; i < argument_.size(); i++) {
         output.writeMessage(2, argument_.get(i));
       }
@@ -5709,6 +5758,10 @@ public final class ProtoBuf {
       if (size != -1) return size;
 
       size = 0;
+      if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(1, flags_);
+      }
       for (int i = 0; i < argument_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, argument_.get(i));
@@ -5881,6 +5934,8 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000800);
         abbreviatedTypeId_ = 0;
         bitField0_ = (bitField0_ & ~0x00001000);
+        flags_ = 0;
+        bitField0_ = (bitField0_ & ~0x00002000);
         return this;
       }
 
@@ -5957,6 +6012,10 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000800;
         }
         result.abbreviatedTypeId_ = abbreviatedTypeId_;
+        if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
+          to_bitField0_ |= 0x00001000;
+        }
+        result.flags_ = flags_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -6008,6 +6067,9 @@ public final class ProtoBuf {
         }
         if (other.hasAbbreviatedTypeId()) {
           setAbbreviatedTypeId(other.getAbbreviatedTypeId());
+        }
+        if (other.hasFlags()) {
+          setFlags(other.getFlags());
         }
         this.mergeExtensionFields(other);
         setUnknownFields(
@@ -6727,6 +6789,54 @@ public final class ProtoBuf {
       public Builder clearAbbreviatedTypeId() {
         bitField0_ = (bitField0_ & ~0x00001000);
         abbreviatedTypeId_ = 0;
+        
+        return this;
+      }
+
+      private int flags_ ;
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *suspend
+       * </pre>
+       */
+      public boolean hasFlags() {
+        return ((bitField0_ & 0x00002000) == 0x00002000);
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *suspend
+       * </pre>
+       */
+      public int getFlags() {
+        return flags_;
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *suspend
+       * </pre>
+       */
+      public Builder setFlags(int value) {
+        bitField0_ |= 0x00002000;
+        flags_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 flags = 1;</code>
+       *
+       * <pre>
+       *suspend
+       * </pre>
+       */
+      public Builder clearFlags() {
+        bitField0_ = (bitField0_ & ~0x00002000);
+        flags_ = 0;
         
         return this;
       }

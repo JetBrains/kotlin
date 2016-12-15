@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.name.Name
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.constants.NullValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.Interner
 import java.io.ByteArrayOutputStream
@@ -455,12 +458,25 @@ class DescriptorSerializer private constructor(
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: PossiblyInnerType) {
-        val classifierDescriptor = type.classifierDescriptor
+        val classifierDescriptor: ClassifierDescriptorWithTypeParameters
+        val isSuspendType: Boolean
+
+        val originalClassifierDescriptor = type.classifierDescriptor
+        if (originalClassifierDescriptor.getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction) {
+            classifierDescriptor = originalClassifierDescriptor.builtIns.getFunction(originalClassifierDescriptor.declaredTypeParameters.size)
+            isSuspendType = true
+        }
+        else {
+            classifierDescriptor = originalClassifierDescriptor
+            isSuspendType = false
+        }
+
         val classifierId = getClassifierId(classifierDescriptor)
         when (classifierDescriptor) {
             is ClassDescriptor -> builder.className = classifierId
             is TypeAliasDescriptor -> builder.typeAliasName = classifierId
         }
+        builder.flags = Flags.getTypeFlags(isSuspendType)
 
         for (projection in type.arguments) {
             builder.addArgument(typeArgument(projection))

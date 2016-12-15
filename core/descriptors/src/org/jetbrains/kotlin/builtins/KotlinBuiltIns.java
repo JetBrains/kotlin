@@ -22,6 +22,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor;
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory;
 import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter;
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -73,6 +75,8 @@ public abstract class KotlinBuiltIns {
 
     private final NotNullLazyValue<Primitives> primitives;
     private final NotNullLazyValue<PackageFragments> packageFragments;
+
+    private final MemoizedFunctionToNotNull<Integer, ClassDescriptor> suspendFunctionClasses;
 
     private final StorageManager storageManager;
 
@@ -116,6 +120,18 @@ public abstract class KotlinBuiltIns {
                 }
                 return new Primitives(
                         primitiveTypeToArrayKotlinType, primitiveKotlinTypeToKotlinArrayType, kotlinArrayTypeToPrimitiveKotlinType
+                );
+            }
+        });
+
+        this.suspendFunctionClasses = storageManager.createMemoizedFunction(new Function1<Integer, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor invoke(Integer arity) {
+                return new FunctionClassDescriptor(
+                        getStorageManager(),
+                        packageFragments.invoke().coroutinePackageFragment,
+                        FunctionClassDescriptor.Kind.SuspendFunction,
+                        arity
                 );
             }
         });
@@ -532,11 +548,6 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public static String getSuspendFunctionName(int parameterCount) {
-        return "SuspendFunction" + parameterCount;
-    }
-
-    @NotNull
     public static ClassId getFunctionClassId(int parameterCount) {
         return new ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(getFunctionName(parameterCount)));
     }
@@ -548,7 +559,8 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getSuspendFunction(int parameterCount) {
-        return getBuiltInClassByName(getSuspendFunctionName(parameterCount));
+        // SuspendFunction$n is not visible through member scope, and is created independently.
+        return suspendFunctionClasses.invoke(parameterCount);
     }
 
     @NotNull

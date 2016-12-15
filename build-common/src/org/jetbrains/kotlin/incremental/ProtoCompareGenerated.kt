@@ -488,6 +488,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.abbreviatedTypeId != new.abbreviatedTypeId) return false
         }
 
+        if (old.hasFlags() != new.hasFlags()) return false
+        if (old.hasFlags()) {
+            if (old.flags != new.flags) return false
+        }
+
         if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) return false
 
         for(i in 0..old.getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
@@ -1359,6 +1364,10 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
 
     if (hasAbbreviatedTypeId()) {
         hashCode = 31 * hashCode + abbreviatedTypeId
+    }
+
+    if (hasFlags()) {
+        hashCode = 31 * hashCode + flags
     }
 
     for(i in 0..getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {

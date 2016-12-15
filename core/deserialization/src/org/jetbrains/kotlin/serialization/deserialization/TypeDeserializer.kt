@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
@@ -105,8 +108,13 @@ class TypeDeserializer(
     private fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor =
             when {
                 proto.hasClassName() -> {
-                    classDescriptors(proto.className)?.typeConstructor
-                    ?: c.components.notFoundClasses.getClass(proto, c.nameResolver, c.typeTable)
+                    if (Flags.SUSPEND_TYPE.get(proto.flags)) {
+                        getSuspendFunctionTypeConstructor(proto)
+                    }
+                    else {
+                        classDescriptors(proto.className)?.typeConstructor
+                        ?: c.components.notFoundClasses.getClass(proto, c.nameResolver, c.typeTable)
+                    }
                 }
                 proto.hasTypeParameter() ->
                     typeParameterTypeConstructor(proto.typeParameter)
@@ -123,6 +131,16 @@ class TypeDeserializer(
                 }
                 else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
             }
+
+    private fun getSuspendFunctionTypeConstructor(proto: ProtoBuf.Type): TypeConstructor {
+        val classId = c.nameResolver.getClassId(proto.className)
+        val arity = BuiltInFictitiousFunctionClassFactory.getFunctionalClassArity(classId.shortClassName.asString(), classId.packageFqName)
+
+        return if (arity != null)
+            c.containingDeclaration.builtIns.getSuspendFunction(arity - 1).typeConstructor
+        else
+            ErrorUtils.createErrorTypeConstructor("Class is not a FunctionN ${classId.asString()}")
+    }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =
             typeParameterDescriptors.get(typeParameterId)?.typeConstructor ?:

@@ -20,11 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.protobuf.Internal;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class Flags {
     private Flags() {}
 
-    // Common
+    // Types
+    public static final BooleanFlagField SUSPEND_TYPE = FlagField.booleanFirst();
+
+    // Common for declarations
 
     public static final BooleanFlagField HAS_ANNOTATIONS = FlagField.booleanFirst();
     public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
@@ -77,6 +81,10 @@ public class Flags {
     public static final BooleanFlagField IS_INLINE_ACCESSOR = FlagField.booleanAfter(IS_EXTERNAL_ACCESSOR);
 
     // ---
+
+    public static int getTypeFlags(boolean isSuspend) {
+        return SUSPEND_TYPE.toFlags(isSuspend);
+    }
 
     public static int getClassFlags(
             boolean hasAnnotations,

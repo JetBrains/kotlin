@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.builtins.functions
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
@@ -50,18 +51,12 @@ class FunctionClassDescriptor(
 
     enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
         Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
-        SuspendFunction(BUILT_INS_PACKAGE_FQ_NAME, "SuspendFunction"),
+        SuspendFunction(COROUTINES_PACKAGE_FQ_NAME, "SuspendFunction"),
         KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction");
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
 
         companion object {
-            fun byPackage(fqName: FqName) = when (fqName) {
-                BUILT_INS_PACKAGE_FQ_NAME -> Function
-                KOTLIN_REFLECT_FQ_NAME -> KFunction
-                else -> null
-            }
-
             fun byClassNamePrefix(packageFqName: FqName, className: String) =
                     Kind.values().firstOrNull { it.packageFqName == packageFqName && className.startsWith(it.classNamePrefix) }
         }

@@ -51,6 +51,9 @@ class BuiltInFictitiousFunctionClassFactory(
         @JvmStatic fun getFunctionalClassKind(className: String, packageFqName: FqName) =
                 parseClassName(className, packageFqName)?.kind
 
+        @JvmStatic fun getFunctionalClassArity(className: String, packageFqName: FqName) =
+                parseClassName(className, packageFqName)?.arity
+
         @JvmStatic fun isFunctionClassName(className: String, packageFqName: FqName) =
                 getFunctionalClassKind(className, packageFqName) == Kind.Function
 
@@ -72,7 +75,7 @@ class BuiltInFictitiousFunctionClassFactory(
 
     override fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean {
         val string = name.asString()
-        return (string.startsWith("Function") || string.startsWith("KFunction") || string.startsWith("SuspendFunction")) // an optimization
+        return (string.startsWith("Function") || string.startsWith("KFunction")) // an optimization
                && parseClassName(string, packageFqName) != null
     }
 
@@ -84,6 +87,9 @@ class BuiltInFictitiousFunctionClassFactory(
 
         val packageFqName = classId.packageFqName
         val (kind, arity) = parseClassName(className, packageFqName) ?: return null
+
+        // SuspendFunction$n can't be created by classId
+        if (kind == Kind.SuspendFunction) return null
 
         val containingPackageFragment = module.getPackage(packageFqName).fragments.filterIsInstance<BuiltInsPackageFragment>().first()
 

@@ -4805,6 +4805,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("SuspendFunction.kt")
+            public void testSuspendFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/SuspendFunction.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("Unit.kt")
             public void testUnit() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/Unit.kt");

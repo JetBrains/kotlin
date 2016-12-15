@@ -4466,6 +4466,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/noInvokeForSuspendFunction.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("suspendFunctionNIsUnresolved.kt")
+                public void testSuspendFunctionNIsUnresolved() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/suspendFunctionNIsUnresolved.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/coroutines/tailCalls")

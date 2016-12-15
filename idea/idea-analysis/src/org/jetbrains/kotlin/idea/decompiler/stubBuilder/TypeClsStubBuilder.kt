@@ -127,9 +127,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (!type.hasClassName() && !type.hasTypeAliasName()) return emptySet()
 
         val result = hashSetOf<KtModifierKeywordToken>()
-        val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
 
-        if (classId.asSingleFqName().toUnsafe().getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction) {
+        if (Flags.SUSPEND_TYPE.get(type.flags)) {
             result.add(KtTokens.SUSPEND_KEYWORD)
         }
 
