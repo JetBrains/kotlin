@@ -33,15 +33,6 @@ public interface Continuation<in P> {
     public fun resumeWithException(exception: Throwable)
 }
 
-
-/**
- * Specifies that suspend extensions with a receiver based on corresponding controller class are allowed to be declared
- */
-@SinceKotlin("1.1")
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-public annotation class AllowSuspendExtensions
-
 /**
  * This value can be used as a return value of [kotlin.coroutines.maySuspendWithCurrentContinuation] `body` argument to state that
  * the execution was suspended and will not return any result immediately.

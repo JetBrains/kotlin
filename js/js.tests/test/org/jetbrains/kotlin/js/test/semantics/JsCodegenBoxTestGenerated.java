@@ -5538,12 +5538,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
-        @TestMetadata("suspendExtension.kt")
-        public void testSuspendExtension() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendExtension.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("suspendFromInlineLambda.kt")
         public void testSuspendFromInlineLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFromInlineLambda.kt");
@@ -5741,12 +5735,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/simple.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("suspendExtension.kt")
-            public void testSuspendExtension() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/suspendExtension.kt");
                 doTest(fileName);
             }
         }

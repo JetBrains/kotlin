@@ -179,9 +179,6 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 	public fun remove ()V
 }
 
-public abstract interface annotation class kotlin/coroutines/AllowSuspendExtensions : java/lang/annotation/Annotation {
-}
-
 public abstract interface class kotlin/coroutines/Continuation {
 	public abstract fun resume (Ljava/lang/Object;)V
 	public abstract fun resumeWithException (Ljava/lang/Throwable;)V
