@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+import kotlin.coroutines.*
 
 fun nonSuspend() {}
 

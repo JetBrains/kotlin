@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
+import kotlin.coroutines.*
+
 class Controller {
     suspend fun noParams(): Unit = suspendWithCurrentContinuation {
         if (hashCode() % 2 == 0) {

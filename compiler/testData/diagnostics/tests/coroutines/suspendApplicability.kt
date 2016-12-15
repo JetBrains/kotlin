@@ -1,4 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
+import kotlin.coroutines.*
+
 suspend fun notMember(q: Double) = 1
 
 suspend fun String.wrongExtension(x: Any) = 1
