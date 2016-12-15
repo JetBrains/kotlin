@@ -1,6 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // TARGET_BACKEND: JVM
+import kotlin.coroutines.*
+
 class Controller {
     suspend fun suspendHere(): Unit = suspendWithCurrentContinuation { x ->
         x.resume(Unit)

@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 var globalResult = ""
 suspend fun suspendWithValue(v: String): String = suspendWithCurrentContinuation { x ->
     x.resume(v)

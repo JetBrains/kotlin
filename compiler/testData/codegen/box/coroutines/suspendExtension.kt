@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 @AllowSuspendExtensions
 class Controller {
     suspend fun String.suspendHere(): String = suspendWithCurrentContinuation { x ->

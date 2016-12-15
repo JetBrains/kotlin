@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 
 // Does not work in JVM backend, probably due to bug. It's not clear which behaviour is right.
 // TODO: fix the bug and enable for JVM backend

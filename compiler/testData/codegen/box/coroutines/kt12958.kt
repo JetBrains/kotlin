@@ -1,6 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // WITH_CONTINUATION
+import kotlin.coroutines.*
+
 suspend fun <V> suspendHere(v: V): V = suspendWithCurrentContinuation { x ->
     x.resume(v)
     SUSPENDED

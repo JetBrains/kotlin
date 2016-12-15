@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 class Controller {
     var ok = false
     var v  = "fail"

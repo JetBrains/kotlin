@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 class Controller {
     var exception: Throwable? = null
     val postponedActions = ArrayList<() -> Unit>()

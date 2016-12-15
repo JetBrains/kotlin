@@ -4,6 +4,8 @@
 // CHECK_NOT_CALLED: suspendInline_61zpoe$
 // CHECK_NOT_CALLED: suspendInline_6r51u9$
 // CHECK_NOT_CALLED: suspendInline
+import kotlin.coroutines.*
+
 class Controller {
     fun withValue(v: String, x: Continuation<String>) {
         x.resume(v)

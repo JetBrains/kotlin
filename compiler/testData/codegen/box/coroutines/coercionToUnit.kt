@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 
 suspend fun <T> await(t: T): T = suspendWithCurrentContinuation { c ->
     c.resume(t)

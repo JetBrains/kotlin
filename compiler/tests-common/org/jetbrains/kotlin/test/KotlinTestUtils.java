@@ -644,6 +644,7 @@ public class KotlinTestUtils {
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
             testFiles.add(factory.createFile(null,
                                              "CoroutineUtil.kt",
+                                             "import kotlin.coroutines.*\n" +
                                              "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
                                              "    override fun resumeWithException(exception: Throwable) {\n" +
                                              "        throw exception\n" +

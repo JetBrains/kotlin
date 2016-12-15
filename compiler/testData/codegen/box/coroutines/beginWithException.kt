@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
 
 suspend fun suspendHere(): Any = suspendWithCurrentContinuation { x -> }
 

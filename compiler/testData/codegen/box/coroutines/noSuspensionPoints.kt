@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 
 fun builder(c: suspend () -> Int): Int {
     var res = 0

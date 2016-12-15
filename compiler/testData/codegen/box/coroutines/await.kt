@@ -2,6 +2,8 @@
 // WITH_COROUTINES
 // NO_INTERCEPT_RESUME_TESTS
 // FILE: promise.kt
+import kotlin.coroutines.*
+
 class Promise<T>(private val executor: ((T) -> Unit) -> Unit) {
     private var value: Any? = null
     private var thenList: MutableList<(T) -> Unit>? = mutableListOf()
@@ -47,6 +49,8 @@ fun processQueue() {
 }
 
 // FILE: await.kt
+import kotlin.coroutines.*
+
 private var log = ""
 
 private var inAwait = false
@@ -91,6 +95,7 @@ fun <T> asyncOperation(resultSupplier: () -> T) = Promise<T> { resolve ->
 fun getLog() = log
 
 // FILE: main.kt
+import kotlin.coroutines.*
 
 private fun test() = async<String> {
     val o = await(asyncOperation { "O" })

@@ -4,6 +4,8 @@
 // CHECK_NOT_CALLED: suspendInline_61zpoe$
 // CHECK_NOT_CALLED: suspendInline_6r51u9$
 // CHECK_NOT_CALLED: suspendInline
+import kotlin.coroutines.*
+
 class Controller {
     suspend inline fun suspendInline(v: String): String = v
 

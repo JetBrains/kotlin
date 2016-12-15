@@ -1,5 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+import kotlin.coroutines.*
+
 
 fun builder(c: suspend () -> Unit): String {
     var ok = false

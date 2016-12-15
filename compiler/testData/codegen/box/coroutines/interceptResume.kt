@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_INTERCEPT_RESUME_TESTS
+import kotlin.coroutines.*
 
 class Controller {
     var log = ""

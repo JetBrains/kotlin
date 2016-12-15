@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // WITH_REFLECT
+import kotlin.coroutines.*
 
 class Controller {
     suspend fun runInstanceOf(): Boolean = suspendWithCurrentContinuation { x ->
