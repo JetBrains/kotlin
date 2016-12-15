@@ -33,6 +33,7 @@ import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.*
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
@@ -104,7 +105,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version
                               ?: return
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider)
-        kotlinFacet.configureFacet(compilerVersion, modifiableModelsProvider)
+        kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, modifiableModelsProvider)
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
 

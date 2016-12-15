@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
@@ -146,7 +144,7 @@ fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): Kotlin
     return facet
 }
 
-fun KotlinFacet.configureFacet(compilerVersion: String, modelsProvider: IdeModifiableModelsProvider) {
+fun KotlinFacet.configureFacet(compilerVersion: String, coroutineSupport: CoroutineSupport, modelsProvider: IdeModifiableModelsProvider) {
     val module = module
     with(configuration.settings) {
         versionInfo.targetPlatformKind = null
@@ -159,5 +157,6 @@ fun KotlinFacet.configureFacet(compilerVersion: String, modelsProvider: IdeModif
                 apiLevel = languageLevel
             }
         }
+        compilerInfo.coroutineSupport = coroutineSupport
     }
 }

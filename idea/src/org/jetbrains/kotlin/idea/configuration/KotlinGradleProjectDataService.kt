@@ -23,6 +23,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
+import java.util.*
 
 interface GradleProjectImportHandler {
     companion object : ProjectExtensionDescriptor<GradleProjectImportHandler>(
@@ -58,9 +60,21 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSe
             val compilerVersion = moduleNode?.findAll(BuildScriptClasspathData.KEY)?.firstOrNull()?.data?.let(::findKotlinPluginVersion)
                                   ?: continue
 
+            val coroutinesProperty = findKotlinCoroutinesProperty(project)
+
             val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider)
-            kotlinFacet.configureFacet(compilerVersion, modelsProvider)
+            kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, modelsProvider)
             GradleProjectImportHandler.getInstances(project).forEach { it(kotlinFacet, sourceSetNode) }
         }
     }
+}
+
+private fun findKotlinCoroutinesProperty(project: Project): CoroutineSupport {
+    val localPropertiesFile = project.baseDir.findChild("local.properties") ?: return CoroutineSupport.DEFAULT
+
+    val properties = Properties()
+    properties.load(localPropertiesFile.inputStream)
+    val coroutinesProperty = properties.getProperty("kotlin.coroutines") ?: return CoroutineSupport.DEFAULT
+
+    return CoroutineSupport.byCompilerArgument(coroutinesProperty)
 }
