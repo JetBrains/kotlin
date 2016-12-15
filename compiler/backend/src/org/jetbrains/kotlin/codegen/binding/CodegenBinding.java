@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.binding;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
 import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -66,10 +65,6 @@ public class CodegenBinding {
 
     public static final WritableSlice<VariableDescriptor, VariableDescriptor> LOCAL_VARIABLE_PROPERTY_METADATA =
             Slices.createSimpleSlice();
-
-
-    public static final WritableSlice<KtElement, FunctionGenerationStrategy> CUSTOM_STRATEGY_FOR_INLINE_LAMBDA = Slices.createSimpleSlice();
-    public static final WritableSlice<KtElement, FunctionDescriptor> CUSTOM_DESCRIPTOR_FOR_INLINE_LAMBDA = Slices.createSimpleSlice();
 
     public static final WritableSlice<SimpleFunctionDescriptor, SimpleFunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
             Slices.createSimpleSlice();

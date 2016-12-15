@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.codegen.*;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
@@ -570,10 +569,7 @@ public class InlineCodegen extends CallGenerator {
         );
 
         FunctionGenerationStrategy strategy;
-        if (state.getBindingContext().get(CodegenBinding.CUSTOM_STRATEGY_FOR_INLINE_LAMBDA, expression) != null) {
-            strategy = state.getBindingContext().get(CodegenBinding.CUSTOM_STRATEGY_FOR_INLINE_LAMBDA, expression);
-        }
-        else if (expression instanceof KtCallableReferenceExpression) {
+        if (expression instanceof KtCallableReferenceExpression) {
             KtCallableReferenceExpression callableReferenceExpression = (KtCallableReferenceExpression) expression;
             KtExpression receiverExpression = callableReferenceExpression.getReceiverExpression();
             Type receiverType =

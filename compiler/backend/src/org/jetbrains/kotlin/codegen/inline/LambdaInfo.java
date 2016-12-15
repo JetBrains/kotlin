@@ -82,12 +82,7 @@ public class LambdaInfo implements LabelOwner {
         }
         else {
             propertyReferenceInfo = null;
-            if (bindingContext.get(CodegenBinding.CUSTOM_DESCRIPTOR_FOR_INLINE_LAMBDA, this.expression) != null) {
-                functionDescriptor = bindingContext.get(CodegenBinding.CUSTOM_DESCRIPTOR_FOR_INLINE_LAMBDA, this.expression);
-            }
-            else {
-                functionDescriptor = function;
-            }
+            functionDescriptor = function;
             assert functionDescriptor != null : "Function is not resolved to descriptor: " + expression.getText();
             classDescriptor = anonymousClassForCallable(bindingContext, functionDescriptor);
             closureClassType = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
