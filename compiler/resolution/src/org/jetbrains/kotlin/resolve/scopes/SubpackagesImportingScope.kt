@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
@@ -36,4 +38,14 @@ class SubpackagesImportingScope(
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = super.getContributedVariables(name, location)
     override fun getContributedFunctions(name: Name, location: LookupLocation) = super.getContributedFunctions(name, location)
+
+    //TODO: kept old behavior, but it seems very strange (super call seems more applicable)
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        return ImportingScope.Empty.getContributedClassifier(name, location)
+    }
+
+    //TODO: kept old behavior, but it seems very strange (super call seems more applicable)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return ImportingScope.Empty.getContributedDescriptors(kindFilter, nameFilter)
+    }
 }
