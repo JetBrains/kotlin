@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.getLibraryProperties
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
 private fun getRuntimeLibraryVersions(
         module: Module,
