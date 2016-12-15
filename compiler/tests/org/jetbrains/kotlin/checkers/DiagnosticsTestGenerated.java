@@ -13054,6 +13054,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/enum")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Enum extends AbstractDiagnosticsTest {
+                @TestMetadata("additionalEntriesInImpl.kt")
+                public void testAdditionalEntriesInImpl() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/enum/additionalEntriesInImpl.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInEnum() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("constructorInHeaderEnum.kt")
+                public void testConstructorInHeaderEnum() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/enum/constructorInHeaderEnum.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("differentEntryOrder.kt")
+                public void testDifferentEntryOrder() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/enum/differentEntryOrder.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("enumEntryWithBody.kt")
+                public void testEnumEntryWithBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/enum/enumEntryWithBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleEnum.kt")
+                public void testSimpleEnum() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/enum/simpleEnum.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/headerClass")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

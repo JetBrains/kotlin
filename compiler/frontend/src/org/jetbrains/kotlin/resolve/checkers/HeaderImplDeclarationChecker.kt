@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -212,6 +213,8 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                     unimplemented: List<Pair<CallableMemberDescriptor, Map<Incompatible, Collection<CallableMemberDescriptor>>>>
             ) : Incompatible("some members are not implemented", unimplemented)
 
+            object EnumEntries : Incompatible("some entries from header enum are missing in the impl enum")
+
             // Common
 
             object Modality : Incompatible("modality is different")
@@ -390,7 +393,16 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
             unimplemented.add(aMember to incompatibilityMap)
         }
 
-        // TODO: check static scope, enum entries
+        if (a.kind == ClassKind.ENUM_CLASS) {
+            fun ClassDescriptor.enumEntries() =
+                    unsubstitutedMemberScope.getDescriptorsFiltered().filter(DescriptorUtils::isEnumEntry).map { it.name }
+            val aEntries = a.enumEntries()
+            val bEntries = b.enumEntries()
+
+            if (!bEntries.containsAll(aEntries)) return Incompatible.EnumEntries
+        }
+
+        // TODO: check static scope?
 
         if (unimplemented.isEmpty()) return Compatible
 
