@@ -87,9 +87,12 @@ fun isBuiltinFunctionClass(classId: ClassId): Boolean {
 }
 
 val KotlinType.isNonExtensionFunctionType: Boolean
-    get() = isBuiltinFunctionalType && !isTypeAnnotatedWithExtensionFunctionType
+    get() = isFunctionType && !isTypeAnnotatedWithExtensionFunctionType
 
 val KotlinType.isExtensionFunctionType: Boolean
+    get() = isFunctionType && isTypeAnnotatedWithExtensionFunctionType
+
+val KotlinType.isBuiltinExtensionFunctionalType: Boolean
     get() = isBuiltinFunctionalType && isTypeAnnotatedWithExtensionFunctionType
 
 private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
@@ -137,7 +140,7 @@ fun KotlinType.getReturnTypeFromFunctionType(): KotlinType {
 fun KotlinType.getValueParameterTypesFromFunctionType(): List<TypeProjection> {
     assert(isBuiltinFunctionalType) { "Not a function type: ${this}" }
     val arguments = arguments
-    val first = if (isExtensionFunctionType) 1 else 0
+    val first = if (isBuiltinExtensionFunctionalType) 1 else 0
     val last = arguments.size - 1
     assert(first <= last) { "Not an exact function type: ${this}" }
     return arguments.subList(first, last)
