@@ -124,6 +124,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun getTypeModifiersAsWritten(type: Type): Set<KtModifierKeywordToken> {
+        if (!type.hasClassName() && !type.hasTypeAliasName()) return emptySet()
+
         val result = hashSetOf<KtModifierKeywordToken>()
         val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
 
