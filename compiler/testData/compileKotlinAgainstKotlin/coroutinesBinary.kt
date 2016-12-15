@@ -1,14 +1,21 @@
 // FILE: A.kt
 package a
+
+import kotlin.coroutines.*
+
 class Controller {
     suspend fun suspendHere() = CoroutineIntrinsics.suspendCoroutineOrReturn<String> { x ->
         x.resume("OK")
-        Suspend
+        CoroutineIntrinsics.SUSPENDED
     }
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: suspend Controller.() -> Unit) {
+    c.startCoroutine(Controller(), object : Continuation<Unit> {
+        override fun resume(value: Unit) {}
+
+        override fun resumeWithException(exception: Throwable) {}
+    })
 }
 
 // FILE: B.kt

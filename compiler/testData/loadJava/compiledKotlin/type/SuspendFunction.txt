@@ -1,7 +1,6 @@
 package test
 
 public fun test1(): suspend () -> kotlin.Unit
-public fun test2(): suspend (kotlin.Int, kotlin.String) -> kotlin.Int
-public fun test3(): suspend kotlin.Int.(kotlin.String) -> kotlin.Int
-public fun test4(): kotlin.collections.List<suspend () -> kotlin.Unit>
-public fun test5(): suspend (suspend () -> kotlin.Unit) -> kotlin.Unit
+public fun test2(): suspend kotlin.Int.() -> kotlin.Int
+public fun test3(): kotlin.collections.List<suspend () -> kotlin.Unit>
+public fun test4(): suspend () -> suspend () -> kotlin.Unit

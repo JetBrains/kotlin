@@ -1,3 +1,5 @@
+import kotlin.coroutines.*
+
 header fun f1()
 
 header fun f2(name: String)
@@ -32,5 +34,5 @@ header inline fun f19(crossinline s: () -> Unit)
 header inline fun f20(s: () -> Unit)
 header inline fun f21(noinline s: () -> Unit)
 header inline fun f22(s: () -> Unit)
-header fun f23(coroutine c: Unit.() -> Continuation<Unit>)
-header fun f24(c: Unit.() -> Continuation<Unit>)
+header fun f23(c: suspend Unit.() -> Unit)
+header fun f24(c: Unit.() -> Unit)

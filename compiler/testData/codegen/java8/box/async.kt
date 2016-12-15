@@ -2,6 +2,7 @@
 // FULL_JDK
 
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.*
 
 fun foo(): CompletableFuture<String> = CompletableFuture.supplyAsync { "foo" }
 fun bar(v: String): CompletableFuture<String> = CompletableFuture.supplyAsync { "bar with $v" }
@@ -43,7 +44,7 @@ fun box(): String {
 
 // LIBRARY CODE
 
-fun <T> async(c: @Suspend() (() -> T)): CompletableFuture<T> {
+fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     val future = CompletableFuture<T>()
     c.startCoroutine(object : Continuation<T> {
         override fun resume(data: T) {

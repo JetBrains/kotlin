@@ -2,6 +2,7 @@
 // FULL_JDK
 
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.*
 
 fun exception(v: String): CompletableFuture<String> = CompletableFuture.supplyAsync { throw RuntimeException(v) }
 
@@ -40,9 +41,9 @@ fun box(): String {
     return "No exception"
 }
 
-fun <T> async(c: @Suspend() (() -> T)): CompletableFuture<T> {
+fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     val future = CompletableFuture<T>()
-    c.startContinuation(object : Continuation<T> {
+    c.startCoroutine(object : Continuation<T> {
         override fun resume(data: T) {
             future.complete(data)
         }

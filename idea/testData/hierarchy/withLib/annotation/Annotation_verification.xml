@@ -50,6 +50,7 @@
   <node text="Retention (kotlin.annotation)"/>
   <node text="Repeatable (kotlin.annotation)"/>
   <node text="MustBeDocumented (kotlin.annotation)"/>
+  <node text="RestrictsSuspendExtensions (kotlin.coroutines)"/>
   <node text="ExtensionFunctionType (kotlin)"/>
   <node text="Metadata (kotlin)"/>
   <node text="DslMarker (kotlin)"/>

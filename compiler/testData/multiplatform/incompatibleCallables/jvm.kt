@@ -1,3 +1,5 @@
+import kotlin.coroutines.*
+
 impl fun f1(): String = ""
 
 impl fun f2(otherName: String) {}
@@ -32,5 +34,5 @@ impl inline fun f19(s: () -> Unit) {}
 impl inline fun f20(crossinline s: () -> Unit) {}
 impl inline fun f21(s: () -> Unit) {}
 impl inline fun f22(noinline s: () -> Unit) {}
-impl fun f23(c: Unit.() -> Continuation<Unit>) {}
-impl fun f24(coroutine c: Unit.() -> Continuation<Unit>) {}
+impl fun f23(c: Unit.() -> Unit) {}
+impl fun f24(c: suspend Unit.() -> Unit) {}
