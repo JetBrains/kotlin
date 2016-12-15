@@ -48,6 +48,12 @@ public class BytecodeListingTestForAllOpenGenerated extends AbstractBytecodeList
         doTest(fileName);
     }
 
+    @TestMetadata("anonymousObject.kt")
+    public void testAnonymousObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/allopen/allopen-cli/testData/bytecodeListing/anonymousObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("explicitFinal.kt")
     public void testExplicitFinal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/allopen/allopen-cli/testData/bytecodeListing/explicitFinal.kt");
