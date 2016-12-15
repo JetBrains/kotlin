@@ -306,10 +306,11 @@ public class AsmUtil {
             case ANNOTATION_CLASS:
                 return ACC_ABSTRACT | ACC_ANNOTATION | ACC_INTERFACE;
             default:
-                if (innerClass.getModality() == Modality.FINAL) {
+                Modality modality = innerClass.getModality();
+                if (modality == Modality.FINAL) {
                     return ACC_FINAL;
                 }
-                else if (innerClass.getModality() == Modality.ABSTRACT) {
+                else if (modality == Modality.ABSTRACT || modality == Modality.SEALED) {
                     return ACC_ABSTRACT;
                 }
         }
