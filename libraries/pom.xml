@@ -82,6 +82,7 @@
         <module>tools/runtime</module>
         <module>tools/script-runtime</module>
         <module>kotlin.test</module>
+        <module>stdlib/common</module>
         <module>stdlib</module>
         <module>stdlib/jre7</module>
         <module>stdlib/jre8</module>
