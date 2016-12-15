@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -278,9 +279,14 @@ fun createMethodNodeForSuspendWithCurrentContinuation(
 fun CallableDescriptor?.unwrapInitialDescriptorForSuspendFunction() =
         (this as? SimpleFunctionDescriptor)?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) ?: this
 
-fun InstructionAdapter.loadSuspendMarker() = invokestatic(
-        AsmTypes.COROUTINES_SUSPEND_MARKER_OWNER.internalName,
-        "getSUSPENDED",
-        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
-        false
-)
+fun InstructionAdapter.loadSuspendMarker() {
+    getstatic(
+            AsmTypes.COROUTINES_INTRINSICS.internalName, JvmAbi.INSTANCE_FIELD, AsmTypes.COROUTINES_INTRINSICS.descriptor
+    )
+    invokevirtual(
+            AsmTypes.COROUTINES_INTRINSICS.internalName,
+            "getSUSPENDED",
+            Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
+            false
+    )
+}

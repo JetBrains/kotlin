@@ -331,20 +331,11 @@ public class KotlinTypeMapper {
     }
 
     private static final ClassId FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(new FqName("kotlin.KotlinPackage"));
-    private static final FqName COROUTINE_SUSPENDED_PROPERTY = new FqName("kotlin.coroutines.SUSPENDED");
 
     @Nullable
     private static ContainingClassesInfo getPackageMemberContainingClassesInfo(@NotNull DeserializedCallableMemberDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof BuiltInsPackageFragment) {
-            // TODO: Top level callables are not supported in built-ins
-            // (while they are loaded from .kotlin-builtins files information about the actual file part is lost)
-            // This must be fixed when built-ins get loaded through their class files
-            if (DescriptorUtils.getFqName(descriptor).equals(COROUTINE_SUSPENDED_PROPERTY.toUnsafe())) {
-                ClassId id = ClassId.topLevel(new FqName("kotlin.coroutines.CoroutinesKt"));
-                return new ContainingClassesInfo(id, id);
-            }
-
             return new ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS);
         }
 

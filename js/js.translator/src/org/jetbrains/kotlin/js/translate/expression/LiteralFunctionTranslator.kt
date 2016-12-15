@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -35,16 +36,17 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
     companion object {
-        private val SUSPEND_FQ_NAME = FqName("kotlin.coroutines.SUSPENDED")
+        private val SUSPEND_NAME = Name.identifier("SUSPENDED")
+        private val COROUTINE_INTRINSICS_FQ_NAME = FqName("kotlin.coroutines.CoroutineIntrinsics")
     }
 
     fun translate(
@@ -111,15 +113,16 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     fun JsFunction.fillCoroutineMetadata(context: TranslationContext, continuationType: KotlinType?) {
         if (continuationType == null) return
 
-        val suspendObjectDescriptor = context().currentModule.getPackage(SUSPEND_FQ_NAME.parent())
-                .memberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES)
-                .first { it is PropertyDescriptor && it.name == SUSPEND_FQ_NAME.shortName() }
+        val suspendPropertyDescriptor = context().currentModule.getPackage(COROUTINE_INTRINSICS_FQ_NAME.parent())
+                .memberScope.getContributedClassifier(COROUTINE_INTRINSICS_FQ_NAME.shortName(), NoLookupLocation.FROM_BACKEND)
+                .let { (it as ClassDescriptor) }.unsubstitutedMemberScope
+                .getContributedVariables(SUSPEND_NAME, NoLookupLocation.FROM_BACKEND).first()
 
         val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
 
         coroutineMetadata = CoroutineMetadata(
                 doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
-                suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendObjectDescriptor, context()),
+                suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendPropertyDescriptor, context()),
                 baseClassRef = coroutineBaseClassRef,
                 stateName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "state")),
                 exceptionStateName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "exceptionState")),
