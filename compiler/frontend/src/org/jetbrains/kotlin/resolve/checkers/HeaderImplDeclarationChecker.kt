@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker.Compatibility.Incompatible
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -101,7 +101,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
     private fun checkImplementationHasHeaderDeclaration(
             reportOn: KtDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink
     ) {
-        fun ClassifierDescriptor.findDeclarationForClass(): ClassDescriptor? =
+        fun ClassifierDescriptorWithTypeParameters.findDeclarationForClass(): ClassDescriptor? =
                 findClassifiersFromTheSameModule().firstOrNull { declaration ->
                     this != declaration &&
                     declaration is ClassDescriptor && declaration.isHeader &&
@@ -122,7 +122,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                     areCompatibleCallables(declaration, descriptor, checkImpl = false) == Compatible
                 }
             }
-            is ClassifierDescriptor -> descriptor.findDeclarationForClass() != null
+            is ClassifierDescriptorWithTypeParameters -> descriptor.findDeclarationForClass() != null
             else -> false
         }
 
@@ -146,12 +146,26 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
     }
 
-    fun ClassifierDescriptor.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptor> {
+    fun ClassifierDescriptorWithTypeParameters.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptorWithTypeParameters> {
         val myModule = moduleToCheck ?: module
-        // TODO: support nested classes
-        return myModule.getPackage(fqNameSafe.parent()).memberScope
-                .getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS) { it == name }
-                .filterIsInstance<ClassifierDescriptor>()
+        val classId = classId ?: return emptyList()
+
+        fun MemberScope.getAllClassifiers(name: Name): Collection<ClassifierDescriptorWithTypeParameters> =
+                getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS) { it == name }
+                        .filterIsInstance<ClassifierDescriptorWithTypeParameters>()
+
+        val segments = classId.relativeClassName.pathSegments()
+        var classifiers = myModule.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
+
+        for (name in segments.subList(1, segments.size)) {
+            classifiers = classifiers.mapNotNull { classifier ->
+                (classifier as? ClassDescriptor)?.unsubstitutedInnerClassesScope?.getContributedClassifier(
+                        name, NoLookupLocation.FOR_ALREADY_TRACKED
+                ) as? ClassifierDescriptorWithTypeParameters
+            }
+        }
+
+        return classifiers
     }
 
     sealed class Compatibility {
@@ -189,6 +203,8 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
             // Classifiers
 
             object ClassKind : Incompatible("class kinds are different (class, interface, object, enum, annotation)")
+
+            object ClassModifiers : Incompatible("modifiers are different (companion, inner)")
 
             object Supertypes : Incompatible("some supertypes are missing in the implementation")
 
@@ -317,6 +333,8 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         }
 
         if (a.kind != b.kind) return Incompatible.ClassKind
+
+        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner) }) return Incompatible.ClassModifiers
 
         val aTypeParams = a.declaredTypeParameters
         val bTypeParams = b.declaredTypeParameters

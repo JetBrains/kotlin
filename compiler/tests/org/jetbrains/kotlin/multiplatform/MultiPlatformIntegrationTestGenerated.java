@@ -42,12 +42,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         doTest(fileName);
     }
 
-    @TestMetadata("implementClassWithTypeAlias")
-    public void testImplementClassWithTypeAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/implementClassWithTypeAlias/");
-        doTest(fileName);
-    }
-
     @TestMetadata("incompatibleCallables")
     public void testIncompatibleCallables() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/incompatibleCallables/");
@@ -63,6 +57,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     @TestMetadata("incompatibleFunctions")
     public void testIncompatibleFunctions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/incompatibleFunctions/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("incompatibleNestedClasses")
+    public void testIncompatibleNestedClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/incompatibleNestedClasses/");
         doTest(fileName);
     }
 
@@ -125,6 +125,28 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         @TestMetadata("simple")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/simple/");
+            doTest(fileName);
+        }
+
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/implTypeAlias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImplTypeAlias extends AbstractMultiPlatformIntegrationTest {
+        public void testAllFilesPresentInImplTypeAlias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("generic")
+        public void testGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/implTypeAlias/generic/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedClassesViaTypeAlias")
+        public void testNestedClassesViaTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/");
             doTest(fileName);
         }
 

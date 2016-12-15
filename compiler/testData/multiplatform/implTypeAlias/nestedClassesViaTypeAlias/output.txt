@@ -1,0 +1,10 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/common.kt:2:22: error: header declaration 'Nested' has no implementation in module
+    header interface Nested
+                     ^
