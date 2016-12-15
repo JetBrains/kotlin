@@ -190,6 +190,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
         args.coroutinesError = coroutines == CoroutineSupport.DISABLED
 
+        logger.warn("Using kotlin.coroutines=${coroutines.compilerArgument}")
+
         if (!incremental) {
             anyClassesCompiled = true
             processCompilerExitCode(compileJvmNotIncrementally(
