@@ -479,6 +479,46 @@ JetFile: TypeModifiers.kt
       USER_TYPE
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p15')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      MODIFIER_LIST
+        PsiElement(suspend)('suspend')
+      PsiWhiteSpace(' ')
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              MODIFIER_LIST
+                PsiElement(suspend)('suspend')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Unit')
+              PsiElement(RPAR)(')')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
   FUN
     MODIFIER_LIST

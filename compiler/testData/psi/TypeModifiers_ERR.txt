@@ -80,10 +80,10 @@ JetFile: TypeModifiers_ERR.kt
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           VALUE_PARAMETER
-            MODIFIER_LIST
-              PsiElement(suspend)('suspend')
-            PsiWhiteSpace(' ')
             TYPE_REFERENCE
+              MODIFIER_LIST
+                PsiElement(suspend)('suspend')
+              PsiWhiteSpace(' ')
               PsiErrorElement:Type expected
                 PsiElement(ARROW)('->')
           PsiErrorElement:Expecting comma or ')'

@@ -8,8 +8,9 @@ public interface SAM {
 }
 public typealias Action = () -> kotlin.Unit
 public typealias Test1 = suspend () -> kotlin.Unit
-public typealias Test10 = suspend (() -> kotlin.Unit) -> kotlin.Unit
+public typealias Test10 = suspend (suspend () -> kotlin.Unit) -> kotlin.Unit
 public typealias Test11 = suspend () -> suspend () -> kotlin.Unit
+public typealias Test12 = suspend (suspend () -> kotlin.Unit) -> kotlin.Unit
 public typealias Test2 = suspend kotlin.Int.(kotlin.String) -> kotlin.Unit
 public typealias Test3 = () -> kotlin.Unit
 public typealias Test4 = Action

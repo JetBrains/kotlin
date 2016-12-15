@@ -14,6 +14,7 @@ val p11: suspend @a a
 val p12: @a suspend a
 val p13: @a suspend @a a
 val p14: @[a] suspend @[a] a
+val p15: suspend (suspend (() -> Unit)) -> Unit
 
 @a fun @a a.f1() {}
 fun (@a a.(a) -> a).f2() {}
