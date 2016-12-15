@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.resolve.inline
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReified
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnalyzerExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.annotations.isInlineOnlyOrReified
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
 object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
