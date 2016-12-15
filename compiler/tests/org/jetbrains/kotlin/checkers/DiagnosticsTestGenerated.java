@@ -4306,6 +4306,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("suspendCoroutineOrReturn.kt")
+            public void testSuspendCoroutineOrReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendCoroutineOrReturn.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("suspendExternalFunctions.kt")
             public void testSuspendExternalFunctions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendExternalFunctions.kt");
@@ -4315,12 +4321,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("suspendFunctions.kt")
             public void testSuspendFunctions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctions.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("suspendWithCurrentContinuation.kt")
-            public void testSuspendWithCurrentContinuation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendWithCurrentContinuation.kt");
                 doTest(fileName);
             }
 

@@ -5340,6 +5340,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("dispatchResume.kt")
+        public void testDispatchResume() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/dispatchResume.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyClosure.kt")
         public void testEmptyClosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/emptyClosure.kt");
@@ -5403,12 +5409,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("instanceOfContinuation.kt")
         public void testInstanceOfContinuation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/instanceOfContinuation.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("interceptResume.kt")
-        public void testInterceptResume() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/interceptResume.kt");
             doTest(fileName);
         }
 
