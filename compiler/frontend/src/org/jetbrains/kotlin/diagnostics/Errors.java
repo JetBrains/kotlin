@@ -512,6 +512,8 @@ public interface Errors {
     DiagnosticFactory0<KtParameter> HEADER_DECLARATION_WITH_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtConstructorDelegationCall> HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtConstructor<?>> HEADER_ENUM_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtEnumEntry> HEADER_ENUM_ENTRY_WITH_BODY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> HEADER_PROPERTY_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtTypeAlias> IMPL_TYPE_ALIAS_NOT_TO_CLASS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);

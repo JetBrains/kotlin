@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
@@ -272,6 +271,10 @@ class DeclarationsChecker(
 
         if (declaration.hasBody()) {
             trace.report(HEADER_DECLARATION_WITH_BODY.on(declaration))
+        }
+
+        if (constructorDescriptor.containingDeclaration.kind == ClassKind.ENUM_CLASS) {
+            trace.report(HEADER_ENUM_CONSTRUCTOR.on(declaration))
         }
 
         if (declaration is KtPrimaryConstructor && !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass)) {
@@ -895,15 +898,20 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkEnumEntry(enumEntry: KtEnumEntry, classDescriptor: ClassDescriptor) {
-        val declaration = classDescriptor.containingDeclaration
-        if (DescriptorUtils.isEnumClass(declaration)) {
-            if (!enumEntry.hasInitializer() && !hasDefaultConstructor(declaration as ClassDescriptor)) {
+    private fun checkEnumEntry(enumEntry: KtEnumEntry, enumEntryClass: ClassDescriptor) {
+        val enumClass = enumEntryClass.containingDeclaration as ClassDescriptor
+        if (DescriptorUtils.isEnumClass(enumClass)) {
+            if (enumClass.isHeader) {
+                if (enumEntry.getBody() != null) {
+                    trace.report(HEADER_ENUM_ENTRY_WITH_BODY.on(enumEntry))
+                }
+            }
+            else if (!enumEntry.hasInitializer() && !hasDefaultConstructor(enumClass)) {
                 trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry))
             }
         }
         else {
-            assert(DescriptorUtils.isInterface(declaration)) { "Enum entry should be declared in enum class: " + classDescriptor }
+            assert(DescriptorUtils.isInterface(enumClass)) { "Enum entry should be declared in enum class: " + enumEntryClass }
         }
     }
 

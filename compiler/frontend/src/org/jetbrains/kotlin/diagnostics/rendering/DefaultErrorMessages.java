@@ -265,6 +265,8 @@ public class DefaultErrorMessages {
         MAP.put(HEADER_DECLARATION_WITH_DEFAULT_PARAMETER, "Header declaration cannot have parameters with default values");
         MAP.put(HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL, "Explicit delegation call for constructor of a header class is not allowed");
         MAP.put(HEADER_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "Header class constructor cannot have a property parameter");
+        MAP.put(HEADER_ENUM_CONSTRUCTOR, "Header enum class cannot have a constructor");
+        MAP.put(HEADER_ENUM_ENTRY_WITH_BODY, "Header enum entry cannot have a body");
         MAP.put(HEADER_PROPERTY_INITIALIZER, "Header property cannot have an initializer");
 
         MAP.put(IMPL_TYPE_ALIAS_NOT_TO_CLASS, "Right-hand side of 'impl' type alias should be a class, not another type alias");

@@ -110,6 +110,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             doTest(fileName);
         }
 
+        @TestMetadata("enumsWithDifferentEntries")
+        public void testEnumsWithDifferentEntries() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/");
+            doTest(fileName);
+        }
+
         @TestMetadata("fakeOverrides")
         public void testFakeOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/classScopes/fakeOverrides/");
