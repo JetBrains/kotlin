@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.PossiblyBareType.bare
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
+import org.jetbrains.kotlin.resolve.calls.checkers.checkCoroutinesFeature
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.descriptorUtil.findImplicitOuterClassArguments
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
@@ -179,8 +180,12 @@ class TypeResolver(
         var result: PossiblyBareType? = null
 
         val hasSuspendModifier = modifiers?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
+        val suspendModifier = modifiers?.getModifier(KtTokens.SUSPEND_KEYWORD)
         if (hasSuspendModifier && typeElement !is KtFunctionType) {
-            c.trace.report(Errors.WRONG_MODIFIER_TARGET.on(modifiers!!.getModifier(KtTokens.SUSPEND_KEYWORD)!!, KtTokens.SUSPEND_KEYWORD, "non-functional type"))
+            c.trace.report(Errors.WRONG_MODIFIER_TARGET.on(suspendModifier!!, KtTokens.SUSPEND_KEYWORD, "non-functional type"))
+        }
+        else if (hasSuspendModifier) {
+            checkCoroutinesFeature(languageVersionSettings, c.trace, suspendModifier!!)
         }
 
         typeElement?.accept(object : KtVisitorVoid() {

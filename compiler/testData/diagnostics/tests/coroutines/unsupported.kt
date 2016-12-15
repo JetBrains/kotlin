@@ -3,7 +3,7 @@
 
 <!UNSUPPORTED_FEATURE!>suspend<!> fun suspendHere(): String = "OK"
 
-fun builder(c: suspend () -> Unit) {
+fun builder(c: <!UNSUPPORTED_FEATURE!>suspend<!> () -> Unit) {
 
 }
 

@@ -96,7 +96,7 @@ object BuilderFunctionsCallChecker : CallChecker {
     }
 }
 
-private fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
         diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.Coroutines))
     }
