@@ -10,9 +10,9 @@ public final class TestIface : java.lang.Runnable {
 
 public final class TestObject : java.lang.Object {
     public constructor TestObject(/*0*/ o: java.lang.Object)
-    protected open override /*1*/ /*delegation*/ fun clone(): kotlin.Any!
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    protected open override /*1*/ /*delegation*/ fun finalize(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun finalize(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun getClass(): java.lang.Class<*>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun notify(): kotlin.Unit
