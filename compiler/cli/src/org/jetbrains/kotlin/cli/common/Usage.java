@@ -29,7 +29,7 @@ class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
-    private static final String coroutinesKeyDescription = "Enable coroutines or report warnings or report errors on declarations and use sites of suspend modifier";
+    private static final String coroutinesKeyDescription = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier";
 
     public static void print(@NotNull PrintStream target, @NotNull CommonCompilerArguments arguments, boolean extraHelp) {
         target.println("Usage: " + arguments.executableScriptFileName() + " <options> <source files>");
