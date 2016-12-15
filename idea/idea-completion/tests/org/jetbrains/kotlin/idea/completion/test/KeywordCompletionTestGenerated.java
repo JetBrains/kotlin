@@ -324,6 +324,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InTypePosition.kt")
+    public void testInTypePosition() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InTypePosition.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("LabeledLambdaThis.kt")
     public void testLabeledLambdaThis() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/LabeledLambdaThis.kt");

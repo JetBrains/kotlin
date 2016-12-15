@@ -14,7 +14,6 @@ class TestSample(<caret>)
 // EXIST: private
 // EXIST: protected
 // EXIST: internal
-// EXIST: coroutine
 // EXIST: impl
 /* TODO: keywords below should not be here*/
 // EXIST: abstract
