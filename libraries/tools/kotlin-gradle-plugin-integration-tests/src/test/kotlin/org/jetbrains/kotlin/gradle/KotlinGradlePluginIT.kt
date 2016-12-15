@@ -217,20 +217,6 @@ class KotlinGradleIT: BaseGradleIT() {
     }
 
     @Test
-    fun testCoroutinesPropertyFromLocalPropertiesFile() {
-        val project = Project("kotlinCoroutinesProject", GRADLE_VERSION)
-        project.setupWorkingDir()
-
-        val localPropertyFile = File(project.projectDir, "local.properties")
-        val coroutinesProperty = "kotlin.coroutines=error"
-        localPropertyFile.writeText(coroutinesProperty)
-
-        project.build("build") {
-            assertContains(coroutinesProperty)
-        }
-    }
-
-    @Test
     fun testConvertJavaToKotlin() {
         val project = Project("convertBetweenJavaAndKotlin", GRADLE_VERSION)
         project.setupWorkingDir()
