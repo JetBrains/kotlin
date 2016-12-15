@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.ReplaceObsoleteLabelSyntaxFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
@@ -96,7 +97,8 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
             Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
             Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
             Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
-            Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
+            Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT,
+            ErrorsJs.WRONG_EXTERNAL_DECLARATION
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

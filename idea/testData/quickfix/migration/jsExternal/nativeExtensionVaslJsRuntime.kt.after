@@ -1,0 +1,6 @@
+// "Fix with 'asDynamic'" "true"
+
+class A
+
+inline val A.boo: Int
+    get() = asDynamic().boo
