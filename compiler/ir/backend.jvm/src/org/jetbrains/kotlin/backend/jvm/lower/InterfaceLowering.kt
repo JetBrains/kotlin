@@ -110,12 +110,12 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
             val dispatchReceiver =
                         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
                                 newFunction, null, 0, AnnotationsImpl(emptyList()), Name.identifier("this"),
-                                interfaceDescriptor.defaultType, false, false, false, false, null, interfaceDescriptor.source, null)
+                                interfaceDescriptor.defaultType, false, false, false, null, interfaceDescriptor.source, null)
             val oldExtensionReceiver = descriptor.extensionReceiverParameter
             val extensionReceiver = if (oldExtensionReceiver != null )
                     ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
                             newFunction, null, 1, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
-                            oldExtensionReceiver.value.type, false, false, false, false, null, oldExtensionReceiver.source, null)
+                            oldExtensionReceiver.value.type, false, false, false, null, oldExtensionReceiver.source, null)
             else null
 
             val valueParameters = listOf(dispatchReceiver, extensionReceiver).filterNotNull() +

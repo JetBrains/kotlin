@@ -17,7 +17,6 @@ internal
 in
 out
 suspend
-coroutine
  class Bar<abstract, abstract enum : T, out open,
     public protected private internal abstract
     open

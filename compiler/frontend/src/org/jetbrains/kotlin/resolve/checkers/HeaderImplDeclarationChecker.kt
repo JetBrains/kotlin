@@ -252,7 +252,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
 
         if (!equalsBy(aParams, bParams, ValueParameterDescriptor::declaresDefaultValue)) return Incompatible.ValueParameterHasDefault
-        if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null, p.isCoroutine, p.isCrossinline, p.isNoinline) })) return Incompatible.ValueParameterModifiers
+        if (!equalsBy(aParams, bParams, { p -> listOf(p.varargElementType != null, p.isCrossinline, p.isNoinline) })) return Incompatible.ValueParameterModifiers
 
         when {
             a is FunctionDescriptor && b is FunctionDescriptor -> areCompatibleFunctions(a, b).let { if (it != Compatible) return it }

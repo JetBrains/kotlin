@@ -57,8 +57,6 @@ JetFile: SoftKeywords.kt
       PsiElement(out)('out')
       PsiWhiteSpace('\n')
       PsiElement(suspend)('suspend')
-      PsiWhiteSpace('\n')
-      PsiElement(coroutine)('coroutine')
     PsiWhiteSpace('\n ')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')

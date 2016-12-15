@@ -195,7 +195,7 @@ fun <D : FunctionDescriptor> createJvmSuspendFunctionView(function: D): D {
             function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("\$continuation"),
             function.getContinuationParameterTypeOfSuspendFunction(),
             /* declaresDefaultValue = */ false, /* isCrossinline = */ false,
-            /* isNoinline = */ false, /* isCoroutine = */ false, /* varargElementType = */ null, SourceElement.NO_SOURCE
+            /* isNoinline = */ false, /* varargElementType = */ null, SourceElement.NO_SOURCE
     )
 
     return function.createCustomCopy {

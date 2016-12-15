@@ -205,9 +205,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             if (varargElementType != null) { modifiers.add(KtTokens.VARARG_KEYWORD) }
             if (Flags.IS_CROSSINLINE.get(valueParameterProto.flags)) { modifiers.add(KtTokens.CROSSINLINE_KEYWORD) }
             if (Flags.IS_NOINLINE.get(valueParameterProto.flags)) { modifiers.add(KtTokens.NOINLINE_KEYWORD) }
-            if (Flags.IS_COROUTINE.get(valueParameterProto.flags)) {
-                modifiers.add(KtTokens.COROUTINE_KEYWORD)
-            }
 
             val modifierList = createModifierListStub(parameterStub, modifiers)
             val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(

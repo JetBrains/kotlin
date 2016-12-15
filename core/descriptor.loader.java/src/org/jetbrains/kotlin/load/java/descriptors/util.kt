@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -51,7 +50,6 @@ fun copyValueParameters(
                 oldParameter.declaresDefaultValue(),
                 oldParameter.isCrossinline,
                 oldParameter.isNoinline,
-                oldParameter.isCoroutine,
                 if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newType) else null,
                 oldParameter.source
         )

@@ -798,10 +798,6 @@ internal class DescriptorRendererImpl(
             builder.append("noinline ")
         }
 
-        if (valueParameter.isCoroutine) {
-            builder.append("coroutine ")
-        }
-
         renderVariable(valueParameter, includeName, builder, topLevel)
 
         val withDefaultValue = renderDefaultValues && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())

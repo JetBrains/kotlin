@@ -206,7 +206,7 @@ class CallArgumentTranslator private constructor(
             val parenthesizedArgumentExpression = valueArguments[0].getArgumentExpression()!!
             val argumentExpression = KtPsiUtil.deparenthesize(parenthesizedArgumentExpression)
 
-            result += if (parameterDescriptor.isCoroutine && argumentExpression is KtLambdaExpression) {
+            result += if (/*parameterDescriptor.isCoroutine=*/false && argumentExpression is KtLambdaExpression) {
                 val continuationType = parameterDescriptor.type.arguments.last().type
                 val continuationDescriptor = continuationType.constructor.declarationDescriptor as ClassDescriptor
                 val controllerType = parameterDescriptor.type.arguments[0].type

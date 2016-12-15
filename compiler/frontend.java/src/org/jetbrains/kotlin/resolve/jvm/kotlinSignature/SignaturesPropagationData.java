@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -175,7 +174,6 @@ public class SignaturesPropagationData {
                         originalParam.declaresDefaultValue(),
                         originalParam.isCrossinline(),
                         originalParam.isNoinline(),
-                        originalParam.isCoroutine(),
                         varargCheckResult.isVararg ? DescriptorUtilsKt.getBuiltIns(originalParam).getArrayElementType(altType) : null,
                         SourceElement.NO_SOURCE
                 ));

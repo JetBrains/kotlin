@@ -44,7 +44,7 @@ sealed class LocalVariableAccessorDescriptor(
 
     private fun createValueParameter(name: Name, type: KotlinType): ValueParameterDescriptorImpl {
         return ValueParameterDescriptorImpl(this, null, 0, Annotations.EMPTY, name, type,
-                                            false, false, false, false, null, SourceElement.NO_SOURCE)
+                                            false, false, false, null, SourceElement.NO_SOURCE)
     }
 
 }

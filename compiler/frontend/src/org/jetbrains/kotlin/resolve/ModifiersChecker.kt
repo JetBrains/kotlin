@@ -81,7 +81,6 @@ object ModifierCheckerCore {
             DATA_KEYWORD      to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS),
             INLINE_KEYWORD    to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
             NOINLINE_KEYWORD  to EnumSet.of(VALUE_PARAMETER),
-            COROUTINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
             TAILREC_KEYWORD   to EnumSet.of(FUNCTION),
             SUSPEND_KEYWORD   to EnumSet.of(FUNCTION),
             EXTERNAL_KEYWORD  to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CLASS),
@@ -95,7 +94,6 @@ object ModifierCheckerCore {
     )
 
     val featureDependencies = mapOf(
-            COROUTINE_KEYWORD to LanguageFeature.Coroutines,
             SUSPEND_KEYWORD   to LanguageFeature.Coroutines,
             INLINE_KEYWORD    to LanguageFeature.InlineProperties,
             HEADER_KEYWORD    to LanguageFeature.MultiPlatformProjects,

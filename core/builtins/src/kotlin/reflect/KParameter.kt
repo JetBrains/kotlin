@@ -77,10 +77,4 @@ public interface KParameter : KAnnotatedElement {
      */
     @SinceKotlin("1.1")
     public val isVararg: Boolean
-
-    /**
-     * `true` if this parameter is `coroutine`.
-     */
-    @SinceKotlin("1.1")
-    public val isCoroutine: Boolean
 }

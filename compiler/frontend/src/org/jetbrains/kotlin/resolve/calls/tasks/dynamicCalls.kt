@@ -171,7 +171,6 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
-                    /* isCoroutine = */ false,
                     varargElementType,
                     SourceElement.NO_SOURCE
             ))

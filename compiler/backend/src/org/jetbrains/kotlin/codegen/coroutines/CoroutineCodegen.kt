@@ -74,14 +74,14 @@ class CoroutineCodegen(
                                       this@doResume, null, 0, Annotations.EMPTY, Name.identifier("data"),
                                       module.builtIns.nullableAnyType,
                                       /* isDefault = */ false, /* isCrossinline = */ false,
-                                      /* isNoinline = */ false, /* isCoroutine = */ false,
+                                      /* isNoinline = */ false,
                                       /* varargElementType = */ null, SourceElement.NO_SOURCE
                               ),
                               ValueParameterDescriptorImpl(
                                       this@doResume, null, 1, Annotations.EMPTY, Name.identifier("throwable"),
                                       module.builtIns.throwable.defaultType.makeNullable(),
                                       /* isDefault = */ false, /* isCrossinline = */ false,
-                                      /* isNoinline = */ false, /* isCoroutine = */ false,
+                                      /* isNoinline = */ false,
                                       /* varargElementType = */ null, SourceElement.NO_SOURCE
                               )
                         ),

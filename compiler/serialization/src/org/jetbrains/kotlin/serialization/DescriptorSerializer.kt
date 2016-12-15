@@ -330,7 +330,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getValueParameterFlags(
                 hasAnnotations(descriptor), descriptor.declaresDefaultValue(),
-                descriptor.isCrossinline, descriptor.isNoinline, descriptor.isCoroutine
+                descriptor.isCrossinline, descriptor.isNoinline
         )
         if (flags != builder.flags) {
             builder.flags = flags

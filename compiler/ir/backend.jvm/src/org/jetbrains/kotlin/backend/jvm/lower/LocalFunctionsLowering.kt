@@ -314,7 +314,7 @@ class LocalFunctionsLowering(val context: JvmBackendContext): ClassLoweringPass 
                         valueDescriptor.annotations,
                         suggestNameForCapturedValueParameter(valueDescriptor),
                         valueDescriptor.type,
-                        false, false, false, false, null, valueDescriptor.source
+                        false, false, false, null, valueDescriptor.source
                 )
 
         private fun createUnsubstitutedParameter(
