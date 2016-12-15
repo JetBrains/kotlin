@@ -47,7 +47,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @NotNull
     @Override
     public String getPresentableText() {
-        return JavaScript.FULL_NAME + " - experimental";
+        return JavaScript.FULL_NAME;
     }
 
     @Override

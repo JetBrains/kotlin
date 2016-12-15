@@ -41,7 +41,7 @@ public class JSFrameworkType extends FrameworkTypeEx {
     @NotNull
     @Override
     public String getPresentableName() {
-        return "Kotlin (JavaScript - experimental)";
+        return "Kotlin (JavaScript)";
     }
 
     @NotNull

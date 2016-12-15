@@ -44,6 +44,6 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(MAVEN_JS_STDLI
 
     companion object {
         private val NAME = "js maven"
-        private val PRESENTABLE_TEXT = "JavaScript Maven - experimental"
+        private val PRESENTABLE_TEXT = "JavaScript Maven"
     }
 }

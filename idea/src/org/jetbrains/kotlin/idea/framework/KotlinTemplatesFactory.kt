@@ -34,6 +34,6 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     override fun createTemplates(group: String?, context: WizardContext?) =
             arrayOf(
                     BuilderBasedTemplate(KotlinModuleBuilder(JvmPlatform, "Kotlin (JVM)", "Kotlin module for JVM target")),
-                    BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "Kotlin (JavaScript - experimental)", "Kotlin module for JavaScript target"))
+                    BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "Kotlin (JavaScript)", "Kotlin module for JavaScript target"))
             )
 }

@@ -26,7 +26,7 @@ public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public K2JSRunConfigurationType() {
-        super("K2JSConfigurationType", "Kotlin (JavaScript - experimental)", "Kotlin to JavaScript configuration", KotlinIcons.SMALL_LOGO_13);
+        super("K2JSConfigurationType", "Kotlin (JavaScript)", "Kotlin to JavaScript configuration", KotlinIcons.SMALL_LOGO_13);
         addFactory(new K2JSConfigurationFactory());
     }
 
