@@ -255,10 +255,6 @@ fun main(args: Array<String>) {
             model("codegen/boxAgainstJava")
         }
 
-        testClass<AbstractAdditionalCoroutineBlackBoxCodegenTest> {
-            model("codegen/box/coroutines")
-        }
-
         testClass<AbstractScriptCodegenTest> {
             model("codegen/script", extension = "kts")
         }

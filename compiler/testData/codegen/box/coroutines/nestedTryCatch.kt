@@ -32,8 +32,6 @@ class Controller {
             postponedActions.removeAt(0)
         }
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(expectException: Boolean = false, c: suspend Controller.() -> String) {

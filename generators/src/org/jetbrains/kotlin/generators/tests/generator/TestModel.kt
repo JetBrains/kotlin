@@ -31,7 +31,7 @@ interface TestClassModel : TestEntityModel {
 }
 
 interface MethodModel : TestEntityModel {
-    fun shouldBeGenerated(baseClassName: String): Boolean = true
+    fun shouldBeGenerated(): Boolean = true
     fun generateSignature(p: Printer)
     fun generateBody(p: Printer)
 }
@@ -40,4 +40,4 @@ interface TestMethodModel : MethodModel {
     override fun generateSignature(p: Printer) {
         p.print("public void $name() throws Exception")
     }
-}
+}   

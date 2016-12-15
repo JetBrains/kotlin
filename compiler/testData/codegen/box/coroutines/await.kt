@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// NO_INTERCEPT_RESUME_TESTS
 // FILE: promise.kt
 import kotlin.coroutines.*
 

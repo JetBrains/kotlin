@@ -11,8 +11,6 @@ class Controller {
         x.resume("OK")
         SUSPENDED
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 // MODULE: main(controller)

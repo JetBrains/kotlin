@@ -164,7 +164,7 @@ public class TestGenerator {
         for (Iterator<MethodModel> iterator = testMethods.iterator(); iterator.hasNext(); ) {
             MethodModel methodModel = iterator.next();
 
-            if (!methodModel.shouldBeGenerated(baseTestClassName)) continue;
+            if (!methodModel.shouldBeGenerated()) continue;
 
             generateTestMethod(p, methodModel);
             if (iterator.hasNext() || !innerTestClasses.isEmpty()) {
@@ -188,11 +188,11 @@ public class TestGenerator {
 
     private static void generateTestMethod(Printer p, MethodModel methodModel) {
         generateMetadata(p, methodModel);
-
+        
         methodModel.generateSignature(p);
         p.printWithNoIndent(" {");
         p.println();
-
+        
         p.pushIndent();
 
         methodModel.generateBody(p);

@@ -19,8 +19,6 @@ class Controller {
     suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())
 
     suspend inline fun <reified T : Any> suspendInline(): String = suspendInline({ T::class.simpleName!! })
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(c: suspend Controller.() -> Unit) {

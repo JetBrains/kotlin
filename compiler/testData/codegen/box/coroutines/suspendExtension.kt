@@ -10,8 +10,6 @@ class Controller {
     }
 
     inline suspend fun String.inlineSuspendHere(): String = suspendHere()
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 suspend fun Controller.suspendExtension(v: String): String = v.suspendHere()

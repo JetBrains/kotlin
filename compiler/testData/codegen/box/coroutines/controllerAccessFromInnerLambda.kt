@@ -12,8 +12,6 @@ class Controller {
     fun foo() {
         result = true
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(c: suspend Controller.() -> Unit) {

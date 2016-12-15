@@ -15,8 +15,6 @@ class Controller {
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
         SUSPENDED
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(c: suspend Controller.() -> Unit) {

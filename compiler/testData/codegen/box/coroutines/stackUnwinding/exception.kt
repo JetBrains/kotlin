@@ -4,8 +4,6 @@ import kotlin.coroutines.*
 
 class Controller {
     suspend fun suspendHere(): String = throw RuntimeException("OK")
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(c: suspend Controller.() -> Unit) {

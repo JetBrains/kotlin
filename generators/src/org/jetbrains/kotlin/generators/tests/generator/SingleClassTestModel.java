@@ -162,7 +162,7 @@ public class SingleClassTestModel implements TestClassModel {
         }
 
         @Override
-        public boolean shouldBeGenerated(@NotNull String baseClassName) {
+        public boolean shouldBeGenerated() {
             return true;
         }
     }

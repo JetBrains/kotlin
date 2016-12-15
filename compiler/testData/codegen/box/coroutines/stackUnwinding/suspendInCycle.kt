@@ -9,8 +9,6 @@ class Controller {
     suspend fun suspendThere(): String = suspendWithCurrentContinuation { x ->
         "?"
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(c: suspend Controller.() -> Unit) {

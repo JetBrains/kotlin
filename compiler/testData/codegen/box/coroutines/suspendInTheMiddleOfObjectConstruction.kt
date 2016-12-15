@@ -17,8 +17,6 @@ class Controller {
         x.resume(v)
         SUSPENDED
     }
-
-    // INTERCEPT_RESUME_PLACEHOLDER
 }
 
 fun builder(c: suspend Controller.() -> Unit) {
