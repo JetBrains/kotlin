@@ -27,14 +27,13 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.findKDoc
 import org.jetbrains.kotlin.idea.kdoc.isBoringBuiltinClass
@@ -42,15 +41,18 @@ import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecatedByAnnotationReplaceWithExpression
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.getDeprecations
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -102,8 +104,60 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             renderCompanionObjectName = true
         }
 
+        private fun renderEnumSpecialFunction(element: KtClass, functionDescriptor: FunctionDescriptor, quickNavigation: Boolean): String {
+            var renderedDecl = DESCRIPTOR_RENDERER.render(functionDescriptor)
+
+            if (quickNavigation) return renderedDecl
+
+            val declarationDescriptor = element.resolveToDescriptorIfAny()
+            val enumDescriptor = (declarationDescriptor as? ClassDescriptor)?.getSuperClassNotAny() ?: return renderedDecl
+
+            val enumDeclaration =
+                    DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, enumDescriptor) as? KtDeclaration ?: return renderedDecl
+
+            val enumSource = SourceNavigationHelper.getNavigationElement(enumDeclaration)
+            val functionName = functionDescriptor.fqNameSafe.shortName().asString()
+            val kdoc = enumSource.findDescendantOfType<KDoc> {
+                it.getChildrenOfType<KDocSection>().any { it.findTagByName(functionName) != null }
+            }
+
+            if (kdoc != null) {
+                val renderedComment = KDocRenderer.renderKDoc(kdoc.getDefaultSection())
+                if (renderedComment.startsWith("<p>")) {
+                    renderedDecl += renderedComment
+                }
+                else {
+                    renderedDecl = "$renderedDecl<br/>$renderedComment"
+                }
+            }
+
+            return renderedDecl
+        }
+
+        private fun renderEnum(element: KtClass, originalElement: PsiElement?, quickNavigation: Boolean): String? {
+            val referenceExpression = originalElement?.getNonStrictParentOfType<KtReferenceExpression>()
+            if (referenceExpression != null) {
+                // When caret on special enum function (e.g SomeEnum.values<caret>())
+                // element is not an KtReferenceExpression, but KtClass of enum
+                // so reference extracted from originalElement
+                val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
+                (context[BindingContext.REFERENCE_TARGET, referenceExpression] ?:
+                 context[BindingContext.REFERENCE_TARGET, referenceExpression.getChildOfType<KtReferenceExpression>()])?.let {
+                    if (it is FunctionDescriptor) // To protect from Some<caret>Enum.values()
+                        return renderEnumSpecialFunction(element, it, quickNavigation)
+                }
+            }
+            return renderKotlinDeclaration(element, quickNavigation)
+        }
+
         private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
-            if (element is KtDeclaration) {
+
+            if (element is KtClass && element.isEnum()) {
+                // When caret on special enum function (e.g SomeEnum.values<caret>())
+                // element is not an KtReferenceExpression, but KtClass of enum
+                return renderEnum(element, originalElement, quickNavigation)
+            }
+            else if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
             else if (element is KtNameReferenceExpression && element.getReferencedName() == "it") {

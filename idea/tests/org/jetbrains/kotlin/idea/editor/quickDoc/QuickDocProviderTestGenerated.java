@@ -144,6 +144,36 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
         doTest(fileName);
     }
 
+    @TestMetadata("OnEnumClassReference.kt")
+    public void testOnEnumClassReference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumClassReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumDeclaration.kt")
+    public void testOnEnumDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumUsage.kt")
+    public void testOnEnumUsage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumUsage.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumValueOfFunction.kt")
+    public void testOnEnumValueOfFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumValueOfFunction.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnEnumValuesFunction.kt")
+    public void testOnEnumValuesFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnEnumValuesFunction.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnFunctionDeclarationWithPackage.kt")
     public void testOnFunctionDeclarationWithPackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnFunctionDeclarationWithPackage.kt");
