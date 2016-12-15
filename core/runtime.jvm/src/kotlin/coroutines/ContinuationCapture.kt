@@ -61,14 +61,18 @@ private val UNDECIDED: Any? = Any()
 private val RESUMED: Any? = Any()
 private class Fail(val exception: Throwable)
 
-@Suppress("UNCHECKED_CAST")
-private val RESULT_UPDATER = AtomicReferenceFieldUpdater.newUpdater<SafeContinuation<*>, Any?>(
-        SafeContinuation::class.java, Any::class.java as Class<Any?>, "result")
 
 @PublishedApi
 internal class SafeContinuation<T> @PublishedApi internal constructor(private val delegate: Continuation<T>) : Continuation<T> {
     @Volatile
     private var result: Any? = UNDECIDED
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        @JvmStatic
+        private val RESULT_UPDATER = AtomicReferenceFieldUpdater.newUpdater<SafeContinuation<*>, Any?>(
+                SafeContinuation::class.java, Any::class.java as Class<Any?>, "result")
+    }
 
     private fun cas(expect: Any?, update: Any?): Boolean =
         RESULT_UPDATER.compareAndSet(this, expect, update)
