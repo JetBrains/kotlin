@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.core.script
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
@@ -29,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
@@ -149,6 +151,13 @@ class KotlinScriptConfigurationManager(
         allScriptsClasspathScope.clear()
         allLibrarySourcesCache.clear()
         allLibrarySourcesScope.clear()
+
+        val kotlinScriptDependenciesClassFinder =
+                Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
+                .filterIsInstance<KotlinScriptDependenciesClassFinder>()
+                .single()
+
+        kotlinScriptDependenciesClassFinder.clearCache()
     }
 
 
@@ -164,8 +173,8 @@ class KotlinScriptConfigurationManager(
         private fun File.classpathEntryToVfs(): VirtualFile? {
             val res = when {
                 !exists() -> null
-                isDirectory -> StandardFileSystems.local()?.findFileByPath(this.canonicalPath) ?: null
-                isFile -> StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR) ?: null
+                isDirectory -> StandardFileSystems.local()?.findFileByPath(this.canonicalPath)
+                isFile -> StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR)
                 else -> null
             }
             // TODO: report this somewhere, but do not throw: assert(res != null, { "Invalid classpath entry '$this': exists: ${exists()}, is directory: $isDirectory, is file: $isFile" })
