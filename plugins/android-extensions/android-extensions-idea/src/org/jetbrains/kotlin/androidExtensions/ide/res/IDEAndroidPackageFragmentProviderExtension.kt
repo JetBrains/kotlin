@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.androidExtensions.ide.res
 
-import com.android.tools.idea.gradle.facet.AndroidGradleFacet
 import com.android.tools.idea.gradle.parser.GradleBuildFile
 import com.intellij.openapi.application.ApplicationManager
+import com.android.tools.idea.gradle.project.facet.gradle.GradleFacet
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.project.Project
@@ -45,8 +45,8 @@ class IDEAndroidPackageFragmentProviderExtension(val project: Project) : Android
     }
 
     private fun isAndroidExtensionsEnabled(module: Module): Boolean {
-        val androidGradleFacet = AndroidGradleFacet.getInstance(module) ?: return false
-        val buildFile = androidGradleFacet.gradleModel?.buildFile ?: return false
+        val androidGradleFacet = GradleFacet.getInstance(module) ?: return false
+        val buildFile = androidGradleFacet.gradleModuleModel?.buildFile ?: return false
         val buildGroovyFile = psiManager.findFile(buildFile) as? GroovyFile ?: return false
         return GradleBuildFile.getPlugins(buildGroovyFile).contains("kotlin-android-extensions")
     }
