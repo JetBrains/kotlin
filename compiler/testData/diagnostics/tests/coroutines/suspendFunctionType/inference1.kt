@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-fun <T> withS(x: T, sfn: suspend (T) -> Unit) = x
+fun <T> withS(x: T, sfn: suspend <!UNSUPPORTED!>(T) -> Unit<!>) = x
 
 val test1 = withS(100) {}
 

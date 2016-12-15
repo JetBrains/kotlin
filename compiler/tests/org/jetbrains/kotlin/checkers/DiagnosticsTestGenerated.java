@@ -4518,6 +4518,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("noValueParameters.kt")
+                public void testNoValueParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/noValueParameters.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("suspendFunctionNIsUnresolved.kt")
                 public void testSuspendFunctionNIsUnresolved() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/suspendFunctionNIsUnresolved.kt");
