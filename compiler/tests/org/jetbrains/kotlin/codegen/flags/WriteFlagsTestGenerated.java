@@ -100,6 +100,12 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("innerSealed.kt")
+            public void testInnerSealed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/innerSealed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("mappingWhen.kt")
             public void testMappingWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/mappingWhen.kt");
