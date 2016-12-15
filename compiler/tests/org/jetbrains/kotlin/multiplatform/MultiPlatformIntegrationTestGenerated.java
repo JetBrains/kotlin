@@ -72,6 +72,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         doTest(fileName);
     }
 
+    @TestMetadata("incompatibleNestedClasses")
+    public void testIncompatibleNestedClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/incompatibleNestedClasses/");
+        doTest(fileName);
+    }
+
     @TestMetadata("incompatibleProperties")
     public void testIncompatibleProperties() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/incompatibleProperties/");

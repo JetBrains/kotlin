@@ -74,11 +74,11 @@ val ClassifierDescriptorWithTypeParameters.denotedClassDescriptor: ClassDescript
         else -> throw UnsupportedOperationException("Unexpected descriptor kind: $this")
     }
 
-val ClassDescriptor.classId: ClassId?
+val ClassifierDescriptorWithTypeParameters.classId: ClassId?
     get() = containingDeclaration.let { owner ->
         when (owner) {
             is PackageFragmentDescriptor -> ClassId(owner.fqName, name)
-            is ClassDescriptor -> owner.classId?.createNestedClassId(name)
+            is ClassifierDescriptorWithTypeParameters -> owner.classId?.createNestedClassId(name)
             else -> null
         }
     }

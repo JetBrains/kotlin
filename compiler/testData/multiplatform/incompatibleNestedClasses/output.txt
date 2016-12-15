@@ -1,0 +1,80 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:2:18: error: header declaration 'N1' has no implementation in module
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public impl interface N1
+
+    header class N1
+                 ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:3:22: error: header declaration 'N2' has no implementation in module
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public impl object N2
+
+    header interface N2
+                     ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:4:12: error: header declaration 'N3' has no implementation in module
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public final impl class N3
+
+    header object N3
+           ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:8:18: error: header declaration 'N2' has no implementation in module
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public final impl inner class N2
+
+    header class N2
+                 ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:9:24: error: header declaration 'I2' has no implementation in module
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public final impl class I2
+
+    header inner class I2
+                       ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:13:12: error: header declaration 'Companion' has no implementation in module
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public impl companion object
+
+    header object Companion
+           ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:14:22: error: header declaration 'Factory' has no implementation in module
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public impl object Factory
+
+    header companion object Factory
+                     ^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:18:22: error: header declaration 'Companion' has no implementation in module
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public impl object Companion
+
+    header companion object
+                     ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:2:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl interface N1
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl object N2
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl class N3
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl inner class N2
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl class I2
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl companion object {}
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl object Factory
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+    impl object Companion
+    ^
+
