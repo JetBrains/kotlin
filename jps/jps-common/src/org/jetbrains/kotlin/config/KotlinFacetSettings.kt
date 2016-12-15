@@ -65,9 +65,9 @@ enum class CoroutineSupport(
         override val description: String,
         val compilerArgument: String
 ) : DescriptionAware {
-    ENABLED("Enabled", "enabled"),
-    ENABLED_WITH_WARNING("Enabled with warning", "warning"),
-    DISABLED("Disabled", "disabled");
+    ENABLED("Enabled", "enable"),
+    ENABLED_WITH_WARNING("Enabled with warning", "warn"),
+    DISABLED("Disabled", "error");
 
     companion object {
         val DEFAULT = ENABLED_WITH_WARNING
@@ -78,6 +78,10 @@ enum class CoroutineSupport(
             arguments.coroutinesWarn -> ENABLED_WITH_WARNING
             arguments.coroutinesError -> DISABLED
             else -> DEFAULT
+        }
+
+        fun byCompilerArgument(argument: String): CoroutineSupport {
+            return CoroutineSupport.values().find { it.compilerArgument == argument } ?: DEFAULT
         }
     }
 }
