@@ -1,10 +1,11 @@
-class Controller {
-    suspend fun suspendHere() = ""
-}
+// WITH_RUNTIME
+// WITH_COROUTINES
+// TREAT_AS_ONE_FILE
+import kotlin.coroutines.*
+suspend fun suspendHere() = ""
 
-
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
-    c(Controller()).resume(Unit)
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(EmptyContinuation)
 }
 
 fun box(): String {
@@ -19,5 +20,5 @@ fun box(): String {
 }
 
 // 1 GETSTATIC kotlin/Unit.INSTANCE : Lkotlin/Unit;
-// 1 GETSTATIC kotlin/coroutines/Suspend.INSTANCE
+// 1 GETSTATIC EmptyContinuation.INSTANCE
 // 2 GETSTATIC
