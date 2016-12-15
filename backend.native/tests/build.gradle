@@ -753,6 +753,7 @@ task initializers1(type: RunKonanTest) {
     source = "runtime/basic/initializers1.kt"
 }
 
+
 task concatenation(type: RunKonanTest) {
     goldValue = "Hello world 1 2\nHello, a\nHello, b\n"
     source = "codegen/basics/concatenation.kt"
@@ -822,4 +823,9 @@ task lambda12(type: RunKonanTest) {
 task lambda13(type: RunKonanTest) {
     goldValue = "foo\n"
     source = "codegen/lambda/lambda13.kt"
+}
+
+task initializers2(type: RunKonanTest) {
+    goldValue = "1\nA\nB\n"
+    source = "runtime/basic/initializers2.kt"
 }

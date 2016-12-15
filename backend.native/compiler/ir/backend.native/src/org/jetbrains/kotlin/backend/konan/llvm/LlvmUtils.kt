@@ -123,6 +123,7 @@ internal val kInt1         = LLVMInt1Type()!!
 internal val kBoolean      = kInt1
 internal val kInt8Ptr      = pointerType(int8Type)
 internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
+internal val kNullInt8Ptr  = LLVMConstNull(kInt8Ptr)
 internal val kImmInt32One  = Int32(1).llvm
 internal val kImmInt64One  = Int64(1).llvm
 internal val ContextUtils.kNullObjHeaderPtr: LLVMValueRef

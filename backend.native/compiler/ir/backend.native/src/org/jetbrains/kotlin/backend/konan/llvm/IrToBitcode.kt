@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 
 internal fun emitLLVM(context: Context) {
@@ -157,6 +158,21 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
          * @return the requested value
          */
         fun genGetValue(descriptor: ValueDescriptor, result: String = ""): LLVMValueRef
+
+        /**
+         * Generates name for local llvm variable.
+         *
+         * @return the requested value
+         */
+        fun newVar():String
+
+        /**
+         * Returns owning function scope.
+         *
+         * @return the requested value
+         */
+        fun functionScope(): CodeContext
+
     }
 
     /**
@@ -165,7 +181,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      * During function code generation [FunctionScope] should be set up.
      */
     private object TopLevelCodeContext : CodeContext {
-
         private fun unsupported(any: Any? = null): Nothing = throw UnsupportedOperationException(any?.toString() ?: "")
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) = unsupported(target)
@@ -183,6 +198,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         override fun getDeclaredVariable(descriptor: VariableDescriptor) = null
 
         override fun genGetValue(descriptor: ValueDescriptor, result: String) = unsupported(descriptor)
+
+        override fun newVar(): String  = unsupported()
+        override fun functionScope(): CodeContext = unsupported()
     }
 
     /**
@@ -219,9 +237,80 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
     override fun visitModuleFragment(module: IrModuleFragment) {
         logger.log("visitModule                  : ${ir2string(module)}")
-        module.acceptChildrenVoid(this)
 
-        appendLlvmUsed(context.llvm.usedFunctions) 
+        module.acceptChildrenVoid(this)
+        appendLlvmUsed(context.llvm.usedFunctions)
+        appendStaticInitializers(context.llvm.staticInitializers)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    val kVoidFuncType = LLVMFunctionType(LLVMVoidType(), null, 0, 0)
+    val kNodeInitType = LLVMGetTypeByName(context.llvmModule, "struct.InitNode")!!
+    //-------------------------------------------------------------------------//
+
+    fun createInitBody(initName: String) {
+        val initFunction = LLVMAddFunction(context.llvmModule, initName, kVoidFuncType)!!    // create LLVM function
+        using(FunctionScope(initFunction)) {
+            val bbEnter = LLVMAppendBasicBlock(initFunction, "label_enter")!!
+            codegen.positionAtEnd(bbEnter)
+
+            context.llvm.fileInitializers.forEachIndexed {
+                i, it ->
+                val irField = it as IrField
+                val descriptor = irField.descriptor
+                val initialization = evaluateExpression("\$init_var_$i", irField.initializer)
+                val globalPtr = LLVMGetNamedGlobal(context.llvmModule, descriptor.symbolName)
+                codegen.store(initialization!!, globalPtr!!)
+            }
+            codegen.ret(null)
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+    // Creates static struct InitNode $nodeName = {$initName, NULL};
+
+    fun createInitNode(initName: String, nodeName: String) {
+        memScoped {
+            val initFunction = LLVMGetNamedFunction(context.llvmModule, initName)!!         // Get initialization function.
+            val nextInitNode = LLVMConstNull(pointerType(kNodeInitType))                    // Set InitNode.next = NULL.
+            val argList      = allocArrayOf(initFunction, nextInitNode)[0].ptr              // Allocate array of args.
+            val initNode     = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!            // Create static object of class InitNode.
+            context.llvm.staticData.placeGlobal(nodeName, constPointer(initNode)).llvmGlobal     // Put the object in global var with name "nodeName".
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun createInitCtor(ctorName: String, nodeName: String) {
+        val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!   // Create constructor function.
+        val bbEnter = LLVMAppendBasicBlock(ctorFunction, "label_enter")!!                   // Create basic block.
+
+        codegen.positionAtEnd(bbEnter)
+        val initNodePtr = LLVMGetNamedGlobal(context.llvmModule, nodeName)!!                // Get LLVM function initializing globals of current file.
+        codegen.call(context.llvm.appendToInitalizersTail, initNodePtr.singletonList(), "") // Add node to the tail of initializers list.
+        codegen.ret(null)
+
+        context.llvm.staticInitializers.add(ctorFunction)                                   // Push newly created constructor in staticInitializers list.
+    }
+
+    //-------------------------------------------------------------------------//
+
+    override fun visitFile(declaration: IrFile) {
+
+        context.llvm.fileInitializers.clear()
+        super.visitFile(declaration)
+
+        if (context.llvm.fileInitializers.isEmpty())
+            return
+        val fileName = declaration.name.takeLastWhile { it != '/' }.dropLastWhile { it != '.' }.dropLast(1)
+        val initName = "${fileName}_init_${context.llvm.globalInitIndex}"
+        val nodeName = "${fileName}_node_${context.llvm.globalInitIndex}"
+        val ctorName = "${fileName}_ctor_${context.llvm.globalInitIndex++}"
+
+        createInitBody(initName)
+        createInitNode(initName, nodeName)
+        createInitCtor(ctorName, nodeName)
     }
 
     //-------------------------------------------------------------------------//
@@ -470,10 +559,24 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     /**
      * The [CodeContext] enclosing the entire function body.
      */
-    private inner class FunctionScope(val declaration: IrFunction) :
-            ParameterScope(bindParameters(declaration.descriptor)) {
+    private inner class FunctionScope (val declaration: IrFunction?) :
+            ParameterScope(bindParameters(declaration?.descriptor)) {
+        constructor(llvmFunction:LLVMValueRef):this(null) {
+            this.llvmFunction = llvmFunction
+        }
+
+        var llvmFunction:LLVMValueRef? = declaration?.let{
+            codegen.llvmFunction(declaration.descriptor)
+        }
+
+        var tmpVariableCount = 0
+        override fun newVar(): String = "tmp_${tmpVariableCount++}"
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
+            if (declaration == null) {
+                codegen.ret(value)
+                return
+            }
             if (target == declaration.descriptor) {
                 codegen.ret(value)
             } else {
@@ -490,12 +593,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             codegen.call(context.llvm.throwExceptionFunction, args, "")
             codegen.unreachable()
         }
+
+        override fun functionScope(): CodeContext = this
     }
 
     /**
      * Binds LLVM function parameters to IR parameter descriptors.
      */
-    private fun bindParameters(descriptor: FunctionDescriptor): Map<ParameterDescriptor, LLVMValueRef> {
+    private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
+        if (descriptor == null) return emptyMap()
         val paramDescriptors = descriptor.allValueParameters
 
         assert(paramDescriptors.size == codegen.countParams(descriptor))
@@ -606,12 +712,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val descriptor = expression.descriptor
         if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
             val globalProperty = LLVMAddGlobal(context.llvmModule, codegen.getLLVMType(descriptor.type), descriptor.symbolName)
-            LLVMSetInitializer(globalProperty, evaluateExpression("", expression.initializer))
+            if (expression.initializer!!.expression is IrConst<*>) {
+                LLVMSetInitializer(globalProperty, evaluateExpression("", expression.initializer))
+            } else {
+                LLVMSetInitializer(globalProperty, codegen.kNullObjHeaderPtr)
+                context.llvm.fileInitializers.add(expression)
+            }
             return
         }
-
-        //super.visitField(expression)
-
     }
 
     //-------------------------------------------------------------------------//
@@ -1971,4 +2079,56 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata");
         }
     }
+
+    //-------------------------------------------------------------------------//
+    // Create type { i32, void ()*, i8* }
+
+    val kCtorType = memScoped {
+        val ctorType = LLVMPointerType(kVoidFuncType, 0)
+        val typeList = allocArrayOf(LLVMInt32Type(), ctorType, kInt8Ptr)[0].ptr
+        LLVMStructType(typeList, 3, 0)
+    }!!
+
+    //-------------------------------------------------------------------------//
+    // Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }
+
+    fun createGlobalCtor(ctorFunction: LLVMValueRef) = memScoped {
+        val priority = kImmInt32One
+        val data     = kNullInt8Ptr
+        val argList  = allocArrayOf(priority, ctorFunction, data)[0].ptr
+        val ctorItem = LLVMConstNamedStruct(kCtorType, argList, 3)!!
+        constPointer(ctorItem)
+    }
+
+    //-------------------------------------------------------------------------//
+    // Append initializers of global variables in "llvm.global_ctors" array
+
+    fun appendStaticInitializers(initializers: List<LLVMValueRef>) {
+        if (initializers.isEmpty()) return
+
+        val ctorList = initializers.map { it -> createGlobalCtor(it) }
+        val globalCtors = context.llvm.staticData.placeGlobalArray("llvm.global_ctors", kCtorType, ctorList)
+        LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+    }
+
+    //-------------------------------------------------------------------------//
+    /**
+     * This block is devoted to coming codegen refactoring:
+     * removing [Codegenerator.currentFunction] of [FunctionDesctiptor]
+     * and working with local variables with [FunctionScope] and other enhancements.
+     */
+
+    fun CodeGenerator.newVar() = currentCodeContext.newVar()
+
+    fun CodeGenerator.basicBlock(name: String = "label_"): LLVMBasicBlockRef {
+        val functionScope:FunctionScope = currentCodeContext.functionScope() as FunctionScope
+        return basicBlock(functionScope.llvmFunction!!)
+    }
+
+    fun CodeGenerator.basicBlock(name: String, code: () -> Unit) = basicBlock(name).apply {
+        appendingTo(this) {
+            code()
+        }
+    }
 }
+

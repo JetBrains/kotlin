@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrConst

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -190,6 +191,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
 
+    var globalInitIndex:Int = 0
+
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val initInstanceFunction = importRtFunction("InitInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
@@ -200,5 +203,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val isInstanceFunction = importRtFunction("IsInstance")
     val checkInstanceFunction = importRtFunction("CheckInstance")
     val throwExceptionFunction = importRtFunction("ThrowException")
+    val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
     val usedFunctions = mutableListOf<LLVMValueRef>()
+    val staticInitializers = mutableListOf<LLVMValueRef>()
+    val fileInitializers = mutableListOf<IrElement>()
 }

@@ -18,7 +18,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
         val descriptor = declaration.descriptor
         if (currentFunction == descriptor) return
-        variableIndex = 0
         currentFunction = declaration.descriptor
         val fn = declaration.descriptor.llvmFunction
         prologueBb = LLVMAppendBasicBlock(fn, "prologue")
@@ -34,15 +33,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     fun fields(descriptor: ClassDescriptor):List<PropertyDescriptor> = descriptor.fields
-
-    fun newVar():String = currentFunction!!.tmpVariable()
-
-    private var variableIndex:Int = 0
-    private var FunctionDescriptor.tmpVariableIndex: Int
-        get() = variableIndex
-        set(i:Int) { variableIndex = i}
-
-    fun FunctionDescriptor.tmpVariable():String = "tmp_${tmpVariableIndex++}"
 
     private var prologueBb: LLVMBasicBlockRef? = null
     private var entryBb: LLVMBasicBlockRef? = null
@@ -143,14 +133,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
 
 
-    fun basicBlock(name: String = "label_"): LLVMBasicBlockRef =
-            LLVMAppendBasicBlock(currentFunction!!.llvmFunction, name)!!
-
-    fun basicBlock(name: String, code: () -> Unit) = basicBlock(name).apply {
-        appendingTo(this) {
-            code()
-        }
-    }
+    fun basicBlock(function: LLVMValueRef, name: String = "label_"): LLVMBasicBlockRef =
+            LLVMAppendBasicBlock(function, name)!!
 
     fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction)
 
@@ -192,9 +176,10 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     inner class PositionHolder {
         private val builder: LLVMBuilderRef = LLVMCreateBuilder()!!
 
+
         fun getBuilder(): LLVMBuilderRef {
             if (isAfterTerminator) {
-                positionAtEnd(basicBlock("unreachable"))
+                positionAtEnd(basicBlock(currentFunction!!.llvmFunction, "unreachable"))
             }
 
             return builder
