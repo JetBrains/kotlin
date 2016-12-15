@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
 
     generateCollectionsAPI(outDir)
     generateCollectionsJsAPI(jsCoreDir)
-    generateCommonAPI(baseDir.resolve("out/src/stdlib/common").apply { mkdirs() })
+    generateCommonAPI(baseDir.resolve("libraries/stdlib/common/src/generated"))
 
 }
 
