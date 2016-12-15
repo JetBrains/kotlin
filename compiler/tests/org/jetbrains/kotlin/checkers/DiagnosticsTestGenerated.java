@@ -4417,6 +4417,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/coroutines/restrictSuspension")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class RestrictSuspension extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInRestrictSuspension() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/restrictSuspension"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("allMembersAllowed.kt")
+                public void testAllMembersAllowed() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/restrictSuspension/allMembersAllowed.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensions.kt")
+                public void testExtensions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/restrictSuspension/extensions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("notRelatedFun.kt")
+                public void testNotRelatedFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/restrictSuspension/notRelatedFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("sameInstance.kt")
+                public void testSameInstance() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/restrictSuspension/sameInstance.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleForbidden.kt")
+                public void testSimpleForbidden() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/restrictSuspension/simpleForbidden.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

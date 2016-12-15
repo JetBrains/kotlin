@@ -55,4 +55,6 @@ public val SUSPENDED: Any? = Any()
  * receiver only and are restricted from calling arbitrary suspension functions.
  */
 @SinceKotlin("1.1")
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
 public annotation class RestrictSuspension
