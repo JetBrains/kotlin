@@ -16,6 +16,8 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
+import com.intellij.psi.PsiCodeBlock
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -38,6 +40,7 @@ open class KotlinUMethod(
         override val containingElement: UElement?
 ) : UMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
+
     private val kotlinOrigin = (psi.originalElement as KtLightElement<*, *>).kotlinOrigin
 
     override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
@@ -57,6 +60,10 @@ open class KotlinUMethod(
 
     override val isOverride: Boolean
         get() = (kotlinOrigin as? KtCallableDeclaration)?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
+
+    override fun getBody(): PsiCodeBlock? = super.getBody()
+
+    override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
 
     companion object {
         fun create(psi: KtLightMethod, containingElement: UElement?) = when (psi) {

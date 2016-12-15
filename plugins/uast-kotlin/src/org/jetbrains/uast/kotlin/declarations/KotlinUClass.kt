@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
@@ -32,6 +33,10 @@ class KotlinUClass private constructor(
 ) : AbstractJavaUClass(), PsiClass by psi {
     val ktClass = psi.kotlinOrigin
     override val psi = unwrap<UClass, PsiClass>(psi)
+
+    override fun getOriginalElement(): PsiElement? {
+        return super.getOriginalElement()
+    }
 
     override val uastAnchor: UElement
         get() = UIdentifier(psi.nameIdentifier, this)
@@ -85,6 +90,10 @@ class KotlinUAnonymousClass(
         override val containingElement: UElement?
 ) : AbstractJavaUClass(), UAnonymousClass, PsiAnonymousClass by psi {
     override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
+
+    override fun getOriginalElement(): PsiElement? {
+        return super<AbstractJavaUClass>.getOriginalElement()
+    }
 
     override val uastAnchor: UElement?
         get() {

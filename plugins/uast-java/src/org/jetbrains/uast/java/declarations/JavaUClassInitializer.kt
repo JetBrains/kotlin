@@ -17,6 +17,8 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiClassInitializer
+import com.intellij.psi.PsiCodeBlock
+import com.intellij.psi.PsiElement
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 
@@ -25,6 +27,14 @@ class JavaUClassInitializer(
         override val containingElement: UElement?
 ) : UClassInitializer, JavaUElementWithComments, PsiClassInitializer by psi {
     override val psi = unwrap<UClassInitializer, PsiClassInitializer>(psi)
+
+    override fun getBody(): PsiCodeBlock {
+        return super.getBody()
+    }
+
+    override fun getOriginalElement(): PsiElement? {
+        return super.getOriginalElement()
+    }
 
     override val uastAnchor: UElement?
         get() = null

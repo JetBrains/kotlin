@@ -44,7 +44,15 @@ open class JavaUVariable(
         override val containingElement: UElement?
 ) : AbstractJavaUVariable(), UVariable, PsiVariable by psi {
     override val psi = unwrap<UVariable, PsiVariable>(psi)
-    
+
+    override fun getInitializer(): PsiExpression? {
+        return super<AbstractJavaUVariable>.getInitializer()
+    }
+
+    override fun getOriginalElement(): PsiElement? {
+        return super<AbstractJavaUVariable>.getOriginalElement()
+    }
+
     companion object {
         fun create(psi: PsiVariable, containingElement: UElement?): UVariable {
             return when (psi) {
@@ -63,6 +71,14 @@ open class JavaUParameter(
         override val containingElement: UElement?
 ) : AbstractJavaUVariable(), UParameter, PsiParameter by psi {
     override val psi = unwrap<UParameter, PsiParameter>(psi)
+
+    override fun getInitializer(): PsiExpression? {
+        return super<AbstractJavaUVariable>.getInitializer()
+    }
+
+    override fun getOriginalElement(): PsiElement? {
+        return super<AbstractJavaUVariable>.getOriginalElement()
+    }
 }
 
 open class JavaUField(
@@ -70,6 +86,14 @@ open class JavaUField(
         override val containingElement: UElement?
 ) : AbstractJavaUVariable(), UField, PsiField by psi {
     override val psi = unwrap<UField, PsiField>(psi)
+
+    override fun getInitializer(): PsiExpression? {
+        return super<AbstractJavaUVariable>.getInitializer()
+    }
+
+    override fun getOriginalElement(): PsiElement? {
+        return super<AbstractJavaUVariable>.getOriginalElement()
+    }
 }
 
 open class JavaULocalVariable(
@@ -77,6 +101,14 @@ open class JavaULocalVariable(
         override val containingElement: UElement?
 ) : AbstractJavaUVariable(), ULocalVariable, PsiLocalVariable by psi {
     override val psi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
+
+    override fun getInitializer(): PsiExpression? {
+        return super<AbstractJavaUVariable>.getInitializer()
+    }
+
+    override fun getOriginalElement(): PsiElement? {
+        return super<AbstractJavaUVariable>.getOriginalElement()
+    }
 }
 
 open class JavaUEnumConstant(
@@ -84,6 +116,14 @@ open class JavaUEnumConstant(
         override val containingElement: UElement?
 ) : AbstractJavaUVariable(), UEnumConstant, PsiEnumConstant by psi {
     override val psi = unwrap<UEnumConstant, PsiEnumConstant>(psi)
+
+    override fun getInitializer(): PsiExpression? {
+        return super<AbstractJavaUVariable>.getInitializer()
+    }
+
+    override fun getOriginalElement(): PsiElement? {
+        return super<AbstractJavaUVariable>.getOriginalElement()
+    }
 
     override val kind: UastCallKind
         get() = UastCallKind.CONSTRUCTOR_CALL
