@@ -41,6 +41,7 @@ internal open class KotlinTasksProvider {
             project.tasks.create(name, KotlinCompileCommon::class.java).apply {
                 this.sourceSetName = sourceSetName
                 friendTaskName = taskToFriendTaskMapper[this]
+                mapKotlinTaskProperties(project, this)
             }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =

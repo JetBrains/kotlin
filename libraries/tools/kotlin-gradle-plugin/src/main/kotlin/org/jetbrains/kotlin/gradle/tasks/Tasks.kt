@@ -105,12 +105,20 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
         sourceRoots.log(this.name, logger)
         val args = populateCompilerArguments()
+        args.setupCoroutineSupportArgs()
+
         compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 
     internal abstract fun getSourceRoots(): SourceRoots
     internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
+
+    private fun CommonCompilerArguments.setupCoroutineSupportArgs() {
+        coroutinesEnable = coroutines == CoroutineSupport.ENABLED
+        coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
+        coroutinesError = coroutines == CoroutineSupport.DISABLED
+    }
 }
 
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
@@ -185,12 +193,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         sourceRoots as SourceRoots.ForJvm
 
         val outputDir = destinationDir
-
-        args.coroutinesEnable = coroutines == CoroutineSupport.ENABLED
-        args.coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
-        args.coroutinesError = coroutines == CoroutineSupport.DISABLED
-
-        logger.warn("Using kotlin.coroutines=${coroutines.compilerArgument}")
 
         if (!incremental) {
             anyClassesCompiled = true
@@ -356,10 +358,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
         args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
-
-        args.coroutinesEnable = coroutines == CoroutineSupport.ENABLED
-        args.coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
-        args.coroutinesError = coroutines == CoroutineSupport.DISABLED
 
         if (args.outputFile == null) {
             args.outputFile = defaultOutputFile.canonicalPath

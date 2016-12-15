@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 import kotlin.reflect.KMutableProperty1
 
-fun mapKotlinTaskProperties(project: Project, task: KotlinCompile) {
+fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
     propertyMappings.forEach { it.apply(project, task) }
 
     val localPropertiesFile = project.rootProject.file("local.properties")
@@ -33,26 +34,26 @@ fun mapKotlinTaskProperties(project: Project, task: KotlinCompile) {
 }
 
 private val propertyMappings = listOf(
-        KotlinPropertyMapping("kotlin.incremental", KotlinCompile::incremental, String::toBoolean),
-        KotlinPropertyMapping("kotlin.coroutines", KotlinCompile::coroutines) { CoroutineSupport.byCompilerArgument(it) }
+        KotlinPropertyMapping("kotlin.incremental", AbstractKotlinCompile<*>::incremental, String::toBoolean),
+        KotlinPropertyMapping("kotlin.coroutines", AbstractKotlinCompile<*>::coroutines) { CoroutineSupport.byCompilerArgument(it) }
 )
 
 private class KotlinPropertyMapping<T>(
         private val projectPropName: String,
-        private val taskProperty: KMutableProperty1<KotlinCompile, T>,
+        private val taskProperty: KMutableProperty1<AbstractKotlinCompile<*>, T>,
         private val transform: (String) -> T
 ) {
-    fun apply(project: Project, task: KotlinCompile) {
+    fun apply(project: Project, task: AbstractKotlinCompile<*>) {
         if (!project.hasProperty(projectPropName)) return
 
         setPropertyValue(task, project.property(projectPropName))
     }
 
-    fun apply(properties: Properties, task: KotlinCompile) {
+    fun apply(properties: Properties, task: AbstractKotlinCompile<*>) {
         setPropertyValue(task, properties.getProperty(projectPropName))
     }
 
-    private fun setPropertyValue(task: KotlinCompile, value: Any?) {
+    private fun setPropertyValue(task: AbstractKotlinCompile<*>, value: Any?) {
         if (value !is String) return
 
         val transformedValue = transform(value) ?: return
