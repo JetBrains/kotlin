@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReified
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -58,7 +59,11 @@ internal class KFunctionImpl private constructor(
 
     override val name: String get() = descriptor.name.asString()
 
-    private fun isDeclared(): Boolean = Visibilities.isPrivate(descriptor.visibility)
+    private fun isPrivateInBytecode(): Boolean =
+            Visibilities.isPrivate(descriptor.visibility) ||
+            descriptor.isInlineOnlyOrReified()
+
+    private fun isDeclared(): Boolean = isPrivateInBytecode()
 
     override val caller: FunctionCaller<*> by ReflectProperties.lazySoft caller@ {
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
