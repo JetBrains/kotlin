@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.android.builder.model.SourceProvider
-import com.android.tools.idea.gradle.AndroidGradleModel
+import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
