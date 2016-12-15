@@ -1668,6 +1668,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/OptionalParameters.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("SuspendFunction.kt")
+            public void testSuspendFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/SuspendFunction.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/inStringLiterals")

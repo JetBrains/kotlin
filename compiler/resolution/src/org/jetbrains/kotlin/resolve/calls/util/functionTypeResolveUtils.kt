@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
-import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -43,7 +43,7 @@ fun createValueParametersForInvokeInFunctionType(
 }
 
 fun getValueParametersCountFromFunctionType(type: KotlinType): Int {
-    assert(type.isFunctionType) { "Not a function type: $type" }
+    assert(type.isBuiltinFunctionalType) { "Not a function type: $type" }
     // Function type arguments = receiver? + parameters + return-type
-    return type.arguments.size - (if (type.isExtensionFunctionType) 1 else 0) - 1
+    return type.arguments.size - (if (type.isBuiltinExtensionFunctionalType) 1 else 0) - 1
 }

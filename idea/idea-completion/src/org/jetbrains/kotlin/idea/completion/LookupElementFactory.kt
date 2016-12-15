@@ -23,6 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
@@ -138,7 +139,7 @@ class LookupElementFactory(
         val lastParameter = descriptor.valueParameters.lastOrNull() ?: return
         if (!descriptor.valueParameters.all { it == lastParameter || it.hasDefaultValue() }) return
 
-        if (lastParameter.original.type.isFunctionType) {
+        if (lastParameter.original.type.isBuiltinFunctionalType) {
             val isSingleParameter = descriptor.valueParameters.size == 1
 
             val parameterType = lastParameter.type
