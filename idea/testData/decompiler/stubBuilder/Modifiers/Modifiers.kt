@@ -1,4 +1,5 @@
 package test
+import kotlin.coroutines.*
 
 data class Modifiers(val x: Int) {
     external fun extFun()
@@ -20,5 +21,5 @@ data class Modifiers(val x: Int) {
 
     suspend fun suspend(x: Continuation<Int>) {}
 
-    fun builder(coroutine c: Any.() -> Continuation<Unit>) {}
+    fun builder(c: suspend Any.() -> Unit) {}
 }

@@ -1,9 +1,8 @@
 package test
 class Controller {
-    suspend fun suspendFun(x: Continuation<String>) {}
-    operator fun handleResult(x: Int, y: Continuation<Nothing>) {}
+    suspend fun suspendFun() {}
 }
 
-fun builder(coroutine c: Controller.() -> Continuation<Unit>) {
+fun builder(c: suspend Controller.() -> Unit) {
 
 }
