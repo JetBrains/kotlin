@@ -643,35 +643,45 @@
             <proguard configuration="${basedir}/compiler/compiler.pro"/>
         </sequential>
 
-        <jar jarfile="${output}/kotlin-compiler-for-maven.jar" duplicate="preserve">
-            <patternset id="lib.metainf.patternset">
-                <include name="**"/>
-                <exclude name="META-INF/build.txt"/>
-                <exclude name="META-INF/MANIFEST.MF"/>
-            </patternset>
+        <pack-compiler-for-maven/>
+    </target>
 
-            <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
-            <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
-            <zipfileset src="${bootstrap.runtime}">
-                <patternset refid="lib.metainf.patternset"/>
-            </zipfileset>
-            <zipfileset src="${bootstrap.reflect}">
-                <patternset refid="lib.metainf.patternset"/>
-            </zipfileset>
-            <zipfileset src="${bootstrap.script.runtime}">
-                <patternset refid="lib.metainf.patternset"/>
-            </zipfileset>
+    <macrodef name="pack-compiler-for-maven">
+        <sequential>
+            <jar jarfile="${output}/kotlin-compiler-for-maven.jar" duplicate="preserve">
+                <patternset id="lib.metainf.patternset">
+                    <include name="**"/>
+                    <exclude name="META-INF/build.txt"/>
+                    <exclude name="META-INF/MANIFEST.MF"/>
+                </patternset>
 
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+                <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
+                <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
+                <zipfileset src="${bootstrap.runtime}">
+                    <patternset refid="lib.metainf.patternset"/>
+                </zipfileset>
+                <zipfileset src="${bootstrap.reflect}">
+                    <patternset refid="lib.metainf.patternset"/>
+                </zipfileset>
+                <zipfileset src="${bootstrap.script.runtime}">
+                    <patternset refid="lib.metainf.patternset"/>
+                </zipfileset>
 
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
+                <manifest>
+                    <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
-            </manifest>
-        </jar>
+                    <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                    <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
+                    <attribute name="Implementation-Version" value="${build.number}"/>
+
+                    <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
+
+    <target name="compiler-for-maven">
+        <pack-compiler-for-maven/>
     </target>
 
     <target name="kotlin-build-common">
