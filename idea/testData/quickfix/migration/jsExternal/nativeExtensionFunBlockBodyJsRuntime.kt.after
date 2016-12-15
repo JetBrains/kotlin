@@ -1,0 +1,6 @@
+// "Fix with 'asDynamic'" "true"
+
+class TS
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun TS.normalizePath(path: String): String = asDynamic().normalizePath(path)

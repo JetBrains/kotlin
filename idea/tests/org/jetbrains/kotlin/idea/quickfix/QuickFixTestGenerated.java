@@ -6086,6 +6086,57 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/jsExternal")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsExternal extends AbstractQuickFixTest {
+            public void testAllFilesPresentInJsExternal() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/jsExternal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("externalExtensionFunJsRuntime.kt")
+            public void testExternalExtensionFunJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/externalExtensionFunJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("externalExtensionFunParamsJsRuntime.kt")
+            public void testExternalExtensionFunParamsJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/externalExtensionFunParamsJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("externalExtensionVarJsRuntime.kt")
+            public void testExternalExtensionVarJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/externalExtensionVarJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeExtensionFunBlockBodyJsRuntime.kt")
+            public void testNativeExtensionFunBlockBodyJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionFunBlockBodyJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeExtensionFunJsRuntime.kt")
+            public void testNativeExtensionFunJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionFunJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeExtensionFunParamsJsRuntime.kt")
+            public void testNativeExtensionFunParamsJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionFunParamsJsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nativeExtensionVaslJsRuntime.kt")
+            public void testNativeExtensionVaslJsRuntime() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/jsExternal/nativeExtensionVaslJsRuntime.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/missingConstructorKeyword")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

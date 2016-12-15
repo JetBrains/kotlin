@@ -1,0 +1,9 @@
+// "Fix with 'asDynamic'" "true"
+
+class A
+
+inline var A.baz: String
+    get() = asDynamic().baz
+    set(value) {
+        asDynamic().baz = value
+    }

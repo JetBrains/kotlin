@@ -1,0 +1,6 @@
+// "Fix with 'asDynamic'" "true"
+
+class A
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun A.foo(): Int = asDynamic().foo()
