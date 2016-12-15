@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.android.builder.model.SourceProvider
-import com.android.tools.idea.gradle.AndroidGradleModel
+import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -33,11 +33,10 @@ import org.jetbrains.kotlin.android.synthetic.res.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
     override val androidModule: AndroidModule?
-        get() = AndroidFacet.getInstance(module)?.let { getAndroidModuleInfo(it) }
+        get() = module.androidFacet?.toAndroidModuleInfo()
 
     @Volatile
     private var _moduleData: CachedValue<AndroidModuleData>? = null
@@ -49,9 +48,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         else {
             if (_moduleData == null) {
                 _moduleData = cachedValue(project) {
-                    CachedValueProvider.Result.create(
-                            super.getModuleData(),
-                            getPsiTreeChangePreprocessor(), ProjectRootModificationTracker.getInstance(project))
+                    CachedValueProvider.Result.create(super.getModuleData(), getPsiTreeChangePreprocessor())
                 }
             }
         }
@@ -59,20 +56,19 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
     }
 
     private fun getPsiTreeChangePreprocessor(): PsiTreeChangePreprocessor {
-        return project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).firstIsInstance<AndroidPsiTreeChangePreprocessor>()
+        return project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    override fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup {
-        val layouts = layoutGroup.layouts.map { layout ->
-            val resources = arrayListOf<AndroidResource>()
-            layout.accept(AndroidXmlVisitor { id, widgetType, attribute ->
-                resources += parseAndroidResource(id, widgetType, attribute.valueElement)
-            })
-            AndroidLayout(resources)
+    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
+        val widgets = arrayListOf<AndroidResource>()
+        val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
+            widgets += parseAndroidResource(id, widgetType, attribute.valueElement)
         }
 
-        return AndroidLayoutGroup(layoutGroup.name, layouts)
+        files.forEach { it.accept(visitor) }
+        return widgets
     }
+
 
     override fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> {
         val fqPath = propertyDescriptor.fqNameUnsafe.pathSegments()
@@ -82,7 +78,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
             val layoutNamePosition = SYNTHETIC_PACKAGE_PATH_LENGTH + (if (defaultVariant) 0 else 1)
             val layoutName = fqPath[layoutNamePosition].asString()
 
-            val layoutFiles = variantData.layouts[layoutName] ?: return null
+            val layoutFiles = variantData[layoutName] ?: return null
             if (layoutFiles.isEmpty()) return null
 
             val propertyName = propertyDescriptor.name.asString()
@@ -96,7 +92,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
             return attributes
         }
 
-        for (variantData in getModuleData().variants) {
+        for (variantData in getModuleData()) {
             if (variantData.variant.isMainVariant && fqPath.size == SYNTHETIC_PACKAGE_PATH_LENGTH + 2) {
                 handle(variantData, true)?.let { return it }
             }
@@ -108,8 +104,10 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         return listOf()
     }
 
-    private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.canonicalPath })
+    private val Module.androidFacet: AndroidFacet?
+        get() = AndroidFacet.getInstance(this)
 
+    /*
     private fun getAndroidModuleInfo(androidFacet: AndroidFacet): AndroidModule? {
         if (androidFacet.module.androidExtensionsIsExperimental) {
             return getAndroidModuleInfoExperimental(androidFacet)
@@ -160,5 +158,31 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         }
 
         return AndroidModule(applicationPackage, variants)
+    }
+    */
+
+    private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.absolutePath })
+
+    private fun AndroidFacet.toAndroidModuleInfo(): AndroidModule? {
+        val applicationPackage = manifest?.`package`?.toString()
+
+        if (applicationPackage != null) {
+            val mainVariant = mainSourceProvider.toVariant()
+
+            val method = try { this::class.java.getMethod("getFlavorSourceProviders") } catch (e: NoSuchMethodException) { null }
+            val variants: List<AndroidVariant>? = if (method != null) {
+                val sourceProviders = method.invoke(this) as List<SourceProvider>?
+                sourceProviders?.map { it.toVariant() } ?: listOf()
+            }
+            else {
+                val model = AndroidModuleModel.get(module)
+                model?.flavorSourceProviders?.map { it.toVariant() } ?: listOf(this.mainSourceProvider.toVariant())
+            }
+
+            if (variants != null) {
+                return AndroidModule(applicationPackage, listOf(mainVariant) + variants)
+            }
+        }
+        return null
     }
 }
