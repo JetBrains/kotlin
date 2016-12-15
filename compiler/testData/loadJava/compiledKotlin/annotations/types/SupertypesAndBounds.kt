@@ -1,3 +1,5 @@
+//ALLOW_AST_ACCESS
+
 package test
 
 annotation class A

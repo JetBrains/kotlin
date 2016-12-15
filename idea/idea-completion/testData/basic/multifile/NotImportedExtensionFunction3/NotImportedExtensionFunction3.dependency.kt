@@ -17,3 +17,5 @@ fun Function1<String, Unit>.helloFun5() {
 
 fun Any.helloAny() {
 }
+
+// ALLOW_AST_ACCESS

@@ -1,3 +1,5 @@
+//ALLOW_AST_ACCESS
+
 package test
 
 fun test1(): suspend () -> Unit = null!!
