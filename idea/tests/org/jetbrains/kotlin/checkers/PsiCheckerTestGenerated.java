@@ -887,12 +887,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
-        @TestMetadata("coroutineApplicability.kt")
-        public void testCoroutineApplicability() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/coroutineApplicability.kt");
-            doTestWithInfos(fileName);
-        }
-
         @TestMetadata("multipleResolvedCalls.kt")
         public void testMultipleResolvedCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/multipleResolvedCalls.kt");
