@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.psi.stubs.IndexSink
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 import org.jetbrains.kotlin.util.aliasImportMap
@@ -24,11 +25,14 @@ import org.jetbrains.kotlin.util.aliasImportMap
 fun <TDeclaration : KtCallableDeclaration> indexTopLevelExtension(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
     if (stub.isExtension()) {
         val declaration = stub.psi
-        declaration.receiverTypeReference!!.typeElement?.index(declaration, sink)
+        val containingTypeReference = declaration.receiverTypeReference!!
+        containingTypeReference.typeElement?.index(declaration, sink, containingTypeReference)
     }
 }
 
-private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(declaration: TDeclaration, sink: IndexSink) {
+private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(
+        declaration: TDeclaration, sink: IndexSink, containingTypeReference: KtTypeReference
+) {
     fun occurrence(typeName: String) {
         val name = declaration.name ?: return
         sink.occurrence(KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE.key,
@@ -43,7 +47,7 @@ private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(declarati
             if (typeParameter != null) {
                 val bound = typeParameter.extendsBound
                 if (bound != null) {
-                    bound.typeElement?.index(declaration, sink)
+                    bound.typeElement?.index(declaration, sink, containingTypeReference)
                 }
                 else {
                     occurrence("Any")
@@ -56,11 +60,16 @@ private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(declarati
             aliasImportMap()[referenceName].forEach { occurrence(it) }
         }
 
-        is KtNullableType -> innerType?.index(declaration, sink)
+        is KtNullableType -> innerType?.index(declaration, sink, containingTypeReference)
 
         is KtFunctionType -> {
             val arity = parameters.size + (if (receiverTypeReference != null) 1 else 0)
-            occurrence("Function$arity")
+            val suspendPrefix =
+                    if (containingTypeReference.modifierList?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true)
+                        "Suspend"
+                    else
+                        ""
+            occurrence("${suspendPrefix}Function$arity")
         }
 
         is KtDynamicType -> occurrence("Any")
