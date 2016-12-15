@@ -1,10 +1,14 @@
-public final class Controller {
-    private field wasHandleResultCalled: boolean
-    public method <init>(): void
-    public final method getWasHandleResultCalled(): boolean
-    public final method handleResult(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
-    public final method setWasHandleResultCalled(p0: boolean): void
-    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+public final class CoroutineUtilKt {
+    public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+    public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+}
+
+
+public final class EmptyContinuation {
+    public final static field INSTANCE: EmptyContinuation
+    private method <init>(): void
+    public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
 }
 
 
@@ -14,4 +18,5 @@ public final class LastStementAssignmentKt {
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.NotNull method getVarWithCustomSetter(): java.lang.String
     public final static method setVarWithCustomSetter(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final static @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }

@@ -4,10 +4,24 @@ public final class Controller {
 }
 
 
+public final class CoroutineUtilKt {
+    public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+    public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+}
+
+
 public final class EmptyClosureKt {
     private static field result: int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void
     public final static method getResult(): int
     public final static method setResult(p0: int): void
+}
+
+
+public final class EmptyContinuation {
+    public final static field INSTANCE: EmptyContinuation
+    private method <init>(): void
+    public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
 }
