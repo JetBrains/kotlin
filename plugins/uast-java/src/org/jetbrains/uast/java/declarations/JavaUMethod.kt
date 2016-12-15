@@ -16,9 +16,7 @@
 
 package org.jetbrains.uast.java
 
-import com.intellij.psi.PsiAnnotationMethod
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 
@@ -27,7 +25,15 @@ open class JavaUMethod(
         override val containingElement: UElement?
 ) : UMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi = unwrap<UMethod, PsiMethod>(psi)
-    
+
+    override fun getBody(): PsiCodeBlock? {
+        return super.getBody()
+    }
+
+    override fun getOriginalElement(): PsiElement? {
+        return super.getOriginalElement()
+    }
+
     override val uastBody by lz {
         val body = psi.body ?: return@lz null
         getLanguagePlugin().convertElement(body, this) as? UExpression

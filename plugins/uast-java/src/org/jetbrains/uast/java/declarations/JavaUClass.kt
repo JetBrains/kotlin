@@ -18,6 +18,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 
@@ -57,8 +58,12 @@ abstract class AbstractJavaUClass : UClass, JavaUElementWithComments {
     override fun hashCode() = psi.hashCode()
 }
 
-class JavaUClass private constructor(psi: PsiClass, override val containingElement: UElement?) : AbstractJavaUClass(), PsiClass by psi {
-    override val psi = unwrap<UClass, PsiClass>(psi)
+class JavaUClass private constructor(psiClass: PsiClass, override val containingElement: UElement?) : AbstractJavaUClass(), PsiClass by psiClass {
+    override val psi = unwrap<UClass, PsiClass>(psiClass)
+
+    override fun getOriginalElement(): PsiElement? {
+        return super.getOriginalElement()
+    }
 
     companion object {
         fun create(psi: PsiClass, containingElement: UElement?): UClass {
@@ -75,4 +80,8 @@ class JavaUAnonymousClass(
         override val containingElement: UElement?
 ) : AbstractJavaUClass(), UAnonymousClass, PsiAnonymousClass by psi {
     override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
+
+    override fun getOriginalElement(): PsiElement? {
+        return super<AbstractJavaUClass>.getOriginalElement()
+    }
 }
