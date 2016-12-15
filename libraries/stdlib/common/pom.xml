@@ -16,6 +16,7 @@
 
     <properties>
         <kotlin-home>${kotlin-dist}/kotlinc</kotlin-home>
+        <pp-profile>JS</pp-profile>
     </properties>
 
     <build>
@@ -29,6 +30,33 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
+                        <id>common-sources</id>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <target>
+                                <delete dir="${basedir}/target/common-sources" failonerror="false"/>
+                                <mkdir dir="${basedir}/target/common-sources"/>
+                                <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true">
+                                    <classpath>
+                                        <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
+                                    </classpath>
+                                    <assertions>
+                                        <enable/>
+                                    </assertions>
+                                    <arg value="-cp"/>
+                                    <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                                    <arg value="org.jetbrains.kotlin.preprocessor.PreprocessorCLI"/>
+                                    <arg value="${basedir}/../src/kotlin"/>
+                                    <arg value="${basedir}/target/common-sources"/>
+                                    <arg value="${pp-profile}"/>
+                                </java>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>serialize-declarations</id>
                         <phase>compile</phase>
                         <configuration>
@@ -41,8 +69,8 @@
 
                                 <path id="src.path">
                                     <union>
-                                        <fileset dir="${basedir}/../src/kotlin">
-                                            <include name="internal/Annotations.kt" />
+                                        <fileset dir="${basedir}/target/common-sources">
+                                            <include name="**/*.kt" />
                                         </fileset>
 
                                         <fileset dir="${basedir}/src">
