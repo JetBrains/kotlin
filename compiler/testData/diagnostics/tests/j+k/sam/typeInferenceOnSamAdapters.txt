@@ -1,0 +1,19 @@
+package
+
+public /*synthesized*/ fun </*0*/ T : kotlin.Any!, /*1*/ U : kotlin.Any!, /*2*/ R : kotlin.Any!> BiFunction(/*0*/ function: (t: T!, u: U!) -> R!): BiFunction<T, U, R>
+public fun main(): kotlin.Unit
+
+public open class A</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> {
+    public constructor A</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ key: K!, /*1*/ remappingFunction: BiFunction<in K!, in V!, out V!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface BiFunction</*0*/ T : kotlin.Any!, /*1*/ U : kotlin.Any!, /*2*/ R : kotlin.Any!> {
+    public abstract fun apply(/*0*/ t: T!, /*1*/ u: U!): R!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
