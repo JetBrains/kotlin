@@ -36,6 +36,12 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("compatibleProperties")
+    public void testCompatibleProperties() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/compatibleProperties/");
+        doTest(fileName);
+    }
+
     @TestMetadata("genericDeclarations")
     public void testGenericDeclarations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/genericDeclarations/");

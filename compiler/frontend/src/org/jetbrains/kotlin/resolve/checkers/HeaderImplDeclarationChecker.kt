@@ -142,9 +142,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
             is FunctionDescriptor -> scope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             is PropertyDescriptor -> scope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             else -> throw AssertionError("Unsupported declaration: $this")
-        }.filter {
-            it.module == myModule // TODO: only obtain descriptors from our module to start with
-        }
+        } // TODO: only obtain descriptors from our module to start with
     }
 
     fun ClassifierDescriptorWithTypeParameters.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptorWithTypeParameters> {
