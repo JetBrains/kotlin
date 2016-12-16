@@ -21,4 +21,5 @@ fun box(): String {
 
 // 1 GETSTATIC kotlin/Unit.INSTANCE : Lkotlin/Unit;
 // 1 GETSTATIC EmptyContinuation.INSTANCE
-// 2 GETSTATIC
+// 1 GETSTATIC kotlin/coroutines/CoroutineIntrinsics.INSTANCE
+// 3 GETSTATIC
