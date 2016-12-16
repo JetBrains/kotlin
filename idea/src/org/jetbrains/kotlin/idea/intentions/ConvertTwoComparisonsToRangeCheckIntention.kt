@@ -102,6 +102,7 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
 
     private fun KtExpression.getDecrementByOneString(): String? {
         val type = getType(analyze()) ?: return null
+        if (!KotlinBuiltIns.isInt(type) && !KotlinBuiltIns.isLong(type) && !KotlinBuiltIns.isShort(type) && !KotlinBuiltIns.isChar(type)) return null
 
         when (this) {
             is KtConstantExpression -> {
