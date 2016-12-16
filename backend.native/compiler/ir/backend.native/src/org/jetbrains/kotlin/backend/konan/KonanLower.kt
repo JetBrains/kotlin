@@ -27,7 +27,7 @@ internal class KonanLower(val context: Context) {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase("Autobox") {
-            Autoboxing(context).runOnFilePostfix(irFile)
+            Autoboxing(context).lower(irFile)
         }
     }
 }

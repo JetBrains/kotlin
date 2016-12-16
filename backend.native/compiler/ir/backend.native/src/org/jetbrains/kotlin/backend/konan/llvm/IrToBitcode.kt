@@ -1310,9 +1310,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateCast(tmpVariableName: String, value: IrTypeOperatorCall): LLVMValueRef {
         logger.log("evaluateCast               : ${ir2string(value)}")
-        assert(!KotlinBuiltIns.isPrimitiveType(value.type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
+        val type = value.typeOperand
+        assert(!KotlinBuiltIns.isPrimitiveType(type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
 
-        val dstDescriptor = TypeUtils.getClassDescriptor(value.type)                   // Get class descriptor for dst type.
+        val dstDescriptor = TypeUtils.getClassDescriptor(type)                         // Get class descriptor for dst type.
         val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
         val srcArg        = evaluateExpression(codegen.newVar(), value.argument)!!     // Evaluate src expression.
         val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, srcArg, codegen.newVar())   // Cast src to ObjInfoPtr.

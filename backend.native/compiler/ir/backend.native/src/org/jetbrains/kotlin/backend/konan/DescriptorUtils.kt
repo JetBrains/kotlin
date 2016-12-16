@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -45,7 +46,6 @@ internal val FunctionDescriptor.implementation: FunctionDescriptor
 private val intrinsicTypes = setOf(
         "kotlin.Unit",
         "kotlin.Boolean", "kotlin.Char",
-        "kotlin.Number",
         "kotlin.Byte", "kotlin.Short",
         "kotlin.Int", "kotlin.Long",
         "kotlin.Float", "kotlin.Double"
@@ -74,23 +74,42 @@ internal val ClassDescriptor.isArray: Boolean
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-private val konanInternal = FqName.fromSegments(listOf("konan", "internal"))
+private val konanInternalPackageName = FqName.fromSegments(listOf("konan", "internal"))
+
+/**
+ * @return `konan.internal` member scope
+ */
+internal val KonanBuiltIns.konanInternal: MemberScope
+    get() = this.builtInsModule.getPackage(konanInternalPackageName).memberScope
+
+/**
+ * @return built-in class `konan.internal.$name` or
+ * `null` if no such class is available (e.g. when compiling `link` test without stdlib).
+ *
+ * TODO: remove this workaround after removing compilation without stdlib.
+ */
+internal fun KonanBuiltIns.getKonanInternalClassOrNull(name: String): ClassDescriptor? {
+    val classifier = konanInternal.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+    return classifier as? ClassDescriptor
+}
 
 /**
  * @return built-in class `konan.internal.$name`
  */
-internal fun KonanBuiltIns.getKonanInternalClass(name: String): ClassDescriptor {
-    val classifier = this.builtInsModule
-            .getPackage(konanInternal).memberScope
-            .getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+internal fun KonanBuiltIns.getKonanInternalClass(name: String): ClassDescriptor =
+        getKonanInternalClassOrNull(name)!!
 
-    return classifier as ClassDescriptor
+internal fun KonanBuiltIns.getKonanInternalFunctions(name: String): List<FunctionDescriptor> {
+    return konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
 }
 
 private val UNBOUND_CALLABLE_REFERENCE = "UnboundCallableReference"
 
-internal val KonanBuiltIns.unboundCallableReferenceType: KotlinType
-    get() = this.getKonanInternalClass(UNBOUND_CALLABLE_REFERENCE).defaultType
+/**
+ * `konan.internal.UnboundCallableReference` type or `null` if it is not available.
+ */
+internal val KonanBuiltIns.unboundCallableReferenceTypeOrNull: KotlinType?
+    get() = this.getKonanInternalClassOrNull(UNBOUND_CALLABLE_REFERENCE)?.defaultType
 
 internal fun KotlinType.isUnboundCallableReference(): Boolean {
     val classDescriptor = TypeUtils.getClassDescriptor(this) ?: return false
