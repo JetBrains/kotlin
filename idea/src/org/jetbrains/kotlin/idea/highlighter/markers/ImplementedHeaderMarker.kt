@@ -34,7 +34,7 @@ private fun ModuleDescriptor.implementationsOf(descriptor: MemberDescriptor) =
         with (HeaderImplDeclarationChecker(this)) {
             when (descriptor) {
                 is CallableMemberDescriptor -> descriptor.findNamesakesFromTheSameModule().filter { it.isImpl }
-                is ClassDescriptor -> descriptor.findClassifiersFromTheSameModule().filter { it is ClassDescriptor && it.isImpl }
+                is ClassDescriptor -> descriptor.findClassifiersFromTheSameModule().filter { it.isImpl }
                 else -> emptyList()
             }
         }

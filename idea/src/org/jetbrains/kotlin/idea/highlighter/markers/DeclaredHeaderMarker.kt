@@ -35,7 +35,7 @@ private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor) =
             when (descriptor) {
                 is CallableMemberDescriptor ->
                     descriptor.findNamesakesFromTheSameModule().filter { it.isHeader }.firstOrNull()
-                is ClassDescriptor ->
+                is ClassifierDescriptorWithTypeParameters ->
                     descriptor.findClassifiersFromTheSameModule().filter { it is ClassDescriptor && it.isHeader }.firstOrNull()
                 else ->
                     null
