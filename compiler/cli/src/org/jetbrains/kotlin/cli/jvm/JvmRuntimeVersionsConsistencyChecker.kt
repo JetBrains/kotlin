@@ -42,8 +42,7 @@ object JvmRuntimeVersionsConsistencyChecker {
     private fun <T> T?.assertNotNull(message: () -> String): T =
             if (this == null) fatal(message()) else this
 
-    // TODO replace with ERROR after bootstrapping
-    private val VERSION_ISSUE_SEVERITY = CompilerMessageSeverity.WARNING
+    private val VERSION_ISSUE_SEVERITY = CompilerMessageSeverity.ERROR
 
     private const val META_INF = "META-INF"
     private const val MANIFEST_MF = "$META_INF/MANIFEST.MF"
