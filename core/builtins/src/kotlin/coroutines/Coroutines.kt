@@ -59,7 +59,7 @@ public interface ContinuationDispatcher {
 @SinceKotlin("1.1")
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class RestrictsSuspendExtensions
+public annotation class RestrictsSuspension
 
 /**
  * Contains intrinsic functions for coroutines.
