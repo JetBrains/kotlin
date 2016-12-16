@@ -13,8 +13,9 @@ struct InitNode {
     struct InitNode* next;
 };
 
-struct InitNode  initHeadNode;
-struct InitNode* initTailNode = &initHeadNode;
+static struct InitNode  initHeadNode;
+static struct InitNode* initTailNode = &initHeadNode;
+
 
 void InitGlobalVariables() {
     struct InitNode *currNode = initHeadNode.next;
@@ -22,6 +23,11 @@ void InitGlobalVariables() {
         currNode->init();
         currNode = currNode->next;
     }
+}
+
+extern "C" void appendToInitializersTail(struct InitNode *next) {
+    initTailNode->next = next;
+    initTailNode = next;
 }
 
 //--- Setup args --------------------------------------------------------------//

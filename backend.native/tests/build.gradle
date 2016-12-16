@@ -826,6 +826,10 @@ task lambda13(type: RunKonanTest) {
 }
 
 task initializers2(type: RunKonanTest) {
-    goldValue = "1\nA\nB\n"
+    goldValue = "init globalValue2\n" +
+                "init globalValue3\n" +
+                "1\n" +
+                "globalValue2\n" +
+                "globalValue3\n"
     source = "runtime/basic/initializers2.kt"
 }

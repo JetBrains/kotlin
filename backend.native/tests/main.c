@@ -19,7 +19,12 @@ void * resolve_symbol(char *name) {
     return symbol;
 }
 
+extern void InitMemory();
+extern void InitGlobalVariables();
+
 int
 main() {
+  InitMemory();
+  InitGlobalVariables();
   exit(run_test());
 }
