@@ -1,5 +1,7 @@
 package foo
 
 header class PlatformTest {
-    //val value: PlatformClass
+    val value: PlatformClass
 }
+
+class CommonTest(val commonClass: CommonClass)

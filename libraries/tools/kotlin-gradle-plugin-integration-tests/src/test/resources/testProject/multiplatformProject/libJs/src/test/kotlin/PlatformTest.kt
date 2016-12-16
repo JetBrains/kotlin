@@ -1,5 +1,5 @@
 package foo
 
 impl class PlatformTest {
-    //impl val value: PlatformClass = PlatformClass()
+    impl val value: PlatformClass = PlatformClass()
 }
