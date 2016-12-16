@@ -39,6 +39,15 @@ extern const TypeInfo* theThrowableTypeInfo;
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info);
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
 
+typedef void (*Initializer)();
+struct InitNode {
+    Initializer      init;
+    struct InitNode* next;
+};
+
+void AppendToInitializersTail(struct InitNode*);
+void InitGlobalVariables();
+
 #ifdef __cplusplus
 }
 #endif

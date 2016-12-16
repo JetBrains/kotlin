@@ -3,33 +3,6 @@
 #include "Natives.h"
 #include "Types.h"
 
-//--- Init global variables ---------------------------------------------------//
-
-typedef void (*Initializer)();
-struct InitNode;
-
-struct InitNode {
-    Initializer      init;
-    struct InitNode* next;
-};
-
-static struct InitNode  initHeadNode;
-static struct InitNode* initTailNode = &initHeadNode;
-
-
-void InitGlobalVariables() {
-    struct InitNode *currNode = initHeadNode.next;
-    while(currNode) {
-        currNode->init();
-        currNode = currNode->next;
-    }
-}
-
-extern "C" void appendToInitializersTail(struct InitNode *next) {
-    initTailNode->next = next;
-    initTailNode = next;
-}
-
 //--- Setup args --------------------------------------------------------------//
 
 ObjHeader* setupArgs(int argc, char** argv) {
