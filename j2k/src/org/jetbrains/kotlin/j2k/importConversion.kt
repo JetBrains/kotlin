@@ -58,8 +58,13 @@ private fun Converter.convertImport(fqName: FqName, ref: PsiJavaCodeReferenceEle
     if (!isOnDemand) {
         if (annotationConverter.isImportNotRequired(fqName)) return emptyList()
 
-        // If imported class has a kotlin analog, drop the import
-        if (JavaToKotlinClassMap.INSTANCE.isJavaPlatformClass(fqName)) return emptyList()
+
+        val mapped = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName)
+        mapped?.let {
+            // If imported class has a kotlin analog, drop the import if it is not nested
+            if (!it.isNestedClass) return emptyList()
+            return convertNonStaticImport(it.asSingleFqName(), false, null)
+        }
     }
 
     //TODO: how to detect compiled Kotlin here?

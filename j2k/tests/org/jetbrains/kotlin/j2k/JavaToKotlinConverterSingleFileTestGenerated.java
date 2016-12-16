@@ -2927,6 +2927,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("kt-6790.java")
+        public void testKt_6790() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-6790.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt-696.java")
         public void testKt_696() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-696.java");
