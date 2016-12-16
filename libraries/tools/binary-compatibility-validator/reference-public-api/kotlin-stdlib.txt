@@ -1715,6 +1715,29 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
+public final class kotlin/coroutines/CoroutinesLibraryKt {
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)Lkotlin/coroutines/Continuation;
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)Lkotlin/coroutines/Continuation;
+	public static synthetic fun createCoroutine$default (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)Lkotlin/coroutines/Continuation;
+	public static synthetic fun createCoroutine$default (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)Lkotlin/coroutines/Continuation;
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)V
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)V
+	public static synthetic fun startCoroutine$default (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)V
+	public static synthetic fun startCoroutine$default (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)V
+	public static final fun suspendCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation {
+	public static final field Companion Lkotlin/coroutines/SafeContinuation$Companion;
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public final fun getResult ()Ljava/lang/Object;
+	public fun resume (Ljava/lang/Object;)V
+	public fun resumeWithException (Ljava/lang/Throwable;)V
+}
+
+public final class kotlin/coroutines/SafeContinuation$Companion {
+}
+
 public final class kotlin/internal/PlatformImplementationsKt {
 	public static final fun platformCloseSuppressed (Ljava/io/Closeable;Ljava/lang/Throwable;)V
 }

@@ -184,8 +184,27 @@ public abstract interface class kotlin/coroutines/Continuation {
 	public abstract fun resumeWithException (Ljava/lang/Throwable;)V
 }
 
-public final class kotlin/coroutines/Suspend {
-	public static final field INSTANCE Lkotlin/coroutines/Suspend;
+public abstract interface class kotlin/coroutines/ContinuationDispatcher {
+	public abstract fun dispatchResume (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Z
+	public abstract fun dispatchResumeWithException (Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Z
+}
+
+public final class kotlin/coroutines/ContinuationDispatcher$DefaultImpls {
+	public static fun dispatchResume (Lkotlin/coroutines/ContinuationDispatcher;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Z
+	public static fun dispatchResumeWithException (Lkotlin/coroutines/ContinuationDispatcher;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Z
+}
+
+public final class kotlin/coroutines/CoroutineIntrinsics {
+	public static final field INSTANCE Lkotlin/coroutines/CoroutineIntrinsics;
+	public final fun getSUSPENDED ()Ljava/lang/Object;
+	public final fun suspendCoroutineOrReturn (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class kotlin/coroutines/CoroutinesKt {
+	public static final fun suspendWithCurrentContinuation (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface annotation class kotlin/coroutines/RestrictsSuspendExtensions : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/jvm/JvmClassMappingKt {
@@ -454,14 +473,15 @@ public class kotlin/jvm/internal/CollectionToArray {
 	public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
-public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
-	protected field _controller Ljava/lang/Object;
-	protected field label I
-	public fun <init> (I)V
-	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)V
-	public final fun getController ()Ljava/lang/Object;
+public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/RestrictedCoroutineImpl, kotlin/jvm/internal/DispatchedContinuation {
+	public fun <init> (ILkotlin/coroutines/Continuation;)V
+	public fun getDispatcher ()Lkotlin/coroutines/ContinuationDispatcher;
 	public fun resume (Ljava/lang/Object;)V
 	public fun resumeWithException (Ljava/lang/Throwable;)V
+}
+
+public abstract interface class kotlin/jvm/internal/DispatchedContinuation : kotlin/coroutines/Continuation {
+	public abstract fun getDispatcher ()Lkotlin/coroutines/ContinuationDispatcher;
 }
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {
@@ -846,6 +866,15 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
 }
 
+public abstract class kotlin/jvm/internal/RestrictedCoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
+	protected field completion Lkotlin/coroutines/Continuation;
+	protected field label I
+	public fun <init> (ILkotlin/coroutines/Continuation;)V
+	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
+	public fun resume (Ljava/lang/Object;)V
+	public fun resumeWithException (Ljava/lang/Throwable;)V
+}
+
 public final class kotlin/jvm/internal/ShortCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ShortCompanionObject;
 	public static final field MAX_VALUE S
@@ -1151,7 +1180,6 @@ public abstract interface class kotlin/reflect/KParameter : kotlin/reflect/KAnno
 	public abstract fun getKind ()Lkotlin/reflect/KParameter$Kind;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getType ()Lkotlin/reflect/KType;
-	public abstract fun isCoroutine ()Z
 	public abstract fun isOptional ()Z
 	public abstract fun isVararg ()Z
 }
