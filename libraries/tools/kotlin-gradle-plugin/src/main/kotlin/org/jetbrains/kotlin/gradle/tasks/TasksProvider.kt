@@ -22,27 +22,27 @@ import org.jetbrains.kotlin.gradle.plugin.TaskToFriendTaskMapper
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 
 internal open class KotlinTasksProvider {
-    fun createKotlinJVMTask(project: Project, name: String, sourceSetName: String): KotlinCompile {
-        return project.tasks.create(name, KotlinCompile::class.java).apply {
-            this.sourceSetName = sourceSetName
-            friendTaskName = taskToFriendTaskMapper[this]
-            mapKotlinTaskProperties(project, this)
-            outputs.upToDateWhen { isCacheFormatUpToDate }
-        }
-    }
+    fun createKotlinJVMTask(project: Project, name: String, sourceSetName: String): KotlinCompile =
+            project.tasks.create(name, KotlinCompile::class.java).apply {
+                configure(project, sourceSetName)
+                outputs.upToDateWhen { isCacheFormatUpToDate }
+            }
 
     fun createKotlinJSTask(project: Project, name: String, sourceSetName: String): Kotlin2JsCompile =
             project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
-                this.sourceSetName = sourceSetName
-                friendTaskName = taskToFriendTaskMapper[this]
+                configure(project, sourceSetName)
             }
 
     fun createKotlinCommonTask(project: Project, name: String, sourceSetName: String): KotlinCompileCommon =
             project.tasks.create(name, KotlinCompileCommon::class.java).apply {
-                this.sourceSetName = sourceSetName
-                friendTaskName = taskToFriendTaskMapper[this]
-                mapKotlinTaskProperties(project, this)
+                configure(project, sourceSetName)
             }
+
+    private fun AbstractKotlinCompile<*>.configure(project: Project, sourceSetName: String) {
+        this.sourceSetName = sourceSetName
+        this.friendTaskName = taskToFriendTaskMapper[this]
+        mapKotlinTaskProperties(project, this)
+    }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
             RegexTaskToFriendTaskMapper.Default()
