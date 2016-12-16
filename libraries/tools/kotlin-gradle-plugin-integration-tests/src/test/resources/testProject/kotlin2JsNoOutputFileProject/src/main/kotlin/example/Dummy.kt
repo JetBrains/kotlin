@@ -1,4 +1,6 @@
 package example
 
-class Dummy {}
+class Dummy {
+    fun f() {}
+}
 
