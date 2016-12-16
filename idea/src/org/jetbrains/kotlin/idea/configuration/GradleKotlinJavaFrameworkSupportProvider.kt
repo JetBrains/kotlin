@@ -47,6 +47,9 @@ class GradleKotlinJavaFrameworkSupportProvider : GradleFrameworkSupportProvider(
                 kotlinVersion = "1.1-SNAPSHOT"
                 KotlinWithGradleConfigurator.SNAPSHOT_REPOSITORY_SNIPPET
             }
+            is11Prerelease(kotlinVersion) -> {
+                KotlinWithGradleConfigurator.EAP_11_REPOSITORY_SNIPPET
+            }
             isEap(kotlinVersion) -> {
                 KotlinWithGradleConfigurator.EAP_REPOSITORY_SNIPPET
             }

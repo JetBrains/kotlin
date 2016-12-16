@@ -133,7 +133,11 @@ abstract class KotlinMavenConfigurator
             pom.addLibraryRepository(SNAPSHOT_REPOSITORY)
             pom.addPluginRepository(SNAPSHOT_REPOSITORY)
         }
-        if (isEap(version)) {
+        else if (is11Prerelease(version)) {
+            pom.addLibraryRepository(EAP_11_REPOSITORY)
+            pom.addPluginRepository(EAP_11_REPOSITORY)
+        }
+        else if (isEap(version)) {
             pom.addLibraryRepository(EAP_REPOSITORY)
             pom.addPluginRepository(EAP_REPOSITORY)
         }

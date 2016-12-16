@@ -47,6 +47,13 @@ val EAP_REPOSITORY = RepositoryDescription(
         "http://dl.bintray.com/kotlin/kotlin-eap",
         isSnapshot = false)
 
+@JvmField
+val EAP_11_REPOSITORY = RepositoryDescription(
+        "bintray.kotlin.eap",
+        "Bintray Kotlin 1.1 EAP Repository",
+        "http://dl.bintray.com/kotlin/kotlin-eap-1.1",
+        isSnapshot = false)
+
 fun isModuleConfigured(module: Module): Boolean {
     return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).any {
         it.getStatus(module) == ConfigureKotlinStatus.CONFIGURED
@@ -151,3 +158,6 @@ fun isEap(version: String): Boolean {
     return version.contains("rc") || version.contains("eap")
 }
 
+fun is11Prerelease(version: String): Boolean {
+    return Regex("1\\.1-[A-Za-z][A-Za-z0-9-]*").matches(version) && !version.startsWith("1.1-dev")
+}

@@ -137,15 +137,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         val repositoriesBlock = getRepositoriesBlock(file)
-        if (isSnapshot(version)) {
-            wasModified = wasModified or addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY_SNIPPET, repositoriesBlock)
-        }
-        else if (isEap(version)) {
-            wasModified = wasModified or addLastExpressionInBlockIfNeeded(EAP_REPOSITORY_SNIPPET, repositoriesBlock)
-        }
-        else if (!isRepositoryConfigured(repositoriesBlock)) {
-            wasModified = wasModified or addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, repositoriesBlock)
-        }
+        wasModified = wasModified or addRepository(repositoriesBlock, version)
 
         val dependenciesBlock = getDependenciesBlock(file)
         wasModified = wasModified or addExpressionInBlockIfNeeded(LIBRARY, dependenciesBlock, false)
@@ -195,6 +187,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         val SNAPSHOT_REPOSITORY_SNIPPET = "maven {\nurl '" + SNAPSHOT_REPOSITORY.url + "'\n}"
         val EAP_REPOSITORY_SNIPPET = "maven {\nurl '" + EAP_REPOSITORY.url + "'\n}"
+        val EAP_11_REPOSITORY_SNIPPET = "maven {\nurl '" + EAP_11_REPOSITORY.url + "'\n}"
 
         private val MAVEN_CENTRAL = "mavenCentral()\n"
         private val JCENTER = "jcenter()\n"
@@ -279,15 +272,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             wasModified = addFirstExpressionInBlockIfNeeded(VERSION.replace(VERSION_TEMPLATE, version), buildScriptBlock)
 
             val buildScriptRepositoriesBlock = getBuildScriptRepositoriesBlock(file)
-            if (isSnapshot(version)) {
-                wasModified = wasModified or addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY_SNIPPET, buildScriptRepositoriesBlock)
-            }
-            else if (isEap(version)) {
-                wasModified = wasModified or addLastExpressionInBlockIfNeeded(EAP_REPOSITORY_SNIPPET, buildScriptRepositoriesBlock)
-            }
-            else if (!isRepositoryConfigured(buildScriptRepositoriesBlock)) {
-                wasModified = wasModified or addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, buildScriptRepositoriesBlock)
-            }
+            wasModified = wasModified or addRepository(buildScriptRepositoriesBlock, version)
 
             val buildScriptDependenciesBlock = getBuildScriptDependenciesBlock(file)
             wasModified = wasModified or addLastExpressionInBlockIfNeeded(CLASSPATH, buildScriptDependenciesBlock)
@@ -409,6 +394,17 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                                      (if (message != null) message + "<br/>" else "") +
                                      "<br/>See manual installation instructions <a href=\"https://kotlinlang.org/docs/reference/using-gradle.html\">here</a>.</html>",
                                      "Configure Kotlin-Gradle Plugin")
+        }
+
+        private fun addRepository(repositoriesBlock: GrClosableBlock, version: String): Boolean {
+            val snippet = when {
+                isSnapshot(version) -> SNAPSHOT_REPOSITORY_SNIPPET
+                is11Prerelease(version) -> EAP_11_REPOSITORY_SNIPPET
+                isEap(version) -> EAP_REPOSITORY_SNIPPET
+                !isRepositoryConfigured(repositoriesBlock) -> MAVEN_CENTRAL
+                else -> return false
+            }
+            return addLastExpressionInBlockIfNeeded(snippet, repositoriesBlock)
         }
     }
 }
