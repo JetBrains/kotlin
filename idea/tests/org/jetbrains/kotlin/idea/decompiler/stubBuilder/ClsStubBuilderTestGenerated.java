@@ -60,6 +60,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("AnonymousReturnWithGenericType")
+    public void testAnonymousReturnWithGenericType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnonymousReturnWithGenericType/");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassMembers")
     public void testClassMembers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/ClassMembers/");
