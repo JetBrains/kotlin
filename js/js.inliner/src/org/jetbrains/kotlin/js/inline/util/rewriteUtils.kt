@@ -18,16 +18,12 @@ package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.JsNode
 import org.jetbrains.kotlin.js.inline.util.rewriters.NameReplacingVisitor
-import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 import org.jetbrains.kotlin.js.inline.util.rewriters.ThisReplacingVisitor
 
-import java.util.IdentityHashMap
-
-fun <T : JsNode> replaceNames(node: T, replaceMap: IdentityHashMap<JsName, JsExpression>): T {
-    return NameReplacingVisitor(replaceMap).accept(node)!!
+fun <T : JsNode> replaceNames(node: T, replaceMap: Map<JsName, JsExpression>): T {
+    return if (replaceMap.isEmpty()) node else NameReplacingVisitor(replaceMap).accept(node)!!
 }
 
 fun <T : JsNode> replaceThisReference(node: T, replacement: JsExpression) {

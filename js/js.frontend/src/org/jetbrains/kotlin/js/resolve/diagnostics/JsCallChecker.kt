@@ -26,11 +26,13 @@ import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder
+import org.jetbrains.kotlin.js.resolve.LEXICAL_SCOPE_FOR_JS
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
@@ -96,6 +98,9 @@ class JsCallChecker(
         } catch (e: AbortParsingException) {
             // ignore
         }
+
+        @Suppress("UNCHECKED_CAST")
+        context.trace.record(LEXICAL_SCOPE_FOR_JS, resolvedCall as ResolvedCall<FunctionDescriptor>, context.scope)
     }
 }
 

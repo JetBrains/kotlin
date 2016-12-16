@@ -22,18 +22,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
+import org.jetbrains.kotlin.js.inline.util.RewriteUtilsKt;
 import org.jetbrains.kotlin.js.parser.ParserUtilsKt;
+import org.jetbrains.kotlin.js.resolve.BindingContextSlicesJsKt;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtCallExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
 import static org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator.getConstant;
@@ -97,18 +103,58 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         List<JsStatement> statements = parseJsCode(argumentExpression);
         int size = statements.size();
 
+        JsNode node;
         if (size == 0) {
-            return JsLiteral.NULL;
-        } else if (size > 1) {
-            return new JsBlock(statements);
-        } else {
+            node = JsLiteral.NULL;
+        }
+        else if (size > 1) {
+            node = new JsBlock(statements);
+        }
+        else {
             JsStatement resultStatement = statements.get(0);
             if (resultStatement instanceof JsExpressionStatement) {
-                return ((JsExpressionStatement) resultStatement).getExpression();
+                node = ((JsExpressionStatement) resultStatement).getExpression();
+            }
+            else {
+                node = resultStatement;
+            }
+        }
+
+        LexicalScope lexicalScope = context().bindingContext().get(BindingContextSlicesJsKt.LEXICAL_SCOPE_FOR_JS, resolvedCall);
+        Map<JsName, JsExpression> replacements = new HashMap<JsName, JsExpression>();
+        if (lexicalScope != null) {
+            Set<JsName> references = CollectUtilsKt.collectUsedNames(node);
+            references.removeAll(CollectUtilsKt.collectDefinedNames(node));
+
+            for (JsName name : references) {
+                VariableDescriptor variable = getVariableByName(lexicalScope, Name.identifier(name.getIdent()));
+                if (variable != null) {
+                    replacements.put(name, ReferenceTranslator.translateAsValueReference(variable, context()));
+                }
             }
 
-            return resultStatement;
+            if (!replacements.isEmpty()) {
+                node = RewriteUtilsKt.replaceNames(node, replacements);
+            }
         }
+
+        return node;
+    }
+
+    @Nullable
+    private static VariableDescriptor getVariableByName(@NotNull LexicalScope scope, @NotNull Name name) {
+        while (true) {
+            Collection<VariableDescriptor> variables = scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND);
+            if (!variables.isEmpty()) {
+                return variables.size() == 1 ? variables.iterator().next() : null;
+            }
+
+            if (!(scope.getParent() instanceof LexicalScope)) break;
+            LexicalScope parentScope = (LexicalScope) scope.getParent();
+            if (scope.getOwnerDescriptor() != parentScope.getOwnerDescriptor()) break;
+            scope = parentScope;
+        }
+        return null;
     }
 
     @NotNull
