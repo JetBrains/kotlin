@@ -1,9 +1,28 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package kotlin.collections
 
 open header class ArrayList<E> : MutableList<E> {
     constructor(capacity: Int)
     constructor()
     constructor(c: Collection<E>)
+
+    fun trimToSize()
+    fun ensureCapacity(minCapacity: Int)
 
     // From List
     override val size: Int
@@ -34,8 +53,10 @@ open header class ArrayList<E> : MutableList<E> {
 }
 
 open header class HashMap<K, V> : MutableMap<K, V> {
-    constructor(initialCapacity: Int)
     constructor()
+    constructor(initialCapacity: Int)
+    constructor(initialCapacity: Int, loadFactor: Float)
+    constructor(original: Map<out K, V>)
 
     // From Map
     override val size: Int
@@ -55,14 +76,17 @@ open header class HashMap<K, V> : MutableMap<K, V> {
 }
 
 open header class LinkedHashMap<K, V> : HashMap<K, V> {
-    constructor(initialCapacity: Int)
     constructor()
-    constructor(m: Map<out K, V>)
+    constructor(initialCapacity: Int)
+    constructor(initialCapacity: Int, loadFactor: Float)
+    constructor(original: Map<out K, V>)
 }
 
 open header class HashSet<E> : MutableSet<E> {
     constructor()
     constructor(initialCapacity: Int)
+    constructor(initialCapacity: Int, loadFactor: Float)
+    constructor(c: Collection<E>)
 
     // From Set
     override val size: Int
@@ -81,8 +105,9 @@ open header class HashSet<E> : MutableSet<E> {
 }
 
 open header class LinkedHashSet<E> : HashSet<E> {
-    constructor(initialCapacity: Int)
     constructor()
+    constructor(initialCapacity: Int)
+    constructor(initialCapacity: Int, loadFactor: Float)
     constructor(c: Collection<E>)
 }
 
@@ -122,3 +147,6 @@ header inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
 
 header fun <T : Comparable<T>> MutableList<T>.sort(): Unit
 header fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit
+
+// from Maps.kt
+header operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit
