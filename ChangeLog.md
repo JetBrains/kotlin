@@ -14,6 +14,7 @@
 - [`KT-14581`](https://youtrack.jetbrains.com/issue/KT-14581) NullPointerException at StackTransformationUtils when inlining extension function to a `do-while` loop condition
 - [`KT-14678`](https://youtrack.jetbrains.com/issue/KT-14678) Internal error with `@JvmOverloads` on constructor of inner class
 - [`KT-14751`](https://youtrack.jetbrains.com/issue/KT-14751) Class can't be resolved (related to annotation on types)
+- [`KT-14774`](https://youtrack.jetbrains.com/issue/KT-14774) Incorrect inner class modifier was generated for `sealed` inner classes
 
 ### Stdlib
 - [`KT-14883`](https://youtrack.jetbrains.com/issue/KT-14883) Performance tune: Use byte array buffer directly to read the entire contents of a file
@@ -56,6 +57,8 @@
 - [`KT-13699`](https://youtrack.jetbrains.com/issue/KT-13699) Quick documentation should show supertype docs for overridden Java methods
 - [`KT-14804`](https://youtrack.jetbrains.com/issue/KT-14804) Avoid loading ast for decompiled files
 - [`KT-5897`](https://youtrack.jetbrains.com/issue/KT-5897) Pressing `Enter` after binary operations places the caret at the wrong indentation
+- [`KT-10828`](https://youtrack.jetbrains.com/issue/KT-10828) Support empty Unit function formatting on one line
+- [`KT-15123`](https://youtrack.jetbrains.com/issue/KT-15123) Do indent adjustment on the fly only for the first element in the line
 
 #### Inspections, Intentions and Quickfixes
 - [`KT-12095`](https://youtrack.jetbrains.com/issue/KT-12095) Implement "Join Declaration and Assignment" intention
@@ -140,12 +143,15 @@
 - [`KT-14825`](https://youtrack.jetbrains.com/issue/KT-14825) Lint: "Calling new methods on older versions" did not report call on receiver in extension function
 - [`KT-12023`](https://youtrack.jetbrains.com/issue/KT-12023) Lint: Cast should trigger minSdk error
 - [`KT-15018`](https://youtrack.jetbrains.com/issue/KT-15018) Lint: Fix PluginException at `IntellijLintUtils.getLocation()`
+- [`KT-14067`](https://youtrack.jetbrains.com/issue/KT-14067) Android Extensions: Remove obsolete JPS plugin
+- [`KT-12741`](https://youtrack.jetbrains.com/issue/KT-12741) Android Extensions: Enable IDE integration only if it is enabled in the `build.gradle` file (apply plugin: 'kotlin-android-extensions')
 
 ### Tools
 
 #### Gradle
 - [`KT-14724`](https://youtrack.jetbrains.com/issue/KT-14724) `main()` was not called
 - [`KT-15120`](https://youtrack.jetbrains.com/issue/KT-15120) Gradle JS test compile task doesn't pick up production code
+- [`KT-15217`](https://youtrack.jetbrains.com/issue/KT-15217) Fix compatibility with Android Gradle plugin 2.3
 
 #### Kapt
 - [`KT-14937`](https://youtrack.jetbrains.com/issue/KT-14937) Use javac annotation processing implementation, generate AST stubs for Kotlin classes (this replaces kapt2 implementation)
