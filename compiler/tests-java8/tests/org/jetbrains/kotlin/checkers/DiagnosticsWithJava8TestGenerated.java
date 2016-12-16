@@ -118,6 +118,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/specialBuiltIns/hashtableInheritance.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("securityProvider.kt")
+        public void testSecurityProvider() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/specialBuiltIns/securityProvider.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJava8/statics")

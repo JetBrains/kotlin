@@ -1,0 +1,114 @@
+package
+
+public final class Example : java.security.Provider {
+    public constructor Example()
+    invisible_fake final override /*1*/ /*fake_override*/ var count: kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ var defaults: java.util.Properties!
+    public open override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Any!, kotlin.Any!>>
+    invisible_fake final override /*1*/ /*fake_override*/ var entrySet: kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.Any!, kotlin.Any!>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var entrySetCallCount: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var info: kotlin.String!
+    invisible_fake final override /*1*/ /*fake_override*/ var initialized: kotlin.Boolean
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.collections.(Mutable)Set<kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<kotlin.Any!>
+    invisible_fake final override /*1*/ /*fake_override*/ var legacyChanged: kotlin.Boolean
+    invisible_fake final override /*1*/ /*fake_override*/ var legacyMap: kotlin.collections.(Mutable)Map<java.security.Provider.ServiceKey!, java.security.Provider.Service!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var legacyStrings: kotlin.collections.(Mutable)Map<kotlin.String!, kotlin.String!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var loadFactor: kotlin.Float
+    invisible_fake final override /*1*/ /*fake_override*/ var modCount: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var name: kotlin.String!
+    invisible_fake final override /*1*/ /*fake_override*/ var serviceMap: kotlin.collections.(Mutable)Map<java.security.Provider.ServiceKey!, java.security.Provider.Service!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var serviceSet: kotlin.collections.(Mutable)Set<java.security.Provider.Service!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var servicesChanged: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var table: kotlin.Array<(out) java.util.Hashtable.Entry<*, *>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var threshold: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.collections.(Mutable)Collection<kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.Any!>
+    invisible_fake final override /*1*/ /*fake_override*/ var version: kotlin.Double
+    invisible_fake open override /*1*/ /*fake_override*/ fun addEntry(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun check(/*0*/ p0: kotlin.String!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun checkInitialized(): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun checkLegacy(/*0*/ p0: kotlin.Any!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: kotlin.Any!, /*1*/ p1: java.util.function.BiFunction<in kotlin.Any!, in kotlin.Any?, out kotlin.Any?>): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: kotlin.Any!, /*1*/ p1: java.util.function.Function<in kotlin.Any!, out kotlin.Any!>): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: kotlin.Any!, /*1*/ p1: java.util.function.BiFunction<in kotlin.Any!, in kotlin.Any, out kotlin.Any?>): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ p0: kotlin.Any!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.Any!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Any!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun elements(): java.util.Enumeration<kotlin.Any!>!
+    invisible_fake open override /*1*/ /*fake_override*/ fun ensureLegacyParsed(): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun enumerate(/*0*/ p0: java.util.Hashtable<kotlin.String!, kotlin.Any!>!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun enumerateStringProperties(/*0*/ p0: java.util.Hashtable<kotlin.String!, kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.Any!, in kotlin.Any!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.Any!): kotlin.Any?
+    invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getEnumeration(/*0*/ p0: kotlin.Int): java.util.Enumeration<T!>!
+    public open override /*1*/ /*fake_override*/ fun getInfo(): kotlin.String!
+    invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getIterator(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Iterator<T!>!
+    public open override /*1*/ /*fake_override*/ fun getName(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.Any!, /*1*/ defaultValue: kotlin.Any!): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun getProperty(/*0*/ p0: kotlin.String!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun getProperty(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun getService(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): java.security.Provider.Service!
+    public open override /*1*/ /*fake_override*/ fun getServices(): kotlin.collections.(Mutable)Set<java.security.Provider.Service!>!
+    invisible_fake open override /*1*/ /*fake_override*/ fun getTypeAndAlgorithm(/*0*/ p0: kotlin.String!): kotlin.Array<(out) kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun getVersion(): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    invisible_fake open override /*1*/ /*fake_override*/ fun implClear(): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun implCompute(/*0*/ p0: kotlin.Any!, /*1*/ p1: java.util.function.BiFunction<in kotlin.Any!, in kotlin.Any!, out kotlin.Any!>!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implComputeIfAbsent(/*0*/ p0: kotlin.Any!, /*1*/ p1: java.util.function.Function<in kotlin.Any!, out kotlin.Any!>!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implComputeIfPresent(/*0*/ p0: kotlin.Any!, /*1*/ p1: java.util.function.BiFunction<in kotlin.Any!, in kotlin.Any!, out kotlin.Any!>!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implMerge(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!, /*2*/ p2: java.util.function.BiFunction<in kotlin.Any!, in kotlin.Any!, out kotlin.Any!>!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implPut(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implPutAll(/*0*/ p0: kotlin.collections.(Mutable)Map<*, *>!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun implPutIfAbsent(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implRemove(/*0*/ p0: kotlin.Any!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implRemove(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
+    invisible_fake open override /*1*/ /*fake_override*/ fun implRemoveService(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun implReplace(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any!
+    invisible_fake open override /*1*/ /*fake_override*/ fun implReplace(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!): kotlin.Boolean
+    invisible_fake open override /*1*/ /*fake_override*/ fun implReplaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.Any!, in kotlin.Any!, out kotlin.Any!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun keys(): java.util.Enumeration<kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ fun list(/*0*/ p0: java.io.PrintStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun list(/*0*/ p0: java.io.PrintWriter!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun load(/*0*/ p0: java.io.InputStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun load(/*0*/ p0: java.io.Reader!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun load0(/*0*/ p0: java.util.Properties.LineReader!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun loadConvert(/*0*/ p0: kotlin.CharArray!, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.CharArray!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun loadFromXML(/*0*/ p0: java.io.InputStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any, /*2*/ p2: java.util.function.BiFunction<in kotlin.Any, in kotlin.Any, out kotlin.Any?>): kotlin.Any?
+    invisible_fake open override /*1*/ /*fake_override*/ fun parseLegacyPut(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun propertyNames(): java.util.Enumeration<*>!
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.Any!, /*1*/ value: kotlin.Any!): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<*, *>): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun putId(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any?
+    invisible_fake open override /*1*/ /*fake_override*/ fun putPropertyStrings(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun putService(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun reconstitutionPut(/*0*/ p0: kotlin.Array<(out) java.util.Hashtable.Entry<*, *>!>!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun rehash(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Any!): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Any!, /*1*/ value: kotlin.Any!): kotlin.Boolean
+    invisible_fake open override /*1*/ /*fake_override*/ fun removeInvalidServices(/*0*/ p0: kotlin.collections.(Mutable)Map<java.security.Provider.ServiceKey!, java.security.Provider.Service!>!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun removePropertyStrings(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeService(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.Any!, in kotlin.Any!, out kotlin.Any!>): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun save(/*0*/ p0: java.io.OutputStream!, /*1*/ p1: kotlin.String!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun saveConvert(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Boolean, /*2*/ p2: kotlin.Boolean): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun setProperty(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun store(/*0*/ p0: java.io.OutputStream!, /*1*/ p1: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun store(/*0*/ p0: java.io.Writer!, /*1*/ p1: kotlin.String!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun store0(/*0*/ p0: java.io.BufferedWriter!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun storeToXML(/*0*/ p0: java.io.OutputStream!, /*1*/ p1: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun storeToXML(/*0*/ p0: java.io.OutputStream!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun stringPropertyNames(): kotlin.collections.(Mutable)Set<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
+}

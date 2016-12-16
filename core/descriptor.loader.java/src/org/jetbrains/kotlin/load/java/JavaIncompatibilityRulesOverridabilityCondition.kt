@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmType
+import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.forceSingleValueParameterBoxing
 import org.jetbrains.kotlin.load.kotlin.mapToJvmType
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
@@ -87,6 +88,22 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
         // If current Java class has Kotlin super class with override of overriddenBuiltin, then common overridability rules can be applied
         // because of final special bridge generated in Kotlin super class
         if (overriddenBuiltin == null || subClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(overriddenBuiltin)) return false
+
+        // class A extends HashMap<Object, Object> {
+        //    void get(Object x) {}
+        // }
+        //
+        // The problem is that when checking overridabilty of `A.get` and `HashMap.get` we fall through to here, because
+        // we do not recreate a magic copy of it, because it has the same signature.
+        // But it obviously that if subDescriptor and superDescriptor has the same JVM descriptor, they're one-way overridable.
+        // Note that it doesn't work if special builtIn was renamed, because we do not consider renamed built-ins
+        // in `computeJvmDescriptor`.
+        // TODO: things get more and more complicated here, consider moving signature mapping from backend and using it here instead of all of this magic
+        if (overriddenBuiltin is FunctionDescriptor && superDescriptor is FunctionDescriptor &&
+                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(overriddenBuiltin) != null &&
+                subDescriptor.computeJvmDescriptor(withReturnType = false) == superDescriptor.original.computeJvmDescriptor(withReturnType = false)) {
+            return false
+        }
 
         // Here we know that something in Java with common signature is going to override some special builtin that is supposed to be
         // incompatible override
