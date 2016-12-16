@@ -112,4 +112,16 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         checkHighlightingInAllFiles()
     }
+
+    fun testPlatform5() {
+        val header = module("header")
+        header.setPlatformKind(TargetPlatformKind.Default)
+
+        val jvm = module("jvm")
+        jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
+        jvm.enableMultiPlatform()
+        jvm.addDependency(header)
+
+        checkHighlightingInAllFiles()
+    }
 }
