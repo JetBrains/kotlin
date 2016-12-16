@@ -131,6 +131,14 @@ public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.
         = @Suppress("UNCHECKED_CAST") (this as Map<K, V>).get(key)
 
 /**
+ * Allows to use the index operator for storing values in a mutable map.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
+    put(key, value)
+}
+
+/**
  * Returns `true` if the map contains the specified [key].
  *
  * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `K`.

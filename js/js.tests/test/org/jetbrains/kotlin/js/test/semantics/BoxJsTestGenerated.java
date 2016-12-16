@@ -5723,12 +5723,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt2323.kt")
-        public void testKt2323() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/kt2323.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("library.kt")
         public void testLibrary() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/library.kt");

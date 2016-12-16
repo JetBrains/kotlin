@@ -7,7 +7,6 @@ public external fun eval(expr: String): dynamic = noImpl
 
 public external val undefined: Nothing? = noImpl
 
-inline operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = asDynamic().set(key, value)
 
 @library
 public fun println() {}

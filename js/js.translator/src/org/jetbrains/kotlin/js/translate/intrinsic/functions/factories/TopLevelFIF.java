@@ -91,53 +91,6 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
-    private static final FunctionIntrinsic NATIVE_MAP_GET = new NativeMapGetSet() {
-        @NotNull
-        @Override
-        protected String operationName() {
-            return "get";
-        }
-
-        @Nullable
-        @Override
-        protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            ReceiverValue result = resolvedCall.getDispatchReceiver();
-            return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
-        }
-
-        @Override
-        protected JsExpression asArrayAccess(
-                @NotNull JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context
-        ) {
-            return ArrayFIF.GET_INTRINSIC.apply(receiver, arguments, context);
-        }
-    };
-
-    private static final FunctionIntrinsic NATIVE_MAP_SET = new NativeMapGetSet() {
-        @NotNull
-        @Override
-        protected String operationName() {
-            return "put";
-        }
-
-        @Nullable
-        @Override
-        protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            ReceiverValue result = resolvedCall.getExtensionReceiver();
-            return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
-        }
-
-        @Override
-        protected JsExpression asArrayAccess(
-                @NotNull JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context
-        ) {
-            return ArrayFIF.SET_INTRINSIC.apply(receiver, arguments, context);
-        }
-    };
 
     private static final JsExpression getReferenceToOnlyTypeParameter(
             @NotNull CallInfo callInfo, @NotNull TranslationContext context
@@ -218,9 +171,6 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
         add(pattern("kotlin", "iterator").isExtensionOf(FQ_NAMES.iterator.asString()), RETURN_RECEIVER_INTRINSIC);
 
-        add(pattern("kotlin.collections", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
-        add(pattern("kotlin.js", "set").isExtensionOf(FQ_NAMES.mutableMap.asString()), NATIVE_MAP_SET);
-
         add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
 
@@ -228,53 +178,6 @@ public final class TopLevelFIF extends CompositeFIF {
 
         add(pattern("kotlin", "enumValues"), ENUM_VALUES_INTRINSIC);
         add(pattern("kotlin", "enumValueOf"), ENUM_VALUE_OF_INTRINSIC);
-    }
-
-    private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
-        @NotNull
-        protected abstract String operationName();
-
-        @Nullable
-        protected abstract ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall);
-
-        protected abstract JsExpression asArrayAccess(
-                @NotNull JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context
-        );
-
-        @NotNull
-        @Override
-        public JsExpression apply(@NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
-            ExpressionReceiver expressionReceiver = getExpressionReceiver(callInfo.getResolvedCall());
-            JsExpression thisOrReceiver = getThisOrReceiverOrNull(callInfo);
-            assert thisOrReceiver != null;
-            if (expressionReceiver != null) {
-                KtExpression expression = expressionReceiver.getExpression();
-                KtReferenceExpression referenceExpression = null;
-                if (expression instanceof KtReferenceExpression) {
-                    referenceExpression = (KtReferenceExpression) expression;
-                }
-                else if (expression instanceof KtQualifiedExpression) {
-                    KtExpression candidate = ((KtQualifiedExpression) expression).getReceiverExpression();
-                    if (candidate instanceof KtReferenceExpression) {
-                        referenceExpression = (KtReferenceExpression) candidate;
-                    }
-                }
-
-                if (referenceExpression != null) {
-                    DeclarationDescriptor candidate = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(),
-                                                                                                       referenceExpression);
-                    if (candidate instanceof PropertyDescriptor && AnnotationsUtils.isNativeObject(candidate)) {
-                        return asArrayAccess(thisOrReceiver, arguments, context);
-                    }
-                }
-            }
-
-            String mangledName = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getMutableMap(), operationName());
-
-            return new JsInvocation(JsAstUtils.pureFqn(mangledName, thisOrReceiver), arguments);
-        }
     }
 
 }

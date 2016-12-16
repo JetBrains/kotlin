@@ -11,14 +11,7 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
 
-/**
- * Allows to use the index operator for storing values in a mutable map.
- */
-// this code is JVM-specific, because JS has native set function
-@kotlin.internal.InlineOnly
-public inline operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
-    put(key, value)
-}
+
 
 /**
  * Concurrent getOrPut, that is safe for concurrent maps.
