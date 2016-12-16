@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import java.util.Collection;
 import java.util.List;
 
-public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters, MemberDescriptor, ClassOrPackageFragmentDescriptor {
+public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters, ClassOrPackageFragmentDescriptor {
     @NotNull
     MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters, MemberDescriptor {
+interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters {
     /// Right-hand side of the type alias definition.
     /// May contain type aliases.
     val underlyingType: SimpleType
