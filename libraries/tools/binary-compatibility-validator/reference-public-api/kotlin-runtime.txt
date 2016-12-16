@@ -204,7 +204,7 @@ public final class kotlin/coroutines/CoroutinesKt {
 	public static final fun suspendWithCurrentContinuation (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface annotation class kotlin/coroutines/RestrictsSuspendExtensions : java/lang/annotation/Annotation {
+public abstract interface annotation class kotlin/coroutines/RestrictsSuspension : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/jvm/JvmClassMappingKt {

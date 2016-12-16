@@ -1,4 +1,4 @@
-@kotlin.coroutines.RestrictsSuspendExtensions
+@kotlin.coroutines.RestrictsSuspension
 class RestrictedController
 
 suspend fun Any?.extFun() {}
