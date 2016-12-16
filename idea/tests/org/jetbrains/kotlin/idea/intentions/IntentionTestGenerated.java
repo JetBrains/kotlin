@@ -6489,6 +6489,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertTwoComparisonsToRangeCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("char.kt")
+        public void testChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/char.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("double.kt")
         public void testDouble() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/double.kt");

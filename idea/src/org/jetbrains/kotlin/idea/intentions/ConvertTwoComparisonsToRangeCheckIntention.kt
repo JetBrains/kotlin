@@ -106,7 +106,7 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
 
         when (this) {
             is KtConstantExpression -> {
-                val number: Number = when {
+                val number: Any = when {
                     KotlinBuiltIns.isInt(type) -> text.toInt() - 1
                     KotlinBuiltIns.isLong(type) -> {
                         val text = text
@@ -114,7 +114,7 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
                         longText.toLong() - 1
                     }
                     KotlinBuiltIns.isShort(type) -> java.lang.Short.parseShort(text) - 1
-                    KotlinBuiltIns.isChar(type) -> text[0].toInt() - 1
+                    KotlinBuiltIns.isChar(type) -> (text[0].toInt() - 1).toChar()
                     else -> return null
                 }
                 return number.toString()
