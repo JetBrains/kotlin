@@ -67,6 +67,9 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
     if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).isNotEmpty()) {
         return TargetPlatformKind.JavaScript
     }
+    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.Default).isNotEmpty()) {
+        return TargetPlatformKind.Default
+    }
     return TargetPlatformKind.Jvm.JVM_1_6
 }
 
@@ -153,10 +156,15 @@ fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): Kotlin
     return facet
 }
 
-fun KotlinFacet.configureFacet(compilerVersion: String, coroutineSupport: CoroutineSupport, modelsProvider: IdeModifiableModelsProvider) {
+fun KotlinFacet.configureFacet(
+        compilerVersion: String,
+        coroutineSupport: CoroutineSupport,
+        platformKind: TargetPlatformKind<*>?, // if null, detect by module dependencies
+        modelsProvider: IdeModifiableModelsProvider
+) {
     val module = module
     with(configuration.settings) {
-        versionInfo.targetPlatformKind = null
+        versionInfo.targetPlatformKind = platformKind
         versionInfo.apiLevel = null
         initializeIfNeeded(module, modelsProvider.getModifiableRootModel(module))
         with(versionInfo) {
