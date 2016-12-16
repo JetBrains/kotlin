@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.sampullara.cli.Argument
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -50,7 +51,8 @@ val Project.languageVersionSettings: LanguageVersionSettings
         val extraLanguageFeatures = getExtraLanguageFeatures(
                 TargetPlatformKind.Default,
                 CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this).settings),
-                compilerSettings
+                compilerSettings,
+                null
         )
         return LanguageVersionSettingsImpl(
                 languageVersion,
@@ -70,16 +72,25 @@ val Module.languageVersionSettings: LanguageVersionSettings
         val extraLanguageFeatures = getExtraLanguageFeatures(
                 versionInfo.targetPlatformKind ?: TargetPlatformKind.Default,
                 facetSettings.compilerInfo.coroutineSupport,
-                facetSettings.compilerInfo.compilerSettings
+                facetSettings.compilerInfo.compilerSettings,
+                this
         )
 
         return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
     }
 
+private val Module.targetPlatform: TargetPlatformKind<*>?
+    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).versionInfo.targetPlatformKind
+
+private val Module.implementsCommonModule: Boolean
+    get() = targetPlatform != TargetPlatformKind.Default
+            && ModuleRootManager.getInstance(this).dependencies.any { it.targetPlatform == TargetPlatformKind.Default}
+
 private fun getExtraLanguageFeatures(
         targetPlatformKind: TargetPlatformKind<*>,
         coroutineSupport: CoroutineSupport,
-        compilerSettings: CompilerSettings?
+        compilerSettings: CompilerSettings?,
+        module: Module?
 ): List<LanguageFeature> {
     return mutableListOf<LanguageFeature>().apply {
         when (coroutineSupport) {
@@ -89,7 +100,8 @@ private fun getExtraLanguageFeatures(
         }
         if (targetPlatformKind == TargetPlatformKind.Default ||
             // TODO: this is a dirty hack, parse arguments correctly here
-            compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true) {
+            compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true ||
+            (module != null && module.implementsCommonModule)) {
             add(LanguageFeature.MultiPlatformProjects)
         }
     }
