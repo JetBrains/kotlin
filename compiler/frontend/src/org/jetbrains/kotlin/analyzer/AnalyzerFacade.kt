@@ -177,7 +177,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
         val resolverForProject = createResolverForProject()
 
         fun computeDependencyDescriptors(module: M): List<ModuleDescriptorImpl> {
-            val orderedDependencies = LinkedHashSet(firstDependency.singletonOrEmptyList() + module.dependencies())
+            val orderedDependencies = firstDependency.singletonOrEmptyList() + module.dependencies()
             val dependenciesDescriptors = orderedDependencies.mapTo(ArrayList<ModuleDescriptorImpl>()) {
                 dependencyInfo ->
                 resolverForProject.descriptorForModule(dependencyInfo as M)
