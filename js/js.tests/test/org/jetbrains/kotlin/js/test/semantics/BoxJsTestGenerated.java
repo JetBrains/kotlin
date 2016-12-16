@@ -3806,6 +3806,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("jsCode.kt")
+        public void testJsCode() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/jsCode.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jsCodeVarDeclared.kt")
+        public void testJsCodeVarDeclared() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/jsCodeVarDeclared.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaInLambda.kt")
         public void testLambdaInLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/lambdaInLambda.kt");
@@ -4955,6 +4967,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("referenceToKotlin.kt")
+        public void testReferenceToKotlin() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsCode/referenceToKotlin.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("switch.kt")
         public void testSwitch() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsCode/switch.kt");
@@ -5678,12 +5696,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("inheritanceInNativeClass.kt")
         public void testInheritanceInNativeClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/inheritanceInNativeClass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jsTypeOf.kt")
-        public void testJsTypeOf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/jsTypeOf.kt");
             doTest(fileName);
         }
 
