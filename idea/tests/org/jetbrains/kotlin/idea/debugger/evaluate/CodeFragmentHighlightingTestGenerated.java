@@ -38,6 +38,12 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
         }
 
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/anonymousObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("binaryExpression.kt")
         public void testBinaryExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/binaryExpression.kt");
@@ -101,6 +107,12 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/primaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorLocal.kt")
+        public void testPrimaryConstructorLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/primaryConstructorLocal.kt");
             doTest(fileName);
         }
 
