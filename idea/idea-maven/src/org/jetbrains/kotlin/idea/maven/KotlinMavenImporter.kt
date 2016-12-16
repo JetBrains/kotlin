@@ -105,7 +105,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version
                               ?: return
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider)
-        kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, modifiableModelsProvider)
+        kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, null, modifiableModelsProvider)
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
 
