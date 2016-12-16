@@ -37,14 +37,14 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
 
 open class KotlinPlatformImplementationPluginBase(platformName: String) : KotlinPlatformPluginBase(platformName) {
     private val commonProjects = arrayListOf<Project>()
-    private val platformSourceSets = hashMapOf<String, SourceSet>()
+    private val platformKotlinTasksBySourceSetName = hashMapOf<String, AbstractKotlinCompile<*>>()
 
     override fun apply(project: Project) {
         project.tasks.withType(AbstractKotlinCompile::class.java).all {
             (it as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += listOf("-Xmulti-platform")
         }
 
-        project.sourceSets.associateByTo(platformSourceSets, SourceSet::getName)
+        project.tasks.filterIsInstance<AbstractKotlinCompile<*>>().associateByTo(platformKotlinTasksBySourceSetName) { it.sourceSetName }
 
         val implementConfig = project.configurations.create("implement")
         implementConfig.isTransitive = false
@@ -71,9 +71,8 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
             commonProject.sourceSets.all { commonSourceSet ->
                 // todo: warn if not found
-                val platformSourceSet = platformSourceSets[commonSourceSet.name]
-                val platformKotlinSourceDirectorySet = platformSourceSet?.kotlin
-                commonSourceSet.kotlin?.srcDirs?.forEach { platformKotlinSourceDirectorySet?.srcDir(it) }
+                val platformTask = platformKotlinTasksBySourceSetName[commonSourceSet.name]
+                commonSourceSet.kotlin!!.srcDirs.forEach { platformTask?.source(it) }
             }
         }
     }
