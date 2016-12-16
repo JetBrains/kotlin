@@ -620,7 +620,7 @@ public header fun Double.coerceIn(minimumValue: Double, maximumValue: Double): D
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
-public header fun <T: Comparable<T>> T.coerceIn(range: ClosedComparableRange<T>): T
+public header fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T
 
 /**
  * Ensures that this value lies in the specified [range].

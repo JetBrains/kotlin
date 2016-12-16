@@ -61,7 +61,7 @@ fun comparables(): List<GenericFunction> {
         }
         body(Generic) {
             """
-            if (range is ClosedComparableRange) {
+            if (range is ClosedFloatingPointRange) {
                 return this.coerceIn<T>(range)
             }
             if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")
@@ -74,7 +74,7 @@ fun comparables(): List<GenericFunction> {
         }
         body(Primitives) {
             """
-            if (range is ClosedComparableRange) {
+            if (range is ClosedFloatingPointRange) {
                 return this.coerceIn<T>(range)
             }
             if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")
@@ -87,7 +87,7 @@ fun comparables(): List<GenericFunction> {
         }
     }
 
-    templates add f("coerceIn(range: ClosedComparableRange<T>)") {
+    templates add f("coerceIn(range: ClosedFloatingPointRange<T>)") {
         sourceFile(SourceFile.Ranges)
         only(Generic)
         returns("SELF")

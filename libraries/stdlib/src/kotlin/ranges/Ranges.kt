@@ -3,14 +3,14 @@
 package kotlin.ranges
 
 /**
- * Represents a range of values (for example, numbers or characters).
+ * Represents a range of floating point numbers.
  * Extends [ClosedRange] interface providing custom operation [lessThanOrEquals] for comparing values of range domain type.
  *
  * This interface is implemented by floating point ranges returned by [Float.rangeTo] and [Double.rangeTo] operators to
  * achieve IEEE-754 comparison order instead of total order of floating point numbers.
  */
 @SinceKotlin("1.1")
-public interface ClosedComparableRange<T: Comparable<T>> : ClosedRange<T> {
+public interface ClosedFloatingPointRange<T: Comparable<T>> : ClosedRange<T> {
     override fun contains(value: T): Boolean = lessThanOrEquals(start, value) && lessThanOrEquals(value, endInclusive)
     override fun isEmpty(): Boolean = !lessThanOrEquals(start, endInclusive)
 
@@ -48,7 +48,7 @@ private open class ComparableRange<T: Comparable<T>> (
 private class ClosedDoubleRange (
         start: Double,
         endInclusive: Double
-) : ClosedComparableRange<Double> {
+) : ClosedFloatingPointRange<Double> {
     private val _start = start
     private val _endInclusive = endInclusive
     override val start: Double get() = _start
@@ -79,7 +79,7 @@ private class ClosedDoubleRange (
 private class ClosedFloatRange (
         start: Float,
         endInclusive: Float
-): ClosedComparableRange<Float> {
+): ClosedFloatingPointRange<Float> {
     private val _start = start
     private val _endInclusive = endInclusive
     override val start: Float get() = _start
@@ -114,7 +114,7 @@ public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Comp
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
 @SinceKotlin("1.1")
-public operator fun Double.rangeTo(that: Double): ClosedComparableRange<Double> = ClosedDoubleRange(this, that)
+public operator fun Double.rangeTo(that: Double): ClosedFloatingPointRange<Double> = ClosedDoubleRange(this, that)
 
 /**
  * Creates a range from this [Float] value to the specified [other] value.
@@ -123,7 +123,7 @@ public operator fun Double.rangeTo(that: Double): ClosedComparableRange<Double> 
  */
 @JvmVersion
 @SinceKotlin("1.1")
-public operator fun Float.rangeTo(that: Float): ClosedComparableRange<Float> = ClosedFloatRange(this, that)
+public operator fun Float.rangeTo(that: Float): ClosedFloatingPointRange<Float> = ClosedFloatRange(this, that)
 
 
 internal fun checkStepIsPositive(isPositive: Boolean, step: Number) {
