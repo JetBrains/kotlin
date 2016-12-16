@@ -20,6 +20,7 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.ex.JpsElementBase
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.jps.model.module.JpsModuleDependency
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -61,15 +62,27 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             return settings
         }
 
+        private val JpsModule.targetPlatform: TargetPlatformKind<*>?
+            get() {
+                val facetSettings = kotlinFacetExtension?.settings ?: return TargetPlatformKind.Default
+                if (facetSettings.useProjectSettings) return TargetPlatformKind.Default
+                return facetSettings.versionInfo.targetPlatformKind
+            }
+
         fun getCommonCompilerArguments(module: JpsModule): CommonCompilerArguments {
             val defaultArguments = getSettings(module.project).commonCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
             val (languageLevel, apiLevel) = facetSettings.versionInfo
-            return facetSettings.compilerInfo.commonCompilerArguments?.apply {
+            val facetArguments = facetSettings.compilerInfo.commonCompilerArguments ?: return defaultArguments
+            return copyBean(facetArguments).apply {
                 languageVersion = languageLevel?.description
                 apiVersion = apiLevel?.description
-            } ?: defaultArguments
+                multiPlatform = module
+                        .dependenciesList
+                        .dependencies
+                        .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Default }
+            }
         }
 
         fun setCommonCompilerArguments(project: JpsProject, commonCompilerSettings: CommonCompilerArguments) {
