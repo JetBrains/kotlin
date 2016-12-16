@@ -869,7 +869,7 @@ public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
-public fun <T: Comparable<T>> T.coerceIn(range: ClosedComparableRange<T>): T {
+public fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return when {
         // this < start equiv to this <= start && !(this >= start)
@@ -886,7 +886,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: ClosedComparableRange<T>): T {
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
 public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
-    if (range is ClosedComparableRange) {
+    if (range is ClosedFloatingPointRange) {
         return this.coerceIn<T>(range)
     }
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
@@ -903,7 +903,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
 public fun Int.coerceIn(range: ClosedRange<Int>): Int {
-    if (range is ClosedComparableRange) {
+    if (range is ClosedFloatingPointRange) {
         return this.coerceIn<Int>(range)
     }
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
@@ -920,7 +920,7 @@ public fun Int.coerceIn(range: ClosedRange<Int>): Int {
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
 public fun Long.coerceIn(range: ClosedRange<Long>): Long {
-    if (range is ClosedComparableRange) {
+    if (range is ClosedFloatingPointRange) {
         return this.coerceIn<Long>(range)
     }
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")

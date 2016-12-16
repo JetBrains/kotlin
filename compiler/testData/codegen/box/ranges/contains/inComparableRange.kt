@@ -13,7 +13,7 @@ class ComparablePair<T : Comparable<T>>(val first: T, val second: T) : Comparabl
 fun <T : Comparable<T>> genericRangeTo(start: T, endInclusive: T) = start..endInclusive
 operator fun Double.rangeTo(other: Double) = genericRangeTo(this, other)
 // some weird inverted range
-operator fun Float.rangeTo(other: Float) = object : ClosedComparableRange<Float> {
+operator fun Float.rangeTo(other: Float) = object : ClosedFloatingPointRange<Float> {
     override val endInclusive: Float = this@rangeTo
     override val start: Float = other
     override fun lessThanOrEquals(a: Float, b: Float) = a >= b

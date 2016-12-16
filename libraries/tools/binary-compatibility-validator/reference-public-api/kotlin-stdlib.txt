@@ -1888,15 +1888,15 @@ public abstract interface class kotlin/properties/ReadWriteProperty {
 	public abstract fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }
 
-public abstract interface class kotlin/ranges/ClosedComparableRange : kotlin/ranges/ClosedRange {
+public abstract interface class kotlin/ranges/ClosedFloatingPointRange : kotlin/ranges/ClosedRange {
 	public abstract fun contains (Ljava/lang/Comparable;)Z
 	public abstract fun isEmpty ()Z
 	public abstract fun lessThanOrEquals (Ljava/lang/Comparable;Ljava/lang/Comparable;)Z
 }
 
-public final class kotlin/ranges/ClosedComparableRange$DefaultImpls {
-	public static fun contains (Lkotlin/ranges/ClosedComparableRange;Ljava/lang/Comparable;)Z
-	public static fun isEmpty (Lkotlin/ranges/ClosedComparableRange;)Z
+public final class kotlin/ranges/ClosedFloatingPointRange$DefaultImpls {
+	public static fun contains (Lkotlin/ranges/ClosedFloatingPointRange;Ljava/lang/Comparable;)Z
+	public static fun isEmpty (Lkotlin/ranges/ClosedFloatingPointRange;)Z
 }
 
 public final class kotlin/ranges/RangesKt {
@@ -1927,7 +1927,7 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun coerceIn (JJJ)J
 	public static final fun coerceIn (JLkotlin/ranges/ClosedRange;)J
 	public static final fun coerceIn (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
-	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedComparableRange;)Ljava/lang/Comparable;
+	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedFloatingPointRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (SSS)S
 	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;B)Z
@@ -1967,8 +1967,8 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;S)Z
-	public static final fun rangeTo (DD)Lkotlin/ranges/ClosedComparableRange;
-	public static final fun rangeTo (FF)Lkotlin/ranges/ClosedComparableRange;
+	public static final fun rangeTo (DD)Lkotlin/ranges/ClosedFloatingPointRange;
+	public static final fun rangeTo (FF)Lkotlin/ranges/ClosedFloatingPointRange;
 	public static final fun rangeTo (Ljava/lang/Comparable;Ljava/lang/Comparable;)Lkotlin/ranges/ClosedRange;
 	public static final fun reversed (Lkotlin/ranges/CharProgression;)Lkotlin/ranges/CharProgression;
 	public static final fun reversed (Lkotlin/ranges/IntProgression;)Lkotlin/ranges/IntProgression;
