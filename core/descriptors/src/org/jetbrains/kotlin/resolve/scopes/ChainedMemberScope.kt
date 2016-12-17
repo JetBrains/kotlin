@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
+import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
@@ -30,7 +30,7 @@ class ChainedMemberScope(
         private val scopes: List<MemberScope>
 ) : MemberScope {
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
-            = getFirstMatch(scopes) { it.getContributedClassifier(name, location) }
+            = getFirstClassifierDiscriminateHeaders(scopes) { it.getContributedClassifier(name, location) }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = getFromAllScopes(scopes) { it.getContributedVariables(name, location) }
