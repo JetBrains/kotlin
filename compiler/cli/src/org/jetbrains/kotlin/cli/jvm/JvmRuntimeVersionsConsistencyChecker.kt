@@ -109,6 +109,9 @@ object JvmRuntimeVersionsConsistencyChecker {
             languageVersionSettings: LanguageVersionSettings?,
             classpathJarRoots: List<VirtualFile>
     ) {
+        // TODO: write runtime version to Maven artifacts and enable these checks
+        return
+
         val runtimeJarsInfo = collectRuntimeJarsInfo(classpathJarRoots)
         if (runtimeJarsInfo.hasAnyJarsToCheck) {
             val languageVersion = languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
