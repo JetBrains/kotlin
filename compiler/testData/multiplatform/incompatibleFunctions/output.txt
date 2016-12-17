@@ -11,25 +11,25 @@ The following declaration is incompatible because some modifiers on header decla
 
 header infix fun Int.plus(s: CharSequence): Int
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:4:1: error: header declaration 'times' has no implementation in module
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:3:1: error: header declaration 'times' has no implementation in module
 The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
     public impl fun Double.times(x: CharArray): Unit
 
 header operator fun Double.times(x: CharArray)
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:7:1: error: header declaration 'f1' has no implementation in module
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:5:1: error: header declaration 'f1' has no implementation in module
 The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
     public impl fun f1(): Unit
 
 header external fun f1()
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:10:1: error: header declaration 'f2' has no implementation in module
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:7:1: error: header declaration 'f2' has no implementation in module
 The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
     public impl fun f2(): Unit
 
 header inline fun f2()
 ^
-compiler/testData/multiplatform/incompatibleFunctions/common.kt:13:1: error: header declaration 'f3' has no implementation in module
+compiler/testData/multiplatform/incompatibleFunctions/common.kt:9:1: error: header declaration 'f3' has no implementation in module
 The following declaration is incompatible because some modifiers on header declaration are missing on the implementation (external, infix, inline, operator, tailrec):
     public impl fun f3(): Unit
 
@@ -38,19 +38,16 @@ header tailrec fun f3()
 compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun Int.plus(s: CharSequence): Int = 0
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:4:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun Double.times(x: CharArray) {}
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:6: error: 'operator' modifier is inapplicable on this function: illegal function name
-impl operator fun Double.divide(x: ByteArray) {}
-     ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:7:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun f1() {}
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:10:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:7:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun f2() {}
 ^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:13:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:9:1: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
 impl fun f3() {}
 ^
 
