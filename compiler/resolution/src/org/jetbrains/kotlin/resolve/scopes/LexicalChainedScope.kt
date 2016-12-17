@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
-import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
+import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
@@ -40,7 +40,7 @@ class LexicalChainedScope @JvmOverloads constructor(
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = getFromAllScopes(memberScopes) { it.getContributedDescriptors() }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstMatch(memberScopes) { it.getContributedClassifier(name, location) }
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifier(name, location) }
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = getFromAllScopes(memberScopes) { it.getContributedVariables(name, location) }
 

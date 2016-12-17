@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
+import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -52,7 +52,7 @@ class JvmPackageScope(
         val javaClassifier = javaScope.getContributedClassifier(name, location)
         if (javaClassifier != null) return javaClassifier
 
-        return getFirstMatch(kotlinScopes) { it.getContributedClassifier(name, location) }
+        return getFirstClassifierDiscriminateHeaders(kotlinScopes) { it.getContributedClassifier(name, location) }
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {

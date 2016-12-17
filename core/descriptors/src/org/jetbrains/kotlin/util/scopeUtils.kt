@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.util.collectionUtils
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import java.util.*
 
 /**
@@ -70,11 +72,20 @@ inline fun <Scope, T> getFromAllScopes(firstScope: Scope, restScopes: List<Scope
     return result ?: emptySet()
 }
 
-inline fun <Scope, T : Any> getFirstMatch(scopes: List<Scope>, callback: (Scope) -> T?): T? {
+inline fun <Scope, T : ClassifierDescriptor> getFirstClassifierDiscriminateHeaders(scopes: List<Scope>, callback: (Scope) -> T?): T? {
     // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
+    var result: T? = null
     for (scope in scopes) {
-        val result = callback(scope)
-        if (result != null) return result
+        val newResult = callback(scope)
+        if (newResult != null) {
+            if (newResult is ClassifierDescriptorWithTypeParameters && newResult.isHeader) {
+                if (result == null) result = newResult
+            }
+            // this class is Impl or usual class
+            else {
+                return newResult
+            }
+        }
     }
-    return null
+    return result
 }
