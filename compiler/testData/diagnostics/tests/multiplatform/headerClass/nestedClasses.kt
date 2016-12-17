@@ -3,7 +3,11 @@
 // FILE: common.kt
 
 header class OuterClass {
-    header class NestedClass
+    header class NestedClass {
+        header class DeepNested {
+            header class Another
+        }
+    }
 
     header inner class InnerClass
 
@@ -18,15 +22,15 @@ header object OuterObject {
     header object NestedObject
 }
 
-header class ByTypeAlias {
-    header interface Nested
-}
-
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 impl class OuterClass {
-    impl class NestedClass
+    impl class NestedClass {
+        impl class DeepNested {
+            impl class Another
+        }
+    }
 
     impl inner class InnerClass
 
@@ -40,10 +44,3 @@ impl class OuterClassWithNamedCompanion {
 impl object OuterObject {
     impl object NestedObject
 }
-
-
-class ByTypeAliasImpl {
-    interface Nested
-}
-
-impl typealias ByTypeAlias = ByTypeAliasImpl

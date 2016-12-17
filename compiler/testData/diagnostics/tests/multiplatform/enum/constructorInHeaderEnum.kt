@@ -9,3 +9,7 @@ header enum class En<!HEADER_ENUM_CONSTRUCTOR!>(x: Int)<!> {
 
     <!HEADER_ENUM_CONSTRUCTOR!>constructor(s: String)<!>
 }
+
+header enum class En2 {
+    E1<!NO_CONSTRUCTOR!>()<!>
+}
