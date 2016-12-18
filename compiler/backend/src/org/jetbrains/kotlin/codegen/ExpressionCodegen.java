@@ -2781,11 +2781,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         StackValue result = callable.invokeMethodWithArguments(resolvedCall, receiver, this);
 
-        if (CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, bindingContext)) {
-            // Suspension points should behave like they leave actual values on stack, while real methods return VOID
-            return new OperationStackValue(getSuspensionBoxedReturnTypeByResolvedCall(resolvedCall), ((OperationStackValue) result).getLambda());
-        }
-
         if (bindingContext.get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall()) != null) {
             // Suspend function's calls inside another suspend function should behave like they leave values of correct type,
             // while real methods return java/lang/Object.
@@ -2907,11 +2902,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (isSuspensionPoint) {
-            v.tconst(getSuspensionBoxedReturnTypeByResolvedCall(resolvedCall));
             v.invokestatic(
                     CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
                     CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,
-                    "(Ljava/lang/Class;)V", false);
+                    "()V", false
+            );
         }
 
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
@@ -2928,23 +2923,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.aconst(null);
             v.athrow();
         }
-    }
-
-    @NotNull
-    private Type getSuspensionBoxedReturnTypeByResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
-        assert resolvedCall.getResultingDescriptor() instanceof SimpleFunctionDescriptor
-                : "Suspension point resolved call should be built on SimpleFunctionDescriptor";
-
-        FunctionDescriptor initialSignature =
-                ((SimpleFunctionDescriptor) resolvedCall.getResultingDescriptor())
-                        .getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION);
-
-        assert initialSignature != null : "Initial signature must be not null for suspension point";
-
-        KotlinType returnType = initialSignature.getReturnType();
-
-        assert returnType != null : "Return type of suspension point should not be null";
-        return typeMapper.mapType(TypeUtils.makeNullable(returnType));
     }
 
     @NotNull

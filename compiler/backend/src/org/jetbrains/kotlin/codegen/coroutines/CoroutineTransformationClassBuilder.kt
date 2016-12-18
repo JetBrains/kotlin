@@ -162,36 +162,12 @@ class CoroutineTransformerMethodVisitor(
                 }
 
                 AFTER_SUSPENSION_POINT_MARKER_NAME -> {
-                    assert(beforeSuspensionPointMarkerStack.isNotEmpty()) { "Expected non-empty stack beforeSuspensionPointMarkerStack" }
-                    val beforeSuspensionPointMarker = beforeSuspensionPointMarkerStack.pop()
-                    assert(beforeSuspensionPointMarker.previous is LdcInsnNode) {
-                        "Instruction before BEFORE_SUSPENSION_POINT_MARKER_NAME should be LDC with expected return type, " +
-                        "but ${beforeSuspensionPointMarker.previous} was found"
-                    }
-
-                    val fakeReturnValueInsns = mutableListOf<AbstractInsnNode>()
-
-                    val suspensionPoint = SuspensionPoint(
-                            suspensionCallBegin = beforeSuspensionPointMarker,
-                            suspensionCallEnd = methodInsn,
-                            fakeReturnValueInsns = fakeReturnValueInsns,
-                            returnType = (beforeSuspensionPointMarker.previous as LdcInsnNode).cst as Type)
-                    suspensionPoints.add(suspensionPoint)
-
-                    // Drop type info from marker
-                    methodNode.instructions.remove(beforeSuspensionPointMarker.previous)
-                    beforeSuspensionPointMarker.desc = "()V"
-
-                    assert(suspensionPoint.returnType != Type.VOID_TYPE) { "Suspension point can't be VOID" }
-
-                    // Checkcast only is needed to tell analyzer what type exactly should be returned from suspension point
-                    // This type is used when for restoring spilled variables into fields
-                    val checkCast = TypeInsnNode(Opcodes.CHECKCAST, suspensionPoint.returnType.internalName)
-                    methodNode.instructions.insertBefore(
-                            suspensionPoint.suspensionCallEnd, checkCast
+                    suspensionPoints.add(
+                            SuspensionPoint(
+                                suspensionCallBegin = beforeSuspensionPointMarkerStack.pop(),
+                                suspensionCallEnd = methodInsn
+                            )
                     )
-
-                    fakeReturnValueInsns.add(checkCast)
                 }
             }
         }
@@ -224,7 +200,7 @@ class CoroutineTransformerMethodVisitor(
         for (suspension in suspensionPoints) {
             val suspensionCallBegin = suspension.suspensionCallBegin
             val suspensionCallEnd = suspension.suspensionCallEnd
-            assert(frames[suspensionCallEnd.next.index()]?.stackSize == (if (suspension.returnType.sort == Type.VOID) 0 else 1)) {
+            assert(frames[suspensionCallEnd.next.index()]?.stackSize == 1) {
                 "Stack should be spilled before suspension call"
             }
 
@@ -338,9 +314,6 @@ class CoroutineTransformerMethodVisitor(
                          )
             )
 
-            // Drop default value that purpose was to simulate returned value by suspension method
-            suspension.fakeReturnValueInsns.forEach { methodNode.instructions.remove(it) }
-
             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
                 dup()
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
@@ -371,7 +344,6 @@ class CoroutineTransformerMethodVisitor(
                 load(1, AsmTypes.OBJECT_TYPE)
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
-                StackValue.coerce(AsmTypes.OBJECT_TYPE, suspension.returnType, this)
             })
         }
 
@@ -500,9 +472,7 @@ private class SuspensionPoint(
         // INVOKESTATIC beforeSuspensionMarker
         val suspensionCallBegin: AbstractInsnNode,
         // INVOKESTATIC afterSuspensionMarker
-        val suspensionCallEnd: AbstractInsnNode,
-        val fakeReturnValueInsns: List<AbstractInsnNode>,
-        val returnType: Type
+        val suspensionCallEnd: AbstractInsnNode
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 }
