@@ -5072,6 +5072,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("insideForLoop.kt")
+        public void testInsideForLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/insideForLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("insideForLoop2.kt")
+        public void testInsideForLoop2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/insideForLoop2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("int.kt")
         public void testInt() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertRangeCheckToTwoComparisons/int.kt");

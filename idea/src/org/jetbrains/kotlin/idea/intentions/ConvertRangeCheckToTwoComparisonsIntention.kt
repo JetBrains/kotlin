@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class ConvertRangeCheckToTwoComparisonsIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert to comparisons") {
@@ -38,9 +35,22 @@ class ConvertRangeCheckToTwoComparisonsIntention : SelfTargetingOffsetIndependen
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (element.operationToken != KtTokens.IN_KEYWORD) return false
         // ignore for-loop. for(x in 1..2) should not be convert to for(1<=x && x<=2)
-        if (element.getStrictParentOfType<KtForExpression>() != null) return false
+        if (element.getStrictParentOfType<KtForExpression>() != null && !element.isInContainerNode()) return false
         val rangeExpression = element.right as? KtBinaryExpression ?: return false
         if (rangeExpression.operationToken != KtTokens.RANGE) return false
         return true
     }
+
+    private fun KtBinaryExpression.isInContainerNode(): Boolean {
+        var parent = parent
+        while (parent != null) {
+            when (parent) {
+                is KtForExpression -> return false
+                is KtContainerNode, is KtContainerNodeForControlStructureBody -> return true
+            }
+            parent = parent.parent ?: return false
+        }
+        return false
+    }
+
 }
