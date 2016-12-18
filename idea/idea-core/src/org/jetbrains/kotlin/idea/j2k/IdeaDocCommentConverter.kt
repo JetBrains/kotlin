@@ -201,7 +201,13 @@ object IdeaDocCommentConverter : DocCommentConverter {
 
             "s", "del" -> MarkdownSpan.wrap("~~")
 
-            "code" -> MarkdownSpan.wrap("`")
+            "code" -> {
+                val innerText = tag.value.text.trim()
+                if (innerText.startsWith('`') && innerText.endsWith('`'))
+                    MarkdownSpan("`` ", " ``")
+                else
+                    MarkdownSpan.wrap("`")
+            }
 
             "a" -> {
                 if (tag.getAttributeValue("docref") != null) {
