@@ -58,7 +58,6 @@ const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
-    abstract protected val compiler: CLICompiler<T>
     abstract protected fun populateCompilerArguments(): T
 
     // indicates that task should compile kotlin incrementally if possible
@@ -130,8 +129,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 }
 
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
-    override val compiler = K2JVMCompiler()
-
     internal var parentKotlinOptionsImpl: KotlinJvmOptionsImpl? = null
     private val kotlinOptionsImpl = KotlinJvmOptionsImpl()
     override val kotlinOptions: KotlinJvmOptions
@@ -317,7 +314,6 @@ internal fun compileJvmNotIncrementally(
 }
 
 open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
-    override val compiler = K2JSCompiler()
     private val kotlinOptionsImpl = KotlinJsOptionsImpl()
     override val kotlinOptions: KotlinJsOptions
             get() = kotlinOptionsImpl
@@ -378,15 +374,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val compilerRunner = GradleCompilerRunner(project)
         val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
         val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
-
-        when (exitCode) {
-            ExitCode.OK -> {
-                logger.kotlinInfo("Compilation succeeded")
-            }
-            ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
-            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
-            else -> throw GradleException("Unexpected exit code: $exitCode")
-        }
+        throwGradleExceptionIfError(exitCode)
     }
 }
 

@@ -47,6 +47,7 @@ interface KotlinLogger {
 abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
     protected val K2JVM_COMPILER = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
     protected val K2JS_COMPILER = "org.jetbrains.kotlin.cli.js.K2JSCompiler"
+    protected val K2METADATA_COMPILER = "org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler"
     protected val INTERNAL_ERROR = ExitCode.INTERNAL_ERROR.toString()
 
     protected abstract val log: KotlinLogger
@@ -148,6 +149,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
         val targetPlatform = when (compilerClassName) {
             K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
             K2JS_COMPILER -> CompileService.TargetPlatform.JS
+            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
             else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
         }
 

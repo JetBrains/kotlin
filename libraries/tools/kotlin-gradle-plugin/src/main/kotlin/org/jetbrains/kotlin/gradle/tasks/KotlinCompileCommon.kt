@@ -16,21 +16,24 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
-import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
+import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
 internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>() {
-    override val compiler = K2MetadataCompiler()
-
     override fun populateCompilerArguments(): K2MetadataCompilerArguments =
             K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =
             SourceRoots.KotlinOnly.create(getSource())
+
+    override fun findKotlinCompilerJar(project: Project): File? =
+            findKotlinMetadataCompilerJar(project)
 
     override fun callCompiler(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         val classpathList = classpath.files.toMutableList()
@@ -43,8 +46,11 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
             freeArgs = sourceRoots.kotlinSourceFiles.map { it.canonicalPath }
         }
 
-        val messageCollector = GradleMessageCollector(project.logger)
-        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
+        val messageCollector = GradleMessageCollector(logger)
+        val outputItemCollector = OutputItemsCollectorImpl()
+        val compilerRunner = GradleCompilerRunner(project)
+        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
+        val exitCode = compilerRunner.runMetadataCompiler(sourceRoots.kotlinSourceFiles, args, environment)
         throwGradleExceptionIfError(exitCode)
     }
 }
