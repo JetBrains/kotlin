@@ -4966,6 +4966,39 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UnitTypeReturn extends AbstractLightAnalysisModeCodegenTest {
+            public void testAllFilesPresentInUnitTypeReturn() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/unitTypeReturn"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("coroutineNonLocalReturn.kt")
+            public void testCoroutineNonLocalReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineNonLocalReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("coroutineReturn.kt")
+            public void testCoroutineReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendNonLocalReturn.kt")
+            public void testSuspendNonLocalReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendNonLocalReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendReturn.kt")
+            public void testSuspendReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendReturn.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/dataClasses")

@@ -127,7 +127,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public final FrameMap myFrameMap;
     public final MethodContext context;
     private final Type returnType;
-    private final Type boxedReturnTypeForCoroutine;
 
     private final CodegenStatementVisitor statementVisitor = new CodegenStatementVisitor(this);
     private final MemberCodegen<?> parentCodegen;
@@ -161,14 +160,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.myFrameMap = frameMap;
         this.context = context;
 
-        FunctionDescriptor descriptorForCoroutine = getOriginalLambdaDescriptorForCoroutine(context);
-        if (descriptorForCoroutine != null && descriptorForCoroutine.getReturnType() != null) {
-            this.returnType = typeMapper.mapReturnType(descriptorForCoroutine);
-            this.boxedReturnTypeForCoroutine = getBoxedReturnTypeForCoroutine(descriptorForCoroutine);
+        FunctionDescriptor originalSuspendDescriptor = getOriginalSuspendDescriptor(context);
+        if (originalSuspendDescriptor != null && originalSuspendDescriptor.getReturnType() != null) {
+            this.returnType = getBoxedReturnTypeForSuspend(originalSuspendDescriptor);
         }
         else {
             this.returnType = returnType;
-            this.boxedReturnTypeForCoroutine = null;
         }
 
         this.parentCodegen = parentCodegen;
@@ -176,18 +173,31 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private Type getBoxedReturnTypeForCoroutine(FunctionDescriptor descriptorForCoroutine) {
-        assert descriptorForCoroutine.getReturnType() != null : "Uninitialized coroutine return type";
-        return AsmUtil.boxType(typeMapper.mapType(descriptorForCoroutine.getReturnType()));
+    private Type getBoxedReturnTypeForSuspend(FunctionDescriptor descriptorForSuspend) {
+        assert descriptorForSuspend.getReturnType() != null : "Uninitialized suspend return type";
+        return AsmUtil.boxType(typeMapper.mapType(descriptorForSuspend.getReturnType()));
     }
 
     @Nullable
-    private static FunctionDescriptor getOriginalLambdaDescriptorForCoroutine(MethodContext context) {
+    private static FunctionDescriptor getOriginalSuspendDescriptor(MethodContext context) {
+        FunctionDescriptor originalCoroutineDescriptor = getOriginalCoroutineDescriptor(context);
+        if (originalCoroutineDescriptor != null) return originalCoroutineDescriptor;
+
+        if (context.getFunctionDescriptor().isSuspend()) {
+            return (FunctionDescriptor) CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(context.getFunctionDescriptor());
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static FunctionDescriptor getOriginalCoroutineDescriptor(MethodContext context) {
         if ((context.getParentContext() instanceof ClosureContext) &&
             (context.getParentContext().closure != null) &&
             context.getParentContext().closure.isCoroutine()) {
             return ((ClosureContext) context.getParentContext()).getCoroutineDescriptor();
         }
+
         return null;
     }
 
@@ -351,7 +361,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         putStackValue(expr, type, value);
     }
 
-    private void putStackValue(KtElement expr, Type type, StackValue value) {
+    private void putStackValue(@Nullable KtElement expr, @NotNull Type type, @NotNull StackValue value) {
         // for repl store the result of the last line into special field
         if (value.type != Type.VOID_TYPE && state.getReplSpecific().getShouldGenerateScriptResultValue()) {
             ScriptContext context = getScriptContext();
@@ -1775,7 +1785,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     private static CallableDescriptor unwrapOriginalLambdaDescriptorForCoroutine(@NotNull MethodContext context) {
-        FunctionDescriptor coroutine = getOriginalLambdaDescriptorForCoroutine(context);
+        FunctionDescriptor coroutine = getOriginalSuspendDescriptor(context);
         if (coroutine != null) return coroutine;
         return context.getFunctionDescriptor();
     }
@@ -2159,26 +2169,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
 
                 Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : ExpressionCodegen.this.returnType;
-                StackValue valueToReturn = returnedExpression != null ? gen(returnedExpression) : null;
+                StackValue valueToReturn = returnedExpression != null ? gen(returnedExpression) : StackValue.none();
 
-                if (returnedExpression != null && valueToReturn != null) {
-                    putStackValue(returnedExpression, returnType, valueToReturn);
-                }
+                putStackValue(returnedExpression, returnType, valueToReturn);
 
                 Label afterReturnLabel = new Label();
                 generateFinallyBlocksIfNeeded(returnType, afterReturnLabel);
 
                 if (isNonLocalReturn) {
-                    if (nonLocalReturn.boxedCoroutineReturnType != null && !nonLocalReturn.boxedCoroutineReturnType.equals(returnType)) {
-                        StackValue.coerce(nonLocalReturn.returnType, nonLocalReturn.boxedCoroutineReturnType, v);
-                        returnType = nonLocalReturn.boxedCoroutineReturnType;
-                    }
-
                     InlineCodegenUtil.generateGlobalReturnFlag(v, nonLocalReturn.labelName);
                     v.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
                 }
                 else {
-                    emitLocalReturnInsn();
+                    v.areturn(ExpressionCodegen.this.returnType);
                 }
 
                 v.mark(afterReturnLabel);
@@ -2213,7 +2216,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     FunctionDescriptor containingFunction =
                             BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
-                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL, null);
+                    return new NonLocalReturnInfo(getReturnTypeForNonLocalReturn(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL);
                 } else {
                     //local
                     return null;
@@ -2225,49 +2228,49 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 DeclarationDescriptor elementDescriptor = typeMapper.getBindingContext().get(DECLARATION_TO_DESCRIPTOR, element);
                 assert element != null : "Expression should be not null " + expression.getText();
                 assert elementDescriptor != null : "Descriptor should be not null: " + element.getText();
-                Type boxedCoroutineReturnType =
-                        elementDescriptor instanceof AnonymousFunctionDescriptor
-                            && ((AnonymousFunctionDescriptor) elementDescriptor).isCoroutine()
-                        ? getBoxedReturnTypeForCoroutine((FunctionDescriptor) elementDescriptor)
-                        : null;
-                return new NonLocalReturnInfo(
-                        typeMapper.mapReturnType((CallableDescriptor) elementDescriptor), expression.getLabelName(),
-                        boxedCoroutineReturnType
-                );
+                return new NonLocalReturnInfo(getReturnTypeForNonLocalReturn(elementDescriptor), expression.getLabelName());
             }
         }
         return null;
     }
 
+    @NotNull
+    private Type getReturnTypeForNonLocalReturn(DeclarationDescriptor elementDescriptor) {
+        return (elementDescriptor instanceof AnonymousFunctionDescriptor
+            && ((AnonymousFunctionDescriptor) elementDescriptor).isCoroutine())
+            || (elementDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) elementDescriptor).isSuspend())
+        ? getBoxedReturnTypeForSuspend((FunctionDescriptor) elementDescriptor)
+        : typeMapper.mapReturnType((CallableDescriptor) elementDescriptor);
+    }
+
     public void returnExpression(KtExpression expr) {
         boolean isBlockedNamedFunction = expr instanceof KtBlockExpression && expr.getParent() instanceof KtNamedFunction;
 
-        // If generating body for named block-bodied function, generate it as sequence of statements
-        gen(expr, isBlockedNamedFunction ? Type.VOID_TYPE : returnType);
+        FunctionDescriptor originalCoroutineDescriptor = getOriginalCoroutineDescriptor(context);
+        boolean isVoidCoroutineLambda =
+                originalCoroutineDescriptor != null && typeMapper.mapReturnType(originalCoroutineDescriptor).getSort() == Type.VOID;
+
+        // If generating body for named block-bodied function or Unit-typed coroutine lambda, generate it as sequence of statements
+        Type typeForExpression =
+                isBlockedNamedFunction || isVoidCoroutineLambda
+                ? Type.VOID_TYPE
+                : returnType;
+
+        gen(expr, typeForExpression);
 
         // If it does not end with return we should return something
         // because if we don't there can be VerifyError (specific cases with Nothing-typed expressions)
         if (!endsWithReturn(expr)) {
             markLineNumber(expr, true);
 
-            if (isLambdaVoidBody(expr, returnType)) {
+            if (isLambdaVoidBody(expr, typeForExpression)) {
                 markLineNumber((KtFunctionLiteral) expr.getParent(), true);
             }
 
-            if (isBlockedNamedFunction && !Type.VOID_TYPE.equals(expressionType(expr))) {
+            if (typeForExpression.getSort() == Type.VOID) {
                 StackValue.none().put(returnType, v);
             }
 
-            emitLocalReturnInsn();
-        }
-    }
-
-    private void emitLocalReturnInsn() {
-        if (boxedReturnTypeForCoroutine != null && !boxedReturnTypeForCoroutine.equals(returnType)) {
-            StackValue.coerce(returnType, boxedReturnTypeForCoroutine, v);
-            v.areturn(boxedReturnTypeForCoroutine);
-        }
-        else {
             v.areturn(returnType);
         }
     }
@@ -2781,6 +2784,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, bindingContext)) {
             // Suspension points should behave like they leave actual values on stack, while real methods return VOID
             return new OperationStackValue(getSuspensionBoxedReturnTypeByResolvedCall(resolvedCall), ((OperationStackValue) result).getLambda());
+        }
+
+        if (bindingContext.get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall()) != null) {
+            // Suspend function's calls inside another suspend function should behave like they leave values of correct type,
+            // while real methods return java/lang/Object.
+            // NB: They are always in return position at the moment.
+            // If we didn't do this, StackValue.coerce would add proper CHECKCAST that would've failed in case of callee function
+            // returning SUSPENDED marker, which is instance of java/lang/Object.
+            return new OperationStackValue(returnType, ((OperationStackValue) result).getLambda());
         }
 
         return result;
@@ -4713,12 +4725,10 @@ The "returned" value of try expression with no finally is either the last expres
         private final Type returnType;
 
         private final String labelName;
-        private final Type boxedCoroutineReturnType;
 
-        private NonLocalReturnInfo(@NotNull Type type, @NotNull String name, @Nullable Type boxedCoroutineReturnType) {
+        private NonLocalReturnInfo(@NotNull Type type, @NotNull String name) {
             returnType = type;
             labelName = name;
-            this.boxedCoroutineReturnType = boxedCoroutineReturnType;
         }
     }
 
