@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert to range check") {
 
@@ -51,16 +52,16 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
                 when (secondOpToken) {
                     KtTokens.GTEQ, KtTokens.GT -> when {
                         firstLeft !is KtConstantExpression && firstLeft.evaluatesTo(secondRight) ->
-                            generateRangeExpressionData(firstLeft, firstRight, secondLeft, minDecrementByOne = firstOpToken == KtTokens.GT, maxDecrementByOne = secondOpToken == KtTokens.GT)
+                            generateRangeExpressionData(firstLeft, firstRight, secondLeft, incrementByOne = firstOpToken == KtTokens.GT, decrementByOne = secondOpToken == KtTokens.GT)
                         firstRight !is KtConstantExpression && firstRight.evaluatesTo(secondLeft) ->
-                            generateRangeExpressionData(firstRight, secondRight, firstLeft, minDecrementByOne = firstOpToken == KtTokens.GT, maxDecrementByOne = secondOpToken == KtTokens.GT)
+                            generateRangeExpressionData(firstRight, secondRight, firstLeft, incrementByOne = firstOpToken == KtTokens.GT, decrementByOne = secondOpToken == KtTokens.GT)
                         else -> null
                     }
                     KtTokens.LTEQ, KtTokens.LT -> when {
                         firstLeft !is KtConstantExpression && firstLeft.evaluatesTo(secondLeft) ->
-                            generateRangeExpressionData(firstLeft, firstRight, secondRight, minDecrementByOne = firstOpToken == KtTokens.GT, maxDecrementByOne = secondOpToken == KtTokens.LT)
+                            generateRangeExpressionData(firstLeft, firstRight, secondRight, incrementByOne = firstOpToken == KtTokens.GT, decrementByOne = secondOpToken == KtTokens.LT)
                         firstRight !is KtConstantExpression && firstRight.evaluatesTo(secondRight) ->
-                            generateRangeExpressionData(firstRight, secondLeft, firstLeft, minDecrementByOne = firstOpToken == KtTokens.GT, maxDecrementByOne = secondOpToken == KtTokens.LT)
+                            generateRangeExpressionData(firstRight, secondLeft, firstLeft, incrementByOne = firstOpToken == KtTokens.GT, decrementByOne = secondOpToken == KtTokens.LT)
                         else -> null
                     }
                     else -> null
@@ -70,16 +71,16 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
                 when (secondOpToken) {
                     KtTokens.GTEQ, KtTokens.GT -> when {
                         firstLeft !is KtConstantExpression && firstLeft.evaluatesTo(secondLeft) ->
-                            generateRangeExpressionData(firstLeft, secondRight, firstRight, minDecrementByOne = firstOpToken == KtTokens.LT, maxDecrementByOne = secondOpToken == KtTokens.GT)
+                            generateRangeExpressionData(firstLeft, secondRight, firstRight, incrementByOne = firstOpToken == KtTokens.LT, decrementByOne = secondOpToken == KtTokens.GT)
                         firstRight !is KtConstantExpression && firstRight.evaluatesTo(secondRight) ->
-                            generateRangeExpressionData(firstRight, firstLeft, secondLeft, minDecrementByOne = firstOpToken == KtTokens.LT, maxDecrementByOne = secondOpToken == KtTokens.GT)
+                            generateRangeExpressionData(firstRight, firstLeft, secondLeft, incrementByOne = firstOpToken == KtTokens.LT, decrementByOne = secondOpToken == KtTokens.GT)
                         else -> null
                     }
                     KtTokens.LTEQ, KtTokens.LT -> when {
                         firstLeft !is KtConstantExpression && firstLeft.evaluatesTo(secondRight) ->
-                            generateRangeExpressionData(firstLeft, secondLeft, firstRight, minDecrementByOne = firstOpToken == KtTokens.LT, maxDecrementByOne = secondOpToken == KtTokens.LT)
+                            generateRangeExpressionData(firstLeft, secondLeft, firstRight, incrementByOne = firstOpToken == KtTokens.LT, decrementByOne = secondOpToken == KtTokens.LT)
                         firstRight !is KtConstantExpression && firstRight.evaluatesTo(secondLeft) ->
-                            generateRangeExpressionData(firstRight, firstLeft, secondRight, minDecrementByOne = firstOpToken == KtTokens.LT, maxDecrementByOne = secondOpToken == KtTokens.LT)
+                            generateRangeExpressionData(firstRight, firstLeft, secondRight, incrementByOne = firstOpToken == KtTokens.LT, decrementByOne = secondOpToken == KtTokens.LT)
                         else -> null
                     }
                     else -> null
@@ -89,37 +90,41 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
         }
     }
 
-    private fun generateRangeExpressionData(value: KtExpression, min: KtExpression, max: KtExpression, minDecrementByOne: Boolean = false, maxDecrementByOne: Boolean = false): RangeExpressionData? {
-        if (minDecrementByOne || maxDecrementByOne) {
-            val type = value.getType(value.analyze()) ?: return null
-            if (!KotlinBuiltIns.isInt(type) && !KotlinBuiltIns.isLong(type) && !KotlinBuiltIns.isShort(type) && !KotlinBuiltIns.isChar(type)) return null
+    private fun generateRangeExpressionData(value: KtExpression, min: KtExpression, max: KtExpression, incrementByOne: Boolean = false, decrementByOne: Boolean = false): RangeExpressionData? {
+        fun KtExpression.getChangeBy(number: Int): String? {
+            val type = getType(analyze()) ?: return null
+            if (!type.isValidTypeForIncrementDecrementByOne()) return null
+
+            when (this) {
+                is KtConstantExpression -> {
+                    return when {
+                        KotlinBuiltIns.isInt(type) -> (text.toInt() + number).toString()
+                        KotlinBuiltIns.isLong(type) -> {
+                            val text = text
+                            val longText = if (text.endsWith("l") || text.endsWith("L")) text.substring(0, text.length - 1) else text
+                            (longText.toLong() + number).toString()
+                        }
+                        KotlinBuiltIns.isShort(type) -> (java.lang.Short.parseShort(text) + number).toString()
+                        KotlinBuiltIns.isChar(type) -> "${text[0]}${text[1] + number}${text[2]}"
+                        else -> return null
+                    }
+                }
+                else -> return if (number > 0) "($text + $number)" else "($text - ${Math.abs(number)})"
+            }
         }
 
-        val minText = if (minDecrementByOne) min.getDecrementByOneString() else min.text
-        val maxText = if (maxDecrementByOne) max.getDecrementByOneString() else max.text
+        if (incrementByOne || decrementByOne) {
+            if (!value.getType(value.analyze()).isValidTypeForIncrementDecrementByOne()) return null
+        }
+
+        val minText = if (incrementByOne) min.getChangeBy(1) else min.text
+        val maxText = if (decrementByOne) max.getChangeBy(-1) else max.text
         return RangeExpressionData(value.text, minText ?: return null, maxText ?: return null)
     }
 
-    private fun KtExpression.getDecrementByOneString(): String? {
-        val type = getType(analyze()) ?: return null
-        if (!KotlinBuiltIns.isInt(type) && !KotlinBuiltIns.isLong(type) && !KotlinBuiltIns.isShort(type) && !KotlinBuiltIns.isChar(type)) return null
-
-        when (this) {
-            is KtConstantExpression -> {
-                val number: Any = when {
-                    KotlinBuiltIns.isInt(type) -> text.toInt() - 1
-                    KotlinBuiltIns.isLong(type) -> {
-                        val text = text
-                        val longText = if (text.endsWith("l") || text.endsWith("L")) text.substring(0, text.length - 1) else text
-                        longText.toLong() - 1
-                    }
-                    KotlinBuiltIns.isShort(type) -> java.lang.Short.parseShort(text) - 1
-                    KotlinBuiltIns.isChar(type) -> (text[0].toInt() - 1).toChar()
-                    else -> return null
-                }
-                return number.toString()
-            }
-            else -> return "($text - 1)"
-        }
+    fun KotlinType?.isValidTypeForIncrementDecrementByOne(): Boolean {
+        this ?: return false
+        return KotlinBuiltIns.isInt(this) || KotlinBuiltIns.isLong(this) || KotlinBuiltIns.isShort(this) || KotlinBuiltIns.isChar(this)
     }
+
 }

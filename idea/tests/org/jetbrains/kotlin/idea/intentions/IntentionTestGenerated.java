@@ -6507,6 +6507,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("charInclusive.kt")
+        public void testCharInclusive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/charInclusive.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("double.kt")
         public void testDouble() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertTwoComparisonsToRangeCheck/double.kt");
