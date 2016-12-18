@@ -22,12 +22,16 @@ import java.util.zip.ZipFile
 
 private val K2JVM_COMPILER_CLASS = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 private val K2JS_COMPILER_CLASS = "org.jetbrains.kotlin.cli.js.K2JSCompiler"
+private val K2METADATA_COMPILER_CLASS = "org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler"
 
 internal fun findKotlinJvmCompilerJar(project: Project): File? =
         findKotlinCompilerJar(project, K2JVM_COMPILER_CLASS)
 
 internal fun findKotlinJsCompilerJar(project: Project): File? =
         findKotlinCompilerJar(project, K2JS_COMPILER_CLASS)
+
+internal fun findKotlinMetadataCompilerJar(project: Project): File? =
+        findKotlinCompilerJar(project, K2METADATA_COMPILER_CLASS)
 
 private fun findKotlinCompilerJar(project: Project, compilerClassName: String): File? {
     fun Project.classpathJars(): Sequence<File> =

@@ -22,22 +22,18 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
-import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
-import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.incremental.makeModuleFile
 import java.io.*
-import java.rmi.server.UnicastRemoteObject
 import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
@@ -99,6 +95,15 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     ): ExitCode {
         val additionalArguments = kotlinSources.joinToString(separator = " ") { it.absolutePath }
         return runCompiler(K2JS_COMPILER, args, additionalArguments, environment)
+    }
+
+    fun runMetadataCompiler(
+            kotlinSources: List<File>,
+            args: K2MetadataCompilerArguments,
+            environment: GradleCompilerEnvironment
+    ): ExitCode {
+        val additionalArguments = kotlinSources.joinToString(separator = " ") { it.absolutePath }
+        return runCompiler(K2METADATA_COMPILER, args, additionalArguments, environment)
     }
 
     override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment): ExitCode {
