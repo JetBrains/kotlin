@@ -14,134 +14,115 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.checkers;
+package org.jetbrains.kotlin.checkers
 
-import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
-import org.jetbrains.kotlin.context.ModuleContext;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
-import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
-import org.jetbrains.kotlin.js.resolve.BindingContextSlicesJsKt;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
-import org.jetbrains.kotlin.serialization.js.ModuleKind;
-import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
+import org.jetbrains.kotlin.js.resolve.*
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
+import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList
 
-public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagnosticsTest {
-    private JsConfig config;
+abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
+    protected var config: JsConfig? = null
+        private set
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB);
-        config = new LibrarySourcesConfig(getProject(), configuration);
+    @Throws(Exception::class)
+    override fun setUp() {
+        super.setUp()
+        val configuration = environment.configuration.copy()
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
+        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
+        config = LibrarySourcesConfig(project, configuration)
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        config = null;
-        super.tearDown();
+    @Throws(Exception::class)
+    override fun tearDown() {
+        config = null
+        super.tearDown()
     }
 
-    @Override
-    @NotNull
-    protected List<String> getEnvironmentConfigFiles() {
-        return EnvironmentConfigFiles.JS_CONFIG_FILES;
+    override fun getEnvironmentConfigFiles(): List<String> {
+        return EnvironmentConfigFiles.JS_CONFIG_FILES
     }
 
-    @Override
-    @NotNull
-    protected JsAnalysisResult analyzeModuleContents(
-            @NotNull ModuleContext moduleContext,
-            @NotNull List<KtFile> ktFiles,
-            @NotNull BindingTrace moduleTrace,
-            @Nullable LanguageVersionSettings languageVersionSettings,
-            boolean separateModules
-    ) {
+    override fun analyzeModuleContents(
+            moduleContext: ModuleContext,
+            ktFiles: List<KtFile>,
+            moduleTrace: BindingTrace,
+            languageVersionSettings: LanguageVersionSettings?,
+            separateModules: Boolean
+    ): JsAnalysisResult {
         // TODO: support LANGUAGE directive in JS diagnostic tests
-        assert languageVersionSettings == null
-                : BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive is not supported in JS diagnostic tests";
-        moduleTrace.record(BindingContextSlicesJsKt.MODULE_KIND, moduleContext.getModule(), getModuleKind(ktFiles));
-        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(ktFiles, moduleTrace, moduleContext, config);
+        assert(languageVersionSettings == null) { BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive is not supported in JS diagnostic tests" }
+        moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(ktFiles))
+        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(ktFiles, moduleTrace, moduleContext, config!!)
     }
 
-    @NotNull
-    private static ModuleKind getModuleKind(@NotNull List<KtFile> ktFiles) {
-        ModuleKind kind = ModuleKind.PLAIN;
-        for (KtFile file : ktFiles) {
-            String text = file.getText();
-            for (String line : StringUtil.splitByLines(text)) {
-                line = line.trim();
-                if (!line.startsWith("//")) continue;
-                line = line.substring(2).trim();
-                List<String> parts = StringUtil.split(line, ":");
-                if (parts.size() != 2) continue;
+    private fun getModuleKind(ktFiles: List<KtFile>): ModuleKind {
+        var kind = ModuleKind.PLAIN
+        for (file in ktFiles) {
+            val text = file.text
+            for (line in StringUtil.splitByLines(text)) {
+                line = line.trim { it <= ' ' }
+                if (!line.startsWith("//")) continue
+                line = line.substring(2).trim { it <= ' ' }
+                val parts = StringUtil.split(line, ":")
+                if (parts.size != 2) continue
 
-                if (!parts.get(0).trim().equals("MODULE_KIND")) continue;
-                kind = ModuleKind.valueOf(parts.get(1).trim());
+                if (parts[0].trim { it <= ' ' } != "MODULE_KIND") continue
+                kind = ModuleKind.valueOf(parts[1].trim { it <= ' ' })
             }
         }
 
-        return kind;
+        return kind
     }
 
-    @Override
-    @NotNull
-    protected List<ModuleDescriptorImpl> getAdditionalDependencies(@NotNull  ModuleDescriptorImpl module) {
-        List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
-        for (JsModuleDescriptor<ModuleDescriptorImpl> moduleDescriptor : config.getModuleDescriptors()) {
-            dependencies.add(moduleDescriptor.getData());
+    override fun getAdditionalDependencies(module: ModuleDescriptorImpl): List<ModuleDescriptorImpl> {
+        val dependencies = ArrayList<ModuleDescriptorImpl>()
+        for (moduleDescriptor in config!!.moduleDescriptors) {
+            dependencies.add(moduleDescriptor.data)
         }
-        return dependencies;
+        return dependencies
     }
 
-    @Override
-    public boolean shouldSkipJvmSignatureDiagnostics(Map<TestModule, List<TestFile>> groupedByModule) {
-        return true;
+    override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<BaseDiagnosticsTest.TestModule, List<BaseDiagnosticsTest.TestFile>>): Boolean {
+        return true
     }
 
-    @NotNull
-    @Override
-    protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return new ModuleDescriptorImpl(Name.special("<" + moduleName + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns());
+    override fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl {
+        return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JsPlatform.builtIns)
     }
 
-    @NotNull
-    @Override
-    protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
-        ModuleDescriptorImpl module = createModule("kotlin-js-test-module", storageManager);
+    override fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl {
+        val module = createModule("kotlin-js-test-module", storageManager)
 
-        List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
-        dependencies.add(module);
+        val dependencies = ArrayList<ModuleDescriptorImpl>()
+        dependencies.add(module)
 
-        dependencies.addAll(getAdditionalDependencies(module));
+        dependencies.addAll(getAdditionalDependencies(module))
 
-        dependencies.add(module.getBuiltIns().getBuiltInsModule());
-        module.setDependencies(dependencies);
+        dependencies.add(module.builtIns.builtInsModule)
+        module.setDependencies(dependencies)
 
-        return module;
-    }
-
-    protected JsConfig getConfig() {
-        return config;
+        return module
     }
 }
