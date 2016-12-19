@@ -22,9 +22,12 @@ import java.io.File
 internal const val STANDALONE_CACHE_VERSION = 0
 internal const val STANDALONE_VERSION_FILE_NAME = "standalone-ic-format-version.txt"
 
-fun standaloneCacheVersion(dataRoot: File, forceEnable: Boolean = false): CacheVersion =
-        CacheVersion(ownVersion = STANDALONE_CACHE_VERSION,
-                versionFile = File(dataRoot, STANDALONE_VERSION_FILE_NAME),
+fun standaloneCacheVersion(dataRoot: File): CacheVersion =
+        customCacheVersion(STANDALONE_CACHE_VERSION, STANDALONE_VERSION_FILE_NAME, dataRoot)
+
+fun customCacheVersion(version: Int, fileName: String, dataRoot: File, forceEnable: Boolean = false): CacheVersion =
+        CacheVersion(ownVersion = version,
+                versionFile = File(dataRoot, fileName),
                 whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                 whenTurnedOff = CacheVersion.Action.REBUILD_ALL_KOTLIN,
