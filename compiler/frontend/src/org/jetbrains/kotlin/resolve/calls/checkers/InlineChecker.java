@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -51,13 +50,13 @@ import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturn
 class InlineChecker implements CallChecker {
     private final FunctionDescriptor descriptor;
     private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<CallableDescriptor>();
-    private final boolean isEffectivelyPublicOrPublishedApiFunction;
+    private final EffectiveVisibility inlineFunEffectiveVisibility;
     private final boolean isEffectivelyPrivateApiFunction;
 
     public InlineChecker(@NotNull FunctionDescriptor descriptor) {
         assert InlineUtil.isInline(descriptor) : "This extension should be created only for inline functions: " + descriptor;
         this.descriptor = descriptor;
-        this.isEffectivelyPublicOrPublishedApiFunction = isEffectivelyPublicOrPublishedApi(descriptor);
+        this.inlineFunEffectiveVisibility = EffectiveVisibilityKt.effectiveVisibility(descriptor, descriptor.getVisibility(), true);
         this.isEffectivelyPrivateApiFunction = DescriptorUtilsKt.isEffectivelyPrivateApi(descriptor);
         for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
             if (isInlinableParameter(param)) {
@@ -239,29 +238,31 @@ class InlineChecker implements CallChecker {
     }
 
     private void checkVisibilityAndAccess(
-            @NotNull CallableDescriptor declarationDescriptor,
+            @NotNull CallableDescriptor calledDescriptor,
             @NotNull KtElement expression,
             @NotNull CallCheckerContext context
     ) {
-        boolean declarationDescriptorIsPublicOrPublishedApi = isEffectivelyPublicOrPublishedApi(declarationDescriptor) ||
-                                                              isDefinedInInlineFunction(declarationDescriptor);
-        if (isEffectivelyPublicOrPublishedApiFunction &&
-            !declarationDescriptorIsPublicOrPublishedApi &&
-            declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
-            context.getTrace().report(Errors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE.on(expression, declarationDescriptor, descriptor));
+        EffectiveVisibility calledFunEffectiveVisibility =
+                isDefinedInInlineFunction(calledDescriptor) ?
+                EffectiveVisibility.Public.INSTANCE :
+                EffectiveVisibilityKt.effectiveVisibility(calledDescriptor, calledDescriptor.getVisibility(), true);
+
+        boolean isCalledFunPublicOrPublishedApi = calledFunEffectiveVisibility.getPublicApi();
+        boolean isInlineFunPublicOrPublishedApi = inlineFunEffectiveVisibility.getPublicApi();
+        if (isInlineFunPublicOrPublishedApi &&
+            !isCalledFunPublicOrPublishedApi &&
+            calledDescriptor.getVisibility() != Visibilities.LOCAL) {
+            context.getTrace().report(Errors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor, descriptor));
         }
         else {
-            checkPrivateClassMemberAccess(declarationDescriptor, expression, context);
+            checkPrivateClassMemberAccess(calledDescriptor, expression, context);
         }
 
-        if (isEffectivelyPublicOrPublishedApiFunction && declarationDescriptor.getVisibility() == Visibilities.PROTECTED) {
-            context.getTrace().report(Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE.on(expression, declarationDescriptor));
+        if (isInlineFunPublicOrPublishedApi &&
+            inlineFunEffectiveVisibility.toVisibility() != Visibilities.PROTECTED &&
+            calledFunEffectiveVisibility.toVisibility() == Visibilities.PROTECTED) {
+            context.getTrace().report(Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor));
         }
-    }
-
-    private static boolean isEffectivelyPublicOrPublishedApi(@NotNull CallableDescriptor descriptor) {
-        EffectiveVisibility visibility = EffectiveVisibilityKt.effectiveVisibility(descriptor, descriptor.getVisibility(), true);
-        return visibility.getPublicApi();
     }
 
     private void checkPrivateClassMemberAccess(
