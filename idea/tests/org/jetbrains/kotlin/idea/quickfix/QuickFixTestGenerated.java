@@ -4869,6 +4869,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extensionVar.kt")
+            public void testExtensionVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/extensionVar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("generic.kt")
             public void testGeneric() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/generic.kt");
@@ -4890,6 +4896,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleVal.kt")
+            public void testSimpleVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/simpleVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleVar.kt")
+            public void testSimpleVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/simpleVar.kt");
                 doTest(fileName);
             }
         }

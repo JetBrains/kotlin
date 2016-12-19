@@ -600,4 +600,12 @@ public class DescriptorUtils {
 
         throw new IllegalStateException("Function not found");
     }
+
+    @NotNull
+    public static CallableMemberDescriptor getDirectMember(@NotNull CallableMemberDescriptor descriptor) {
+        return descriptor instanceof PropertyAccessorDescriptor
+               ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
+               : descriptor;
+    }
+
 }

@@ -268,9 +268,7 @@ public class JvmCodegenUtil {
 
     @NotNull
     public static CallableMemberDescriptor getDirectMember(@NotNull CallableMemberDescriptor descriptor) {
-        return descriptor instanceof PropertyAccessorDescriptor
-               ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
-               : descriptor;
+        return DescriptorUtils.getDirectMember(descriptor);
     }
 
     public static boolean isArgumentWhichWillBeInlined(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
