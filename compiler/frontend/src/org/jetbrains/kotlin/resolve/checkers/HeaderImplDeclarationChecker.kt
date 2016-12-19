@@ -143,12 +143,12 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         } // TODO: only obtain descriptors from our module to start with
     }
 
-    fun ClassifierDescriptor.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptor> {
+    fun ClassifierDescriptor.findClassifiersFromTheSameModule(): Collection<ClassifierDescriptorWithTypeParameters> {
         val myModule = moduleToCheck ?: module
         // TODO: support nested classes
         return myModule.getPackage(fqNameSafe.parent()).memberScope
                 .getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS) { it == name }
-                .filterIsInstance<ClassifierDescriptor>()
+                .filterIsInstance<ClassifierDescriptorWithTypeParameters>()
     }
 
     sealed class Compatibility {
