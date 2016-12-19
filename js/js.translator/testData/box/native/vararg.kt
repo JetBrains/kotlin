@@ -16,11 +16,11 @@ fun anotherCount(vararg a: Int) = anotherParamCount(*a)
 
 external fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = noImpl
 
-external class Bar(val size: Int, order: Int = 0) {
+external class Bar(val size: Int, order: Int = noImpl) {
     fun test(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
     companion object {
         fun startNewTest(): Boolean = noImpl
-        var hasOrderProblem: Boolean = false
+        var hasOrderProblem: Boolean = noImpl
     }
 }
 

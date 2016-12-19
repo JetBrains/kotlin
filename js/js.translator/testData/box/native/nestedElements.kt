@@ -113,7 +113,7 @@ external object Object {
     interface Trait {
         val a: String
         var b: String
-        fun test(): Int = noImpl
+        fun test(): Int
 
         companion object {
             val a: String = noImpl
@@ -149,7 +149,7 @@ external class Class {
     interface Trait {
         val a: String
         var b: String
-        fun test(): Int = noImpl
+        fun test(): Int
 
         companion object {
             val a: String = noImpl
@@ -189,7 +189,7 @@ external interface Trait {
     interface Trait {
         val a: String
         var b: String
-        fun test(): Int = noImpl
+        fun test(): Int
 
         companion object {
             val a: String = noImpl
