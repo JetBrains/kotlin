@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.gradle.tasks.SourceRoots
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.incremental.makeModuleFile
@@ -64,7 +66,6 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             environment: GradleCompilerEnvironment
     ): ExitCode {
         val outputDir = args.destinationAsFile
-        log.info("Using kotlin compiler jar: ${environment.compilerJar}")
 
         if (environment !is GradleIncrementalCompilerEnvironment) {
             log.debug("Removing all kotlin classes in $outputDir")
@@ -104,7 +105,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment): ExitCode {
         with (project.logger) {
             kotlinDebug { "Kotlin compiler class: $compilerClassName" }
-            kotlinDebug { "Kotlin compiler jar: ${environment.compilerJar}" }
+            kotlinDebug { "Kotlin compiler classpath: ${environment.compilerClasspath.map { it.canonicalPath }.joinToString()}" }
             kotlinDebug { "Kotlin compiler args: ${argsArray.joinToString(" ")}" }
         }
 
@@ -229,7 +230,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
     @Synchronized
     override fun getDaemonConnection(environment: GradleCompilerEnvironment): DaemonConnection {
-        return newDaemonConnection(environment.compilerJar, flagFile, environment)
+        val compilerId = CompilerId.makeCompilerId(environment.compilerClasspath)
+        return newDaemonConnection(compilerId, flagFile, environment)
     }
 }
 

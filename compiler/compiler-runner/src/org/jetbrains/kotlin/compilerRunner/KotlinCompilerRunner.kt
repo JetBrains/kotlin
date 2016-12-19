@@ -56,8 +56,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
     protected abstract fun getDaemonConnection(environment: Env): DaemonConnection
 
     @Synchronized
-    protected fun newDaemonConnection(compilerPath: File, flagFile: File, environment: Env): DaemonConnection {
-        val compilerId = CompilerId.makeCompilerId(compilerPath)
+    protected fun newDaemonConnection(compilerId: CompilerId, flagFile: File, environment: Env): DaemonConnection {
         val daemonOptions = configureDaemonOptions()
         val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
 

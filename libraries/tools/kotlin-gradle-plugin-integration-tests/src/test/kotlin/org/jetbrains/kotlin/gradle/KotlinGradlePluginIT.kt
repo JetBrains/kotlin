@@ -299,7 +299,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains("Using kotlin compiler jar: $compilerJar")
+            assertContains("Kotlin compiler classpath: $compilerJar")
         }
     }
 }

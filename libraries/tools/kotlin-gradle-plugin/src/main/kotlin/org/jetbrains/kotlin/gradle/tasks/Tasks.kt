@@ -17,19 +17,15 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.codehaus.groovy.runtime.MethodClosure
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdaterImpl
-import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -37,10 +33,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
@@ -72,7 +65,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         }
 
     var compilerJarFile: File? = null
-    protected val compilerJar: File
+    internal val compilerJar: File
             get() = compilerJarFile
                     ?: findKotlinCompilerJar(project)
                     ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
@@ -256,41 +249,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun source(vararg sources: Any?): SourceTask? {
         sourceRootsContainer.add(*sources)
         return super.source(*sources)
-    }
-}
-
-internal fun compileJvmNotIncrementally(
-        compiler: K2JVMCompiler,
-        logger: Logger,
-        sourcesToCompile: List<File>,
-        javaSourceRoots: Iterable<File>,
-        compileClasspath: Iterable<File>,
-        outputDir: File,
-        args: K2JVMCompilerArguments
-): ExitCode {
-    logger.kotlinDebug("Removing all kotlin classes in $outputDir")
-    // we're free to delete all classes since only we know about that directory
-    // todo: can be optimized -- compile and remove only files that were not generated
-    listClassFiles(outputDir.canonicalPath).forEach { it.delete() }
-
-    val moduleFile = makeModuleFile(
-            args.moduleName,
-            isTest = false,
-            outputDir = outputDir,
-            sourcesToCompile = sourcesToCompile,
-            javaSourceRoots = javaSourceRoots,
-            classpath = compileClasspath,
-            friendDirs = listOf())
-    args.module = moduleFile.absolutePath
-    val messageCollector = GradleMessageCollector(logger)
-
-    try {
-        logger.kotlinDebug("compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}")
-        logger.kotlinDebug("compiling with classpath: ${compileClasspath.toList().sorted().joinToString()}")
-        return compiler.exec(messageCollector, Services.EMPTY, args)
-    }
-    finally {
-        moduleFile.delete()
     }
 }
 
