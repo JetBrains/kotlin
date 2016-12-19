@@ -224,7 +224,7 @@ public class KotlinTypeMapper {
             }
         }
 
-        CallableMemberDescriptor directMember = getDirectMember(descriptor);
+        CallableMemberDescriptor directMember = DescriptorUtils.getDirectMember(descriptor);
 
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
             String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember, publicFacade);
@@ -946,7 +946,7 @@ public class KotlinTypeMapper {
             return null;
         }
 
-        descriptor = getDirectMember(descriptor);
+        descriptor = DescriptorUtils.getDirectMember(descriptor);
         assert descriptor instanceof DeserializedCallableMemberDescriptor :
                 "Descriptor without sources should be instance of DeserializedCallableMemberDescriptor, but: " +
                 descriptor;
@@ -1039,7 +1039,7 @@ public class KotlinTypeMapper {
             writeVoidReturn(sw);
         }
         else {
-            CallableMemberDescriptor directMember = getDirectMember(f);
+            CallableMemberDescriptor directMember = DescriptorUtils.getDirectMember(f);
             KotlinType thisIfNeeded = null;
             if (OwnerKind.DEFAULT_IMPLS == kind) {
                 ReceiverTypeAndTypeParameters receiverTypeAndTypeParameters = TypeMapperUtilsKt.patchTypeParametersForDefaultImplMethod(directMember);

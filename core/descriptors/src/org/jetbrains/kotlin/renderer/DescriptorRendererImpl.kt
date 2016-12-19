@@ -841,18 +841,20 @@ internal class DescriptorRendererImpl(
 
     private fun renderProperty(property: PropertyDescriptor, builder: StringBuilder) {
         if (!startFromName) {
-            builder.renderAnnotations(property)
-            renderVisibility(property.visibility, builder)
+            if (!startFromDeclarationKeyword) {
+                builder.renderAnnotations(property)
+                renderVisibility(property.visibility, builder)
 
-            if (property.isConst) {
-                builder.append("const ")
+                if (property.isConst) {
+                    builder.append("const ")
+                }
+
+                renderExternal(property, builder)
+                renderModalityForCallable(property, builder)
+                renderOverride(property, builder)
+                renderLateInit(property, builder)
+                renderMemberKind(property, builder)
             }
-
-            renderExternal(property, builder)
-            renderModalityForCallable(property, builder)
-            renderOverride(property, builder)
-            renderLateInit(property, builder)
-            renderMemberKind(property, builder)
             renderValVarPrefix(property, builder)
             renderTypeParameters(property.typeParameters, builder, true)
             renderReceiver(property, builder)
