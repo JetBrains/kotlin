@@ -41,18 +41,25 @@ interface AnnotationBasedExtension {
 
     private fun AnnotationDescriptor.isASpecialAnnotation(
             modifierListOwner: KtModifierListOwner?,
+            visitedAnnotations: MutableSet<String> = hashSetOf(),
             allowMetaAnnotations: Boolean = true
     ): Boolean {
         val annotationType = type.constructor.declarationDescriptor ?: return false
-        if (annotationType.fqNameSafe.asString() in getAnnotationFqNames(modifierListOwner)) return true
+        val annotationFqName = annotationType.fqNameSafe.asString()
+        if (annotationFqName in visitedAnnotations) return false // Prevent infinite recursion
+        if (annotationFqName in getAnnotationFqNames(modifierListOwner)) return true
+
+        visitedAnnotations.add(annotationFqName)
 
         if (allowMetaAnnotations) {
             for (metaAnnotation in annotationType.annotations) {
-                if (metaAnnotation.isASpecialAnnotation(modifierListOwner, allowMetaAnnotations = false)) {
+                if (metaAnnotation.isASpecialAnnotation(modifierListOwner, visitedAnnotations, allowMetaAnnotations = true)) {
                     return true
                 }
             }
         }
+
+        visitedAnnotations.remove(annotationFqName)
 
         return false
     }

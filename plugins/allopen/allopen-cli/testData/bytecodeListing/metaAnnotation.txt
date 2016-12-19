@@ -2,6 +2,22 @@
 @kotlin.Metadata
 public annotation class AllOpen
 
+@OtherComponent
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AnotherComponent
+
+@Documented
+@kotlin.Metadata
+public final class ClassWithDocumented {
+    public method <init>(): void
+}
+
+@java.lang.annotation.Documented
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Documented
+
 @AllOpen
 @java.lang.annotation.Retention
 @kotlin.Metadata
@@ -42,6 +58,12 @@ public class TestAllOpen_ShouldBeOpen {
     public method <init>(): void
 }
 
+@AnotherComponent
+@kotlin.Metadata
+public class TestAnotherComponent_ShouldBeOpen {
+    public method <init>(): void
+}
+
 @MyComponent
 @kotlin.Metadata
 public class TestMyComponent_ShouldBeOpen {
@@ -50,7 +72,7 @@ public class TestMyComponent_ShouldBeOpen {
 
 @OtherComponent
 @kotlin.Metadata
-public final class TestOtherComponent_ShouldBeFinal {
+public class TestOtherComponent_ShouldBeOpen {
     public method <init>(): void
 }
 
