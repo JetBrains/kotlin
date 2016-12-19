@@ -26,6 +26,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdaterImpl
 import org.jetbrains.kotlin.cli.common.CLICompiler

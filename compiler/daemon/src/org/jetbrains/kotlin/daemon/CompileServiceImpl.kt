@@ -300,7 +300,8 @@ class CompileServiceImpl(
             val changesRegistry = RemoteChangesRegostry(servicesFacade)
 
             val workingDir = servicesFacade.workingDir()
-            val versions = commonCacheVersions(workingDir) + standaloneCacheVersion(workingDir, forceEnable = true)
+            val versions = commonCacheVersions(workingDir) +
+                           customCacheVersion(servicesFacade.customCacheVersion(), servicesFacade.customCacheVersionFileName(), workingDir, forceEnable = true)
 
             try {
                 printStream.print(renderer.renderPreamble())
