@@ -63,7 +63,7 @@ class DelegationChecker : SimpleDeclarationChecker {
                         DescriptorUtils.getAllOverriddenDescriptors(delegatedDescriptor).filter { it.kind.isReal }.toSet()
                 ) - DescriptorUtils.unwrapFakeOverride(delegatedToDescriptor).original
 
-        val nonAbstractReachable = reachableFromDelegated.filter { it.modality != Modality.ABSTRACT }
+        val nonAbstractReachable = reachableFromDelegated.filter { it.modality == Modality.OPEN }
 
         if (nonAbstractReachable.isNotEmpty()) {
             /*In case of MANY_IMPL_MEMBER_NOT_IMPLEMENTED error there could be several elements otherwise only one*/
