@@ -272,16 +272,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    fun evaluateBreak(destination: IrBreak): LLVMValueRef? {
+    fun evaluateBreak(destination: IrBreak): LLVMValueRef {
         currentCodeContext.genBreak(destination)
-        return null
+        return codegen.kNothingFakeValue
     }
 
     //-------------------------------------------------------------------------//
 
-    fun evaluateContinue(destination: IrContinue): LLVMValueRef? {
+    fun evaluateContinue(destination: IrContinue): LLVMValueRef {
         currentCodeContext.genContinue(destination)
-        return null
+        return codegen.kNothingFakeValue
     }
 
     //-------------------------------------------------------------------------//
@@ -860,10 +860,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateThrow(tmpVariableName: String, expression: IrThrow): LLVMValueRef? {
+    private fun evaluateThrow(tmpVariableName: String, expression: IrThrow): LLVMValueRef {
         val exception = evaluateExpression(codegen.newVar(), expression.value)!!
         currentCodeContext.genThrow(exception)
-        return null
+        return codegen.kNothingFakeValue
     }
 
     //-------------------------------------------------------------------------//
@@ -1516,7 +1516,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         currentCodeContext.genReturn(expression.returnTarget, ret)
-        return null
+        return codegen.kNothingFakeValue
     }
 
     //-------------------------------------------------------------------------//
