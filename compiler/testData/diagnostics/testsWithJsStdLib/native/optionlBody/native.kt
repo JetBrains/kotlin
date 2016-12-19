@@ -11,7 +11,7 @@ external interface T {
     val baz: Int
 
     fun foo()
-    fun bar() {}
+    fun bar()
 
     companion object {
         val baz: Int

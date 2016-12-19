@@ -9,5 +9,5 @@ external interface T {
     @nativeGetter
     fun foo(d: Double): String?
     @nativeGetter
-    fun bar(d: Double): String? = noImpl
+    fun bar(d: Double): String?
 }

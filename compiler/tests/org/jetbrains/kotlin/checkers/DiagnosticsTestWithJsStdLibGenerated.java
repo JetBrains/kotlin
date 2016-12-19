@@ -599,6 +599,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("nonAbstractMembersOfInterface.kt")
+        public void testNonAbstractMembersOfInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nonAbstractMembersOfInterface.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("overrideOptionalParam.kt")
         public void testOverrideOptionalParam() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/overrideOptionalParam.kt");

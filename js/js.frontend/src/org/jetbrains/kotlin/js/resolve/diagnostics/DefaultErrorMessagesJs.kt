@@ -73,6 +73,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Overriding `external` function with optional parameters by declaration from superclass: {0}", Renderers.COMPACT)
         put(ErrorsJs.IMPLEMENTING_FUNCTION_INTERFACE, "Implementing function interface is prohibited in JavaScript")
         put(ErrorsJs.INLINE_EXTERNAL_DECLARATION, "Inline external declaration")
+        put(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE,
+            "Only nullable properties of external interfaces are allowed to be non-abstract")
 
         this
     }

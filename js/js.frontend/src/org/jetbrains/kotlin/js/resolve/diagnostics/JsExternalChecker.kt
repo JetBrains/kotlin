@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReified
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -80,6 +79,12 @@ object JsExternalChecker : SimpleDeclarationChecker {
         if (descriptor is FunctionDescriptor && descriptor.isInline) {
             diagnosticHolder.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
         }
+
+        if (descriptor is CallableMemberDescriptor && descriptor.isNonAbstractMemberOfInterface() &&
+            !descriptor.isNullableProperty()
+        ) {
+            diagnosticHolder.report(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE.on(declaration))
+        }
     }
 
     private fun isDirectlyExternal(declaration: KtDeclaration, descriptor: DeclarationDescriptor): Boolean {
@@ -95,5 +100,32 @@ object JsExternalChecker : SimpleDeclarationChecker {
 
         val containingDeclaration = descriptor.containingDeclaration as? ClassDescriptor ?: return false
         return AnnotationsUtils.isNativeObject(containingDeclaration)
+    }
+
+    private fun CallableMemberDescriptor.isNonAbstractMemberOfInterface() =
+            modality != Modality.ABSTRACT && DescriptorUtils.isInterface(containingDeclaration) &&
+            this !is PropertyAccessorDescriptor
+
+    private fun CallableMemberDescriptor.isNullableProperty() = this is PropertyDescriptor && TypeUtils.isNullableType(type)
+
+    private fun KtDeclarationWithBody.hasValidExternalBody(bindingContext: BindingContext): Boolean {
+        if (!hasBody()) return true
+        val body = bodyExpression!!
+        return if (!hasBlockBody()) {
+            body.isNoImplExpression(bindingContext)
+        }
+        else if (body is KtBlockExpression) {
+            val statement = body.statements.singleOrNull() ?: return false
+            statement.isNoImplExpression(bindingContext)
+        }
+        else {
+            false
+        }
+    }
+
+    private fun KtExpression.isNoImplExpression(bindingContext: BindingContext): Boolean {
+        val descriptor = getResolvedCall(bindingContext)?.resultingDescriptor as? PropertyDescriptor ?: return false
+        val container = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
+        return container.fqNameUnsafe == NO_IMPL_PROPERTY_NAME.parent() && descriptor.name == NO_IMPL_PROPERTY_NAME.shortName()
     }
 }

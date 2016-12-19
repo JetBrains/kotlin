@@ -40,7 +40,7 @@ public external object O {
 
 public external interface T {
     public abstract val baz: kotlin.Int
-    public open fun bar(): kotlin.Unit
+    public abstract fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
