@@ -141,12 +141,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             (variantData as BaseVariantData<*>).addJavaSourceFoldersToModel(generatedFilesDir)
         }
 
+        pluginOptions += SubpluginOption("aptOnly", "true")
+        disableAnnotationProcessingInJavaTask()
+
         // Skip annotation processing in kotlinc if no kapt dependencies were provided
-        if (kaptClasspath.isEmpty()) return emptyList()
+        if (kaptClasspath.isEmpty()) return pluginOptions
+
         kaptClasspath.forEach { pluginOptions += SubpluginOption("apclasspath", it.absolutePath) }
 
         javaCompile.source(generatedFilesDir)
-        disableAnnotationProcessingInJavaTask()
 
         pluginOptions += SubpluginOption("sources", generatedFilesDir.canonicalPath)
         pluginOptions += SubpluginOption("classes", kotlinCompile.destinationDir.canonicalPath)
@@ -176,7 +179,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             project.logger.warn("'kapt.generateStubs' is not used by the 'kotlin-kapt' plugin")
         }
 
-        pluginOptions += SubpluginOption("aptOnly", "true")
         pluginOptions += SubpluginOption("useLightAnalysis", "${kaptExtension.useLightAnalysis}")
 
         if (project.hasProperty(VERBOSE_OPTION_NAME) && project.property(VERBOSE_OPTION_NAME) == "true") {
