@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.ByteArrayOutputStream
@@ -138,10 +139,11 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         if (jpsDaemonConnection == null) {
             val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
             val compilerPath = File(libPath, "kotlin-compiler.jar")
+            val compilerId = CompilerId.makeCompilerId(compilerPath)
             val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running").apply {
                 deleteOnExit()
             }
-            newDaemonConnection(compilerPath, flagFile, environment)
+            newDaemonConnection(compilerId, flagFile, environment)
         }
         return jpsDaemonConnection!!
     }
