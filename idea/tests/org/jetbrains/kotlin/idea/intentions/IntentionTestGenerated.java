@@ -1294,6 +1294,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("comparisonInElse.kt")
+            public void testComparisonInElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/comparisonInElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("conditionComparesNullWithNull.kt")
             public void testConditionComparesNullWithNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/conditionComparesNullWithNull.kt");
