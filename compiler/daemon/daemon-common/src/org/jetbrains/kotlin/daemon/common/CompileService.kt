@@ -137,6 +137,9 @@ interface CompileService : Remote {
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
+    fun clearJarCache()
+
+    @Throws(RemoteException::class)
     fun leaseReplSession(
             aliveFlagPath: String?,
             targetPlatform: CompileService.TargetPlatform,

@@ -680,7 +680,7 @@ class CompileServiceImpl(
         }
     }
 
-    private fun clearJarCache() {
+    override fun clearJarCache() {
         ZipHandler.clearFileAccessorCache()
         (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
     }
