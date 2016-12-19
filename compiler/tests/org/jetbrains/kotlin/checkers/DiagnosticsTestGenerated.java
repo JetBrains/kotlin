@@ -6271,6 +6271,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fakeOverrideInTheMiddle.kt")
+            public void testFakeOverrideInTheMiddle() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/fakeOverrideInTheMiddle.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("generic.kt")
             public void testGeneric() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegationBy/generic.kt");

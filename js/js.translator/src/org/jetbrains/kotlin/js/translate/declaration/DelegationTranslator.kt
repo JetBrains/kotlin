@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctio
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 
@@ -42,7 +43,7 @@ class DelegationTranslator(
             BindingUtils.getClassDescriptor(context.bindingContext(), classDeclaration)
 
     private val delegationBySpecifiers =
-            classDeclaration.getSuperTypeListEntries().filterIsInstance<KtDelegatedSuperTypeEntry>()
+            classDeclaration.superTypeListEntries.filterIsInstance<KtDelegatedSuperTypeEntry>()
 
     private class Field (val name: JsName, val generateField: Boolean)
     private val fields = mutableMapOf<KtDelegatedSuperTypeEntry, Field>()
@@ -91,7 +92,7 @@ class DelegationTranslator(
         CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext())
 
     private fun generateDelegates(toClass: ClassDescriptor, field: Field) {
-        for ((descriptor, overriddenDescriptor) in CodegenUtil.getDelegates(classDescriptor, toClass)) {
+        for ((descriptor, overriddenDescriptor) in DelegationResolver.getDelegates(classDescriptor, toClass)) {
             when (descriptor) {
                 is PropertyDescriptor ->
                     generateDelegateCallForPropertyMember(descriptor, field.name)

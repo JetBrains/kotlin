@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Res
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         private val classOrObject: KtPureClassOrObject,
@@ -124,5 +127,40 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         private fun isOverridableBy(memberOne: CallableDescriptor, memberTwo: CallableDescriptor): Boolean =
                 OverridingUtil.DEFAULT.isOverridableBy(memberOne, memberTwo, null).result == OVERRIDABLE
 
+        // class Foo : Bar by baz
+        //   descriptor = Foo
+        //   toInterface = Bar
+        //   delegateExpressionType = typeof(baz)
+        // return Map<member of Foo, corresponding member of typeOf(baz)>
+        fun getDelegates(
+                descriptor: ClassDescriptor,
+                toInterface: ClassDescriptor,
+                delegateExpressionType: KotlinType? = null
+        ): Map<CallableMemberDescriptor, CallableMemberDescriptor> {
+            if (delegateExpressionType?.isDynamic() ?: false) return emptyMap()
+
+            val delegatedMembers = descriptor.defaultType.memberScope.getContributedDescriptors().asSequence()
+                    .filterIsInstance<CallableMemberDescriptor>()
+                    .filter { it.kind == CallableMemberDescriptor.Kind.DELEGATION }
+                    .asIterable()
+                    .sortedWith(MemberComparator.INSTANCE)
+
+            return delegatedMembers
+                    .keysToMapExceptNulls { delegatingMember ->
+                        val actualDelegates = DescriptorUtils.getAllOverriddenDescriptors(delegatingMember)
+                                .filter { it.containingDeclaration == toInterface }
+                                .map { overriddenDescriptor ->
+                                    val scope = (delegateExpressionType ?: toInterface.defaultType).memberScope
+                                    val name = overriddenDescriptor.name
+
+                                    // this is the actual member of delegateExpressionType that we are delegating to
+                                    (scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_OVERRIDES) +
+                                     scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
+                                            .firstOrNull { it == overriddenDescriptor || OverridingUtil.overrides(it, overriddenDescriptor) }
+                                }
+
+                        actualDelegates.firstOrNull()
+                    }
+        }
     }
 }

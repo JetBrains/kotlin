@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DelegationResolver;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -1655,18 +1656,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    fieldInfo.name, fieldInfo.type.getDescriptor(), /*TODO*/null, null);
     }
 
-    private void generateDelegates(ClassDescriptor toTrait, KotlinType delegateExpressionType, DelegationFieldsInfo.Field field) {
-        for (Map.Entry<CallableMemberDescriptor, CallableDescriptor> entry :
-                CodegenUtil.getDelegates(descriptor, toTrait, delegateExpressionType).entrySet()) {
-            CallableMemberDescriptor callableMemberDescriptor = entry.getKey();
-            CallableDescriptor delegateTo = entry.getValue();
-            if (callableMemberDescriptor instanceof PropertyDescriptor) {
-                propertyCodegen
-                        .genDelegate((PropertyDescriptor) callableMemberDescriptor, (PropertyDescriptor) delegateTo, field.getStackValue());
+    private void generateDelegates(
+            @NotNull ClassDescriptor toInterface,
+            @Nullable KotlinType delegateExpressionType,
+            @NotNull DelegationFieldsInfo.Field field
+    ) {
+        for (Map.Entry<CallableMemberDescriptor, CallableMemberDescriptor> entry : DelegationResolver.Companion.getDelegates(
+                descriptor, toInterface, delegateExpressionType).entrySet()
+        ) {
+            CallableMemberDescriptor member = entry.getKey();
+            CallableMemberDescriptor delegateTo = entry.getValue();
+            if (member instanceof PropertyDescriptor) {
+                propertyCodegen.genDelegate((PropertyDescriptor) member, (PropertyDescriptor) delegateTo, field.getStackValue());
             }
-            else if (callableMemberDescriptor instanceof FunctionDescriptor) {
-                functionCodegen
-                        .genDelegate((FunctionDescriptor) callableMemberDescriptor, (FunctionDescriptor) delegateTo, field.getStackValue());
+            else if (member instanceof FunctionDescriptor) {
+                functionCodegen.genDelegate((FunctionDescriptor) member, (FunctionDescriptor) delegateTo, field.getStackValue());
             }
         }
     }
