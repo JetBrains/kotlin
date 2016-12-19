@@ -39,7 +39,7 @@ class Kapt3IT : BaseGradleIT() {
 
 
     private fun CompiledProject.assertKaptSuccessful() {
-        KAPT_SUCCESSFUL_REGEX.findAll(this.output).single()
+        KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
     }
 
     @Test
@@ -151,7 +151,7 @@ class Kapt3IT : BaseGradleIT() {
         val project = Project("android-dagger", GRADLE_VERSION, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
-        project.build("compileReleaseSources", options = options) {
+        project.build("compileReleaseSources", ":app:compileDebugUnitTestJavaWithJavac", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/release/com/example/dagger/kotlin/DaggerApplicationComponent.java")

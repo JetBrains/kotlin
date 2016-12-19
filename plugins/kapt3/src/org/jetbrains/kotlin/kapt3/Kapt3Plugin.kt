@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.kapt3
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_OPTIONS
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -29,11 +31,18 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.container.ComponentProvider
+import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.File
+import java.util.*
 
 object Kapt3ConfigurationKeys {
     val SOURCE_OUTPUT_DIR: CompilerConfigurationKey<String> =
@@ -121,11 +130,24 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
 class Kapt3ComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val sourcesOutputDir = configuration.get(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR)?.let(::File) ?: return
-        val classFilesOutputDir = configuration.get(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR)?.let(::File) ?: return
+        val isAptOnly = configuration.get(Kapt3ConfigurationKeys.APT_ONLY) == "true"
+        val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
+        val logger = KaptLogger(isVerbose)
+
+        val sourcesOutputDir = configuration.get(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR)?.let(::File)
+        val classFilesOutputDir = configuration.get(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR)?.let(::File)
         val stubsOutputDir = configuration.get(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR)?.let(::File)
 
-        val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: return
+        val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File)
+
+        if (sourcesOutputDir == null || classFilesOutputDir == null || apClasspath == null) {
+            if (isAptOnly) {
+                val subject = if (apClasspath == null) "Annotation processing classpath" else "Generated files output directories"
+                logger.warn("$subject is not specified, skipping annotation processing")
+                AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
+            }
+            return
+        }
 
         val apOptions = (configuration.get(APT_OPTIONS) ?: listOf())
                 .map { it.split(':', limit = 2) }
@@ -141,13 +163,10 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val javaSourceRoots = contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file }
 
-        val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
-        val isAptOnly = configuration.get(Kapt3ConfigurationKeys.APT_ONLY) == "true"
         val useLightAnalysis = configuration.get(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS) == "true"
 
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesKapt3())
 
-        val logger = KaptLogger(isVerbose)
         if (isVerbose) {
             logger.info("Kapt3 is enabled.")
             logger.info("Do annotation processing only: $isAptOnly")
@@ -164,5 +183,30 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                 compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
                 isAptOnly, useLightAnalysis, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
+    }
+
+    /* This extension simply disables both code analysis and code generation.
+     * When aptOnly is true, and any of required kapt options was not passed, we just abort compilation by providing this extension.
+     * */
+    private class AbortAnalysisHandlerExtension : AnalysisHandlerExtension {
+        override fun doAnalysis(
+                project: Project,
+                module: ModuleDescriptor,
+                projectContext: ProjectContext,
+                files: Collection<KtFile>,
+                bindingTrace: BindingTrace,
+                componentProvider: ComponentProvider
+        ): AnalysisResult? {
+            return AnalysisResult.success(bindingTrace.bindingContext, module, shouldGenerateCode = false)
+        }
+
+        override fun analysisCompleted(
+                project: Project,
+                module: ModuleDescriptor,
+                bindingTrace: BindingTrace,
+                files: Collection<KtFile>
+        ): AnalysisResult? {
+            return AnalysisResult.Companion.success(bindingTrace.bindingContext, module, shouldGenerateCode = false)
+        }
     }
 }

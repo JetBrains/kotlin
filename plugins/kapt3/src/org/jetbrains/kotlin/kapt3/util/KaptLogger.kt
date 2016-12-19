@@ -32,6 +32,11 @@ class KaptLogger(val isVerbose: Boolean) {
             info(message())
         }
     }
+
+    fun warn(message: String) {
+        println(PREFIX + message)
+    }
+
     fun error(message: String) {
         System.err.println(PREFIX + message)
     }
