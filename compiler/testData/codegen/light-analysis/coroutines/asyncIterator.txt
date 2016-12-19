@@ -1,0 +1,65 @@
+public interface AsyncGenerator {
+    public abstract @org.jetbrains.annotations.Nullable method yield(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class AsyncGeneratorIterator {
+    private @org.jetbrains.annotations.Nullable field computeContinuation: kotlin.coroutines.Continuation
+    private field computedNext: boolean
+    private field computesNext: boolean
+    private @org.jetbrains.annotations.Nullable field nextStep: kotlin.coroutines.Continuation
+    private @org.jetbrains.annotations.Nullable field nextValue: java.lang.Object
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method computeHasNext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method computeNext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    private final method done(): void
+    public final @org.jetbrains.annotations.Nullable method getComputeContinuation(): kotlin.coroutines.Continuation
+    public final method getComputedNext(): boolean
+    public final method getComputesNext(): boolean
+    public final @org.jetbrains.annotations.Nullable method getNextStep(): kotlin.coroutines.Continuation
+    public final @org.jetbrains.annotations.Nullable method getNextValue(): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method hasNext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method next(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public method resume(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): void
+    public synthetic method resume(p0: java.lang.Object): void
+    public final @kotlin.Suppress method resumeIterator(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+    public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+    public final method setComputeContinuation(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): void
+    public final method setComputedNext(p0: boolean): void
+    public final method setComputesNext(p0: boolean): void
+    public final method setNextStep(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): void
+    public final method setNextValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public @org.jetbrains.annotations.Nullable method yield(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public interface AsyncIterator {
+    public abstract @org.jetbrains.annotations.Nullable method hasNext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public abstract @org.jetbrains.annotations.Nullable method next(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+
+public final class AsyncIteratorKt {
+    public final static @org.jetbrains.annotations.NotNull method asyncGenerate(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): AsyncSequence
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+}
+
+
+public interface AsyncSequence {
+    public abstract @org.jetbrains.annotations.NotNull method iterator(): AsyncIterator
+}
+
+
+public final class CoroutineUtilKt {
+    public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+    public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+}
+
+
+public final class EmptyContinuation {
+    public final static field INSTANCE: EmptyContinuation
+    private method <init>(): void
+    public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+}

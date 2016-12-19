@@ -4493,6 +4493,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("asyncIterator.kt")
+        public void testAsyncIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/asyncIterator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("await.kt")
         public void testAwait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/await.kt");

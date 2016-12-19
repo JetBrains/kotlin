@@ -954,14 +954,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                                                                       "No hasNext() function " + DiagnosticUtils.atLocation(loopRange));
             @SuppressWarnings("ConstantConditions") Call fakeCall = makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
             StackValue result = invokeFunction(fakeCall, hasNextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator));
-            result.put(result.type, v);
+            result.put(Type.BOOLEAN_TYPE, v);
 
-            FunctionDescriptor hasNext = hasNextCall.getResultingDescriptor();
-            KotlinType type = hasNext.getReturnType();
-            assert type != null && KotlinTypeChecker.DEFAULT.isSubtypeOf(type, DescriptorUtilsKt.getBuiltIns(hasNext).getBooleanType());
-
-            Type asmType = asmType(type);
-            StackValue.coerce(asmType, Type.BOOLEAN_TYPE, v);
             v.ifeq(loopExit);
         }
 

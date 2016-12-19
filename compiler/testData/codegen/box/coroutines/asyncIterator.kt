@@ -1,0 +1,122 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
+// TARGET_BACKEND: JVM
+import kotlin.coroutines.*
+
+interface AsyncGenerator<in T> {
+    suspend fun yield(value: T)
+}
+
+interface AsyncSequence<out T> {
+    operator fun iterator(): AsyncIterator<T>
+}
+
+interface AsyncIterator<out T> {
+    operator suspend fun hasNext(): Boolean
+    operator suspend fun next(): T
+}
+
+fun <T> asyncGenerate(block: suspend AsyncGenerator<T>.() -> Unit): AsyncSequence<T> = object : AsyncSequence<T> {
+    override fun iterator(): AsyncIterator<T> {
+        val iterator = AsyncGeneratorIterator<T>()
+        iterator.nextStep = block.createCoroutine(receiver = iterator, completion = iterator)
+        return iterator
+    }
+}
+
+class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuation<Unit> {
+    var computedNext = false
+    var nextValue: T? = null
+    var nextStep: Continuation<Unit>? = null
+
+    // if (computesNext) computeContinuation is Continuation<T>
+    // if (!computesNext) computeContinuation is Continuation<Boolean>
+    var computesNext = false
+    var computeContinuation: Continuation<*>? = null
+
+    suspend fun computeHasNext(): Boolean = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+        computesNext = false
+        computeContinuation = c
+        nextStep!!.resume(Unit)
+        CoroutineIntrinsics.SUSPENDED
+    }
+
+    suspend fun computeNext(): T = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+        computesNext = true
+        computeContinuation = c
+        nextStep!!.resume(Unit)
+        CoroutineIntrinsics.SUSPENDED
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun resumeIterator(exception: Throwable?) {
+        if (exception != null) {
+            done()
+            computeContinuation!!.resumeWithException(exception)
+            return
+        }
+        if (computesNext) {
+            computedNext = false
+            (computeContinuation as Continuation<T>).resume(nextValue as T)
+        } else {
+            (computeContinuation as Continuation<Boolean>).resume(nextStep != null)
+        }
+    }
+
+    override suspend fun hasNext(): Boolean {
+        if (!computedNext) return computeHasNext()
+        return nextStep != null
+    }
+
+    override suspend fun next(): T {
+        if (!computedNext) return computeNext()
+        computedNext = false
+        return nextValue as T
+    }
+
+    private fun done() {
+        computedNext = true
+        nextStep = null
+    }
+
+    // Completion continuation implementation
+    override fun resume(value: Unit) {
+        done()
+        resumeIterator(null)
+    }
+
+    override fun resumeWithException(exception: Throwable) {
+        done()
+        resumeIterator(exception)
+    }
+
+    // Generator implementation
+    override suspend fun yield(value: T): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+        computedNext = true
+        nextValue = value
+        nextStep = c
+        resumeIterator(null)
+        CoroutineIntrinsics.SUSPENDED
+    }
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(EmptyContinuation)
+}
+
+fun box(): String {
+    val seq = asyncGenerate {
+        yield("O")
+        yield("K")
+    }
+
+    var res = ""
+
+    builder {
+        for (i in seq) {
+            res += i
+        }
+    }
+
+    return res
+}
