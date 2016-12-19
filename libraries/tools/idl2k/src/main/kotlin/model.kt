@@ -69,7 +69,8 @@ data class GenerateFunction(
         val returnType: Type,
         val arguments: List<GenerateAttribute>,
         val nativeGetterOrSetter: NativeGetterOrSetter,
-        val static: Boolean
+        val static: Boolean,
+        val override: Boolean
 )
 
 data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute, val initTypeCall: GenerateFunctionCall?)
@@ -78,8 +79,8 @@ data class GenerateTraitOrClass(
         val namespace: String,
         val kind: GenerateDefinitionKind,
         val superTypes: List<String>,
-        val memberAttributes: List<GenerateAttribute>,
-        val memberFunctions: List<GenerateFunction>,
+        val memberAttributes: MutableList<GenerateAttribute>,
+        val memberFunctions: MutableList<GenerateFunction>,
         val constants: List<GenerateAttribute>,
         val primaryConstructor: ConstructorWithSuperTypeCall?,
         val secondaryConstructors: List<ConstructorWithSuperTypeCall>,

@@ -41,6 +41,7 @@ fun main(args: Array<String>) {
     }
     val unions = generateUnions(definitions, repository.typeDefs.values)
     val allPackages = definitions.map { it.namespace }.distinct().sorted()
+    implementInterfaces(definitions)
 
     outDir.deleteRecursively()
     outDir.mkdirs()

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.idl2k
 
 private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet().let { attributes ->
@@ -9,7 +25,7 @@ private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet()
 }
 
 fun generateFunction(repository: Repository, function: Operation, functionName: String, nativeGetterOrSetter: NativeGetterOrSetter = function.getterOrSetter()): GenerateFunction =
-        function.attributes.map { it.call }.toSet().let { attributes ->
+        function.attributes.map { it.call }.toSet().let {
             GenerateFunction(
                     name = functionName,
                     returnType = mapType(repository, function.returnType).let { mapped -> if (nativeGetterOrSetter == NativeGetterOrSetter.GETTER) mapped.toNullableIfNonPrimitive() else mapped },
@@ -19,7 +35,7 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
                         GenerateAttribute(
                                 name = it.name,
                                 type = mappedType,
-                                initializer = mapLiteral(it.defaultValue, mappedType),
+                                initializer = if (it.defaultValue != null) "noImpl" else null,
                                 getterSetterNoImpl = false,
                                 override = false,
                                 kind = AttributeKind.ARGUMENT,
@@ -28,7 +44,8 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
                         )
                     },
                     nativeGetterOrSetter = nativeGetterOrSetter,
-                    static = function.static
+                    static = function.static,
+                    override = false
             )
         }
 
@@ -69,7 +86,16 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
 fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute, nullableAttributes: Boolean): GenerateAttribute =
         GenerateAttribute(attribute.name,
                 type = mapType(repository, attribute.type).let { if (nullableAttributes) it.toNullable() else it },
-                initializer = mapLiteral(attribute.defaultValue, mapType(repository, attribute.type)),
+                initializer =
+                    if (putNoImpl && !attribute.static) {
+                        mapLiteral(attribute.defaultValue, mapType(repository, attribute.type))
+                    }
+                    else if (attribute.defaultValue != null) {
+                        "noImpl"
+                    }
+                    else {
+                        null
+                    },
                 getterSetterNoImpl = putNoImpl,
                 kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
                 override = false,
@@ -90,9 +116,9 @@ private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefini
         }
 
 private fun InterfaceDefinition.mapAttributes(repository: Repository)
-        = attributes.map { generateAttribute(putNoImpl = !dictionary, repository = repository, attribute = it, nullableAttributes = dictionary) }
+        = attributes.map { generateAttribute(putNoImpl = dictionary, repository = repository, attribute = it, nullableAttributes = dictionary) }
 private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
-private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, AttributeKind.VAL, false, false, true)
+private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), null, false, AttributeKind.VAL, false, false, true)
 private val EMPTY_CONSTRUCTOR = ExtendedAttribute(null, "Constructor", emptyList())
 
 fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
@@ -143,8 +169,8 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
     }
 
     return GenerateTraitOrClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensions.map { it.name }).distinct(),
-            memberAttributes = iface.mapAttributes(repository),
-            memberFunctions = iface.mapOperations(repository),
+            memberAttributes = iface.mapAttributes(repository).toMutableList(),
+            memberFunctions = iface.mapOperations(repository).toMutableList(),
             constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
             primaryConstructor = primaryConstructorWithCall,
             secondaryConstructors = secondaryConstructorsWithCall,
@@ -173,8 +199,8 @@ fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
         namespace = it.namespace,
         kind = GenerateDefinitionKind.INTERFACE,
         superTypes = emptyList(),
-        memberAttributes = emptyList(),
-        memberFunctions = emptyList(),
+        memberAttributes = mutableListOf(),
+        memberFunctions = mutableListOf(),
         constants = emptyList(),
         primaryConstructor = null,
         secondaryConstructors = emptyList(),
@@ -229,3 +255,58 @@ private fun mapLiteral(literal: String?, expectedType: Type = DynamicType) = whe
     }
     else -> literal
 }
+
+fun implementInterfaces(declarations: List<GenerateTraitOrClass>) {
+    val unimplementedMemberMap = getUnimplementedMembers(declarations)
+    val nonAbstractDeclarations = declarations.filter { it.kind == GenerateDefinitionKind.CLASS }
+    for (declaration in nonAbstractDeclarations) {
+        val unimplementedMembers = unimplementedMemberMap[declaration.name] ?: continue
+
+        for (attribute in unimplementedMembers.attributes) {
+            declaration.memberAttributes += attribute.copy(override = true)
+        }
+        for (function in unimplementedMembers.functions) {
+            declaration.memberFunctions += function.copy(override = true)
+        }
+    }
+}
+
+private fun getUnimplementedMembers(declarations: List<GenerateTraitOrClass>): Map<String, UnimplementedMembers> {
+    val declarationMap = declarations.associate { it.name to it }
+    val unimplementedMemberCache = mutableMapOf<String, UnimplementedMembers>()
+
+    fun getForClass(className: String): UnimplementedMembers = unimplementedMemberCache.getOrPut(className) {
+        val declaration = declarationMap[className] ?: return@getOrPut UnimplementedMembers(emptyList(), emptyList())
+        val unimplementedInSuperClasses = declaration.superTypes.map { getForClass(it) }
+        val attributeMap = unimplementedInSuperClasses
+                .flatMap { it.attributes }
+                .associate { it.name to it }
+                .toMutableMap()
+        val functionMap = unimplementedInSuperClasses
+                .flatMap { it.functions }
+                .associate { "${it.name}(${it.signature})" to it }
+                .toMutableMap()
+
+        val (implementedAttributes, unimplementedAttributes) = declaration.memberAttributes
+                .filter { !it.static }
+                .partition { declaration.kind != GenerateDefinitionKind.INTERFACE && !it.getterSetterNoImpl }
+        val (implementedFunctions, unimplementedFunctions) = declaration.memberFunctions
+                .filter { !it.static }
+                .partition { declaration.kind != GenerateDefinitionKind.INTERFACE }
+
+        attributeMap += unimplementedAttributes.map { it.name to it }
+        attributeMap.keys -= implementedAttributes.map { it.name }
+        functionMap += unimplementedFunctions.map { "${it.name}(${it.signature})" to it }
+        functionMap.keys -= implementedFunctions.map { "${it.name}(${it.signature})" }
+
+        UnimplementedMembers(attributeMap.values.toList(), functionMap.values.toList())
+    }
+
+    for (declaration in declarations) {
+        getForClass(declaration.name)
+    }
+
+    return unimplementedMemberCache
+}
+
+private class UnimplementedMembers(val attributes: List<GenerateAttribute>, val functions: List<GenerateFunction>)
