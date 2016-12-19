@@ -869,6 +869,7 @@ public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
  * 
  * @return this value if it's in the [range], or `range.start` if this value is less than `range.start`, or `range.endInclusive` if this value is greater than `range.endInclusive`.
  */
+@SinceKotlin("1.1")
 public fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return when {
