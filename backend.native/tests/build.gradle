@@ -464,9 +464,64 @@ task boxing0(type: RunKonanTest) {
     source = "codegen/boxing/boxing0.kt"
 }
 
-task boxing1 (type:RunKonanTest) {
-    disabled = true
+task boxing1(type: RunKonanTest) {
+    goldValue = "1\nfalse\nHello\n"
     source = "codegen/boxing/boxing1.kt"
+}
+
+task boxing2(type: RunKonanTest) {
+    goldValue = "1\ntrue\nother\n"
+    source = "codegen/boxing/boxing2.kt"
+}
+
+task boxing3(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/boxing/boxing3.kt"
+}
+
+task boxing4(type: RunKonanTest) {
+    goldValue = "16\n"
+    source = "codegen/boxing/boxing4.kt"
+}
+
+task boxing5(type: RunKonanTest) {
+    goldValue = "16\n42\n"
+    source = "codegen/boxing/boxing5.kt"
+}
+
+task boxing6(type: RunKonanTest) {
+    goldValue = "42\n16\n"
+    source = "codegen/boxing/boxing6.kt"
+}
+
+task boxing7(type: RunKonanTest) {
+    goldValue = "1\n0\n"
+    source = "codegen/boxing/boxing7.kt"
+}
+
+task boxing8(type: RunKonanTest) {
+    goldValue = "1\n<null>\ntrue\nHello\n"
+    source = "codegen/boxing/boxing8.kt"
+}
+
+task boxing9(type: RunKonanTest) {
+    goldValue = "1\n<null>\ntrue\nHello\n2\n<null>\ntrue\nHello\n3\n"
+    source = "codegen/boxing/boxing9.kt"
+}
+
+task boxing10(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/boxing/boxing10.kt"
+}
+
+task boxing11(type: RunKonanTest) {
+    goldValue = "17\n42\n"
+    source = "codegen/boxing/boxing11.kt"
+}
+
+task boxing12(type: RunKonanTest) {
+    goldValue = "18\n"
+    source = "codegen/boxing/boxing12.kt"
 }
 
 task interface0(type: RunKonanTest) {
