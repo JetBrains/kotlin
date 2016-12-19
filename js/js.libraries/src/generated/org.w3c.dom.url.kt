@@ -22,55 +22,33 @@ import org.w3c.xhr.*
 
 public external open class URL(url: String, base: String = noImpl) {
     var href: String
-        get() = noImpl
-        set(value) = noImpl
     open val origin: String
-        get() = noImpl
     var protocol: String
-        get() = noImpl
-        set(value) = noImpl
     var username: String
-        get() = noImpl
-        set(value) = noImpl
     var password: String
-        get() = noImpl
-        set(value) = noImpl
     var host: String
-        get() = noImpl
-        set(value) = noImpl
     var hostname: String
-        get() = noImpl
-        set(value) = noImpl
     var port: String
-        get() = noImpl
-        set(value) = noImpl
     var pathname: String
-        get() = noImpl
-        set(value) = noImpl
     var search: String
-        get() = noImpl
-        set(value) = noImpl
     open val searchParams: URLSearchParams
-        get() = noImpl
     var hash: String
-        get() = noImpl
-        set(value) = noImpl
 
     companion object {
-        fun createObjectURL(blob: Blob): String = noImpl
-        fun createFor(blob: Blob): String = noImpl
-        fun revokeObjectURL(url: String): Unit = noImpl
-        fun domainToASCII(domain: String): String = noImpl
-        fun domainToUnicode(domain: String): String = noImpl
+        fun createObjectURL(blob: Blob): String
+        fun createFor(blob: Blob): String
+        fun revokeObjectURL(url: String): Unit
+        fun domainToASCII(domain: String): String
+        fun domainToUnicode(domain: String): String
     }
 }
 
-public external open class URLSearchParams(init: dynamic = "") {
-    fun append(name: String, value: String): Unit = noImpl
-    fun delete(name: String): Unit = noImpl
-    fun get(name: String): String? = noImpl
-    fun getAll(name: String): Array<String> = noImpl
-    fun has(name: String): Boolean = noImpl
-    fun set(name: String, value: String): Unit = noImpl
+public external open class URLSearchParams(init: dynamic = noImpl) {
+    fun append(name: String, value: String): Unit
+    fun delete(name: String): Unit
+    fun get(name: String): String?
+    fun getAll(name: String): Array<String>
+    fun has(name: String): Boolean
+    fun set(name: String, value: String): Unit
 }
 

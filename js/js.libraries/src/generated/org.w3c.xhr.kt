@@ -22,26 +22,12 @@ import org.w3c.workers.*
 
 public external abstract class XMLHttpRequestEventTarget : EventTarget() {
     open var onloadstart: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open var onprogress: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open var onabort: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open var onerror: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open var onload: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open var ontimeout: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open var onloadend: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
 }
 
 public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget() {
@@ -49,75 +35,62 @@ public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget(
 
 public external open class XMLHttpRequest : XMLHttpRequestEventTarget() {
     var onreadystatechange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open val readyState: Short
-        get() = noImpl
     var timeout: Int
-        get() = noImpl
-        set(value) = noImpl
     var withCredentials: Boolean
-        get() = noImpl
-        set(value) = noImpl
     open val upload: XMLHttpRequestUpload
-        get() = noImpl
     open val responseURL: String
-        get() = noImpl
     open val status: Short
-        get() = noImpl
     open val statusText: String
-        get() = noImpl
     var responseType: String
-        get() = noImpl
-        set(value) = noImpl
     open val response: Any?
-        get() = noImpl
     open val responseText: String
-        get() = noImpl
     open val responseXML: Document?
-        get() = noImpl
-    fun open(method: String, url: String): Unit = noImpl
-    fun open(method: String, url: String, async: Boolean, username: String? = null, password: String? = null): Unit = noImpl
-    fun setRequestHeader(name: String, value: String): Unit = noImpl
-    fun send(body: dynamic = null): Unit = noImpl
-    fun abort(): Unit = noImpl
-    fun getResponseHeader(name: String): String? = noImpl
-    fun getAllResponseHeaders(): String = noImpl
-    fun overrideMimeType(mime: String): Unit = noImpl
+    fun open(method: String, url: String): Unit
+    fun open(method: String, url: String, async: Boolean, username: String? = noImpl, password: String? = noImpl): Unit
+    fun setRequestHeader(name: String, value: String): Unit
+    fun send(body: dynamic = noImpl): Unit
+    fun abort(): Unit
+    fun getResponseHeader(name: String): String?
+    fun getAllResponseHeaders(): String
+    fun overrideMimeType(mime: String): Unit
 
     companion object {
-        val UNSENT: Short = 0
-        val OPENED: Short = 1
-        val HEADERS_RECEIVED: Short = 2
-        val LOADING: Short = 3
-        val DONE: Short = 4
+        val UNSENT: Short
+        val OPENED: Short
+        val HEADERS_RECEIVED: Short
+        val LOADING: Short
+        val DONE: Short
     }
 }
 
 public external open class FormData(form: HTMLFormElement = noImpl) {
-    fun append(name: String, value: String): Unit = noImpl
-    fun append(name: String, value: Blob, filename: String = noImpl): Unit = noImpl
-    fun delete(name: String): Unit = noImpl
-    fun get(name: String): dynamic = noImpl
-    fun getAll(name: String): Array<dynamic> = noImpl
-    fun has(name: String): Boolean = noImpl
-    fun set(name: String, value: String): Unit = noImpl
-    fun set(name: String, value: Blob, filename: String = noImpl): Unit = noImpl
+    fun append(name: String, value: String): Unit
+    fun append(name: String, value: Blob, filename: String = noImpl): Unit
+    fun delete(name: String): Unit
+    fun get(name: String): dynamic
+    fun getAll(name: String): Array<dynamic>
+    fun has(name: String): Boolean
+    fun set(name: String, value: String): Unit
+    fun set(name: String, value: Blob, filename: String = noImpl): Unit
 }
 
 public external open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
     open val lengthComputable: Boolean
-        get() = noImpl
     open val loaded: Int
-        get() = noImpl
     open val total: Int
-        get() = noImpl
 }
 
 public external interface ProgressEventInit : EventInit {
     var lengthComputable: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var loaded: Int? /* = 0 */
+        get() = noImpl
+        set(value) = noImpl
     var total: Int? /* = 0 */
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")

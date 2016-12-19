@@ -22,79 +22,86 @@ import org.w3c.xhr.*
 
 public external open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget() {
     var onclick: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     var onerror: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
     open val title: String
-        get() = noImpl
     open val dir: String
-        get() = noImpl
     open val lang: String
-        get() = noImpl
     open val body: String
-        get() = noImpl
     open val tag: String
-        get() = noImpl
     open val image: String
-        get() = noImpl
     open val icon: String
-        get() = noImpl
     open val badge: String
-        get() = noImpl
     open val sound: String
-        get() = noImpl
-    open val attribute: dynamic
-        get() = noImpl
+    open val vibrate: dynamic
     open val timestamp: Number
-        get() = noImpl
     open val renotify: Boolean
-        get() = noImpl
     open val silent: Boolean
-        get() = noImpl
     open val noscreen: Boolean
-        get() = noImpl
     open val requireInteraction: Boolean
-        get() = noImpl
     open val sticky: Boolean
-        get() = noImpl
     open val data: Any?
-        get() = noImpl
-    open val NotificationAction: dynamic
-        get() = noImpl
-    fun vibrate(): dynamic = noImpl
-    fun close(): Unit = noImpl
+    open val actions: dynamic
+    fun close(): Unit
 
     companion object {
         var permission: String
-            get() = noImpl
-            set(value) = noImpl
         var maxActions: Int
-            get() = noImpl
-            set(value) = noImpl
-        fun requestPermission(deprecatedCallback: (String) -> Unit = noImpl): dynamic = noImpl
+        fun requestPermission(deprecatedCallback: (String) -> Unit = noImpl): dynamic
     }
 }
 
 public external interface NotificationOptions {
     var dir: String? /* = "auto" */
+        get() = noImpl
+        set(value) = noImpl
     var lang: String? /* = "" */
+        get() = noImpl
+        set(value) = noImpl
     var body: String? /* = "" */
+        get() = noImpl
+        set(value) = noImpl
     var tag: String? /* = "" */
+        get() = noImpl
+        set(value) = noImpl
     var image: String?
+        get() = noImpl
+        set(value) = noImpl
     var icon: String?
+        get() = noImpl
+        set(value) = noImpl
     var badge: String?
+        get() = noImpl
+        set(value) = noImpl
     var sound: String?
+        get() = noImpl
+        set(value) = noImpl
     var vibrate: dynamic
+        get() = noImpl
+        set(value) = noImpl
     var timestamp: Number?
+        get() = noImpl
+        set(value) = noImpl
     var renotify: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var silent: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var noscreen: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var requireInteraction: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var sticky: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var data: Any? /* = null */
+        get() = noImpl
+        set(value) = noImpl
     var actions: Array<NotificationAction>? /* = arrayOf() */
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -124,8 +131,14 @@ public inline fun NotificationOptions(dir: String? = "auto", lang: String? = "",
 
 public external interface NotificationAction {
     var action: String?
+        get() = noImpl
+        set(value) = noImpl
     var title: String?
+        get() = noImpl
+        set(value) = noImpl
     var icon: String?
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -141,6 +154,8 @@ public inline fun NotificationAction(action: String?, title: String?, icon: Stri
 
 public external interface GetNotificationOptions {
     var tag: String? /* = "" */
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -154,14 +169,16 @@ public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOpti
 
 public external open class NotificationEvent(type: String, eventInitDict: NotificationEventInit) : ExtendableEvent(type, eventInitDict) {
     open val notification: Notification
-        get() = noImpl
     open val action: String
-        get() = noImpl
 }
 
 public external interface NotificationEventInit : ExtendableEventInit {
     var notification: Notification?
+        get() = noImpl
+        set(value) = noImpl
     var action: String? /* = "" */
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")

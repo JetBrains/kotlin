@@ -21,66 +21,82 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 
 public external open class Headers(init: dynamic = noImpl) {
-    fun append(name: String, value: String): Unit = noImpl
-    fun delete(name: String): Unit = noImpl
-    fun get(name: String): String? = noImpl
-    fun has(name: String): Boolean = noImpl
-    fun set(name: String, value: String): Unit = noImpl
+    fun append(name: String, value: String): Unit
+    fun delete(name: String): Unit
+    fun get(name: String): String?
+    fun has(name: String): Boolean
+    fun set(name: String, value: String): Unit
 }
 
 public external interface Body {
     val bodyUsed: Boolean
-        get() = noImpl
-    fun arrayBuffer(): dynamic = noImpl
-    fun blob(): dynamic = noImpl
-    fun formData(): dynamic = noImpl
-    fun json(): dynamic = noImpl
-    fun text(): dynamic = noImpl
+    fun arrayBuffer(): dynamic
+    fun blob(): dynamic
+    fun formData(): dynamic
+    fun json(): dynamic
+    fun text(): dynamic
 }
 
 public external open class Request(input: dynamic, init: RequestInit = noImpl) : Body {
     open val method: String
-        get() = noImpl
     open val url: String
-        get() = noImpl
     open val headers: Headers
-        get() = noImpl
     open val type: String
-        get() = noImpl
     open val destination: String
-        get() = noImpl
     open val referrer: String
-        get() = noImpl
     open val referrerPolicy: dynamic
-        get() = noImpl
     open val mode: String
-        get() = noImpl
     open val credentials: String
-        get() = noImpl
     open val cache: String
-        get() = noImpl
     open val redirect: String
-        get() = noImpl
     open val integrity: String
-        get() = noImpl
     open val keepalive: Boolean
-        get() = noImpl
-    fun clone(): Request = noImpl
+    override val bodyUsed: Boolean
+    fun clone(): Request
+    override fun arrayBuffer(): dynamic
+    override fun blob(): dynamic
+    override fun formData(): dynamic
+    override fun json(): dynamic
+    override fun text(): dynamic
 }
 
 public external interface RequestInit {
     var method: String?
+        get() = noImpl
+        set(value) = noImpl
     var headers: dynamic
+        get() = noImpl
+        set(value) = noImpl
     var body: dynamic
+        get() = noImpl
+        set(value) = noImpl
     var referrer: String?
+        get() = noImpl
+        set(value) = noImpl
     var referrerPolicy: dynamic
+        get() = noImpl
+        set(value) = noImpl
     var mode: String?
+        get() = noImpl
+        set(value) = noImpl
     var credentials: String?
+        get() = noImpl
+        set(value) = noImpl
     var cache: String?
+        get() = noImpl
+        set(value) = noImpl
     var redirect: String?
+        get() = noImpl
+        set(value) = noImpl
     var integrity: String?
+        get() = noImpl
+        set(value) = noImpl
     var keepalive: Boolean?
+        get() = noImpl
+        set(value) = noImpl
     var window: Any?
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -103,37 +119,40 @@ public inline fun RequestInit(method: String?, headers: dynamic, body: dynamic, 
     return o
 }
 
-public external open class Response(body: dynamic = null, init: ResponseInit = noImpl) : Body {
+public external open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) : Body {
     open val type: String
-        get() = noImpl
     open val url: String
-        get() = noImpl
     open val redirected: Boolean
-        get() = noImpl
     open val status: Short
-        get() = noImpl
     open val ok: Boolean
-        get() = noImpl
     open val statusText: String
-        get() = noImpl
     open val headers: Headers
-        get() = noImpl
     open val body: dynamic
-        get() = noImpl
     open val trailer: dynamic
-        get() = noImpl
-    fun clone(): Response = noImpl
+    override val bodyUsed: Boolean
+    fun clone(): Response
+    override fun arrayBuffer(): dynamic
+    override fun blob(): dynamic
+    override fun formData(): dynamic
+    override fun json(): dynamic
+    override fun text(): dynamic
 
     companion object {
-        fun error(): Response = noImpl
-        fun redirect(url: String, status: Short = 302): Response = noImpl
+        fun error(): Response
+        fun redirect(url: String, status: Short = noImpl): Response
     }
 }
 
 public external interface ResponseInit {
     var status: Short? /* = 200 */
+        get() = noImpl
+        set(value) = noImpl
     var statusText: String? /* = "OK" */
+        get() = noImpl
+        set(value) = noImpl
     var headers: dynamic
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")

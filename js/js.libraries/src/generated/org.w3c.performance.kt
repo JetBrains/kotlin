@@ -22,73 +22,47 @@ import org.w3c.xhr.*
 
 public external abstract class Performance : EventTarget() {
     open val timing: PerformanceTiming
-        get() = noImpl
     open val navigation: PerformanceNavigation
-        get() = noImpl
-    fun now(): Double = noImpl
+    fun now(): Double
 }
 
 public external interface GlobalPerformance {
     val performance: Performance
-        get() = noImpl
 }
 
 public external abstract class PerformanceTiming {
     open val navigationStart: Int
-        get() = noImpl
     open val unloadEventStart: Int
-        get() = noImpl
     open val unloadEventEnd: Int
-        get() = noImpl
     open val redirectStart: Int
-        get() = noImpl
     open val redirectEnd: Int
-        get() = noImpl
     open val fetchStart: Int
-        get() = noImpl
     open val domainLookupStart: Int
-        get() = noImpl
     open val domainLookupEnd: Int
-        get() = noImpl
     open val connectStart: Int
-        get() = noImpl
     open val connectEnd: Int
-        get() = noImpl
     open val secureConnectionStart: Int
-        get() = noImpl
     open val requestStart: Int
-        get() = noImpl
     open val responseStart: Int
-        get() = noImpl
     open val responseEnd: Int
-        get() = noImpl
     open val domLoading: Int
-        get() = noImpl
     open val domInteractive: Int
-        get() = noImpl
     open val domContentLoadedEventStart: Int
-        get() = noImpl
     open val domContentLoadedEventEnd: Int
-        get() = noImpl
     open val domComplete: Int
-        get() = noImpl
     open val loadEventStart: Int
-        get() = noImpl
     open val loadEventEnd: Int
-        get() = noImpl
 }
 
 public external abstract class PerformanceNavigation {
     open val type: Short
-        get() = noImpl
     open val redirectCount: Short
-        get() = noImpl
 
     companion object {
-        val TYPE_NAVIGATE: Short = 0
-        val TYPE_RELOAD: Short = 1
-        val TYPE_BACK_FORWARD: Short = 2
-        val TYPE_RESERVED: Short = 255
+        val TYPE_NAVIGATE: Short
+        val TYPE_RELOAD: Short
+        val TYPE_BACK_FORWARD: Short
+        val TYPE_RESERVED: Short
     }
 }
 

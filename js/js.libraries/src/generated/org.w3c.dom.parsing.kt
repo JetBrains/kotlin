@@ -21,10 +21,10 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 
 public external open class DOMParser {
-    fun parseFromString(str: String, type: dynamic): Document = noImpl
+    fun parseFromString(str: String, type: dynamic): Document
 }
 
 public external open class XMLSerializer {
-    fun serializeToString(root: Node): String = noImpl
+    fun serializeToString(root: Node): String
 }
 

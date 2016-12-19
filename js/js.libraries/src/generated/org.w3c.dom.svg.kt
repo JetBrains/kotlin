@@ -22,23 +22,26 @@ import org.w3c.xhr.*
 
 public external abstract class SVGElement : Element(), ElementCSSInlineStyle, GlobalEventHandlers, SVGElementInstance {
     open val dataset: DOMStringMap
-        get() = noImpl
     open val ownerSVGElement: SVGSVGElement?
-        get() = noImpl
     open val viewportElement: SVGElement?
-        get() = noImpl
     open var tabIndex: Int
-        get() = noImpl
-        set(value) = noImpl
-    fun focus(): Unit = noImpl
-    fun blur(): Unit = noImpl
+    fun focus(): Unit
+    fun blur(): Unit
 }
 
 public external interface SVGBoundingBoxOptions {
     var fill: Boolean? /* = true */
+        get() = noImpl
+        set(value) = noImpl
     var stroke: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var markers: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
     var clipped: Boolean? /* = false */
+        get() = noImpl
+        set(value) = noImpl
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -55,305 +58,240 @@ public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? 
 
 public external abstract class SVGGraphicsElement : SVGElement(), SVGTests {
     open val transform: SVGAnimatedTransformList
-        get() = noImpl
-    fun getBBox(options: SVGBoundingBoxOptions = noImpl): DOMRect = noImpl
-    fun getCTM(): DOMMatrix? = noImpl
-    fun getScreenCTM(): DOMMatrix? = noImpl
+    fun getBBox(options: SVGBoundingBoxOptions = noImpl): DOMRect
+    fun getCTM(): DOMMatrix?
+    fun getScreenCTM(): DOMMatrix?
 }
 
 public external abstract class SVGGeometryElement : SVGGraphicsElement() {
     open val pathLength: SVGAnimatedNumber
-        get() = noImpl
-    fun isPointInFill(point: DOMPoint): Boolean = noImpl
-    fun isPointInStroke(point: DOMPoint): Boolean = noImpl
-    fun getTotalLength(): Float = noImpl
-    fun getPointAtLength(distance: Float): DOMPoint = noImpl
+    fun isPointInFill(point: DOMPoint): Boolean
+    fun isPointInStroke(point: DOMPoint): Boolean
+    fun getTotalLength(): Float
+    fun getPointAtLength(distance: Float): DOMPoint
 }
 
 public external abstract class SVGNumber {
     open var value: Float
-        get() = noImpl
-        set(value) = noImpl
 }
 
 public external abstract class SVGLength {
     open val unitType: Short
-        get() = noImpl
     open var value: Float
-        get() = noImpl
-        set(value) = noImpl
     open var valueInSpecifiedUnits: Float
-        get() = noImpl
-        set(value) = noImpl
     open var valueAsString: String
-        get() = noImpl
-        set(value) = noImpl
-    fun newValueSpecifiedUnits(unitType: Short, valueInSpecifiedUnits: Float): Unit = noImpl
-    fun convertToSpecifiedUnits(unitType: Short): Unit = noImpl
+    fun newValueSpecifiedUnits(unitType: Short, valueInSpecifiedUnits: Float): Unit
+    fun convertToSpecifiedUnits(unitType: Short): Unit
 
     companion object {
-        val SVG_LENGTHTYPE_UNKNOWN: Short = 0
-        val SVG_LENGTHTYPE_NUMBER: Short = 1
-        val SVG_LENGTHTYPE_PERCENTAGE: Short = 2
-        val SVG_LENGTHTYPE_EMS: Short = 3
-        val SVG_LENGTHTYPE_EXS: Short = 4
-        val SVG_LENGTHTYPE_PX: Short = 5
-        val SVG_LENGTHTYPE_CM: Short = 6
-        val SVG_LENGTHTYPE_MM: Short = 7
-        val SVG_LENGTHTYPE_IN: Short = 8
-        val SVG_LENGTHTYPE_PT: Short = 9
-        val SVG_LENGTHTYPE_PC: Short = 10
+        val SVG_LENGTHTYPE_UNKNOWN: Short
+        val SVG_LENGTHTYPE_NUMBER: Short
+        val SVG_LENGTHTYPE_PERCENTAGE: Short
+        val SVG_LENGTHTYPE_EMS: Short
+        val SVG_LENGTHTYPE_EXS: Short
+        val SVG_LENGTHTYPE_PX: Short
+        val SVG_LENGTHTYPE_CM: Short
+        val SVG_LENGTHTYPE_MM: Short
+        val SVG_LENGTHTYPE_IN: Short
+        val SVG_LENGTHTYPE_PT: Short
+        val SVG_LENGTHTYPE_PC: Short
     }
 }
 
 public external abstract class SVGAngle {
     open val unitType: Short
-        get() = noImpl
     open var value: Float
-        get() = noImpl
-        set(value) = noImpl
     open var valueInSpecifiedUnits: Float
-        get() = noImpl
-        set(value) = noImpl
     open var valueAsString: String
-        get() = noImpl
-        set(value) = noImpl
-    fun newValueSpecifiedUnits(unitType: Short, valueInSpecifiedUnits: Float): Unit = noImpl
-    fun convertToSpecifiedUnits(unitType: Short): Unit = noImpl
+    fun newValueSpecifiedUnits(unitType: Short, valueInSpecifiedUnits: Float): Unit
+    fun convertToSpecifiedUnits(unitType: Short): Unit
 
     companion object {
-        val SVG_ANGLETYPE_UNKNOWN: Short = 0
-        val SVG_ANGLETYPE_UNSPECIFIED: Short = 1
-        val SVG_ANGLETYPE_DEG: Short = 2
-        val SVG_ANGLETYPE_RAD: Short = 3
-        val SVG_ANGLETYPE_GRAD: Short = 4
+        val SVG_ANGLETYPE_UNKNOWN: Short
+        val SVG_ANGLETYPE_UNSPECIFIED: Short
+        val SVG_ANGLETYPE_DEG: Short
+        val SVG_ANGLETYPE_RAD: Short
+        val SVG_ANGLETYPE_GRAD: Short
     }
 }
 
 public external abstract class SVGNameList {
     open val length: Int
-        get() = noImpl
     open val numberOfItems: Int
-        get() = noImpl
-    fun clear(): Unit = noImpl
-    fun initialize(newItem: dynamic): dynamic = noImpl
-    fun getItem(index: Int): dynamic = noImpl
+    fun clear(): Unit
+    fun initialize(newItem: dynamic): dynamic
+    fun getItem(index: Int): dynamic
     @nativeGetter
-    operator fun get(index: Int): dynamic = noImpl
-    fun insertItemBefore(newItem: dynamic, index: Int): dynamic = noImpl
-    fun replaceItem(newItem: dynamic, index: Int): dynamic = noImpl
-    fun removeItem(index: Int): dynamic = noImpl
-    fun appendItem(newItem: dynamic): dynamic = noImpl
+    operator fun get(index: Int): dynamic
+    fun insertItemBefore(newItem: dynamic, index: Int): dynamic
+    fun replaceItem(newItem: dynamic, index: Int): dynamic
+    fun removeItem(index: Int): dynamic
+    fun appendItem(newItem: dynamic): dynamic
     @nativeSetter
-    operator fun set(index: Int, newItem: dynamic): Unit = noImpl
+    operator fun set(index: Int, newItem: dynamic): Unit
 }
 
 public external abstract class SVGNumberList {
     open val length: Int
-        get() = noImpl
     open val numberOfItems: Int
-        get() = noImpl
-    fun clear(): Unit = noImpl
-    fun initialize(newItem: SVGNumber): SVGNumber = noImpl
-    fun getItem(index: Int): SVGNumber = noImpl
+    fun clear(): Unit
+    fun initialize(newItem: SVGNumber): SVGNumber
+    fun getItem(index: Int): SVGNumber
     @nativeGetter
-    operator fun get(index: Int): SVGNumber? = noImpl
-    fun insertItemBefore(newItem: SVGNumber, index: Int): SVGNumber = noImpl
-    fun replaceItem(newItem: SVGNumber, index: Int): SVGNumber = noImpl
-    fun removeItem(index: Int): SVGNumber = noImpl
-    fun appendItem(newItem: SVGNumber): SVGNumber = noImpl
+    operator fun get(index: Int): SVGNumber?
+    fun insertItemBefore(newItem: SVGNumber, index: Int): SVGNumber
+    fun replaceItem(newItem: SVGNumber, index: Int): SVGNumber
+    fun removeItem(index: Int): SVGNumber
+    fun appendItem(newItem: SVGNumber): SVGNumber
     @nativeSetter
-    operator fun set(index: Int, newItem: SVGNumber): Unit = noImpl
+    operator fun set(index: Int, newItem: SVGNumber): Unit
 }
 
 public external abstract class SVGLengthList {
     open val length: Int
-        get() = noImpl
     open val numberOfItems: Int
-        get() = noImpl
-    fun clear(): Unit = noImpl
-    fun initialize(newItem: SVGLength): SVGLength = noImpl
-    fun getItem(index: Int): SVGLength = noImpl
+    fun clear(): Unit
+    fun initialize(newItem: SVGLength): SVGLength
+    fun getItem(index: Int): SVGLength
     @nativeGetter
-    operator fun get(index: Int): SVGLength? = noImpl
-    fun insertItemBefore(newItem: SVGLength, index: Int): SVGLength = noImpl
-    fun replaceItem(newItem: SVGLength, index: Int): SVGLength = noImpl
-    fun removeItem(index: Int): SVGLength = noImpl
-    fun appendItem(newItem: SVGLength): SVGLength = noImpl
+    operator fun get(index: Int): SVGLength?
+    fun insertItemBefore(newItem: SVGLength, index: Int): SVGLength
+    fun replaceItem(newItem: SVGLength, index: Int): SVGLength
+    fun removeItem(index: Int): SVGLength
+    fun appendItem(newItem: SVGLength): SVGLength
     @nativeSetter
-    operator fun set(index: Int, newItem: SVGLength): Unit = noImpl
+    operator fun set(index: Int, newItem: SVGLength): Unit
 }
 
 public external abstract class SVGAnimatedBoolean {
     open var baseVal: Boolean
-        get() = noImpl
-        set(value) = noImpl
     open val animVal: Boolean
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedEnumeration {
     open var baseVal: Short
-        get() = noImpl
-        set(value) = noImpl
     open val animVal: Short
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedInteger {
     open var baseVal: Int
-        get() = noImpl
-        set(value) = noImpl
     open val animVal: Int
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedNumber {
     open var baseVal: Float
-        get() = noImpl
-        set(value) = noImpl
     open val animVal: Float
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedLength {
     open val baseVal: SVGLength
-        get() = noImpl
     open val animVal: SVGLength
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedAngle {
     open val baseVal: SVGAngle
-        get() = noImpl
     open val animVal: SVGAngle
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedString {
     open var baseVal: String
-        get() = noImpl
-        set(value) = noImpl
     open val animVal: String
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedRect {
     open val baseVal: DOMRect
-        get() = noImpl
     open val animVal: DOMRectReadOnly
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedNumberList {
     open val baseVal: SVGNumberList
-        get() = noImpl
     open val animVal: SVGNumberList
-        get() = noImpl
 }
 
 public external abstract class SVGAnimatedLengthList {
     open val baseVal: SVGLengthList
-        get() = noImpl
     open val animVal: SVGLengthList
-        get() = noImpl
 }
 
 public external abstract class SVGStringList {
     open val length: Int
-        get() = noImpl
     open val numberOfItems: Int
-        get() = noImpl
-    fun clear(): Unit = noImpl
-    fun initialize(newItem: String): String = noImpl
-    fun getItem(index: Int): String = noImpl
+    fun clear(): Unit
+    fun initialize(newItem: String): String
+    fun getItem(index: Int): String
     @nativeGetter
-    operator fun get(index: Int): String? = noImpl
-    fun insertItemBefore(newItem: String, index: Int): String = noImpl
-    fun replaceItem(newItem: String, index: Int): String = noImpl
-    fun removeItem(index: Int): String = noImpl
-    fun appendItem(newItem: String): String = noImpl
+    operator fun get(index: Int): String?
+    fun insertItemBefore(newItem: String, index: Int): String
+    fun replaceItem(newItem: String, index: Int): String
+    fun removeItem(index: Int): String
+    fun appendItem(newItem: String): String
     @nativeSetter
-    operator fun set(index: Int, newItem: String): Unit = noImpl
+    operator fun set(index: Int, newItem: String): Unit
 }
 
 public external interface SVGUnitTypes {
 
     companion object {
-        val SVG_UNIT_TYPE_UNKNOWN: Short = 0
-        val SVG_UNIT_TYPE_USERSPACEONUSE: Short = 1
-        val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short = 2
+        val SVG_UNIT_TYPE_UNKNOWN: Short
+        val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+        val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
     }
 }
 
 public external interface SVGTests {
     val requiredExtensions: SVGStringList
-        get() = noImpl
     val systemLanguage: SVGStringList
-        get() = noImpl
 }
 
 public external interface SVGFitToViewBox {
     val viewBox: SVGAnimatedRect
-        get() = noImpl
     val preserveAspectRatio: SVGAnimatedPreserveAspectRatio
-        get() = noImpl
 }
 
 public external interface SVGZoomAndPan {
     var zoomAndPan: Short
-        get() = noImpl
-        set(value) = noImpl
 
     companion object {
-        val SVG_ZOOMANDPAN_UNKNOWN: Short = 0
-        val SVG_ZOOMANDPAN_DISABLE: Short = 1
-        val SVG_ZOOMANDPAN_MAGNIFY: Short = 2
+        val SVG_ZOOMANDPAN_UNKNOWN: Short
+        val SVG_ZOOMANDPAN_DISABLE: Short
+        val SVG_ZOOMANDPAN_MAGNIFY: Short
     }
 }
 
 public external interface SVGURIReference {
     val href: SVGAnimatedString
-        get() = noImpl
 }
 
 public external abstract class SVGSVGElement : SVGGraphicsElement(), SVGFitToViewBox, SVGZoomAndPan, WindowEventHandlers {
     open val x: SVGAnimatedLength
-        get() = noImpl
     open val y: SVGAnimatedLength
-        get() = noImpl
     open val width: SVGAnimatedLength
-        get() = noImpl
     open val height: SVGAnimatedLength
-        get() = noImpl
     open var currentScale: Float
-        get() = noImpl
-        set(value) = noImpl
     open val currentTranslate: DOMPointReadOnly
-        get() = noImpl
-    fun getIntersectionList(rect: DOMRectReadOnly, referenceElement: SVGElement?): NodeList = noImpl
-    fun getEnclosureList(rect: DOMRectReadOnly, referenceElement: SVGElement?): NodeList = noImpl
-    fun checkIntersection(element: SVGElement, rect: DOMRectReadOnly): Boolean = noImpl
-    fun checkEnclosure(element: SVGElement, rect: DOMRectReadOnly): Boolean = noImpl
-    fun deselectAll(): Unit = noImpl
-    fun createSVGNumber(): SVGNumber = noImpl
-    fun createSVGLength(): SVGLength = noImpl
-    fun createSVGAngle(): SVGAngle = noImpl
-    fun createSVGPoint(): DOMPoint = noImpl
-    fun createSVGMatrix(): DOMMatrix = noImpl
-    fun createSVGRect(): DOMRect = noImpl
-    fun createSVGTransform(): SVGTransform = noImpl
-    fun createSVGTransformFromMatrix(matrix: DOMMatrixReadOnly): SVGTransform = noImpl
-    fun getElementById(elementId: String): Element = noImpl
-    fun suspendRedraw(maxWaitMilliseconds: Int): Int = noImpl
-    fun unsuspendRedraw(suspendHandleID: Int): Unit = noImpl
-    fun unsuspendRedrawAll(): Unit = noImpl
-    fun forceRedraw(): Unit = noImpl
+    fun getIntersectionList(rect: DOMRectReadOnly, referenceElement: SVGElement?): NodeList
+    fun getEnclosureList(rect: DOMRectReadOnly, referenceElement: SVGElement?): NodeList
+    fun checkIntersection(element: SVGElement, rect: DOMRectReadOnly): Boolean
+    fun checkEnclosure(element: SVGElement, rect: DOMRectReadOnly): Boolean
+    fun deselectAll(): Unit
+    fun createSVGNumber(): SVGNumber
+    fun createSVGLength(): SVGLength
+    fun createSVGAngle(): SVGAngle
+    fun createSVGPoint(): DOMPoint
+    fun createSVGMatrix(): DOMMatrix
+    fun createSVGRect(): DOMRect
+    fun createSVGTransform(): SVGTransform
+    fun createSVGTransformFromMatrix(matrix: DOMMatrixReadOnly): SVGTransform
+    fun getElementById(elementId: String): Element
+    fun suspendRedraw(maxWaitMilliseconds: Int): Int
+    fun unsuspendRedraw(suspendHandleID: Int): Unit
+    fun unsuspendRedrawAll(): Unit
+    fun forceRedraw(): Unit
 
     companion object {
-        val SVG_ZOOMANDPAN_UNKNOWN: Short = 0
-        val SVG_ZOOMANDPAN_DISABLE: Short = 1
-        val SVG_ZOOMANDPAN_MAGNIFY: Short = 2
+        val SVG_ZOOMANDPAN_UNKNOWN: Short
+        val SVG_ZOOMANDPAN_DISABLE: Short
+        val SVG_ZOOMANDPAN_MAGNIFY: Short
     }
 }
 
@@ -380,136 +318,113 @@ public external abstract class SVGSymbolElement : SVGGraphicsElement(), SVGFitTo
 
 public external abstract class SVGUseElement : SVGGraphicsElement(), SVGURIReference {
     open val x: SVGAnimatedLength
-        get() = noImpl
     open val y: SVGAnimatedLength
-        get() = noImpl
     open val width: SVGAnimatedLength
-        get() = noImpl
     open val height: SVGAnimatedLength
-        get() = noImpl
     open val instanceRoot: SVGElement?
-        get() = noImpl
     open val animatedInstanceRoot: SVGElement?
-        get() = noImpl
 }
 
 public external open class SVGUseElementShadowRoot : ShadowRoot() {
+    override fun getElementById(elementId: String): Element?
+    override fun prepend(vararg nodes: dynamic): Unit
+    override fun append(vararg nodes: dynamic): Unit
+    override fun querySelector(selectors: String): Element?
+    override fun querySelectorAll(selectors: String): NodeList
 }
 
 public external interface SVGElementInstance {
     val correspondingElement: SVGElement?
-        get() = noImpl
     val correspondingUseElement: SVGUseElement?
-        get() = noImpl
 }
 
 public external open class ShadowAnimation(source: dynamic, newTarget: dynamic) {
     open val sourceAnimation: dynamic
-        get() = noImpl
 }
 
 public external abstract class SVGSwitchElement : SVGGraphicsElement() {
 }
 
 public external interface GetSVGDocument {
-    fun getSVGDocument(): Document = noImpl
+    fun getSVGDocument(): Document
 }
 
 public external abstract class SVGStyleElement : SVGElement(), LinkStyle {
     open var type: String
-        get() = noImpl
-        set(value) = noImpl
     open var media: String
-        get() = noImpl
-        set(value) = noImpl
     open var title: String
-        get() = noImpl
-        set(value) = noImpl
 }
 
 public external abstract class SVGTransform {
     open val type: Short
-        get() = noImpl
     open val matrix: DOMMatrix
-        get() = noImpl
     open val angle: Float
-        get() = noImpl
-    fun setMatrix(matrix: DOMMatrixReadOnly): Unit = noImpl
-    fun setTranslate(tx: Float, ty: Float): Unit = noImpl
-    fun setScale(sx: Float, sy: Float): Unit = noImpl
-    fun setRotate(angle: Float, cx: Float, cy: Float): Unit = noImpl
-    fun setSkewX(angle: Float): Unit = noImpl
-    fun setSkewY(angle: Float): Unit = noImpl
+    fun setMatrix(matrix: DOMMatrixReadOnly): Unit
+    fun setTranslate(tx: Float, ty: Float): Unit
+    fun setScale(sx: Float, sy: Float): Unit
+    fun setRotate(angle: Float, cx: Float, cy: Float): Unit
+    fun setSkewX(angle: Float): Unit
+    fun setSkewY(angle: Float): Unit
 
     companion object {
-        val SVG_TRANSFORM_UNKNOWN: Short = 0
-        val SVG_TRANSFORM_MATRIX: Short = 1
-        val SVG_TRANSFORM_TRANSLATE: Short = 2
-        val SVG_TRANSFORM_SCALE: Short = 3
-        val SVG_TRANSFORM_ROTATE: Short = 4
-        val SVG_TRANSFORM_SKEWX: Short = 5
-        val SVG_TRANSFORM_SKEWY: Short = 6
+        val SVG_TRANSFORM_UNKNOWN: Short
+        val SVG_TRANSFORM_MATRIX: Short
+        val SVG_TRANSFORM_TRANSLATE: Short
+        val SVG_TRANSFORM_SCALE: Short
+        val SVG_TRANSFORM_ROTATE: Short
+        val SVG_TRANSFORM_SKEWX: Short
+        val SVG_TRANSFORM_SKEWY: Short
     }
 }
 
 public external abstract class SVGTransformList {
     open val length: Int
-        get() = noImpl
     open val numberOfItems: Int
-        get() = noImpl
-    fun clear(): Unit = noImpl
-    fun initialize(newItem: SVGTransform): SVGTransform = noImpl
-    fun getItem(index: Int): SVGTransform = noImpl
+    fun clear(): Unit
+    fun initialize(newItem: SVGTransform): SVGTransform
+    fun getItem(index: Int): SVGTransform
     @nativeGetter
-    operator fun get(index: Int): SVGTransform? = noImpl
-    fun insertItemBefore(newItem: SVGTransform, index: Int): SVGTransform = noImpl
-    fun replaceItem(newItem: SVGTransform, index: Int): SVGTransform = noImpl
-    fun removeItem(index: Int): SVGTransform = noImpl
-    fun appendItem(newItem: SVGTransform): SVGTransform = noImpl
+    operator fun get(index: Int): SVGTransform?
+    fun insertItemBefore(newItem: SVGTransform, index: Int): SVGTransform
+    fun replaceItem(newItem: SVGTransform, index: Int): SVGTransform
+    fun removeItem(index: Int): SVGTransform
+    fun appendItem(newItem: SVGTransform): SVGTransform
     @nativeSetter
-    operator fun set(index: Int, newItem: SVGTransform): Unit = noImpl
-    fun createSVGTransformFromMatrix(matrix: DOMMatrixReadOnly): SVGTransform = noImpl
-    fun consolidate(): SVGTransform? = noImpl
+    operator fun set(index: Int, newItem: SVGTransform): Unit
+    fun createSVGTransformFromMatrix(matrix: DOMMatrixReadOnly): SVGTransform
+    fun consolidate(): SVGTransform?
 }
 
 public external abstract class SVGAnimatedTransformList {
     open val baseVal: SVGTransformList
-        get() = noImpl
     open val animVal: SVGTransformList
-        get() = noImpl
 }
 
 public external abstract class SVGPreserveAspectRatio {
     open var align: Short
-        get() = noImpl
-        set(value) = noImpl
     open var meetOrSlice: Short
-        get() = noImpl
-        set(value) = noImpl
 
     companion object {
-        val SVG_PRESERVEASPECTRATIO_UNKNOWN: Short = 0
-        val SVG_PRESERVEASPECTRATIO_NONE: Short = 1
-        val SVG_PRESERVEASPECTRATIO_XMINYMIN: Short = 2
-        val SVG_PRESERVEASPECTRATIO_XMIDYMIN: Short = 3
-        val SVG_PRESERVEASPECTRATIO_XMAXYMIN: Short = 4
-        val SVG_PRESERVEASPECTRATIO_XMINYMID: Short = 5
-        val SVG_PRESERVEASPECTRATIO_XMIDYMID: Short = 6
-        val SVG_PRESERVEASPECTRATIO_XMAXYMID: Short = 7
-        val SVG_PRESERVEASPECTRATIO_XMINYMAX: Short = 8
-        val SVG_PRESERVEASPECTRATIO_XMIDYMAX: Short = 9
-        val SVG_PRESERVEASPECTRATIO_XMAXYMAX: Short = 10
-        val SVG_MEETORSLICE_UNKNOWN: Short = 0
-        val SVG_MEETORSLICE_MEET: Short = 1
-        val SVG_MEETORSLICE_SLICE: Short = 2
+        val SVG_PRESERVEASPECTRATIO_UNKNOWN: Short
+        val SVG_PRESERVEASPECTRATIO_NONE: Short
+        val SVG_PRESERVEASPECTRATIO_XMINYMIN: Short
+        val SVG_PRESERVEASPECTRATIO_XMIDYMIN: Short
+        val SVG_PRESERVEASPECTRATIO_XMAXYMIN: Short
+        val SVG_PRESERVEASPECTRATIO_XMINYMID: Short
+        val SVG_PRESERVEASPECTRATIO_XMIDYMID: Short
+        val SVG_PRESERVEASPECTRATIO_XMAXYMID: Short
+        val SVG_PRESERVEASPECTRATIO_XMINYMAX: Short
+        val SVG_PRESERVEASPECTRATIO_XMIDYMAX: Short
+        val SVG_PRESERVEASPECTRATIO_XMAXYMAX: Short
+        val SVG_MEETORSLICE_UNKNOWN: Short
+        val SVG_MEETORSLICE_MEET: Short
+        val SVG_MEETORSLICE_SLICE: Short
     }
 }
 
 public external abstract class SVGAnimatedPreserveAspectRatio {
     open val baseVal: SVGPreserveAspectRatio
-        get() = noImpl
     open val animVal: SVGPreserveAspectRatio
-        get() = noImpl
 }
 
 public external abstract class SVGPathElement : SVGGeometryElement() {
@@ -517,48 +432,31 @@ public external abstract class SVGPathElement : SVGGeometryElement() {
 
 public external abstract class SVGRectElement : SVGGeometryElement() {
     open val x: SVGAnimatedLength
-        get() = noImpl
     open val y: SVGAnimatedLength
-        get() = noImpl
     open val width: SVGAnimatedLength
-        get() = noImpl
     open val height: SVGAnimatedLength
-        get() = noImpl
     open val rx: SVGAnimatedLength
-        get() = noImpl
     open val ry: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGCircleElement : SVGGeometryElement() {
     open val cx: SVGAnimatedLength
-        get() = noImpl
     open val cy: SVGAnimatedLength
-        get() = noImpl
     open val r: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGEllipseElement : SVGGeometryElement() {
     open val cx: SVGAnimatedLength
-        get() = noImpl
     open val cy: SVGAnimatedLength
-        get() = noImpl
     open val rx: SVGAnimatedLength
-        get() = noImpl
     open val ry: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGLineElement : SVGGeometryElement() {
     open val x1: SVGAnimatedLength
-        get() = noImpl
     open val y1: SVGAnimatedLength
-        get() = noImpl
     open val x2: SVGAnimatedLength
-        get() = noImpl
     open val y2: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGMeshElement : SVGGeometryElement(), SVGURIReference {
@@ -566,27 +464,23 @@ public external abstract class SVGMeshElement : SVGGeometryElement(), SVGURIRefe
 
 public external interface SVGAnimatedPoints {
     val points: SVGPointList
-        get() = noImpl
     val animatedPoints: SVGPointList
-        get() = noImpl
 }
 
 public external abstract class SVGPointList {
     open val length: Int
-        get() = noImpl
     open val numberOfItems: Int
-        get() = noImpl
-    fun clear(): Unit = noImpl
-    fun initialize(newItem: DOMPoint): DOMPoint = noImpl
-    fun getItem(index: Int): DOMPoint = noImpl
+    fun clear(): Unit
+    fun initialize(newItem: DOMPoint): DOMPoint
+    fun getItem(index: Int): DOMPoint
     @nativeGetter
-    operator fun get(index: Int): DOMPoint? = noImpl
-    fun insertItemBefore(newItem: DOMPoint, index: Int): DOMPoint = noImpl
-    fun replaceItem(newItem: DOMPoint, index: Int): DOMPoint = noImpl
-    fun removeItem(index: Int): DOMPoint = noImpl
-    fun appendItem(newItem: DOMPoint): DOMPoint = noImpl
+    operator fun get(index: Int): DOMPoint?
+    fun insertItemBefore(newItem: DOMPoint, index: Int): DOMPoint
+    fun replaceItem(newItem: DOMPoint, index: Int): DOMPoint
+    fun removeItem(index: Int): DOMPoint
+    fun appendItem(newItem: DOMPoint): DOMPoint
     @nativeSetter
-    operator fun set(index: Int, newItem: DOMPoint): Unit = noImpl
+    operator fun set(index: Int, newItem: DOMPoint): Unit
 }
 
 public external abstract class SVGPolylineElement : SVGGeometryElement(), SVGAnimatedPoints {
@@ -597,37 +491,30 @@ public external abstract class SVGPolygonElement : SVGGeometryElement(), SVGAnim
 
 public external abstract class SVGTextContentElement : SVGGraphicsElement() {
     open val textLength: SVGAnimatedLength
-        get() = noImpl
     open val lengthAdjust: SVGAnimatedEnumeration
-        get() = noImpl
-    fun getNumberOfChars(): Int = noImpl
-    fun getComputedTextLength(): Float = noImpl
-    fun getSubStringLength(charnum: Int, nchars: Int): Float = noImpl
-    fun getStartPositionOfChar(charnum: Int): DOMPoint = noImpl
-    fun getEndPositionOfChar(charnum: Int): DOMPoint = noImpl
-    fun getExtentOfChar(charnum: Int): DOMRect = noImpl
-    fun getRotationOfChar(charnum: Int): Float = noImpl
-    fun getCharNumAtPosition(point: DOMPoint): Int = noImpl
-    fun selectSubString(charnum: Int, nchars: Int): Unit = noImpl
+    fun getNumberOfChars(): Int
+    fun getComputedTextLength(): Float
+    fun getSubStringLength(charnum: Int, nchars: Int): Float
+    fun getStartPositionOfChar(charnum: Int): DOMPoint
+    fun getEndPositionOfChar(charnum: Int): DOMPoint
+    fun getExtentOfChar(charnum: Int): DOMRect
+    fun getRotationOfChar(charnum: Int): Float
+    fun getCharNumAtPosition(point: DOMPoint): Int
+    fun selectSubString(charnum: Int, nchars: Int): Unit
 
     companion object {
-        val LENGTHADJUST_UNKNOWN: Short = 0
-        val LENGTHADJUST_SPACING: Short = 1
-        val LENGTHADJUST_SPACINGANDGLYPHS: Short = 2
+        val LENGTHADJUST_UNKNOWN: Short
+        val LENGTHADJUST_SPACING: Short
+        val LENGTHADJUST_SPACINGANDGLYPHS: Short
     }
 }
 
 public external abstract class SVGTextPositioningElement : SVGTextContentElement() {
     open val x: SVGAnimatedLengthList
-        get() = noImpl
     open val y: SVGAnimatedLengthList
-        get() = noImpl
     open val dx: SVGAnimatedLengthList
-        get() = noImpl
     open val dy: SVGAnimatedLengthList
-        get() = noImpl
     open val rotate: SVGAnimatedNumberList
-        get() = noImpl
 }
 
 public external abstract class SVGTextElement : SVGTextPositioningElement() {
@@ -638,77 +525,54 @@ public external abstract class SVGTSpanElement : SVGTextPositioningElement() {
 
 public external abstract class SVGTextPathElement : SVGTextContentElement(), SVGURIReference {
     open val startOffset: SVGAnimatedLength
-        get() = noImpl
     open val method: SVGAnimatedEnumeration
-        get() = noImpl
     open val spacing: SVGAnimatedEnumeration
-        get() = noImpl
 
     companion object {
-        val TEXTPATH_METHODTYPE_UNKNOWN: Short = 0
-        val TEXTPATH_METHODTYPE_ALIGN: Short = 1
-        val TEXTPATH_METHODTYPE_STRETCH: Short = 2
-        val TEXTPATH_SPACINGTYPE_UNKNOWN: Short = 0
-        val TEXTPATH_SPACINGTYPE_AUTO: Short = 1
-        val TEXTPATH_SPACINGTYPE_EXACT: Short = 2
+        val TEXTPATH_METHODTYPE_UNKNOWN: Short
+        val TEXTPATH_METHODTYPE_ALIGN: Short
+        val TEXTPATH_METHODTYPE_STRETCH: Short
+        val TEXTPATH_SPACINGTYPE_UNKNOWN: Short
+        val TEXTPATH_SPACINGTYPE_AUTO: Short
+        val TEXTPATH_SPACINGTYPE_EXACT: Short
     }
 }
 
 public external abstract class SVGImageElement : SVGGraphicsElement(), SVGURIReference, HTMLOrSVGImageElement {
     open val x: SVGAnimatedLength
-        get() = noImpl
     open val y: SVGAnimatedLength
-        get() = noImpl
     open val width: SVGAnimatedLength
-        get() = noImpl
     open val height: SVGAnimatedLength
-        get() = noImpl
     open val preserveAspectRatio: SVGAnimatedPreserveAspectRatio
-        get() = noImpl
     open var crossOrigin: String?
-        get() = noImpl
-        set(value) = noImpl
 }
 
 public external abstract class SVGForeignObjectElement : SVGGraphicsElement() {
     open val x: SVGAnimatedLength
-        get() = noImpl
     open val y: SVGAnimatedLength
-        get() = noImpl
     open val width: SVGAnimatedLength
-        get() = noImpl
     open val height: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGMarkerElement : SVGElement(), SVGFitToViewBox {
     open val refX: SVGAnimatedLength
-        get() = noImpl
     open val refY: SVGAnimatedLength
-        get() = noImpl
     open val markerUnits: SVGAnimatedEnumeration
-        get() = noImpl
     open val markerWidth: SVGAnimatedLength
-        get() = noImpl
     open val markerHeight: SVGAnimatedLength
-        get() = noImpl
     open val orientType: SVGAnimatedEnumeration
-        get() = noImpl
     open val orientAngle: SVGAnimatedAngle
-        get() = noImpl
     open var orient: String
-        get() = noImpl
-        set(value) = noImpl
-    fun setOrientToAuto(): Unit = noImpl
-    fun setOrientToAngle(angle: SVGAngle): Unit = noImpl
+    fun setOrientToAuto(): Unit
+    fun setOrientToAngle(angle: SVGAngle): Unit
 
     companion object {
-        val SVG_MARKERUNITS_UNKNOWN: Short = 0
-        val SVG_MARKERUNITS_USERSPACEONUSE: Short = 1
-        val SVG_MARKERUNITS_STROKEWIDTH: Short = 2
-        val SVG_MARKER_ORIENT_UNKNOWN: Short = 0
-        val SVG_MARKER_ORIENT_AUTO: Short = 1
-        val SVG_MARKER_ORIENT_ANGLE: Short = 2
+        val SVG_MARKERUNITS_UNKNOWN: Short
+        val SVG_MARKERUNITS_USERSPACEONUSE: Short
+        val SVG_MARKERUNITS_STROKEWIDTH: Short
+        val SVG_MARKER_ORIENT_UNKNOWN: Short
+        val SVG_MARKER_ORIENT_AUTO: Short
+        val SVG_MARKER_ORIENT_ANGLE: Short
     }
 }
 
@@ -717,47 +581,34 @@ public external abstract class SVGSolidcolorElement : SVGElement() {
 
 public external abstract class SVGGradientElement : SVGElement(), SVGURIReference, SVGUnitTypes {
     open val gradientUnits: SVGAnimatedEnumeration
-        get() = noImpl
     open val gradientTransform: SVGAnimatedTransformList
-        get() = noImpl
     open val spreadMethod: SVGAnimatedEnumeration
-        get() = noImpl
 
     companion object {
-        val SVG_SPREADMETHOD_UNKNOWN: Short = 0
-        val SVG_SPREADMETHOD_PAD: Short = 1
-        val SVG_SPREADMETHOD_REFLECT: Short = 2
-        val SVG_SPREADMETHOD_REPEAT: Short = 3
-        val SVG_UNIT_TYPE_UNKNOWN: Short = 0
-        val SVG_UNIT_TYPE_USERSPACEONUSE: Short = 1
-        val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short = 2
+        val SVG_SPREADMETHOD_UNKNOWN: Short
+        val SVG_SPREADMETHOD_PAD: Short
+        val SVG_SPREADMETHOD_REFLECT: Short
+        val SVG_SPREADMETHOD_REPEAT: Short
+        val SVG_UNIT_TYPE_UNKNOWN: Short
+        val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+        val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
     }
 }
 
 public external abstract class SVGLinearGradientElement : SVGGradientElement() {
     open val x1: SVGAnimatedLength
-        get() = noImpl
     open val y1: SVGAnimatedLength
-        get() = noImpl
     open val x2: SVGAnimatedLength
-        get() = noImpl
     open val y2: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGRadialGradientElement : SVGGradientElement() {
     open val cx: SVGAnimatedLength
-        get() = noImpl
     open val cy: SVGAnimatedLength
-        get() = noImpl
     open val r: SVGAnimatedLength
-        get() = noImpl
     open val fx: SVGAnimatedLength
-        get() = noImpl
     open val fy: SVGAnimatedLength
-        get() = noImpl
     open val fr: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGMeshGradientElement : SVGGradientElement() {
@@ -771,29 +622,21 @@ public external abstract class SVGMeshpatchElement : SVGElement() {
 
 public external abstract class SVGStopElement : SVGElement() {
     open val offset: SVGAnimatedNumber
-        get() = noImpl
 }
 
 public external abstract class SVGPatternElement : SVGElement(), SVGFitToViewBox, SVGURIReference, SVGUnitTypes {
     open val patternUnits: SVGAnimatedEnumeration
-        get() = noImpl
     open val patternContentUnits: SVGAnimatedEnumeration
-        get() = noImpl
     open val patternTransform: SVGAnimatedTransformList
-        get() = noImpl
     open val x: SVGAnimatedLength
-        get() = noImpl
     open val y: SVGAnimatedLength
-        get() = noImpl
     open val width: SVGAnimatedLength
-        get() = noImpl
     open val height: SVGAnimatedLength
-        get() = noImpl
 
     companion object {
-        val SVG_UNIT_TYPE_UNKNOWN: Short = 0
-        val SVG_UNIT_TYPE_USERSPACEONUSE: Short = 1
-        val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short = 2
+        val SVG_UNIT_TYPE_UNKNOWN: Short
+        val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+        val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
     }
 }
 
@@ -805,41 +648,29 @@ public external abstract class SVGHatchpathElement : SVGElement() {
 
 public external abstract class SVGCursorElement : SVGElement(), SVGURIReference {
     open val x: SVGAnimatedLength
-        get() = noImpl
     open val y: SVGAnimatedLength
-        get() = noImpl
 }
 
 public external abstract class SVGScriptElement : SVGElement(), SVGURIReference, HTMLOrSVGScriptElement {
     open var type: String
-        get() = noImpl
-        set(value) = noImpl
     open var crossOrigin: String?
-        get() = noImpl
-        set(value) = noImpl
 }
 
 public external abstract class SVGAElement : SVGGraphicsElement(), SVGURIReference {
     open val target: SVGAnimatedString
-        get() = noImpl
     open val download: SVGAnimatedString
-        get() = noImpl
     open val rel: SVGAnimatedString
-        get() = noImpl
     open val relList: SVGAnimatedString
-        get() = noImpl
     open val hreflang: SVGAnimatedString
-        get() = noImpl
     open val type: SVGAnimatedString
-        get() = noImpl
 }
 
 public external abstract class SVGViewElement : SVGElement(), SVGFitToViewBox, SVGZoomAndPan {
 
     companion object {
-        val SVG_ZOOMANDPAN_UNKNOWN: Short = 0
-        val SVG_ZOOMANDPAN_DISABLE: Short = 1
-        val SVG_ZOOMANDPAN_MAGNIFY: Short = 2
+        val SVG_ZOOMANDPAN_UNKNOWN: Short
+        val SVG_ZOOMANDPAN_DISABLE: Short
+        val SVG_ZOOMANDPAN_MAGNIFY: Short
     }
 }
 
