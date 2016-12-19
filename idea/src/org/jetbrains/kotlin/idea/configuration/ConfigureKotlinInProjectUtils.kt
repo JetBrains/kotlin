@@ -24,11 +24,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.versions.getKotlinJsRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
+import org.jetbrains.kotlin.idea.vfilefinder.JvmIDEVirtualFileFinder
 import org.jetbrains.kotlin.utils.ifEmpty
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val isSnapshot: Boolean)
@@ -127,9 +129,11 @@ fun getNonConfiguredModules(project: Project, excludeModules: Collection<Module>
     }
 }
 
-fun hasKotlinJvmOrJsRuntimeInScope(module: Module): Boolean {
+fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
     val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
-    return getKotlinJvmRuntimeMarkerClass(module.project, scope) != null || getKotlinJsRuntimeMarkerClass(module.project, scope) != null
+    return getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
+           getKotlinJsRuntimeMarkerClass(module.project, scope) != null ||
+           hasKotlinCommonRuntimeInScope(scope)
 }
 
 fun hasKotlinJvmRuntimeInScope(module: Module): Boolean {
@@ -140,6 +144,10 @@ fun hasKotlinJvmRuntimeInScope(module: Module): Boolean {
 fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
     val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
     return getKotlinJsRuntimeMarkerClass(module.project, scope) != null
+}
+
+fun hasKotlinCommonRuntimeInScope(scope: GlobalSearchScope): Boolean {
+    return JvmIDEVirtualFileFinder(scope).hasMetadataPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
 }
 
 fun hasKotlinFilesOnlyInTests(module: Module): Boolean {

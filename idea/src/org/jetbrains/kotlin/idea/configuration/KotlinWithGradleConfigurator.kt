@@ -51,7 +51,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return ConfigureKotlinStatus.NON_APPLICABLE
         }
 
-        if (hasKotlinJvmRuntimeInScope(module)) {
+        if (hasAnyKotlinRuntimeInScope(module)) {
             return ConfigureKotlinStatus.CONFIGURED
         }
 
