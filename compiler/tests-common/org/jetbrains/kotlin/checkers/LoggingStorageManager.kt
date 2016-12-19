@@ -23,7 +23,7 @@ import java.lang.reflect.GenericDeclaration
 
 class LoggingStorageManager(
         private val delegate: StorageManager,
-        private val callHandler: (lambda: Any, call: LoggingStorageManager.CallData?) -> Unit) : ObservableStorageManager(delegate) {
+        private val callHandler: (lambda: Any, call: LoggingStorageManager.CallData) -> Unit) : ObservableStorageManager(delegate) {
 
     class CallData(
             val fieldOwner: Any?,

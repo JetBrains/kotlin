@@ -17,12 +17,9 @@
 package org.jetbrains.kotlin.checkers
 
 import com.google.common.base.Predicate
-import com.google.common.collect.Sets
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import junit.framework.TestCase
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
@@ -31,12 +28,17 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.container.getService
-import org.jetbrains.kotlin.context.*
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.context.SimpleGlobalContext
+import org.jetbrains.kotlin.context.withModule
+import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
@@ -46,12 +48,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JvmBuiltIns
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
@@ -63,53 +63,47 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.*
-import org.jetbrains.kotlin.utils.rethrow
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL
 import org.junit.Assert
 import java.io.File
 import java.util.*
 
 abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
-    override fun analyzeAndCheck(testDataFile: File, testFiles: List<BaseDiagnosticsTest.TestFile>) {
-        val groupedByModule = testFiles.groupByTo<TestFile, TestModule, LinkedHashMap<TestModule, List<TestFile>>>(
-                LinkedHashMap<TestModule, List<TestFile>>()
-        ) { file -> file.module }
-
-        val checkLazyResolveLog = testFiles.any { file -> file.checkLazyLog }
+    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
+        val groupedByModule = files.groupBy(TestFile::module)
 
         var lazyOperationsLog: LazyOperationsLog? = null
-        val context: GlobalContext
 
         val tracker = ExceptionTracker()
-        if (checkLazyResolveLog) {
+        val storageManager: StorageManager
+        if (files.any(TestFile::checkLazyLog)) {
             lazyOperationsLog = LazyOperationsLog(HASH_SANITIZER)
-            context = SimpleGlobalContext(
-                    LoggingStorageManager(
-                            LockBasedStorageManager.createWithExceptionHandling(tracker),
-                            lazyOperationsLog.addRecordFunction
-                    ),
-                    tracker
+            storageManager = LoggingStorageManager(
+                    LockBasedStorageManager.createWithExceptionHandling(tracker),
+                    lazyOperationsLog.addRecordFunction
             )
         }
         else {
-            context = SimpleGlobalContext(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
+            storageManager = LockBasedStorageManager.createWithExceptionHandling(tracker)
         }
 
+        val context = SimpleGlobalContext(storageManager, tracker)
+
         val modules = createModules(groupedByModule, context.storageManager)
-        val moduleBindings = java.util.HashMap<TestModule, BindingContext>()
+        val moduleBindings = HashMap<TestModule?, BindingContext>()
 
         for ((testModule, testFilesInModule) in groupedByModule) {
+            val ktFiles = getKtFiles(testFilesInModule, true)
 
-            val jetFiles = getJetFiles(testFilesInModule, true)
-
-            val oldModule = modules.get(testModule)
+            val oldModule = modules[testModule]!!
 
             val languageVersionSettings = loadLanguageVersionSettings(testFilesInModule)
             val moduleContext = context.withProject(project).withModule(oldModule)
 
-            val separateModules = groupedByModule.size == 1 && groupedByModule.keys.iterator().next() == null
+            val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
-                    moduleContext, jetFiles, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                    moduleContext, ktFiles, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                     languageVersionSettings, separateModules
             )
             if (oldModule != result.moduleDescriptor) {
@@ -117,36 +111,37 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 // (its API does not support working with a module created beforehand).
                 // So, we should replace the old (effectively discarded) module with the new one everywhere in dependencies.
                 // TODO: dirty hack, refactor this test so that it doesn't create ModuleDescriptor instances
-                modules.put(testModule, result.moduleDescriptor)
+                modules[testModule] = result.moduleDescriptor as ModuleDescriptorImpl
                 for (module in modules.values) {
-                    val it = module.testOnly_AllDependentModules.listIterator()
+                    @Suppress("DEPRECATION")
+                    val it = (module.testOnly_AllDependentModules as MutableList).listIterator()
                     while (it.hasNext()) {
                         if (it.next() == oldModule) {
-                            it.set(result.moduleDescriptor)
+                            it.set(result.moduleDescriptor as ModuleDescriptorImpl)
                         }
                     }
                 }
             }
 
-            moduleBindings.put(testModule, result.bindingContext)
-            checkAllResolvedCallsAreCompleted(jetFiles, result.bindingContext)
+            moduleBindings[testModule] = result.bindingContext
+            checkAllResolvedCallsAreCompleted(ktFiles, result.bindingContext)
         }
 
         // We want to always create a test data file (txt) if it was missing,
         // but don't want to skip the following checks in case this one fails
         var exceptionFromLazyResolveLogValidation: Throwable? = null
-        if (checkLazyResolveLog) {
+        if (lazyOperationsLog != null) {
             exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile)
         }
         else {
             val lazyLogFile = getLazyLogFile(testDataFile)
-            TestCase.assertFalse("No lazy log expected, but found: " + lazyLogFile.getAbsolutePath(), lazyLogFile.exists())
+            assertFalse("No lazy log expected, but found: ${lazyLogFile.absolutePath}", lazyLogFile.exists())
         }
 
         var exceptionFromDescriptorValidation: Throwable? = null
         try {
             val expectedFile = File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".txt")
-            validateAndCompareDescriptorWithFile(expectedFile, testFiles, modules)
+            validateAndCompareDescriptorWithFile(expectedFile, files, modules)
         }
         catch (e: Throwable) {
             exceptionFromDescriptorValidation = e
@@ -156,11 +151,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         var ok = true
 
         val actualText = StringBuilder()
-        for (testFile in testFiles) {
+        for (testFile in files) {
             val module = testFile.module
-            val isCommonModule = modules.get(module).getMultiTargetPlatform() === MultiTargetPlatform.Common
+            val isCommonModule = modules[module]!!.getMultiTargetPlatform() == MultiTargetPlatform.Common
             ok = ok and testFile.getActualText(
-                    moduleBindings.get(module), actualText,
+                    moduleBindings[module]!!, actualText,
                     shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule
             )
         }
@@ -168,7 +163,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         var exceptionFromDynamicCallDescriptorsValidation: Throwable? = null
         try {
             val expectedFile = File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".dynamic.txt")
-            checkDynamicCallDescriptors(expectedFile, testFiles)
+            checkDynamicCallDescriptors(expectedFile, files)
         }
         catch (e: Throwable) {
             exceptionFromDynamicCallDescriptorsValidation = e
@@ -176,41 +171,34 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         KotlinTestUtils.assertEqualsToFile(testDataFile, actualText.toString())
 
-        TestCase.assertTrue("Diagnostics mismatch. See the output above", ok)
+        assertTrue("Diagnostics mismatch. See the output above", ok)
 
         // now we throw a previously found error, if any
-        if (exceptionFromDescriptorValidation != null) {
-            throw rethrow(exceptionFromDescriptorValidation)
-        }
-        if (exceptionFromLazyResolveLogValidation != null) {
-            throw rethrow(exceptionFromLazyResolveLogValidation)
-        }
-        if (exceptionFromDynamicCallDescriptorsValidation != null) {
-            throw rethrow(exceptionFromDynamicCallDescriptorsValidation)
-        }
+        exceptionFromDescriptorValidation?.let { throw it }
+        exceptionFromLazyResolveLogValidation?.let { throw it }
+        exceptionFromDynamicCallDescriptorsValidation?.let { throw it }
 
-        performAdditionalChecksAfterDiagnostics(testDataFile, testFiles, groupedByModule, modules, moduleBindings)
+        performAdditionalChecksAfterDiagnostics(testDataFile, files, groupedByModule, modules, moduleBindings)
     }
 
-    protected fun performAdditionalChecksAfterDiagnostics(
+    protected open fun performAdditionalChecksAfterDiagnostics(
             testDataFile: File,
-            testFiles: List<BaseDiagnosticsTest.TestFile>,
-            moduleFiles: Map<BaseDiagnosticsTest.TestModule, List<BaseDiagnosticsTest.TestFile>>,
-            moduleDescriptors: Map<BaseDiagnosticsTest.TestModule, ModuleDescriptorImpl>,
-            moduleBindings: Map<BaseDiagnosticsTest.TestModule, BindingContext>
+            testFiles: List<TestFile>,
+            moduleFiles: Map<TestModule?, List<TestFile>>,
+            moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
+            moduleBindings: Map<TestModule?, BindingContext>
     ) {
         // To be overridden by diagnostic-like tests.
     }
 
-    private fun loadLanguageVersionSettings(module: List<BaseDiagnosticsTest.TestFile>): LanguageVersionSettings? {
+    private fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings? {
         var result: LanguageVersionSettings? = null
         for (file in module) {
             val current = file.customLanguageVersionSettings
             if (current != null) {
                 if (result != null && result != current) {
                     Assert.fail(
-                            "More than one file in the module has " + BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " or " +
-                            BaseDiagnosticsTest.API_VERSION_DIRECTIVE + " directive specified. " +
+                            "More than one file in the module has $LANGUAGE_DIRECTIVE or $API_VERSION_DIRECTIVE directive specified. " +
                             "This is not supported. Please move all directives into one file"
                     )
                 }
@@ -221,59 +209,49 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         return result
     }
 
-    private fun checkDynamicCallDescriptors(expectedFile: File, testFiles: List<BaseDiagnosticsTest.TestFile>) {
+    private fun checkDynamicCallDescriptors(expectedFile: File, testFiles: List<TestFile>) {
         val serializer = RecursiveDescriptorComparator(RECURSIVE_ALL)
 
         val actualText = StringBuilder()
 
         for (testFile in testFiles) {
-            val dynamicCallDescriptors = testFile.dynamicCallDescriptors
-
-            for (descriptor in dynamicCallDescriptors) {
+            for (descriptor in testFile.dynamicCallDescriptors) {
                 val actualSerialized = serializer.serializeRecursively(descriptor)
                 actualText.append(actualSerialized)
             }
         }
 
-        if (actualText.length != 0 || expectedFile.exists()) {
+        if (actualText.isNotEmpty() || expectedFile.exists()) {
             KotlinTestUtils.assertEqualsToFile(expectedFile, actualText.toString())
         }
     }
 
-    fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<BaseDiagnosticsTest.TestModule, List<BaseDiagnosticsTest.TestFile>>): Boolean {
-        return groupedByModule.size > 1
-    }
+    protected open fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean =
+            groupedByModule.size > 1
 
-    private fun checkLazyResolveLog(lazyOperationsLog: LazyOperationsLog, testDataFile: File): Throwable? {
-        var exceptionFromLazyResolveLogValidation: Throwable? = null
-        try {
-            val expectedFile = getLazyLogFile(testDataFile)
+    private fun checkLazyResolveLog(lazyOperationsLog: LazyOperationsLog, testDataFile: File): Throwable? =
+            try {
+                val expectedFile = getLazyLogFile(testDataFile)
+                KotlinTestUtils.assertEqualsToFile(expectedFile, lazyOperationsLog.getText(), HASH_SANITIZER)
+                null
+            }
+            catch (e: Throwable) {
+                e
+            }
 
-            KotlinTestUtils.assertEqualsToFile(
-                    expectedFile,
-                    lazyOperationsLog.getText(),
-                    HASH_SANITIZER
-            )
-        }
-        catch (e: Throwable) {
-            exceptionFromLazyResolveLogValidation = e
-        }
+    private fun getLazyLogFile(testDataFile: File): File =
+            File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".lazy.log")
 
-        return exceptionFromLazyResolveLogValidation
-    }
-
-    private fun getLazyLogFile(testDataFile: File): File {
-        return File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".lazy.log")
-    }
-
-    protected fun analyzeModuleContents(
+    protected open fun analyzeModuleContents(
             moduleContext: ModuleContext,
             files: List<KtFile>,
             moduleTrace: BindingTrace,
             languageVersionSettings: LanguageVersionSettings?,
             separateModules: Boolean
     ): AnalysisResult {
+        @Suppress("NAME_SHADOWING")
         var files = files
+        @Suppress("NAME_SHADOWING")
         var languageVersionSettings = languageVersionSettings
         val configuration: CompilerConfiguration
         if (languageVersionSettings != null) {
@@ -305,22 +283,21 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val moduleDescriptor = moduleContext.module as ModuleDescriptorImpl
 
         val platform = moduleDescriptor.getMultiTargetPlatform()
-        if (platform === MultiTargetPlatform.Common) {
-
+        if (platform == MultiTargetPlatform.Common) {
             return DefaultAnalyzerFacade.analyzeFiles(
                     files, moduleDescriptor.name, true,
-                    mapOf<ModuleDescriptor.Capability<out Any>, Any>(
-                            MultiTargetPlatform.CAPABILITY.to<ModuleDescriptor.Capability<MultiTargetPlatform>, MultiTargetPlatform.Common>(MultiTargetPlatform.Common),
-                            MODULE_FILES.to<ModuleDescriptor.Capability<List<KtFile>>, List<KtFile>>(files)
+                    mapOf(
+                            MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,
+                            MODULE_FILES to files
                     )
-            ) { info, content ->
+            ) { _, _ ->
                 // TODO
                 PackagePartProvider.Empty
             }
         }
         else if (platform != null) {
             // TODO: analyze with the correct platform, not always JVM
-            files = files.plus<KtFile>(getCommonCodeFilesForPlatformSpecificModule(moduleDescriptor))
+            files += getCommonCodeFilesForPlatformSpecificModule(moduleDescriptor)
         }
 
         val moduleContentScope = GlobalSearchScope.allScope(moduleContext.project)
@@ -336,16 +313,14 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 moduleClassResolver
         )
         container.initJvmBuiltInsForTopDownAnalysis(moduleDescriptor, languageVersionSettings)
-        moduleClassResolver.resolver = container.getService(JavaDescriptorResolver::class.java)
+        moduleClassResolver.resolver = container.get<JavaDescriptorResolver>()
 
-        moduleDescriptor.initialize(CompositePackageFragmentProvider(Arrays.asList<PackageFragmentProvider>(
-                container.getService(KotlinCodeAnalyzer::class.java).getPackageFragmentProvider(),
-                container.getService(JavaDescriptorResolver::class.java).packageFragmentProvider
+        moduleDescriptor.initialize(CompositePackageFragmentProvider(listOf(
+                container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
+                container.get<JavaDescriptorResolver>().packageFragmentProvider
         )))
 
-        container.getService(LazyTopDownAnalyzer::class.java).analyzeDeclarations(
-                TopDownAnalysisMode.TopLevelDeclarations, files, DataFlowInfo.EMPTY
-        )
+        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
         return AnalysisResult.success(moduleTrace.bindingContext, moduleDescriptor)
     }
@@ -353,14 +328,16 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun getCommonCodeFilesForPlatformSpecificModule(moduleDescriptor: ModuleDescriptorImpl): List<KtFile> {
         // We assume that a platform-specific module _implements_ all declarations from common modules which are immediate dependencies.
         // So we collect all sources from such modules to analyze in the platform-specific module as well
+        @Suppress("DEPRECATION")
         val dependencies = moduleDescriptor.testOnly_AllDependentModules
 
         // TODO: diagnostics on common code reported during the platform module analysis should be distinguished somehow
         // E.g. "<!JVM:IMPLEMENTATION_WITHOUT_HEADER!>...<!>
         val result = ArrayList<KtFile>(0)
         for (dependency in dependencies) {
-            if (dependency.getCapability(MultiTargetPlatform.CAPABILITY) === MultiTargetPlatform.Common) {
-                val files = dependency.getCapability(MODULE_FILES) ?: error("MODULE_FILES should have been set for the common module: " + dependency)
+            if (dependency.getCapability(MultiTargetPlatform.CAPABILITY) == MultiTargetPlatform.Common) {
+                val files = dependency.getCapability(MODULE_FILES)
+                            ?: error("MODULE_FILES should have been set for the common module: $dependency")
                 result.addAll(files)
             }
         }
@@ -370,11 +347,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
     private fun validateAndCompareDescriptorWithFile(
             expectedFile: File,
-            testFiles: List<BaseDiagnosticsTest.TestFile>,
-            modules: Map<BaseDiagnosticsTest.TestModule, ModuleDescriptorImpl>
+            testFiles: List<TestFile>,
+            modules: Map<TestModule?, ModuleDescriptorImpl>
     ) {
         if (testFiles.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT") }) {
-            TestCase.assertFalse(".txt file should not exist if SKIP_TXT directive is used: " + expectedFile, expectedFile.exists())
+            assertFalse(".txt file should not exist if SKIP_TXT directive is used: $expectedFile", expectedFile.exists())
             return
         }
 
@@ -383,14 +360,24 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val isMultiModuleTest = modules.size != 1
         val rootPackageText = StringBuilder()
 
-        val module = modules.keys.sorted().iterator()
+        val sortedModules = modules.keys.sortedWith(Comparator { x, y ->
+            when {
+                x == null && y == null -> 0
+                x == null && y != null -> -1
+                x != null && y == null -> 1
+                x != null && y != null -> x.compareTo(y)
+                else -> error("Unreachable")
+            }
+        })
+
+        val module = sortedModules.iterator()
         while (module.hasNext()) {
-            val moduleDescriptor = modules[module.next()]
+            val moduleDescriptor = modules[module.next()]!!
             val aPackage = moduleDescriptor.getPackage(FqName.ROOT)
-            TestCase.assertFalse(aPackage.isEmpty())
+            assertFalse(aPackage.isEmpty())
 
             if (isMultiModuleTest) {
-                rootPackageText.append(String.format("// -- Module: %s --\n", moduleDescriptor.getName()))
+                rootPackageText.append(String.format("// -- Module: %s --\n", moduleDescriptor.name))
             }
 
             val actualSerialized = comparator.serializeRecursively(aPackage)
@@ -403,7 +390,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val lineCount = StringUtil.getLineBreakCount(rootPackageText)
         assert(lineCount < 1000) {
-            "Rendered descriptors of this test take up " + lineCount + " lines. " +
+            "Rendered descriptors of this test take up $lineCount lines. " +
             "Please ensure you don't render JRE contents to the .txt file. " +
             "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway."
         }
@@ -411,20 +398,19 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, rootPackageText.toString())
     }
 
-    private fun createdAffectedPackagesConfiguration(testFiles: List<BaseDiagnosticsTest.TestFile>, modules: Collection<ModuleDescriptor>): RecursiveDescriptorComparator.Configuration {
-        val packagesNames = getTopLevelPackagesFromFileList(getJetFiles(testFiles, false))
+    private fun createdAffectedPackagesConfiguration(
+            testFiles: List<TestFile>,
+            modules: Collection<ModuleDescriptor>
+    ): RecursiveDescriptorComparator.Configuration {
+        val packagesNames = getTopLevelPackagesFromFileList(getKtFiles(testFiles, false))
 
         val stepIntoFilter = Predicate<DeclarationDescriptor> { descriptor ->
             val module = DescriptorUtils.getContainingModuleOrNull(descriptor!!)
-            if (!modules.contains(module)) return@Predicate false
+            if (module !in modules) return@Predicate false
 
             if (descriptor is PackageViewDescriptor) {
                 val fqName = descriptor.fqName
-
-                if (fqName.isRoot) return@Predicate true
-
-                val firstName = fqName.pathSegments()[0]
-                return@Predicate packagesNames.contains(firstName)
+                return@Predicate fqName.isRoot || fqName.pathSegments().first() in packagesNames
             }
 
             true
@@ -433,21 +419,16 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         return RECURSIVE.filterRecursion(stepIntoFilter).withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed())
     }
 
-    private fun getTopLevelPackagesFromFileList(files: List<KtFile>): Set<Name> {
-        val shortNames = LinkedHashSet<Name>()
-        for (file in files) {
-            val packageFqNameSegments = file.packageFqName.pathSegments()
-            val name = if (packageFqNameSegments.isEmpty()) SpecialNames.ROOT_PACKAGE else packageFqNameSegments[0]
-            shortNames.add(name)
-        }
-        return shortNames
-    }
+    private fun getTopLevelPackagesFromFileList(files: List<KtFile>): Set<Name> =
+            files.mapTo(LinkedHashSet<Name>()) { file ->
+                file.packageFqName.pathSegments().firstOrNull() ?: SpecialNames.ROOT_PACKAGE
+            }
 
     private fun createModules(
-            groupedByModule: Map<BaseDiagnosticsTest.TestModule, List<BaseDiagnosticsTest.TestFile>>,
+            groupedByModule: Map<TestModule?, List<TestFile>>,
             storageManager: StorageManager
-    ): Map<BaseDiagnosticsTest.TestModule, ModuleDescriptorImpl> {
-        val modules = HashMap<BaseDiagnosticsTest.TestModule, ModuleDescriptorImpl>()
+    ): MutableMap<TestModule?, ModuleDescriptorImpl> {
+        val modules = HashMap<TestModule?, ModuleDescriptorImpl>()
 
         for (testModule in groupedByModule.keys) {
             val module = if (testModule == null)
@@ -461,11 +442,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         for (testModule in groupedByModule.keys) {
             if (testModule == null) continue
 
-            val module = modules[testModule]
+            val module = modules[testModule]!!
             val dependencies = ArrayList<ModuleDescriptorImpl>()
             dependencies.add(module)
             for (dependency in testModule.getDependencies()) {
-                dependencies.add(modules[dependency])
+                dependencies.add(modules[dependency]!!)
             }
 
             dependencies.add(module.builtIns.builtInsModule)
@@ -476,98 +457,76 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         return modules
     }
 
-    protected fun getAdditionalDependencies(module: ModuleDescriptorImpl): List<ModuleDescriptorImpl> {
-        return emptyList()
-    }
+    protected open fun getAdditionalDependencies(module: ModuleDescriptorImpl): List<ModuleDescriptorImpl> =
+            emptyList()
 
-    protected fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl {
+    protected open fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl {
         val nameSuffix = moduleName.substringAfterLast("-", "")
-        val platform = if (nameSuffix.isEmpty())
-            null
-        else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix)
-        val capabilities = if (platform == null)
-            emptyMap<Any, Any>()
-        else
-            Collections.singletonMap<ModuleDescriptor.Capability<MultiTargetPlatform>, MultiTargetPlatform>(MultiTargetPlatform.CAPABILITY, platform)
+        val platform =
+                if (nameSuffix.isEmpty()) null
+                else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix)
+        val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> =
+                if (platform == null) emptyMap()
+                else mapOf(MultiTargetPlatform.CAPABILITY to platform)
         return ModuleDescriptorImpl(
                 Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager),
-                if (platform === MultiTargetPlatform.Common) PlatformKind.DEFAULT else PlatformKind.JVM,
+                if (platform == MultiTargetPlatform.Common) PlatformKind.DEFAULT else PlatformKind.JVM,
                 SourceKind.TEST, capabilities
         )
     }
 
-    protected fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl {
-        val moduleDescriptor = createModule("test-module", storageManager)
-        moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
-        return moduleDescriptor
-    }
-
-    private fun checkAllResolvedCallsAreCompleted(jetFiles: List<KtFile>, bindingContext: BindingContext) {
-        for (file in jetFiles) {
-            if (!AnalyzingUtils.getSyntaxErrorRanges(file).isEmpty()) {
-                return
+    protected open fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl =
+            createModule("test-module", storageManager).apply {
+                setDependencies(this, builtIns.builtInsModule)
             }
-        }
+
+    private fun checkAllResolvedCallsAreCompleted(ktFiles: List<KtFile>, bindingContext: BindingContext) {
+        if (ktFiles.any { file -> AnalyzingUtils.getSyntaxErrorRanges(file).isNotEmpty() }) return
 
         val resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
-        for (entry in resolvedCallsEntries.entries) {
-            val element = entry.key.callElement
-            val resolvedCall = entry.value
+        for ((call, resolvedCall) in resolvedCallsEntries) {
+            val element = call.callElement
 
             val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
 
-            TestCase.assertTrue("Resolved call for '" + element.text + "'" + lineAndColumn + " is not completed",
-                                (resolvedCall as MutableResolvedCall<*>).isCompleted)
+            assertTrue("Resolved call for '${element.text}'$lineAndColumn is not completed",
+                       (resolvedCall as MutableResolvedCall<*>).isCompleted)
         }
 
         checkResolvedCallsInDiagnostics(bindingContext)
     }
 
     private fun checkResolvedCallsInDiagnostics(bindingContext: BindingContext) {
-        val diagnosticsStoringResolvedCalls1 = Sets.newHashSet<DiagnosticFactory1<PsiElement, Collection<ResolvedCall<*>>>>(
+        val diagnosticsStoringResolvedCalls1 = setOf(
                 OVERLOAD_RESOLUTION_AMBIGUITY, NONE_APPLICABLE, CANNOT_COMPLETE_RESOLVE, UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-                ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY)
-        val diagnosticsStoringResolvedCalls2 = Sets.newHashSet<DiagnosticFactory2<KtExpression, out Comparable<out Comparable<*>>, Collection<ResolvedCall<*>>>>(
-                COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE)
-        val diagnostics = bindingContext.diagnostics
-        for (diagnostic in diagnostics) {
-            val factory = diagnostic.factory
+                ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY
+        )
+        val diagnosticsStoringResolvedCalls2 = setOf(
+                COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
+        )
 
-            if (diagnosticsStoringResolvedCalls1.contains(factory)) {
-                assertResolvedCallsAreCompleted(
-                        diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls1).a)
-            }
-
-            if (diagnosticsStoringResolvedCalls2.contains(factory)) {
-                assertResolvedCallsAreCompleted(
-                        diagnostic,
-                        DiagnosticFactory.cast<DiagnosticWithParameters2<KtExpression, out Comparable<out Comparable<*>>, Collection<ResolvedCall<*>>>>(diagnostic, diagnosticsStoringResolvedCalls2).b)
+        for (diagnostic in bindingContext.diagnostics) {
+            when (diagnostic.factory) {
+                in diagnosticsStoringResolvedCalls1 -> assertResolvedCallsAreCompleted(
+                        diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls1).a
+                )
+                in diagnosticsStoringResolvedCalls2 -> assertResolvedCallsAreCompleted(
+                        diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls2).b
+                )
             }
         }
     }
 
-    private fun assertResolvedCallsAreCompleted(
-            diagnostic: Diagnostic, resolvedCalls: Collection<ResolvedCall<*>>
-    ) {
-        var allCallsAreCompleted = true
-        for (resolvedCall in resolvedCalls) {
-            if (!(resolvedCall as MutableResolvedCall<*>).isCompleted) {
-                allCallsAreCompleted = false
-            }
-        }
-
+    private fun assertResolvedCallsAreCompleted(diagnostic: Diagnostic, resolvedCalls: Collection<ResolvedCall<*>>) {
         val element = diagnostic.psiElement
         val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
 
-        TestCase.assertTrue("Resolved calls stored in " + diagnostic.factory.name + "\n" +
-                            "for '" + element.text + "'" + lineAndColumn + " are not completed",
-                            allCallsAreCompleted)
+        assertTrue("Resolved calls stored in ${diagnostic.factory.name}\nfor '${element.text}'$lineAndColumn are not completed",
+                   resolvedCalls.all { (it as MutableResolvedCall<*>).isCompleted })
     }
 
     companion object {
-        private val HASH_SANITIZER = fun(s: String): String {
-            return s.replace("@(\\d)+".toRegex(), "")
-        }
+        private val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
 
         private val MODULE_FILES = ModuleDescriptor.Capability<List<KtFile>>("")
     }

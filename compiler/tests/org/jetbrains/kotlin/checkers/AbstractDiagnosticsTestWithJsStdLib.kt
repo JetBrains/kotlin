@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -29,60 +28,55 @@ import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
-import org.jetbrains.kotlin.js.resolve.*
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
-
-import java.util.ArrayList
+import java.util.*
+import kotlin.reflect.jvm.javaField
 
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
-    protected var config: JsConfig? = null
+    protected lateinit var config: JsConfig
         private set
 
-    @Throws(Exception::class)
     override fun setUp() {
         super.setUp()
-        val configuration = environment.configuration.copy()
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
-        config = LibrarySourcesConfig(project, configuration)
+        config = LibrarySourcesConfig(project, environment.configuration.copy().apply {
+            put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
+            put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
+        })
     }
 
-    @Throws(Exception::class)
     override fun tearDown() {
-        config = null
+        (AbstractDiagnosticsTestWithJsStdLib::config).javaField!!.set(this, null)
         super.tearDown()
     }
 
-    override fun getEnvironmentConfigFiles(): List<String> {
-        return EnvironmentConfigFiles.JS_CONFIG_FILES
-    }
+    override fun getEnvironmentConfigFiles(): List<String> = EnvironmentConfigFiles.JS_CONFIG_FILES
 
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,
-            ktFiles: List<KtFile>,
+            files: List<KtFile>,
             moduleTrace: BindingTrace,
             languageVersionSettings: LanguageVersionSettings?,
             separateModules: Boolean
     ): JsAnalysisResult {
         // TODO: support LANGUAGE directive in JS diagnostic tests
-        assert(languageVersionSettings == null) { BaseDiagnosticsTest.LANGUAGE_DIRECTIVE + " directive is not supported in JS diagnostic tests" }
-        moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(ktFiles))
-        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(ktFiles, moduleTrace, moduleContext, config!!)
+        assert(languageVersionSettings == null) { "$LANGUAGE_DIRECTIVE directive is not supported in JS diagnostic tests" }
+        moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
+        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(files, moduleTrace, moduleContext, config)
     }
 
     private fun getModuleKind(ktFiles: List<KtFile>): ModuleKind {
         var kind = ModuleKind.PLAIN
         for (file in ktFiles) {
             val text = file.text
-            for (line in StringUtil.splitByLines(text)) {
-                line = line.trim { it <= ' ' }
+            for (textLine in StringUtil.splitByLines(text)) {
+                var line = textLine.trim { it <= ' ' }
                 if (!line.startsWith("//")) continue
                 line = line.substring(2).trim { it <= ' ' }
                 val parts = StringUtil.split(line, ":")
@@ -96,21 +90,13 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         return kind
     }
 
-    override fun getAdditionalDependencies(module: ModuleDescriptorImpl): List<ModuleDescriptorImpl> {
-        val dependencies = ArrayList<ModuleDescriptorImpl>()
-        for (moduleDescriptor in config!!.moduleDescriptors) {
-            dependencies.add(moduleDescriptor.data)
-        }
-        return dependencies
-    }
+    override fun getAdditionalDependencies(module: ModuleDescriptorImpl): List<ModuleDescriptorImpl> =
+            config.moduleDescriptors.map { it.data }
 
-    override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<BaseDiagnosticsTest.TestModule, List<BaseDiagnosticsTest.TestFile>>): Boolean {
-        return true
-    }
+    override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean = true
 
-    override fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl {
-        return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JsPlatform.builtIns)
-    }
+    override fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl =
+            ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JsPlatform.builtIns)
 
     override fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl {
         val module = createModule("kotlin-js-test-module", storageManager)

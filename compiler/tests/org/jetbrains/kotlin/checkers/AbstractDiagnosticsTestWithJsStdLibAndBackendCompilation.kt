@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,
-            ktFiles: MutableList<KtFile>,
+            files: List<KtFile>,
             moduleTrace: BindingTrace,
             languageVersionSettings: LanguageVersionSettings?,
             separateModules: Boolean
     ): JsAnalysisResult {
-        val analysisResult = super.analyzeModuleContents(moduleContext, ktFiles, moduleTrace, languageVersionSettings, separateModules)
+        val analysisResult = super.analyzeModuleContents(moduleContext, files, moduleTrace, languageVersionSettings, separateModules)
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 
         if (!hasError(diagnostics)) {
             val translator = K2JSTranslator(config)
-            translator.translate(ktFiles, MainCallParameters.noCall(), analysisResult)
+            translator.translate(files, MainCallParameters.noCall(), analysisResult)
         }
 
         return analysisResult

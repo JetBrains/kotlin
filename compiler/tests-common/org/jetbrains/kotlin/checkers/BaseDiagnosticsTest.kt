@@ -16,20 +16,17 @@
 
 package org.jetbrains.kotlin.checkers
 
-import com.google.common.collect.ImmutableSet
-import com.google.common.collect.Lists
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.Function
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.containers.HashMap
-import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
+import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
+import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestModule
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
@@ -37,106 +34,84 @@ import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
-
 import java.io.File
 import java.util.*
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnosticsTest.TestModule, BaseDiagnosticsTest.TestFile>() {
+abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, TestFile>() {
+    override fun createTestModule(name: String): TestModule =
+            TestModule(name)
 
-    override fun createTestModule(name: String): TestModule {
-        return TestModule(name)
-    }
+    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile =
+            TestFile(module, fileName, text, directives)
 
-    override fun createTestFile(module: TestModule, fileName: String, text: String, directives: Map<String, String>): TestFile {
-        return TestFile(module, fileName, text, directives)
-    }
-
-    override fun doMultiFileTest(file: File, modules: Map<String, KotlinMultiFileTestWithJava<BaseDiagnosticsTest.TestFile, BaseDiagnosticsTest.TestModule>.ModuleAndDependencies>, testFiles: List<TestFile>) {
+    override fun doMultiFileTest(
+            file: File,
+            modules: @JvmSuppressWildcards Map<String, ModuleAndDependencies>,
+            testFiles: List<TestFile>
+    ) {
         for (moduleAndDependencies in modules.values) {
-            val dependencies = moduleAndDependencies.dependencies.map(
-                    { name ->
-                        val dependency = modules[name] ?: error("Dependency not found: " +
-                                                                name +
-                                                                " for module " +
-                                                                moduleAndDependencies.module.name)
-                        dependency.module
-                    }
-            )
-            moduleAndDependencies.module.getDependencies().addAll(dependencies)
+            moduleAndDependencies.module.getDependencies().addAll(moduleAndDependencies.dependencies.map { name ->
+                modules[name]?.module ?: error("Dependency not found: $name for module ${moduleAndDependencies.module.name}")
+            })
         }
 
         analyzeAndCheck(file, testFiles)
     }
 
-    protected abstract fun analyzeAndCheck(
-            testDataFile: File,
-            files: List<TestFile>
-    )
+    protected abstract fun analyzeAndCheck(testDataFile: File, files: List<TestFile>)
 
-    protected fun getJetFiles(testFiles: List<TestFile>, includeExtras: Boolean): List<KtFile> {
+    protected fun getKtFiles(testFiles: List<TestFile>, includeExtras: Boolean): List<KtFile> {
         var declareFlexibleType = false
         var declareCheckType = false
-        val jetFiles = Lists.newArrayList<KtFile>()
+        val ktFiles = arrayListOf<KtFile>()
         for (testFile in testFiles) {
-            if (testFile.jetFile != null) {
-                jetFiles.add(testFile.jetFile)
-            }
+            ktFiles.addIfNotNull(testFile.ktFile)
             declareFlexibleType = declareFlexibleType or testFile.declareFlexibleType
             declareCheckType = declareCheckType or testFile.declareCheckType
         }
 
         if (includeExtras) {
             if (declareFlexibleType) {
-                jetFiles.add(KotlinTestUtils.createFile("EXPLICIT_FLEXIBLE_TYPES.kt", EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS, project))
+                ktFiles.add(KotlinTestUtils.createFile("EXPLICIT_FLEXIBLE_TYPES.kt", EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS, project))
             }
             if (declareCheckType) {
-                jetFiles.add(KotlinTestUtils.createFile("CHECK_TYPE.kt", CHECK_TYPE_DECLARATIONS, project))
+                ktFiles.add(KotlinTestUtils.createFile("CHECK_TYPE.kt", CHECK_TYPE_DECLARATIONS, project))
             }
         }
 
-        return jetFiles
+        return ktFiles
     }
 
     class TestModule(val name: String) : Comparable<TestModule> {
         private val dependencies = ArrayList<TestModule>()
 
-        fun getDependencies(): MutableList<TestModule> {
-            return dependencies
-        }
+        fun getDependencies(): MutableList<TestModule> = dependencies
 
-        override fun compareTo(module: TestModule): Int {
-            return name.compareTo(module.name)
-        }
+        override fun compareTo(other: TestModule): Int = name.compareTo(other.name)
 
-        override fun toString(): String {
-            return name
-        }
+        override fun toString(): String = name
     }
 
     class DiagnosticTestLanguageVersionSettings(
-            private val languageFeatures: Map<LanguageFeature, Boolean>, override val apiVersion: ApiVersion
+            private val languageFeatures: Map<LanguageFeature, Boolean>,
+            override val apiVersion: ApiVersion
     ) : LanguageVersionSettings {
+        override fun supportsFeature(feature: LanguageFeature): Boolean =
+                languageFeatures[feature] ?: LanguageVersionSettingsImpl.DEFAULT.supportsFeature(feature)
 
-        override fun supportsFeature(feature: LanguageFeature): Boolean {
-            val enabled = languageFeatures[feature]
-            return enabled ?: LanguageVersionSettingsImpl.DEFAULT.supportsFeature(feature)
-        }
-
-        override // TODO provide base language version
-        val languageVersion: LanguageVersion
+        // TODO provide base language version
+        override val languageVersion: LanguageVersion
             get() = throw UnsupportedOperationException("This instance of LanguageVersionSettings should be used for tests only")
 
-        override fun equals(obj: Any?): Boolean {
-            return obj is DiagnosticTestLanguageVersionSettings &&
-                   obj.languageFeatures == languageFeatures &&
-                   obj.apiVersion == apiVersion
-        }
+        override fun equals(other: Any?): Boolean =
+                other is DiagnosticTestLanguageVersionSettings && other.languageFeatures == languageFeatures && other.apiVersion == apiVersion
+
+        override fun hashCode(): Int =
+                31 * languageFeatures.hashCode() + apiVersion.hashCode()
     }
 
     inner class TestFile(
@@ -145,14 +120,14 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
             textWithMarkers: String,
             directives: Map<String, String>
     ) {
-        private val diagnosedRanges = Lists.newArrayList<CheckerTestUtil.DiagnosedRange>()
+        private val diagnosedRanges: List<CheckerTestUtil.DiagnosedRange> = ArrayList()
         val expectedText: String
         private val clearText: String
-        val jetFile: KtFile?
+        val ktFile: KtFile?
         private val whatDiagnosticsToConsider: Condition<Diagnostic>
-        val customLanguageVersionSettings: LanguageVersionSettings
-        private val declareCheckType: Boolean
-        private val declareFlexibleType: Boolean
+        val customLanguageVersionSettings: LanguageVersionSettings?
+        val declareCheckType: Boolean
+        val declareFlexibleType: Boolean
         val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
         val dynamicCallDescriptors: List<DeclarationDescriptor> = ArrayList()
@@ -160,46 +135,43 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
         init {
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives)
             this.customLanguageVersionSettings = parseLanguageVersionSettings(directives)
-            this.checkLazyLog = directives.containsKey(CHECK_LAZY_LOG_DIRECTIVE) || CHECK_LAZY_LOG_DEFAULT
-            this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE)
-            this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE)
-            this.markDynamicCalls = directives.containsKey(MARK_DYNAMIC_CALLS_DIRECTIVE)
+            this.checkLazyLog = CHECK_LAZY_LOG_DIRECTIVE in directives || CHECK_LAZY_LOG_DEFAULT
+            this.declareCheckType = CHECK_TYPE_DIRECTIVE in directives
+            this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
+            this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
             if (fileName.endsWith(".java")) {
                 PsiFileFactory.getInstance(project).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers)
                 // TODO: check there's not syntax errors
-                this.jetFile = null
+                this.ktFile = null
                 this.clearText = textWithMarkers
                 this.expectedText = this.clearText
             }
             else {
                 this.expectedText = textWithMarkers
-                val textWithExtras = addExtras(expectedText)
-                this.clearText = CheckerTestUtil.parseDiagnosedRanges(textWithExtras, diagnosedRanges)
-                this.jetFile = TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project)
+                this.clearText = CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges)
+                this.ktFile = TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project)
                 for (diagnosedRange in diagnosedRanges) {
-                    diagnosedRange.file = jetFile
+                    diagnosedRange.file = ktFile
                 }
             }
         }
 
         private val imports: String
-            get() {
-                var imports = ""
+            get() = buildString {
+                // Line separator is "\n" intentionally here (see DocumentImpl.assertValidSeparators)
                 if (declareCheckType) {
-                    imports += CHECK_TYPE_IMPORT + "\n"
+                    append(CHECK_TYPE_IMPORT + "\n")
                 }
                 if (declareFlexibleType) {
-                    imports += EXPLICIT_FLEXIBLE_TYPES_IMPORT + "\n"
+                    append(EXPLICIT_FLEXIBLE_TYPES_IMPORT + "\n")
                 }
-                return imports
             }
 
         private val extras: String
             get() = "/*extras*/\n$imports/*extras*/\n\n"
 
-        private fun addExtras(text: String): String {
-            return addImports(text, extras)
-        }
+        private fun addExtras(text: String): String =
+                addImports(text, extras)
 
         private fun stripExtras(actualText: StringBuilder) {
             val extras = extras
@@ -210,22 +182,22 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
         }
 
         private fun addImports(text: String, imports: String): String {
-            var text = text
+            var result = text
             val pattern = Pattern.compile("^package [\\.\\w\\d]*\n", Pattern.MULTILINE)
-            val matcher = pattern.matcher(text)
+            val matcher = pattern.matcher(result)
             if (matcher.find()) {
                 // add imports after the package directive
-                text = text.substring(0, matcher.end()) + imports + text.substring(matcher.end())
+                result = result.substring(0, matcher.end()) + imports + result.substring(matcher.end())
             }
             else {
                 // add imports at the beginning
-                text = imports + text
+                result = imports + result
             }
-            return text
+            return result
         }
 
         fun getActualText(bindingContext: BindingContext, actualText: StringBuilder, skipJvmSignatureDiagnostics: Boolean): Boolean {
-            if (this.jetFile == null) {
+            if (this.ktFile == null) {
                 // TODO: check java files too
                 actualText.append(this.clearText)
                 return true
@@ -238,16 +210,16 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
 
             val ok = booleanArrayOf(true)
             val diagnostics = ContainerUtil.filter(
-                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, markDynamicCalls, dynamicCallDescriptors).plus(
-                            jvmSignatureDiagnostics),
+                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
+                            bindingContext, ktFile, markDynamicCalls, dynamicCallDescriptors
+                    ) + jvmSignatureDiagnostics,
                     whatDiagnosticsToConsider
             )
 
-            val diagnosticToExpectedDiagnostic = ContainerUtil.newHashMap<Diagnostic, CheckerTestUtil.TextDiagnostic>()
+            val diagnosticToExpectedDiagnostic = hashMapOf<Diagnostic, CheckerTestUtil.TextDiagnostic>()
             CheckerTestUtil.diagnosticsDiff(diagnosticToExpectedDiagnostic, diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
-
                 override fun missingDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
-                    val message = "Missing " + diagnostic.name + DiagnosticUtils.atLocation(jetFile, TextRange(expectedStart, expectedEnd))
+                    val message = "Missing " + diagnostic.name + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
                     System.err.println(message)
                     ok[0] = false
                 }
@@ -258,21 +230,23 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
                         start: Int,
                         end: Int
                 ) {
-                    val message = "Parameters of diagnostic not equal at position "
-                    +DiagnosticUtils.atLocation(jetFile, TextRange(start, end))
-                    +". Expected: " + expectedDiagnostic.asString() + ", actual: " + actualDiagnostic.asString()
+                    val message = "Parameters of diagnostic not equal at position " +
+                                  DiagnosticUtils.atLocation(ktFile, TextRange(start, end)) +
+                                  ". Expected: ${expectedDiagnostic.asString()}, actual: $actualDiagnostic"
                     System.err.println(message)
                     ok[0] = false
                 }
 
                 override fun unexpectedDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, actualStart: Int, actualEnd: Int) {
-                    val message = "Unexpected " + diagnostic.name + DiagnosticUtils.atLocation(jetFile, TextRange(actualStart, actualEnd))
+                    val message = "Unexpected ${diagnostic.name}${DiagnosticUtils.atLocation(ktFile, TextRange(actualStart, actualEnd))}"
                     System.err.println(message)
                     ok[0] = false
                 }
             })
 
-            actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(jetFile, diagnostics, diagnosticToExpectedDiagnostic, Function<PsiFile, String> { file -> file.text }))
+            actualText.append(
+                    CheckerTestUtil.addDiagnosticMarkersToText(ktFile, diagnostics, diagnosticToExpectedDiagnostic, { file -> file.text })
+            )
 
             stripExtras(actualText)
 
@@ -281,7 +255,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
 
         private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<Diagnostic> {
             val jvmSignatureDiagnostics = HashSet<Diagnostic>()
-            val declarations = PsiTreeUtil.findChildrenOfType(jetFile, KtDeclaration::class.java)
+            val declarations = PsiTreeUtil.findChildrenOfType(ktFile, KtDeclaration::class.java)
             for (declaration in declarations) {
                 val diagnostics = getJvmSignatureDiagnostics(declaration, bindingContext.diagnostics,
                                                              GlobalSearchScope.allScope(project)) ?: continue
@@ -290,16 +264,13 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
             return jvmSignatureDiagnostics
         }
 
-        override fun toString(): String {
-            return jetFile!!.name
-        }
+        override fun toString(): String = ktFile!!.name
     }
 
     companion object {
-
         val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
-        val DIAGNOSTICS_PATTERN = Pattern.compile("([\\+\\-!])(\\w+)\\s*")
-        val DIAGNOSTICS_TO_INCLUDE_ANYWAY: ImmutableSet<DiagnosticFactory<*>> = ImmutableSet.of(
+        val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([\\+\\-!])(\\w+)\\s*")
+        val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(
                 Errors.UNRESOLVED_REFERENCE,
                 Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
                 CheckerTestUtil.SyntaxErrorDiagnosticFactory.INSTANCE,
@@ -338,9 +309,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
             val directives = directiveMap[LANGUAGE_DIRECTIVE]
             if (apiVersionString == null && directives == null) return null
 
-            val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST) ?: error("Unknown API version: " + apiVersionString!!)
+            val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST)
+                             ?: error("Unknown API version: $apiVersionString")
 
-            val languageFeatures = if (directives == null) emptyMap<LanguageFeature, Boolean>() else collectLanguageFeatureMap(directives)
+            val languageFeatures = directives?.let(this::collectLanguageFeatureMap).orEmpty()
 
             return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion)
         }
@@ -349,8 +321,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
             val matcher = LANGUAGE_PATTERN.matcher(directives)
             if (!matcher.find()) {
                 Assert.fail(
-                        "Wrong syntax in the '// !" + LANGUAGE_DIRECTIVE + ": ...' directive:\n" +
-                        "found: '" + directives + "'\n" +
+                        "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
+                        "found: '$directives'\n" +
                         "Must be '([+-]LanguageFeatureName)+'\n" +
                         "where '+' means 'enable' and '-' means 'disable'\n" +
                         "and language feature names are names of enum entries in LanguageFeature enum class"
@@ -361,15 +333,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
             do {
                 val enable = matcher.group(1) == "+"
                 val name = matcher.group(2)
-                val feature = LanguageFeature.fromString(name)
-                if (feature == null) {
-                    Assert.fail(
-                            "Language feature not found, please check spelling: " + name + "\n" +
-                            "Known features:\n    " + join(Arrays.asList(*LanguageFeature.values()), "\n    ")
-                    )
-                }
+                val feature = LanguageFeature.fromString(name) ?: throw AssertionError(
+                        "Language feature not found, please check spelling: $name\n" +
+                        "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}"
+                )
                 if (values.put(feature, enable) != null) {
-                    Assert.fail("Duplicate entry for the language feature: " + name)
+                    Assert.fail("Duplicate entry for the language feature: $name")
                 }
             }
             while (matcher.find())
@@ -382,55 +351,57 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<BaseDiagnostics
             if (directives == null) {
                 // If "!API_VERSION" is present, disable the NEWER_VERSION_IN_SINCE_KOTLIN diagnostic.
                 // Otherwise it would be reported in any non-trivial test on the @SinceKotlin value.
-                if (directiveMap.containsKey(API_VERSION_DIRECTIVE)) {
+                if (API_VERSION_DIRECTIVE in directiveMap) {
                     return Condition { diagnostic -> diagnostic.factory !== Errors.NEWER_VERSION_IN_SINCE_KOTLIN }
                 }
-                return Conditions.alwaysTrue<Diagnostic>()
+                return Conditions.alwaysTrue()
             }
+
             var condition = Conditions.alwaysTrue<Diagnostic>()
             val matcher = DIAGNOSTICS_PATTERN.matcher(directives)
             if (!matcher.find()) {
-                Assert.fail("Wrong syntax in the '// !" + DIAGNOSTICS_DIRECTIVE + ": ...' directive:\n" +
-                            "found: '" + directives + "'\n" +
+                Assert.fail("Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
+                            "found: '$directives'\n" +
                             "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
                             "where '+' means 'include'\n" +
                             "      '-' means 'exclude'\n" +
                             "      '!' means 'exclude everything but this'\n" +
                             "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR")
             }
+
             var first = true
             do {
                 val operation = matcher.group(1)
                 val name = matcher.group(2)
 
-                var newCondition: Condition<Diagnostic>
-                if (ImmutableSet.of("ERROR", "WARNING", "INFO").contains(name)) {
-                    val severity = Severity.valueOf(name)
-                    newCondition = Condition<Diagnostic> { diagnostic -> diagnostic.severity == severity }
-                }
-                else {
-                    newCondition = Condition<Diagnostic> { diagnostic -> name == diagnostic.factory.name }
-                }
-                if ("!" == operation) {
-                    if (!first) {
-                        Assert.fail("'" + operation + name + "' appears in a position rather than the first one, " +
-                                    "which effectively cancels all the previous filters in this directive")
+                val newCondition: Condition<Diagnostic> =
+                        if (name in setOf("ERROR", "WARNING", "INFO")) {
+                            Condition { diagnostic -> diagnostic.severity == Severity.valueOf(name) }
+                        }
+                        else {
+                            Condition { diagnostic -> name == diagnostic.factory.name }
+                        }
+
+                when (operation) {
+                    "!" -> {
+                        if (!first) {
+                            Assert.fail("'$operation$name' appears in a position rather than the first one, " +
+                                        "which effectively cancels all the previous filters in this directive")
+                        }
+                        condition = newCondition
                     }
-                    condition = newCondition
-                }
-                else if ("+" == operation) {
-                    condition = Conditions.or(condition, newCondition)
-                }
-                else if ("-" == operation) {
-                    condition = Conditions.and(condition, Conditions.not(newCondition))
+                    "+" -> condition = Conditions.or(condition, newCondition)
+                    "-" -> condition = Conditions.and(condition, Conditions.not(newCondition))
                 }
                 first = false
             }
             while (matcher.find())
+
             // We always include UNRESOLVED_REFERENCE and SYNTAX_ERROR because they are too likely to indicate erroneous test data
             return Conditions.or(
                     condition,
-                    Condition<Diagnostic> { diagnostic -> DIAGNOSTICS_TO_INCLUDE_ANYWAY.contains(diagnostic.factory) })
+                    Condition { diagnostic -> diagnostic.factory in DIAGNOSTICS_TO_INCLUDE_ANYWAY }
+            )
         }
     }
 }

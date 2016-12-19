@@ -26,14 +26,14 @@ import java.io.File
 abstract class AbstractPsi2IrDiagnosticsTest : AbstractDiagnosticsTest() {
     override fun performAdditionalChecksAfterDiagnostics(
             testDataFile: File,
-            testFiles: MutableList<TestFile>,
-            moduleFiles: MutableMap<TestModule?, MutableList<TestFile>>,
-            moduleDescriptors: MutableMap<TestModule?, ModuleDescriptorImpl>,
-            moduleBindings: MutableMap<TestModule?, BindingContext>
+            testFiles: List<TestFile>,
+            moduleFiles: Map<TestModule?, List<TestFile>>,
+            moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
+            moduleBindings: Map<TestModule?, BindingContext>
     ) {
         val actualIrDump = StringBuilder()
         for (module in moduleFiles.keys) {
-            val ktFiles = moduleFiles[module]?.mapNotNull { it.jetFile } ?: continue
+            val ktFiles = moduleFiles[module]?.mapNotNull { it.ktFile } ?: continue
             val moduleDescriptor = moduleDescriptors[module] ?: continue
             val moduleBindingContext = moduleBindings[module] ?: continue
             val irModule = AbstractIrGeneratorTestCase.generateIrModule(ktFiles, moduleDescriptor, moduleBindingContext, true)
