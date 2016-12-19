@@ -77,7 +77,7 @@ class KotlinSetupEnvironmentNotificationProvider(
             return createSetupSdkPanel(myProject, psiFile)
         }
 
-        if (!hasKotlinJvmOrJsRuntimeInScope(module) &&
+        if (!hasAnyKotlinRuntimeInScope(module) &&
             UnsupportedAbiVersionNotificationPanelProvider.collectBadRoots(module).isEmpty()) {
             return createKotlinNotConfiguredPanel(module)
         }
