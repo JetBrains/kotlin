@@ -53,7 +53,7 @@ fun makeIncrementally(
 
     val kotlinExtensions = listOf("kt", "kts")
     val allExtensions = kotlinExtensions + listOf("java")
-    val rootsWalk = sourceRoots.asSequence().map { it.walk() }.flatten()
+    val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
     val files = rootsWalk.filter(File::isFile)
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
     val kotlinFiles = sourceFiles.filter { it.extension.toLowerCase() in kotlinExtensions }
