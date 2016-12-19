@@ -34,6 +34,12 @@ interface IncrementalCompilationServicesFacade : Remote {
     @Throws(RemoteException::class)
     fun workingDir(): File
 
+    @Throws(RemoteException::class)
+    fun customCacheVersionFileName(): String
+
+    @Throws(RemoteException::class)
+    fun customCacheVersion(): Int
+
     // ICReporter
 
     @Throws(RemoteException::class)

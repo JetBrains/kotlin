@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.daemon.incremental.toDirtyData
 import org.jetbrains.kotlin.daemon.incremental.toSimpleDirtyData
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.DirtyData
+import org.jetbrains.kotlin.incremental.GRADLE_CACHE_VERSION
+import org.jetbrains.kotlin.incremental.GRADLE_CACHE_VERSION_FILE_NAME
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifference
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
@@ -63,6 +65,12 @@ internal class IncrementalCompilationFacadeImpl(
     override fun workingDir(): File {
         return environment.workingDir
     }
+
+    override fun customCacheVersion(): Int =
+            GRADLE_CACHE_VERSION
+
+    override fun customCacheVersionFileName(): String =
+            GRADLE_CACHE_VERSION_FILE_NAME
 
     override fun hasAnnotationsFileUpdater(): Boolean {
         return environment.kaptAnnotationsFileUpdater != null
