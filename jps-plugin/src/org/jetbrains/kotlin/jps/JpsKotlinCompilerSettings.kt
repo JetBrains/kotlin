@@ -64,8 +64,8 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
 
         private val JpsModule.targetPlatform: TargetPlatformKind<*>?
             get() {
-                val facetSettings = kotlinFacetExtension?.settings ?: return TargetPlatformKind.Default
-                if (facetSettings.useProjectSettings) return TargetPlatformKind.Default
+                val facetSettings = kotlinFacetExtension?.settings ?: return TargetPlatformKind.Common
+                if (facetSettings.useProjectSettings) return TargetPlatformKind.Common
                 return facetSettings.versionInfo.targetPlatformKind
             }
 
@@ -81,7 +81,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
                 multiPlatform = module
                         .dependenciesList
                         .dependencies
-                        .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Default }
+                        .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Common }
             }
         }
 

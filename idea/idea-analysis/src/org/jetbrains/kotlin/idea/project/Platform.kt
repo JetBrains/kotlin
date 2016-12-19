@@ -49,7 +49,7 @@ val Project.languageVersionSettings: LanguageVersionSettings
         val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
         val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
         val extraLanguageFeatures = getExtraLanguageFeatures(
-                TargetPlatformKind.Default,
+                TargetPlatformKind.Common,
                 CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this).settings),
                 compilerSettings,
                 null
@@ -70,7 +70,7 @@ val Module.languageVersionSettings: LanguageVersionSettings
         val apiVersion = versionInfo.apiLevel ?: languageVersion
 
         val extraLanguageFeatures = getExtraLanguageFeatures(
-                versionInfo.targetPlatformKind ?: TargetPlatformKind.Default,
+                versionInfo.targetPlatformKind ?: TargetPlatformKind.Common,
                 facetSettings.compilerInfo.coroutineSupport,
                 facetSettings.compilerInfo.compilerSettings,
                 this
@@ -83,8 +83,8 @@ private val Module.targetPlatform: TargetPlatformKind<*>?
     get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).versionInfo.targetPlatformKind
 
 private val Module.implementsCommonModule: Boolean
-    get() = targetPlatform != TargetPlatformKind.Default
-            && ModuleRootManager.getInstance(this).dependencies.any { it.targetPlatform == TargetPlatformKind.Default}
+    get() = targetPlatform != TargetPlatformKind.Common
+            && ModuleRootManager.getInstance(this).dependencies.any { it.targetPlatform == TargetPlatformKind.Common }
 
 private fun getExtraLanguageFeatures(
         targetPlatformKind: TargetPlatformKind<*>,
@@ -98,7 +98,7 @@ private fun getExtraLanguageFeatures(
             CoroutineSupport.ENABLED_WITH_WARNING -> add(LanguageFeature.WarnOnCoroutines)
             CoroutineSupport.DISABLED -> add(LanguageFeature.ErrorOnCoroutines)
         }
-        if (targetPlatformKind == TargetPlatformKind.Default ||
+        if (targetPlatformKind == TargetPlatformKind.Common ||
             // TODO: this is a dirty hack, parse arguments correctly here
             compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true ||
             (module != null && module.implementsCommonModule)) {

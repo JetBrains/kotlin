@@ -62,7 +62,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatform1() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
@@ -74,7 +74,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatform2() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
@@ -86,7 +86,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatform3() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
@@ -103,7 +103,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatform4() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
@@ -115,7 +115,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatform5() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)

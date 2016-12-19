@@ -44,7 +44,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
             return when (this) {
                 is TargetPlatformKind.Jvm -> JavaRuntimeLibraryDescription(project)
                 is TargetPlatformKind.JavaScript -> JSLibraryStdDescription(project)
-                is TargetPlatformKind.Default -> CommonStandardLibraryDescription(project)
+                is TargetPlatformKind.Common -> CommonStandardLibraryDescription(project)
             }
         }
 
@@ -73,7 +73,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         if (found) return ValidationResult.OK
 
         // TODO: propose to configure kotlin-stdlib-common once it's available
-        if (targetPlatform == TargetPlatformKind.Default) return ValidationResult.OK
+        if (targetPlatform == TargetPlatformKind.Common) return ValidationResult.OK
 
         return ValidationResult(
                 IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
