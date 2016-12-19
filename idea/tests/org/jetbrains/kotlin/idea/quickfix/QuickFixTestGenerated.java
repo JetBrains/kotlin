@@ -4863,6 +4863,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("existingStub.kt")
+            public void testExistingStub() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/existingStub.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("existingStubForVar.kt")
+            public void testExistingStubForVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/existingStubForVar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extension.kt")
             public void testExtension() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi/extension.kt");
