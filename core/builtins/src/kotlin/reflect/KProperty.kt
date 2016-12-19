@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
 package kotlin.reflect
 
 /**
