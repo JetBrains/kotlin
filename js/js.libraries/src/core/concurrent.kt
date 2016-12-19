@@ -35,4 +35,4 @@ public annotation class Volatile
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Synchronized
 
-public external inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()
+public inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()

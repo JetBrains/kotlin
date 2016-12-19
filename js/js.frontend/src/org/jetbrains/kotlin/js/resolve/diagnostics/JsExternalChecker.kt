@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReified
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -74,6 +75,10 @@ object JsExternalChecker : SimpleDeclarationChecker {
             if (superClasses.any { !AnnotationsUtils.isNativeObject(it) }) {
                 diagnosticHolder.report(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE.on(declaration))
             }
+        }
+
+        if (descriptor is FunctionDescriptor && descriptor.isInline) {
+            diagnosticHolder.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
         }
     }
 

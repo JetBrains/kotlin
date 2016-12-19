@@ -1,0 +1,15 @@
+package
+
+public external val bar: kotlin.Int
+public external val baz: kotlin.Int
+public external inline fun foo(): kotlin.Unit
+
+public external final class A {
+    public constructor A()
+    public final val bar: kotlin.Int
+    public final val baz: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final inline fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
