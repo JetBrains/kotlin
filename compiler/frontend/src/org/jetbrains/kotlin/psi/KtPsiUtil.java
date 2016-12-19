@@ -505,7 +505,10 @@ public class KtPsiUtil {
         if (parentElement instanceof KtLabeledExpression) return false;
 
         // 'x ?: ...' case
-        if (parentElement instanceof KtBinaryExpression && parentOperation == KtTokens.ELVIS && currentInner == ((KtBinaryExpression) parentElement).getRight()) {
+        if (parentElement instanceof KtBinaryExpression &&
+            parentOperation == KtTokens.ELVIS &&
+            !(innerExpression instanceof KtBinaryExpression) &&
+            currentInner == ((KtBinaryExpression) parentElement).getRight()) {
             return false;
         }
 

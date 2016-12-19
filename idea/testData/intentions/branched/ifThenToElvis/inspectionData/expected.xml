@@ -87,4 +87,12 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
     <description>Replace 'if' expression with elvis expression</description>
   </problem>
+  <problem>
+    <file>comparisonInElse.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/comparisonInElse.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
 </problems>
