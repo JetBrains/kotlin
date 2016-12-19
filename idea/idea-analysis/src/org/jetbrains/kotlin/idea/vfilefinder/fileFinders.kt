@@ -56,11 +56,14 @@ class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVirtualFi
 }
 
 class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), JvmVirtualFileFinder {
-    // TODO
-    override fun findMetadata(classId: ClassId): InputStream? = null
+    override fun findMetadata(classId: ClassId): InputStream? {
+        return findVirtualFileWithHeader(classId, KotlinMetadataFileIndex.KEY, scope, LOG)?.inputStream
+    }
 
-    // TODO
-    override fun hasMetadataPackage(fqName: FqName): Boolean = false
+    override fun hasMetadataPackage(fqName: FqName): Boolean {
+        return !FileBasedIndex.getInstance().processValues(KotlinMetadataFilePackageIndex.KEY,
+                                                           fqName, null, { _, _ -> false }, scope)
+   }
 
     // TODO: load built-ins metadata from scope
     override fun findBuiltInsData(packageFqName: FqName): InputStream? = null

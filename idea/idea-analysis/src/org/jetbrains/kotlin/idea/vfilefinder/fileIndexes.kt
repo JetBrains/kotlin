@@ -22,9 +22,14 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
+import org.jetbrains.kotlin.idea.decompiler.builtIns.BuiltInDefinitionFile
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.decompiler.js.JsMetaFileUtils
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import java.io.DataInput
 import java.io.DataOutput
 import java.util.*
@@ -101,3 +106,32 @@ object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaF
 
     override fun dependsOnFileContent(): Boolean = false
 }
+
+open class KotlinMetadataFileIndexBase<T>(classOfIndex: Class<T>, indexFunction: (ClassId) -> FqName) : KotlinFileIndexBase<T>(classOfIndex) {
+    override fun getIndexer() = INDEXER
+
+    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.fileType == KotlinBuiltInFileType }
+
+    override fun getVersion() = VERSION
+
+    private val VERSION = 1
+
+    private val INDEXER = indexer { fileContent ->
+        if (fileContent.fileType == KotlinBuiltInFileType && fileContent.fileName.endsWith(MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION)) {
+            val builtins = BuiltInDefinitionFile.read(fileContent.content, fileContent.file.parent)
+            (builtins as? BuiltInDefinitionFile.Compatible)?.let { builtinDefFile ->
+                val proto = builtinDefFile.proto
+                proto.class_List.singleOrNull()?.let { cls ->
+                    indexFunction(builtinDefFile.nameResolver.getClassId(cls.fqName))
+                } ?: indexFunction(ClassId(builtinDefFile.packageFqName,
+                                           Name.identifier(fileContent.fileName.substringBeforeLast(MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION))))
+            }
+        } else null
+    }
+}
+
+object KotlinMetadataFileIndex : KotlinMetadataFileIndexBase<KotlinMetadataFileIndex>(
+        KotlinMetadataFileIndex::class.java, ClassId::asSingleFqName)
+
+object KotlinMetadataFilePackageIndex : KotlinMetadataFileIndexBase<KotlinMetadataFilePackageIndex>(
+        KotlinMetadataFilePackageIndex::class.java, ClassId::getPackageFqName)

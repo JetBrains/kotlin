@@ -34,5 +34,6 @@
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea-jps-common" />
     <orderEntry type="module" module-name="cli-common" />
+    <orderEntry type="module" module-name="descriptors" />
   </component>
 </module>

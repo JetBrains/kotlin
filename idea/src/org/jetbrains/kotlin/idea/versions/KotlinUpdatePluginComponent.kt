@@ -26,9 +26,7 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex
-import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
-import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
+import org.jetbrains.kotlin.idea.vfilefinder.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -64,6 +62,8 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             fileBasedIndex.requestRebuild(KotlinJavaScriptAbiVersionIndex.name)
             fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinJavaScriptMetaFileIndex.KEY)
+            fileBasedIndex.requestRebuild(KotlinMetadataFileIndex.KEY)
+            fileBasedIndex.requestRebuild(KotlinMetadataFilePackageIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinModuleMappingIndex.KEY)
 
             PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, KotlinPluginUtil.getPluginVersion())

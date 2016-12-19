@@ -132,6 +132,7 @@ class MetadataPackageFragment(
     }
 
     companion object {
-        val METADATA_FILE_EXTENSION = ".kotlin_metadata"
+        val DOT_METADATA_FILE_EXTENSION = ".kotlin_metadata"
+        val METADATA_FILE_EXTENSION = "kotlin_metadata"
     }
 }
