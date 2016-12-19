@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -36,14 +37,11 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -110,79 +108,6 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
             TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor())
 
     return ResolvedCallWithRealDescriptor(newCall, thisExpression)
-}
-
-data class HandleResultCallContext(
-        val resolvedCall: ResolvedCall<*>,
-        val exceptionExpression: KtExpression,
-        val continuationThisExpression: KtExpression
-)
-
-fun createResolvedCallForHandleExceptionCall(
-        callElement: KtElement,
-        handleExceptionFunction: SimpleFunctionDescriptor,
-        coroutineLambdaDescriptor: FunctionDescriptor
-): HandleResultCallContext {
-    val psiFactory = KtPsiFactory(callElement)
-
-    val exceptionArgument = CallMaker.makeValueArgument(psiFactory.createExpression("exception"))
-    val continuationThisArgument = CallMaker.makeValueArgument(psiFactory.createExpression("this"))
-
-    val resolvedCall =
-            createFakeResolvedCall(
-                    callElement,
-                    coroutineLambdaDescriptor,
-                    handleExceptionFunction,
-                    listOf(exceptionArgument, continuationThisArgument)
-            )
-
-    return HandleResultCallContext(
-            resolvedCall, exceptionArgument.getArgumentExpression()!!, continuationThisArgument.getArgumentExpression()!!)
-}
-
-private fun createFakeResolvedCall(
-        element: KtElement,
-        coroutineLambdaDescriptor: FunctionDescriptor,
-        descriptor: SimpleFunctionDescriptor,
-        valueArguments: List<ValueArgument>
-): ResolvedCallImpl<SimpleFunctionDescriptor> {
-    val call = CallMaker.makeCall(element, null, null, null, valueArguments)
-
-    val resolvedCall = ResolvedCallImpl(
-            call,
-            descriptor,
-            coroutineLambdaDescriptor.extensionReceiverParameter!!.value, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-            null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for handleException resolution"),
-            TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
-
-    descriptor.valueParameters.zip(valueArguments).forEach {
-        resolvedCall.recordValueArgument(it.first, ExpressionValueArgument(it.second))
-    }
-
-    resolvedCall.setResultingSubstitutor(TypeSubstitutor.EMPTY)
-
-    return resolvedCall
-}
-
-data class InterceptResumeCallContext(
-        val resolvedCall: ResolvedCall<*>,
-        val thisExpression: KtExpression
-)
-
-fun createResolvedCallForInterceptResume(
-        coroutineLambda: KtFunctionLiteral,
-        interceptResume: SimpleFunctionDescriptor,
-        coroutineLambdaDescriptor: FunctionDescriptor
-): InterceptResumeCallContext {
-    val psiFactory = KtPsiFactory(coroutineLambda)
-
-    val isInline = interceptResume.isInline
-    val thisExpression = psiFactory.createExpression("this")
-    val blockArgument = CallMaker.makeValueArgument(if (isInline) coroutineLambda.parent as KtExpression else thisExpression)
-
-    val resolvedCall = createFakeResolvedCall(coroutineLambda, coroutineLambdaDescriptor, interceptResume, listOf(blockArgument))
-
-    return InterceptResumeCallContext(resolvedCall, thisExpression)
 }
 
 fun ResolvedCall<*>.isSuspensionPoint(bindingContext: BindingContext) =
