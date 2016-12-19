@@ -145,6 +145,7 @@ val TargetPlatformKind<*>.mavenLibraryId: String
     get() = when (this) {
         is TargetPlatformKind.Jvm -> "kotlin-stdlib"
         is TargetPlatformKind.JavaScript -> "kotlin-js-library"
+        is TargetPlatformKind.Common -> "kotlin-stdlib-common"
         else -> error("Unexpected platform: $this")
     }
 
