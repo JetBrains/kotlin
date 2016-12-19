@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
     fun testFromCommonToJvmHeader() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
@@ -33,7 +33,7 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
 
     fun testFromCommonToJvmImpl() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
@@ -45,7 +45,7 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
 
     fun testFromClassToAlias() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Default)
+        header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
         jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)

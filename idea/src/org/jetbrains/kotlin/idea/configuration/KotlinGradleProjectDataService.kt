@@ -58,7 +58,7 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSe
             when (it.data.plugins.values.map { it.id }.firstOrNull { it.startsWith("kotlin-platform-") }) {
                 "kotlin-platform-jvm" -> TargetPlatformKind.Jvm.JVM_1_6
                 "kotlin-platform-js" -> TargetPlatformKind.JavaScript
-                "kotlin-platform-common" -> TargetPlatformKind.Default
+                "kotlin-platform-common" -> TargetPlatformKind.Common
                 else -> null
             }
         }

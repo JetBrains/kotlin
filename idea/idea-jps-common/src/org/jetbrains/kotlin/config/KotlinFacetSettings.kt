@@ -37,10 +37,10 @@ sealed class TargetPlatformKind<out Version : DescriptionAware>(
 
     object JavaScript : TargetPlatformKind<NoVersion>(NoVersion, "JavaScript")
 
-    object Default : TargetPlatformKind<NoVersion>(NoVersion, "Default (experimental)")
+    object Common : TargetPlatformKind<NoVersion>(NoVersion, "Common (experimental)")
 
     companion object {
-        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { listOf(Jvm.JVM_1_6, JavaScript, Default) }
+        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { listOf(Jvm.JVM_1_6, JavaScript, Common) }
     }
 }
 

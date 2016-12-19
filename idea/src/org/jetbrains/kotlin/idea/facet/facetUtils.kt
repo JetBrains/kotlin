@@ -46,7 +46,7 @@ private fun getRuntimeLibraryVersions(
     val presentationProvider = when (targetPlatform) {
         is TargetPlatformKind.JavaScript -> JSLibraryStdPresentationProvider.getInstance()
         is TargetPlatformKind.Jvm -> JavaRuntimePresentationProvider.getInstance()
-        is TargetPlatformKind.Default -> return emptyList()
+        is TargetPlatformKind.Common -> return emptyList()
     }
 
     KotlinVersionInfoProvider.EP_NAME
@@ -67,8 +67,8 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
     if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).isNotEmpty()) {
         return TargetPlatformKind.JavaScript
     }
-    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.Default).isNotEmpty()) {
-        return TargetPlatformKind.Default
+    if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.Common).isNotEmpty()) {
+        return TargetPlatformKind.Common
     }
     return TargetPlatformKind.Jvm.JVM_1_6
 }
@@ -142,7 +142,7 @@ val TargetPlatformKind<*>.mavenLibraryId: String
     get() = when (this) {
         is TargetPlatformKind.Jvm -> MAVEN_STDLIB_ID
         is TargetPlatformKind.JavaScript -> MAVEN_JS_STDLIB_ID
-        is TargetPlatformKind.Default -> MAVEN_COMMON_STDLIB_ID
+        is TargetPlatformKind.Common -> MAVEN_COMMON_STDLIB_ID
     }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): KotlinFacet {
