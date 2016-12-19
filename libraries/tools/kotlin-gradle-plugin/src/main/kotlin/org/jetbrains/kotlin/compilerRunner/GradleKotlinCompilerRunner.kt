@@ -20,6 +20,7 @@ import net.rubygrapefruit.platform.Native
 import net.rubygrapefruit.platform.ProcessLauncher
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
@@ -83,6 +84,17 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         finally {
             moduleFile.delete()
         }
+    }
+
+    fun runJsCompiler(
+            kotlinSources: List<File>,
+            args: K2JSCompilerArguments,
+            messageCollector: MessageCollector,
+            outputItemsCollector: OutputItemsCollector,
+            kotlinCompilerJar: File
+    ): ExitCode {
+        val additionalArguments = kotlinSources.joinToString(separator = " ") { it.absolutePath }
+        return runCompiler(K2JS_COMPILER, args, additionalArguments, messageCollector, outputItemsCollector, GradleCompilerEnvironment(kotlinCompilerJar))
     }
 
     override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, messageCollector: MessageCollector, collector: OutputItemsCollector): ExitCode {
