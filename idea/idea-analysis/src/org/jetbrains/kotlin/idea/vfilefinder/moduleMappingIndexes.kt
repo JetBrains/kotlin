@@ -43,11 +43,13 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
         override fun read(input: DataInput): PackageParts? =
                 PackageParts(IOUtil.readUTF(input)).apply {
                     parts.addAll(IOUtil.readStringList(input))
+                    metadataParts.addAll(IOUtil.readStringList(input))
                 }
 
         override fun save(out: DataOutput, value: PackageParts?) {
             IOUtil.writeUTF(out, value!!.packageFqName)
             IOUtil.writeStringList(out, value.parts)
+            IOUtil.writeStringList(out, value.metadataParts)
         }
     }
 
@@ -63,7 +65,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
         return FileBasedIndex.InputFilter { file -> file.extension == ModuleMapping.MAPPING_FILE_EXT }
     }
 
-    override fun getVersion(): Int = 2
+    override fun getVersion(): Int = 3
 
     override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
         return DataIndexer<String, PackageParts, FileContent> { inputData ->

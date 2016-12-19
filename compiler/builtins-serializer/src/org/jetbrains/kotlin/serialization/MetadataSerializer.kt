@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializerExtension
-import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment.Companion.METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment.Companion.DOT_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -132,10 +132,10 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
 
     private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
             packageFqName.asString().replace('.', '/') + "/" +
-            PackagePartClassUtils.getPartClassName(fileName.substringBeforeLast(".kt")) + METADATA_FILE_EXTENSION
+            PackagePartClassUtils.getPartClassName(fileName.substringBeforeLast(".kt")) + DOT_METADATA_FILE_EXTENSION
 
     private fun getClassFilePath(classId: ClassId): String =
-            classId.asSingleFqName().asString().replace('.', '/') + METADATA_FILE_EXTENSION
+            classId.asSingleFqName().asString().replace('.', '/') + DOT_METADATA_FILE_EXTENSION
 
     protected inner class PackageSerializer(
             private val classes: Collection<DeclarationDescriptor>,

@@ -39,13 +39,13 @@ class JvmCliVirtualFileFinder(
     override fun findMetadata(classId: ClassId): InputStream? {
         assert(!classId.isNestedClass) { "Nested classes are not supported here: $classId" }
 
-        return findBinaryClass(classId, classId.shortClassName.asString() + MetadataPackageFragment.METADATA_FILE_EXTENSION)?.inputStream
+        return findBinaryClass(classId, classId.shortClassName.asString() + MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION)?.inputStream
     }
 
     override fun hasMetadataPackage(fqName: FqName): Boolean {
         var found = false
         index.traverseDirectoriesInPackage(fqName, continueSearch = { dir, _ ->
-            found = found or dir.children.any { it.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION.substring(1) }
+            found = found or dir.children.any { it.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION }
             !found
         })
         return found
