@@ -36,6 +36,12 @@ public class GotoTypeDeclarationTestGenerated extends AbstractGotoTypeDeclaratio
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoTypeDeclaration"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("builtinTypeStdlib.test")
+    public void testBuiltinTypeStdlib() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoTypeDeclaration/builtinTypeStdlib.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("explicitParameterInLambda.test")
     public void testExplicitParameterInLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoTypeDeclaration/explicitParameterInLambda.test");
