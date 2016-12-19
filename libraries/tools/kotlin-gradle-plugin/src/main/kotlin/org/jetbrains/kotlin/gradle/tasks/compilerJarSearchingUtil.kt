@@ -17,12 +17,18 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.initialization.dsl.ScriptHandler
 import java.io.File
 import java.util.zip.ZipFile
 
 private val K2JVM_COMPILER_CLASS = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 private val K2JS_COMPILER_CLASS = "org.jetbrains.kotlin.cli.js.K2JSCompiler"
 private val K2METADATA_COMPILER_CLASS = "org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler"
+private val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
+private val KOTLIN_GRADLE_PLUGIN = "kotlin-gradle-plugin"
+private val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 
 internal fun findKotlinJvmCompilerJar(project: Project): File? =
         findKotlinCompilerJar(project, K2JVM_COMPILER_CLASS)
@@ -34,33 +40,47 @@ internal fun findKotlinMetadataCompilerJar(project: Project): File? =
         findKotlinCompilerJar(project, K2METADATA_COMPILER_CLASS)
 
 private fun findKotlinCompilerJar(project: Project, compilerClassName: String): File? {
-    fun Project.classpathJars(): Sequence<File> =
-            buildscript.configurations.findByName("classpath")?.files?.asSequence() ?: emptySequence()
-
+    val filesToCheck = findPotentialCompilerJars(project)
     val entryToFind = compilerClassName.replace(".", "/") + ".class"
-    val jarFromClasspath = project.classpathJars().firstOrNull { it.hasEntry(entryToFind) }
+    return filesToCheck.firstOrNull { it.hasEntry(entryToFind) }
+}
 
-    return when {
-        jarFromClasspath != null ->
-            jarFromClasspath
-        project.parent != null ->
-            findKotlinCompilerJar(project.parent, compilerClassName)
-        else ->
-            null
+private fun findPotentialCompilerJars(project: Project): Iterable<File> {
+    val projects = generateSequence(project) { it.parent }
+    val classpathConfigurations = projects
+            .map { it.buildscript.configurations.findByName(ScriptHandler.CLASSPATH_CONFIGURATION) }
+            .filterNotNull()
 
+    val allFiles = HashSet<File>()
+
+    for (configuration in classpathConfigurations) {
+        val compilerEmbeddable = findCompilerEmbeddable(configuration)
+
+        if (compilerEmbeddable != null) {
+            return compilerEmbeddable.moduleArtifacts.map { it.file }
+        }
+        else {
+            allFiles.addAll(configuration.files)
+        }
     }
+
+    return allFiles
+}
+
+private fun findCompilerEmbeddable(configuration: Configuration): ResolvedDependency? {
+    fun Iterable<ResolvedDependency>.findDependency(group: String, name: String): ResolvedDependency? =
+            find { it.moduleGroup == group && it.moduleName == name }
+
+    val firstLevelModuleDependencies = configuration.resolvedConfiguration.firstLevelModuleDependencies
+    val gradlePlugin = firstLevelModuleDependencies.findDependency(KOTLIN_MODULE_GROUP, KOTLIN_GRADLE_PLUGIN)
+    return gradlePlugin?.children?.findDependency(KOTLIN_MODULE_GROUP, KOTLIN_COMPILER_EMBEDDABLE)
 }
 
 private fun File.hasEntry(entryToFind: String): Boolean {
     val zip = ZipFile(this)
 
     try {
-        val enumeration = zip.entries()
-
-        while (enumeration.hasMoreElements()) {
-            val entry = enumeration.nextElement()
-            if (entry.name.equals(entryToFind, ignoreCase = true)) return true
-        }
+        return zip.getEntry(entryToFind) != null
     }
     catch (e: Exception) {
         return false
@@ -68,7 +88,4 @@ private fun File.hasEntry(entryToFind: String): Boolean {
     finally {
         zip.close()
     }
-
-    return false
 }
-
