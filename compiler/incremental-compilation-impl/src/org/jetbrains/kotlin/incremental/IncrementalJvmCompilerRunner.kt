@@ -58,7 +58,7 @@ fun makeIncrementally(
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
     val kotlinFiles = sourceFiles.filter { it.extension.toLowerCase() in kotlinExtensions }
 
-    enableIC {
+    withIC {
         val compiler = IncrementalJvmCompilerRunner(cachesDir, /* javaSourceRoots = */sourceRoots.toSet(), versions, reporter)
         compiler.compile(kotlinFiles, args, messageCollector) {
             it.incrementalCache.sourceSnapshotMap.compareAndUpdate(sourceFiles)
@@ -71,7 +71,7 @@ private object EmptyICReporter : ICReporter() {
     }
 }
 
-private inline fun enableIC(fn: ()->Unit) {
+private inline fun withIC(fn: ()->Unit) {
     val isEnabledBackup = IncrementalCompilation.isEnabled()
     val isExperimentalBackup = IncrementalCompilation.isExperimental()
     IncrementalCompilation.setIsEnabled(true)
