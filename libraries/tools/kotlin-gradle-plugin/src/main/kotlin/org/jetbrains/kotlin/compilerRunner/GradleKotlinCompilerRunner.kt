@@ -152,7 +152,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val compilerOut = ByteArrayOutputStream()
         val daemonOut = ByteArrayOutputStream()
 
-        val res = withDaemon(environment) { daemon, sessionId ->
+        val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
             val remoteCompilerOut = RemoteOutputStreamServer(compilerOut, port)
             val remoteDaemonOut = RemoteOutputStreamServer(daemonOut, port)
             daemon.serverSideJvmIC(sessionId, argsArray, services, remoteCompilerOut, remoteDaemonOut, null)
