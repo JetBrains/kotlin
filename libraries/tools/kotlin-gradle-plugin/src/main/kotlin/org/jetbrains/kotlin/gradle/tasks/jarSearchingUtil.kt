@@ -21,6 +21,8 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.initialization.dsl.ScriptHandler
 import java.io.File
+import java.net.URLDecoder
+import java.nio.charset.Charset
 import java.util.zip.ZipFile
 
 private val K2JVM_COMPILER_CLASS = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
@@ -38,6 +40,19 @@ internal fun findKotlinJsCompilerJar(project: Project): File? =
 
 internal fun findKotlinMetadataCompilerJar(project: Project): File? =
         findKotlinCompilerJar(project, K2METADATA_COMPILER_CLASS)
+
+internal fun findToolsJar(): File? =
+        Class.forName("com.sun.tools.javac.util.Context")?.let(::findJarByClass)
+
+private fun findJarByClass(klass: Class<*>): File? {
+    val classFileName = klass.name.substringAfterLast(".") + ".class"
+    val resource = klass.getResource(classFileName) ?: return null
+    val uri = resource.toString()
+    if (!uri.startsWith("jar:file:")) return null
+
+    val fileName = URLDecoder.decode(uri.removePrefix("jar:file:").substringBefore("!"), Charset.defaultCharset().name())
+    return File(fileName)
+}
 
 private fun findKotlinCompilerJar(project: Project, compilerClassName: String): File? {
     val filesToCheck = findPotentialCompilerJars(project)
