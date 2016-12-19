@@ -25,4 +25,4 @@ public external class MathClass() {
     public fun ceil(value: Number): Int = noImpl
 }
 
-public external val Math: MathClass = MathClass()
+public external val Math: MathClass

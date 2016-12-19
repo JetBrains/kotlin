@@ -1,7 +1,7 @@
 package kotlin.js
 
 public external val noImpl: Nothing
-    get() = throw Exception()
+    get() = noImpl
 
 public external fun eval(expr: String): dynamic = noImpl
 
@@ -18,7 +18,7 @@ public fun println(s: Any?) {}
 public fun print(s: Any?) {}
 
 //TODO: consistent parseInt
-public external fun parseInt(s: String, radix: Int = 10): Int = noImpl
+public external fun parseInt(s: String, radix: Int = noImpl): Int = noImpl
 
 @library
 public fun safeParseInt(s: String): Int? = noImpl

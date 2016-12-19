@@ -17,7 +17,7 @@
 package kotlin.text.js
 
 
-public external class RegExp(pattern: String, flags: String? = null) {
+public external class RegExp(pattern: String, flags: String? = noImpl) {
 
     public fun test(str: String): Boolean = noImpl
 
