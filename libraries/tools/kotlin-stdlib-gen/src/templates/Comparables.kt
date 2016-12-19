@@ -90,6 +90,7 @@ fun comparables(): List<GenericFunction> {
     templates add f("coerceIn(range: ClosedFloatingPointRange<T>)") {
         sourceFile(SourceFile.Ranges)
         only(Generic)
+        since("1.1")
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {
