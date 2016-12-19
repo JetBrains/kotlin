@@ -1433,6 +1433,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("equalsNullUndefined.kt")
+        public void testEqualsNullUndefined() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/enum/equalsNullUndefined.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("implementsComparable.kt")
         public void testImplementsComparable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/enum/implementsComparable.kt");

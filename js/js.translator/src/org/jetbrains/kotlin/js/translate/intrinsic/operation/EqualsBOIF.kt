@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import java.util.*
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
-
-
     private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val isNegated = expression.isNegated()
@@ -80,17 +80,22 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    override fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS
+    override fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS!!
 
-    override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
+    override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? =
             when {
-                DescriptorUtils.isEnumClass(descriptor.containingDeclaration) -> EnumEqualsIntrinsic
+                isEnumIntrinsicApplicable(descriptor, leftType, rightType) -> EnumEqualsIntrinsic
 
                 KotlinBuiltIns.isBuiltIn(descriptor) ||
                 TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic
 
                 else -> null
             }
+
+    private fun isEnumIntrinsicApplicable(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): Boolean {
+        return DescriptorUtils.isEnumClass(descriptor.containingDeclaration) && leftType != null && rightType != null &&
+               !TypeUtils.isNullableType(leftType) && !TypeUtils.isNullableType(rightType)
+    }
 
     private fun KtBinaryExpression.isNegated() = getOperationToken(this) == KtTokens.EXCLEQ
 }

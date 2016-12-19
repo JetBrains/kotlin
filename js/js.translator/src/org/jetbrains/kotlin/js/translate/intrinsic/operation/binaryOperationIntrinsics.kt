@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
+import com.google.common.collect.ImmutableSet
+import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
-import gnu.trove.THashMap
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.common.collect.ImmutableSet
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.types.KotlinType
 
 interface BinaryOperationIntrinsic {
 
@@ -35,7 +35,7 @@ interface BinaryOperationIntrinsic {
 
 class BinaryOperationIntrinsics {
 
-    private val intrinsicCache = THashMap<Pair<KtToken, FunctionDescriptor>, BinaryOperationIntrinsic>()
+    private val intrinsicCache = mutableMapOf<IntrinsicKey, BinaryOperationIntrinsic>()
 
     private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF)
 
@@ -46,22 +46,20 @@ class BinaryOperationIntrinsics {
             return NO_INTRINSIC
         }
 
-        return lookUpCache(token, descriptor) ?: computeAndCacheIntrinsic(token, descriptor)
+        val leftType = expression.left?.let { context.bindingContext().getType(it) }
+        val rightType = expression.right?.let { context.bindingContext().getType(it) }
+
+        val key = IntrinsicKey(token, descriptor, leftType, rightType)
+        return intrinsicCache.getOrPut(key) { computeIntrinsic(token, descriptor, leftType, rightType) }
     }
 
-    private fun lookUpCache(token: KtToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
-            intrinsicCache.get(Pair(token, descriptor))
-
-    private fun computeAndCacheIntrinsic(token: KtToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic {
-        val result = computeIntrinsic(token, descriptor)
-        intrinsicCache.put(Pair(token, descriptor), result)
-        return result
-    }
-
-    private fun computeIntrinsic(token: KtToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic {
+    private fun computeIntrinsic(
+            token: KtToken, descriptor: FunctionDescriptor,
+            leftType: KotlinType?, rightType: KotlinType?
+    ): BinaryOperationIntrinsic {
         for (factory in factories) {
             if (factory.getSupportTokens().contains(token)) {
-                val intrinsic = factory.getIntrinsic(descriptor)
+                val intrinsic = factory.getIntrinsic(descriptor, leftType, rightType)
                 if (intrinsic != null) {
                     return intrinsic
                 }
@@ -71,11 +69,16 @@ class BinaryOperationIntrinsics {
     }
 }
 
+private data class IntrinsicKey(
+        val token: KtToken, val function: FunctionDescriptor,
+        val leftType: KotlinType?, val rightType: KotlinType?
+)
+
 interface BinaryOperationIntrinsicFactory {
 
     fun getSupportTokens(): ImmutableSet<out KtToken>
 
-    fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic?
+    fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic?
 }
 
 abstract class AbstractBinaryOperationIntrinsic : BinaryOperationIntrinsic {
