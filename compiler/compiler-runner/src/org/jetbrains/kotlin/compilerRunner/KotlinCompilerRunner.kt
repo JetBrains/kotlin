@@ -152,7 +152,7 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
             else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
         }
 
-        val res: Int = withDaemon(environment) { daemon, sessionId ->
+        val res: Int = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
             KotlinCompilerClient.incrementalCompile(daemon, sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
         } ?: return null
 
@@ -164,11 +164,11 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
         return exitCode
     }
 
-    protected fun <T> withDaemon(environment: Env, retryOnConnectionError: Boolean = true, fn: (CompileService, sessionId: Int)->T): T? {
+    protected fun <T> withDaemon(environment: Env, retryOnConnectionError: Boolean, fn: (CompileService, sessionId: Int)->T): T? {
         fun retryOrFalse(e: Exception): T? {
             if (retryOnConnectionError) {
                 log.debug("retrying once on daemon connection error: ${e.message}")
-                return withDaemon(environment, false, fn)
+                return withDaemon(environment, retryOnConnectionError = false, fn = fn)
             }
             log.info("daemon connection error: ${e.message}")
             return null
