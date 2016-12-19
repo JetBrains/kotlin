@@ -8,10 +8,10 @@ external class <!NESTED_JS_MODULE_PROHIBITED!>A<!>
 external <!NESTED_JS_MODULE_PROHIBITED!>object B<!>
 
 <!NESTED_JS_MODULE_PROHIBITED!>@JsModule("foo")
-external fun foo()<!> = 23
+external fun foo(): Int<!>
 
 <!NESTED_JS_MODULE_PROHIBITED!>@JsModule("bar")
-external val bar<!> = 42
+external val bar: Int<!>
 
 <!NESTED_JS_MODULE_PROHIBITED!>@JsNonModule
-external val baz<!> = 99
+external val baz: Int<!>

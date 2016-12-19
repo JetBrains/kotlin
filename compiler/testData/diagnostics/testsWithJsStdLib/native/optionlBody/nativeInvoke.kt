@@ -9,5 +9,5 @@ external object O {
     @nativeInvoke
     fun foo()
     @nativeInvoke
-    fun bar() {}
+    fun bar() { noImpl }
 }

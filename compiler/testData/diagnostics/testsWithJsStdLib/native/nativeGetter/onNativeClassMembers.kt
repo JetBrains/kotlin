@@ -2,36 +2,36 @@
 
 external class A {
     @nativeGetter
-    fun get(a: String): Any? = null
+    fun get(a: String): Any? = noImpl
 
     @nativeGetter
-    fun take(a: Number): String? = null
+    fun take(a: Number): String? = noImpl
 
     @nativeGetter
-    fun foo(a: Double): String? = null
+    fun foo(a: Double): String? = noImpl
 
     companion object {
         @nativeGetter
-        fun get(a: String): Any? = null
+        fun get(a: String): Any? = noImpl
 
         @nativeGetter
-        fun take(a: Number): String? = null
+        fun take(a: Number): String? = noImpl
 
         @nativeGetter
-        fun foo(a: Double): String? = null
+        fun foo(a: Double): String? = noImpl
     }
 }
 
 external class B {
     <!WRONG_ANNOTATION_TARGET!>@nativeGetter<!>
-    val foo = 0
+    val foo: Int = noImpl
 
     <!WRONG_ANNOTATION_TARGET!>@nativeGetter<!>
     object Obj1 {}
 
     companion object {
         <!WRONG_ANNOTATION_TARGET!>@nativeGetter<!>
-        val foo = 0
+        val foo: Int = noImpl
 
         <!WRONG_ANNOTATION_TARGET!>@nativeGetter<!>
         object Obj2 {}
@@ -40,18 +40,18 @@ external class B {
 
 external class C {
     <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeGetter
-    fun get(): Any?<!> = null
+    fun get(): Any?<!> = noImpl
 
     @nativeGetter
-    fun get(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>): Any? = null
+    fun get(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>): Any? = noImpl
 
     @nativeGetter
-    fun <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>foo<!>(a: Int) {}
+    fun <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>foo<!>(a: Int) { noImpl }
 
     @nativeGetter
-    fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = 0
+    fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = noImpl
 
     @nativeGetter
-    fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = "foo"<!>): Int? = 0
+    fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = noImpl<!>): Int? = noImpl
 
 }

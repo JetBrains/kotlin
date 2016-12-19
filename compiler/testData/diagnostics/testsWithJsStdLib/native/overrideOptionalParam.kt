@@ -7,7 +7,7 @@ class B : A() {
 }
 
 external class C : A() {
-    override fun f(x: Int) {}
+    override fun f(x: Int)
 }
 
 
@@ -24,7 +24,7 @@ open external class D {
 }
 
 class E : D() {
-    override fun f(x: Int) {}
+    override fun f(x: Int) { }
 }
 
 class F : D(), I {
@@ -32,7 +32,7 @@ class F : D(), I {
 }
 
 external class G : D(), I {
-    override fun f(x: Int) {}
+    override fun f(x: Int)
 }
 
 open class X {

@@ -26,14 +26,14 @@ public external final class A {
 
 public external final class B {
     public constructor B()
-    @kotlin.js.nativeSetter public final val foo: kotlin.Int = 0
+    @kotlin.js.nativeSetter public final val foo: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.js.nativeSetter public final val foo: kotlin.Int = 0
+        @kotlin.js.nativeSetter public final val foo: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -4,34 +4,26 @@ external class A {
     class B {
         class C {
             @nativeInvoke
-            fun foo() {}
+            fun foo() { noImpl }
 
             @nativeInvoke
-            fun invoke(a: String): Int = 0
+            fun invoke(a: String): Int = noImpl
         }
 
         object obj {
             @nativeInvoke
-            fun foo() {}
+            fun foo() { noImpl }
 
             @nativeInvoke
-            fun invoke(a: String): Int = 0
+            fun invoke(a: String): Int = noImpl
         }
 
         companion object {
             @nativeInvoke
-            fun foo() {}
+            fun foo() { noImpl }
 
             @nativeInvoke
-            fun invoke(a: String): Int = 0
-        }
-
-        val anonymous = object {
-            @nativeInvoke
-            fun foo() {}
-
-            @nativeInvoke
-            fun invoke(a: String): Int = 0
+            fun invoke(a: String): Int = noImpl
         }
     }
 }

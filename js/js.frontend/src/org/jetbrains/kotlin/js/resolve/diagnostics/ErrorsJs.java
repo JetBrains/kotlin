@@ -78,8 +78,9 @@ public interface ErrorsJs {
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtDeclaration> INLINE_EXTERNAL_DECLARATION = DiagnosticFactory0.create(
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
-    DiagnosticFactory0<KtDeclaration> NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE = DiagnosticFactory0.create(
+    DiagnosticFactory0<KtExpression> NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE = DiagnosticFactory0.create(
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtExpression> WRONG_BODY_OF_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

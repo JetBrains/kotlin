@@ -2,26 +2,26 @@
 
 external class A {
     @nativeInvoke
-    fun foo() {}
+    fun foo() {noImpl}
 
     @nativeInvoke
-    fun invoke(a: String): Int = 0
+    fun invoke(a: String): Int = noImpl
 
     <!WRONG_ANNOTATION_TARGET!>@nativeInvoke<!>
-    val foo = 0
+    val foo: Int = noImpl
 
     <!WRONG_ANNOTATION_TARGET!>@nativeInvoke<!>
     object Obj1 {}
 
     companion object {
         @nativeInvoke
-        fun foo() {}
+        fun foo() { noImpl }
 
         @nativeInvoke
-        fun invoke(a: String): Int = 0
+        fun invoke(a: String): Int = noImpl
 
         <!WRONG_ANNOTATION_TARGET!>@nativeInvoke<!>
-        val foo = 0
+        val foo: Int = noImpl
 
         <!WRONG_ANNOTATION_TARGET!>@nativeInvoke<!>
         object Obj2 {}

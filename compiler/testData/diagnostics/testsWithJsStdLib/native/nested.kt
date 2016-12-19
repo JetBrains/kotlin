@@ -24,11 +24,11 @@ external class TopLevelNative {
 
     class B
 
-    fun foo() = 23
+    fun foo(): Int = noImpl
 
     <!NESTED_EXTERNAL_DECLARATION!>external fun bar(): Int<!>
 
-    val x = "a"
+    val x: String = noImpl
 
     <!NESTED_EXTERNAL_DECLARATION!>external val y: String<!>
 }

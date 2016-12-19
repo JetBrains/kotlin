@@ -5,7 +5,7 @@ external val baz: Int
 external val boo: Int = noImpl
 
 external fun foo()
-external fun bar() {}
+external fun bar() { noImpl }
 
 external interface T {
     val baz: Int
@@ -27,7 +27,7 @@ external class C {
     val boo: Int = noImpl
 
     fun foo()
-    fun bar() {}
+    fun bar() { noImpl }
 
     companion object {
         val baz: Int

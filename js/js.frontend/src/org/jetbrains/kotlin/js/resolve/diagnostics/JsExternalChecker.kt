@@ -22,18 +22,22 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 object JsExternalChecker : SimpleDeclarationChecker {
+    val NO_IMPL_PROPERTY_NAME = FqNameUnsafe("kotlin.js.noImpl")
+
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext) {
         if (!AnnotationsUtils.isNativeObject(descriptor)) return
@@ -84,6 +88,34 @@ object JsExternalChecker : SimpleDeclarationChecker {
             !descriptor.isNullableProperty()
         ) {
             diagnosticHolder.report(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE.on(declaration))
+        }
+
+        checkBody(declaration, diagnosticHolder, bindingContext)
+    }
+
+    private fun checkBody(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+        if (declaration is KtDeclarationWithBody && !declaration.hasValidExternalBody(bindingContext)) {
+            reportWrongBody(declaration.bodyExpression!!, diagnosticHolder, bindingContext)
+        }
+        else if (declaration is KtDeclarationWithInitializer && declaration.initializer?.isNoImplExpression(bindingContext) == false) {
+            reportWrongBody(declaration.initializer!!, diagnosticHolder, bindingContext)
+        }
+        if (declaration is KtCallableDeclaration) {
+            for (defaultValue in declaration.valueParameters.mapNotNull { it.defaultValue }) {
+                checkExternalExpression(defaultValue, diagnosticHolder, bindingContext)
+            }
+        }
+    }
+
+    private fun checkExternalExpression(expression: KtExpression, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+        if (!expression.isNoImplExpression(bindingContext)) {
+            reportWrongBody(expression, diagnosticHolder, bindingContext)
+        }
+    }
+
+    private fun reportWrongBody(expression: KtExpression, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+        if (bindingContext.diagnostics.forElement(expression).none { it.factory == ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION }) {
+            diagnosticHolder.report(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION.on(expression))
         }
     }
 

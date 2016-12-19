@@ -4,48 +4,48 @@ external class A {
     class B {
         class A {
             @nativeSetter
-            fun set(a: String, v: Any?): Any? = null
+            fun set(a: String, v: Any?): Any? = noImpl
 
             @nativeSetter
-            fun put(a: Number, v: String) {}
+            fun put(a: Number, v: String) { noImpl }
 
             @nativeSetter
-            fun foo(a: Int, v: String) {}
+            fun foo(a: Int, v: String) { noImpl }
 
             @nativeSetter
-            fun set4(a: Double, v: String): Any = 1
+            fun set4(a: Double, v: String): Any = noImpl
 
             @nativeSetter
-            fun set5(a: Double, v: String): CharSequence = "OK"
+            fun set5(a: Double, v: String): CharSequence = noImpl
 
             companion object {
                 @nativeSetter
-                fun set(a: String, v: Any?): Any? = null
+                fun set(a: String, v: Any?): Any? = noImpl
 
                 @nativeSetter
-                fun put(a: Number, v: String) {}
+                fun put(a: Number, v: String) { noImpl }
 
                 @nativeSetter
-                fun foo(a: Int, v: String) {}
+                fun foo(a: Int, v: String) { noImpl }
 
                 @nativeSetter
-                fun set4(a: Double, v: String): Any = 1
+                fun set4(a: Double, v: String): Any = noImpl
 
                 @nativeSetter
-                fun set5(a: Double, v: String): CharSequence = "OK"
+                fun set5(a: Double, v: String): CharSequence = noImpl
             }
         }
 
         class B {
             <!WRONG_ANNOTATION_TARGET!>@nativeSetter<!>
-            val foo = 0
+            val foo: Int = noImpl
 
             <!WRONG_ANNOTATION_TARGET!>@nativeSetter<!>
             object Obj1 {}
 
             companion object {
                 <!WRONG_ANNOTATION_TARGET!>@nativeSetter<!>
-                val foo = 0
+                val foo: Int = noImpl
 
                 <!WRONG_ANNOTATION_TARGET!>@nativeSetter<!>
                 object Obj2 {}
@@ -54,56 +54,39 @@ external class A {
 
         class C {
             @nativeSetter
-            fun set6(a: Double, v: String): <!NATIVE_SETTER_WRONG_RETURN_TYPE!>Number<!> = 1
+            fun set6(a: Double, v: String): <!NATIVE_SETTER_WRONG_RETURN_TYPE!>Number<!> = noImpl
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(): Any?<!> = null
+            fun set(): Any?<!> = noImpl
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>): Any?<!> = null
+            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>): Any?<!> = noImpl
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(a: String, v: Any, v2: Any)<!> {}
+            fun set(a: String, v: Any, v2: Any)<!> { noImpl }
 
             @nativeSetter
-            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>, v: Any?) {}
+            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>, v: Any?) { noImpl }
 
             @nativeSetter
-            fun foo(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: Double = 0.0<!>, <!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>v: String = "str"<!>) = "OK"
+            fun foo(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: Double = noImpl<!>, <!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>v: String = noImpl<!>): String = noImpl
         }
 
         object obj {
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(): Any?<!> = null
+            fun set(): Any?<!> = noImpl
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>): Any?<!> = null
+            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>): Any?<!> = noImpl
 
             <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(a: String, v: Any, v2: Any)<!> {}
+            fun set(a: String, v: Any, v2: Any)<!> { noImpl }
 
             @nativeSetter
-            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>, v: Any?) {}
+            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>, v: Any?) { noImpl }
 
             @nativeSetter
-            fun foo(a: Int, <!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>v: String = "str"<!>) = "OK"
-        }
-
-        val anonymous = object {
-            <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(): Any?<!> = null
-
-            <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>): Any?<!> = null
-
-            <!NATIVE_INDEXER_WRONG_PARAMETER_COUNT!>@nativeSetter
-            fun set(a: String, v: Any, v2: Any)<!> {}
-
-            @nativeSetter
-            fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>, v: Any?) {}
-
-            @nativeSetter
-            fun foo(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: Number = 0.0<!>, v: String) = "OK"
+            fun foo(a: Int, <!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>v: String = noImpl<!>): String = noImpl
         }
     }
 }

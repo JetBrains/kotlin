@@ -8,7 +8,6 @@ public external final class A {
 
     public final class B {
         public constructor B()
-        public final val anonymous: kotlin.Any
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -35,14 +34,14 @@ public external final class A {
 
         public final class B {
             public constructor B()
-            @kotlin.js.nativeGetter public final val foo: kotlin.Int = 0
+            @kotlin.js.nativeGetter public final val foo: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             public companion object Companion {
                 private constructor Companion()
-                @kotlin.js.nativeGetter public final val foo: kotlin.Int = 0
+                @kotlin.js.nativeGetter public final val foo: kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
