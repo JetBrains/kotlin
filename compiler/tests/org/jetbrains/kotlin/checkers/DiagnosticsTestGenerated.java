@@ -302,6 +302,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("IdentityComparisonWithPrimitives.kt")
+        public void testIdentityComparisonWithPrimitives() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/IdentityComparisonWithPrimitives.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("implicitIntersection.kt")
         public void testImplicitIntersection() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/implicitIntersection.kt");

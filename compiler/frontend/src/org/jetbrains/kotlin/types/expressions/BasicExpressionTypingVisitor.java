@@ -1098,6 +1098,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ensureNonemptyIntersectionOfOperandTypes(expression, context);
             // TODO : Check comparison pointlessness
             result = TypeInfoFactoryKt.createTypeInfo(components.builtIns.getBooleanType(), context);
+            checkIdentityOnPrimitiveTypes(expression, context);
         }
         else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
             ValueArgument leftArgument = CallMaker.makeValueArgument(left, left != null ? left : operationSign);
@@ -1117,6 +1118,27 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return components.dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
         return components.dataFlowAnalyzer.checkType(result, expression, contextWithExpectedType);
+    }
+
+    private static void checkIdentityOnPrimitiveTypes(@NotNull KtBinaryExpression expression, @NotNull ExpressionTypingContext context) {
+        if (expression.getLeft() == null || expression.getRight() == null) return;
+
+        KotlinType leftType = context.trace.getType(expression.getLeft());
+        KotlinType rightType = context.trace.getType(expression.getRight());
+        if (leftType == null || rightType == null) return;
+
+        if (KotlinTypeChecker.DEFAULT.equalTypes(leftType, rightType) && KotlinBuiltIns.isPrimitiveType(leftType)) {
+            context.trace.report(DEPRECATED_IDENTITY_EQUALS.on(expression, leftType, rightType));
+        }
+        else if (isIdentityComparedWithImplicitBoxing(leftType, rightType) || isIdentityComparedWithImplicitBoxing(rightType, leftType)) {
+            context.trace.report(IMPLICIT_BOXING_IN_IDENTITY_EQUALS.on(expression, leftType, rightType));
+        }
+    }
+
+    private static boolean isIdentityComparedWithImplicitBoxing(KotlinType leftType, KotlinType rightType) {
+        return KotlinBuiltIns.isPrimitiveType(leftType) &&
+               !KotlinBuiltIns.isPrimitiveType(rightType) &&
+               KotlinTypeChecker.DEFAULT.isSubtypeOf(leftType, rightType);
     }
 
     private KotlinTypeInfo visitEquality(

@@ -18,8 +18,8 @@ fun f(): Unit {
   <error>x === "1"</error>
   <error>x !== "1"</error>
 
-  x === 1
-  x !== 1
+  <warning>x === 1</warning>
+  <warning>x !== 1</warning>
 
   x..2
   x in 1..2
