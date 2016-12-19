@@ -198,7 +198,6 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
                     outType = param.type,
                     declaresDefaultValue = false,
                     isCrossinline = false, isNoinline = false,
-                    isCoroutine = false,
                     varargElementType = (param as? ValueParameterDescriptor)?.varargElementType,
                     source = SourceElement.NO_SOURCE)
         }
@@ -213,7 +212,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
                 outType = simpleFunctionImplType,
                 declaresDefaultValue = false,
                 isCrossinline = false, isNoinline = false,
-                isCoroutine = false, varargElementType = null,
+                varargElementType = null,
                 source = SourceElement.NO_SOURCE)
 
         val newValueParameters = listOf(functionParameter) + newUnboundParams
