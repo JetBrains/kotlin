@@ -5,7 +5,7 @@ open class ABase {
     @Z
     protected var String.prop: Int
         get() = 1
-        set(field) = {}
+        set(field) {}
 
 
     inline fun test() {
