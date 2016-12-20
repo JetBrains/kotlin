@@ -20,9 +20,9 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.checkers.CheckerTestUtil.ActualDiagnostic;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.DiagnosedRange;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
@@ -53,7 +53,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
     public void testEquals() throws Exception {
         doTest(new TheTest() {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
             }
         });
     }
@@ -62,7 +62,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         final DiagnosticData typeMismatch1 = diagnostics.get(1);
         doTest(new TheTest(missing(typeMismatch1)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnostics.remove(typeMismatch1.index);
             }
         });
@@ -72,7 +72,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         final DiagnosticData typeMismatch1 = diagnostics.get(1);
         doTest(new TheTest(unexpected(typeMismatch1)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.remove(typeMismatch1.index);
             }
         });
@@ -83,7 +83,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         final DiagnosticData unresolvedReference = diagnostics.get(6);
         doTest(new TheTest(unexpected(typeMismatch1), missing(unresolvedReference)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.remove(typeMismatch1.rangeIndex);
                 diagnostics.remove(unresolvedReference.index);
             }
@@ -95,7 +95,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         final DiagnosticData typeMismatch3 = diagnostics.get(5);
         doTest(new TheTest(unexpected(noneApplicable), missing(typeMismatch3)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.remove(noneApplicable.rangeIndex);
                 diagnostics.remove(typeMismatch3.index);
             }
@@ -108,7 +108,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         final DiagnosedRange range = asDiagnosticRange(unused, unusedDiagnostic);
         doTest(new TheTest(wrongParameters(unusedDiagnostic, "UNUSED_VARIABLE(a)", unused.startOffset, unused.endOffset)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.set(unused.rangeIndex, range);
             }
         });
@@ -121,7 +121,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
         final DiagnosedRange range = asDiagnosticRange(unresolvedReference, unusedDiagnostic, toManyArguments);
         doTest(new TheTest(wrongParameters(unusedDiagnostic, "UNRESOLVED_REFERENCE(xx)", unresolvedReference.startOffset, unresolvedReference.endOffset)) {
             @Override
-            protected void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
+            protected void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges) {
                 diagnosedRanges.set(unresolvedReference.rangeIndex, range);
             }
         });
@@ -153,15 +153,16 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
             List<DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
 
-            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null);
-            Collections.sort(diagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
+            List<ActualDiagnostic> actualDiagnostics =
+                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null);
+            Collections.sort(actualDiagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
 
-            makeTestData(diagnostics, diagnosedRanges);
+            makeTestData(actualDiagnostics, diagnosedRanges);
 
             List<String> expectedMessages = Lists.newArrayList(expected);
             final List<String> actualMessages = Lists.newArrayList();
 
-            CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
+            CheckerTestUtil.diagnosticsDiff(diagnosedRanges, actualDiagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
                 @Override
                 public void missingDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int expectedStart, int expectedEnd) {
                     actualMessages.add(missing(diagnostic.getName(), expectedStart, expectedEnd));
@@ -194,7 +195,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
             return stringBuilder.toString();
         }
 
-        protected abstract void makeTestData(List<Diagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges);
+        protected abstract void makeTestData(List<ActualDiagnostic> diagnostics, List<DiagnosedRange> diagnosedRanges);
     }
 
     private static String wrongParameters(String expected, String actual, int start, int end) {

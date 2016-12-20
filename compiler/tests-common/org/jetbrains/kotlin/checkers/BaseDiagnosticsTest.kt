@@ -27,6 +27,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestModule
+import org.jetbrains.kotlin.checkers.CheckerTestUtil.ActualDiagnostic
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
@@ -201,7 +202,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             }
 
             val jvmSignatureDiagnostics = if (skipJvmSignatureDiagnostics)
-                emptySet<Diagnostic>()
+                emptySet<ActualDiagnostic>()
             else
                 computeJvmSignatureDiagnostics(bindingContext)
 
@@ -210,7 +211,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
                             bindingContext, ktFile, markDynamicCalls, dynamicCallDescriptors
                     ) + jvmSignatureDiagnostics,
-                    whatDiagnosticsToConsider
+                    { whatDiagnosticsToConsider.value(it.diagnostic) }
             )
 
             val diagnosticToExpectedDiagnostic = CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
@@ -249,13 +250,13 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             return ok[0]
         }
 
-        private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<Diagnostic> {
-            val jvmSignatureDiagnostics = HashSet<Diagnostic>()
+        private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<ActualDiagnostic> {
+            val jvmSignatureDiagnostics = HashSet<ActualDiagnostic>()
             val declarations = PsiTreeUtil.findChildrenOfType(ktFile, KtDeclaration::class.java)
             for (declaration in declarations) {
                 val diagnostics = getJvmSignatureDiagnostics(declaration, bindingContext.diagnostics,
                                                              GlobalSearchScope.allScope(project)) ?: continue
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration))
+                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it) })
             }
             return jvmSignatureDiagnostics
         }

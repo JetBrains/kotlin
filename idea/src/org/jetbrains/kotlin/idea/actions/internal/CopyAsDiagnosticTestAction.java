@@ -23,7 +23,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -44,7 +43,8 @@ public class CopyAsDiagnosticTestAction extends AnAction {
 
         BindingContext bindingContext = ResolutionUtils.analyzeFully((KtFile) psiFile);
 
-        List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null);
+        List<CheckerTestUtil.ActualDiagnostic> diagnostics =
+                CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null);
         String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString();
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -54,7 +54,6 @@ public class CopyAsDiagnosticTestAction extends AnAction {
         });
     }
 
-
     @Override
     public void update(AnActionEvent e) {
         e.getPresentation().setVisible(ApplicationManager.getApplication().isInternal());
@@ -63,5 +62,4 @@ public class CopyAsDiagnosticTestAction extends AnAction {
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         e.getPresentation().setEnabled(editor != null && psiFile instanceof KtFile);
     }
-
 }
