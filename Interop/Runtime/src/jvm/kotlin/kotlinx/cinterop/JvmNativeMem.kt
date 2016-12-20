@@ -48,6 +48,18 @@ object nativeMemUtils {
         DataModel._64BIT -> putLong(mem, value)
     }
 
+    fun getByteArray(source: NativePointed, dest: ByteArray, length: Int) {
+        val clazz = ByteArray::class.java
+        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
+        unsafe.copyMemory(null, source.address, dest, baseOffset, length.toLong())
+    }
+
+    fun putByteArray(source: ByteArray, dest: NativePointed, length: Int) {
+        val clazz = ByteArray::class.java
+        val baseOffset = unsafe.arrayBaseOffset(clazz).toLong();
+        unsafe.copyMemory(source, baseOffset, null, dest.address, length.toLong())
+    }
+
     internal class NativeAllocated(override val rawPtr: NativePtr) : NativePointed
 
     fun alloc(size: Long, align: Int): NativePointed {

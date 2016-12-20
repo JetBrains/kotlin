@@ -41,7 +41,9 @@ public fun base64Decode(encoded: String): ByteArray {
         val errorCode = DecodeBase64(encoded, encoded.length, result[0].ptr, resultSize[0].ptr)
         if (errorCode != 0) throw Error("Non-zero exit code of DecodeBase64: ${errorCode}")
         val realSize = resultSize[0].value!!
-        return ByteArray(realSize, {i -> result[i].value!!})
+        val bytes = ByteArray(realSize)
+        nativeMemUtils.getByteArray(result[0], bytes, realSize)
+        return bytes
     }
 }
 
