@@ -4732,6 +4732,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineStdlib/thisInExtension.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("unsafeCast.kt")
+        public void testUnsafeCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineStdlib/unsafeCast.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/java")
