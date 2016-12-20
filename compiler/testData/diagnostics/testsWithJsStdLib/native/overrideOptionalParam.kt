@@ -6,7 +6,7 @@ class B : A() {
     <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS!>override fun f(x: Int)<!> {}
 }
 
-external class C : A() {
+external class C : A {
     override fun f(x: Int)
 }
 
@@ -31,7 +31,7 @@ class F : D(), I {
     <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS!>override fun f(x: Int)<!> {}
 }
 
-external class G : D(), I {
+external class G : D, I {
     override fun f(x: Int)
 }
 
@@ -45,6 +45,6 @@ open external class XE {
 
 class <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE!>Y<!> : X(), I
 
-external class YE: XE(), I
+external class YE: XE, I
 
 class Z : X(), J

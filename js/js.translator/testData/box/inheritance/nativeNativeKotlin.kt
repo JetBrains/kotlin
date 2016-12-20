@@ -6,7 +6,7 @@ external open class A {
     fun foo(): String
 }
 
-external open class B : A() {
+external open class B : A {
     fun bar(): String
 }
 

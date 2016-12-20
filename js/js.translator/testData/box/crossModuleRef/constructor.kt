@@ -7,7 +7,7 @@ class A(val x: Int) {
 }
 
 external class B(x: Int) {
-    constructor(a: Int, b: Int) : this(0) { noImpl }
+    constructor(a: Int, b: Int)
 
     val x: Int
 }

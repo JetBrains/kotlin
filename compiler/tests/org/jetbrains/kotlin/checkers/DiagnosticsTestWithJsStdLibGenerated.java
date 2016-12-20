@@ -575,6 +575,18 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("delegatedConstructorCall.kt")
+        public void testDelegatedConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/delegatedConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegation.kt")
+        public void testDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/delegation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionFunctionAndProperty.kt")
         public void testExtensionFunctionAndProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/extensionFunctionAndProperty.kt");

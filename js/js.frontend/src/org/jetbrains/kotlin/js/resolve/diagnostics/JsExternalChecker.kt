@@ -91,6 +91,7 @@ object JsExternalChecker : SimpleDeclarationChecker {
         }
 
         checkBody(declaration, descriptor, diagnosticHolder, bindingContext)
+        checkDelegation(declaration, descriptor, diagnosticHolder)
     }
 
     private fun checkBody(
@@ -110,6 +111,34 @@ object JsExternalChecker : SimpleDeclarationChecker {
                 if (!defaultValue.isNoImplExpression(bindingContext)) {
                     diagnosticHolder.report(ErrorsJs.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER.on(defaultValue))
                 }
+            }
+        }
+    }
+
+    private fun checkDelegation(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+        if (descriptor !is MemberDescriptor || !DescriptorUtils.isEffectivelyExternal(descriptor)) return
+
+        if (declaration is KtClassOrObject) {
+            for (superTypeEntry in declaration.superTypeListEntries) {
+                when (superTypeEntry) {
+                    is KtSuperTypeCallEntry -> {
+                        diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL.on(superTypeEntry.valueArgumentList!!))
+                    }
+                    is KtDelegatedSuperTypeEntry -> {
+                        diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATION.on(superTypeEntry))
+                    }
+                }
+            }
+        }
+        else if (declaration is KtSecondaryConstructor) {
+            val delegationCall = declaration.getDelegationCall()
+            if (!delegationCall.isImplicit) {
+                diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL.on(delegationCall))
+            }
+        }
+        else if (declaration is KtProperty && descriptor !is PropertyAccessorDescriptor) {
+            declaration.delegate?.let { delegate ->
+                diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATION.on(delegate))
             }
         }
     }

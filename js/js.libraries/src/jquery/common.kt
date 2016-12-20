@@ -49,7 +49,7 @@ open public external class MouseEvent() {
     public fun isDefaultPrevented(): Boolean
 }
 
-public external class MouseClickEvent() : MouseEvent() {
+public external class MouseClickEvent() : MouseEvent {
     public val which: Int
 }
 
