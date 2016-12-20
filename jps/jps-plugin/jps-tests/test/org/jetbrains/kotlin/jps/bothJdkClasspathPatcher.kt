@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.jps
 
-import org.jetbrains.jps.cmdline.ClasspathBootstrap
+import org.jetbrains.jps.javac.OptimizedFileManagerUtil
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
 fun disableJava6FileManager() {
-    val fileManagerClass = ClasspathBootstrap.getOptimizedFileManagerClass()
+    val fileManagerClass = OptimizedFileManagerUtil.getManagerClass()
     if (fileManagerClass?.simpleName == "OptimizedFileManager") {
         // JPS tests depends on idea.jar and can't be executed under Java 1.6 anymore. But currently TeamCity merges classpath from all
         // dependencies in a one big mess with no differences between JDK and non-JDK jars. Such behaviour causes both
