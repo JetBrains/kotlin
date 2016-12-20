@@ -16,14 +16,16 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
 object JsModuleChecker : SimpleDeclarationChecker {
     override fun check(
@@ -32,6 +34,7 @@ object JsModuleChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
+        checkSuperClass(bindingContext, diagnosticHolder, descriptor, declaration)
         if (AnnotationsUtils.getModuleName(descriptor) == null && !AnnotationsUtils.isNonModule(descriptor)) return
 
         if (descriptor is PropertyDescriptor && descriptor.isVar) {
@@ -47,5 +50,21 @@ object JsModuleChecker : SimpleDeclarationChecker {
         if (isFileModuleOrNonModule) {
             diagnosticHolder.report(ErrorsJs.NESTED_JS_MODULE_PROHIBITED.on(declaration))
         }
+    }
+
+    private fun checkSuperClass(
+            bindingContext: BindingContext,
+            diagnosticHolder: DiagnosticSink,
+            descriptor: DeclarationDescriptor,
+            declaration: KtDeclaration
+    ) {
+        if (descriptor !is ClassDescriptor) return
+        val superClass = descriptor.getSuperClassNotAny() ?: return
+
+        val psi = (declaration as KtClassOrObject).superTypeListEntries.firstOrNull { entry ->
+            bindingContext[BindingContext.TYPE, entry.typeReference]?.constructor?.declarationDescriptor == superClass
+        }
+
+        checkJsModuleUsage(bindingContext, diagnosticHolder, descriptor, superClass, psi ?: declaration)
     }
 }

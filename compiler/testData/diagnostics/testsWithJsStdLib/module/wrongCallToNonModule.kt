@@ -33,5 +33,4 @@ fun box() {
     <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>bar<!>()
 }
 
-// TODO: fix and uncomment
-// external class DerivedB : <! CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B< !>
+external class DerivedB : <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B<!>
