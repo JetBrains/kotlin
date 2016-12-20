@@ -74,6 +74,10 @@ import com.sun.tools.javac.util.List as JavacList
 
     ClassType < *
         * TypeArgument
+        * InnerClass
+
+    InnerClass < ClassType
+        ! TypeArgument
 
     TypeArgument < ClassType
         + ClassType
@@ -81,10 +85,10 @@ import com.sun.tools.javac.util.List as JavacList
 
 internal enum class ElementKind {
     Root, TypeParameter, ClassBound, InterfaceBound, SuperClass, Interface, TypeArgument, ParameterType, ReturnType, ExceptionType,
-    ClassType, TypeVariable, PrimitiveType, ArrayType
+    ClassType, InnerClass, TypeVariable, PrimitiveType, ArrayType
 }
 
-private class SignatureNode(val kind: ElementKind, val name: String? = null) {
+private class SignatureNode(val kind: ElementKind, var name: String? = null) {
     val children: MutableList<SignatureNode> = SmartList<SignatureNode>()
 }
 
@@ -188,23 +192,20 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
         val kind = node.kind
         return when (kind) {
             ClassType -> {
-                val classFqName = node.name!!.replace('/', '.')
-                val args = node.children
-                val fqNameExpression = treeMaker.FqName(classFqName)
-                if (args.isEmpty()) return fqNameExpression
+                val typeArgs = mutableListOf<SignatureNode>()
+                val innerClasses = mutableListOf<SignatureNode>()
+                node.split(typeArgs, TypeArgument, innerClasses, InnerClass)
 
-                treeMaker.TypeApply(fqNameExpression, mapJList(args) { arg ->
-                    assert(arg.kind == TypeArgument) { "Unexpected kind ${arg.kind}, $TypeArgument expected" }
-                    val variance = arg.name ?: return@mapJList treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
+                var expression = makeExpressionForClassTypeWithArguments(treeMaker.FqName(node.name!!.replace('/', '.')), typeArgs)
+                if (innerClasses.isEmpty()) return expression
 
-                    val argType = parseType(arg.children.single())
-                    when (variance.single()) {
-                        '=' -> argType
-                        '+' -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS), argType)
-                        '-' -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER), argType)
-                        else -> error("Unknown variance, '=', '+' or '-' expected")
-                    }
-                })
+                for (innerClass in innerClasses) {
+                    expression = makeExpressionForClassTypeWithArguments(
+                            treeMaker.Select(expression, treeMaker.name(innerClass.name!!)),
+                            innerClass.children)
+                }
+
+                expression
             }
             TypeVariable -> treeMaker.SimpleName(node.name!!)
             ArrayType -> treeMaker.TypeArray(parseType(node.children.single()))
@@ -225,6 +226,23 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
             }
             else -> error("Unsupported type: $node")
         }
+    }
+
+    private fun makeExpressionForClassTypeWithArguments(fqNameExpression: JCExpression, args: List<SignatureNode>): JCExpression {
+        if (args.isEmpty()) return fqNameExpression
+
+        return treeMaker.TypeApply(fqNameExpression, mapJList(args) { arg ->
+            assert(arg.kind == TypeArgument) { "Unexpected kind ${arg.kind}, $TypeArgument expected" }
+            val variance = arg.name ?: return@mapJList treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
+
+            val argType = parseType(arg.children.single())
+            when (variance.single()) {
+                '=' -> argType
+                '+' -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS), argType)
+                '-' -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER), argType)
+                else -> error("Unknown variance, '=', '+' or '-' expected")
+            }
+        })
     }
 
     private fun parse(signature: String): SignatureNode {
@@ -292,12 +310,21 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
     val root = SignatureNode(Root)
     private val stack = ArrayDeque<SignatureNode>(5).apply { add(root) }
 
-    private fun push(kind: ElementKind, parent: ElementKind? = null, name: String? = null) {
-        if (parent != null) {
-            while (stack.peek().kind != parent) {
+    private fun popUntil(kind: ElementKind?) {
+        if (kind != null) {
+            while (stack.peek().kind != kind) {
                 stack.pop()
             }
         }
+    }
+    private fun popUntil(vararg kinds: ElementKind) {
+        while (stack.peek().kind !in kinds) {
+            stack.pop()
+        }
+    }
+
+    private fun push(kind: ElementKind, parent: ElementKind? = null, name: String? = null) {
+        popUntil(parent)
 
         val newNode = SignatureNode(kind, name)
         stack.peek().children += newNode
@@ -329,12 +356,18 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
     }
 
     override fun visitTypeArgument() {
+        popUntil(ClassType, InnerClass)
         push(TypeArgument, parent = ClassType)
     }
 
     override fun visitTypeArgument(variance: Char): SignatureVisitor {
-        push(TypeArgument, parent = ClassType, name = variance.toString())
+        popUntil(ClassType, InnerClass)
+        push(TypeArgument, name = variance.toString())
         return super.visitTypeArgument(variance)
+    }
+
+    override fun visitInnerClassType(name: String) {
+        push(InnerClass, name = name, parent = ClassType)
     }
 
     override fun visitParameterType(): SignatureVisitor {

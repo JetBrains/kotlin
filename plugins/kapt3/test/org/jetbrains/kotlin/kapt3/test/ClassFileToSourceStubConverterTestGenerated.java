@@ -102,6 +102,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("innerClassesWithTypeParameters.kt")
+    public void testInnerClassesWithTypeParameters() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/innerClassesWithTypeParameters.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/jvmOverloads.kt");
