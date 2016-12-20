@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
@@ -48,6 +50,7 @@ import javax.lang.model.element.TypeElement
 class JavaKaptContextTest {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/testData/runner")
+        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
 
         fun simpleProcessor() = object : AbstractProcessor() {
             override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
@@ -75,7 +78,7 @@ class JavaKaptContextTest {
     }
 
     private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
-        KaptContext(KaptLogger(isVerbose = true),
+        KaptContext(KaptLogger(isVerbose = true, messageCollector = messageCollector),
                     compiledClasses = emptyList(),
                     origins = emptyMap(),
                     processorOptions = emptyMap()

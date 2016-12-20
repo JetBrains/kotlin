@@ -20,6 +20,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import com.sun.tools.javac.util.Log
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -38,6 +40,7 @@ import java.nio.file.Files
 abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     companion object {
         val FILE_SEPARATOR = "\n\n////////////////////\n\n"
+        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
@@ -55,7 +58,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val factory = CodegenTestUtil.generateFiles(myEnvironment, myFiles, classBuilderFactory)
         val typeMapper = factory.generationState.typeMapper
 
-        val logger = KaptLogger(isVerbose = true)
+        val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
         val kaptContext = KaptContext(logger, classBuilderFactory.compiledClasses,
                                       classBuilderFactory.origins, processorOptions = emptyMap())
         try {
