@@ -24,6 +24,7 @@
       <element id="module-output" name="deserialization" />
       <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/native-platform-uberjar.jar" path-in-jar="/" />
       <element id="module-output" name="build-common" />
+      <element id="module-output" name="compiler-runner" />
     </root>
   </artifact>
 </component>
