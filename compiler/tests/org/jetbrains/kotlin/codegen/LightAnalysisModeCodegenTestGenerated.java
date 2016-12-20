@@ -16367,6 +16367,18 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             doTest(fileName);
         }
 
+        @TestMetadata("toArrayShouldBePublic.kt")
+        public void testToArrayShouldBePublic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/toArray/toArrayShouldBePublic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toArrayShouldBePublicWithJava.kt")
+        public void testToArrayShouldBePublicWithJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/toArray/toArrayShouldBePublicWithJava.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("toTypedArray.kt")
         public void testToTypedArray() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/toArray/toTypedArray.kt");

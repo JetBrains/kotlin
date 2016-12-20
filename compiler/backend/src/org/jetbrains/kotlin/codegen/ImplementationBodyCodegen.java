@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -74,6 +73,8 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isGenericToArray;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
@@ -395,35 +396,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         catch (RuntimeException e) {
             throw new RuntimeException("Error generating constructors of class " + myClass.getName() + " with kind " + kind, e);
         }
-    }
-
-    private boolean isGenericToArray(@NotNull FunctionDescriptor function) {
-        if (function.getValueParameters().size() != 1 || function.getTypeParameters().size() != 1) {
-            return false;
-        }
-
-        KotlinType returnType = function.getReturnType();
-        assert returnType != null : function.toString();
-        KotlinType paramType = function.getValueParameters().get(0).getType();
-        if (KotlinBuiltIns.isArray(returnType) && KotlinBuiltIns.isArray(paramType)) {
-            KotlinType elementType = function.getTypeParameters().get(0).getDefaultType();
-            KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(descriptor);
-            if (KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(returnType))
-                && KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(paramType))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean isNonGenericToArray(@NotNull FunctionDescriptor function) {
-        if (!function.getValueParameters().isEmpty() || !function.getTypeParameters().isEmpty()) {
-            return false;
-        }
-
-        KotlinType returnType = function.getReturnType();
-        return returnType != null && KotlinBuiltIns.isArray(returnType);
     }
 
     private void generateToArray() {

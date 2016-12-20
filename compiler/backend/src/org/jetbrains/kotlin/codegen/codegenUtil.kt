@@ -38,15 +38,18 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.org.objectweb.asm.Label
@@ -297,3 +300,34 @@ fun KtExpression?.asmType(typeMapper: KotlinTypeMapper, bindingContext: BindingC
 
 fun KtExpression?.kotlinType(bindingContext: BindingContext) = this?.let(bindingContext::getType)
 
+fun FunctionDescriptor.isGenericToArray(): Boolean {
+    if (valueParameters.size != 1 || typeParameters.size != 1) return false
+
+    val returnType = returnType ?: throw AssertionError(toString())
+    val paramType = valueParameters[0].type
+
+    if (!KotlinBuiltIns.isArray(returnType) || !KotlinBuiltIns.isArray(paramType)) return false
+
+    val elementType = typeParameters[0].defaultType
+    return KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(returnType)) &&
+           KotlinTypeChecker.DEFAULT.equalTypes(elementType, builtIns.getArrayElementType(paramType))
+}
+
+fun FunctionDescriptor.isNonGenericToArray(): Boolean {
+    if (!valueParameters.isEmpty() || !typeParameters.isEmpty()) return false
+
+    val returnType = returnType
+    return returnType != null && KotlinBuiltIns.isArray(returnType)
+}
+
+fun MemberDescriptor.isToArrayFromCollection(): Boolean {
+    if (this !is FunctionDescriptor) return false
+
+    val containingClassDescriptor = containingDeclaration as? ClassDescriptor ?: return false
+    if (containingClassDescriptor.source == SourceElement.NO_SOURCE) return false
+
+    val collectionClass = builtIns.collection
+    if (!isSubclass(containingClassDescriptor, collectionClass)) return false
+
+    return isGenericToArray() || isNonGenericToArray()
+}

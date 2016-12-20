@@ -63,6 +63,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isInlineOnlyOrReified;
@@ -352,6 +353,10 @@ public class AsmUtil {
 
         if (isEnumEntry(memberDescriptor)) {
             return NO_FLAG_PACKAGE_PRIVATE;
+        }
+
+        if (isToArrayFromCollection(memberDescriptor)) {
+            return ACC_PUBLIC;
         }
 
         if (memberDescriptor instanceof ConstructorDescriptor && isAnonymousObject(memberDescriptor.getContainingDeclaration())) {
