@@ -213,8 +213,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     whatDiagnosticsToConsider
             )
 
-            val diagnosticToExpectedDiagnostic = hashMapOf<Diagnostic, CheckerTestUtil.TextDiagnostic>()
-            CheckerTestUtil.diagnosticsDiff(diagnosticToExpectedDiagnostic, diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
+            val diagnosticToExpectedDiagnostic = CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
                 override fun missingDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
                     val message = "Missing " + diagnostic.name + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
                     System.err.println(message)

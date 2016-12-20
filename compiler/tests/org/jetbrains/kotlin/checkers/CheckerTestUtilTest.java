@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.checkers;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.DiagnosedRange;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -162,9 +161,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
             List<String> expectedMessages = Lists.newArrayList(expected);
             final List<String> actualMessages = Lists.newArrayList();
 
-            CheckerTestUtil.diagnosticsDiff(ContainerUtil.<Diagnostic, CheckerTestUtil.TextDiagnostic>newHashMap(),
-                                            diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
-
+            CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
                 @Override
                 public void missingDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int expectedStart, int expectedEnd) {
                     actualMessages.add(missing(diagnostic.getName(), expectedStart, expectedEnd));

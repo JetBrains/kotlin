@@ -30,6 +30,8 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -187,12 +189,13 @@ public class CheckerTestUtil {
         void unexpectedDiagnostic(TextDiagnostic diagnostic, int actualStart, int actualEnd);
     }
 
-    public static void diagnosticsDiff(
-            Map<Diagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic,
+    public static Map<Diagnostic, TextDiagnostic> diagnosticsDiff(
             List<DiagnosedRange> expected,
             Collection<Diagnostic> actual,
             DiagnosticDiffCallbacks callbacks
     ) {
+        Map<Diagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic = new HashMap<Diagnostic, TextDiagnostic>();
+
         assertSameFile(actual);
 
         Iterator<DiagnosedRange> expectedDiagnostics = expected.iterator();
@@ -217,7 +220,7 @@ public class CheckerTestUtil {
                         currentExpected = safeAdvance(expectedDiagnostics);
                     }
                     else if (expectedStart > actualStart) {
-                        unexpectedDiagnostics(currentActual.getDiagnostics(), callbacks);
+                        unexpectedDiagnostics(currentActual, callbacks);
                         currentActual = safeAdvance(actualDiagnostics);
                     }
                     else if (expectedEnd > actualEnd) {
@@ -227,7 +230,7 @@ public class CheckerTestUtil {
                     }
                     else if (expectedEnd < actualEnd) {
                         assert expectedStart == actualStart;
-                        unexpectedDiagnostics(currentActual.getDiagnostics(), callbacks);
+                        unexpectedDiagnostics(currentActual, callbacks);
                         currentActual = safeAdvance(actualDiagnostics);
                     }
                     else {
@@ -241,10 +244,12 @@ public class CheckerTestUtil {
                 //noinspection ConstantConditions
                 assert (currentActual != null);
 
-                unexpectedDiagnostics(currentActual.getDiagnostics(), callbacks);
+                unexpectedDiagnostics(currentActual, callbacks);
                 currentActual = safeAdvance(actualDiagnostics);
             }
         }
+
+        return diagnosticToExpectedDiagnostic;
     }
 
     private static void compareDiagnostics(
@@ -263,22 +268,30 @@ public class CheckerTestUtil {
         Map<Diagnostic, TextDiagnostic> actualDiagnostics = currentActual.getTextDiagnosticsMap();
         List<TextDiagnostic> expectedDiagnostics = currentExpected.getDiagnostics();
 
-        for (TextDiagnostic expectedDiagnostic : expectedDiagnostics) {
-            boolean diagnosticFound = false;
-            for (Diagnostic actualDiagnostic : actualDiagnostics.keySet()) {
-                TextDiagnostic actualTextDiagnostic = actualDiagnostics.get(actualDiagnostic);
-                if (expectedDiagnostic.getName().equals(actualTextDiagnostic.getName())) {
-                    if (!compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
-                        callbacks.wrongParametersDiagnostic(expectedDiagnostic, actualTextDiagnostic, expectedStart, expectedEnd);
+        for (final TextDiagnostic expectedDiagnostic : expectedDiagnostics) {
+            Map.Entry<Diagnostic, TextDiagnostic> actualDiagnosticEntry = CollectionsKt.firstOrNull(
+                    actualDiagnostics.entrySet(), new Function1<Map.Entry<Diagnostic, TextDiagnostic>, Boolean>() {
+                        @Override
+                        public Boolean invoke(Map.Entry<Diagnostic, TextDiagnostic> entry) {
+                            return expectedDiagnostic.getName().equals(entry.getValue().getName());
+                        }
                     }
+            );
 
-                    actualDiagnostics.remove(actualDiagnostic);
-                    diagnosticToInput.put(actualDiagnostic, expectedDiagnostic);
-                    diagnosticFound = true;
-                    break;
+            if (actualDiagnosticEntry != null) {
+                Diagnostic actualDiagnostic = actualDiagnosticEntry.getKey();
+                TextDiagnostic actualTextDiagnostic = actualDiagnosticEntry.getValue();
+
+                if (!compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
+                    callbacks.wrongParametersDiagnostic(expectedDiagnostic, actualTextDiagnostic, expectedStart, expectedEnd);
                 }
+
+                actualDiagnostics.remove(actualDiagnostic);
+                diagnosticToInput.put(actualDiagnostic, expectedDiagnostic);
             }
-            if (!diagnosticFound) callbacks.missingDiagnostic(expectedDiagnostic, expectedStart, expectedEnd);
+            else {
+                callbacks.missingDiagnostic(expectedDiagnostic, expectedStart, expectedEnd);
+            }
         }
 
         for (TextDiagnostic unexpectedDiagnostic : actualDiagnostics.values()) {
@@ -311,13 +324,9 @@ public class CheckerTestUtil {
         }
     }
 
-    private static void unexpectedDiagnostics(List<Diagnostic> actual, DiagnosticDiffCallbacks callbacks) {
-        for (Diagnostic diagnostic : actual) {
-            List<TextRange> textRanges = diagnostic.getTextRanges();
-            for (TextRange textRange : textRanges) {
-                callbacks.unexpectedDiagnostic(TextDiagnostic.asTextDiagnostic(diagnostic), textRange.getStartOffset(),
-                                               textRange.getEndOffset());
-            }
+    private static void unexpectedDiagnostics(DiagnosticDescriptor descriptor, DiagnosticDiffCallbacks callbacks) {
+        for (Diagnostic diagnostic : descriptor.diagnostics) {
+            callbacks.unexpectedDiagnostic(TextDiagnostic.asTextDiagnostic(diagnostic), descriptor.start, descriptor.end);
         }
     }
 
@@ -445,8 +454,8 @@ public class CheckerTestUtil {
         result.append("<!");
         for (Iterator<Diagnostic> iterator = currentDescriptor.diagnostics.iterator(); iterator.hasNext(); ) {
             Diagnostic diagnostic = iterator.next();
-            if (diagnosticToExpectedDiagnostic.containsKey(diagnostic)) {
-                TextDiagnostic expectedDiagnostic = diagnosticToExpectedDiagnostic.get(diagnostic);
+            TextDiagnostic expectedDiagnostic = diagnosticToExpectedDiagnostic.get(diagnostic);
+            if (expectedDiagnostic != null) {
                 TextDiagnostic actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic);
                 if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
                     result.append(expectedDiagnostic.asString());
@@ -620,10 +629,6 @@ public class CheckerTestUtil {
             return end;
         }
 
-        public List<Diagnostic> getDiagnostics() {
-            return diagnostics;
-        }
-
         public TextRange getTextRange() {
             return new TextRange(start, end);
         }
@@ -725,6 +730,11 @@ public class CheckerTestUtil {
                     return escape(s);
                 }
             }, "; ") + ')';
+        }
+
+        @Override
+        public String toString() {
+            return asString();
         }
     }
 
