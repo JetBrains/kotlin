@@ -66,22 +66,22 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
 public external abstract class WebGLObject {
 }
 
-public external abstract class WebGLBuffer : WebGLObject() {
+public external abstract class WebGLBuffer : WebGLObject {
 }
 
-public external abstract class WebGLFramebuffer : WebGLObject() {
+public external abstract class WebGLFramebuffer : WebGLObject {
 }
 
-public external abstract class WebGLProgram : WebGLObject() {
+public external abstract class WebGLProgram : WebGLObject {
 }
 
-public external abstract class WebGLRenderbuffer : WebGLObject() {
+public external abstract class WebGLRenderbuffer : WebGLObject {
 }
 
-public external abstract class WebGLShader : WebGLObject() {
+public external abstract class WebGLShader : WebGLObject {
 }
 
-public external abstract class WebGLTexture : WebGLObject() {
+public external abstract class WebGLTexture : WebGLObject {
 }
 
 public external abstract class WebGLUniformLocation {
@@ -858,7 +858,7 @@ public external abstract class WebGLRenderingContext : WebGLRenderingContextBase
     }
 }
 
-public external open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event(type, noImpl) {
+public external open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event {
     open val statusMessage: String
 }
 

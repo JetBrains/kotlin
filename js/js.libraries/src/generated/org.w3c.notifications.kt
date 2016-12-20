@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget() {
+public external open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget {
     var onclick: ((Event) -> dynamic)?
     var onerror: ((Event) -> dynamic)?
     open val title: String
@@ -167,7 +167,7 @@ public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOpti
     return o
 }
 
-public external open class NotificationEvent(type: String, eventInitDict: NotificationEventInit) : ExtendableEvent(type, eventInitDict) {
+public external open class NotificationEvent(type: String, eventInitDict: NotificationEventInit) : ExtendableEvent {
     open val notification: Notification
     open val action: String
 }

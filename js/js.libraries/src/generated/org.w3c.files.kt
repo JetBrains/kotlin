@@ -43,7 +43,7 @@ public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     return o
 }
 
-public external open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob(noImpl, options) {
+public external open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob {
     open val name: String
     open val lastModified: Int
 }
@@ -71,7 +71,7 @@ public external abstract class FileList {
     operator fun get(index: Int): File?
 }
 
-public external open class FileReader : EventTarget() {
+public external open class FileReader : EventTarget {
     open val readyState: Short
     open val result: dynamic
     open val error: dynamic

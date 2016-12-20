@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external abstract class SVGElement : Element(), ElementCSSInlineStyle, GlobalEventHandlers, SVGElementInstance {
+public external abstract class SVGElement : Element, ElementCSSInlineStyle, GlobalEventHandlers, SVGElementInstance {
     open val dataset: DOMStringMap
     open val ownerSVGElement: SVGSVGElement?
     open val viewportElement: SVGElement?
@@ -56,14 +56,14 @@ public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? 
     return o
 }
 
-public external abstract class SVGGraphicsElement : SVGElement(), SVGTests {
+public external abstract class SVGGraphicsElement : SVGElement, SVGTests {
     open val transform: SVGAnimatedTransformList
     fun getBBox(options: SVGBoundingBoxOptions = noImpl): DOMRect
     fun getCTM(): DOMMatrix?
     fun getScreenCTM(): DOMMatrix?
 }
 
-public external abstract class SVGGeometryElement : SVGGraphicsElement() {
+public external abstract class SVGGeometryElement : SVGGraphicsElement {
     open val pathLength: SVGAnimatedNumber
     fun isPointInFill(point: DOMPoint): Boolean
     fun isPointInStroke(point: DOMPoint): Boolean
@@ -262,7 +262,7 @@ public external interface SVGURIReference {
     val href: SVGAnimatedString
 }
 
-public external abstract class SVGSVGElement : SVGGraphicsElement(), SVGFitToViewBox, SVGZoomAndPan, WindowEventHandlers {
+public external abstract class SVGSVGElement : SVGGraphicsElement, SVGFitToViewBox, SVGZoomAndPan, WindowEventHandlers {
     open val x: SVGAnimatedLength
     open val y: SVGAnimatedLength
     open val width: SVGAnimatedLength
@@ -295,28 +295,28 @@ public external abstract class SVGSVGElement : SVGGraphicsElement(), SVGFitToVie
     }
 }
 
-public external abstract class SVGGElement : SVGGraphicsElement() {
+public external abstract class SVGGElement : SVGGraphicsElement {
 }
 
-public external abstract class SVGUnknownElement : SVGGraphicsElement() {
+public external abstract class SVGUnknownElement : SVGGraphicsElement {
 }
 
-public external abstract class SVGDefsElement : SVGGraphicsElement() {
+public external abstract class SVGDefsElement : SVGGraphicsElement {
 }
 
-public external abstract class SVGDescElement : SVGElement() {
+public external abstract class SVGDescElement : SVGElement {
 }
 
-public external abstract class SVGMetadataElement : SVGElement() {
+public external abstract class SVGMetadataElement : SVGElement {
 }
 
-public external abstract class SVGTitleElement : SVGElement() {
+public external abstract class SVGTitleElement : SVGElement {
 }
 
-public external abstract class SVGSymbolElement : SVGGraphicsElement(), SVGFitToViewBox {
+public external abstract class SVGSymbolElement : SVGGraphicsElement, SVGFitToViewBox {
 }
 
-public external abstract class SVGUseElement : SVGGraphicsElement(), SVGURIReference {
+public external abstract class SVGUseElement : SVGGraphicsElement, SVGURIReference {
     open val x: SVGAnimatedLength
     open val y: SVGAnimatedLength
     open val width: SVGAnimatedLength
@@ -325,7 +325,7 @@ public external abstract class SVGUseElement : SVGGraphicsElement(), SVGURIRefer
     open val animatedInstanceRoot: SVGElement?
 }
 
-public external open class SVGUseElementShadowRoot : ShadowRoot() {
+public external open class SVGUseElementShadowRoot : ShadowRoot {
     override fun getElementById(elementId: String): Element?
     override fun prepend(vararg nodes: dynamic): Unit
     override fun append(vararg nodes: dynamic): Unit
@@ -342,14 +342,14 @@ public external open class ShadowAnimation(source: dynamic, newTarget: dynamic) 
     open val sourceAnimation: dynamic
 }
 
-public external abstract class SVGSwitchElement : SVGGraphicsElement() {
+public external abstract class SVGSwitchElement : SVGGraphicsElement {
 }
 
 public external interface GetSVGDocument {
     fun getSVGDocument(): Document
 }
 
-public external abstract class SVGStyleElement : SVGElement(), LinkStyle {
+public external abstract class SVGStyleElement : SVGElement, LinkStyle {
     open var type: String
     open var media: String
     open var title: String
@@ -427,10 +427,10 @@ public external abstract class SVGAnimatedPreserveAspectRatio {
     open val animVal: SVGPreserveAspectRatio
 }
 
-public external abstract class SVGPathElement : SVGGeometryElement() {
+public external abstract class SVGPathElement : SVGGeometryElement {
 }
 
-public external abstract class SVGRectElement : SVGGeometryElement() {
+public external abstract class SVGRectElement : SVGGeometryElement {
     open val x: SVGAnimatedLength
     open val y: SVGAnimatedLength
     open val width: SVGAnimatedLength
@@ -439,27 +439,27 @@ public external abstract class SVGRectElement : SVGGeometryElement() {
     open val ry: SVGAnimatedLength
 }
 
-public external abstract class SVGCircleElement : SVGGeometryElement() {
+public external abstract class SVGCircleElement : SVGGeometryElement {
     open val cx: SVGAnimatedLength
     open val cy: SVGAnimatedLength
     open val r: SVGAnimatedLength
 }
 
-public external abstract class SVGEllipseElement : SVGGeometryElement() {
+public external abstract class SVGEllipseElement : SVGGeometryElement {
     open val cx: SVGAnimatedLength
     open val cy: SVGAnimatedLength
     open val rx: SVGAnimatedLength
     open val ry: SVGAnimatedLength
 }
 
-public external abstract class SVGLineElement : SVGGeometryElement() {
+public external abstract class SVGLineElement : SVGGeometryElement {
     open val x1: SVGAnimatedLength
     open val y1: SVGAnimatedLength
     open val x2: SVGAnimatedLength
     open val y2: SVGAnimatedLength
 }
 
-public external abstract class SVGMeshElement : SVGGeometryElement(), SVGURIReference {
+public external abstract class SVGMeshElement : SVGGeometryElement, SVGURIReference {
 }
 
 public external interface SVGAnimatedPoints {
@@ -483,13 +483,13 @@ public external abstract class SVGPointList {
     operator fun set(index: Int, newItem: DOMPoint): Unit
 }
 
-public external abstract class SVGPolylineElement : SVGGeometryElement(), SVGAnimatedPoints {
+public external abstract class SVGPolylineElement : SVGGeometryElement, SVGAnimatedPoints {
 }
 
-public external abstract class SVGPolygonElement : SVGGeometryElement(), SVGAnimatedPoints {
+public external abstract class SVGPolygonElement : SVGGeometryElement, SVGAnimatedPoints {
 }
 
-public external abstract class SVGTextContentElement : SVGGraphicsElement() {
+public external abstract class SVGTextContentElement : SVGGraphicsElement {
     open val textLength: SVGAnimatedLength
     open val lengthAdjust: SVGAnimatedEnumeration
     fun getNumberOfChars(): Int
@@ -509,7 +509,7 @@ public external abstract class SVGTextContentElement : SVGGraphicsElement() {
     }
 }
 
-public external abstract class SVGTextPositioningElement : SVGTextContentElement() {
+public external abstract class SVGTextPositioningElement : SVGTextContentElement {
     open val x: SVGAnimatedLengthList
     open val y: SVGAnimatedLengthList
     open val dx: SVGAnimatedLengthList
@@ -517,13 +517,13 @@ public external abstract class SVGTextPositioningElement : SVGTextContentElement
     open val rotate: SVGAnimatedNumberList
 }
 
-public external abstract class SVGTextElement : SVGTextPositioningElement() {
+public external abstract class SVGTextElement : SVGTextPositioningElement {
 }
 
-public external abstract class SVGTSpanElement : SVGTextPositioningElement() {
+public external abstract class SVGTSpanElement : SVGTextPositioningElement {
 }
 
-public external abstract class SVGTextPathElement : SVGTextContentElement(), SVGURIReference {
+public external abstract class SVGTextPathElement : SVGTextContentElement, SVGURIReference {
     open val startOffset: SVGAnimatedLength
     open val method: SVGAnimatedEnumeration
     open val spacing: SVGAnimatedEnumeration
@@ -538,7 +538,7 @@ public external abstract class SVGTextPathElement : SVGTextContentElement(), SVG
     }
 }
 
-public external abstract class SVGImageElement : SVGGraphicsElement(), SVGURIReference, HTMLOrSVGImageElement {
+public external abstract class SVGImageElement : SVGGraphicsElement, SVGURIReference, HTMLOrSVGImageElement {
     open val x: SVGAnimatedLength
     open val y: SVGAnimatedLength
     open val width: SVGAnimatedLength
@@ -547,14 +547,14 @@ public external abstract class SVGImageElement : SVGGraphicsElement(), SVGURIRef
     open var crossOrigin: String?
 }
 
-public external abstract class SVGForeignObjectElement : SVGGraphicsElement() {
+public external abstract class SVGForeignObjectElement : SVGGraphicsElement {
     open val x: SVGAnimatedLength
     open val y: SVGAnimatedLength
     open val width: SVGAnimatedLength
     open val height: SVGAnimatedLength
 }
 
-public external abstract class SVGMarkerElement : SVGElement(), SVGFitToViewBox {
+public external abstract class SVGMarkerElement : SVGElement, SVGFitToViewBox {
     open val refX: SVGAnimatedLength
     open val refY: SVGAnimatedLength
     open val markerUnits: SVGAnimatedEnumeration
@@ -576,10 +576,10 @@ public external abstract class SVGMarkerElement : SVGElement(), SVGFitToViewBox 
     }
 }
 
-public external abstract class SVGSolidcolorElement : SVGElement() {
+public external abstract class SVGSolidcolorElement : SVGElement {
 }
 
-public external abstract class SVGGradientElement : SVGElement(), SVGURIReference, SVGUnitTypes {
+public external abstract class SVGGradientElement : SVGElement, SVGURIReference, SVGUnitTypes {
     open val gradientUnits: SVGAnimatedEnumeration
     open val gradientTransform: SVGAnimatedTransformList
     open val spreadMethod: SVGAnimatedEnumeration
@@ -595,14 +595,14 @@ public external abstract class SVGGradientElement : SVGElement(), SVGURIReferenc
     }
 }
 
-public external abstract class SVGLinearGradientElement : SVGGradientElement() {
+public external abstract class SVGLinearGradientElement : SVGGradientElement {
     open val x1: SVGAnimatedLength
     open val y1: SVGAnimatedLength
     open val x2: SVGAnimatedLength
     open val y2: SVGAnimatedLength
 }
 
-public external abstract class SVGRadialGradientElement : SVGGradientElement() {
+public external abstract class SVGRadialGradientElement : SVGGradientElement {
     open val cx: SVGAnimatedLength
     open val cy: SVGAnimatedLength
     open val r: SVGAnimatedLength
@@ -611,20 +611,20 @@ public external abstract class SVGRadialGradientElement : SVGGradientElement() {
     open val fr: SVGAnimatedLength
 }
 
-public external abstract class SVGMeshGradientElement : SVGGradientElement() {
+public external abstract class SVGMeshGradientElement : SVGGradientElement {
 }
 
-public external abstract class SVGMeshrowElement : SVGElement() {
+public external abstract class SVGMeshrowElement : SVGElement {
 }
 
-public external abstract class SVGMeshpatchElement : SVGElement() {
+public external abstract class SVGMeshpatchElement : SVGElement {
 }
 
-public external abstract class SVGStopElement : SVGElement() {
+public external abstract class SVGStopElement : SVGElement {
     open val offset: SVGAnimatedNumber
 }
 
-public external abstract class SVGPatternElement : SVGElement(), SVGFitToViewBox, SVGURIReference, SVGUnitTypes {
+public external abstract class SVGPatternElement : SVGElement, SVGFitToViewBox, SVGURIReference, SVGUnitTypes {
     open val patternUnits: SVGAnimatedEnumeration
     open val patternContentUnits: SVGAnimatedEnumeration
     open val patternTransform: SVGAnimatedTransformList
@@ -640,23 +640,23 @@ public external abstract class SVGPatternElement : SVGElement(), SVGFitToViewBox
     }
 }
 
-public external abstract class SVGHatchElement : SVGElement() {
+public external abstract class SVGHatchElement : SVGElement {
 }
 
-public external abstract class SVGHatchpathElement : SVGElement() {
+public external abstract class SVGHatchpathElement : SVGElement {
 }
 
-public external abstract class SVGCursorElement : SVGElement(), SVGURIReference {
+public external abstract class SVGCursorElement : SVGElement, SVGURIReference {
     open val x: SVGAnimatedLength
     open val y: SVGAnimatedLength
 }
 
-public external abstract class SVGScriptElement : SVGElement(), SVGURIReference, HTMLOrSVGScriptElement {
+public external abstract class SVGScriptElement : SVGElement, SVGURIReference, HTMLOrSVGScriptElement {
     open var type: String
     open var crossOrigin: String?
 }
 
-public external abstract class SVGAElement : SVGGraphicsElement(), SVGURIReference {
+public external abstract class SVGAElement : SVGGraphicsElement, SVGURIReference {
     open val target: SVGAnimatedString
     open val download: SVGAnimatedString
     open val rel: SVGAnimatedString
@@ -665,7 +665,7 @@ public external abstract class SVGAElement : SVGGraphicsElement(), SVGURIReferen
     open val type: SVGAnimatedString
 }
 
-public external abstract class SVGViewElement : SVGElement(), SVGFitToViewBox, SVGZoomAndPan {
+public external abstract class SVGViewElement : SVGElement, SVGFitToViewBox, SVGZoomAndPan {
 
     companion object {
         val SVG_ZOOMANDPAN_UNKNOWN: Short

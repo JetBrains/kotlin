@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.xhr.*
 
-public external abstract class ServiceWorkerRegistration : EventTarget() {
+public external abstract class ServiceWorkerRegistration : EventTarget {
     open val installing: ServiceWorker?
     open val waiting: ServiceWorker?
     open val active: ServiceWorker?
@@ -34,7 +34,7 @@ public external abstract class ServiceWorkerRegistration : EventTarget() {
     fun getNotifications(filter: GetNotificationOptions = noImpl): dynamic
 }
 
-public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope() {
+public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
     open val clients: Clients
     open val registration: ServiceWorkerRegistration
     open var oninstall: ((Event) -> dynamic)?
@@ -48,14 +48,14 @@ public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope() {
     fun skipWaiting(): dynamic
 }
 
-public external abstract class ServiceWorker : EventTarget(), AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
+public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
     open val scriptURL: String
     open val state: String
     open var onstatechange: ((Event) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = noImpl): Unit
 }
 
-public external abstract class ServiceWorkerContainer : EventTarget() {
+public external abstract class ServiceWorkerContainer : EventTarget {
     open val controller: ServiceWorker?
     open val ready: dynamic
     open var oncontrollerchange: ((Event) -> dynamic)?
@@ -85,7 +85,7 @@ public inline fun RegistrationOptions(scope: String?, type: String? = "classic")
     return o
 }
 
-public external open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event {
     open val data: Any?
     open val origin: String
     open val lastEventId: String
@@ -134,7 +134,7 @@ public external abstract class Client : UnionClientOrMessagePortOrServiceWorker 
     fun postMessage(message: Any?, transfer: Array<dynamic> = noImpl): Unit
 }
 
-public external abstract class WindowClient : Client() {
+public external abstract class WindowClient : Client {
     open val visibilityState: dynamic
     open val focused: Boolean
     fun focus(): dynamic
@@ -167,7 +167,7 @@ public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type
     return o
 }
 
-public external open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = noImpl) : Event {
     fun waitUntil(f: dynamic): Unit
 }
 
@@ -185,7 +185,7 @@ public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boo
     return o
 }
 
-public external open class InstallEvent(type: String, eventInitDict: ExtendableEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
+public external open class InstallEvent(type: String, eventInitDict: ExtendableEventInit = noImpl) : ExtendableEvent {
     fun registerForeignFetch(options: ForeignFetchOptions): Unit
 }
 
@@ -208,7 +208,7 @@ public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<Str
     return o
 }
 
-public external open class FetchEvent(type: String, eventInitDict: FetchEventInit) : ExtendableEvent(type, eventInitDict) {
+public external open class FetchEvent(type: String, eventInitDict: FetchEventInit) : ExtendableEvent {
     open val request: Request
     open val clientId: String?
     open val isReload: Boolean
@@ -241,7 +241,7 @@ public inline fun FetchEventInit(request: Request?, clientId: String? = null, is
     return o
 }
 
-public external open class ForeignFetchEvent(type: String, eventInitDict: ForeignFetchEventInit) : ExtendableEvent(type, eventInitDict) {
+public external open class ForeignFetchEvent(type: String, eventInitDict: ForeignFetchEventInit) : ExtendableEvent {
     open val request: Request
     open val origin: String
     fun respondWith(r: dynamic): Unit
@@ -292,7 +292,7 @@ public inline fun ForeignFetchResponse(response: Response?, origin: String?, hea
     return o
 }
 
-public external open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
+public external open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent {
     open val data: Any?
     open val origin: String
     open val lastEventId: String
@@ -406,7 +406,7 @@ public external abstract class CacheStorage {
     fun keys(): dynamic
 }
 
-public external open class FunctionalEvent : ExtendableEvent(noImpl, noImpl) {
+public external open class FunctionalEvent : ExtendableEvent {
 }
 
 public external @marker interface UnionClientOrMessagePortOrServiceWorker {

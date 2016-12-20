@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external open class Document : Node(), GlobalEventHandlers, DocumentAndElementEventHandlers, NonElementParentNode, DocumentOrShadowRoot, ParentNode, GeometryUtils {
+public external open class Document : Node, GlobalEventHandlers, DocumentAndElementEventHandlers, NonElementParentNode, DocumentOrShadowRoot, ParentNode, GeometryUtils {
     open val fullscreenEnabled: Boolean
     open val fullscreen: Boolean
     var onfullscreenchange: ((Event) -> dynamic)?
@@ -190,7 +190,7 @@ public external open class Document : Node(), GlobalEventHandlers, DocumentAndEl
     override fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions /* = noImpl */): DOMPoint
 }
 
-public external abstract class Window : EventTarget(), GlobalEventHandlers, WindowEventHandlers, WindowOrWorkerGlobalScope, WindowSessionStorage, WindowLocalStorage, GlobalPerformance, UnionMessagePortOrWindow {
+public external abstract class Window : EventTarget, GlobalEventHandlers, WindowEventHandlers, WindowOrWorkerGlobalScope, WindowSessionStorage, WindowLocalStorage, GlobalPerformance, UnionMessagePortOrWindow {
     open val window: Window
     open val self: Window
     open val document: Document
@@ -268,17 +268,17 @@ public external abstract class HTMLAllCollection {
     fun item(nameOrIndex: String = noImpl): UnionElementOrHTMLCollection?
 }
 
-public external abstract class HTMLFormControlsCollection : HTMLCollection() {
+public external abstract class HTMLFormControlsCollection : HTMLCollection {
 //    override fun namedItem(name: String): UnionElementOrRadioNodeList?
 //    @nativeGetter
 //    operator override fun get(name: String): UnionElementOrRadioNodeList?
 }
 
-public external abstract class RadioNodeList : NodeList(), UnionElementOrRadioNodeList {
+public external abstract class RadioNodeList : NodeList, UnionElementOrRadioNodeList {
     open var value: String
 }
 
-public external abstract class HTMLOptionsCollection : HTMLCollection() {
+public external abstract class HTMLOptionsCollection : HTMLCollection {
     override var length: Int
     open var selectedIndex: Int
     @nativeSetter
@@ -287,7 +287,7 @@ public external abstract class HTMLOptionsCollection : HTMLCollection() {
     fun remove(index: Int): Unit
 }
 
-public external abstract class HTMLElement : Element(), ElementCSSInlineStyle, GlobalEventHandlers, DocumentAndElementEventHandlers, ElementContentEditable {
+public external abstract class HTMLElement : Element, ElementCSSInlineStyle, GlobalEventHandlers, DocumentAndElementEventHandlers, ElementContentEditable {
     open var title: String
     open var lang: String
     open var translate: Boolean
@@ -313,7 +313,7 @@ public external abstract class HTMLElement : Element(), ElementCSSInlineStyle, G
     fun forceSpellCheck(): Unit
 }
 
-public external abstract class HTMLUnknownElement : HTMLElement() {
+public external abstract class HTMLUnknownElement : HTMLElement {
 }
 
 public external abstract class DOMStringMap {
@@ -323,23 +323,23 @@ public external abstract class DOMStringMap {
     operator fun set(name: String, value: String): Unit
 }
 
-public external abstract class HTMLHtmlElement : HTMLElement() {
+public external abstract class HTMLHtmlElement : HTMLElement {
     open var version: String
 }
 
-public external abstract class HTMLHeadElement : HTMLElement() {
+public external abstract class HTMLHeadElement : HTMLElement {
 }
 
-public external abstract class HTMLTitleElement : HTMLElement() {
+public external abstract class HTMLTitleElement : HTMLElement {
     open var text: String
 }
 
-public external abstract class HTMLBaseElement : HTMLElement() {
+public external abstract class HTMLBaseElement : HTMLElement {
     open var href: String
     open var target: String
 }
 
-public external abstract class HTMLLinkElement : HTMLElement(), LinkStyle {
+public external abstract class HTMLLinkElement : HTMLElement, LinkStyle {
     open var scope: String
     open var workerType: String
     open var href: String
@@ -358,20 +358,20 @@ public external abstract class HTMLLinkElement : HTMLElement(), LinkStyle {
     open var target: String
 }
 
-public external abstract class HTMLMetaElement : HTMLElement() {
+public external abstract class HTMLMetaElement : HTMLElement {
     open var name: String
     open var httpEquiv: String
     open var content: String
     open var scheme: String
 }
 
-public external abstract class HTMLStyleElement : HTMLElement(), LinkStyle {
+public external abstract class HTMLStyleElement : HTMLElement, LinkStyle {
     open var media: String
     open var nonce: String
     open var type: String
 }
 
-public external abstract class HTMLBodyElement : HTMLElement(), WindowEventHandlers {
+public external abstract class HTMLBodyElement : HTMLElement, WindowEventHandlers {
     open var text: String
     open var link: String
     open var vLink: String
@@ -380,15 +380,15 @@ public external abstract class HTMLBodyElement : HTMLElement(), WindowEventHandl
     open var background: String
 }
 
-public external abstract class HTMLHeadingElement : HTMLElement() {
+public external abstract class HTMLHeadingElement : HTMLElement {
     open var align: String
 }
 
-public external abstract class HTMLParagraphElement : HTMLElement() {
+public external abstract class HTMLParagraphElement : HTMLElement {
     open var align: String
 }
 
-public external abstract class HTMLHRElement : HTMLElement() {
+public external abstract class HTMLHRElement : HTMLElement {
     open var align: String
     open var color: String
     open var noShade: Boolean
@@ -396,40 +396,40 @@ public external abstract class HTMLHRElement : HTMLElement() {
     open var width: String
 }
 
-public external abstract class HTMLPreElement : HTMLElement() {
+public external abstract class HTMLPreElement : HTMLElement {
     open var width: Int
 }
 
-public external abstract class HTMLQuoteElement : HTMLElement() {
+public external abstract class HTMLQuoteElement : HTMLElement {
     open var cite: String
 }
 
-public external abstract class HTMLOListElement : HTMLElement() {
+public external abstract class HTMLOListElement : HTMLElement {
     open var reversed: Boolean
     open var start: Int
     open var type: String
     open var compact: Boolean
 }
 
-public external abstract class HTMLUListElement : HTMLElement() {
+public external abstract class HTMLUListElement : HTMLElement {
     open var compact: Boolean
     open var type: String
 }
 
-public external abstract class HTMLLIElement : HTMLElement() {
+public external abstract class HTMLLIElement : HTMLElement {
     open var value: Int
     open var type: String
 }
 
-public external abstract class HTMLDListElement : HTMLElement() {
+public external abstract class HTMLDListElement : HTMLElement {
     open var compact: Boolean
 }
 
-public external abstract class HTMLDivElement : HTMLElement() {
+public external abstract class HTMLDivElement : HTMLElement {
     open var align: String
 }
 
-public external abstract class HTMLAnchorElement : HTMLElement(), HTMLHyperlinkElementUtils {
+public external abstract class HTMLAnchorElement : HTMLElement, HTMLHyperlinkElementUtils {
     open var target: String
     open var download: String
     open var ping: String
@@ -446,18 +446,18 @@ public external abstract class HTMLAnchorElement : HTMLElement(), HTMLHyperlinkE
     open var shape: String
 }
 
-public external abstract class HTMLDataElement : HTMLElement() {
+public external abstract class HTMLDataElement : HTMLElement {
     open var value: String
 }
 
-public external abstract class HTMLTimeElement : HTMLElement() {
+public external abstract class HTMLTimeElement : HTMLElement {
     open var dateTime: String
 }
 
-public external abstract class HTMLSpanElement : HTMLElement() {
+public external abstract class HTMLSpanElement : HTMLElement {
 }
 
-public external abstract class HTMLBRElement : HTMLElement() {
+public external abstract class HTMLBRElement : HTMLElement {
     open var clear: String
 }
 
@@ -475,15 +475,15 @@ public external interface HTMLHyperlinkElementUtils {
     var hash: String
 }
 
-public external abstract class HTMLModElement : HTMLElement() {
+public external abstract class HTMLModElement : HTMLElement {
     open var cite: String
     open var dateTime: String
 }
 
-public external abstract class HTMLPictureElement : HTMLElement() {
+public external abstract class HTMLPictureElement : HTMLElement {
 }
 
-public external abstract class HTMLSourceElement : HTMLElement() {
+public external abstract class HTMLSourceElement : HTMLElement {
     open var src: String
     open var type: String
     open var srcset: String
@@ -491,7 +491,7 @@ public external abstract class HTMLSourceElement : HTMLElement() {
     open var media: String
 }
 
-public external abstract class HTMLImageElement : HTMLElement(), TexImageSource, HTMLOrSVGImageElement {
+public external abstract class HTMLImageElement : HTMLElement, TexImageSource, HTMLOrSVGImageElement {
     open var alt: String
     open var src: String
     open var srcset: String
@@ -517,7 +517,7 @@ public external abstract class HTMLImageElement : HTMLElement(), TexImageSource,
     open val y: Int
 }
 
-public external abstract class HTMLIFrameElement : HTMLElement() {
+public external abstract class HTMLIFrameElement : HTMLElement {
     open var src: String
     open var srcdoc: String
     open var name: String
@@ -538,7 +538,7 @@ public external abstract class HTMLIFrameElement : HTMLElement() {
     fun getSVGDocument(): Document?
 }
 
-public external abstract class HTMLEmbedElement : HTMLElement() {
+public external abstract class HTMLEmbedElement : HTMLElement {
     open var src: String
     open var type: String
     open var width: String
@@ -548,7 +548,7 @@ public external abstract class HTMLEmbedElement : HTMLElement() {
     fun getSVGDocument(): Document?
 }
 
-public external abstract class HTMLObjectElement : HTMLElement() {
+public external abstract class HTMLObjectElement : HTMLElement {
     open var data: String
     open var type: String
     open var typeMustMatch: Boolean
@@ -578,14 +578,14 @@ public external abstract class HTMLObjectElement : HTMLElement() {
     fun setCustomValidity(error: String): Unit
 }
 
-public external abstract class HTMLParamElement : HTMLElement() {
+public external abstract class HTMLParamElement : HTMLElement {
     open var name: String
     open var value: String
     open var type: String
     open var valueType: String
 }
 
-public external abstract class HTMLVideoElement : HTMLMediaElement(), TexImageSource {
+public external abstract class HTMLVideoElement : HTMLMediaElement, TexImageSource {
     open var width: Int
     open var height: Int
     open val videoWidth: Int
@@ -594,10 +594,10 @@ public external abstract class HTMLVideoElement : HTMLMediaElement(), TexImageSo
     open var playsInline: Boolean
 }
 
-public external abstract class HTMLAudioElement : HTMLMediaElement() {
+public external abstract class HTMLAudioElement : HTMLMediaElement {
 }
 
-public external abstract class HTMLTrackElement : HTMLElement() {
+public external abstract class HTMLTrackElement : HTMLElement {
     open var kind: String
     open var src: String
     open var srclang: String
@@ -614,7 +614,7 @@ public external abstract class HTMLTrackElement : HTMLElement() {
     }
 }
 
-public external abstract class HTMLMediaElement : HTMLElement() {
+public external abstract class HTMLMediaElement : HTMLElement {
     open val error: MediaError?
     open var src: String
     open var srcObject: dynamic
@@ -674,7 +674,7 @@ public external abstract class MediaError {
     }
 }
 
-public external abstract class AudioTrackList : EventTarget() {
+public external abstract class AudioTrackList : EventTarget {
     open val length: Int
     open var onchange: ((Event) -> dynamic)?
     open var onaddtrack: ((Event) -> dynamic)?
@@ -692,7 +692,7 @@ public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTra
     open var enabled: Boolean
 }
 
-public external abstract class VideoTrackList : EventTarget() {
+public external abstract class VideoTrackList : EventTarget {
     open val length: Int
     open val selectedIndex: Int
     open var onchange: ((Event) -> dynamic)?
@@ -711,7 +711,7 @@ public external abstract class VideoTrack : UnionAudioTrackOrTextTrackOrVideoTra
     open var selected: Boolean
 }
 
-public external abstract class TextTrackList : EventTarget() {
+public external abstract class TextTrackList : EventTarget {
     open val length: Int
     open var onchange: ((Event) -> dynamic)?
     open var onaddtrack: ((Event) -> dynamic)?
@@ -721,7 +721,7 @@ public external abstract class TextTrackList : EventTarget() {
     fun getTrackById(id: String): TextTrack?
 }
 
-public external abstract class TextTrack : EventTarget(), UnionAudioTrackOrTextTrackOrVideoTrack {
+public external abstract class TextTrack : EventTarget, UnionAudioTrackOrTextTrackOrVideoTrack {
     open val kind: String
     open val label: String
     open val language: String
@@ -742,7 +742,7 @@ public external abstract class TextTrackCueList {
     fun getCueById(id: String): TextTrackCue?
 }
 
-public external abstract class TextTrackCue : EventTarget() {
+public external abstract class TextTrackCue : EventTarget {
     open val track: TextTrack?
     open var id: String
     open var startTime: Double
@@ -758,7 +758,7 @@ public external abstract class TimeRanges {
     fun end(index: Int): Double
 }
 
-public external open class TrackEvent(type: String, eventInitDict: TrackEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class TrackEvent(type: String, eventInitDict: TrackEventInit = noImpl) : Event {
     open val track: UnionAudioTrackOrTextTrackOrVideoTrack?
 }
 
@@ -780,12 +780,12 @@ public inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack? 
     return o
 }
 
-public external abstract class HTMLMapElement : HTMLElement() {
+public external abstract class HTMLMapElement : HTMLElement {
     open var name: String
     open val areas: HTMLCollection
 }
 
-public external abstract class HTMLAreaElement : HTMLElement(), HTMLHyperlinkElementUtils {
+public external abstract class HTMLAreaElement : HTMLElement, HTMLHyperlinkElementUtils {
     open var alt: String
     open var coords: String
     open var shape: String
@@ -798,7 +798,7 @@ public external abstract class HTMLAreaElement : HTMLElement(), HTMLHyperlinkEle
     open var noHref: Boolean
 }
 
-public external abstract class HTMLTableElement : HTMLElement() {
+public external abstract class HTMLTableElement : HTMLElement {
     open var caption: HTMLTableCaptionElement?
     open var tHead: HTMLTableSectionElement?
     open var tFoot: HTMLTableSectionElement?
@@ -824,11 +824,11 @@ public external abstract class HTMLTableElement : HTMLElement() {
     fun deleteRow(index: Int): Unit
 }
 
-public external abstract class HTMLTableCaptionElement : HTMLElement() {
+public external abstract class HTMLTableCaptionElement : HTMLElement {
     open var align: String
 }
 
-public external abstract class HTMLTableColElement : HTMLElement() {
+public external abstract class HTMLTableColElement : HTMLElement {
     open var span: Int
     open var align: String
     open var ch: String
@@ -837,7 +837,7 @@ public external abstract class HTMLTableColElement : HTMLElement() {
     open var width: String
 }
 
-public external abstract class HTMLTableSectionElement : HTMLElement() {
+public external abstract class HTMLTableSectionElement : HTMLElement {
     open val rows: HTMLCollection
     open var align: String
     open var ch: String
@@ -847,7 +847,7 @@ public external abstract class HTMLTableSectionElement : HTMLElement() {
     fun deleteRow(index: Int): Unit
 }
 
-public external abstract class HTMLTableRowElement : HTMLElement() {
+public external abstract class HTMLTableRowElement : HTMLElement {
     open val rowIndex: Int
     open val sectionRowIndex: Int
     open val cells: HTMLCollection
@@ -860,7 +860,7 @@ public external abstract class HTMLTableRowElement : HTMLElement() {
     fun deleteCell(index: Int): Unit
 }
 
-public external abstract class HTMLTableCellElement : HTMLElement() {
+public external abstract class HTMLTableCellElement : HTMLElement {
     open var colSpan: Int
     open var rowSpan: Int
     open var headers: String
@@ -878,7 +878,7 @@ public external abstract class HTMLTableCellElement : HTMLElement() {
     open var bgColor: String
 }
 
-public external abstract class HTMLFormElement : HTMLElement() {
+public external abstract class HTMLFormElement : HTMLElement {
     open var acceptCharset: String
     open var action: String
     open var autocomplete: String
@@ -900,13 +900,13 @@ public external abstract class HTMLFormElement : HTMLElement() {
     fun reportValidity(): Boolean
 }
 
-public external abstract class HTMLLabelElement : HTMLElement() {
+public external abstract class HTMLLabelElement : HTMLElement {
     open val form: HTMLFormElement?
     open var htmlFor: String
     open val control: HTMLElement?
 }
 
-public external abstract class HTMLInputElement : HTMLElement() {
+public external abstract class HTMLInputElement : HTMLElement {
     open var accept: String
     open var alt: String
     open var autocomplete: String
@@ -965,7 +965,7 @@ public external abstract class HTMLInputElement : HTMLElement() {
     fun setSelectionRange(start: Int, end: Int, direction: String = noImpl): Unit
 }
 
-public external abstract class HTMLButtonElement : HTMLElement() {
+public external abstract class HTMLButtonElement : HTMLElement {
     open var autofocus: Boolean
     open var disabled: Boolean
     open val form: HTMLFormElement?
@@ -987,7 +987,7 @@ public external abstract class HTMLButtonElement : HTMLElement() {
     fun setCustomValidity(error: String): Unit
 }
 
-public external abstract class HTMLSelectElement : HTMLElement() {
+public external abstract class HTMLSelectElement : HTMLElement {
     open var autocomplete: String
     open var autofocus: Boolean
     open var disabled: Boolean
@@ -1019,16 +1019,16 @@ public external abstract class HTMLSelectElement : HTMLElement() {
     fun setCustomValidity(error: String): Unit
 }
 
-public external abstract class HTMLDataListElement : HTMLElement() {
+public external abstract class HTMLDataListElement : HTMLElement {
     open val options: HTMLCollection
 }
 
-public external abstract class HTMLOptGroupElement : HTMLElement(), UnionHTMLOptGroupElementOrHTMLOptionElement {
+public external abstract class HTMLOptGroupElement : HTMLElement, UnionHTMLOptGroupElementOrHTMLOptionElement {
     open var disabled: Boolean
     open var label: String
 }
 
-public external abstract class HTMLOptionElement : HTMLElement(), UnionHTMLOptGroupElementOrHTMLOptionElement {
+public external abstract class HTMLOptionElement : HTMLElement, UnionHTMLOptGroupElementOrHTMLOptionElement {
     open var disabled: Boolean
     open val form: HTMLFormElement?
     open var label: String
@@ -1039,7 +1039,7 @@ public external abstract class HTMLOptionElement : HTMLElement(), UnionHTMLOptGr
     open val index: Int
 }
 
-public external abstract class HTMLTextAreaElement : HTMLElement() {
+public external abstract class HTMLTextAreaElement : HTMLElement {
     open var autocomplete: String
     open var autofocus: Boolean
     open var cols: Int
@@ -1075,7 +1075,7 @@ public external abstract class HTMLTextAreaElement : HTMLElement() {
     fun setSelectionRange(start: Int, end: Int, direction: String = noImpl): Unit
 }
 
-public external abstract class HTMLKeygenElement : HTMLElement() {
+public external abstract class HTMLKeygenElement : HTMLElement {
     open var autofocus: Boolean
     open var challenge: String
     open var disabled: Boolean
@@ -1092,7 +1092,7 @@ public external abstract class HTMLKeygenElement : HTMLElement() {
     fun setCustomValidity(error: String): Unit
 }
 
-public external abstract class HTMLOutputElement : HTMLElement() {
+public external abstract class HTMLOutputElement : HTMLElement {
     open val htmlFor: DOMTokenList
     open val form: HTMLFormElement?
     open var name: String
@@ -1108,14 +1108,14 @@ public external abstract class HTMLOutputElement : HTMLElement() {
     fun setCustomValidity(error: String): Unit
 }
 
-public external abstract class HTMLProgressElement : HTMLElement() {
+public external abstract class HTMLProgressElement : HTMLElement {
     open var value: Double
     open var max: Double
     open val position: Double
     open val labels: NodeList
 }
 
-public external abstract class HTMLMeterElement : HTMLElement() {
+public external abstract class HTMLMeterElement : HTMLElement {
     open var value: Double
     open var min: Double
     open var max: Double
@@ -1125,7 +1125,7 @@ public external abstract class HTMLMeterElement : HTMLElement() {
     open val labels: NodeList
 }
 
-public external abstract class HTMLFieldSetElement : HTMLElement() {
+public external abstract class HTMLFieldSetElement : HTMLElement {
     open var disabled: Boolean
     open val form: HTMLFormElement?
     open var name: String
@@ -1139,7 +1139,7 @@ public external abstract class HTMLFieldSetElement : HTMLElement() {
     fun setCustomValidity(error: String): Unit
 }
 
-public external abstract class HTMLLegendElement : HTMLElement() {
+public external abstract class HTMLLegendElement : HTMLElement {
     open val form: HTMLFormElement?
     open var align: String
 }
@@ -1158,17 +1158,17 @@ public external abstract class ValidityState {
     open val valid: Boolean
 }
 
-public external abstract class HTMLDetailsElement : HTMLElement() {
+public external abstract class HTMLDetailsElement : HTMLElement {
     open var open: Boolean
 }
 
-public external abstract class HTMLMenuElement : HTMLElement() {
+public external abstract class HTMLMenuElement : HTMLElement {
     open var type: String
     open var label: String
     open var compact: Boolean
 }
 
-public external abstract class HTMLMenuItemElement : HTMLElement() {
+public external abstract class HTMLMenuItemElement : HTMLElement {
     open var type: String
     open var label: String
     open var icon: String
@@ -1178,7 +1178,7 @@ public external abstract class HTMLMenuItemElement : HTMLElement() {
     open var default: Boolean
 }
 
-public external open class RelatedEvent(type: String, eventInitDict: RelatedEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class RelatedEvent(type: String, eventInitDict: RelatedEventInit = noImpl) : Event {
     open val relatedTarget: EventTarget?
 }
 
@@ -1200,7 +1200,7 @@ public inline fun RelatedEventInit(relatedTarget: EventTarget? = null, bubbles: 
     return o
 }
 
-public external abstract class HTMLDialogElement : HTMLElement() {
+public external abstract class HTMLDialogElement : HTMLElement {
     open var open: Boolean
     open var returnValue: String
     fun show(anchor: UnionElementOrMouseEvent = noImpl): Unit
@@ -1208,7 +1208,7 @@ public external abstract class HTMLDialogElement : HTMLElement() {
     fun close(returnValue: String = noImpl): Unit
 }
 
-public external abstract class HTMLScriptElement : HTMLElement(), HTMLOrSVGScriptElement {
+public external abstract class HTMLScriptElement : HTMLElement, HTMLOrSVGScriptElement {
     open var src: String
     open var type: String
     open var charset: String
@@ -1221,11 +1221,11 @@ public external abstract class HTMLScriptElement : HTMLElement(), HTMLOrSVGScrip
     open var htmlFor: String
 }
 
-public external abstract class HTMLTemplateElement : HTMLElement() {
+public external abstract class HTMLTemplateElement : HTMLElement {
     open val content: DocumentFragment
 }
 
-public external abstract class HTMLSlotElement : HTMLElement() {
+public external abstract class HTMLSlotElement : HTMLElement {
     open var name: String
     fun assignedNodes(options: AssignedNodesOptions = noImpl): Array<Node>
 }
@@ -1245,7 +1245,7 @@ public inline fun AssignedNodesOptions(flatten: Boolean? = false): AssignedNodes
     return o
 }
 
-public external abstract class HTMLCanvasElement : HTMLElement(), TexImageSource {
+public external abstract class HTMLCanvasElement : HTMLElement, TexImageSource {
     open var width: Int
     open var height: Int
     fun getContext(contextId: String, vararg arguments: Any?): RenderingContext?
@@ -1476,9 +1476,9 @@ public external open class ImageData : TexImageSource {
 }
 
 public external open class Path2D() : CanvasPath {
-    constructor(path: Path2D) : this()
-    constructor(paths: Array<Path2D>, fillRule: String = noImpl) : this()
-    constructor(d: String) : this()
+    constructor(path: Path2D)
+    constructor(paths: Array<Path2D>, fillRule: String = noImpl)
+    constructor(d: String)
     fun addPath(path: Path2D, transform: dynamic = noImpl): Unit
     override fun closePath(): Unit
     override fun moveTo(x: Double, y: Double): Unit
@@ -1571,7 +1571,7 @@ public external abstract class DataTransferItem {
     fun getAsFile(): File?
 }
 
-public external open class DragEvent(type: String, eventInitDict: DragEventInit = noImpl) : MouseEvent(type, eventInitDict) {
+public external open class DragEvent(type: String, eventInitDict: DragEventInit = noImpl) : MouseEvent {
     open val dataTransfer: DataTransfer?
 }
 
@@ -1647,7 +1647,7 @@ public external abstract class Location {
     fun reload(): Unit
 }
 
-public external open class PopStateEvent(type: String, eventInitDict: PopStateEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class PopStateEvent(type: String, eventInitDict: PopStateEventInit = noImpl) : Event {
     open val state: Any?
 }
 
@@ -1669,7 +1669,7 @@ public inline fun PopStateEventInit(state: Any? = null, bubbles: Boolean? = fals
     return o
 }
 
-public external open class HashChangeEvent(type: String, eventInitDict: HashChangeEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class HashChangeEvent(type: String, eventInitDict: HashChangeEventInit = noImpl) : Event {
     open val oldURL: String
     open val newURL: String
 }
@@ -1696,7 +1696,7 @@ public inline fun HashChangeEventInit(oldURL: String? = "", newURL: String? = ""
     return o
 }
 
-public external open class PageTransitionEvent(type: String, eventInitDict: PageTransitionEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class PageTransitionEvent(type: String, eventInitDict: PageTransitionEventInit = noImpl) : Event {
     open val persisted: Boolean
 }
 
@@ -1718,11 +1718,11 @@ public inline fun PageTransitionEventInit(persisted: Boolean? = false, bubbles: 
     return o
 }
 
-public external open class BeforeUnloadEvent : Event(noImpl, noImpl) {
+public external open class BeforeUnloadEvent : Event {
     var returnValue: String
 }
 
-public external abstract class ApplicationCache : EventTarget() {
+public external abstract class ApplicationCache : EventTarget {
     open val status: Short
     open var onchecking: ((Event) -> dynamic)?
     open var onerror: ((Event) -> dynamic)?
@@ -1750,7 +1750,7 @@ public external interface NavigatorOnLine {
     val onLine: Boolean
 }
 
-public external open class ErrorEvent(type: String, eventInitDict: ErrorEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class ErrorEvent(type: String, eventInitDict: ErrorEventInit = noImpl) : Event {
     open val message: String
     open val filename: String
     open val lineno: Int
@@ -1792,7 +1792,7 @@ public inline fun ErrorEventInit(message: String? = "", filename: String? = "", 
     return o
 }
 
-public external open class PromiseRejectionEvent(type: String, eventInitDict: PromiseRejectionEventInit) : Event(type, eventInitDict) {
+public external open class PromiseRejectionEvent(type: String, eventInitDict: PromiseRejectionEventInit) : Event {
     open val promise: dynamic
     open val reason: Any?
 }
@@ -2046,7 +2046,7 @@ public inline fun ImageBitmapOptions(imageOrientation: String? = "none", premult
     return o
 }
 
-public external open class MessageEvent(type: String, eventInitDict: MessageEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class MessageEvent(type: String, eventInitDict: MessageEventInit = noImpl) : Event {
     open val data: Any?
     open val origin: String
     open val lastEventId: String
@@ -2089,7 +2089,7 @@ public inline fun MessageEventInit(data: Any? = null, origin: String? = "", last
     return o
 }
 
-public external open class EventSource(url: String, eventSourceInitDict: EventSourceInit = noImpl) : EventTarget() {
+public external open class EventSource(url: String, eventSourceInitDict: EventSourceInit = noImpl) : EventTarget {
     open val url: String
     open val withCredentials: Boolean
     open val readyState: Short
@@ -2120,7 +2120,7 @@ public inline fun EventSourceInit(withCredentials: Boolean? = false): EventSourc
     return o
 }
 
-public external open class WebSocket(url: String, protocols: dynamic = noImpl) : EventTarget() {
+public external open class WebSocket(url: String, protocols: dynamic = noImpl) : EventTarget {
     open val url: String
     open val readyState: Short
     open val bufferedAmount: Int
@@ -2145,7 +2145,7 @@ public external open class WebSocket(url: String, protocols: dynamic = noImpl) :
     }
 }
 
-public external open class CloseEvent(type: String, eventInitDict: CloseEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class CloseEvent(type: String, eventInitDict: CloseEventInit = noImpl) : Event {
     open val wasClean: Boolean
     open val code: Short
     open val reason: String
@@ -2182,21 +2182,21 @@ public external open class MessageChannel {
     open val port2: MessagePort
 }
 
-public external abstract class MessagePort : EventTarget(), UnionMessagePortOrWindow, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
+public external abstract class MessagePort : EventTarget, UnionMessagePortOrWindow, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
     open var onmessage: ((Event) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = noImpl): Unit
     fun start(): Unit
     fun close(): Unit
 }
 
-public external open class BroadcastChannel(name: String) : EventTarget() {
+public external open class BroadcastChannel(name: String) : EventTarget {
     open val name: String
     var onmessage: ((Event) -> dynamic)?
     fun postMessage(message: Any?): Unit
     fun close(): Unit
 }
 
-public external abstract class WorkerGlobalScope : EventTarget(), WindowOrWorkerGlobalScope, GlobalPerformance {
+public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGlobalScope, GlobalPerformance {
     open val self: WorkerGlobalScope
     open val location: WorkerLocation
     open val navigator: WorkerNavigator
@@ -2209,13 +2209,13 @@ public external abstract class WorkerGlobalScope : EventTarget(), WindowOrWorker
     fun importScripts(vararg urls: String): Unit
 }
 
-public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope() {
+public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope {
     open var onmessage: ((Event) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = noImpl): Unit
     fun close(): Unit
 }
 
-public external abstract class SharedWorkerGlobalScope : WorkerGlobalScope() {
+public external abstract class SharedWorkerGlobalScope : WorkerGlobalScope {
     open val name: String
     open val applicationCache: ApplicationCache
     open var onconnect: ((Event) -> dynamic)?
@@ -2226,7 +2226,7 @@ public external interface AbstractWorker {
     var onerror: ((Event) -> dynamic)?
 }
 
-public external open class Worker(scriptURL: String, options: WorkerOptions = noImpl) : EventTarget(), AbstractWorker {
+public external open class Worker(scriptURL: String, options: WorkerOptions = noImpl) : EventTarget, AbstractWorker {
     var onmessage: ((Event) -> dynamic)?
     override var onerror: ((Event) -> dynamic)?
     fun terminate(): Unit
@@ -2252,7 +2252,7 @@ public inline fun WorkerOptions(type: String? = "classic", credentials: String? 
     return o
 }
 
-public external open class SharedWorker(scriptURL: String, name: String = noImpl, options: WorkerOptions = noImpl) : EventTarget(), AbstractWorker {
+public external open class SharedWorker(scriptURL: String, name: String = noImpl, options: WorkerOptions = noImpl) : EventTarget, AbstractWorker {
     open val port: MessagePort
     override var onerror: ((Event) -> dynamic)?
 }
@@ -2298,7 +2298,7 @@ public external interface WindowLocalStorage {
     val localStorage: Storage
 }
 
-public external open class StorageEvent(type: String, eventInitDict: StorageEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class StorageEvent(type: String, eventInitDict: StorageEventInit = noImpl) : Event {
     open val key: String?
     open val oldValue: String?
     open val newValue: String?
@@ -2340,7 +2340,7 @@ public inline fun StorageEventInit(key: String? = null, oldValue: String? = null
     return o
 }
 
-public external abstract class HTMLAppletElement : HTMLElement() {
+public external abstract class HTMLAppletElement : HTMLElement {
     open var align: String
     open var alt: String
     open var archive: String
@@ -2354,7 +2354,7 @@ public external abstract class HTMLAppletElement : HTMLElement() {
     open var width: String
 }
 
-public external abstract class HTMLMarqueeElement : HTMLElement() {
+public external abstract class HTMLMarqueeElement : HTMLElement {
     open var behavior: String
     open var bgColor: String
     open var direction: String
@@ -2373,12 +2373,12 @@ public external abstract class HTMLMarqueeElement : HTMLElement() {
     fun stop(): Unit
 }
 
-public external abstract class HTMLFrameSetElement : HTMLElement(), WindowEventHandlers {
+public external abstract class HTMLFrameSetElement : HTMLElement, WindowEventHandlers {
     open var cols: String
     open var rows: String
 }
 
-public external abstract class HTMLFrameElement : HTMLElement() {
+public external abstract class HTMLFrameElement : HTMLElement {
     open var name: String
     open var scrolling: String
     open var src: String
@@ -2391,11 +2391,11 @@ public external abstract class HTMLFrameElement : HTMLElement() {
     open var marginWidth: String
 }
 
-public external abstract class HTMLDirectoryElement : HTMLElement() {
+public external abstract class HTMLDirectoryElement : HTMLElement {
     open var compact: Boolean
 }
 
-public external abstract class HTMLFontElement : HTMLElement() {
+public external abstract class HTMLFontElement : HTMLElement {
     open var color: String
     open var face: String
     open var size: String
@@ -2429,7 +2429,7 @@ public inline fun EventInit(bubbles: Boolean? = false, cancelable: Boolean? = fa
     return o
 }
 
-public external open class CustomEvent(type: String, eventInitDict: CustomEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class CustomEvent(type: String, eventInitDict: CustomEventInit = noImpl) : Event {
     open val detail: Any?
     fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: Any?): Unit
 }
@@ -2596,7 +2596,7 @@ public external abstract class MutationRecord {
     open val oldValue: String?
 }
 
-public external abstract class Node : EventTarget() {
+public external abstract class Node : EventTarget {
     open val nodeType: Short
     open val nodeName: String
     open val baseURI: String
@@ -2664,7 +2664,7 @@ public inline fun GetRootNodeOptions(composed: Boolean? = false): GetRootNodeOpt
     return o
 }
 
-public external open class XMLDocument : Document() {
+public external open class XMLDocument : Document {
     override fun getElementById(elementId: String): Element?
     override fun prepend(vararg nodes: dynamic): Unit
     override fun append(vararg nodes: dynamic): Unit
@@ -2698,13 +2698,13 @@ public external abstract class DOMImplementation {
     fun hasFeature(): Boolean
 }
 
-public external abstract class DocumentType : Node(), ChildNode {
+public external abstract class DocumentType : Node, ChildNode {
     open val name: String
     open val publicId: String
     open val systemId: String
 }
 
-public external open class DocumentFragment : Node(), NonElementParentNode, ParentNode {
+public external open class DocumentFragment : Node, NonElementParentNode, ParentNode {
     override val children: HTMLCollection
     override val firstElementChild: Element?
     override val lastElementChild: Element?
@@ -2716,7 +2716,7 @@ public external open class DocumentFragment : Node(), NonElementParentNode, Pare
     override fun querySelectorAll(selectors: String): NodeList
 }
 
-public external open class ShadowRoot : DocumentFragment(), DocumentOrShadowRoot {
+public external open class ShadowRoot : DocumentFragment, DocumentOrShadowRoot {
     open val mode: String
     open val host: Element
     override val fullscreenElement: Element?
@@ -2727,7 +2727,7 @@ public external open class ShadowRoot : DocumentFragment(), DocumentOrShadowRoot
     override fun querySelectorAll(selectors: String): NodeList
 }
 
-public external abstract class Element : Node(), ParentNode, NonDocumentTypeChildNode, ChildNode, Slotable, GeometryUtils, UnionElementOrProcessingInstruction, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent {
+public external abstract class Element : Node, ParentNode, NonDocumentTypeChildNode, ChildNode, Slotable, GeometryUtils, UnionElementOrProcessingInstruction, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent {
     open var innerHTML: String
     open var outerHTML: String
     open val namespaceURI: String?
@@ -2816,7 +2816,7 @@ public external abstract class NamedNodeMap {
     fun removeNamedItemNS(namespace: String?, localName: String): Attr
 }
 
-public external abstract class Attr : Node() {
+public external abstract class Attr : Node {
     open val namespaceURI: String?
     open val prefix: String?
     open val localName: String
@@ -2826,7 +2826,7 @@ public external abstract class Attr : Node() {
     open val specified: Boolean
 }
 
-public external abstract class CharacterData : Node(), NonDocumentTypeChildNode, ChildNode {
+public external abstract class CharacterData : Node, NonDocumentTypeChildNode, ChildNode {
     open var data: String
     open val length: Int
     fun substringData(offset: Int, count: Int): String
@@ -2836,7 +2836,7 @@ public external abstract class CharacterData : Node(), NonDocumentTypeChildNode,
     fun replaceData(offset: Int, count: Int, data: String): Unit
 }
 
-public external open class Text(data: String = noImpl) : CharacterData(), Slotable, GeometryUtils {
+public external open class Text(data: String = noImpl) : CharacterData, Slotable, GeometryUtils {
     open val wholeText: String
     override val previousElementSibling: Element?
     override val nextElementSibling: Element?
@@ -2852,7 +2852,7 @@ public external open class Text(data: String = noImpl) : CharacterData(), Slotab
     override fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions /* = noImpl */): DOMPoint
 }
 
-public external open class CDATASection : Text(noImpl) {
+public external open class CDATASection : Text {
     override fun before(vararg nodes: dynamic): Unit
     override fun after(vararg nodes: dynamic): Unit
     override fun replaceWith(vararg nodes: dynamic): Unit
@@ -2863,11 +2863,11 @@ public external open class CDATASection : Text(noImpl) {
     override fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions /* = noImpl */): DOMPoint
 }
 
-public external abstract class ProcessingInstruction : CharacterData(), LinkStyle, UnionElementOrProcessingInstruction {
+public external abstract class ProcessingInstruction : CharacterData, LinkStyle, UnionElementOrProcessingInstruction {
     open val target: String
 }
 
-public external open class Comment(data: String = noImpl) : CharacterData() {
+public external open class Comment(data: String = noImpl) : CharacterData {
     override val previousElementSibling: Element?
     override val nextElementSibling: Element?
     override fun before(vararg nodes: dynamic): Unit
@@ -2986,8 +2986,8 @@ public external open class DOMPointReadOnly(x: Double, y: Double, z: Double, w: 
 }
 
 public external open class DOMPoint : DOMPointReadOnly {
-    constructor(point: DOMPointInit) : super(noImpl, noImpl, noImpl, noImpl)
-    constructor(x: Double = noImpl, y: Double = noImpl, z: Double = noImpl, w: Double = noImpl) : super(x, y, z, w)
+    constructor(point: DOMPointInit)
+    constructor(x: Double = noImpl, y: Double = noImpl, z: Double = noImpl, w: Double = noImpl)
     override var x: Double
     override var y: Double
     override var z: Double
@@ -3021,7 +3021,7 @@ public inline fun DOMPointInit(x: Double? = 0.0, y: Double? = 0.0, z: Double? = 
     return o
 }
 
-public external open class DOMRect(x: Double = noImpl, y: Double = noImpl, width: Double = noImpl, height: Double = noImpl) : DOMRectReadOnly(x, y, width, height) {
+public external open class DOMRect(x: Double = noImpl, y: Double = noImpl, width: Double = noImpl, height: Double = noImpl) : DOMRectReadOnly {
     override var x: Double
     override var y: Double
     override var width: Double
@@ -3126,12 +3126,12 @@ public external open class DOMMatrixReadOnly(numberSequence: Array<Double>) {
     fun toFloat64Array(): Float64Array
 }
 
-public external open class DOMMatrix() : DOMMatrixReadOnly(noImpl) {
-    constructor(transformList: String) : this()
-    constructor(other: DOMMatrixReadOnly) : this()
-    constructor(array32: Float32Array) : this()
-    constructor(array64: Float64Array) : this()
-    constructor(numberSequence: Array<Double>) : this()
+public external open class DOMMatrix() : DOMMatrixReadOnly {
+    constructor(transformList: String)
+    constructor(other: DOMMatrixReadOnly)
+    constructor(array32: Float32Array)
+    constructor(array64: Float64Array)
+    constructor(numberSequence: Array<Double>)
     override var a: Double
     override var b: Double
     override var c: Double
@@ -3204,7 +3204,7 @@ public inline fun ScrollToOptions(left: Double?, top: Double?, behavior: String?
     return o
 }
 
-public external abstract class MediaQueryList : EventTarget() {
+public external abstract class MediaQueryList : EventTarget {
     open val media: String
     open val matches: Boolean
     open var onchange: ((Event) -> dynamic)?
@@ -3214,7 +3214,7 @@ public external abstract class MediaQueryList : EventTarget() {
     fun removeListener(listener: ((Event) -> Unit)?): Unit
 }
 
-public external open class MediaQueryListEvent(type: String, eventInitDict: MediaQueryListEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class MediaQueryListEvent(type: String, eventInitDict: MediaQueryListEventInit = noImpl) : Event {
     open val media: String
     open val matches: Boolean
 }

@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external abstract class Performance : EventTarget() {
+public external abstract class Performance : EventTarget {
     open val timing: PerformanceTiming
     open val navigation: PerformanceNavigation
     fun now(): Double

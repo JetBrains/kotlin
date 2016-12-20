@@ -20,7 +20,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 
-public external abstract class XMLHttpRequestEventTarget : EventTarget() {
+public external abstract class XMLHttpRequestEventTarget : EventTarget {
     open var onloadstart: ((Event) -> dynamic)?
     open var onprogress: ((Event) -> dynamic)?
     open var onabort: ((Event) -> dynamic)?
@@ -30,10 +30,10 @@ public external abstract class XMLHttpRequestEventTarget : EventTarget() {
     open var onloadend: ((Event) -> dynamic)?
 }
 
-public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget() {
+public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget {
 }
 
-public external open class XMLHttpRequest : XMLHttpRequestEventTarget() {
+public external open class XMLHttpRequest : XMLHttpRequestEventTarget {
     var onreadystatechange: ((Event) -> dynamic)?
     open val readyState: Short
     var timeout: Int
@@ -75,7 +75,7 @@ public external open class FormData(form: HTMLFormElement = noImpl) {
     fun set(name: String, value: Blob, filename: String = noImpl): Unit
 }
 
-public external open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
+public external open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event {
     open val lengthComputable: Boolean
     open val loaded: Int
     open val total: Int

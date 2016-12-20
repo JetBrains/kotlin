@@ -282,7 +282,7 @@ public external abstract class StyleSheet {
     open var disabled: Boolean
 }
 
-public external abstract class CSSStyleSheet : StyleSheet() {
+public external abstract class CSSStyleSheet : StyleSheet {
     open val ownerRule: CSSRule?
     open val cssRules: CSSRuleList
     fun insertRule(rule: String, index: Int): Int
@@ -325,38 +325,38 @@ public external abstract class CSSRule {
     }
 }
 
-public external abstract class CSSStyleRule : CSSRule() {
+public external abstract class CSSStyleRule : CSSRule {
     open var selectorText: String
     open val style: CSSStyleDeclaration
 }
 
-public external abstract class CSSImportRule : CSSRule() {
+public external abstract class CSSImportRule : CSSRule {
     open val href: String
     open val media: MediaList
     open val styleSheet: CSSStyleSheet
 }
 
-public external abstract class CSSGroupingRule : CSSRule() {
+public external abstract class CSSGroupingRule : CSSRule {
     open val cssRules: CSSRuleList
     fun insertRule(rule: String, index: Int): Int
     fun deleteRule(index: Int): Unit
 }
 
-public external abstract class CSSMediaRule : CSSGroupingRule() {
+public external abstract class CSSMediaRule : CSSGroupingRule {
     open val media: MediaList
 }
 
-public external abstract class CSSPageRule : CSSGroupingRule() {
+public external abstract class CSSPageRule : CSSGroupingRule {
     open var selectorText: String
     open val style: CSSStyleDeclaration
 }
 
-public external abstract class CSSMarginRule : CSSRule() {
+public external abstract class CSSMarginRule : CSSRule {
     open val name: String
     open val style: CSSStyleDeclaration
 }
 
-public external abstract class CSSNamespaceRule : CSSRule() {
+public external abstract class CSSNamespaceRule : CSSRule {
     open val namespaceURI: String
     open val prefix: String
 }
