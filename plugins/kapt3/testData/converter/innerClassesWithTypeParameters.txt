@@ -1,0 +1,57 @@
+public final class Test {
+    private Test.FilterValueDelegate<java.lang.Float> a;
+
+    public Test() {
+        super();
+    }
+
+    private final class FilterValueDelegate<T extends java.lang.Object> {
+
+        public FilterValueDelegate() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+public final class Test2 {
+
+    public Test2() {
+        super();
+    }
+
+    public final class FilterValueDelegate<T extends java.lang.Object> {
+        private Test2.FilterValueDelegate<T>.Filter2<java.lang.String> a;
+
+        public FilterValueDelegate() {
+            super();
+        }
+
+        public final class Filter2<X extends java.lang.Object> {
+
+            public Filter2() {
+                super();
+            }
+        }
+    }
+}
+
+////////////////////
+
+
+public final class Test3 {
+    private Test3.FilterValueDelegate<java.lang.Float> a;
+
+    public Test3() {
+        super();
+    }
+
+    private static final class FilterValueDelegate<T extends java.lang.Object> {
+
+        public FilterValueDelegate() {
+            super();
+        }
+    }
+}
