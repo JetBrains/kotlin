@@ -133,8 +133,6 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
             }
 
     assert(superClasses.size <= 1) { "Type ${iface.name} should have one or zero super classes but found ${superClasses.map { it.name }}" }
-    val superClass = superClasses.singleOrNull()
-    val superConstructor = superClass?.findConstructors()?.firstOrNull() ?: EMPTY_CONSTRUCTOR
 
     val declaredConstructors = iface.findConstructors()
     val entityKind = resolveDefinitionKind(repository, iface, declaredConstructors)
@@ -149,23 +147,14 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
     val primaryConstructorWithCall = primaryConstructor?.let { constructor ->
         val constructorAsFunction = generateConstructorAsFunction(repository, constructor)
-        val superCall = when {
-            superClass != null -> superOrPrimaryConstructorCall(constructorAsFunction, superClass.name, superConstructor)
-            else -> null
-        }
 
-        ConstructorWithSuperTypeCall(constructorAsFunction, constructor, superCall)
+        ConstructorWithSuperTypeCall(constructorAsFunction, constructor)
     }
 
     val secondaryConstructorsWithCall = secondaryConstructors.map { secondaryConstructor ->
         val constructorAsFunction = generateConstructorAsFunction(repository, secondaryConstructor)
-        val initCall = when {
-            primaryConstructorWithCall != null -> superOrPrimaryConstructorCall(constructorAsFunction, "this", primaryConstructorWithCall.constructorAttribute)
-            superClass != null -> superOrPrimaryConstructorCall(constructorAsFunction, "super", superConstructor)
-            else -> null
-        }
 
-        ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor, initCall)
+        ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor)
     }
 
     return GenerateTraitOrClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensions.map { it.name }).distinct(),
@@ -184,15 +173,6 @@ fun generateConstructorAsFunction(repository: Repository, constructor: ExtendedA
         functionName = "constructor",
         nativeGetterOrSetter = NativeGetterOrSetter.NONE)
 
-fun superOrPrimaryConstructorCall(constructorAsFunction: GenerateFunction, superClassName: String, superOrPrimaryConstructor: ExtendedAttribute): GenerateFunctionCall {
-    val constructorArgumentNames = constructorAsFunction.arguments.map { it.name }.toSet()
-    return GenerateFunctionCall(
-            name = superClassName,
-            arguments = superOrPrimaryConstructor.arguments.map { arg ->
-                if (arg.name in constructorArgumentNames) arg.name else "noImpl"
-            }
-    )
-}
 
 fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
         name = it.name,

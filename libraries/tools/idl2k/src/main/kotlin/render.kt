@@ -156,10 +156,8 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     }
 
     val superTypesExclude = inheritanceExclude[iface.name] ?: emptySet()
-    val superCallName = primary?.initTypeCall?.name
     val superTypesWithCalls =
-            (primary?.initTypeCall?.let { listOf(renderCall(it)) } ?: emptyList()) +
-                    iface.superTypes.filter { it != superCallName && it in allSuperTypesNames }.filter { it !in superTypesExclude } +
+                    iface.superTypes.filter { it in allSuperTypesNames }.filter { it !in superTypesExclude } +
                     (typeNamesToUnions[iface.name] ?: emptyList())
 
     if (superTypesWithCalls.isNotEmpty()) {
@@ -172,11 +170,6 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         indent(false, 1)
         append("constructor")
         renderArgumentsDeclaration(secondary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keys), false)
-
-        if (secondary.initTypeCall != null) {
-            append(" : ")
-            append(renderCall(secondary.initTypeCall))
-        }
 
         appendln()
     }

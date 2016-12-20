@@ -73,7 +73,7 @@ data class GenerateFunction(
         val override: Boolean
 )
 
-data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute, val initTypeCall: GenerateFunctionCall?)
+data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute)
 data class GenerateTraitOrClass(
         val name: String,
         val namespace: String,
