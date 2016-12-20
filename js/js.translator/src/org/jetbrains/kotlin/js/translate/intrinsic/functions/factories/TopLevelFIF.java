@@ -24,22 +24,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfoExtensionsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtQualifiedExpression;
-import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
@@ -47,7 +39,6 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
-import static org.jetbrains.kotlin.js.translate.context.Namer.getStableMangledNameForDescriptor;
 import static org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 
 public final class TopLevelFIF extends CompositeFIF {
