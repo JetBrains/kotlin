@@ -30,7 +30,7 @@ public abstract class AbstractSet<out E> protected constructor() : AbstractColle
         internal fun unorderedHashCode(c: Collection<*>): Int {
             var hashCode = 0
             for (element in c) {
-                hashCode = (hashCode + (element?.hashCode() ?: 0)) or 0
+                hashCode += (element?.hashCode() ?: 0)
             }
             return hashCode
         }

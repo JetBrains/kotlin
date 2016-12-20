@@ -123,7 +123,6 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             var hashCode = 1
             for (e in c) {
                 hashCode = 31 * hashCode + (e?.hashCode() ?: 0)
-                hashCode = hashCode or 0 // make sure we don't overflow
             }
             return hashCode
         }
