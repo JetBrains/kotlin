@@ -14605,6 +14605,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("suppressedByNotPropertyList.kt")
+        public void testSuppressedByNotPropertyList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/suppressedByNotPropertyList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeParameterReceiver.kt")
         public void testTypeParameterReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/typeParameterReceiver.kt");

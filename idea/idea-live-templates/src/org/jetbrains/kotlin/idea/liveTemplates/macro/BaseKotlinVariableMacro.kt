@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.BasicLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.InsertHandlerProvider
+import org.jetbrains.kotlin.idea.core.NotPropertiesService
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
@@ -60,7 +61,7 @@ abstract class BaseKotlinVariableMacro<TState> : Macro() {
 
         val state = initState(contextElement, bindingContext)
 
-        val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible)
+        val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible, NotPropertiesService.getNotProperties(contextElement))
         return helper
                 .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
                 .map { it as VariableDescriptor }

@@ -91,8 +91,11 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         return !isIntentionBaseInspectionEnabled(project, target)
     }
 
+    var inspection: IntentionBasedInspection<TElement>? = null
+        internal set
+
     protected fun isIntentionBaseInspectionEnabled(project: Project, target: TElement): Boolean {
-        val inspection = findInspection(this.javaClass.kotlin) ?: return false
+        val inspection = inspection ?: findInspection(this.javaClass.kotlin) ?: return false
 
         val key = HighlightDisplayKey.find(inspection.shortName)
         if (!InspectionProjectProfileManager.getInstance(project).inspectionProfile.isToolEnabled(key, target)) {

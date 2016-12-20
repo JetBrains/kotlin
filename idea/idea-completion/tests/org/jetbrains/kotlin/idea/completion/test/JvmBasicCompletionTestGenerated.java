@@ -2917,6 +2917,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("SuppressedByNotPropertyList.kt")
+            public void testSuppressedByNotPropertyList() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SuppressedByNotPropertyList.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SyntheticExtensions1.kt")
             public void testSyntheticExtensions1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensions1.kt");

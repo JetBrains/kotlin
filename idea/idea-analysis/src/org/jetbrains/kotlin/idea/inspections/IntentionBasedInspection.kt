@@ -78,7 +78,9 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
 
         val intentionsAndCheckers = intentionInfos.map {
-            it.intention.constructors.single().call() to it.additionalChecker
+            val instance = it.intention.constructors.single().call()
+            instance.inspection = this
+            instance to it.additionalChecker
         }
         val elementType = intentionsAndCheckers.map { it.first.elementType }.distinct().singleOrNull()
                           ?: error("$intentionInfos should have the same elementType")
@@ -105,7 +107,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                         if (fixes == null) {
                             fixes = SmartList<LocalQuickFix>()
                         }
-                        fixes!!.add(createQuickFix(intention, additionalChecker, targetElement))
+                        fixes.add(createQuickFix(intention, additionalChecker, targetElement))
                     }
                 }
 

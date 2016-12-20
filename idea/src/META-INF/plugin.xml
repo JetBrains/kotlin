@@ -119,6 +119,11 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
+    <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
+            text="Search Not Property Candidates">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
     <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
             text="Find Implicit Nothing Calls">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
@@ -305,6 +310,9 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.facet.KotlinFacetSettingsProviderImpl"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.NotPropertiesService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.intentions.NotPropertiesServiceImpl"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -1612,6 +1620,7 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
                      displayName="Accessor call that can be replaced with property access syntax"
+                     shortName="UsePropertyAccessSyntax"
                      groupName="Kotlin"
                      cleanupTool="true"
                      enabledByDefault="true"

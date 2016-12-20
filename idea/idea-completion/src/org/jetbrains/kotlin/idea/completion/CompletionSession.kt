@@ -123,7 +123,11 @@ abstract class CompletionSession(
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = configuration.nonAccessibleDeclarations) }
     protected val isVisibleFilterCheckAlways: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = false) }
 
-    protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, moduleDescriptor, isVisibleFilter)
+    protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext,
+                                                                    resolutionFacade,
+                                                                    moduleDescriptor,
+                                                                    isVisibleFilter,
+                                                                    NotPropertiesService.getNotProperties(position))
 
     protected val callTypeAndReceiver: CallTypeAndReceiver<*, *>
     protected val receiverTypes: Collection<ReceiverType>?
