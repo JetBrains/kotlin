@@ -7397,6 +7397,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("UsedInside.kt")
+        public void testUsedInside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/UsedInside.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UsedInsideInTemplate.kt")
+        public void testUsedInsideInTemplate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/UsedInsideInTemplate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Var.kt")
         public void testVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/foldInitializerAndIfToElvis/Var.kt");
