@@ -121,5 +121,11 @@ internal final class Context(val config: KonanConfig,
     fun shouldPrintBitCode(): Boolean {
         return config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE) 
     }
+
+    fun log(message: String) {
+        if (phase?.verbose) {
+            println(message)
+        }
+    }
 }
 

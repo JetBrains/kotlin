@@ -1,7 +1,11 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import java.io.StringWriter
 
 
 /**
@@ -60,3 +64,13 @@ internal fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor
 
 internal fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
         this.addArguments(args.toMap())
+
+fun ir2string(ir: IrElement?): String = ir2stringWhole(ir).takeWhile { it != '\n' }
+
+fun ir2stringWhole(ir: IrElement?): String {
+  val strWriter = StringWriter()
+
+  ir?.accept(DumpIrTreeVisitor(strWriter), "")
+  return strWriter.toString()
+}
+

@@ -191,3 +191,9 @@ internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, va
             val paramTypesPtr = allocArrayOf(*paramTypes)[0].ptr
             LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, if (isVarArg) 1 else 0)!!
         }
+
+fun llvm2string(value: LLVMValueRef?): String {
+  if (value == null) return "<null>"
+  return LLVMPrintValueToString(value)!!.asCString().toString()
+}
+
