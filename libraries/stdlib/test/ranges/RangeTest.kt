@@ -70,7 +70,7 @@ public class RangeTest {
         assertFalse(10.toByte() in openRange)
 
         // byte arguments now construct IntRange so no overflow here
-        // assertTrue(assertFails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
+        assertTrue((0.toByte() until Byte.MIN_VALUE).isEmpty())
         assertTrue((0.toByte() until Int.MIN_VALUE).isEmpty())
     }
 
@@ -103,8 +103,7 @@ public class RangeTest {
         assertTrue(9.toShort() in openRange)
         assertFalse(10.toShort() in openRange)
 
-        // short arguments now construct IntRange so no overflow here
-        // assertTrue(assertFails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
+        assertTrue((0.toShort() until Short.MIN_VALUE).isEmpty())
         assertTrue((0.toShort() until Int.MIN_VALUE).isEmpty())
     }
 

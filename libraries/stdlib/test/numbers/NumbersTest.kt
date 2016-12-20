@@ -20,6 +20,8 @@ object NumbersTestConstants {
 class NumbersTest {
 
     var one: Int = 1
+    var oneS: Short = 1
+    var oneB: Byte = 1
 
     @Test fun intMinMaxValues() {
         assertTrue(Int.MIN_VALUE < 0)
@@ -29,9 +31,8 @@ class NumbersTest {
         assertEquals(NumbersTestConstants.intMaxPred, Int.MAX_VALUE - one)
 
         // overflow behavior
-        // doesn't hold for JS Number
-        // expect(Int.MIN_VALUE) { Int.MAX_VALUE + 1 }
-        // expect(Int.MAX_VALUE) { Int.MIN_VALUE - 1 }
+        expect(Int.MIN_VALUE) { Int.MAX_VALUE + one }
+        expect(Int.MAX_VALUE) { Int.MIN_VALUE - one }
     }
 
     @Test fun longMinMaxValues() {
@@ -42,8 +43,8 @@ class NumbersTest {
         assertEquals(NumbersTestConstants.longMaxPred, Long.MAX_VALUE - one)
 
         // overflow behavior
-        expect(Long.MIN_VALUE) { Long.MAX_VALUE + 1 }
-        expect(Long.MAX_VALUE) { Long.MIN_VALUE - 1 }
+        expect(Long.MIN_VALUE) { Long.MAX_VALUE + one }
+        expect(Long.MAX_VALUE) { Long.MIN_VALUE - one }
     }
 
     @Test fun shortMinMaxValues() {
@@ -54,8 +55,8 @@ class NumbersTest {
         assertEquals(NumbersTestConstants.shortMaxPred, Short.MAX_VALUE.dec())
 
         // overflow behavior
-        expect(Short.MIN_VALUE) { (Short.MAX_VALUE + 1).toShort() }
-        expect(Short.MAX_VALUE) { (Short.MIN_VALUE - 1).toShort() }
+        expect(Short.MIN_VALUE) { (Short.MAX_VALUE + oneS).toShort() }
+        expect(Short.MAX_VALUE) { (Short.MIN_VALUE - oneS).toShort() }
     }
 
     @Test fun byteMinMaxValues() {
@@ -66,8 +67,8 @@ class NumbersTest {
         assertEquals(NumbersTestConstants.byteMaxPred, Byte.MAX_VALUE.dec())
 
         // overflow behavior
-        expect(Byte.MIN_VALUE) { (Byte.MAX_VALUE + 1).toByte() }
-        expect(Byte.MAX_VALUE) { (Byte.MIN_VALUE - 1).toByte() }
+        expect(Byte.MIN_VALUE) { (Byte.MAX_VALUE + oneB).toByte() }
+        expect(Byte.MAX_VALUE) { (Byte.MIN_VALUE - oneB).toByte() }
     }
 
     @Test fun doubleMinMaxValues() {
