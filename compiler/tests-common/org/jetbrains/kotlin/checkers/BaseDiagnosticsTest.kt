@@ -150,9 +150,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 this.expectedText = textWithMarkers
                 this.clearText = CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges)
                 this.ktFile = TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project)
-                for (diagnosedRange in diagnosedRanges) {
-                    diagnosedRange.file = ktFile
-                }
             }
         }
 

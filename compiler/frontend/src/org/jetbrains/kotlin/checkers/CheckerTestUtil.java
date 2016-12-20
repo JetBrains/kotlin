@@ -732,7 +732,6 @@ public class CheckerTestUtil {
         private final int start;
         private int end;
         private final List<TextDiagnostic> diagnostics = ContainerUtil.newSmartList();
-        private PsiFile file;
 
         protected DiagnosedRange(int start) {
             this.start = start;
@@ -756,15 +755,6 @@ public class CheckerTestUtil {
 
         public void addDiagnostic(String diagnostic) {
             diagnostics.add(TextDiagnostic.parseDiagnostic(diagnostic));
-        }
-
-        public void setFile(@NotNull PsiFile file) {
-            this.file = file;
-        }
-
-        @NotNull
-        public PsiFile getFile() {
-            return file;
         }
     }
 }

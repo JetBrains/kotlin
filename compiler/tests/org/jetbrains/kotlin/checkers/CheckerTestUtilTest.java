@@ -153,9 +153,6 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
 
             List<DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-            for (DiagnosedRange diagnosedRange : diagnosedRanges) {
-                diagnosedRange.setFile(psiFile);
-            }
 
             List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null);
             Collections.sort(diagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
