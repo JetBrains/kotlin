@@ -19,7 +19,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = (this as (R, Continuation<T>) -> Continuation<Unit>).invoke(receiver, withDispatcher(completion, dispatcher))
+): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction1<R, T>).create(receiver, withDispatcher(completion, dispatcher))
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -34,7 +34,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
 ) {
-    createCoroutine(receiver, completion, dispatcher).resume(Unit)
+    (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, withDispatcher(completion, dispatcher))
 }
 
 /**
@@ -49,7 +49,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = (this as (Continuation<T>) -> Continuation<Unit>).invoke(withDispatcher(completion, dispatcher))
+): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction0<T>).create(withDispatcher(completion, dispatcher))
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -63,7 +63,7 @@ public fun <T> (suspend  () -> T).startCoroutine(
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
 ) {
-    createCoroutine(completion, dispatcher).resume(Unit)
+    (this as Function1<Continuation<T>, Any?>).invoke(withDispatcher(completion, dispatcher))
 }
 
 /**

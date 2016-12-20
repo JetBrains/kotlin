@@ -900,6 +900,14 @@ public final class kotlin/jvm/internal/StringCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/StringCompanionObject;
 }
 
+public abstract interface class kotlin/jvm/internal/SuspendFunction0 {
+	public abstract fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+}
+
+public abstract interface class kotlin/jvm/internal/SuspendFunction1 {
+	public abstract fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+}
+
 public class kotlin/jvm/internal/TypeIntrinsics {
 	public fun <init> ()V
 	public static fun asMutableCollection (Ljava/lang/Object;)Ljava/util/Collection;

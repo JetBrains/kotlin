@@ -304,7 +304,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         );
     }
 
-    private void generateBridge(@NotNull Method bridge, @NotNull Method delegate) {
+    protected void generateBridge(@NotNull Method bridge, @NotNull Method delegate) {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =

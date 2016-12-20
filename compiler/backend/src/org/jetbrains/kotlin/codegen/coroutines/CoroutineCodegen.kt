@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CONTINUATION_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -91,6 +94,19 @@ class CoroutineCodegen(
                 )
             }
 
+    private val createCoroutineDescriptor =
+        funDescriptor.createCustomCopy {
+            setName(Name.identifier("create"))
+            setReturnType(
+                    KotlinTypeFactory.simpleNotNullType(
+                            Annotations.EMPTY,
+                            funDescriptor.builtIns.continuationClassDescriptor,
+                            listOf(funDescriptor.builtIns.unitType.asTypeProjection())
+                    )
+            )
+            setVisibility(Visibilities.PUBLIC)
+        }
+
     override fun generateClosureBody() {
         for (parameter in allLambdaParameters()) {
             val fieldInfo = parameter.getFieldInfoForCoroutineLambdaParameter()
@@ -108,13 +124,64 @@ class CoroutineCodegen(
     override fun generateBody() {
         super.generateBody()
 
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, createCoroutineDescriptor,
+                                       object : FunctionGenerationStrategy.CodegenBased(state) {
+                                           override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                                               generateCreateCoroutineMethod(codegen)
+                                           }
+                                       })
+
+        // invoke(..) = create(..).resume(Unit)
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, funDescriptor,
                                        object : FunctionGenerationStrategy.CodegenBased(state) {
                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                                               generateInvokeMethod(codegen)
+                                               codegen.v.generateInvokeMethod(signature)
                                            }
                                        })
+
+        if (allLambdaParameters().size <= 1) {
+            val delegate = typeMapper.mapSignatureSkipGeneric(createCoroutineDescriptor).asmMethod
+
+            val bridgeParameters = (1..delegate.argumentTypes.size - 1).map { AsmTypes.OBJECT_TYPE } + delegate.argumentTypes.last()
+            val bridge = Method(delegate.name, delegate.returnType, bridgeParameters.toTypedArray())
+
+            generateBridge(bridge, delegate)
+        }
     }
+
+    private fun InstructionAdapter.generateInvokeMethod(signature: JvmMethodSignature) {
+        // this
+        load(0, AsmTypes.OBJECT_TYPE)
+        val parameterTypes = signature.valueParameters.map { it.asmType }
+        parameterTypes.withVariableIndices().forEach {
+            (index, type) -> load(index + 1, type)
+        }
+
+        // this.create(..)
+        invokevirtual(
+                v.thisName,
+                createCoroutineDescriptor.name.identifier,
+                Type.getMethodDescriptor(
+                        AsmTypes.CONTINUATION,
+                        *parameterTypes.toTypedArray()
+                ),
+                false
+        )
+        checkcast(Type.getObjectType(v.thisName))
+
+        // .resume(Unit)
+        StackValue.putUnitInstance(this)
+        invokevirtual(
+                AsmTypes.RESTRICTED_COROUTINE_IMPL.internalName,
+                CONTINUATION_RESUME_METHOD_NAME.identifier,
+                Type.getMethodDescriptor(Type.VOID_TYPE, AsmTypes.OBJECT_TYPE),
+                false
+        )
+
+        loadSuspendMarker()
+        areturn(AsmTypes.OBJECT_TYPE)
+    }
+
 
     override fun generateConstructor(): Method {
         val args = calculateConstructorParameters(typeMapper, closure, asmType)
@@ -149,7 +216,7 @@ class CoroutineCodegen(
         return constructor
     }
 
-    private fun generateInvokeMethod(codegen: ExpressionCodegen) {
+    private fun generateCreateCoroutineMethod(codegen: ExpressionCodegen) {
         val classDescriptor = closureContext.contextDescriptor
         val owner = typeMapper.mapClass(classDescriptor)
 

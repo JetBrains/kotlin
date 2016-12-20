@@ -19,7 +19,7 @@ fun box(): String {
     return "OK"
 }
 
-// 1 GETSTATIC kotlin/Unit.INSTANCE : Lkotlin/Unit;
+// 2 GETSTATIC kotlin/Unit.INSTANCE : Lkotlin/Unit;
 // 1 GETSTATIC EmptyContinuation.INSTANCE
-// 1 GETSTATIC kotlin/coroutines/CoroutineIntrinsics.INSTANCE
-// 3 GETSTATIC
+// 2 GETSTATIC kotlin/coroutines/CoroutineIntrinsics.INSTANCE
+// 5 GETSTATIC

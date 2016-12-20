@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.codegen.coroutines.createJvmSuspendFunctionView
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
@@ -48,8 +50,16 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
         (0..2).map { i -> createClass(kotlinJvmInternalPackage, "MutablePropertyReference$i") }
     }
 
-    private fun createClass(packageFragment: PackageFragmentDescriptor, name: String): ClassDescriptor =
-            MutableClassDescriptor(packageFragment, ClassKind.CLASS, /* isInner = */ false, /* isExternal = */ false,
+    private val suspendFunctions: List<ClassDescriptor> by lazy {
+        (0..1).map { i -> createClass(kotlinJvmInternalPackage, "SuspendFunction$i", ClassKind.INTERFACE) }
+    }
+
+    private fun createClass(
+            packageFragment: PackageFragmentDescriptor,
+            name: String,
+            classKind: ClassKind = ClassKind.CLASS
+    ): ClassDescriptor =
+            MutableClassDescriptor(packageFragment, classKind, /* isInner = */ false, /* isExternal = */ false,
                                    Name.identifier(name), SourceElement.NO_SOURCE).apply {
                 modality = Modality.FINAL
                 visibility = Visibilities.PUBLIC
@@ -75,7 +85,15 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
         )
 
         if (descriptor.isSuspendLambda) {
-            return listOf(coroutineImplClass.defaultType, functionType)
+            return mutableListOf<KotlinType>().apply {
+                add(coroutineImplClass.defaultType)
+                add(functionType)
+
+                val parametersNumber =
+                        descriptor.valueParameters.size + (if (functionType.isExtensionFunctionType) 1 else 0)
+
+                addIfNotNull(suspendFunctions.getOrNull(parametersNumber)?.defaultType)
+            }
         }
 
         return listOf(lambda.defaultType, functionType)
