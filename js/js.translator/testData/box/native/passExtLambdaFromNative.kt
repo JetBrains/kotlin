@@ -1,6 +1,8 @@
 package foo
 
-internal external class A(val v: String)
+internal external class A(v: String) {
+    val v: String
+}
 
 internal class B {
     fun bar(a: A, extLambda: A.(Int, String) -> String): String = a.extLambda(7, "_rr_")

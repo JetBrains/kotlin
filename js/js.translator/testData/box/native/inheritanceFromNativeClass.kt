@@ -1,6 +1,8 @@
 package foo
 
-internal external open class A(val a: Int) {
+internal external open class A(a: Int) {
+    val a: Int
+
     fun g(): Int = noImpl
     fun m(): Int = noImpl
 

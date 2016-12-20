@@ -4,7 +4,9 @@
 package foo
 
 @JsName("A")
-external open class B(val foo: String)
+external open class B(foo: String) {
+    val foo: String
+}
 
 // MODULE: main(module1)
 // FILE: main.kt

@@ -1,6 +1,8 @@
 package foo
 
-external class A(val v: String)
+external class A(v: String) {
+    val v: String
+}
 
 external fun bar(a: A, extLambda: A.(Int, String) -> String): String = noImpl
 

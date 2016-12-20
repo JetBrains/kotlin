@@ -87,7 +87,8 @@ external object Object {
         fun test(): Int = noImpl
 
         @JsName("AnotherClass")
-        class Class(val a: String) {
+        class Class(a: String) {
+            val a: String
             var b: String = noImpl
             fun test(): Int = noImpl
 
@@ -99,7 +100,8 @@ external object Object {
         }
     }
 
-    class Class(val a: String) {
+    class Class(a: String) {
+        val a: String
         var b: String = noImpl
         fun test(): Int = noImpl
 
@@ -135,7 +137,8 @@ external class Class {
         fun test(): Int = noImpl
     }
 
-    class Class(val a: String) {
+    class Class(a: String) {
+        val a: String
         var b: String = noImpl
         fun test(): Int = noImpl
 
@@ -174,7 +177,8 @@ external interface Trait {
         fun test(): Int = noImpl
     }
 
-    class Class(val a: String) {
+    class Class(a: String) {
+        val a: String
         var b: String = noImpl
         fun test(): Int = noImpl
 

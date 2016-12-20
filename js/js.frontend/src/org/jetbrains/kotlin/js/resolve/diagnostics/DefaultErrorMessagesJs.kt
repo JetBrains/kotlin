@@ -80,8 +80,11 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION, "Wrong initializer of external declaration. Must be ' = noImpl'")
         put(ErrorsJs.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER,
             "Wrong default value for parameter of external function. Must be ' = noImpl'")
-        put(ErrorsJs.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, "Delegated constructor call in external class")
-        put(ErrorsJs.EXTERNAL_DELEGATION, "Using delegate on external declaration")
+        put(ErrorsJs.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, "Delegated constructor call in external class is not allowed")
+        put(ErrorsJs.EXTERNAL_DELEGATION, "Can't use delegate on external declaration")
+        put(ErrorsJs.EXTERNAL_ANONYMOUS_INITIALIZER, "Anonymous initializer is not allowed in external classes")
+        put(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class can't have body")
+        put(ErrorsJs.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "External class constructor cannot have a property parameter")
 
         this
     }

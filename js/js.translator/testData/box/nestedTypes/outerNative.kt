@@ -7,7 +7,9 @@ external class A(x: Int) {
 
     fun foo(): Int = noImpl
 
-    class B(val value: Int) {
+    class B(value: Int) {
+        val value: Int
+
         fun bar(): Int = noImpl
     }
 }

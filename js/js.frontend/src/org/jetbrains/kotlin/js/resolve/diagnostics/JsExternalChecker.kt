@@ -51,6 +51,9 @@ object JsExternalChecker : SimpleDeclarationChecker {
         if (DescriptorUtils.isAnnotationClass(descriptor)) {
             diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "annotation class"))
         }
+        else if (descriptor is ClassDescriptor && descriptor.isData) {
+            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "data class"))
+        }
         else if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
             diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "property accessor"))
         }
@@ -92,6 +95,9 @@ object JsExternalChecker : SimpleDeclarationChecker {
 
         checkBody(declaration, descriptor, diagnosticHolder, bindingContext)
         checkDelegation(declaration, descriptor, diagnosticHolder)
+        checkAnonymousInitializer(declaration, diagnosticHolder)
+        checkEnumEntry(declaration, diagnosticHolder)
+        checkConstructorPropertyParam(declaration, descriptor, diagnosticHolder)
     }
 
     private fun checkBody(
@@ -141,6 +147,32 @@ object JsExternalChecker : SimpleDeclarationChecker {
                 diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATION.on(delegate))
             }
         }
+    }
+
+    private fun checkAnonymousInitializer(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
+        if (declaration !is KtClassOrObject) return
+
+        for (anonymousInitializer in declaration.getAnonymousInitializers()) {
+            diagnosticHolder.report(ErrorsJs.EXTERNAL_ANONYMOUS_INITIALIZER.on(anonymousInitializer))
+        }
+    }
+
+    private fun checkEnumEntry(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
+        if (declaration !is KtEnumEntry) return
+        declaration.getBody()?.let {
+            diagnosticHolder.report(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY.on(it))
+        }
+    }
+
+    private fun checkConstructorPropertyParam(
+            declaration: KtDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink
+    ) {
+        if (descriptor !is PropertyDescriptor || declaration !is KtParameter) return
+        val containingClass = descriptor.containingDeclaration as ClassDescriptor
+        if (containingClass.isData || DescriptorUtils.isAnnotationClass(containingClass)) return
+        diagnosticHolder.report(ErrorsJs.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(declaration))
     }
 
     private fun isDirectlyExternal(declaration: KtDeclaration, descriptor: DeclarationDescriptor): Boolean {

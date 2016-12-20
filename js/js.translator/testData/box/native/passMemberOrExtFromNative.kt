@@ -1,6 +1,8 @@
 package foo
 
-external class A(val v: String) {
+external class A(v: String) {
+    val v: String
+
     fun m(i:Int, s:String): String = noImpl
 }
 

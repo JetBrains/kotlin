@@ -2,7 +2,9 @@
 package foo
 
 @JsModule("lib")
-external class A(val x: Int = noImpl) {
+external class A(x: Int = noImpl) {
+    val x: Int
+
     fun foo(y: Int): Int = noImpl
 }
 
