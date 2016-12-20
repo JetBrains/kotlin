@@ -123,7 +123,7 @@ internal final class Context(val config: KonanConfig,
     }
 
     fun log(message: String) {
-        if (phase?.verbose) {
+        if (phase?.verbose ?: false) {
             println(message)
         }
     }
