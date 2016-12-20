@@ -8,5 +8,5 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 internal class Ir(val context: Context, val irModule: IrModuleFragment) {
     val propertiesWithBackingFields = mutableSetOf<PropertyDescriptor>()
 
-    val moduleIndex = ModuleIndex(irModule!!)
+    val moduleIndex = ModuleIndex(irModule)
 }

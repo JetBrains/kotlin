@@ -33,11 +33,7 @@ fun ClassDescriptor?.signature2Descriptor(methodName: Name, signature:Array<Kotl
 val PropertyDescriptor.backingField: PropertyDescriptor? 
     get() {
         val backingFieldAnnotation = FqName("konan.internal.HasBackingField")
-        if (this.annotations.findAnnotation(backingFieldAnnotation) != null) {
-            return this
-        } else {
-            return null
-        }
+        return if (this.annotations.findAnnotation(backingFieldAnnotation) != null) this else null
     }
 
 fun DeclarationDescriptor.deepPrint() {

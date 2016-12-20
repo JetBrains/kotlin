@@ -436,12 +436,16 @@ task empty_string(type: RunKonanTest) {
 task intrinsic(type: UnitKonanTest) {
     source = "codegen/function/intrinsic.kt"
 }
+/*
+    Disabled until we extract the classes that should be 
+    always present from stdlib.kt.bc into a separate binary.
 
 task link(type: LinkKonanTest) {
     goldValue = "0\n"
     source = "link/src/bar.kt"
     lib = "link/lib"
 }
+*/
 
 task for0(type: RunKonanTest) {
     goldValue = "2\n3\n4\n"
