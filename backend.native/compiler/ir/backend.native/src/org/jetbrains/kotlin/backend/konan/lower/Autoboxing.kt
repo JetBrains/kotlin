@@ -72,7 +72,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         return if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
             this
         } else {
-            // Codegen expects the argument of type-checking operator to be object reference:
+            // Codegen expects the argument of type-checking operator to be an object reference:
             this.useAs(builtIns.nullableAnyType)
         }
     }
