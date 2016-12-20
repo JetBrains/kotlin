@@ -125,6 +125,7 @@ fun <D : FunctionDescriptor> createJvmSuspendFunctionView(function: D): D {
     )
 
     return function.createCustomCopy {
+        setDropOriginalInContainingParts()
         setPreserveSourceElement()
         setReturnType(function.builtIns.nullableAnyType)
         setValueParameters(it.valueParameters + continuationParameter)

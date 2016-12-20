@@ -119,7 +119,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
                     TypeAliasConstructorDescriptorImpl(typeAliasDescriptor, constructor, null, constructor.annotations,
                                                        constructor.kind, typeAliasDescriptor.source)
 
-            val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, substitutor, false)
+            val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, substitutor, false, false)
                                   ?: return null
 
             val returnType = substitutor.substitute(constructor.returnType, Variance.INVARIANT)

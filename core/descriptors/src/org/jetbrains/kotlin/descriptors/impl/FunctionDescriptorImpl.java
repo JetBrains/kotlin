@@ -625,7 +625,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(
-                substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor, configuration.dropOriginalInContainingParts
+                substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor, configuration.dropOriginalInContainingParts,
+                configuration.preserveSourceElement
         );
         if (substitutedValueParameters == null) {
             return null;
@@ -765,7 +766,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             FunctionDescriptor substitutedDescriptor,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull TypeSubstitutor substitutor,
-            boolean dropOriginal
+            boolean dropOriginal,
+            boolean preserveSourceElement
     ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(unsubstitutedValueParameters.size());
         for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
@@ -787,7 +789,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                             unsubstitutedValueParameter.isCrossinline(),
                             unsubstitutedValueParameter.isNoinline(),
                             substituteVarargElementType,
-                            SourceElement.NO_SOURCE
+                            preserveSourceElement ? unsubstitutedValueParameter.getSource() : SourceElement.NO_SOURCE
                     )
             );
         }
