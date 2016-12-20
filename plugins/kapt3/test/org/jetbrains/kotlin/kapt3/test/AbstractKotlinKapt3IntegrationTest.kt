@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
@@ -44,6 +46,7 @@ import com.sun.tools.javac.util.List as JavacList
 abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     private companion object {
         val TEST_DATA_DIR = File("plugins/kapt3/testData/kotlinRunner")
+        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
     }
 
     private lateinit var processors: List<Processor>
@@ -141,7 +144,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             outputDir: File,
             options: Map<String, String>
     ) : AbstractKapt3Extension(PathUtil.getJdkClassesRoots(), emptyList(), javaSourceRoots, outputDir, outputDir,
-                               options, true, System.currentTimeMillis(), KaptLogger(true)
+                               options, true, System.currentTimeMillis(), KaptLogger(true, messageCollector)
     ) {
         internal var savedStubs: String? = null
 
