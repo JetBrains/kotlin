@@ -30,7 +30,12 @@ public inline fun <T> Any?.unsafeCast(): @kotlin.internal.NoInfer T = this.asDyn
 @JsName("unsafeCastDynamic")
 public inline fun <T> dynamic.unsafeCast(): @kotlin.internal.NoInfer T = this
 
-// TODO add the support ES6 iterators
+/**
+ * Allows to iterate this `dynamic` object in the following cases:
+ * - when it has an `iterator` function,
+ * - when it is an array
+ * - when it is an instance of [kotlin.collections.Iterable]
+ */
 @kotlin.internal.DynamicExtension
 public operator fun dynamic.iterator(): Iterator<dynamic> {
     val r: Any? = this
