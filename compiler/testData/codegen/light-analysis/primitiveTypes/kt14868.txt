@@ -1,0 +1,3 @@
+public final class Kt14868Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

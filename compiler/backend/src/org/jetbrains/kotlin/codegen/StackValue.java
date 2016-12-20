@@ -405,11 +405,12 @@ public abstract class StackValue {
                 coerce(unboxedType, toType, v);
             }
             else {
-                if (toType.getSort() == Type.BOOLEAN || toType.getSort() == Type.CHAR) {
+                Type numberType = getType(Number.class);
+                if (toType.getSort() == Type.BOOLEAN || (toType.getSort() == Type.CHAR && !numberType.equals(fromType))) {
                     coerce(fromType, boxType(toType), v);
                 }
                 else {
-                    coerce(fromType, getType(Number.class), v);
+                    coerce(fromType, numberType, v);
                 }
                 unbox(toType, v);
             }
