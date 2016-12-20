@@ -100,6 +100,9 @@
         <element id="archive" name="sam-with-receiver-ide-plugin.jar">
           <element id="module-output" name="sam-with-receiver-ide" />
         </element>
+        <element id="archive" name="kotlin-gradle-tooling.jar">
+          <element id="module-output" name="kotlin-gradle-tooling" />
+        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

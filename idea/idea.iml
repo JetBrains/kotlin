@@ -58,5 +58,6 @@
     <orderEntry type="module" module-name="noarg-ide" scope="TEST" />
     <orderEntry type="module" module-name="sam-with-receiver-ide" scope="TEST" />
     <orderEntry type="module" module-name="descriptors" />
+    <orderEntry type="module" module-name="kotlin-gradle-tooling" />
   </component>
 </module>
