@@ -6065,6 +6065,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mulInt32.kt")
+        public void testMulInt32() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/mulInt32.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("numberCompareTo.kt")
         public void testNumberCompareTo() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/numberCompareTo.kt");
