@@ -14,54 +14,42 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
+import java.util.HashMap
+import java.util.HashSet
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+class InlineResult private constructor() {
 
-public class InlineResult {
+    private val classesToRemove = HashSet<String>()
+    private val changedTypes = HashMap<String, String>()
+    val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
 
-    private final Set<String> classesToRemove = new HashSet<String>();
-    private final Map<String, String> changedTypes = new HashMap<String, String>();
-    private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
-
-    private InlineResult() {
+    fun addAllClassesToRemove(child: InlineResult): InlineResult {
+        classesToRemove.addAll(child.classesToRemove)
+        return this
     }
 
-    @NotNull
-    public static InlineResult create() {
-        return new InlineResult();
+    fun addClassToRemove(classInternalName: String) {
+        classesToRemove.add(classInternalName)
     }
 
-    @NotNull
-    public InlineResult addAllClassesToRemove(@NotNull InlineResult child) {
-        classesToRemove.addAll(child.classesToRemove);
-        return this;
+    fun addChangedType(oldClassInternalName: String, newClassInternalName: String) {
+        changedTypes.put(oldClassInternalName, newClassInternalName)
     }
 
-    public void addClassToRemove(@NotNull String classInternalName) {
-        classesToRemove.add(classInternalName);
+    fun getClassesToRemove(): Set<String> {
+        return classesToRemove
     }
 
-    public void addChangedType(@NotNull String oldClassInternalName, @NotNull String newClassInternalName) {
-        changedTypes.put(oldClassInternalName, newClassInternalName);
+    fun getChangedTypes(): Map<String, String> {
+        return changedTypes
     }
 
-    @NotNull
-    public Set<String> getClassesToRemove() {
-        return classesToRemove;
-    }
-
-    public Map<String, String> getChangedTypes() {
-        return changedTypes;
-    }
-
-    @NotNull
-    public ReifiedTypeParametersUsages getReifiedTypeParametersUsages() {
-        return reifiedTypeParametersUsages;
+    companion object {
+        @JvmStatic
+        fun create(): InlineResult {
+            return InlineResult()
+        }
     }
 }
