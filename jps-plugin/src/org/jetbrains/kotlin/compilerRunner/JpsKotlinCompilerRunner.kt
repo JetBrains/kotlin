@@ -143,7 +143,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running").apply {
                 deleteOnExit()
             }
-            newDaemonConnection(compilerId, flagFile, environment)
+            jpsDaemonConnection = newDaemonConnection(compilerId, flagFile, environment)
         }
         return jpsDaemonConnection!!
     }
