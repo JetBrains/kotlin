@@ -37,36 +37,38 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     private var prologueBb: LLVMBasicBlockRef? = null
     private var entryBb: LLVMBasicBlockRef? = null
 
-    fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildAdd (builder, arg0, arg1, result)!!
-    fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildMul (builder, arg0, arg1, result)!!
-    fun minus (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSub (builder, arg0, arg1, result)!!
-    fun div   (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSDiv(builder, arg0, arg1, result)!!
-    fun srem  (arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildSRem(builder, arg0, arg1, result)!!
+    fun setName(value: LLVMValueRef, name: String) = LLVMSetValueName(value, name)
+
+    fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildAdd (builder, arg0, arg1, name)!!
+    fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildMul (builder, arg0, arg1, name)!!
+    fun minus (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildSub (builder, arg0, arg1, name)!!
+    fun div   (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildSDiv(builder, arg0, arg1, name)!!
+    fun srem  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildSRem(builder, arg0, arg1, name)!!
 
     /* integers comparisons */
-    fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, result)!!
-    fun icmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, result)!!
-    fun icmpGe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGE, arg0, arg1, result)!!
-    fun icmpLt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, result)!!
-    fun icmpLe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, result)!!
-    fun icmpNe(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, result)!!
+    fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, name)!!
+    fun icmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, name)!!
+    fun icmpGe(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGE, arg0, arg1, name)!!
+    fun icmpLt(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, name)!!
+    fun icmpLe(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, name)!!
+    fun icmpNe(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntNE,  arg0, arg1, name)!!
 
-    fun ucmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntUGT, arg0, arg1, result)!!
+    fun ucmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntUGT, arg0, arg1, name)!!
 
     /* floating-point comparisons */
-    fun fcmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, result: String): LLVMValueRef = LLVMBuildFCmp(builder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, result)!!
+    fun fcmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildFCmp(builder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, name)!!
 
-    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, result: String) = LLVMBuildBitCast(builder, value, type, result)!!
+    fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, name: String = "") = LLVMBuildBitCast(builder, value, type, name)!!
 
-    fun intToPtr(imm: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String) = LLVMBuildIntToPtr(builder, imm, DestTy, Name)
+    fun intToPtr(imm: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, imm, DestTy, Name)
 
-    fun alloca(type: KotlinType, varName: String): LLVMValueRef = alloca( getLLVMType(type), varName)
-    fun alloca(type: LLVMTypeRef?, varName: String): LLVMValueRef {
+    fun alloca(type: KotlinType, name: String = ""): LLVMValueRef = alloca(getLLVMType(type), name)
+    fun alloca(type: LLVMTypeRef?, name: String = ""): LLVMValueRef {
         appendingTo(prologueBb!!) {
-            return LLVMBuildAlloca(builder, type, varName)!!
+            return LLVMBuildAlloca(builder, type, name)!!
         }
     }
-    fun load(value: LLVMValueRef, varName: String): LLVMValueRef = LLVMBuildLoad(builder, value, varName)!!
+    fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildLoad(builder, value, name)!!
     fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(builder, value, ptr)!!
 
     fun isConst(value: LLVMValueRef): Boolean = (LLVMIsConstant(value) == 1)
@@ -75,26 +77,26 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun invoke(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>,
                then: LLVMBasicBlockRef, landingpad: LLVMBasicBlockRef,
-               result: String?): LLVMValueRef {
+               name: String = ""): LLVMValueRef {
 
         memScoped {
             val rargs = allocArrayOf(args)[0].ptr
-            return LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, then, landingpad, result)!!
+            return LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, then, landingpad, name)!!
         }
 
     }
 
-    fun call(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>, result: String?): LLVMValueRef {
+    fun call(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>, name: String = ""): LLVMValueRef {
         memScoped {
             val rargs = allocArrayOf(args)[0].ptr
-            return LLVMBuildCall(builder, llvmFunction, rargs, args.size, result)!!
+            return LLVMBuildCall(builder, llvmFunction, rargs, args.size, name)!!
         }
     }
 
     //-------------------------------------------------------------------------//
 
-    fun phi(type: LLVMTypeRef, result: String): LLVMValueRef {
-        return LLVMBuildPhi(builder, type, result)!!
+    fun phi(type: LLVMTypeRef, name: String = ""): LLVMValueRef {
+        return LLVMBuildPhi(builder, type, name)!!
     }
 
     fun addPhiIncoming(phi: LLVMValueRef, vararg incoming: Pair<LLVMBasicBlockRef, LLVMValueRef>) {
