@@ -193,7 +193,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             boolean isConstructor
     ) {
         InlineResult funResult = inlineMethod(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, isConstructor);
-        transformationResult.addAllClassesToRemove(funResult);
+        transformationResult.merge(funResult);
         transformationResult.getReifiedTypeParametersUsages().mergeAll(funResult.getReifiedTypeParametersUsages());
         return funResult;
     }

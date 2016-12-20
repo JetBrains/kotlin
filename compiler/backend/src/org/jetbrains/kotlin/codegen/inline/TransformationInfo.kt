@@ -26,6 +26,10 @@ interface TransformationInfo {
 
     val nameGenerator: NameGenerator
 
+    val wasAlreadyRegenerated: Boolean
+        get() = false
+
+
     fun shouldRegenerate(sameModule: Boolean): Boolean
 
     fun canRemoveAfterTransformation(): Boolean
@@ -76,6 +80,9 @@ class AnonymousObjectTransformationInfo internal constructor(
     lateinit var allRecapturedParameters: List<CapturedParamDesc>
 
     lateinit var capturedLambdasToInline: Map<String, LambdaInfo>
+
+    override val wasAlreadyRegenerated: Boolean
+        get() = alreadyRegenerated
 
     constructor(
             ownerInternalName: String,

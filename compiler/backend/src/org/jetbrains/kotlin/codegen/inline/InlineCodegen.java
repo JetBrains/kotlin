@@ -218,7 +218,7 @@ public class InlineCodegen extends CallGenerator {
 
         codegen.propagateChildReifiedTypeParametersUsages(result.getReifiedTypeParametersUsages());
 
-        state.getFactory().removeClasses(result.getClassesToRemove());
+        state.getFactory().removeClasses(result.calcClassesToRemove());
 
         codegen.markLineNumberAfterInlineIfNeeded();
     }

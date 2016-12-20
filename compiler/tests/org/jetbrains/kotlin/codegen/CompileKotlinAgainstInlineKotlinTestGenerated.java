@@ -140,6 +140,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("kt14011.kt")
+        public void testKt14011() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt14011.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14011_2.kt")
+        public void testKt14011_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt14011_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14011_3.kt")
+        public void testKt14011_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt14011_3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6552.kt")
         public void testKt6552() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt6552.kt");

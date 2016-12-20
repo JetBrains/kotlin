@@ -164,9 +164,9 @@ public class MethodInliner {
             private void handleAnonymousObjectRegeneration() {
                 transformationInfo = iterator.next();
 
+                String oldClassName = transformationInfo.getOldClassName();
                 if (transformationInfo.shouldRegenerate(isSameModule)) {
                     //TODO: need poping of type but what to do with local funs???
-                    String oldClassName = transformationInfo.getOldClassName();
                     String newClassName = transformationInfo.getNewClassName();
                     remapper.addMapping(oldClassName, newClassName);
 
@@ -178,7 +178,7 @@ public class MethodInliner {
                     ObjectTransformer transformer = transformationInfo.createTransformer(childInliningContext, isSameModule);
 
                     InlineResult transformResult = transformer.doTransform(nodeRemapper);
-                    result.addAllClassesToRemove(transformResult);
+                    result.merge(transformResult);
                     result.addChangedType(oldClassName, newClassName);
 
                     if (inliningContext.isInliningLambda && transformationInfo.canRemoveAfterTransformation()) {
@@ -190,6 +190,9 @@ public class MethodInliner {
                         ReifiedTypeInliner.putNeedClassReificationMarker(mv);
                         result.getReifiedTypeParametersUsages().mergeAll(transformResult.getReifiedTypeParametersUsages());
                     }
+                }
+                else if (!transformationInfo.getWasAlreadyRegenerated()) {
+                    result.addNotChangedClass(oldClassName);
                 }
             }
 
@@ -248,7 +251,7 @@ public class MethodInliner {
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
                     //TODO add skipped this and receiver
                     InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift);
-                    result.addAllClassesToRemove(lambdaResult);
+                    result.mergeWithNotChangeInfo(lambdaResult);
 
                     //return value boxing/unboxing
                     Method bridge = typeMapper.mapAsmMethod(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor()));
