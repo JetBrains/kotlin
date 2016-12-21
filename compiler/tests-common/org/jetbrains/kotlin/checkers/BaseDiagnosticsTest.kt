@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
@@ -194,13 +195,19 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             return result
         }
 
-        fun getActualText(bindingContext: BindingContext, actualText: StringBuilder, skipJvmSignatureDiagnostics: Boolean): Boolean {
+        fun getActualText(
+                bindingContext: BindingContext,
+                implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
+                actualText: StringBuilder,
+                skipJvmSignatureDiagnostics: Boolean
+        ): Boolean {
             if (this.ktFile == null) {
                 // TODO: check java files too
                 actualText.append(this.clearText)
                 return true
             }
 
+            // TODO: report JVM signature diagnostics also for implementing modules
             val jvmSignatureDiagnostics = if (skipJvmSignatureDiagnostics)
                 emptySet<ActualDiagnostic>()
             else
@@ -209,14 +216,14 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val ok = booleanArrayOf(true)
             val diagnostics = ContainerUtil.filter(
                     CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
-                            bindingContext, ktFile, markDynamicCalls, dynamicCallDescriptors
+                            bindingContext, implementingModulesBindings, ktFile, markDynamicCalls, dynamicCallDescriptors
                     ) + jvmSignatureDiagnostics,
                     { whatDiagnosticsToConsider.value(it.diagnostic) }
             )
 
             val diagnosticToExpectedDiagnostic = CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
                 override fun missingDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
-                    val message = "Missing " + diagnostic.name + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
+                    val message = "Missing " + diagnostic.description + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
                     System.err.println(message)
                     ok[0] = false
                 }
@@ -235,7 +242,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 }
 
                 override fun unexpectedDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, actualStart: Int, actualEnd: Int) {
-                    val message = "Unexpected ${diagnostic.name}${DiagnosticUtils.atLocation(ktFile, TextRange(actualStart, actualEnd))}"
+                    val message = "Unexpected ${diagnostic.description}${DiagnosticUtils.atLocation(ktFile, TextRange(actualStart, actualEnd))}"
                     System.err.println(message)
                     ok[0] = false
                 }
@@ -256,7 +263,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             for (declaration in declarations) {
                 val diagnostics = getJvmSignatureDiagnostics(declaration, bindingContext.diagnostics,
                                                              GlobalSearchScope.allScope(project)) ?: continue
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it) })
+                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null) })
             }
             return jvmSignatureDiagnostics
         }

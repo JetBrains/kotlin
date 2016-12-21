@@ -14,10 +14,10 @@ public final header class Foo {
 // -- Module: <m2-jvm> --
 package
 
-public final class Foo {
+public final impl class Foo {
     public constructor Foo()
     public final val foo: kotlin.String = "JVM"
-    public final fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    public final impl fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -27,10 +27,10 @@ public final class Foo {
 // -- Module: <m3-js> --
 package
 
-public final class Foo {
+public final impl class Foo {
     public constructor Foo()
     public final val foo: kotlin.String = "JS"
-    public final fun bar(/*0*/ x: kotlin.Int): kotlin.Int
+    public final impl fun bar(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

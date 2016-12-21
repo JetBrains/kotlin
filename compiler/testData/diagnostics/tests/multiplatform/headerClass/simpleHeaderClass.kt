@@ -5,8 +5,8 @@ header class Foo
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
-class Foo
+impl class Foo
 
 // MODULE: m3-js(m1-common)
 // FILE: js.kt
-class Foo
+impl class Foo

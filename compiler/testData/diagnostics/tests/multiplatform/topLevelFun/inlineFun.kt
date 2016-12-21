@@ -2,7 +2,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-inline header fun inlineFun()
+<!JVM:HEADER_WITHOUT_IMPLEMENTATION!>inline header fun inlineFun()<!>
 header fun nonInlineFun()
 
 // MODULE: m2-jvm(m1-common)

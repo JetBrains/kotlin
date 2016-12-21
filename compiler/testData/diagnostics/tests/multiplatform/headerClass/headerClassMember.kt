@@ -9,16 +9,16 @@ header class Foo {
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
-class Foo {
-    val foo: String = "JVM"
+impl class Foo {
+    impl val foo: String = "JVM"
 
-    fun bar(x: Int): Int = x + 1
+    impl fun bar(x: Int): Int = x + 1
 }
 
 // MODULE: m3-js(m1-common)
 // FILE: js.kt
-class Foo {
-    val foo: String = "JS"
+impl class Foo {
+    impl val foo: String = "JS"
 
-    fun bar(x: Int): Int = x - 1
+    impl fun bar(x: Int): Int = x - 1
 }

@@ -147,14 +147,14 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
 
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(
                     psiFile,
-                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null)
+                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null)
             ).toString();
 
             List<DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
 
             List<ActualDiagnostic> actualDiagnostics =
-                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null);
+                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null, null);
             Collections.sort(actualDiagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
 
             makeTestData(actualDiagnostics, diagnosedRanges);
@@ -165,7 +165,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, actualDiagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
                 @Override
                 public void missingDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int expectedStart, int expectedEnd) {
-                    actualMessages.add(missing(diagnostic.getName(), expectedStart, expectedEnd));
+                    actualMessages.add(missing(diagnostic.getDescription(), expectedStart, expectedEnd));
                 }
 
                 @Override
@@ -180,7 +180,7 @@ public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
 
                 @Override
                 public void unexpectedDiagnostic(CheckerTestUtil.TextDiagnostic diagnostic, int actualStart, int actualEnd) {
-                    actualMessages.add(unexpected(diagnostic.getName(), actualStart, actualEnd));
+                    actualMessages.add(unexpected(diagnostic.getDescription(), actualStart, actualEnd));
                 }
             });
 

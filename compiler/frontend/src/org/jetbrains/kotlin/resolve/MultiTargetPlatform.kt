@@ -20,10 +20,19 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-sealed class MultiTargetPlatform {
-    object Common : MultiTargetPlatform()
+sealed class MultiTargetPlatform : Comparable<MultiTargetPlatform> {
+    object Common : MultiTargetPlatform() {
+        override fun compareTo(other: MultiTargetPlatform): Int =
+                if (other is Common) 0 else -1
+    }
 
-    data class Specific(val platform: String) : MultiTargetPlatform()
+    data class Specific(val platform: String) : MultiTargetPlatform() {
+        override fun compareTo(other: MultiTargetPlatform): Int =
+                when (other) {
+                    is Common -> 1
+                    is Specific -> platform.compareTo(other.platform)
+                }
+    }
 
     companion object {
         @JvmField

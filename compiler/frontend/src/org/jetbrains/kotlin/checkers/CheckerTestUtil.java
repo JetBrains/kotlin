@@ -34,6 +34,7 @@ import kotlin.Pair;
 import kotlin.TuplesKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.*;
@@ -84,7 +86,7 @@ public class CheckerTestUtil {
     private static final String IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE";
     private static final String SHOULD_BE_ESCAPED = "\\)\\(;";
     private static final String DIAGNOSTIC_PARAMETER = "(?:(?:\\\\[" + SHOULD_BE_ESCAPED + "])|[^" + SHOULD_BE_ESCAPED + "])+";
-    private static final String INDIVIDUAL_DIAGNOSTIC = "(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?";
+    private static final String INDIVIDUAL_DIAGNOSTIC = "(\\w+:)?(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?";
     private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!" +
                                                                               INDIVIDUAL_DIAGNOSTIC + "(,\\s*" +
                                                                               INDIVIDUAL_DIAGNOSTIC + ")*!>)|(<!>)");
@@ -94,23 +96,57 @@ public class CheckerTestUtil {
     @NotNull
     public static List<ActualDiagnostic> getDiagnosticsIncludingSyntaxErrors(
             @NotNull BindingContext bindingContext,
+            @NotNull List<Pair<MultiTargetPlatform, BindingContext>> implementingModulesBindings,
             @NotNull PsiElement root,
             boolean markDynamicCalls,
             @Nullable List<DeclarationDescriptor> dynamicCallDescriptors
     ) {
+        List<ActualDiagnostic> result =
+                getDiagnosticsIncludingSyntaxErrors(bindingContext, root, markDynamicCalls, dynamicCallDescriptors, null);
+
+        List<Pair<MultiTargetPlatform, BindingContext>> sortedBindings = CollectionsKt.sortedWith(
+                implementingModulesBindings,
+                new Comparator<Pair<MultiTargetPlatform, BindingContext>>() {
+                    @Override
+                    public int compare(Pair<MultiTargetPlatform, BindingContext> o1, Pair<MultiTargetPlatform, BindingContext> o2) {
+                        return o1.getFirst().compareTo(o2.getFirst());
+                    }
+                }
+        );
+
+        for (Pair<MultiTargetPlatform, BindingContext> binding : sortedBindings) {
+            MultiTargetPlatform platform = binding.getFirst();
+            assert platform instanceof MultiTargetPlatform.Specific : "Implementing module must have a specific platform: " + platform;
+
+            result.addAll(getDiagnosticsIncludingSyntaxErrors(
+                    binding.getSecond(), root, markDynamicCalls, dynamicCallDescriptors,
+                    ((MultiTargetPlatform.Specific) platform).getPlatform()
+            ));
+        }
+
+        return result;
+    }
+
+    @NotNull
+    public static List<ActualDiagnostic> getDiagnosticsIncludingSyntaxErrors(
+            @NotNull BindingContext bindingContext,
+            @NotNull PsiElement root,
+            boolean markDynamicCalls,
+            @Nullable List<DeclarationDescriptor> dynamicCallDescriptors,
+            @Nullable String platform
+    ) {
         List<ActualDiagnostic> diagnostics = new ArrayList<ActualDiagnostic>();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics().all()) {
             if (PsiTreeUtil.isAncestor(root, diagnostic.getPsiElement(), false)) {
-                diagnostics.add(new ActualDiagnostic(diagnostic));
+                diagnostics.add(new ActualDiagnostic(diagnostic, platform));
             }
         }
 
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
-            diagnostics.add(new ActualDiagnostic(new SyntaxErrorDiagnostic(errorElement)));
+            diagnostics.add(new ActualDiagnostic(new SyntaxErrorDiagnostic(errorElement), platform));
         }
 
-        List<ActualDiagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls, dynamicCallDescriptors);
-        diagnostics.addAll(debugAnnotations);
+        diagnostics.addAll(getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls, dynamicCallDescriptors, platform));
         return diagnostics;
     }
 
@@ -120,7 +156,8 @@ public class CheckerTestUtil {
             @NotNull PsiElement root,
             @NotNull BindingContext bindingContext,
             final boolean markDynamicCalls,
-            @Nullable final List<DeclarationDescriptor> dynamicCallDescriptors
+            @Nullable final List<DeclarationDescriptor> dynamicCallDescriptors,
+            @Nullable final String platform
     ) {
         final List<ActualDiagnostic> debugAnnotations = new ArrayList<ActualDiagnostic>();
 
@@ -152,7 +189,7 @@ public class CheckerTestUtil {
             }
 
             private void newDiagnostic(KtElement element, DebugInfoDiagnosticFactory factory) {
-                debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(element, factory)));
+                debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(element, factory), platform));
             }
         });
 
@@ -167,7 +204,7 @@ public class CheckerTestUtil {
         )) {
             for (KtExpression expression : bindingContext.getSliceContents(factory.getFirst()).keySet()) {
                 if (PsiTreeUtil.isAncestor(root, expression, false)) {
-                    debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(expression, factory.getSecond())));
+                    debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(expression, factory.getSecond()), platform));
                 }
             }
         }
@@ -267,7 +304,7 @@ public class CheckerTestUtil {
                     actualDiagnostics.entrySet(), new Function1<Map.Entry<ActualDiagnostic, TextDiagnostic>, Boolean>() {
                         @Override
                         public Boolean invoke(Map.Entry<ActualDiagnostic, TextDiagnostic> entry) {
-                            return expectedDiagnostic.getName().equals(entry.getValue().getName());
+                            return expectedDiagnostic.getDescription().equals(entry.getValue().getDescription());
                         }
                     }
             );
@@ -294,7 +331,7 @@ public class CheckerTestUtil {
     }
 
     private static boolean compareTextDiagnostic(@NotNull TextDiagnostic expected, @NotNull TextDiagnostic actual) {
-        if (!expected.getName().equals(actual.getName())) return false;
+        if (!expected.getDescription().equals(actual.getDescription())) return false;
 
         if (expected.getParameters() == null) return true;
         if (actual.getParameters() == null || expected.getParameters().size() != actual.getParameters().size()) return false;
@@ -461,6 +498,10 @@ public class CheckerTestUtil {
                 }
             }
             else {
+                if (diagnostic.platform != null) {
+                    result.append(diagnostic.platform);
+                    result.append(":");
+                }
                 result.append(diagnostic.getName());
             }
             if (iterator.hasNext()) {
@@ -633,9 +674,11 @@ public class CheckerTestUtil {
 
     public static class ActualDiagnostic {
         public final Diagnostic diagnostic;
+        public final String platform;
 
-        ActualDiagnostic(@NotNull Diagnostic diagnostic) {
+        ActualDiagnostic(@NotNull Diagnostic diagnostic, @Nullable String platform) {
             this.diagnostic = diagnostic;
+            this.platform = platform;
         }
 
         @NotNull
@@ -650,18 +693,22 @@ public class CheckerTestUtil {
 
         @Override
         public boolean equals(Object obj) {
+            if (!(obj instanceof ActualDiagnostic)) return false;
+
+            ActualDiagnostic other = (ActualDiagnostic) obj;
             // '==' on diagnostics is intentional here
-            return obj instanceof ActualDiagnostic && ((ActualDiagnostic) obj).diagnostic == diagnostic;
+            return other.diagnostic == diagnostic &&
+                   (other.platform == null ? platform == null : other.platform.equals(platform));
         }
 
         @Override
         public int hashCode() {
-            return System.identityHashCode(diagnostic);
+            return System.identityHashCode(diagnostic) * 31 + (platform != null ? platform.hashCode() : 0);
         }
 
         @Override
         public String toString() {
-            return diagnostic.toString();
+            return (platform != null ? platform + ":" : "") + diagnostic.toString();
         }
     }
 
@@ -671,18 +718,22 @@ public class CheckerTestUtil {
             Matcher matcher = INDIVIDUAL_DIAGNOSTIC_PATTERN.matcher(text);
             if (!matcher.find())
                 throw new IllegalArgumentException("Could not parse diagnostic: " + text);
-            String name = matcher.group(1);
 
-            String parameters = matcher.group(2);
+            String platformPrefix = matcher.group(1);
+            assert platformPrefix == null || platformPrefix.endsWith(":") : platformPrefix;
+            String platform = platformPrefix == null ? null : StringsKt.substringBeforeLast(platformPrefix, ":", platformPrefix);
+
+            String name = matcher.group(2);
+            String parameters = matcher.group(3);
             if (parameters == null) {
-                return new TextDiagnostic(name, null);
+                return new TextDiagnostic(name, platform, null);
             }
 
             List<String> parsedParameters = new SmartList<String>();
             Matcher parametersMatcher = INDIVIDUAL_PARAMETER_PATTERN.matcher(parameters);
             while (parametersMatcher.find())
                 parsedParameters.add(unescape(parametersMatcher.group().trim()));
-            return new TextDiagnostic(name, parsedParameters);
+            return new TextDiagnostic(name, platform, parsedParameters);
         }
 
         private static @NotNull String escape(@NotNull String s) {
@@ -708,24 +759,32 @@ public class CheckerTestUtil {
                         return o != null ? o.toString() : "null";
                     }
                 });
-                return new TextDiagnostic(diagnosticName, parameters);
+                return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, parameters);
             }
-            return new TextDiagnostic(diagnosticName, null);
+            return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, null);
         }
 
         @NotNull
         private final String name;
         @Nullable
+        private final String platform;
+        @Nullable
         private final List<String> parameters;
 
-        public TextDiagnostic(@NotNull String name, @Nullable List<String> parameters) {
+        public TextDiagnostic(@NotNull String name, @Nullable String platform, @Nullable List<String> parameters) {
             this.name = name;
+            this.platform = platform;
             this.parameters = parameters;
         }
 
+        @Nullable
+        public String getPlatform() {
+            return platform;
+        }
+
         @NotNull
-        public String getName() {
-            return name;
+        public String getDescription() {
+            return (platform != null ? platform + ":" : "") + name;
         }
 
         @Nullable
@@ -741,6 +800,7 @@ public class CheckerTestUtil {
             TextDiagnostic that = (TextDiagnostic) o;
 
             if (!name.equals(that.name)) return false;
+            if (platform != null ? !platform.equals(that.platform) : that.platform != null) return false;
             if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) return false;
 
             return true;
@@ -749,20 +809,30 @@ public class CheckerTestUtil {
         @Override
         public int hashCode() {
             int result = name.hashCode();
+            result = 31 * result + (platform != null ? platform.hashCode() : 0);
             result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
             return result;
         }
 
         @NotNull
         public String asString() {
-            if (parameters == null)
-                return name;
-            return name + '(' + StringUtil.join(parameters, new Function<String, String>() {
-                @Override
-                public String fun(String s) {
-                    return escape(s);
-                }
-            }, "; ") + ')';
+            StringBuilder result = new StringBuilder();
+            if (platform != null) {
+                result.append(platform);
+                result.append(":");
+            }
+            result.append(name);
+            if (parameters != null) {
+                result.append("(");
+                result.append(StringUtil.join(parameters, new Function<String, String>() {
+                    @Override
+                    public String fun(String s) {
+                        return escape(s);
+                    }
+                }, "; "));
+                result.append(")");
+            }
+            return result.toString();
         }
 
         @Override

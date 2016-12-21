@@ -4,15 +4,15 @@
 // FILE: common.kt
 
 header class C1
-header class C2<A>
-header class C3<B>
-header class C4<D, E>
-header class C5<F, G>
-header class C6<H>
-header class C7<I>
-header class C8<J>
-header class C9<K>
-header class C10<L>
+header interface <!JVM:HEADER_WITHOUT_IMPLEMENTATION!>C2<!><A>
+header interface <!JVM:HEADER_WITHOUT_IMPLEMENTATION!>C3<!><B>
+header interface C4<D, E>
+header interface C5<F, G>
+header interface C6<H>
+header interface C7<I>
+header interface C8<J>
+header interface C9<K>
+header interface C10<L>
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt

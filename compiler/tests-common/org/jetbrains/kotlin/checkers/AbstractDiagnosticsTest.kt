@@ -154,8 +154,17 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         for (testFile in files) {
             val module = testFile.module
             val isCommonModule = modules[module]!!.getMultiTargetPlatform() == MultiTargetPlatform.Common
+            val implementingModules =
+                    if (!isCommonModule) emptyList()
+                    else modules.entries.filter { (testModule) -> module in testModule?.getDependencies().orEmpty() }
+            val implementingModulesBindings = implementingModules.mapNotNull {
+                (testModule, moduleDescriptor) ->
+                val platform = moduleDescriptor.getCapability(MultiTargetPlatform.CAPABILITY)
+                if (platform is MultiTargetPlatform.Specific) platform to moduleBindings[testModule]!!
+                else null
+            }
             ok = ok and testFile.getActualText(
-                    moduleBindings[module]!!, actualText,
+                    moduleBindings[module]!!, implementingModulesBindings, actualText,
                     shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule
             )
         }
@@ -464,7 +473,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val nameSuffix = moduleName.substringAfterLast("-", "")
         val platform =
                 if (nameSuffix.isEmpty()) null
-                else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix)
+                else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix.toUpperCase())
         val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> =
                 if (platform == null) emptyMap()
                 else mapOf(MultiTargetPlatform.CAPABILITY to platform)
