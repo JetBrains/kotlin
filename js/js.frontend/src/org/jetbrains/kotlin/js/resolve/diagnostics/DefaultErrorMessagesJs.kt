@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,9 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE,
             "Only nullable properties of external interfaces are allowed to be non-abstract")
         put(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION, "Wrong body of external declaration. Must be either ' = noImpl' or { noImpl }")
+        put(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION, "Wrong initializer of external declaration. Must be ' = noImpl'")
+        put(ErrorsJs.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER,
+            "Wrong default value for parameter of external function. Must be ' = noImpl'")
 
         this
     }

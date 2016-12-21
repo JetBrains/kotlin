@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +81,8 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtExpression> NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE = DiagnosticFactory0.create(
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtExpression> WRONG_BODY_OF_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

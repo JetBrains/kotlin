@@ -90,32 +90,27 @@ object JsExternalChecker : SimpleDeclarationChecker {
             diagnosticHolder.report(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE.on(declaration))
         }
 
-        checkBody(declaration, diagnosticHolder, bindingContext)
+        checkBody(declaration, descriptor, diagnosticHolder, bindingContext)
     }
 
-    private fun checkBody(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+    private fun checkBody(
+            declaration: KtDeclaration, descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
+    ) {
+        if (declaration is KtProperty && descriptor is PropertyAccessorDescriptor) return
+
         if (declaration is KtDeclarationWithBody && !declaration.hasValidExternalBody(bindingContext)) {
-            reportWrongBody(declaration.bodyExpression!!, diagnosticHolder, bindingContext)
+            diagnosticHolder.report(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION.on(declaration.bodyExpression!!))
         }
         else if (declaration is KtDeclarationWithInitializer && declaration.initializer?.isNoImplExpression(bindingContext) == false) {
-            reportWrongBody(declaration.initializer!!, diagnosticHolder, bindingContext)
+            diagnosticHolder.report(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION.on(declaration.initializer!!))
         }
         if (declaration is KtCallableDeclaration) {
             for (defaultValue in declaration.valueParameters.mapNotNull { it.defaultValue }) {
-                checkExternalExpression(defaultValue, diagnosticHolder, bindingContext)
+                if (!defaultValue.isNoImplExpression(bindingContext)) {
+                    diagnosticHolder.report(ErrorsJs.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER.on(defaultValue))
+                }
             }
-        }
-    }
-
-    private fun checkExternalExpression(expression: KtExpression, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
-        if (!expression.isNoImplExpression(bindingContext)) {
-            reportWrongBody(expression, diagnosticHolder, bindingContext)
-        }
-    }
-
-    private fun reportWrongBody(expression: KtExpression, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
-        if (bindingContext.diagnostics.forElement(expression).none { it.factory == ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION }) {
-            diagnosticHolder.report(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION.on(expression))
         }
     }
 
