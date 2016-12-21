@@ -26,6 +26,9 @@ import java.lang.reflect.*
 import java.util.*
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.*
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.internal.KTypeImpl
 import kotlin.reflect.jvm.internal.asKCallableImpl
 import kotlin.reflect.jvm.internal.asKPropertyImpl

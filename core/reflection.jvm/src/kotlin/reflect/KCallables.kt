@@ -17,33 +17,42 @@
 @file:JvmName("KCallables")
 package kotlin.reflect
 
+import kotlin.reflect.full.extensionReceiverParameter
+import kotlin.reflect.full.findParameterByName
+import kotlin.reflect.full.instanceParameter
+import kotlin.reflect.full.valueParameters
+
 /**
  * Returns a parameter representing the `this` instance needed to call this callable,
  * or `null` if this callable is not a member of a class and thus doesn't take such parameter.
  */
+@Deprecated("Use 'instanceParameter' from kotlin.reflect.full package", ReplaceWith("this.instanceParameter", "kotlin.reflect.full.instanceParameter"), level = DeprecationLevel.WARNING)
 @SinceKotlin("1.1")
-val KCallable<*>.instanceParameter: KParameter?
-    get() = parameters.singleOrNull { it.kind == KParameter.Kind.INSTANCE }
+inline val KCallable<*>.instanceParameter: KParameter?
+    get() = this.instanceParameter
 
 /**
  * Returns a parameter representing the extension receiver instance needed to call this callable,
  * or `null` if this callable is not an extension.
  */
+@Deprecated("Use 'extensionReceiverParameter' from kotlin.reflect.full package", ReplaceWith("this.extensionReceiverParameter", "kotlin.reflect.full.extensionReceiverParameter"), level = DeprecationLevel.WARNING)
 @SinceKotlin("1.1")
-val KCallable<*>.extensionReceiverParameter: KParameter?
-    get() = parameters.singleOrNull { it.kind == KParameter.Kind.EXTENSION_RECEIVER }
+inline val KCallable<*>.extensionReceiverParameter: KParameter?
+    get() = this.extensionReceiverParameter
 
 /**
  * Returns parameters of this callable, excluding the `this` instance and the extension receiver parameter.
  */
+@Deprecated("Use 'valueParameters' from kotlin.reflect.full package", ReplaceWith("this.valueParameters", "kotlin.reflect.full.valueParameters"), level = DeprecationLevel.WARNING)
 @SinceKotlin("1.1")
-val KCallable<*>.valueParameters: List<KParameter>
-    get() = parameters.filter { it.kind == KParameter.Kind.VALUE }
+inline val KCallable<*>.valueParameters: List<KParameter>
+    get() = this.valueParameters
 
 /**
  * Returns the parameter of this callable with the given name, or `null` if there's no such parameter.
  */
+@Deprecated("Use 'findParameterByName' from kotlin.reflect.full package", ReplaceWith("this.findParameterByName", "kotlin.reflect.full.findParameterByName"), level = DeprecationLevel.WARNING)
 @SinceKotlin("1.1")
-fun KCallable<*>.findParameterByName(name: String): KParameter? {
-    return parameters.singleOrNull { it.name == name }
+inline fun KCallable<*>.findParameterByName(name: String): KParameter? {
+    return this.findParameterByName(name)
 }

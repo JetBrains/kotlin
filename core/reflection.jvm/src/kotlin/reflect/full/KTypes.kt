@@ -15,30 +15,43 @@
  */
 
 @file:JvmName("KTypes")
-package kotlin.reflect
+package kotlin.reflect.full
 
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.isSupertypeOf
-import kotlin.reflect.full.withNullability
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.KTypeImpl
 
 /**
  * Returns a new type with the same classifier, arguments and annotations as the given type, and with the given nullability.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'withNullability' from kotlin.reflect.full package", ReplaceWith("this.withNullability(nullable)", "kotlin.reflect.full.withNullability"), level = DeprecationLevel.WARNING)
-inline fun KType.withNullability(nullable: Boolean): KType = this.withNullability(nullable)
+fun KType.withNullability(nullable: Boolean): KType {
+    if (isMarkedNullable) {
+        return if (nullable) this else KTypeImpl(TypeUtils.makeNotNullable((this as KTypeImpl).type)) { javaType }
+    }
+
+    // If the type is not marked nullable, it's either a non-null type or a platform type.
+    val kotlinType = (this as KTypeImpl).type
+    if (kotlinType.isFlexible()) return KTypeImpl(TypeUtils.makeNullableAsSpecified(kotlinType, nullable)) { javaType }
+
+    return if (!nullable) this else KTypeImpl(TypeUtils.makeNullable(kotlinType)) { javaType }
+}
 
 
 /**
  * Returns `true` if `this` type is the same or is a subtype of [other], `false` otherwise.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'isSubtypeOf' from kotlin.reflect.full package", ReplaceWith("this.isSubtypeOf(other)", "kotlin.reflect.full.isSubtypeOf"), level = DeprecationLevel.WARNING)
-inline fun KType.isSubtypeOf(other: KType): Boolean = this.isSubtypeOf(other)
+fun KType.isSubtypeOf(other: KType): Boolean {
+    return (this as KTypeImpl).type.isSubtypeOf((other as KTypeImpl).type)
+}
 
 /**
  * Returns `true` if `this` type is the same or is a supertype of [other], `false` otherwise.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'isSupertypeOf' from kotlin.reflect.full package", ReplaceWith("this.isSupertypeOf(other)", "kotlin.reflect.full.isSupertypeOf"), level = DeprecationLevel.WARNING)
-inline fun KType.isSupertypeOf(other: KType): Boolean = this.isSupertypeOf(other)
+fun KType.isSupertypeOf(other: KType): Boolean {
+    return other.isSubtypeOf(this)
+}
