@@ -48,9 +48,9 @@ class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
         }
         else if (isLayoutPackageIdentifier(reference)) {
             return if (newElementName.endsWith(".xml"))
-                psiFactory.createSimpleName(newElementName.dropLast(".xml".length))
+                psiFactory.createSimpleName(newElementName.dropLast(".xml".length)).getIdentifier()
             else
-                reference.element
+                reference.element.getIdentifier()
         }
 
         return null
