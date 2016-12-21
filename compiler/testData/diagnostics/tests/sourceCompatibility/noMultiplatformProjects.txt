@@ -1,6 +1,6 @@
 package
 
-public val bar2: kotlin.Int
+public impl val bar2: kotlin.Int
 public impl fun foo2(): kotlin.Int
 
 public impl interface Baz2 {

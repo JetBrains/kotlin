@@ -522,6 +522,16 @@ internal class DescriptorRendererImpl(
         }
     }
 
+    private fun renderCallableModifiers(descriptor: CallableMemberDescriptor, builder: StringBuilder) {
+        renderExternal(descriptor, builder)
+        if (descriptor.isHeader) {
+            builder.append("header ")
+        }
+        if (descriptor.isImpl) {
+            builder.append("impl ")
+        }
+    }
+
     private fun renderExternal(memberDescriptor: MemberDescriptor, builder: StringBuilder) {
         if (memberDescriptor.isExternal) {
             builder.append("external ")
@@ -541,7 +551,7 @@ internal class DescriptorRendererImpl(
         if (functionDescriptor.isInfix && (functionDescriptor.overriddenDescriptors.none { it.isInfix } || alwaysRenderModifiers)) {
             builder.append("infix ")
         }
-        renderExternal(functionDescriptor, builder)
+        renderCallableModifiers(functionDescriptor, builder)
         if (functionDescriptor.isInline) {
             builder.append("inline ")
         }
@@ -550,12 +560,6 @@ internal class DescriptorRendererImpl(
         }
         if (functionDescriptor.isSuspend) {
             builder.append("suspend ")
-        }
-        if (functionDescriptor.isHeader) {
-            builder.append("header ")
-        }
-        if (functionDescriptor.isImpl) {
-            builder.append("impl ")
         }
     }
 
@@ -849,7 +853,7 @@ internal class DescriptorRendererImpl(
                     builder.append("const ")
                 }
 
-                renderExternal(property, builder)
+                renderCallableModifiers(property, builder)
                 renderModalityForCallable(property, builder)
                 renderOverride(property, builder)
                 renderLateInit(property, builder)
@@ -997,7 +1001,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAccessorModifiers(descriptor: PropertyAccessorDescriptor, builder: StringBuilder) {
-        renderExternal(descriptor, builder)
+        renderCallableModifiers(descriptor, builder)
     }
 
     /* STUPID DISPATCH-ONLY VISITOR */

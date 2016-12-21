@@ -1,19 +1,19 @@
 package
 
-public val backingFieldVal: kotlin.String = "no"
-public var backingFieldVar: kotlin.String
-public const val constVal: kotlin.Int
-public val customAccessorVal: kotlin.String
-public var customAccessorVar: kotlin.String
-public val delegated: kotlin.String
-public val justVal: kotlin.String
-public var justVar: kotlin.String
-public lateinit var lateinitVar: kotlin.String
-public val valWithGet: kotlin.String
-public var varWithGetSet: kotlin.String
-public var varWithPlatformGetSet: kotlin.String
-public val kotlin.String.extensionVal: kotlin.Unit
-public var </*0*/ T> T.genericExtensionVar: T
+public header val backingFieldVal: kotlin.String = "no"
+public header var backingFieldVar: kotlin.String
+public const header val constVal: kotlin.Int
+public header val customAccessorVal: kotlin.String
+public header var customAccessorVar: kotlin.String
+public header val delegated: kotlin.String
+public header val justVal: kotlin.String
+public header var justVar: kotlin.String
+public header lateinit var lateinitVar: kotlin.String
+public header val valWithGet: kotlin.String
+public header var varWithGetSet: kotlin.String
+public header var varWithPlatformGetSet: kotlin.String
+public header val kotlin.String.extensionVal: kotlin.Unit
+public header var </*0*/ T> T.genericExtensionVar: T
 public fun test(): kotlin.String
 
 public object Delegate {

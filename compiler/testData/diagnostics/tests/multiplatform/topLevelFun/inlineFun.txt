@@ -1,7 +1,7 @@
 // -- Module: <m1-common> --
 package
 
-public inline header fun inlineFun(): kotlin.Unit
+public header inline fun inlineFun(): kotlin.Unit
 public header fun nonInlineFun(): kotlin.Unit
 
 
@@ -15,5 +15,5 @@ public impl fun nonInlineFun(): kotlin.Unit
 // -- Module: <m3-js> --
 package
 
-public inline impl fun inlineFun(): kotlin.Unit
-public inline impl fun nonInlineFun(): kotlin.Unit
+public impl inline fun inlineFun(): kotlin.Unit
+public impl inline fun nonInlineFun(): kotlin.Unit

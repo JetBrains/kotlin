@@ -3,7 +3,7 @@ package
 
 public final header annotation class Anno : kotlin.Annotation {
     public constructor Anno(/*0*/ prop: kotlin.String)
-    public final val prop: kotlin.String
+    public header final val prop: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -50,7 +50,7 @@ package
 
 public final impl annotation class Anno : kotlin.Annotation {
     public constructor Anno(/*0*/ prop: kotlin.String)
-    public final val prop: kotlin.String
+    public impl final val prop: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -12,7 +12,7 @@ public header fun kotlin.String.unaryMinus(): kotlin.String
 package
 
 public external impl fun external(): kotlin.Unit
-public inline impl fun inline(): kotlin.Unit
-public tailrec impl fun tailrec(): kotlin.Unit
+public impl inline fun inline(): kotlin.Unit
+public impl tailrec fun tailrec(): kotlin.Unit
 public infix impl fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
 public operator impl fun kotlin.String.unaryMinus(): kotlin.String

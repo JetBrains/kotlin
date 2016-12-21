@@ -73,13 +73,13 @@ public header fun f10()
 ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:26:1: error: header declaration 'f14' has no implementation in module
 The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
-    public inline impl fun <reified X> f14(): Unit
+    public impl inline fun <reified X> f14(): Unit
 
 header inline fun <X> f14()
 ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:27:1: error: header declaration 'f15' has no implementation in module
 The following declaration is incompatible because some type parameter is reified in one declaration and non-reified in the other:
-    public inline impl fun <Y> f15(): Unit
+    public impl inline fun <Y> f15(): Unit
 
 header inline fun <reified Y> f15()
 ^
@@ -103,25 +103,25 @@ header fun f18(s: Array<out String>)
 ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:33:1: error: header declaration 'f19' has no implementation in module
 The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public inline impl fun f19(s: () -> Unit): Unit
+    public impl inline fun f19(s: () -> Unit): Unit
 
 header inline fun f19(crossinline s: () -> Unit)
 ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:34:1: error: header declaration 'f20' has no implementation in module
 The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public inline impl fun f20(crossinline s: () -> Unit): Unit
+    public impl inline fun f20(crossinline s: () -> Unit): Unit
 
 header inline fun f20(s: () -> Unit)
 ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:35:1: error: header declaration 'f21' has no implementation in module
 The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public inline impl fun f21(s: () -> Unit): Unit
+    public impl inline fun f21(s: () -> Unit): Unit
 
 header inline fun f21(noinline s: () -> Unit)
 ^
 compiler/testData/multiplatform/incompatibleCallables/common.kt:36:1: error: header declaration 'f22' has no implementation in module
 The following declaration is incompatible because parameter modifiers are different (vararg, coroutine, crossinline, noinline):
-    public inline impl fun f22(noinline s: () -> Unit): Unit
+    public impl inline fun f22(noinline s: () -> Unit): Unit
 
 header inline fun f22(s: () -> Unit)
 ^
