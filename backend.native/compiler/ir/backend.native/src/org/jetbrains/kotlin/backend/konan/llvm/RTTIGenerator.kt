@@ -4,9 +4,9 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.implementation
-import org.jetbrains.kotlin.backend.konan.implementedInterfaces
-import org.jetbrains.kotlin.backend.konan.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.implementation
+import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
+import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.isUnboundCallableReference
+import org.jetbrains.kotlin.backend.konan.descriptors.isUnboundCallableReference
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
 

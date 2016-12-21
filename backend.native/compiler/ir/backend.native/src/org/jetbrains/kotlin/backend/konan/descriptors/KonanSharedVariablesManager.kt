@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 
 import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
-import org.jetbrains.kotlin.backend.konan.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
