@@ -61,7 +61,7 @@ internal final class Context(val config: KonanConfig,
 
     fun printDescriptors() {
         separator("Descriptors after: ${phase?.description}")
-        moduleDescriptor!!.deepPrint()
+        moduleDescriptor.deepPrint()
     }
 
     fun verifyIr() {

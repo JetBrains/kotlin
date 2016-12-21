@@ -244,12 +244,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     fun createInitBody(initName: String) {
         val initFunction = LLVMAddFunction(context.llvmModule, initName, kVoidFuncType)!!    // create LLVM function
+        codegen.prologue(initFunction, voidType)
         using(FunctionScope(initFunction)) {
-            val bbEnter = LLVMAppendBasicBlock(initFunction, "label_enter")!!
-            codegen.positionAtEnd(bbEnter)
-
-            context.llvm.fileInitializers.forEachIndexed {
-                i, it ->
+            context.llvm.fileInitializers.forEach {
                 val irField = it as IrField
                 val descriptor = irField.descriptor
                 val initialization = evaluateExpression(irField.initializer)
@@ -258,6 +255,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
             codegen.ret(null)
         }
+        codegen.epilogue()
     }
 
     //-------------------------------------------------------------------------//
@@ -277,12 +275,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     fun createInitCtor(ctorName: String, nodeName: String) {
         val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!   // Create constructor function.
-        val bbEnter = LLVMAppendBasicBlock(ctorFunction, "label_enter")!!                   // Create basic block.
-
-        codegen.positionAtEnd(bbEnter)
+        codegen.prologue(ctorFunction, voidType)
         val initNodePtr = LLVMGetNamedGlobal(context.llvmModule, nodeName)!!                // Get LLVM function initializing globals of current file.
         codegen.call(context.llvm.appendToInitalizersTail, initNodePtr.singletonList(), "") // Add node to the tail of initializers list.
         codegen.ret(null)
+        codegen.epilogue()
 
         context.llvm.staticInitializers.add(ctorFunction)                                   // Push newly created constructor in staticInitializers list.
     }
@@ -374,7 +371,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return
         }
 
-        codegen.prologue(constructorDeclaration)
+
+        codegen.prologue(constructorDeclaration.descriptor)
+
         val constructorDescriptor = constructorDeclaration.descriptor
         val classDescriptor = constructorDescriptor.constructedClass
 
@@ -433,7 +432,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             codegen.ret(thisPtr)
         }
 
-        codegen.epilogue(constructorDeclaration)
+        codegen.epilogue()
         context.log("visitConstructor            : ${ir2string(constructorDeclaration)}")
     }
 
@@ -448,9 +447,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     override fun visitBlockBody(body: IrBlockBody) {
         using(VariableScope()) {
             super.visitBlockBody(body)
-            val function = codegen.currentFunction!!
-            if (function !is ConstructorDescriptor && !codegen.isAfterTerminator()) {
-                if (function.returnType!!.isUnit()) {
+            // TODO: write it properly!
+            if (codegen.constructedClass == null && !codegen.isAfterTerminator()) {
+                if (codegen.returnType == voidType) {
                     codegen.ret(null)
                 } else {
                     codegen.unreachable()
@@ -470,7 +469,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     override fun visitCall(expression: IrCall) {
         context.log("visitCall                  : ${ir2string(expression)}")
-        val isUnit = KotlinBuiltIns.isUnit(expression.descriptor.returnType!!)
         evaluateExpression(expression)
     }
 
@@ -606,15 +604,17 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (declaration.descriptor.modality == Modality.ABSTRACT || declaration.body == null)
             return
 
-        codegen.prologue(declaration)
+
+        codegen.prologue(declaration.descriptor)
 
         using(FunctionScope(declaration)) {
             declaration.acceptChildrenVoid(this)
         }
 
-        codegen.epilogue(declaration)
+        codegen.epilogue()
 
-        verifyModule(context.llvmModule!!, ir2string(declaration))
+        verifyModule(context.llvmModule!!,
+                "${declaration.descriptor.containingDeclaration}::${ir2string(declaration)}")
     }
 
     //-------------------------------------------------------------------------//
@@ -1923,7 +1923,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                                        arg0: LLVMValueRef, arg1: LLVMValueRef): LLVMValueRef {
 
         val arg0Type = callee.argument0.type
-        val arg1Type = callee.argument1.type
 
         return when {
             KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO("${ir2string(callee)}")
@@ -2009,7 +2008,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     fun delegatingConstructorCall(descriptor: ClassConstructorDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
 
-        val constructedClass = (codegen.currentFunction!! as ConstructorDescriptor).constructedClass
+        val constructedClass = codegen.constructedClass!!
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisAsReceiverParameter)
 
         val thisPtrArgType = codegen.getLLVMType(descriptor.allValueParameters[0].type)

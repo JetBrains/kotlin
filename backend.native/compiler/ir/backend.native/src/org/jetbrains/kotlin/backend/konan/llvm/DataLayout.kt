@@ -16,6 +16,8 @@ internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
         KotlinBuiltIns.isInt(type) -> LLVMInt32Type()
         KotlinBuiltIns.isLong(type) -> LLVMInt64Type()
         KotlinBuiltIns.isUnit(type) -> LLVMVoidType() // TODO: handle Unit parameter case
+        // TODO: stdlib have methods taking Nothing, such as kotlin.collections.EmptySet.contains().
+        // KotlinBuiltIns.isNothing(type) -> LLVMVoidType()
         KotlinBuiltIns.isFloat(type) -> LLVMFloatType()
         KotlinBuiltIns.isDouble(type) -> LLVMDoubleType()
         !KotlinBuiltIns.isPrimitiveType(type) -> this.kObjHeaderPtr

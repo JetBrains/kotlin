@@ -4,6 +4,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -11,31 +12,57 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
-    var currentFunction:FunctionDescriptor? = null
+    var function: LLVMValueRef? = null
+    var returnType: LLVMTypeRef? = null
+    val returns: MutableMap<LLVMBasicBlockRef, LLVMValueRef> = mutableMapOf()
+    // TODO: remove, to make CodeGenerator descriptor-agnostic.
+    var constructedClass: ClassDescriptor? = null
 
-    fun prologue(declaration: IrFunction) {
-        assert(declaration.body != null)
-
-        val descriptor = declaration.descriptor
-        if (currentFunction == descriptor) return
-        currentFunction = declaration.descriptor
-        val fn = declaration.descriptor.llvmFunction
-        prologueBb = LLVMAppendBasicBlock(fn, "prologue")
-        entryBb = LLVMAppendBasicBlock(fn, "entry")
-        positionAtEnd(entryBb!!)
-    }
-
-
-    fun epilogue(declaration: IrFunction) {
-        appendingTo(prologueBb!!) {
-            br(entryBb!!)
+    fun prologue(descriptor: FunctionDescriptor) {
+        prologue(llvmFunction(descriptor),
+                LLVMGetReturnType(getLlvmFunctionType(descriptor))!!)
+        if (descriptor is ConstructorDescriptor) {
+            constructedClass = descriptor.constructedClass
         }
     }
 
-    fun fields(descriptor: ClassDescriptor):List<PropertyDescriptor> = descriptor.fields
+    fun prologue(function:LLVMValueRef, returnType:LLVMTypeRef) {
+        assert(returns.size == 0)
+
+        assert(this.function != function)
+        this.function = function
+        this.returnType = returnType
+        this.constructedClass = null
+        prologueBb = LLVMAppendBasicBlock(function, "prologue")
+        entryBb = LLVMAppendBasicBlock(function, "entry")
+        epilogueBb = LLVMAppendBasicBlock(function, "epilogue")
+        positionAtEnd(entryBb!!)
+    }
+
+    fun epilogue() {
+        appendingTo(prologueBb!!) {
+            br(entryBb!!)
+        }
+
+        appendingTo(epilogueBb!!) {
+            when {
+               returnType == voidType -> LLVMBuildRetVoid(builder)
+               returns.size > 0 -> {
+                    val returnPhi = phi(returnType!!)
+                    addPhiIncoming(returnPhi, *returns.toList().toTypedArray())
+                    LLVMBuildRet(builder, returnPhi)
+               }
+               // Do nothing, all paths throw.
+               else -> LLVMBuildUnreachable(builder)
+            }
+        }
+
+        returns.clear()
+    }
 
     private var prologueBb: LLVMBasicBlockRef? = null
     private var entryBb: LLVMBasicBlockRef? = null
+    private var epilogueBb: LLVMBasicBlockRef? = null
 
     fun setName(value: LLVMValueRef, name: String) = LLVMSetValueName(value, name)
 
@@ -138,7 +165,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun basicBlock(function: LLVMValueRef, name: String = "label_"): LLVMBasicBlockRef =
             LLVMAppendBasicBlock(function, name)!!
 
-    fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(currentFunction!!.llvmFunction)
+    fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(function)
 
     fun functionLlvmValue(descriptor: FunctionDescriptor) = descriptor.llvmFunction
     fun functionEntryPointAddress(descriptor: FunctionDescriptor) = descriptor.entryPointAddress.llvm
@@ -157,7 +184,16 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     fun ret(value: LLVMValueRef?): LLVMValueRef {
-        val res = LLVMBuildRet(builder, value)!!
+        val res = LLVMBuildBr(builder, epilogueBb)!!
+
+        if (returns.get(currentBlock) != null) {
+            // TODO: enable error throwing.
+            throw Error("ret() in the same basic block twice!")
+        }
+
+        if (value != null)
+            returns[currentBlock] = value
+
         currentPositionHolder.setAfterTerminator()
         return res
     }
@@ -181,7 +217,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
         fun getBuilder(): LLVMBuilderRef {
             if (isAfterTerminator) {
-                positionAtEnd(basicBlock(currentFunction!!.llvmFunction, "unreachable"))
+                positionAtEnd(basicBlock(function!!, "unreachable"))
             }
 
             return builder
