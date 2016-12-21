@@ -49,6 +49,11 @@
             <artifactId>kotlin-test-junit</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>native-platform</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
