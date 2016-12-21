@@ -3996,6 +3996,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("superConstructorCallWithComplexArg.kt")
+        public void testSuperConstructorCallWithComplexArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/superConstructorCallWithComplexArg.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typedDelegation.kt")
         public void testTypedDelegation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/typedDelegation.kt");
@@ -19747,6 +19753,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("defaultParametersNotDuplicated.kt")
         public void testDefaultParametersNotDuplicated() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/defaultParametersNotDuplicated.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegateWithComplexExpression.kt")
+        public void testDelegateWithComplexExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/delegateWithComplexExpression.kt");
             doTest(fileName);
         }
 
