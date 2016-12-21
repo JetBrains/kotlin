@@ -94,7 +94,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         private fun isAlreadyImported(target: DeclarationDescriptor, topLevelScope: LexicalScope, targetFqName: FqName): Boolean {
             val name = target.name
             return when (target) {
-                is ClassDescriptor -> {
+                is ClassifierDescriptorWithTypeParameters -> {
                     val classifier = topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE)
                     classifier?.importableFqName == targetFqName
                 }
@@ -144,7 +144,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                                     && when (target) {
                                         // this check does not give a guarantee that import with * will import the class - for example,
                                         // there can be classes with conflicting name in more than one import with *
-                                        is ClassDescriptor -> topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE) == null
+                                        is ClassifierDescriptorWithTypeParameters -> topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE) == null
                                         is FunctionDescriptor, is PropertyDescriptor -> true
                                         else -> error("Unknown kind of descriptor to import:$target")
                                     }
