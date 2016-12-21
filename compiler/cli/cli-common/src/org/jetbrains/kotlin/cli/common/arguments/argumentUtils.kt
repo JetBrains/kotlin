@@ -50,7 +50,10 @@ private fun Any.copyValueIfNeeded(): Any {
         is DoubleArray -> Arrays.copyOf(this, size)
         is BooleanArray -> Arrays.copyOf(this, size)
 
-        is Array<*> -> Array(size) { this[it]?.copyValueIfNeeded() }
+        is Array<*> -> java.lang.reflect.Array.newInstance(javaClass.componentType, size).apply {
+            this as Array<Any?>
+            (this@copyValueIfNeeded as Array<Any?>).forEachIndexed { i, value -> this[i] = value?.copyValueIfNeeded() }
+        }
 
         is MutableCollection<*> -> (this as Collection<Any?>).mapTo(javaClass.newInstance() as MutableCollection<Any?>) { it?.copyValueIfNeeded() }
 
