@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedLocalFunctionDeclaration
 import org.jetbrains.kotlin.js.inline.context.FunctionContext;
 import org.jetbrains.kotlin.js.inline.context.InliningContext;
 import org.jetbrains.kotlin.js.inline.context.NamingContext;
-import org.jetbrains.kotlin.js.inline.util.*;
+import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
+import org.jetbrains.kotlin.js.inline.util.CollectionUtilsKt;
+import org.jetbrains.kotlin.js.inline.util.NamingUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
@@ -268,7 +270,9 @@ public class JsInliner extends JsVisitorWithContextImpl {
             return;
         }
 
-        context.replaceMe(accept(resultExpression));
+        resultExpression = accept(resultExpression);
+        MetadataProperties.setSynthetic(resultExpression, true);
+        context.replaceMe(resultExpression);
     }
 
     @NotNull

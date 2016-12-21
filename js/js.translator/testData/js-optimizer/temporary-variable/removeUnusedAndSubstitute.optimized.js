@@ -1,8 +1,7 @@
 var log = "";
 
 function test(a) {
-    var $tmp1;
-    log += $tmp1 = 1;
+    log += 1;
     return a;
 }
 

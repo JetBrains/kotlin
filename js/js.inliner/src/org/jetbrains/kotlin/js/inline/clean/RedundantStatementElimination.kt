@@ -35,7 +35,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
     private fun process() {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
-                if (x.synthetic) {
+                if (x.synthetic || x.expression.synthetic) {
                     val replacement = replace(x.expression)
                     if (replacement.size != 1 || replacement[0] != x.expression) {
                         hasChanges = true
