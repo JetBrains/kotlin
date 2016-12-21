@@ -63,11 +63,13 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
             }
 
             val fileName = config.getString("file")
-            val gutterMark = myFixture.findGutter(fileName)!!
-
             val iconName = config.getString("icon")
             val icon = SpringApiIcons::class.java.getField(iconName)[null]
-            assert(gutterMark.icon == icon)
+
+            val gutterMark = myFixture.findGutter(fileName)!!.let {
+                if (it.icon == icon) it
+                else myFixture.findGuttersAtCaret().first { it.icon == icon }
+            }
 
             val tooltip = config.getString("tooltip")
             assert(gutterMark.tooltipText == tooltip)
