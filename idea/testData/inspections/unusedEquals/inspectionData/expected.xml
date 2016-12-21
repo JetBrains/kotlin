@@ -1,0 +1,82 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt"/>
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt"/>
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt"/>
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>13</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt"/>
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>14</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt"/>
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>18</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt"/>
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>38</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt"/>
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>61</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+
+    <problem>
+        <file>test.kt</file>
+        <line>61</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused equals expression</problem_class>
+        <description>Unused equals expression</description>
+    </problem>
+</problems>
