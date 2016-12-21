@@ -469,5 +469,8 @@ class QuickFixRegistrar : QuickFixContributor {
         ErrorsJs.WRONG_EXTERNAL_DECLARATION.registerFactory(MigrateExternalExtensionFix)
 
         UNSUPPORTED_FEATURE.registerFactory(EnableUnsupportedFeatureFix)
+
+        EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeCoroutineSupportFix)
+        EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeCoroutineSupportFix)
     }
 }

@@ -289,9 +289,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void apply() throws ConfigurationException {
         commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
         if (isProjectSettings) {
-            boolean languageVersionChanged = commonCompilerArguments.languageVersion != getSelectedLanguageVersion();
+            boolean shouldInvalidateCaches =
+                    commonCompilerArguments.languageVersion != getSelectedLanguageVersion() ||
+                    !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
             commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
-            if (languageVersionChanged) {
+            if (shouldInvalidateCaches) {
                 ApplicationUtilsKt.runWriteAction(
                         new Function0<Object>() {
                             @Override
