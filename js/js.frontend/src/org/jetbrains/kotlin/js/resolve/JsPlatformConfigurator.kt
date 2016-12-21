@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
+import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
@@ -47,7 +48,8 @@ object JsPlatformConfigurator : PlatformConfigurator(
         identifierChecker = IdentifierChecker.DEFAULT,
         overloadFilter = OverloadFilter.DEFAULT,
         platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
-        delegationFilter = DelegationFilter.DEFAULT
+        delegationFilter = DelegationFilter.DEFAULT,
+        overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.DEFAULT
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JsCallChecker>()

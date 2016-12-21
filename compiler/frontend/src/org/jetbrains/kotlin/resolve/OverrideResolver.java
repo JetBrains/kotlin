@@ -48,9 +48,14 @@ import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityI
 
 public class OverrideResolver {
     private final BindingTrace trace;
+    private final OverridesBackwardCompatibilityHelper overridesBackwardCompatibilityHelper;
 
-    public OverrideResolver(@NotNull BindingTrace trace) {
+    public OverrideResolver(
+            @NotNull BindingTrace trace,
+            @NotNull OverridesBackwardCompatibilityHelper overridesBackwardCompatibilityHelper
+    ) {
         this.trace = trace;
+        this.overridesBackwardCompatibilityHelper = overridesBackwardCompatibilityHelper;
     }
 
     public void check(@NotNull TopDownAnalysisContext c) {
@@ -650,7 +655,7 @@ public class OverrideResolver {
                 }
             });
         }
-        else if (!overriddenDescriptors.isEmpty()) {
+        else if (!overriddenDescriptors.isEmpty() && !overridesBackwardCompatibilityHelper.overrideCanBeOmitted(declared)) {
             CallableMemberDescriptor overridden = overriddenDescriptors.iterator().next();
             trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
         }

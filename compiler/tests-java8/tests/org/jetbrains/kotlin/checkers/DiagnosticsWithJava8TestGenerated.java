@@ -196,5 +196,56 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/unsupportedFeature.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BackwardCompatibility extends AbstractDiagnosticsWithFullJdkTest {
+            public void testAllFilesPresentInBackwardCompatibility() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility/basic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("delegation.kt")
+            public void testDelegation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility/delegation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("derivedInterfaces.kt")
+            public void testDerivedInterfaces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility/derivedInterfaces.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("derivedInterfacesWithKotlinFun.kt")
+            public void testDerivedInterfacesWithKotlinFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility/derivedInterfacesWithKotlinFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fillInStackTrace.kt")
+            public void testFillInStackTrace() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility/fillInStackTrace.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("finalize.kt")
+            public void testFinalize() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility/finalize.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hashMapGetOrDefault.kt")
+            public void testHashMapGetOrDefault() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/targetedBuiltIns/backwardCompatibility/hashMapGetOrDefault.kt");
+                doTest(fileName);
+            }
+        }
     }
 }

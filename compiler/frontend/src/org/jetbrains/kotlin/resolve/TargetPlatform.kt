@@ -51,7 +51,8 @@ abstract class TargetPlatform(val platformName: String) {
         override val platformConfigurator =
                 object : PlatformConfigurator(
                         DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
-                        IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY, DelegationFilter.DEFAULT
+                        IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT, PlatformToKotlinClassMap.EMPTY, DelegationFilter.DEFAULT,
+                        OverridesBackwardCompatibilityHelper.DEFAULT
                 ) {
                     override fun configureModuleComponents(container: StorageComponentContainer) {
                         container.useInstance(SyntheticScopes.Empty)
@@ -97,7 +98,8 @@ abstract class PlatformConfigurator(
         private val identifierChecker: IdentifierChecker,
         private val overloadFilter: OverloadFilter,
         private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-        private val delegationFilter: DelegationFilter
+        private val delegationFilter: DelegationFilter,
+        private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper
 ) {
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
     private val callCheckers: List<CallChecker> = DEFAULT_CALL_CHECKERS + additionalCallCheckers
@@ -117,6 +119,7 @@ abstract class PlatformConfigurator(
         useInstance(overloadFilter)
         useInstance(platformToKotlinClassMap)
         useInstance(delegationFilter)
+        useInstance(overridesBackwardCompatibilityHelper)
     }
 }
 

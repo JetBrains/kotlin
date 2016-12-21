@@ -7,8 +7,7 @@ class A : java.util.ArrayList<String>() {
 }
 
 class A1 : java.util.ArrayList<String>() {
-    // TODO: should be allowed
-    <!VIRTUAL_MEMBER_HIDDEN!>fun stream(): java.util.stream.Stream<String><!> = super.<!DEPRECATION_ERROR!>stream<!>()
+    fun stream(): java.util.stream.Stream<String> = super.<!DEPRECATION_ERROR!>stream<!>()
 }
 
 class B : <!DEPRECATION_ERROR!>Throwable<!>("", null, false, false)
