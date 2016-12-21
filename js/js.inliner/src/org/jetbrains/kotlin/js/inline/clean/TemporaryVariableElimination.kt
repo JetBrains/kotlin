@@ -507,7 +507,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     initializers.forEach { accept(it) }
                     if (isRemoved) {
                         for (initializer in initializers) {
-                            ctx.addPrevious(JsExpressionStatement(initializer).apply { synthetic = x.synthetic })
+                            ctx.addPrevious(JsExpressionStatement(accept(initializer)).apply { synthetic = x.synthetic })
                         }
                     }
                     else {
@@ -530,10 +530,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     val (name, value) = assignment
                     if (shouldConsiderUnused(name)) {
                         hasChanges = true
-                        ctx.replaceMe(JsExpressionStatement(value).run {
-                            synthetic = true
-                            accept(this)
-                        })
+                        ctx.replaceMe(accept(JsExpressionStatement(value)).apply { synthetic = true })
                         return false
                     }
                 }
@@ -552,7 +549,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 val name = x.name
                 if (name != null && x.qualifier == null && name in namesToSubstitute) {
                     val replacement = accept(definedValues[name]!!)
-                    ctx.replaceMe(replacement)
+                    ctx.replaceMe(replacement.apply { synthetic = true })
                     return false
                 }
                 return super.visit(x, ctx)
@@ -569,7 +566,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 if (assignment != null) {
                     val name = assignment.first
                     if (shouldConsiderUnused(name)) {
-                        ctx.replaceMe(x.arg2)
+                        ctx.replaceMe(accept(x.arg2).apply { synthetic = true })
                     }
                 }
                 super.endVisit(x, ctx)
