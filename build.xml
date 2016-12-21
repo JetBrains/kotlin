@@ -1073,7 +1073,7 @@
             </class-path>
         </new-kotlinc>
 
-        <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}">
+        <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}" runtime-component="Test">
             <jar-content>
                 <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal/InlineOnly*,kotlin/internal"/>
             </jar-content>
@@ -1118,6 +1118,7 @@
         <attribute name="jar-dir" default="${kotlin-home}/lib"/>
         <attribute name="jar-name"/>
         <attribute name="implementation-title"/>
+        <attribute name="runtime-component" default="${manifest.impl.value.kotlin.runtime.component.core}"/>
         <element name="jar-content"/>
 
         <sequential>
@@ -1130,7 +1131,7 @@
                 <manifest>
                     <attribute name="Built-By" value="${manifest.impl.vendor}"/>
                     <attribute name="${manifest.impl.attribute.kotlin.version}" value="${manifest.impl.value.kotlin.version}"/>
-                    <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="${manifest.impl.value.kotlin.runtime.component.core}"/>
+                    <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="@{runtime-component}"/>
 
                     <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
                     <attribute name="Implementation-Title" value="@{implementation-title}"/>

@@ -52,6 +52,8 @@
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
         <kotlin.compiler.jdkHome>${env.JDK_16}</kotlin.compiler.jdkHome>
 
+        <kotlin.language.version>1.1</kotlin.language.version>
+
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
     </properties>

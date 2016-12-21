@@ -108,6 +108,18 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Kotlin-Version>${kotlin.language.version}</Kotlin-Version>
+                            <Kotlin-Runtime-Component>Core</Kotlin-Runtime-Component>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
