@@ -12,7 +12,7 @@ fun <T> manyArgumentsBuilder(
         c3: suspend () -> Int
 ):T = null!!
 
-fun severalParamsInLambda(c: suspend <!UNSUPPORTED!>(String, Int) -> Unit<!>) {}
+fun severalParamsInLambda(c: suspend (String, Int) -> Unit) {}
 
 fun foo() {
     builder({ 1 })

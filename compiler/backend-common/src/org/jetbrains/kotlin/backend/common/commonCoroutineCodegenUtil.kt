@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 val SUSPEND_WITH_CURRENT_CONTINUATION_NAME = Name.identifier("suspendWithCurrentContinuation")
+val CONTINUATION_RESUME_METHOD_NAME = Name.identifier("resume")
 
 fun FunctionDescriptor.getBuiltInSuspendWithCurrentContinuation() =
         builtIns.builtInsCoroutinePackageFragment.getMemberScope()

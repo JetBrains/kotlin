@@ -265,7 +265,7 @@ class CoroutineCodegen(
     }
 
     private fun allLambdaParameters() =
-            coroutineLambdaDescriptor.extensionReceiverParameter.singletonOrEmptyList()
+            coroutineLambdaDescriptor.extensionReceiverParameter.singletonOrEmptyList() + coroutineLambdaDescriptor.valueParameters
 
     private fun ExpressionCodegen.generateLoadField(fieldInfo: FieldInfo) {
         StackValue.field(fieldInfo, generateThisOrOuter(context.thisDescriptor, false)).put(fieldInfo.fieldType, v)

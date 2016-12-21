@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.SUSPEND_WITH_CURRENT_CONTINUATION_NAME
 import org.jetbrains.kotlin.backend.common.getBuiltInSuspendWithCurrentContinuation
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
@@ -32,10 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -44,6 +42,7 @@ import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -75,6 +74,19 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
         project: Project,
         bindingContext: BindingContext
 ): ResolvedCallWithRealDescriptor? {
+    if (this is VariableAsFunctionResolvedCall) {
+        val replacedFunctionCall =
+                functionCall.replaceSuspensionFunctionWithRealDescriptor(project, bindingContext)
+                ?: return null
+
+        @Suppress("UNCHECKED_CAST")
+        return replacedFunctionCall.copy(
+                VariableAsFunctionResolvedCallImpl(
+                        replacedFunctionCall.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
+                        variableCall as MutableResolvedCall<VariableDescriptor>
+                )
+        )
+    }
     val function = candidateDescriptor as? SimpleFunctionDescriptor ?: return null
     if (!function.isSuspend || function.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) return null
 
@@ -119,7 +131,11 @@ fun ResolvedCall<*>.isSuspensionPoint(bindingContext: BindingContext) =
 fun <D : FunctionDescriptor> createJvmSuspendFunctionView(function: D): D {
     val continuationParameter = ValueParameterDescriptorImpl(
             function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("\$continuation"),
-            function.getContinuationParameterTypeOfSuspendFunction(),
+            // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
+            if (function.containingDeclaration.safeAs<ClassDescriptor>()?.defaultType?.isBuiltinFunctionalType == true)
+                function.builtIns.nullableAnyType
+            else
+                function.getContinuationParameterTypeOfSuspendFunction(),
             /* declaresDefaultValue = */ false, /* isCrossinline = */ false,
             /* isNoinline = */ false, /* varargElementType = */ null, SourceElement.NO_SOURCE
     )

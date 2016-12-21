@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -147,7 +147,7 @@ private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
         extensionFunctionReceiver: ReceiverValueWithSmartCastInfo
 ): CandidateWithBoundDispatchReceiver<FunctionDescriptor>? {
     val type = extensionFunctionReceiver.receiverValue.type
-    if (!type.isExtensionFunctionType) return null // todo: missing smart cast?
+    if (!type.isBuiltinExtensionFunctionalType) return null // todo: missing smart cast?
 
     val invokeDescriptor = type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
     val synthesizedInvoke = createSynthesizedInvokes(listOf(invokeDescriptor)).single()

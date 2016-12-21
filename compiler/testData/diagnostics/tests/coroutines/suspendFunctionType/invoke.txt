@@ -1,0 +1,7 @@
+package
+
+public suspend fun foo1(/*0*/ q: suspend () -> kotlin.Unit): kotlin.Unit
+public suspend fun foo2(/*0*/ x: suspend (kotlin.Int) -> kotlin.String): kotlin.String
+public suspend fun foo3(/*0*/ y: suspend kotlin.String.(kotlin.Int) -> kotlin.Double): kotlin.Double
+public fun noSuspend(/*0*/ x: suspend (kotlin.Int) -> kotlin.String): kotlin.Unit
+public suspend fun kotlin.String.foo4(/*0*/ y: suspend kotlin.String.(kotlin.Int) -> kotlin.Double): kotlin.Double

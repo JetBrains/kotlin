@@ -18,17 +18,18 @@ package org.jetbrains.kotlin.resolve.calls.tasks
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind.Function
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind.SuspendFunction
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
+
+private val BUILTIN_FUNCTIONS = setOf(Function, SuspendFunction)
 
 fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collection<FunctionDescriptor> {
     val result = ArrayList<FunctionDescriptor>(1)
@@ -36,7 +37,7 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
     for (invoke in functions) {
         if (invoke !is FunctionInvokeDescriptor || invoke.getValueParameters().isEmpty()) continue
 
-        val synthesized = if ((invoke.getContainingDeclaration() as? FunctionClassDescriptor)?.functionKind == Function) {
+        val synthesized = if ((invoke.getContainingDeclaration() as? FunctionClassDescriptor)?.functionKind in BUILTIN_FUNCTIONS) {
             createSynthesizedFunctionWithFirstParameterAsReceiver(invoke)
         }
         else {
@@ -59,40 +60,15 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
     return result
 }
 
-private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: FunctionDescriptor): FunctionDescriptor {
-    val result = SimpleFunctionDescriptorImpl.create(
-            descriptor.containingDeclaration,
-            descriptor.annotations,
-            descriptor.name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            descriptor.source
-    )
-
-    val original = descriptor.original
-    result.initialize(
-            original.valueParameters.first().type,
-            original.dispatchReceiverParameter,
-            original.typeParameters,
-            original.valueParameters.drop(1).map { p ->
-                ValueParameterDescriptorImpl(
-                        result, null, p.index - 1, p.annotations, Name.identifier("p${p.index + 1}"), p.type,
-                        p.declaresDefaultValue(), p.isCrossinline, p.isNoinline, p.varargElementType, p.source
-                )
-            },
-            original.returnType,
-            original.modality,
-            original.visibility
-    )
-    result.isOperator = original.isOperator
-    result.isInfix = original.isInfix
-    result.isExternal = original.isExternal
-    result.isInline = original.isInline
-    result.isTailrec = original.isTailrec
-    result.setHasStableParameterNames(false)
-    result.setHasSynthesizedParameterNames(true)
-
-    return result
-}
+private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: FunctionDescriptor) =
+    descriptor.original.newCopyBuilder().apply {
+        setExtensionReceiverType(descriptor.original.valueParameters.first().type)
+        setValueParameters(
+                descriptor.original.valueParameters
+                        .drop(1)
+                        .map { p -> p.copy(descriptor.original, Name.identifier("p${p.index + 1}"), p.index - 1) }
+        )
+    }.build()!!
 
 fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
     if (descriptor.name != OperatorNameConventions.INVOKE || descriptor !is FunctionDescriptor) return false

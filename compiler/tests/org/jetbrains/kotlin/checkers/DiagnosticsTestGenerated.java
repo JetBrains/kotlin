@@ -4506,6 +4506,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("invoke.kt")
+                public void testInvoke() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/invoke.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("lambdaInOverriddenValInitializer.kt")
                 public void testLambdaInOverriddenValInitializer() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/lambdaInOverriddenValInitializer.kt");

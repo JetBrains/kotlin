@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 class FunctionInvokeDescriptor private constructor(
         container: DeclarationDescriptor,
         original: FunctionInvokeDescriptor?,
-        callableKind: CallableMemberDescriptor.Kind
+        callableKind: CallableMemberDescriptor.Kind,
+        isSuspend: Boolean
 ) : SimpleFunctionDescriptorImpl(
         container,
         original,
@@ -41,6 +42,7 @@ class FunctionInvokeDescriptor private constructor(
 ) {
     init {
         this.isOperator = true
+        this.isSuspend = isSuspend
         this.setHasStableParameterNames(false)
     }
 
@@ -59,7 +61,7 @@ class FunctionInvokeDescriptor private constructor(
             annotations: Annotations,
             source: SourceElement
     ): FunctionDescriptorImpl {
-        return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind)
+        return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind, isSuspend)
     }
 
     override fun isExternal(): Boolean = false
@@ -94,10 +96,10 @@ class FunctionInvokeDescriptor private constructor(
     }
 
     companion object Factory {
-        fun create(functionClass: FunctionClassDescriptor): FunctionInvokeDescriptor {
+        fun create(functionClass: FunctionClassDescriptor, isSuspend: Boolean): FunctionInvokeDescriptor {
             val typeParameters = functionClass.declaredTypeParameters
 
-            val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION)
+            val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION, isSuspend)
             result.initialize(
                     null,
                     functionClass.thisAsReceiverParameter,

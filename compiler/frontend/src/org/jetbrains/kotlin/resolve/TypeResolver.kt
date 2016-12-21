@@ -220,9 +220,6 @@ class TypeResolver(
                 val receiverTypeRef = type.receiverTypeReference
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
-                if (hasSuspendModifier && type.parameters.isNotEmpty()) {
-                    c.trace.report(UNSUPPORTED.on(type, "suspend function type with value parameters"))
-                }
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
 
                 val returnTypeRef = type.returnTypeReference
