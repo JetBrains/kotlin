@@ -83,7 +83,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
             }
             assignToField(context.metadata.exceptionStateName, program.getNumberLiteral(globalCatchBlockIndex))
             for (localVariable in localVariables) {
-                val value = if (localVariable !in parameterNames) JsLiteral.NULL else localVariable.makeRef()
+                val value = if (localVariable !in parameterNames) Namer.getUndefinedExpression() else localVariable.makeRef()
                 assignToField(function.scope.getFieldName(localVariable), value)
             }
         }
