@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// TARGET_BACKEND: JVM
 import kotlin.coroutines.*
 
 interface AsyncGenerator<in T> {

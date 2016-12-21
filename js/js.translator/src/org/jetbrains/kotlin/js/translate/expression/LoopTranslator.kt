@@ -179,25 +179,43 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
     fun translateForOverIterator(): JsStatement {
 
-        fun translateMethodInvocation(receiver: JsExpression?, resolvedCall: ResolvedCall<FunctionDescriptor>): JsExpression =
-                CallTranslator.translate(context, resolvedCall, receiver)
+        fun translateMethodInvocation(
+                receiver: JsExpression?,
+                resolvedCall: ResolvedCall<FunctionDescriptor>,
+                block: JsBlock
+        ): JsExpression = CallTranslator.translate(context.innerBlock(block), resolvedCall, receiver)
 
         fun iteratorMethodInvocation(): JsExpression {
             val range = Translation.translateAsExpression(loopRange, context)
             val resolvedCall = getIteratorFunction(context.bindingContext(), loopRange)
-            return translateMethodInvocation(range, resolvedCall)
+            return CallTranslator.translate(context, resolvedCall, range)
         }
 
         val iteratorVar = context.defineTemporary(iteratorMethodInvocation())
 
-        fun hasNextMethodInvocation(): JsExpression {
+        fun hasNextMethodInvocation(block: JsBlock): JsExpression {
             val resolvedCall = getHasNextCallable(context.bindingContext(), loopRange)
-            return translateMethodInvocation(iteratorVar, resolvedCall)
+            return translateMethodInvocation(iteratorVar, resolvedCall, block)
         }
 
-        val nextInvoke = translateMethodInvocation(iteratorVar, getNextFunction(context.bindingContext(), loopRange))
-        val body = translateBody(nextInvoke)
-        return JsWhile(hasNextMethodInvocation(), body ?: nextInvoke.makeStmt())
+        val hasNextBlock = JsBlock()
+        val hasNextInvocation = hasNextMethodInvocation(hasNextBlock)
+
+        val nextBlock = JsBlock()
+        val nextInvoke = translateMethodInvocation(iteratorVar, getNextFunction(context.bindingContext(), loopRange), nextBlock)
+
+        val bodyStatements = mutableListOf<JsStatement>()
+        val exitCondition = if (hasNextBlock.isEmpty) {
+            hasNextInvocation
+        }
+        else {
+            bodyStatements += hasNextBlock.statements
+            bodyStatements += JsIf(notOptimized(hasNextInvocation), JsBreak())
+            JsLiteral.TRUE
+        }
+        bodyStatements += nextBlock.statements
+        bodyStatements += translateBody(nextInvoke)?.let(::flattenStatement).orEmpty()
+        return JsWhile(exitCondition, bodyStatements.singleOrNull() ?: JsBlock(bodyStatements))
     }
 
     return when {
