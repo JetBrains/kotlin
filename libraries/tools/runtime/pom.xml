@@ -92,13 +92,6 @@
                             <skipAttach>true</skipAttach>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
                     <execution>
                         <id>add-native-sources</id>
                         <phase>prepare-package</phase>
