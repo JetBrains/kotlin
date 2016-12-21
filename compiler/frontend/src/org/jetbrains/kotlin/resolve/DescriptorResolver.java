@@ -1140,7 +1140,7 @@ public class DescriptorResolver {
                 KotlinSourceElementKt.toSourceElement(parameter),
                 /* lateInit = */ false,
                 /* isConst = */ false,
-                /* isHeader = */ false,
+                /* isHeader = */ classDescriptor.isHeader(),
                 /* isImpl = */ modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
                 /* isExternal = */ false
         );

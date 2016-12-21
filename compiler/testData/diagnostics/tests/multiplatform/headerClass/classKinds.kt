@@ -17,7 +17,7 @@ header enum class En { ENTRY }
 
 impl interface Interface
 
-impl annotation class Anno(val prop: String)
+impl annotation class Anno impl constructor(impl val prop: String)
 
 impl object Object
 
