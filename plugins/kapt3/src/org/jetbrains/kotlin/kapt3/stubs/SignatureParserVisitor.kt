@@ -79,7 +79,7 @@ import com.sun.tools.javac.util.List as JavacList
     InnerClass < ClassType
         ! TypeArgument
 
-    TypeArgument < ClassType
+    TypeArgument < ClassType | InnerClass
         + ClassType
  */
 
@@ -88,7 +88,7 @@ internal enum class ElementKind {
     ClassType, InnerClass, TypeVariable, PrimitiveType, ArrayType
 }
 
-private class SignatureNode(val kind: ElementKind, var name: String? = null) {
+private class SignatureNode(val kind: ElementKind, val name: String? = null) {
     val children: MutableList<SignatureNode> = SmartList<SignatureNode>()
 }
 
@@ -317,6 +317,7 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
             }
         }
     }
+
     private fun popUntil(vararg kinds: ElementKind) {
         while (stack.peek().kind !in kinds) {
             stack.pop()
@@ -357,7 +358,7 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.ASM5) {
 
     override fun visitTypeArgument() {
         popUntil(ClassType, InnerClass)
-        push(TypeArgument, parent = ClassType)
+        push(TypeArgument)
     }
 
     override fun visitTypeArgument(variance: Char): SignatureVisitor {
