@@ -7249,6 +7249,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumSubjectTypeCheck.kt")
+            public void testEnumSubjectTypeCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumSubjectTypeCheck.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumWithAnnotationKeyword.kt")
             public void testEnumWithAnnotationKeyword() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumWithAnnotationKeyword.kt");
