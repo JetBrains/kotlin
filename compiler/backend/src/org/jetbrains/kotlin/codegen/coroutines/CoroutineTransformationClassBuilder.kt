@@ -78,9 +78,6 @@ class CoroutineTransformerMethodVisitor(
             splitTryCatchBlocksContainingSuspensionPoint(methodNode, suspensionPoint)
         }
 
-        // Add global exception handler
-        val isThereGlobalExceptionHandler = processHandleExceptionCall(methodNode, customCoroutineStart ?: methodNode.instructions.first)
-
         // Spill stack to variables before suspension points, try/catch blocks
         FixStackWithLabelNormalizationMethodTransformer().transform(classBuilder.thisName, methodNode)
 
@@ -104,17 +101,7 @@ class CoroutineTransformerMethodVisitor(
         methodNode.instructions.apply {
             val startLabel = LabelNode()
             val defaultLabel = LabelNode()
-            val firstToInsertBefore =
-                    if (isThereGlobalExceptionHandler) {
-                        // Insert after relevant NOP insn (i.e. before next instruction of this NOP)
-                        val globalExceptionHandler = methodNode.tryCatchBlocks.last()
-                        assert(globalExceptionHandler.start is LabelNode && globalExceptionHandler.start.next.opcode == Opcodes.NOP) {
-                            "In a case of global exception handler first insn should be a label"
-                        }
-                        globalExceptionHandler.start.next.next
-                    }
-                    else
-                        customCoroutineStart ?: first
+            val firstToInsertBefore = customCoroutineStart ?: first
             // tableswitch(this.label)
             insertBefore(firstToInsertBefore,
                          insnListOf(
@@ -398,39 +385,6 @@ class CoroutineTransformerMethodVisitor(
 
         return
     }
-
-    private fun processHandleExceptionCall(methodNode: MethodNode, coroutineStart: AbstractInsnNode): Boolean {
-        val instructions = methodNode.instructions
-        val marker = instructions.toArray().firstOrNull { it.isHandleExceptionMarker() } ?: return false
-
-        assert(instructions.toArray().count { it.isHandleExceptionMarker() } == 1) {
-            "Found more than one handleException markers"
-        }
-
-        val startLabel = LabelNode()
-        val endLabel = LabelNode()
-        instructions.insertBefore(coroutineStart, startLabel)
-        instructions.set(marker, endLabel)
-
-        // NOP is necessary to preserve common invariant: first insn of TCB is always NOP
-        instructions.insert(startLabel, InsnNode(Opcodes.NOP))
-        // ASTORE is needed by the same reason
-        val maxVar = methodNode.maxLocals++
-        instructions.insert(endLabel, VarInsnNode(Opcodes.ASTORE, maxVar))
-
-        val exceptionArgument = instructions.toArray().single { it.isHandleExceptionMarkerArgument() }
-        instructions.set(exceptionArgument, VarInsnNode(Opcodes.ALOAD, maxVar))
-
-        methodNode.tryCatchBlocks.add(TryCatchBlockNode(startLabel, endLabel, endLabel, AsmTypes.JAVA_THROWABLE_TYPE.internalName))
-
-        return true
-    }
-
-    private fun AbstractInsnNode.isHandleExceptionMarker() =
-            this is MethodInsnNode && this.owner == COROUTINE_MARKER_OWNER && this.name == HANDLE_EXCEPTION_MARKER_NAME
-
-    private fun AbstractInsnNode.isHandleExceptionMarkerArgument() =
-            this is MethodInsnNode && this.owner == COROUTINE_MARKER_OWNER && this.name == HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME
 }
 
 private fun InstructionAdapter.generateResumeWithExceptionCheck() {

@@ -54,8 +54,6 @@ val CONTINUATION_METHOD_ANNOTATION_DESC = "Lkotlin/ContinuationMethod;"
 const val COROUTINE_MARKER_OWNER = "kotlin/coroutines/Markers"
 const val BEFORE_SUSPENSION_POINT_MARKER_NAME = "beforeSuspensionPoint"
 const val AFTER_SUSPENSION_POINT_MARKER_NAME = "afterSuspensionPoint"
-const val HANDLE_EXCEPTION_MARKER_NAME = "handleException"
-const val HANDLE_EXCEPTION_ARGUMENT_MARKER_NAME = "handleExceptionArgument"
 const val ACTUAL_COROUTINE_START_MARKER_NAME = "actualCoroutineStart"
 
 const val COROUTINE_LABEL_FIELD_NAME = "label"
