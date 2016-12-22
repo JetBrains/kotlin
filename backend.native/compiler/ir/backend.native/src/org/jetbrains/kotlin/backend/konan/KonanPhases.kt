@@ -5,19 +5,19 @@ import org.jetbrains.kotlin.backend.konan.Context
 enum class KonanPhase(val description: String,
                       var enabled: Boolean = true, var verbose: Boolean = false) {
 
-    BACKEND("All backend"), // TODO: it is unused
-    OPTIMIZER("IR Optimizer"),
-    LOWER_BUILTIN_OPERATORS("BuiltIn Operators Lowering"),
-    LOWER_SHARED_VARIABLES("Shared Variable Lowering"),
-    LOWER_LOCAL_FUNCTIONS("Local Function Lowering"),
-    LOWER_CALLABLES("Callable references Lowering"),
-    AUTOBOX("Autoboxing of primitive types"),
-    LOWER("IR Lowering"), // TODO: it is unused
-    BITCODE("LLVM BitCode Generation"),
-    RTTI("RTTI Generation"),
-    CODEGEN("Code Generation"),
-    METADATOR("Metadata Generation"),
-    LINKER("Link Stage");
+    /* */ PSI_TO_IR("Psi to IR conversion"),
+    /* */ BACKEND("All backend"),
+    /* ... */ LOWER("IR Lowering"), 
+    /* ... ... */ LOWER_BUILTIN_OPERATORS("BuiltIn Operators Lowering"),
+    /* ... ... */ LOWER_SHARED_VARIABLES("Shared Variable Lowering"),
+    /* ... ... */ LOWER_LOCAL_FUNCTIONS("Local Function Lowering"),
+    /* ... ... */ LOWER_CALLABLES("Callable references Lowering"),
+    /* ... ... */ AUTOBOX("Autoboxing of primitive types"),
+    /* ... */ BITCODE("LLVM BitCode Generation"),
+    /* ... ... */ RTTI("RTTI Generation"),
+    /* ... ... */ CODEGEN("Code Generation"),
+    /* ... ... */ METADATOR("Metadata Generation"),
+    /* */ LINKER("Link Stage");
 }
 
 object KonanPhases {

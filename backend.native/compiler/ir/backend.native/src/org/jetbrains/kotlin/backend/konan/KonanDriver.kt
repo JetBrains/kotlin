@@ -51,21 +51,23 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
     val moduleDescriptor = analyzerWithCompilerReport.analysisResult.moduleDescriptor
 
     val context = Context(konanConfig, bindingContext, moduleDescriptor)
-
-    // Translate AST to high level IR.
-    val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
-    val module = translator.generateModule( moduleDescriptor,
-        environment.getSourceFiles(), bindingContext)
-
-    context.irModule = module
     val phaser = PhaseManager(context)
 
-    phaser.phase(KonanPhase.OPTIMIZER) {
-        KonanLower(context).lower(module)
-    }
+    phaser.phase(KonanPhase.PSI_TO_IR) {
+        // Translate AST to high level IR.
+        val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
+        val module = translator.generateModule( moduleDescriptor,
+            environment.getSourceFiles(), bindingContext)
 
-    phaser.phase(KonanPhase.BITCODE) {
-        emitLLVM(context)
+        context.irModule = module
+    }
+    phaser.phase(KonanPhase.BACKEND) {
+        phaser.phase(KonanPhase.LOWER) {
+            KonanLower(context).lower()
+        }
+        phaser.phase(KonanPhase.BITCODE) {
+            emitLLVM(context)
+        }
     }
 
     phaser.phase(KonanPhase.LINKER) {
