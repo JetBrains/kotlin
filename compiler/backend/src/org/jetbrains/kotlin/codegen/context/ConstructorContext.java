@@ -34,7 +34,7 @@ public class ConstructorContext extends MethodContext {
             @NotNull CodegenContext parent,
             @Nullable MutableClosure closure
     ) {
-        super(contextDescriptor, kind, parent, closure);
+        super(contextDescriptor, kind, parent, closure, false);
     }
 
     @Override

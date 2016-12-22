@@ -300,8 +300,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
+    public MethodContext intoFunction(FunctionDescriptor descriptor, boolean isDefaultFunctionContext) {
+        return new MethodContext(descriptor, getContextKind(), this, null, isDefaultFunctionContext);
+    }
+
+    @NotNull
     public MethodContext intoFunction(FunctionDescriptor descriptor) {
-        return new MethodContext(descriptor, getContextKind(), this, null);
+        return intoFunction(descriptor, false);
     }
 
     @NotNull

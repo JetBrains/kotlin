@@ -133,7 +133,7 @@ public class FunctionCodegen {
                            new FunctionGenerationStrategy.FunctionDefault(state, function));
         }
 
-        generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), functionDescriptor, owner.getContextKind(),
+        generateDefaultIfNeeded(owner.intoFunction(functionDescriptor, true), functionDescriptor, owner.getContextKind(),
                                 DefaultParameterValueLoader.DEFAULT, function);
 
         generateOverloadsWithDefaultValues(function, functionDescriptor, functionDescriptor);

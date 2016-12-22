@@ -39,16 +39,19 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     // Note: in case of code inside property accessors, functionDescriptor will be that accessor,
     // but CodegenContext#contextDescriptor will be the corresponding property
     private final FunctionDescriptor functionDescriptor;
+    private final boolean isDefaultFunctionContext;
 
     protected MethodContext(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull OwnerKind contextKind,
             @NotNull CodegenContext parentContext,
-            @Nullable MutableClosure closure
+            @Nullable MutableClosure closure,
+            boolean isDefaultFunctionContext
     ) {
         super(JvmCodegenUtil.getDirectMember(functionDescriptor), contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
         this.functionDescriptor = functionDescriptor;
+        this.isDefaultFunctionContext = isDefaultFunctionContext;
     }
 
     @NotNull
@@ -125,5 +128,9 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     @NotNull
     public FunctionDescriptor getFunctionDescriptor() {
         return functionDescriptor;
+    }
+
+    public boolean isDefaultFunctionContext() {
+        return isDefaultFunctionContext;
     }
 }

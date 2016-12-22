@@ -66,6 +66,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8Interface;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceMember;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_ALIAS;
@@ -375,7 +377,14 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     private Type computeOuterClass(@NotNull CodegenContext<?> context) {
         CodegenContext<? extends ClassOrPackageFragmentDescriptor> outermost = context.getClassOrPackageParentContext();
         if (outermost instanceof ClassContext) {
-            return typeMapper.mapType(((ClassContext) outermost).getContextDescriptor());
+            ClassDescriptor classDescriptor = ((ClassContext) outermost).getContextDescriptor();
+            if (context instanceof MethodContext) {
+                FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
+                if (isInterface(functionDescriptor.getContainingDeclaration()) && !isJvm8InterfaceMember(functionDescriptor, state)) {
+                    return typeMapper.mapDefaultImpls(classDescriptor);
+                }
+            }
+            return typeMapper.mapType(classDescriptor);
         }
         else if (outermost instanceof MultifileClassFacadeContext || outermost instanceof DelegatingToPartContext) {
             Type implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(outermost);
@@ -393,10 +402,17 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @Nullable
     private Method computeEnclosingMethod(@NotNull CodegenContext context) {
         if (context instanceof MethodContext) {
-            Method method = typeMapper.mapAsmMethod(((MethodContext) context).getFunctionDescriptor());
-            if (!method.getName().equals("<clinit>")) {
-                return method;
+            FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
+            if ("<clinit>".equals(functionDescriptor.getName().asString())) {
+                return null;
             }
+
+            if (((MethodContext) context).isDefaultFunctionContext()) {
+                return typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind());
+            }
+
+            return typeMapper.mapAsmMethod(functionDescriptor, context.getContextKind());
+
         }
         return null;
     }
