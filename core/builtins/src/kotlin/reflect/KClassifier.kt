@@ -17,8 +17,10 @@
 package kotlin.reflect
 
 /**
- * A classifier is either a class, or a type parameter, or a type alias.
+ * A classifier is either a class or a type parameter.
+ *
+ * @see [KClass]
+ * @see [KTypeParameter]
  */
-// TODO: improve doc
 @SinceKotlin("1.1")
 public interface KClassifier

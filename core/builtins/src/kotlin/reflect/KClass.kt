@@ -133,12 +133,15 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     public val isCompanion: Boolean
 
     /**
-     * Returns `true` if [other] is a [KClass] instance representing the same class on a given platform.
+     * Returns `true` if this [KClass] instance represents the same Kotlin class as the class represented by [other].
      * On JVM this means that all of the following conditions are satisfied:
      *
-     * 1. [other] has the same fully qualified name as this instance.
+     * 1. [other] has the same (fully qualified) Kotlin class name as this instance.
      * 2. [other]'s backing [Class] object is loaded with the same class loader as the [Class] object of this instance.
      * 3. If the classes represent [Array], then [Class] objects of their element types are equal.
+     *
+     * For example, on JVM, [KClass] instances for a primitive type (`int`) and the corresponding wrapper type (`java.lang.Integer`)
+     * are considered equal, because they have the same fully qualified name "kotlin.Int".
      */
     override fun equals(other: Any?): Boolean
 
