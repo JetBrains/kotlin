@@ -661,12 +661,13 @@ public final class StaticContext {
 
     @NotNull
     private ImportedModule getImportedModule(@NotNull String baseName, @Nullable DeclarationDescriptor descriptor) {
-        ImportedModuleKey key = new ImportedModuleKey(baseName, descriptor);
+        JsName plainName = descriptor != null && config.getModuleKind() == ModuleKind.UMD ?
+                           rootScope.declareName(getPlainId(descriptor)) : null;
+        ImportedModuleKey key = new ImportedModuleKey(baseName, plainName);
 
         ImportedModule module = importedModules.get(key);
         if (module == null) {
             JsName internalName = rootScope.declareTemporaryName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(baseName));
-            JsName plainName = descriptor != null ? rootScope.declareName(getPlainId(descriptor)) : null;
             module = new ImportedModule(baseName, internalName, plainName != null ? pureFqn(plainName, null) : null);
             importedModules.put(key, module);
         }
@@ -835,11 +836,11 @@ public final class StaticContext {
         private final String baseName;
 
         @Nullable
-        private final DeclarationDescriptor declaration;
+        private final JsName plainName;
 
-        public ImportedModuleKey(@NotNull String baseName, @Nullable DeclarationDescriptor declaration) {
+        public ImportedModuleKey(@NotNull String baseName, @Nullable JsName plainName) {
             this.baseName = baseName;
-            this.declaration = declaration;
+            this.plainName = plainName;
         }
 
         @Override
@@ -850,7 +851,7 @@ public final class StaticContext {
             ImportedModuleKey key = (ImportedModuleKey) o;
 
             if (!baseName.equals(key.baseName)) return false;
-            if (declaration != null ? !declaration.equals(key.declaration) : key.declaration != null) return false;
+            if (plainName != null ? !plainName.equals(key.plainName) : key.plainName != null) return false;
 
             return true;
         }
@@ -858,7 +859,7 @@ public final class StaticContext {
         @Override
         public int hashCode() {
             int result = baseName.hashCode();
-            result = 31 * result + (declaration != null ? declaration.hashCode() : 0);
+            result = 31 * result + (plainName != null ? plainName.hashCode() : 0);
             return result;
         }
     }

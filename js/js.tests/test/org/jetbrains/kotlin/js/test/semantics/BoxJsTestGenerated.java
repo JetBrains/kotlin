@@ -5083,6 +5083,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/externalProperty.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("importCountCommonJS.kt")
+        public void testImportCountCommonJS() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/importCountCommonJS.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("importCountUmd.kt")
+        public void testImportCountUmd() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsModule/importCountUmd.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/jsName")

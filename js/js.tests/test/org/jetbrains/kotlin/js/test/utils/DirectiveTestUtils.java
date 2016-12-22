@@ -92,6 +92,17 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler FUNCTION_CALLED_TIMES = new DirectiveHandler("FUNCTION_CALLED_TIMES") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            int expectedCount = Integer.parseInt(arguments.getNamedArgument("count"));
+            String functionName = arguments.getFirst();
+            CallCounter counter = CallCounter.countCalls(ast);
+            int actualCount = counter.getUnqualifiedCallsCount(functionName);
+            assertEquals("Function " + functionName, expectedCount, actualCount);
+        }
+    };
+
     private static boolean parseBooleanArgument(@NotNull ArgumentsHelper arguments, @NotNull String name, boolean defaultValue) {
         String value = arguments.findNamedArgument(name);
         return value != null ? Boolean.parseBoolean(value) : defaultValue;
@@ -253,6 +264,7 @@ public class DirectiveTestUtils {
     private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
             FUNCTION_CONTAINS_NO_CALLS,
             FUNCTION_NOT_CALLED,
+            FUNCTION_CALLED_TIMES,
             PROPERTY_NOT_USED,
             PROPERTY_NOT_READ_FROM,
             PROPERTY_NOT_WRITTEN_TO,
