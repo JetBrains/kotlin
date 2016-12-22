@@ -29,7 +29,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = this.asDynamic().call(receiver, withDispatcher(completion, dispatcher))
+): Continuation<Unit> = this.asDynamic().call(receiver, withDispatcher(completion, dispatcher)).facade
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -57,7 +57,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = this.asDynamic()(withDispatcher(completion, dispatcher))
+): Continuation<Unit> = this.asDynamic()(withDispatcher(completion, dispatcher)).facade
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -75,13 +75,19 @@ public fun <T> (suspend  () -> T).startCoroutine(
 
 // ------- internal stuff -------
 
-private fun <T> withDispatcher(completion: Continuation<T>, dispatcher: ContinuationDispatcher?): Continuation<T> {
-    val finalContinuationDispatcher = dispatcher ?: object : ContinuationDispatcher {
-        override fun <T> dispatchResume(value: T, continuation: Continuation<T>) = false
+internal interface DispatchedContinuation {
+    val dispatcher: ContinuationDispatcher?
+}
 
-        override fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>) = false
+private fun <T> withDispatcher(completion: Continuation<T>, dispatcher: ContinuationDispatcher?): Continuation<T> {
+    return if (dispatcher == null) {
+        completion
     }
-    return object : Continuation<T> by completion, ContinuationDispatcher by finalContinuationDispatcher {}
+    else {
+        object : Continuation<T> by completion, DispatchedContinuation {
+            override val dispatcher = dispatcher
+        }
+    }
 }
 
 @JsName("CoroutineImpl")
@@ -91,18 +97,19 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
     protected var result: Any? = null
     protected var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
-    private val continuationDispatcher = resultContinuation as? ContinuationDispatcher
+    private val continuationDispatcher = (resultContinuation as? DispatchedContinuation)?.dispatcher
+    val facade: Continuation<Any?>
+
+    init {
+        facade = if (continuationDispatcher != null) {
+            ContinuationFacade(this, continuationDispatcher)
+        }
+        else {
+            this
+        }
+    }
 
     override fun resume(data: Any?) {
-        if (continuationDispatcher != null && (state and INTERCEPTING) == 0) {
-            state = state or INTERCEPTING
-            if (continuationDispatcher.dispatchResume(data, this)) {
-                state = state and INTERCEPTING.inv()
-                return
-            }
-        }
-
-        state = state and INTERCEPTING.inv()
         this.result = data
         try {
             val result = doResume()
@@ -116,14 +123,6 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
     }
 
     override fun resumeWithException(exception: Throwable) {
-        if (continuationDispatcher != null && (state and INTERCEPTING) == 0) {
-            state = state or INTERCEPTING
-            if (continuationDispatcher.dispatchResumeWithException(exception, this)) {
-                state = state and INTERCEPTING.inv()
-                return
-            }
-        }
-
         state = exceptionState
         this.exception = exception
         try {
@@ -140,4 +139,16 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
     protected abstract fun doResume(): Any?
 }
 
-private const val INTERCEPTING = 1 shl 31
+private class ContinuationFacade(val innerContinuation: Continuation<Any?>, val dispatcher: ContinuationDispatcher) : Continuation<Any?> {
+    override fun resume(value: Any?) {
+        if (!dispatcher.dispatchResume(value, innerContinuation)) {
+            innerContinuation.resume(value)
+        }
+    }
+
+    override fun resumeWithException(exception: Throwable) {
+        if (!dispatcher.dispatchResumeWithException(exception, innerContinuation)) {
+            innerContinuation.resumeWithException(exception)
+        }
+    }
+}

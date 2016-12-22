@@ -21,10 +21,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
 import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -156,7 +153,8 @@ class CallArgumentTranslator private constructor(
 
         val callableDescriptor = resolvedCall.resultingDescriptor
         if (callableDescriptor is FunctionDescriptor && callableDescriptor.isSuspend) {
-            result.add(TranslationUtils.translateContinuationArgument(context(), resolvedCall))
+            val facadeName = context().getNameForDescriptor(TranslationUtils.getCoroutineProperty(context(), "facade"))
+            result.add(JsAstUtils.pureFqn(facadeName, TranslationUtils.translateContinuationArgument(context(), resolvedCall)))
         }
 
         removeLastUndefinedArguments(result)
