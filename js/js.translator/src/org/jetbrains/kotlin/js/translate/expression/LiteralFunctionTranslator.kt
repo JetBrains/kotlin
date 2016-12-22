@@ -120,15 +120,20 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
 
+        fun getCoroutinePropertyName(id: String) =
+                context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
+
         coroutineMetadata = CoroutineMetadata(
                 doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
+                resumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineResumeFunction(context)),
                 suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendPropertyDescriptor, context()),
                 baseClassRef = coroutineBaseClassRef,
-                stateName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "state")),
-                exceptionStateName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "exceptionState")),
-                finallyPathName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "finallyPath")),
-                resultName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "result")),
-                exceptionName = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, "exception")),
+                stateName = getCoroutinePropertyName("state"),
+                exceptionStateName = getCoroutinePropertyName("exceptionState"),
+                finallyPathName = getCoroutinePropertyName("finallyPath"),
+                resultName = getCoroutinePropertyName("result"),
+                exceptionName = getCoroutinePropertyName("exception"),
+                facadeName = getCoroutinePropertyName("facade"),
                 hasController = continuationType.isBuiltinExtensionFunctionalType
         )
         coroutineType = continuationType

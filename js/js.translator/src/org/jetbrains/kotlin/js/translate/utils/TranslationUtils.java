@@ -358,4 +358,11 @@ public final class TranslationUtils {
                 .getContributedFunctions(Name.identifier("doResume"), NoLookupLocation.FROM_DESERIALIZATION)
                 .iterator().next();
     }
+
+    @NotNull
+    public static FunctionDescriptor getCoroutineResumeFunction(@NotNull TranslationContext context) {
+        return getCoroutineBaseClass(context).getUnsubstitutedMemberScope()
+                .getContributedFunctions(Name.identifier("resume"), NoLookupLocation.FROM_DESERIALIZATION)
+                .iterator().next();
+    }
 }

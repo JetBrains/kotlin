@@ -46,7 +46,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         generateDoResume(coroutineBlocks, context, additionalStatements)
         generateContinuationConstructor(context, additionalStatements, globalCatchBlockIndex)
 
-        generateCoroutineInstantiation()
+        generateCoroutineInstantiation(context)
 
         return additionalStatements
     }
@@ -129,7 +129,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
             this += coroutineBody
         }
 
-        val resumeName = function.coroutineMetadata!!.doResumeName
+        val resumeName = context.metadata.doResumeName
         statements.apply {
             assignToPrototype(resumeName, resumeFunction)
         }
@@ -137,7 +137,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         FunctionPostProcessor(resumeFunction).apply()
     }
 
-    private fun generateCoroutineInstantiation() {
+    private fun generateCoroutineInstantiation(context: CoroutineTransformationContext) {
         val instantiation = JsNew(className.makeRef())
         instantiation.arguments += function.parameters.map { it.name.makeRef() }
         if (innerFunction != null) {
@@ -151,9 +151,19 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         val interceptorParamName = functionWithBody.scope.declareFreshName("interceptor")
         functionWithBody.parameters += JsParameter(interceptorParamName)
 
+        val suspendedName = functionWithBody.scope.declareFreshName("suspended")
+        functionWithBody.parameters += JsParameter(suspendedName)
+
         instantiation.arguments += interceptorParamName.makeRef()
 
-        functionWithBody.body.statements += JsReturn(instantiation)
+        val instanceName = functionWithBody.scope.declareFreshName("instance")
+        functionWithBody.body.statements += JsAstUtils.newVar(instanceName, JsNameRef(context.metadata.facadeName, instantiation))
+
+        val invokeResume = JsInvocation(JsNameRef(context.metadata.resumeName, instanceName.makeRef()), JsLiteral.NULL).makeStmt()
+        val returnResult = JsReturn(JsNameRef(context.metadata.resultName, instanceName.makeRef()))
+
+        functionWithBody.body.statements += JsIf(
+                suspendedName.makeRef(), JsReturn(instanceName.makeRef()), JsBlock(invokeResume, returnResult))
     }
 
     private fun generateCoroutineBody(

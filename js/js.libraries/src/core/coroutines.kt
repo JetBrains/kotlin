@@ -29,7 +29,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = this.asDynamic().call(receiver, withDispatcher(completion, dispatcher)).facade
+): Continuation<Unit> = this.asDynamic().call(receiver, withDispatcher(completion, dispatcher), true).facade
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -43,7 +43,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
 ) {
-    createCoroutine(receiver, completion, dispatcher).resume(Unit)
+    this.asDynamic().call(receiver, withDispatcher(completion, dispatcher))
 }
 
 /**
@@ -57,7 +57,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = this.asDynamic()(withDispatcher(completion, dispatcher)).facade
+): Continuation<Unit> = this.asDynamic()(withDispatcher(completion, dispatcher), true).facade
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -70,7 +70,7 @@ public fun <T> (suspend  () -> T).startCoroutine(
         completion: Continuation<T>,
         dispatcher: ContinuationDispatcher? = null
 ) {
-    createCoroutine(completion, dispatcher).resume(Unit)
+    this.asDynamic()(withDispatcher(completion, dispatcher))
 }
 
 /**

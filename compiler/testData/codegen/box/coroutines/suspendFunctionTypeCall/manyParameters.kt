@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND: JS
 import kotlin.coroutines.*
 
 suspend fun suspendHere(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
@@ -25,7 +24,7 @@ fun box(): String {
         }
     }
 
-    if (result != "1.0#56#55#abc") return "fail: $result"
+    if (result != "1.0#56#55#abc" && result != "1#56#55#abc") return "fail: $result"
 
     return final
 }

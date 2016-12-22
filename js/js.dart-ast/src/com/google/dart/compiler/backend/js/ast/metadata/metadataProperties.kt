@@ -101,11 +101,13 @@ var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default
 
 class CoroutineMetadata(
         val doResumeName: JsName,
+        val resumeName: JsName,
         val stateName: JsName,
         val exceptionStateName: JsName,
         val finallyPathName: JsName,
         val resultName: JsName,
         val exceptionName: JsName,
+        val facadeName: JsName,
         val baseClassRef: JsExpression,
         val suspendObjectRef: JsExpression,
         val hasController: Boolean
