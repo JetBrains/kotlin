@@ -48,9 +48,11 @@ open class KaptTask : AbstractCompile() {
         val sourceRoots = SourceRoots.ForJvm.create(getSource(), rawSourceRoots)
         val compileClasspath = classpath.toList().filter(File::exists)
 
+        val pluginOptionsForKotlinCompile = kotlinCompileTask.pluginOptions
+
         args.moduleName = kotlinCompileTask.moduleName
-        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
-        args.pluginOptions = pluginOptions.arguments.toTypedArray()
+        args.pluginClasspaths = (pluginOptions.classpath + pluginOptionsForKotlinCompile.classpath).toSet().toTypedArray()
+        args.pluginOptions = (pluginOptions.arguments + pluginOptionsForKotlinCompile.arguments).toTypedArray()
         args.destinationAsFile = destinationDir
         args.classpathAsList = compileClasspath
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
