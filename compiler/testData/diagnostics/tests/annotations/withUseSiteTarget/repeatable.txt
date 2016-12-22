@@ -25,6 +25,17 @@ public final annotation class Ann : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final class B {
+    public constructor B(/*0*/ @param:fieldOrPropAnn x: kotlin.Int, /*1*/ y: kotlin.Int)
+    @getSetAndParamAnn @setparam:getSetAndParamAnn public final var w: kotlin.Int
+    @fieldOrPropAnn public final val x: kotlin.Int
+    @property:fieldOrPropAnn @fieldOrPropAnn public final val y: kotlin.Int
+    @fieldOrPropAnn @field:fieldOrPropAnn public final val z: kotlin.Int = 42
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final class CustomDelegate {
     public constructor CustomDelegate()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -35,6 +46,20 @@ public final class CustomDelegate {
 
 @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() public final annotation class RepeatableAnn : kotlin.Annotation {
     public constructor RepeatableAnn()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD, AnnotationTarget.PROPERTY}) public final annotation class fieldOrPropAnn : kotlin.Annotation {
+    public constructor fieldOrPropAnn()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER}) public final annotation class getSetAndParamAnn : kotlin.Annotation {
+    public constructor getSetAndParamAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
