@@ -197,13 +197,8 @@ class AndroidGradleWrapper {
     if (libraries == null) return jarToLibraryArtifactMap
 
     for (lib in libraries) {
-      if (lib.class.name == "com.android.builder.dependency.level2.AndroidDependency") {
-        // android tools >= 2.3
-        jarToLibraryArtifactMap[lib.jarFile] = lib.artifactFile
-      } else {
-        // android tools <= 2.2
-        jarToLibraryArtifactMap[lib.jarFile] = lib.bundle
-      }
+      Object bundle = getLibraryArtifactFile(lib)
+      jarToLibraryArtifactMap[lib.jarFile] = bundle
 
       // local dependencies are detected as changed by gradle, because they are seem to be
       // rewritten every time when bundle changes
@@ -211,16 +206,26 @@ class AndroidGradleWrapper {
       for (localDep in lib.localJars) {
         if (localDep instanceof File) {
           // android tools 2.2
-          jarToLibraryArtifactMap[localDep] = lib.bundle
+          jarToLibraryArtifactMap[localDep] = bundle
         }
         else if (localDep.metaClass.getMetaMethod("jarFile") != null) {
           // android tools < 2.2
-          jarToLibraryArtifactMap[localDep.jarFile] = lib.bundle
+          jarToLibraryArtifactMap[localDep.jarFile] = bundle
         }
       }
     }
 
     return jarToLibraryArtifactMap
+  }
+
+  private static def getLibraryArtifactFile(Object lib) {
+    if (lib.class.name == "com.android.builder.dependency.level2.AndroidDependency") {
+      // android tools >= 2.3
+      return lib.artifactFile
+    } else {
+      // android tools <= 2.2
+      return lib.bundle
+    }
   }
 
   @Nullable
