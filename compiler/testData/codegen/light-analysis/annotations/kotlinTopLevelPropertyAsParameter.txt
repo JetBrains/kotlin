@@ -12,7 +12,6 @@ public annotation class Ann {
     public abstract method str(): java.lang.String
 }
 
-
 public final class KotlinTopLevelPropertyAsParameterKt {
     public final static field b: byte
     public final static field bool: boolean

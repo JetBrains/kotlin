@@ -16,7 +16,6 @@ public final class Foo {
     public final method setD(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final static class Foo/Companion {
     inner class Foo/Companion
     private method <init>(): void
@@ -24,7 +23,6 @@ public final static class Foo/Companion {
     public final @org.jetbrains.annotations.NotNull method getBoo(): java.lang.String
     public final method setBoo(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class Kt4252_2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

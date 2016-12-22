@@ -4,11 +4,9 @@ public final class A {
     private final method x(): void
 }
 
-
 public interface Callable {
     public abstract method call(p0: boolean): void
 }
-
 
 public final class Kt8608Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

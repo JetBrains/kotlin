@@ -5,11 +5,9 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getB(): B
 }
 
-
 public final class B {
     public method <init>(): void
 }
-
 
 public final class SelfcreateKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

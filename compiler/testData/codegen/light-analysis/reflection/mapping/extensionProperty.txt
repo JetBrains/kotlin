@@ -4,7 +4,6 @@ public final class ExtensionPropertyKt {
     public final static method setExt(@org.jetbrains.annotations.NotNull p0: K, p1: double): void
 }
 
-
 public final class K {
     private field value: long
     public method <init>(p0: long): void

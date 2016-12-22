@@ -2,7 +2,6 @@ public final class ClosureInsideConstrucorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class KModel {
     private final @org.jetbrains.annotations.NotNull field sourcesInfo: java.lang.String
     public method <init>(): void

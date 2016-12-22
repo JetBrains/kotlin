@@ -56,7 +56,6 @@ public final class A {
     public final method setXsnn(@org.jetbrains.annotations.Nullable p0: java.lang.Short): void
 }
 
-
 public final class Kt48Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

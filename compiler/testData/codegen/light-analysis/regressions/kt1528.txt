@@ -2,7 +2,6 @@ public final class _1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class _2Kt {
     private final static field a: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String

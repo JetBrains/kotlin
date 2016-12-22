@@ -3,12 +3,10 @@ public interface A {
     public abstract method foo(@org.jetbrains.annotations.NotNull p0: Base): void
 }
 
-
 public final class A/DefaultImpls {
     inner class A/DefaultImpls
     public static method foo(@org.jetbrains.annotations.NotNull p0: A, p1: Base): void
 }
-
 
 public final class B {
     public method <init>(): void
@@ -16,14 +14,11 @@ public final class B {
     public synthetic method foo(p0: Base): void
 }
 
-
 public interface Base
-
 
 public class Child {
     public method <init>(): void
 }
-
 
 public final class Kt318Kt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String

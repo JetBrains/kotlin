@@ -8,7 +8,6 @@ public enum class Season {
     public static method values(): Season[]
 }
 
-
 public final class WithoutElseKt {
     public final static @org.jetbrains.annotations.NotNull method bar1(@org.jetbrains.annotations.NotNull p0: Season): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method bar2(@org.jetbrains.annotations.NotNull p0: Season): java.lang.String

@@ -18,12 +18,10 @@ public final class C {
     public final @kotlin.jvm.JvmName method set_rwProperty(p0: int): void
 }
 
-
 public final static class C/Inner {
     inner class C/Inner
     public method <init>(): void
 }
-
 
 public final class ClassMembersKt {
     private final static @org.jetbrains.annotations.NotNull field ints: java.util.List

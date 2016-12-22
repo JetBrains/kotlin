@@ -6,7 +6,6 @@ public final class A {
     public final method setB(p0: byte): void
 }
 
-
 public final class Kt2251Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

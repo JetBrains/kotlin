@@ -4,7 +4,6 @@ public enum class Empty {
     public static method values(): Empty[]
 }
 
-
 public final class EmptyEnumValuesValueOfKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

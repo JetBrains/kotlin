@@ -9,7 +9,6 @@ public annotation class Simple {
     public abstract method value(): java.lang.String
 }
 
-
 public final class SimpleClassAnnotationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -10,7 +10,6 @@ public final class CompanionObjectPropertyAccessorsKt {
     public final static @org.jetbrains.annotations.NotNull method getC_yy(): kotlin.reflect.KMutableProperty0
 }
 
-
 public final class Host {
     public final static field Companion: Host.Companion
     private final static field x: int
@@ -18,7 +17,6 @@ public final class Host {
     inner class Host/Companion
     public method <init>(): void
 }
-
 
 public final static class Host/Companion {
     inner class Host/Companion

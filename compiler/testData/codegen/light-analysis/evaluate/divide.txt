@@ -7,7 +7,6 @@ public annotation class Ann {
     public abstract method s(): short
 }
 
-
 public final class DivideKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

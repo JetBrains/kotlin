@@ -6,13 +6,11 @@ public final class z/A {
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 
-
 public final static class z/A/Companion {
     inner class z/A/Companion
     private method <init>(): void
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
-
 
 public final class z/KotlinKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

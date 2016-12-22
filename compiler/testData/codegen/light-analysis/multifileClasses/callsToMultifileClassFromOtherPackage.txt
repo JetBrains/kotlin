@@ -2,7 +2,6 @@ public final class _1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class a/MultifileClass {
     public final static @org.jetbrains.annotations.NotNull field constOK: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
@@ -10,7 +9,6 @@ public final class a/MultifileClass {
     public final static @org.jetbrains.annotations.NotNull method getVarOK(): java.lang.String
     public final static method setVarOK(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 synthetic final class a/MultifileClass___2Kt {
     private final static @org.jetbrains.annotations.NotNull field valOK: java.lang.String

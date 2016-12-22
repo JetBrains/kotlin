@@ -7,7 +7,6 @@ public final class ArrayWrapper {
     public final @org.jetbrains.annotations.NotNull method unaryMinus(): ArrayWrapper
 }
 
-
 public final class OverloadUnaryOperatorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

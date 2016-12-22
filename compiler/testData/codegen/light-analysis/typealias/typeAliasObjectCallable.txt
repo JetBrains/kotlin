@@ -6,7 +6,6 @@ public final class O {
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
 }
 
-
 public final class TypeAliasObjectCallableKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

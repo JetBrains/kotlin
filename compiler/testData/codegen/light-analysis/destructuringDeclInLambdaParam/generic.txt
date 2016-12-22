@@ -13,7 +13,6 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
 public final class GenericKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.lang.String

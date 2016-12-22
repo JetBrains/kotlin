@@ -16,7 +16,6 @@ public final class A {
     public final method size(): int
 }
 
-
 public final class AbstractListKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

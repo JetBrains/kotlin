@@ -3,7 +3,6 @@ public interface A {
     public abstract method setV(p0: java.lang.Object): void
 }
 
-
 public final class B {
     private @org.jetbrains.annotations.NotNull field v: java.lang.String
     public method <init>(): void
@@ -12,7 +11,6 @@ public final class B {
     public method setV(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public synthetic method setV(p0: java.lang.Object): void
 }
-
 
 public final class PropertySetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

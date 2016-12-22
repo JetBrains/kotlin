@@ -2,14 +2,12 @@ public final class CompanionFieldInsideLambdaKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class My {
     public final static field Companion: My.Companion
     private final static @org.jetbrains.annotations.NotNull field my: java.lang.String
     inner class My/Companion
     public method <init>(): void
 }
-
 
 public final static class My/Companion {
     inner class My/Companion

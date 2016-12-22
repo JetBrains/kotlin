@@ -2,7 +2,6 @@ public final class InheritedInnerClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Outer {
     private final @org.jetbrains.annotations.Nullable field foo: Outer.InnerBase
     inner class Outer/InnerBase
@@ -11,13 +10,11 @@ public final class Outer {
     public final @org.jetbrains.annotations.Nullable method getFoo(): Outer.InnerBase
 }
 
-
 public class Outer/InnerBase {
     synthetic final field this$0: Outer
     inner class Outer/InnerBase
     public method <init>(p0: Outer): void
 }
-
 
 public final class Outer/InnerDerived {
     synthetic final field this$0: Outer

@@ -1,4 +1,3 @@
-
 public final class Controller {
     private @org.jetbrains.annotations.NotNull field log: java.lang.String
     private field resumeIndex: int
@@ -11,18 +10,15 @@ public final class Controller {
     public final @org.jetbrains.annotations.Nullable method suspendWithValue(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
-
 public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
 
-
 public final class DispatchResumeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): java.lang.String
 }
-
 
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation

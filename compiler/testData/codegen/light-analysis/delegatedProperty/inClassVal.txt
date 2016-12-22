@@ -5,12 +5,10 @@ public final class A {
     public final method getProp(): int
 }
 
-
 public final class Delegate {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
 }
-
 
 public final class InClassValKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

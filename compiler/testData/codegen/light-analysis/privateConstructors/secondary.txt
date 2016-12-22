@@ -5,7 +5,6 @@ public class Outer {
     public final method getX(): int
 }
 
-
 public final class SecondaryKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

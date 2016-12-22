@@ -2,7 +2,6 @@ public final class ValuesInsideEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public enum class Variants {
     public final static field Companion: Variants.Companion
     public final static field K: Variants
@@ -13,7 +12,6 @@ public enum class Variants {
     public static method valueOf(p0: java.lang.String): Variants
     public static method values(): Variants[]
 }
-
 
 public final static class Variants/Companion {
     inner class Variants/Companion

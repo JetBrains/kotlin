@@ -6,7 +6,6 @@ public final class A {
     public final method set(p0: int, p1: int): void
 }
 
-
 public final class OverloadedSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

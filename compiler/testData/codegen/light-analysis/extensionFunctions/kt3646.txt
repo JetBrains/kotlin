@@ -4,7 +4,6 @@ public final class Foo {
     public final method getA(): int
 }
 
-
 public final class Kt3646Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method test(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): int

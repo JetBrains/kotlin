@@ -7,7 +7,6 @@ public abstract enum class Direction {
     public static method values(): Direction[]
 }
 
-
 final static class Direction/NORTH {
     private final @org.jetbrains.annotations.NotNull field someSpecialValue: java.lang.String
     inner class Direction/NORTH
@@ -15,7 +14,6 @@ final static class Direction/NORTH {
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getSomeSpecialValue(): java.lang.String
 }
-
 
 public final class Kt1119Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

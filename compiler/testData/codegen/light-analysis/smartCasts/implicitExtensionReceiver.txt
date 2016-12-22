@@ -3,7 +3,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public final class ImplicitExtensionReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.Nullable p0: A): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

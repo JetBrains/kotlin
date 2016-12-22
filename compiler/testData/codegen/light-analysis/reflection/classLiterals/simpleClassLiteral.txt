@@ -2,7 +2,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class SimpleClassLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -27,7 +27,6 @@ public class A0 {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class A1 {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -43,7 +42,6 @@ public final class A1 {
     public @org.jetbrains.annotations.NotNull method removeAt(p0: int): java.lang.String
 }
 
-
 public final class A2 {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -57,7 +55,6 @@ public final class A2 {
     public method remove(p0: java.lang.String): boolean
     public method removeAt(p0: int): java.lang.String
 }
-
 
 public final class RemoveAtTwoSpecialBridgesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

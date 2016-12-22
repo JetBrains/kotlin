@@ -7,7 +7,6 @@ public final class ArrayConventionKt {
     public final static method setResult(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class X {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String

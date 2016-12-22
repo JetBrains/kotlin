@@ -8,14 +8,12 @@ public final class Kt238Kt {
     public final static method t6(): void
 }
 
-
 public final class StrangeArray {
     private field defaultValue: java.lang.Object
     public method <init>(p0: int, p1: java.lang.Object): void
     public final method get(p0: int): java.lang.Object
     public final method set(p0: int, p1: java.lang.Object): void
 }
-
 
 public final class StrangeIntArray {
     private field defaultValue: int

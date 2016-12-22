@@ -5,18 +5,15 @@ public final class A {
     public final method foo(): void
 }
 
-
 public final class B {
     inner class B/D
     public method <init>(): void
 }
 
-
 public final static class B/D {
     inner class B/D
     public method <init>(): void
 }
-
 
 public final class Kt3738Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

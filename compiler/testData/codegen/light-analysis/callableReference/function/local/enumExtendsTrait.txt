@@ -6,11 +6,9 @@ public enum class E {
     public static method values(): E[]
 }
 
-
 public final class EnumExtendsTraitKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface Named {
     public abstract @org.jetbrains.annotations.NotNull method getName(): java.lang.String

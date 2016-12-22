@@ -4,7 +4,6 @@ public final class CallableReferencesKt {
     public final static method checkToString(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KCallable, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
 }
 
-
 public final class M {
     private final field bar: int
     public method <init>(): void

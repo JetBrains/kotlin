@@ -2,7 +2,6 @@ public final class Kt309Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class N {
     public method <init>(): void
     public final @org.jetbrains.annotations.Nullable method foo(): java.lang.Void

@@ -6,13 +6,11 @@ public interface M {
     public abstract method setBackingB(p0: int): void
 }
 
-
 public final class M/DefaultImpls {
     inner class M/DefaultImpls
     public static method getB(p0: M): int
     public static method setB(p0: M, p1: int): void
 }
-
 
 public final class N {
     private field b: int
@@ -25,7 +23,6 @@ public final class N {
     public method setB(p0: int): void
     public method setBackingB(p0: int): void
 }
-
 
 public final class TraitpropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

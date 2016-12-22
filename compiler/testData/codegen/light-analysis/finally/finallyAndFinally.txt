@@ -3,7 +3,6 @@ public final class FinallyAndFinallyKt {
     public final static @org.jetbrains.annotations.NotNull method test1(): MyString
 }
 
-
 public final class MyString {
     private @org.jetbrains.annotations.NotNull field s: java.lang.String
     public method <init>(): void

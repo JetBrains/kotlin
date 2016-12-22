@@ -3,7 +3,6 @@ public final class A {
     public final method foo(p0: java.lang.Object): void
 }
 
-
 public final class MemberOfGenericClassKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

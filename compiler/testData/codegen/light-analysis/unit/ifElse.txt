@@ -16,7 +16,6 @@ public final class A {
     public final method setCond2(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class IfElseKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

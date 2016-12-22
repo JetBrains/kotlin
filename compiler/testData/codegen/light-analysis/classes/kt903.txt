@@ -3,7 +3,6 @@ public final class Kt903Kt {
     public final static method plus(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Integer): int
 }
 
-
 public class PerfectNumberFinder {
     public method <init>(): void
     public method isPerfect(p0: int): boolean

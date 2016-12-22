@@ -24,7 +24,6 @@ public enum class BigEnum {
     public static method values(): BigEnum[]
 }
 
-
 public final class BigEnumKt {
     public final static @org.jetbrains.annotations.NotNull method bar1(@org.jetbrains.annotations.NotNull p0: BigEnum): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method bar2(@org.jetbrains.annotations.NotNull p0: BigEnum): java.lang.String

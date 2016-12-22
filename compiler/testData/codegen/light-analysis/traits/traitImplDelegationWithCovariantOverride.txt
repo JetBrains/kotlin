@@ -3,30 +3,25 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Number
 }
 
-
 public final class A/DefaultImpls {
     inner class A/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method foo(p0: A): java.lang.Number
 }
 
-
 public interface B {
     inner class B/DefaultImpls
 }
-
 
 public final class B/DefaultImpls {
     inner class B/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method foo(p0: B): java.lang.Number
 }
 
-
 public final class C {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.Integer
     public synthetic method foo(): java.lang.Number
 }
-
 
 public final class TraitImplDelegationWithCovariantOverrideKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

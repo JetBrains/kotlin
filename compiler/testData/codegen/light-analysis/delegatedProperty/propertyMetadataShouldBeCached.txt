@@ -9,7 +9,6 @@ public final class A {
     public final method setFoo(p0: int): void
 }
 
-
 public final static class A/Companion {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     inner class A/Companion
@@ -18,7 +17,6 @@ public final static class A/Companion {
     public final method setBar(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
 }
 
-
 public final class AnyHandler {
     public final static field INSTANCE: AnyHandler
     private method <init>(): void
@@ -26,14 +24,12 @@ public final class AnyHandler {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
 }
 
-
 public final class IntHandler {
     public final static field INSTANCE: IntHandler
     private method <init>(): void
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: int): void
 }
-
 
 public final class PropertyMetadataShouldBeCachedKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
@@ -44,7 +40,6 @@ public final class PropertyMetadataShouldBeCachedKt {
     public final static @org.jetbrains.annotations.NotNull method getMetadatas(): java.util.IdentityHashMap
     public final static @org.jetbrains.annotations.Nullable method record(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KProperty): kotlin.Unit
 }
-
 
 public final class StringHandler {
     public final static field INSTANCE: StringHandler

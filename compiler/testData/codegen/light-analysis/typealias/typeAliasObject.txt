@@ -5,13 +5,11 @@ public final class KHolder {
     public method <init>(): void
 }
 
-
 public final static class KHolder/Companion {
     inner class KHolder/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getK(): java.lang.String
 }
-
 
 public final class OHolder {
     public final static field INSTANCE: OHolder
@@ -19,7 +17,6 @@ public final class OHolder {
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getO(): java.lang.String
 }
-
 
 public final class TypeAliasObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -2,16 +2,13 @@ public final class test/DelegationMethodsWithArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public interface test/InputTextField {
     public abstract method setText(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public interface test/MooableTextField {
     public abstract method moo(p0: int, p1: int, p2: int): int
 }
-
 
 public final class test/SimpleTextField {
     private field text2: java.lang.String
@@ -21,11 +18,9 @@ public final class test/SimpleTextField {
     public method setText(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public interface test/TextField {
     public abstract @org.jetbrains.annotations.NotNull method getText(): java.lang.String
 }
-
 
 public final class test/TextFieldWrapper {
     private synthetic final field $$delegate_0: test.MooableTextField

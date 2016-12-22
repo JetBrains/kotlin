@@ -16,7 +16,6 @@ public final class MyClass {
     public method <init>(): void
 }
 
-
 public final class ParameterWithPrimitiveTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

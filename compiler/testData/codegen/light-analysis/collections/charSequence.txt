@@ -8,7 +8,6 @@ public class A {
     public @org.jetbrains.annotations.NotNull method subSequence(p0: int, p1: int): java.lang.CharSequence
 }
 
-
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

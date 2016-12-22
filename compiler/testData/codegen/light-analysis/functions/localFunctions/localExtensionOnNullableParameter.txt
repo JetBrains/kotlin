@@ -3,7 +3,6 @@ public final class LocalExtensionOnNullableParameterKt {
     public final static @org.jetbrains.annotations.NotNull method localExtensionOnNullableParameter(): T
 }
 
-
 public class T {
     private field value: int
     public method <init>(p0: int): void

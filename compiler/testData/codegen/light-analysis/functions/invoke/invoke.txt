@@ -8,12 +8,10 @@ public final class invoke/InvokeKt {
     public final static @org.jetbrains.annotations.NotNull method test5(@org.jetbrains.annotations.NotNull p0: invoke.Method2, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
 
-
 public final class invoke/Method {
     public method <init>(): void
     public final method invoke(p0: int): int
 }
-
 
 public final class invoke/Method2 {
     public method <init>(): void

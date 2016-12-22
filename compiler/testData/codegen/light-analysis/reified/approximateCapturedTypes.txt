@@ -2,20 +2,16 @@ public final class ApproximateCapturedTypesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class Inv {
     public method <init>(): void
 }
-
 
 public final class Obs {
     public method <init>(): void
     private final method lift(p0: Operator): Inv
 }
 
-
 public interface Operator
-
 
 public final class SwOperator {
     public method <init>(): void

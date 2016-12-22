@@ -4,12 +4,10 @@ public class A {
     public @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
 }
 
-
 public class B {
     inner class B/E
     public method <init>(): void
 }
-
 
 public final class B/E {
     private final @org.jetbrains.annotations.NotNull field foo: java.lang.String
@@ -19,12 +17,10 @@ public final class B/E {
     public final @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
 }
 
-
 public final class C {
     inner class C/D
     public method <init>(): void
 }
-
 
 public final class C/D {
     private final @org.jetbrains.annotations.NotNull field foo: java.lang.String
@@ -33,7 +29,6 @@ public final class C/D {
     public method <init>(p0: C): void
     public final @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
 }
-
 
 public final class Kt2566_2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

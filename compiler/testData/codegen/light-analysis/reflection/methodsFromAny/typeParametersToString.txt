@@ -2,15 +2,12 @@ public final class OneBound {
     public method <init>(): void
 }
 
-
 public final class SeveralBounds {
     public method <init>(): void
 }
 
-
 public final class TypeParametersToStringKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface Variance

@@ -5,7 +5,6 @@ public final class Box {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class RunnableAccessingClosure2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

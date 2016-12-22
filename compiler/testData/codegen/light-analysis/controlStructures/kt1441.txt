@@ -6,7 +6,6 @@ public final class Foo {
     public final method setRnd(p0: int): void
 }
 
-
 public final class Kt1441Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

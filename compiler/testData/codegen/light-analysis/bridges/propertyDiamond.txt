@@ -3,12 +3,9 @@ public interface A {
     public abstract method getO(): java.lang.Object
 }
 
-
 public interface B
 
-
 public interface C
-
 
 public final class D {
     private final @org.jetbrains.annotations.NotNull field k: java.lang.String
@@ -19,7 +16,6 @@ public final class D {
     public synthetic method getO(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getO(): java.lang.String
 }
-
 
 public final class PropertyDiamondKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

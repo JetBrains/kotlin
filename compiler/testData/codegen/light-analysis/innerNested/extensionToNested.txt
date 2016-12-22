@@ -3,12 +3,10 @@ public final class ExtensionToNestedKt {
     public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: Test.Nested): java.lang.String
 }
 
-
 public final class Test {
     inner class Test/Nested
     public method <init>(): void
 }
-
 
 public final static class Test/Nested {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String

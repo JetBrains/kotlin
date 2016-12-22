@@ -5,11 +5,9 @@ public final class A {
     private final method getFoo(): int
 }
 
-
 public final class AccessToPrivatePropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class B {
     private final field foo: int
@@ -17,13 +15,11 @@ public final class B {
     public final method foo(): void
 }
 
-
 public final class C {
     private field foo: int
     public method <init>(): void
     public final method foo(): void
 }
-
 
 public final class D {
     private field foo: int

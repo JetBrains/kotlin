@@ -2,14 +2,11 @@ public final class Another {
     public method <init>(): void
 }
 
-
 public interface Base
-
 
 public final class Derived {
     public method <init>(): void
 }
-
 
 public final class PostfixIncrementOnClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

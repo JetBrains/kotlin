@@ -5,7 +5,6 @@ public final class A {
     public final method setId(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
 }
 
-
 public final class MemberExtensionToStringKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

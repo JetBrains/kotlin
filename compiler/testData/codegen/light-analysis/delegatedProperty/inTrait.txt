@@ -2,7 +2,6 @@ public interface A {
     public abstract method getProp(): int
 }
 
-
 public final class AImpl {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
@@ -10,12 +9,10 @@ public final class AImpl {
     public method getProp(): int
 }
 
-
 public final class Delegate {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
 }
-
 
 public final class InTraitKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

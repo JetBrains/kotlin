@@ -4,17 +4,14 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
 }
 
-
 public class Factory {
     public method <init>(p0: int): void
 }
-
 
 public final class Kt2784Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

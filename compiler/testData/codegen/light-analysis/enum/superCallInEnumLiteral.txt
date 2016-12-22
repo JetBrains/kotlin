@@ -9,20 +9,17 @@ public enum class test/E {
     public static method values(): test.E[]
 }
 
-
 final static class test/E/E1 {
     inner class test/E/E1
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
 
-
 final static class test/E/E2 {
     inner class test/E/E2
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
-
 
 public final class test/SuperCallInEnumLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -5,7 +5,6 @@ public enum class E {
     public static method values(): E[]
 }
 
-
 public final class EnumNameOrdinalKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

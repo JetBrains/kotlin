@@ -5,7 +5,6 @@ public final class A {
     public final method getT(): java.lang.Object
 }
 
-
 public final class GenericMemberKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

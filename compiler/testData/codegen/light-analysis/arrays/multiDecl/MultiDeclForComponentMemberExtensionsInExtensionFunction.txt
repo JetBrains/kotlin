@@ -4,13 +4,11 @@ public final class C {
     public final method getI(): int
 }
 
-
 public final class M {
     public method <init>(): void
     public final method component1(@org.jetbrains.annotations.NotNull p0: C): int
     public final method component2(@org.jetbrains.annotations.NotNull p0: C): int
 }
-
 
 public final class MultiDeclForComponentMemberExtensionsInExtensionFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -13,7 +13,6 @@ public final class A {
     public final static @kotlin.jvm.JvmStatic method setC(p0: int): void
 }
 
-
 public final class PostfixIncKt {
     private static @org.jetbrains.annotations.NotNull field holder: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

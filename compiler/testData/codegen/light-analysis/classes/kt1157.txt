@@ -2,11 +2,9 @@ public final class Kt1157Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public interface Runnable {
     public abstract method run(): void
 }
-
 
 public final class SomeClass {
     public final static field INSTANCE: SomeClass

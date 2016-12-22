@@ -3,7 +3,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final class ClassMemberFromTopLevelStringOneStringArgKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

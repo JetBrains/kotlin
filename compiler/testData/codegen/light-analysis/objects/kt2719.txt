@@ -5,13 +5,11 @@ public final class Clazz {
     public method <init>(): void
 }
 
-
 public final static class Clazz/Companion {
     inner class Clazz/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getA(): java.lang.Object
 }
-
 
 public final class Kt2719Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

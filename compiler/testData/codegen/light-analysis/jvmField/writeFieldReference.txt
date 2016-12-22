@@ -9,7 +9,6 @@ public final class zzz/A {
     public final method testAccessors(): void
 }
 
-
 public final class zzz/WriteFieldReferenceKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method checkAccessor(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KMutableProperty1, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void

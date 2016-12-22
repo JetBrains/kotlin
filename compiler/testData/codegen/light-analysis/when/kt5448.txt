@@ -2,20 +2,17 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class B {
     private final @org.jetbrains.annotations.NotNull field items: java.util.Collection
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
     public final @org.jetbrains.annotations.NotNull method getItems(): java.util.Collection
 }
 
-
 public final class C {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method bar(): B
     public final method foo(p0: int): void
 }
-
 
 public final class Kt5448Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

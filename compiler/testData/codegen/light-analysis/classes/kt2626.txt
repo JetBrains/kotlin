@@ -4,7 +4,6 @@ public final class example2/Context {
     private method <init>(): void
 }
 
-
 public static enum class example2/Context/OsType {
     public final static field LINUX: example2.Context.OsType
     public final static field MACOSX: example2.Context.OsType
@@ -17,7 +16,6 @@ public static enum class example2/Context/OsType {
     public static method valueOf(p0: java.lang.String): example2.Context.OsType
     public static method values(): example2.Context.OsType[]
 }
-
 
 public final class example2/Kt2626Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

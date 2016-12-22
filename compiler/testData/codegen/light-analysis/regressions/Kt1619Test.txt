@@ -4,7 +4,6 @@ public final class regressions/Kt1619Test {
     public final method testCollectionNotNullCanBeUsedForNullables(): int
 }
 
-
 public final class regressions/Kt1619TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

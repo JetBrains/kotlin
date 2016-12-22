@@ -5,13 +5,11 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.Object
 }
 
-
 public class A/Inner {
     synthetic final field this$0: A
     inner class A/Inner
     public method <init>(p0: A): void
 }
-
 
 public final class ObjectExtendsInnerAndReferencesOuterMemberKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

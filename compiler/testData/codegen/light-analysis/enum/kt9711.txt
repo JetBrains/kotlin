@@ -2,7 +2,6 @@ public final class Kt9711Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public abstract enum class X {
     public final static field B: X
     inner class X/B
@@ -11,7 +10,6 @@ public abstract enum class X {
     public static method valueOf(p0: java.lang.String): X
     public static method values(): X[]
 }
-
 
 final static class X/B {
     private final @org.jetbrains.annotations.NotNull field value2: java.lang.String

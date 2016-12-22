@@ -3,7 +3,6 @@ public final class Kt4784Kt {
     public final static @org.jetbrains.annotations.NotNull method plusAssign(): T
 }
 
-
 public class T {
     private field value: int
     public method <init>(p0: int): void

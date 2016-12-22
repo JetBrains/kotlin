@@ -10,7 +10,6 @@ public final class AX {
     public final @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
 }
 
-
 public final class ExplicitObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

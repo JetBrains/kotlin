@@ -4,20 +4,17 @@ public final class A {
     public final method foo(): void
 }
 
-
 public final class B {
     private final field foo: int
     public method <init>(): void
     public final method foo(): void
 }
 
-
 public final class C {
     private field foo: int
     public method <init>(): void
     public final method foo(): void
 }
-
 
 public final class D {
     private field foo: int
@@ -26,7 +23,6 @@ public final class D {
     public final method getFoo(): int
     private final method setFoo(p0: int): void
 }
-
 
 public final class InvokespecialKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -6,26 +6,20 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
-
 public interface ClassDescriptor
-
 
 public final class ClassDescriptorImpl {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getName(): java.lang.String
 }
 
-
 public interface ClassifierDescriptor
-
 
 public final class FakeDescriptorWithSeveralOverridenOneKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public interface MemberDescriptor
-
 
 public interface Named {
     public abstract @org.jetbrains.annotations.NotNull method getName(): java.lang.String

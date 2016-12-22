@@ -10,14 +10,12 @@ public final class Kt471Kt {
     public final static method test8(): boolean
 }
 
-
 public final class MNR {
     private @org.jetbrains.annotations.NotNull field ref: MyNumber
     public method <init>(@org.jetbrains.annotations.NotNull p0: MyNumber): void
     public final @org.jetbrains.annotations.NotNull method getRef(): MyNumber
     public final method setRef(@org.jetbrains.annotations.NotNull p0: MyNumber): void
 }
-
 
 public final class MyArrayList {
     private field value17: java.lang.Object
@@ -26,7 +24,6 @@ public final class MyArrayList {
     public final method get(p0: int): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method set(p0: int, p1: java.lang.Object): java.lang.Object
 }
-
 
 public final class MyNumber {
     private final field i: int

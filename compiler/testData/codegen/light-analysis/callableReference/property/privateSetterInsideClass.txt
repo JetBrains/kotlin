@@ -6,7 +6,6 @@ public final class Bar {
     public final method test(): void
 }
 
-
 public final class PrivateSetterInsideClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

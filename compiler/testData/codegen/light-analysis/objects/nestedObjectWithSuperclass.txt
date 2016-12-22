@@ -5,18 +5,15 @@ public class A {
     public final method getS(): int
 }
 
-
 public final class NestedObjectWithSuperclassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class Outer {
     public final static field INSTANCE: Outer
     inner class Outer/O
     private method <init>(): void
 }
-
 
 public final class Outer/O {
     public final static field INSTANCE: Outer.O

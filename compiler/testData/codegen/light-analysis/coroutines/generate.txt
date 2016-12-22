@@ -3,14 +3,12 @@ public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
 
-
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation
     private method <init>(): void
     public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
 }
-
 
 public final class GenerateKt {
     private static field was: boolean
@@ -21,7 +19,6 @@ public final class GenerateKt {
     public final static method setWas(p0: boolean): void
 }
 
-
 public final class GeneratedIterator {
     private field nextStep: kotlin.coroutines.Continuation
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void
@@ -29,13 +26,11 @@ public final class GeneratedIterator {
     public @org.jetbrains.annotations.Nullable method yield(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
-
 public final class GeneratedSequence {
     private final field block: kotlin.jvm.functions.Function2
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
 }
-
 
 public interface Generator {
     public abstract @org.jetbrains.annotations.Nullable method yield(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object

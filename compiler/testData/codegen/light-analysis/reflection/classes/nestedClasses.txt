@@ -7,12 +7,10 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
 }
-
 
 public final class A/Inner {
     synthetic final field this$0: A
@@ -20,18 +18,15 @@ public final class A/Inner {
     public method <init>(p0: A): void
 }
 
-
 public final static class A/Nested {
     inner class A/Nested
     public method <init>(): void
 }
 
-
 private final static class A/PrivateNested {
     inner class A/PrivateNested
     public method <init>(): void
 }
-
 
 public final class NestedClassesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

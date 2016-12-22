@@ -4,7 +4,6 @@ public final class mask/Kt529Kt {
     public final static method sum(@org.jetbrains.annotations.NotNull p0: java.lang.Iterable, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): int
 }
 
-
 public final class mask/Luhny {
     private final field buffer: java.util.ArrayDeque
     private final field digits: java.util.ArrayDeque

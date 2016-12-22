@@ -4,7 +4,6 @@ public final class test/FieldKt {
     public final static method getNoMangling(): int
 }
 
-
 public final class test/Z {
     private field noMangling: int
     public method <init>(): void

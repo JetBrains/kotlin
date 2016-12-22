@@ -3,12 +3,10 @@ public final class A {
     public final method mem(): void
 }
 
-
 public final class B {
     public method <init>(): void
     public final method mem(): void
 }
-
 
 public final class FunctionEqualsHashCodeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

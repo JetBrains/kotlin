@@ -2,7 +2,6 @@ public final class JvmStaticInObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Obj {
     public final static field INSTANCE: Obj
     private method <init>(): void

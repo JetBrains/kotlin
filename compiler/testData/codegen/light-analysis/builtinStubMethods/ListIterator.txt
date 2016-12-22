@@ -3,7 +3,6 @@ public final class ListIteratorKt {
     public final static method expectUoe(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
 }
 
-
 public final class MyListIterator {
     public method <init>(): void
     public method add(p0: java.lang.Object): void

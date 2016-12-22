@@ -2,24 +2,20 @@ public final class BoxKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class a/MultifileClass {
     public final static @org.jetbrains.annotations.NotNull method ok(): java.lang.String
 }
-
 
 synthetic final class a/MultifileClass__Part1Kt {
     private final static field overlapping: java.lang.String
     private final static method getOverlapping$MultifileClass__Part1Kt(): java.lang.String
 }
 
-
 synthetic final class a/MultifileClass__Part2Kt {
     private final static field overlapping: java.lang.String
     private final static method getOverlapping$MultifileClass__Part2Kt(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method ok(): java.lang.String
 }
-
 
 synthetic final class a/MultifileClass__Part3Kt {
     private final static field overlapping: java.lang.String

@@ -7,7 +7,6 @@ public final class A {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
 public final class B {
     private final @org.jetbrains.annotations.NotNull field first: java.lang.String
     private final @org.jetbrains.annotations.NotNull field second: java.lang.String
@@ -18,7 +17,6 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method getThird(): java.lang.String
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
-
 
 public final class C {
     private final field first: long
@@ -31,7 +29,6 @@ public final class C {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
 public final class Controller {
     public method <init>(): void
     public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
@@ -39,12 +36,10 @@ public final class Controller {
     public final @org.jetbrains.annotations.Nullable method suspendWithDouble(p0: double, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
-
 public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
-
 
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation
@@ -52,7 +47,6 @@ public final class EmptyContinuation {
     public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
 }
-
 
 public final class SuspendInTheMiddleOfObjectConstructionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

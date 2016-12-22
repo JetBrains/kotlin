@@ -3,7 +3,6 @@ public final class foo/CapturedLocalValNoInlineKt {
     public final static method run(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
 }
 
-
 public final class foo/Delegate {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int

@@ -5,13 +5,11 @@ public final class A {
     public final method setT(p0: java.lang.Object): void
 }
 
-
 public final class B {
     private final field r: java.lang.Object
     public method <init>(p0: java.lang.Object): void
     public final method getR(): java.lang.Object
 }
-
 
 public final class Kt257Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

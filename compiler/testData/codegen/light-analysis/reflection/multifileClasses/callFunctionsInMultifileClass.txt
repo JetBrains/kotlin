@@ -6,12 +6,10 @@ public final class test/Test {
     public final static method getZ(p0: int): int
 }
 
-
 synthetic final class test/Test__Test1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method getX(): int
 }
-
 
 synthetic final class test/Test__Test2Kt {
     public final static method getY(): int

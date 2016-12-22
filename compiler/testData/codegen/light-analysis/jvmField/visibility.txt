@@ -6,7 +6,6 @@ public final class A {
     public final method testVisibilities(): void
 }
 
-
 public final class AWithCompanion {
     public final static field Companion: AWithCompanion.Companion
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
@@ -16,14 +15,12 @@ public final class AWithCompanion {
     public method <init>(): void
 }
 
-
 public final static class AWithCompanion/Companion {
     inner class AWithCompanion/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method get(@org.jetbrains.annotations.NotNull p0: java.lang.String): kotlin.reflect.KProperty
     public final method testVisibilities(): void
 }
-
 
 public final class Object {
     public final static field INSTANCE: Object
@@ -33,7 +30,6 @@ public final class Object {
     public final @org.jetbrains.annotations.NotNull method get(@org.jetbrains.annotations.NotNull p0: java.lang.String): kotlin.reflect.KProperty
     public final method testVisibilities(): void
 }
-
 
 public final class VisibilityKt {
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String

@@ -3,7 +3,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class A/B {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
@@ -14,7 +13,6 @@ public final class A/B {
     public final method setProp(p0: int): void
 }
 
-
 public final class Delegate {
     private field inner: java.lang.Object
     public method <init>(p0: java.lang.Object): void
@@ -23,7 +21,6 @@ public final class Delegate {
     public final method setInner(p0: java.lang.Object): void
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: java.lang.Object): void
 }
-
 
 public final class InferredPropertyTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

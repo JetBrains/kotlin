@@ -2,11 +2,9 @@ public class Base {
     public method <init>(): void
 }
 
-
 public final class Derived {
     public method <init>(): void
 }
-
 
 public final class PrefixIncrementOnClassSmartCastKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

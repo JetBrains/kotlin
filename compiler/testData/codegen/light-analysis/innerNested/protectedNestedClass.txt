@@ -3,13 +3,11 @@ public abstract class a/A {
     public method <init>(): void
 }
 
-
 protected final static class a/A/C {
     inner class a/A/C
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method result(): java.lang.String
 }
-
 
 public final class b/B {
     private final @org.jetbrains.annotations.NotNull field c: a.A.C
@@ -17,7 +15,6 @@ public final class b/B {
     protected final @org.jetbrains.annotations.NotNull method getC(): a.A.C
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
-
 
 public final class b/BKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

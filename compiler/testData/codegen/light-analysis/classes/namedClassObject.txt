@@ -4,13 +4,11 @@ public final class C {
     public method <init>(): void
 }
 
-
 public final static class C/Foo {
     inner class C/Foo
     private method <init>(): void
     public final method create(): int
 }
-
 
 public final class NamedClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -5,11 +5,9 @@ public final class AImpl {
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.Number
 }
 
-
 public final class CastGetReturnTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class Delegate {
     public method <init>(): void

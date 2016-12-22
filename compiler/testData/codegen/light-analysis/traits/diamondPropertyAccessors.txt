@@ -4,18 +4,15 @@ public interface A {
     public abstract method setBar(p0: boolean): void
 }
 
-
 public final class A/DefaultImpls {
     inner class A/DefaultImpls
     public static method getBar(p0: A): boolean
     public static method setBar(p0: A, p1: boolean): void
 }
 
-
 public interface B {
     inner class B/DefaultImpls
 }
-
 
 public final class B/DefaultImpls {
     inner class B/DefaultImpls
@@ -23,13 +20,11 @@ public final class B/DefaultImpls {
     public static method setBar(p0: B, p1: boolean): void
 }
 
-
 public interface C {
     inner class C/DefaultImpls
     public abstract method getBar(): boolean
     public abstract method setBar(p0: boolean): void
 }
-
 
 public final class C/DefaultImpls {
     inner class C/DefaultImpls
@@ -37,11 +32,9 @@ public final class C/DefaultImpls {
     public static method setBar(p0: C, p1: boolean): void
 }
 
-
 public interface D {
     inner class D/DefaultImpls
 }
-
 
 public final class D/DefaultImpls {
     inner class D/DefaultImpls
@@ -49,11 +42,9 @@ public final class D/DefaultImpls {
     public static method setBar(p0: D, p1: boolean): void
 }
 
-
 public final class DiamondPropertyAccessorsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class Impl {
     public method <init>(): void

@@ -9,7 +9,6 @@ public annotation class Ann {
     public abstract method p6(): float
 }
 
-
 public final class MinusKt {
     private final static field prop1: byte
     private final static field prop2: short

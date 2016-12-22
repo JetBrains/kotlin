@@ -2,7 +2,6 @@ public final class Kt3132Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Test {
     inner class Test/Foo
     inner class Test/FooImplInner
@@ -10,18 +9,15 @@ public final class Test {
     public method <init>(): void
 }
 
-
 public static interface Test/Foo {
     inner class Test/Foo
 }
-
 
 public final class Test/FooImplInner {
     synthetic final field this$0: Test
     inner class Test/FooImplInner
     public method <init>(p0: Test): void
 }
-
 
 public final static class Test/FooImplNested {
     inner class Test/FooImplNested

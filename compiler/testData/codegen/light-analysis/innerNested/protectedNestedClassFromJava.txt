@@ -3,12 +3,10 @@ public class com/company/Test {
     public method <init>(): void
 }
 
-
 protected final static class com/company/Test/ProtectedClass {
     inner class com/company/Test/ProtectedClass
     public method <init>(): void
 }
-
 
 public final class com/company/TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

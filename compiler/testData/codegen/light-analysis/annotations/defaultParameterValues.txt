@@ -17,7 +17,6 @@ public annotation class Ann {
 @java.lang.annotation.Retention
 public annotation class Ann2
 
-
 public final class DefaultParameterValuesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
@@ -26,7 +25,6 @@ public final class DefaultParameterValuesKt {
 public final class MyClass {
     public method <init>(): void
 }
-
 
 public enum class MyEnum {
     public final static field A: MyEnum

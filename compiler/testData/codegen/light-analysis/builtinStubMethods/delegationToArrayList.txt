@@ -27,7 +27,6 @@ public final class A {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class B {
     private synthetic final field $$delegate_0: A
     public method <init>(): void
@@ -64,7 +63,6 @@ public final class B {
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
-
 
 public final class DelegationToArrayListKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

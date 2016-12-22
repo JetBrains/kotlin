@@ -3,7 +3,6 @@ public final class ClassReferenceKt {
     public final static method check(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KClass): void
 }
 
-
 public final class M {
     public method <init>(): void
 }

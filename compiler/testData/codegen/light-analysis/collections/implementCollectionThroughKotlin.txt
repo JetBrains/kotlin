@@ -3,7 +3,6 @@ public final class ListImpl {
     public method getSize(): int
 }
 
-
 public abstract class MyList {
     public method <init>(): void
     public synthetic method add(p0: int, p1: java.lang.Object): void
@@ -34,7 +33,6 @@ public abstract class MyList {
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
-
 
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

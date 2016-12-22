@@ -5,7 +5,6 @@ public final class A {
     private method <init>(): void
 }
 
-
 public final class B {
     public final static field Companion: B.Companion
     private final static field privateConst: int
@@ -14,7 +13,6 @@ public final class B {
     inner class B/Companion
     public method <init>(): void
 }
-
 
 public final static class B/Companion {
     inner class B/Companion

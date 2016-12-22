@@ -5,7 +5,6 @@ public final class Box {
     public final method setValue(p0: java.lang.Object): void
 }
 
-
 public final class SimpleBoxKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

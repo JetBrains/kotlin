@@ -2,7 +2,6 @@ public final class Klass {
     public method <init>(): void
 }
 
-
 public final class ReifiedTypeJavaClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method simpleName(): java.lang.String

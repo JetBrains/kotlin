@@ -2,7 +2,6 @@ public class O {
     public method <init>(): void
 }
 
-
 public final class SimpleSubtypeSupertypeKt {
     public final static @org.jetbrains.annotations.NotNull method any(): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -15,7 +14,6 @@ public final class SimpleSubtypeSupertypeKt {
     public final static @org.jetbrains.annotations.Nullable method nullableString(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method string(): java.lang.String
 }
-
 
 public final class X {
     public method <init>(): void

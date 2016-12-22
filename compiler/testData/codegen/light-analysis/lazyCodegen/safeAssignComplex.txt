@@ -10,7 +10,6 @@ public final class SafeAssignComplexKt {
     public final static method setMainShape(@org.jetbrains.annotations.Nullable p0: Shape): void
 }
 
-
 public final class Shape {
     private @org.jetbrains.annotations.Nullable field innerShape: Shape
     private @org.jetbrains.annotations.NotNull field result: java.lang.String

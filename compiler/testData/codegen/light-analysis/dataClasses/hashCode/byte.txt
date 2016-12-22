@@ -10,7 +10,6 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
 public final class ByteKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

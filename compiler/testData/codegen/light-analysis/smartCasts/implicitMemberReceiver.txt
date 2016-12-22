@@ -4,7 +4,6 @@ public class A {
     public @org.jetbrains.annotations.NotNull method getA(): java.lang.String
 }
 
-
 public final class B {
     private final @org.jetbrains.annotations.NotNull field a: java.lang.String
     public method <init>(): void
@@ -12,13 +11,11 @@ public final class B {
     public @org.jetbrains.annotations.NotNull method getA(): java.lang.String
 }
 
-
 public final class C {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method bar(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method complex(@org.jetbrains.annotations.Nullable p0: A): java.lang.String
 }
-
 
 public final class ImplicitMemberReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

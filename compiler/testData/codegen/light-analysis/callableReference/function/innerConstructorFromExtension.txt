@@ -3,7 +3,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class A/Inner {
     private final field k: int
     private final field o: int
@@ -13,7 +12,6 @@ public final class A/Inner {
     public final method getK(): int
     public final method getO(): int
 }
-
 
 public final class InnerConstructorFromExtensionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

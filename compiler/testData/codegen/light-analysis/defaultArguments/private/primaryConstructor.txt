@@ -5,13 +5,11 @@ public final class A {
     synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): A
 }
-
 
 public final class PrimaryConstructorKt {
     private static @org.jetbrains.annotations.NotNull field state: java.lang.String

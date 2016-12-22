@@ -6,7 +6,6 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public class A/B {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     synthetic final field this$0: A
@@ -16,14 +15,12 @@ public class A/B {
     public final @org.jetbrains.annotations.NotNull method testB(): java.lang.String
 }
 
-
 public class A/C {
     synthetic final field this$0: A
     inner class A/C
     public method <init>(p0: A): void
     public final @org.jetbrains.annotations.NotNull method testC(): java.lang.String
 }
-
 
 public final class ProperOuterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -11,12 +11,10 @@ public annotation class Ann {
     public abstract method x(): int
 }
 
-
 public final class AnnotationsOnDefaultKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method test(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.annotation.Annotation[]): void
 }
-
 
 public final class B {
     public @Ann method <init>(p0: int, p1: int, p2: int): void

@@ -2,7 +2,6 @@ public final class Kt6870_privatePropertyReferenceKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Test {
     private field iv: int
     public method <init>(): void

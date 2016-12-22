@@ -4,13 +4,11 @@ public final class C {
     public final method quux(): void
 }
 
-
 public final class F {
     public method <init>(): void
     public final method foo(): void
     public final method getBar(p0: java.lang.Object): java.lang.Object
 }
-
 
 public final class TypeParametersAndNamesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

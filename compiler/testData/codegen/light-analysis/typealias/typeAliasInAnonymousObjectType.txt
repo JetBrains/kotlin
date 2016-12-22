@@ -4,7 +4,6 @@ public class Foo {
     public final method getX(): java.lang.Object
 }
 
-
 public final class TypeAliasInAnonymousObjectTypeKt {
     private final static @org.jetbrains.annotations.NotNull field test: Foo
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

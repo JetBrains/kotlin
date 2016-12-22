@@ -4,7 +4,6 @@ public annotation class Simple {
     public abstract method value(): java.lang.String
 }
 
-
 public final class SimpleFunAnnotationKt {
     public final static @Simple @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -6,7 +6,6 @@ public final class Bug {
     public final @org.jetbrains.annotations.NotNull method title(p0: int): java.lang.String
 }
 
-
 public final class Kt6153Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -3,13 +3,11 @@ public final class CreatedNestedInOuterMemberKt {
     public final static method foo(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): int
 }
 
-
 public final class Outer {
     inner class Outer/Nested
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method bar(): java.lang.String
 }
-
 
 public final static class Outer/Nested {
     private final field y: int

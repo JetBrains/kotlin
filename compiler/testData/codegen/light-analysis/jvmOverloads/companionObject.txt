@@ -6,7 +6,6 @@ public final class C {
     public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
 
-
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
@@ -14,7 +13,6 @@ public final static class C/Companion {
     public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull @synthetic.kotlin.jvm.GeneratedByJvmOverloads method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
-
 
 public final class CompanionObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

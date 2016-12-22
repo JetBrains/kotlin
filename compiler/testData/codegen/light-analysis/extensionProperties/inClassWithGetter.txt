@@ -2,7 +2,6 @@ public final class InClassWithGetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Test {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getFoo(p0: int): java.lang.String

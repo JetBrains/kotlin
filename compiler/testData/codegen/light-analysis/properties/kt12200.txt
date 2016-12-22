@@ -2,20 +2,17 @@ public final class Kt12200Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class ThingTemplate {
     private final field prop: int
     public method <init>(): void
     public final method getProp(): int
 }
 
-
 public final class ThingVal {
     private final field prop: int
     public method <init>(@org.jetbrains.annotations.NotNull p0: ThingTemplate): void
     public final method getProp(): int
 }
-
 
 public final class ThingVar {
     private field prop: int

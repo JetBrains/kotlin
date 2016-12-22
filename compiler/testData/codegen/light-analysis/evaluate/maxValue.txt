@@ -9,7 +9,6 @@ public annotation class Ann {
     public abstract method p6(): long
 }
 
-
 public final class MaxValueKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

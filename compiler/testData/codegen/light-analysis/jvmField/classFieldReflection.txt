@@ -9,7 +9,6 @@ public final class zzz/A {
     public final method testAccessors(): void
 }
 
-
 public final class zzz/AWithCompanion {
     public final static field Companion: zzz.AWithCompanion.Companion
     public static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
@@ -18,13 +17,11 @@ public final class zzz/AWithCompanion {
     public method <init>(): void
 }
 
-
 public final static class zzz/AWithCompanion/Companion {
     inner class zzz/AWithCompanion/Companion
     private method <init>(): void
     public final method testAccessors(): void
 }
-
 
 public final class zzz/ClassFieldReflectionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

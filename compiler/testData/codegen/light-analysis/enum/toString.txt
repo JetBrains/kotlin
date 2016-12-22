@@ -6,7 +6,6 @@ public enum class State {
     public static method values(): State[]
 }
 
-
 public final class ToStringKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

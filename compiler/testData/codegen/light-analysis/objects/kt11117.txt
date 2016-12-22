@@ -4,7 +4,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
 }
 
-
 public final class Kt11117Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: A): java.lang.String

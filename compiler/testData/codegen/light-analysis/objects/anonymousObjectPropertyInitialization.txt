@@ -4,7 +4,6 @@ public final class AnonymousObjectPropertyInitializationKt {
     public final static @org.jetbrains.annotations.NotNull method getO(): T
 }
 
-
 public interface T {
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }

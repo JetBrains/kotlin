@@ -3,7 +3,6 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method copy(p0: int): A
 }
 
-
 public final class B {
     private final field x: int
     public method <init>(p0: int): void
@@ -17,7 +16,6 @@ public final class B {
     public method hashCode(): int
     public method toString(): java.lang.String
 }
-
 
 public final class Kt12708Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

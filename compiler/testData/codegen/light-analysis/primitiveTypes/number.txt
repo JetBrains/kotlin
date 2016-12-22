@@ -15,7 +15,6 @@ public final class FortyTwo {
     public method toShort(): short
 }
 
-
 public final class FortyTwoExtractorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

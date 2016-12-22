@@ -3,7 +3,6 @@ public final class GenericSetKt {
     private final static method change(p0: Wrapper, p1: java.lang.Object): void
 }
 
-
 public final class Wrapper {
     private field x: java.lang.Object
     public method <init>(p0: java.lang.Object): void

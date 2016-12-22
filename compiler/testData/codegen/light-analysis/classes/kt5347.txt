@@ -6,7 +6,6 @@ public final class Kt5347Kt {
     public final static @org.jetbrains.annotations.NotNull method test4(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final class TestClass {
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

@@ -2,14 +2,12 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class C {
     private final field value: java.lang.Object
     public method <init>(p0: java.lang.Object): void
     public final method foo(): java.lang.Object
     public final method getValue(): java.lang.Object
 }
-
 
 public final class Kt237Kt {
     public final static method almostFilter(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[], @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void

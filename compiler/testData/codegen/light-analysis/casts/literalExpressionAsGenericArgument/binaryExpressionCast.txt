@@ -2,7 +2,6 @@ public final class BinaryExpressionCastKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Box {
     private final field value: java.lang.Object
     public method <init>(p0: java.lang.Object): void

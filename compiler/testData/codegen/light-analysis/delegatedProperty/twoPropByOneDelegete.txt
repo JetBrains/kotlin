@@ -8,14 +8,12 @@ public final class A {
     public final method getProp(): int
 }
 
-
 public final class Delegate {
     private final @org.jetbrains.annotations.NotNull field f: kotlin.jvm.functions.Function1
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final @org.jetbrains.annotations.NotNull method getF(): kotlin.jvm.functions.Function1
     public final method getValue(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
 }
-
 
 public final class TwoPropByOneDelegeteKt {
     private final static @org.jetbrains.annotations.NotNull field p: Delegate

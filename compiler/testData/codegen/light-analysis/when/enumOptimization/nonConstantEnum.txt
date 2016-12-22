@@ -4,7 +4,6 @@ public final class NonConstantEnumKt {
     public final static @org.jetbrains.annotations.NotNull method foo(): Season
 }
 
-
 public enum class Season {
     public final static field AUTUMN: Season
     public final static field SPRING: Season

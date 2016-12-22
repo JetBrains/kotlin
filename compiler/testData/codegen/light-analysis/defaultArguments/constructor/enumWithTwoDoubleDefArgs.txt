@@ -2,7 +2,6 @@ public final class EnumWithTwoDoubleDefArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public enum class Foo {
     public final static field A: Foo
     public final static field B: Foo

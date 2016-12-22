@@ -6,7 +6,6 @@ public final class A {
     public final method setV(p0: int): void
 }
 
-
 public final class F {
     public final static field INSTANCE: F
     private static field u: int
@@ -14,7 +13,6 @@ public final class F {
     public final method getU(): int
     public final method setU(p0: int): void
 }
-
 
 public final class MultiCaseKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

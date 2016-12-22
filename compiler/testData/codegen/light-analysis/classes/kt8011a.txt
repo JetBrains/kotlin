@@ -6,7 +6,6 @@ public final class Kt8011aKt {
     public final static @org.jetbrains.annotations.NotNull method testFun4(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final class TestClass {
     private final @org.jetbrains.annotations.NotNull field str: java.lang.String
     private @org.jetbrains.annotations.Nullable field xx: java.lang.String

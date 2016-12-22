@@ -2,7 +2,6 @@ public interface ISized {
     public abstract method getSize(): int
 }
 
-
 public final class MutableArray {
     private final field array: java.lang.Object[]
     public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
@@ -12,7 +11,6 @@ public final class MutableArray {
     public method set(p0: int, p1: int, p2: java.lang.Object): void
     public method set(p0: int, p1: java.lang.Object): void
 }
-
 
 public final class MyIterator {
     private final @org.jetbrains.annotations.NotNull field array: ReadOnlyArray
@@ -24,24 +22,20 @@ public final class MyIterator {
     public method remove(): void
 }
 
-
 public interface ReadOnlyArray {
     inner class ReadOnlyArray/DefaultImpls
     public abstract method get(p0: int): java.lang.Object
     public abstract @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
 }
 
-
 public final class ReadOnlyArray/DefaultImpls {
     inner class ReadOnlyArray/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method iterator(p0: ReadOnlyArray): java.util.Iterator
 }
 
-
 public final class StdlibKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface WriteOnlyArray {
     inner class WriteOnlyArray/DefaultImpls
@@ -49,18 +43,15 @@ public interface WriteOnlyArray {
     public abstract method set(p0: int, p1: java.lang.Object): void
 }
 
-
 public final class WriteOnlyArray/DefaultImpls {
     inner class WriteOnlyArray/DefaultImpls
     public static method set(p0: WriteOnlyArray, p1: int, p2: int, p3: java.lang.Object): void
 }
 
-
 public interface javaUtilIterator {
     inner class javaUtilIterator/DefaultImpls
     public abstract method remove(): void
 }
-
 
 public final class javaUtilIterator/DefaultImpls {
     inner class javaUtilIterator/DefaultImpls

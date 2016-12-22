@@ -2,12 +2,10 @@ public final class BaseKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class Outer {
     inner class Outer/Inner
     private method <init>(): void
 }
-
 
 public final static class Outer/Inner {
     inner class Outer/Inner

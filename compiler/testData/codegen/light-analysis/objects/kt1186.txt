@@ -9,7 +9,6 @@ public enum class Color {
     public static method values(): Color[]
 }
 
-
 public enum class Direction {
     public final static field EAST: Direction
     public final static field NORTH: Direction
@@ -19,7 +18,6 @@ public enum class Direction {
     public static method valueOf(p0: java.lang.String): Direction
     public static method values(): Direction[]
 }
-
 
 public final class Kt1186Kt {
     public final static method bar(@org.jetbrains.annotations.NotNull p0: Color): int

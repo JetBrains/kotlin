@@ -6,7 +6,6 @@ public final class A {
     private final method k(): java.lang.Object
 }
 
-
 public final class PrivateToThisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

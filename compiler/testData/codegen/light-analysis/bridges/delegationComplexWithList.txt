@@ -3,9 +3,7 @@ public class Content {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
 public interface ContentBox
-
 
 public final class ContentBoxDelegate {
     private synthetic final field $$delegate_0: ContentBox
@@ -44,11 +42,9 @@ public final class ContentBoxDelegate {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class DelegationComplexWithListKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class Impl {
     public final static field INSTANCE: Impl

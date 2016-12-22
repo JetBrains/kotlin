@@ -2,7 +2,6 @@ public final class ObjectExtendsClassVarargKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class SomeClass {
     private final @org.jetbrains.annotations.NotNull field args: java.lang.String[]
     private final field other: int

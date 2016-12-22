@@ -3,7 +3,6 @@ public final class anotherPackage/Kotlin {
     public final @org.jetbrains.annotations.NotNull method doTest(): java.lang.String
 }
 
-
 public final class anotherPackage/KotlinKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

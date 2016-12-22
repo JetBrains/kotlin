@@ -2,14 +2,12 @@ public final class JavaFieldGetterSetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class TestBase {
     private field id: long
     public method <init>(): void
     public final method getId(): long
     public final method setId(p0: long): void
 }
-
 
 public final class TestChild {
     public method <init>(): void

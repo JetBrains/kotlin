@@ -9,7 +9,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
 }
 
-
 public final class DefaultArgsKt {
     private final static @org.jetbrains.annotations.NotNull field global: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

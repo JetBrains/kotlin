@@ -16,7 +16,6 @@ public class A {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class MainKt {
     public final static method box(): java.lang.String
 }

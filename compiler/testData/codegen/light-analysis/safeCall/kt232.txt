@@ -3,7 +3,6 @@ public final class A {
     public final method foo(): void
 }
 
-
 public final class Kt232Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

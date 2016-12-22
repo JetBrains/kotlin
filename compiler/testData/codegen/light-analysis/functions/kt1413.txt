@@ -2,11 +2,9 @@ public interface t/I {
     public abstract method f(): void
 }
 
-
 public final class t/Kt1413Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class t/Test {
     public method <init>(): void

@@ -4,12 +4,10 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
 }
-
 
 public final class ClassObjectAsExtensionReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -5,14 +5,12 @@ public final class Outer {
     public final @org.jetbrains.annotations.NotNull method getX(): Outer.Inner
 }
 
-
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     inner class Outer/Inner
     public method <init>(p0: Outer): void
     public final @org.jetbrains.annotations.NotNull method getOuter(): Outer
 }
-
 
 public final class OuterThisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

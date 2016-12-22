@@ -3,7 +3,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public static enum class A/E {
     public final static field OK: A.E
     inner class A/E
@@ -11,7 +10,6 @@ public static enum class A/E {
     public static method valueOf(p0: java.lang.String): A.E
     public static method values(): A.E[]
 }
-
 
 public final class InnerKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -2,14 +2,12 @@ public final class EnclosedVarKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class M {
     private field y: int
     public method <init>(): void
     public method getY(): int
     public method setY(p0: int): void
 }
-
 
 public class N {
     private field y: int
@@ -18,7 +16,6 @@ public class N {
     public method getY(): int
     public method setY(p0: int): void
 }
-
 
 public class N/C {
     synthetic final field this$0: N

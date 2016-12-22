@@ -9,7 +9,6 @@ public enum class Game {
     public static method values(): Game[]
 }
 
-
 public final class SortEnumEntriesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

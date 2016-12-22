@@ -10,7 +10,6 @@ public final class Foo {
     public final @org.jetbrains.annotations.NotNull method getC(): java.lang.Runnable
 }
 
-
 public final static class Foo/Companion {
     inner class Foo/Companion
     private method <init>(): void
@@ -18,7 +17,6 @@ public final static class Foo/Companion {
     public synthetic final static @org.jetbrains.annotations.NotNull method access$getA$p(p0: Foo.Companion): java.lang.String
     private final method getA(): java.lang.String
 }
-
 
 public final class PropertyAccessorsCompanionKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String

@@ -3,11 +3,9 @@ public final class bar/Bar {
     public final @org.jetbrains.annotations.NotNull method execute(): java.lang.String
 }
 
-
 public final class bar/BarKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public class foo/Foo {
     public method <init>(): void

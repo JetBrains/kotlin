@@ -2,11 +2,9 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class B {
     public method <init>(): void
 }
-
 
 public final class NoOptimizationKt {
     private static field holder: int

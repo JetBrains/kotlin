@@ -2,7 +2,6 @@ public final class otherpackage/_2Kt {
     public final static method fromOtherPackage(): boolean
 }
 
-
 public final class thispackage/_1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method localUse(): boolean

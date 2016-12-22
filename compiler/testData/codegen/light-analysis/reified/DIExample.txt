@@ -10,7 +10,6 @@ public final class DIExampleKt {
     public final static @org.jetbrains.annotations.NotNull method getX2(): java.lang.String
 }
 
-
 public final class Project {
     public method <init>(): void
     public final method getInstance(@org.jetbrains.annotations.NotNull p0: java.lang.Class): java.lang.Object

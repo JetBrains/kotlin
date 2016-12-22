@@ -1,4 +1,0 @@
-public final class ParametersKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method foo(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p2: kotlin.Unit[]): void
-}

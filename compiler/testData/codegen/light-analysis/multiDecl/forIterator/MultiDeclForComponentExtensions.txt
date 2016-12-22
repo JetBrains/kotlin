@@ -4,7 +4,6 @@ public final class C {
     public final method getI(): int
 }
 
-
 public final class MultiDeclForComponentExtensionsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method component1(@org.jetbrains.annotations.NotNull p0: C): int

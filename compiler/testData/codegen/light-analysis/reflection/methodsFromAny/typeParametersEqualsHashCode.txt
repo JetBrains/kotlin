@@ -2,22 +2,18 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class B {
     public method <init>(): void
 }
-
 
 public final class Fourple {
     public method <init>(): void
 }
 
-
 public final class Fun {
     public method <init>(): void
     public final method foo(): java.lang.Object
 }
-
 
 public final class TypeParametersEqualsHashCodeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

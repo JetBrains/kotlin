@@ -6,7 +6,6 @@ public final class C {
     public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
 
-
 public final class MultipleDefaultParametersKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

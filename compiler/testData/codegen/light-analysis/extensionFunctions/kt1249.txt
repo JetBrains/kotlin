@@ -2,7 +2,6 @@ public final class Kt1249Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class TestClass {
     private final @org.jetbrains.annotations.NotNull field body: kotlin.jvm.functions.Function0
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void

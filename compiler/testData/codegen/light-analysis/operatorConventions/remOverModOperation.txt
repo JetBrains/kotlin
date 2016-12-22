@@ -7,7 +7,6 @@ public final class A {
     public final method setX(p0: int): void
 }
 
-
 public final class RemOverModOperationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

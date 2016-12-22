@@ -2,19 +2,15 @@ public interface org/example/KotlinCallback {
     public abstract method on(p0: java.lang.Object): void
 }
 
-
 public interface org/example/KotlinProcessor {
     public abstract method execute(@org.jetbrains.annotations.Nullable p0: org.example.KotlinCallback): void
 }
-
 
 public final class org/example/Kt3210Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public interface org/example/SomeTrait
-
 
 public final class org/example/Test {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

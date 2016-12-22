@@ -6,14 +6,12 @@ public final class B {
     public final method setX(p0: int): void
 }
 
-
 public class C {
     private final @org.jetbrains.annotations.NotNull field f: kotlin.jvm.functions.Function0
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
     public final @org.jetbrains.annotations.NotNull method getF(): kotlin.jvm.functions.Function0
     public final method test(): void
 }
-
 
 public final class Kt4173Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

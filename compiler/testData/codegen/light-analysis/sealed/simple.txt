@@ -4,18 +4,15 @@ public abstract class Season {
     private method <init>(): void
 }
 
-
 public final static class Season/Cold {
     inner class Season/Cold
     public method <init>(): void
 }
 
-
 public final static class Season/Warm {
     inner class Season/Warm
     public method <init>(): void
 }
-
 
 public final class SimpleKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

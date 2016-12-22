@@ -3,7 +3,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class A/B {
     synthetic final field this$0: A
     inner class A/B
@@ -11,14 +10,12 @@ public final class A/B {
     public method <init>(p0: A): void
 }
 
-
 public final class A/B/C {
     synthetic final field this$0: A.B
     inner class A/B
     inner class A/B/C
     public method <init>(p0: A.B): void
 }
-
 
 public final class TypeToStringInnerGenericKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -6,7 +6,6 @@ public final class A {
     public final method getBaz(): int
 }
 
-
 public final class ParametersEqualsHashCodeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

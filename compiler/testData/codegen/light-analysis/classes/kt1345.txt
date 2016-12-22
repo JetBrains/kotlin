@@ -6,19 +6,15 @@ public final class Actor {
     public final @org.jetbrains.annotations.NotNull method getCode(): java.lang.String
 }
 
-
 public interface Creator {
     public abstract method create(): java.lang.Object
 }
 
-
 public interface Factory
-
 
 public final class Kt1345Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class MyFactory {
     public method <init>(): void

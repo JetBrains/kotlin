@@ -2,7 +2,6 @@ public final class BKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Foo {
     private final field minus0: java.lang.Object
     private final field plus0: java.lang.Object

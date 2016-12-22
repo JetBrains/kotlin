@@ -1,6 +1,5 @@
 public interface A
 
-
 public final class B {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method clone(): B
@@ -12,7 +11,6 @@ public final class B {
     public method remove(p0: java.lang.String): boolean
     public final method size(): int
 }
-
 
 public final class ObjectCloneKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

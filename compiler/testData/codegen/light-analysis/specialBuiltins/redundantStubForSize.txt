@@ -4,7 +4,6 @@ public class A1 {
     public method getSize(): int
 }
 
-
 public final class A2 {
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): boolean
@@ -23,7 +22,6 @@ public final class A2 {
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
-
 
 public final class RedundantStubForSizeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

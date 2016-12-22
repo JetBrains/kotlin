@@ -6,7 +6,6 @@ public final class AsFunKSmallKt {
     public final static method fn1(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
 public final class MyFun {
     public method <init>(): void
 }

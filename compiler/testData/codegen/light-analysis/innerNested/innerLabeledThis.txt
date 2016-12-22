@@ -2,7 +2,6 @@ public final class InnerLabeledThisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Outer {
     private final @org.jetbrains.annotations.NotNull field O: java.lang.String
     inner class Outer/Inner
@@ -10,7 +9,6 @@ public final class Outer {
     public final @org.jetbrains.annotations.NotNull method K(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getO(): java.lang.String
 }
-
 
 public final class Outer/Inner {
     private final @org.jetbrains.annotations.NotNull field K: java.lang.String

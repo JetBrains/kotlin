@@ -3,12 +3,10 @@ public interface Addable {
     public abstract method add(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
 }
 
-
 public final class Addable/DefaultImpls {
     inner class Addable/DefaultImpls
     public static method add(@org.jetbrains.annotations.NotNull p0: Addable, p1: java.lang.String): boolean
 }
-
 
 public final class C {
     public method <init>(): void
@@ -45,7 +43,6 @@ public final class C {
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
-
 
 public final class ImplementationInTraitKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

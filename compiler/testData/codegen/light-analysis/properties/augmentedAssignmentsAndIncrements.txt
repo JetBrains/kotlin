@@ -4,7 +4,6 @@ public final class A {
     public final method setC(p0: int): void
 }
 
-
 public final class AugmentedAssignmentsAndIncrementsKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private static field a: int
@@ -21,7 +20,6 @@ public final class AugmentedAssignmentsAndIncrementsKt {
     public final static method setE(p0: int, p1: int): void
     public final static method setF(p0: int): void
 }
-
 
 public final class SimpleDelegate {
     public final static field INSTANCE: SimpleDelegate

@@ -4,7 +4,6 @@ public final class Box {
     public final method getValue(): java.lang.Object
 }
 
-
 public final class ParenthesizedExpressionCastKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

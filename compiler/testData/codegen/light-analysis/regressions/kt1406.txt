@@ -4,11 +4,9 @@ public final class pack/C {
     private final method name(@org.jetbrains.annotations.NotNull p0: pack.Item): java.lang.String
 }
 
-
 public final class pack/Item {
     public method <init>(): void
 }
-
 
 public final class pack/Kt1406Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

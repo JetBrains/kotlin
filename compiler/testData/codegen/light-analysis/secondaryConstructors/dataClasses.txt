@@ -18,7 +18,6 @@ public final class A1 {
     public method toString(): java.lang.String
 }
 
-
 public final class A2 {
     private @org.jetbrains.annotations.NotNull field prop1: java.lang.String
     private @org.jetbrains.annotations.NotNull field prop2: java.lang.String
@@ -35,7 +34,6 @@ public final class A2 {
     public final method setProp2(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final method setProp3(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class DataClassesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

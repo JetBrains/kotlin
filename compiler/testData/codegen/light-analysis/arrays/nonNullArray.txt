@@ -4,14 +4,12 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method test(): A.B[]
 }
 
-
 public final static class A/B {
     private final field i: int
     inner class A/B
     public method <init>(p0: int): void
     public final method getI(): int
 }
-
 
 public final class NonNullArrayKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

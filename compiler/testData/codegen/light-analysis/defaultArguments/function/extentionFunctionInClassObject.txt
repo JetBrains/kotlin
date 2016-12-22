@@ -4,7 +4,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
@@ -12,7 +11,6 @@ public final static class A/Companion {
     public final method foo(p0: int, p1: int): int
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
-
 
 public final class ExtentionFunctionInClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -4,7 +4,6 @@ public final class test/A {
     public final method foo(): void
 }
 
-
 public final class test/ReceiverInEqualsKt {
     private final static @org.jetbrains.annotations.NotNull field A_foo: kotlin.reflect.KFunction
     private final static @org.jetbrains.annotations.NotNull field a: test.A

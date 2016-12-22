@@ -4,11 +4,9 @@ public class Base {
     public final method getValue(): java.lang.Object
 }
 
-
 public final class Box {
     public method <init>(): void
 }
-
 
 public final class SuperConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -3,12 +3,10 @@ public final class InnerGenericArgumentsKt {
     public final static @org.jetbrains.annotations.NotNull method foo(): Outer.Inner.Innermost
 }
 
-
 public final class Outer {
     inner class Outer/Inner
     public method <init>(): void
 }
-
 
 public final class Outer/Inner {
     synthetic final field this$0: Outer
@@ -16,7 +14,6 @@ public final class Outer/Inner {
     inner class Outer/Inner/Innermost
     public method <init>(p0: Outer): void
 }
-
 
 public final class Outer/Inner/Innermost {
     synthetic final field this$0: Outer.Inner

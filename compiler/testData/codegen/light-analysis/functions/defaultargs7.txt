@@ -6,7 +6,6 @@ public final class A {
     public final method getExpected(): int
 }
 
-
 public final class Defaultargs7Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

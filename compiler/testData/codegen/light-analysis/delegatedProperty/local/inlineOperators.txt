@@ -7,7 +7,6 @@ public final class foo/Delegate {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: int): void
 }
 
-
 public final class foo/InlineOperatorsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

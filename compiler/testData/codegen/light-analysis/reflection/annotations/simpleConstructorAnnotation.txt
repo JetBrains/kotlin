@@ -9,7 +9,6 @@ public annotation class Primary
 @java.lang.annotation.Retention
 public annotation class Secondary
 
-
 public final class SimpleConstructorAnnotationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

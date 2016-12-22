@@ -3,7 +3,6 @@ public final class Kt6485Kt {
     private final static method typeLiteral(): TypeLiteral
 }
 
-
 public class TypeLiteral {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getType(): java.lang.reflect.Type

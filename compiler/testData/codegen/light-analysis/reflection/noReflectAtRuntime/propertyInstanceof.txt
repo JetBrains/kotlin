@@ -7,7 +7,6 @@ public final class A {
     public final method setMutable(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class PropertyInstanceofKt {
     private static @org.jetbrains.annotations.NotNull field mutable: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field readonly: java.lang.String

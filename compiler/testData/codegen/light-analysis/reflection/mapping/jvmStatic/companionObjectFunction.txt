@@ -5,13 +5,11 @@ public final class C {
     public final static @kotlin.jvm.JvmStatic method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
 }
 
-
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
     public final @kotlin.jvm.JvmStatic method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
 }
-
 
 public final class CompanionObjectFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

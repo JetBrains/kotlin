@@ -9,14 +9,12 @@ public final class A {
     public final method setQ(@org.jetbrains.annotations.Nullable p0: A.B[][]): void
 }
 
-
 public final static class A/B {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     inner class A/B
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
-
 
 public final class PropertyOfNestedClassAndArrayTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

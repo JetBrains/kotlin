@@ -35,11 +35,9 @@ public final class A {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public interface Container {
     public abstract @org.jetbrains.annotations.NotNull method removeAt(p0: int): java.lang.String
 }
-
 
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

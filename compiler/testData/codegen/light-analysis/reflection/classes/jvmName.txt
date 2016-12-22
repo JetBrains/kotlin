@@ -2,7 +2,6 @@ public final class JvmNameKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Klass {
     public final static field Companion: Klass.Companion
     inner class Klass/Companion
@@ -10,12 +9,10 @@ public final class Klass {
     public method <init>(): void
 }
 
-
 public final static class Klass/Companion {
     inner class Klass/Companion
     private method <init>(): void
 }
-
 
 public final static class Klass/Nested {
     inner class Klass/Nested

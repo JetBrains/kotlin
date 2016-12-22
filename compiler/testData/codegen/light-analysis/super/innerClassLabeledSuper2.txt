@@ -5,7 +5,6 @@ public final class A {
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public final class A/B {
     synthetic final field this$0: A
     inner class A/B
@@ -20,29 +19,24 @@ public final class A/B {
     public final @org.jetbrains.annotations.NotNull method test6(): java.lang.String
 }
 
-
 public interface BK {
     public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.String
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public final class InnerClassLabeledSuper2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public abstract class K {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public interface KTrait {
     inner class KTrait/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final class KTrait/DefaultImpls {
     inner class KTrait/DefaultImpls

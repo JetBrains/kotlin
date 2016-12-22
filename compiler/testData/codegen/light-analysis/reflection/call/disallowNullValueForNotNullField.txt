@@ -3,18 +3,15 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class CounterTest {
     private field baz: java.lang.String
     private field generic: java.lang.Object
     public method <init>(p0: java.lang.Object): void
 }
 
-
 public final class DisallowNullValueForNotNullFieldKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class O {
     public final static field INSTANCE: O

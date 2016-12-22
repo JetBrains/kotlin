@@ -6,7 +6,6 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 private final class C/Inner {
     synthetic final field this$0: C
     inner class C/Inner
@@ -14,11 +13,9 @@ private final class C/Inner {
     public final method innerFun(): void
 }
 
-
 public final class PrivateOuterFunctionsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface Runnable {
     public abstract method run(): void

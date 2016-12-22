@@ -8,7 +8,6 @@ public final class A {
     public final method setProp(@org.jetbrains.annotations.NotNull p0: A): void
 }
 
-
 public final class IncrementKt {
     private static @org.jetbrains.annotations.NotNull field globalA: A
     private static @org.jetbrains.annotations.NotNull field holder: java.lang.String

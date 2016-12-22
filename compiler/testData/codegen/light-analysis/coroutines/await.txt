@@ -8,12 +8,10 @@ public final class AwaitKt {
     public final static @org.jetbrains.annotations.NotNull method getLog(): java.lang.String
 }
 
-
 public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
-
 
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation
@@ -22,12 +20,10 @@ public final class EmptyContinuation {
     public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
 }
 
-
 public final class MainKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method test(): Promise
 }
-
 
 public final class Promise {
     private final field executor: kotlin.jvm.functions.Function1
@@ -36,7 +32,6 @@ public final class Promise {
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final @org.jetbrains.annotations.NotNull method then(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): Promise
 }
-
 
 public final class QueueKt {
     private final static field queue: java.util.List

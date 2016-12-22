@@ -15,7 +15,6 @@ public final class Host {
     private synthetic deprecated static @kotlin.jvm.JvmStatic method yy$annotations(): void
 }
 
-
 public final class JvmStaticObjectPropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field c_x: kotlin.reflect.KProperty0
     private final static @org.jetbrains.annotations.NotNull field c_xx: kotlin.reflect.KProperty0

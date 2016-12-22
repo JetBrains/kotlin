@@ -7,13 +7,11 @@ public abstract enum class A {
     public static method values(): A[]
 }
 
-
 final static class A/ENTRY {
     inner class A/ENTRY
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method t(): java.lang.String
 }
-
 
 public final class AbstractMethodInEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

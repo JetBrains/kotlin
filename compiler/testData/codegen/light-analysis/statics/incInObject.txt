@@ -20,7 +20,6 @@ public final class A {
     public final method test4(): int
 }
 
-
 public final class IncInObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

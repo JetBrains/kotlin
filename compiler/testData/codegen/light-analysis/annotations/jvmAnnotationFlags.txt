@@ -12,12 +12,10 @@ public final class C {
     public final @kotlin.jvm.Synchronized method sync(): void
 }
 
-
 public final class CustomDelegate {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
 }
-
 
 public final class JvmAnnotationFlagsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

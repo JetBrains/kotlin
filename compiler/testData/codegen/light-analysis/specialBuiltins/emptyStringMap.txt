@@ -23,7 +23,6 @@ final class EmptyStringMap {
     public final method values(): java.util.Collection
 }
 
-
 public final class EmptyStringMapKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

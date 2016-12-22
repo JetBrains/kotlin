@@ -3,7 +3,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method a(): java.lang.String
 }
 
-
 public final class LocalClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

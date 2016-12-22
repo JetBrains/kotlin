@@ -10,7 +10,6 @@ public class A {
     public method setVarProp(p0: int): void
 }
 
-
 public final class B {
     private final field valProp: int
     public method <init>(): void
@@ -20,7 +19,6 @@ public final class B {
     public method setProp(p0: int): void
     public method setVarProp(p0: int): void
 }
-
 
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

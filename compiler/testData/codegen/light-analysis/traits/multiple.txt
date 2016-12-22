@@ -3,18 +3,15 @@ public interface AL {
     public abstract @org.jetbrains.annotations.Nullable method get(p0: int): java.lang.Object
 }
 
-
 public final class AL/DefaultImpls {
     inner class AL/DefaultImpls
     public static @org.jetbrains.annotations.Nullable method get(p0: AL, p1: int): java.lang.Object
 }
 
-
 public interface ALE {
     inner class ALE/DefaultImpls
     public abstract method getOrNull(p0: int, p1: java.lang.Object): java.lang.Object
 }
-
 
 public final class ALE/DefaultImpls {
     inner class ALE/DefaultImpls
@@ -22,11 +19,9 @@ public final class ALE/DefaultImpls {
     public static method getOrNull(p0: ALE, p1: int, p2: java.lang.Object): java.lang.Object
 }
 
-
 public final class MultipleKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public class SmartArrayList {
     public method <init>(): void
@@ -34,7 +29,6 @@ public class SmartArrayList {
     public @org.jetbrains.annotations.NotNull method getOrNull(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
     public synthetic method getOrNull(p0: int, p1: java.lang.Object): java.lang.Object
 }
-
 
 public final class SmartArrayList2 {
     public method <init>(): void

@@ -4,7 +4,6 @@ public final class Delegate {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
 }
 
-
 public final class DelegatedPropertySetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
@@ -12,7 +11,6 @@ public final class DelegatedPropertySetterKt {
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 public annotation class First
-
 
 public final class MyClass {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]

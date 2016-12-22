@@ -4,7 +4,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.Runnable
 }
 
-
 public final class Kt6691_lambdaInSamConstructorKt {
     private static @org.jetbrains.annotations.NotNull field lambda: kotlin.jvm.functions.Function0
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -3,7 +3,6 @@ public final class ComponentKt {
     public final static @org.jetbrains.annotations.NotNull method component3(@org.jetbrains.annotations.NotNull p0: S): java.lang.String
 }
 
-
 public final class S {
     private final @org.jetbrains.annotations.NotNull field a: java.lang.String
     private final @org.jetbrains.annotations.NotNull field b: java.lang.String
@@ -13,7 +12,6 @@ public final class S {
     public final @org.jetbrains.annotations.NotNull method getA(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
 }
-
 
 public final class Tester {
     public method <init>(): void

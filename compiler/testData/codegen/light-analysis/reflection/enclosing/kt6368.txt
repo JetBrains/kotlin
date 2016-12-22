@@ -5,7 +5,6 @@ public final class Kt6368Kt {
     public final static @org.jetbrains.annotations.NotNull method getA(): java.util.HashMap
 }
 
-
 public interface R {
     public abstract @org.jetbrains.annotations.NotNull method result(): java.lang.String
 }

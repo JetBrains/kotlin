@@ -4,7 +4,6 @@ public final class A {
     public final method getT(): int
 }
 
-
 public final class Kt1572Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method testKt1572(): boolean

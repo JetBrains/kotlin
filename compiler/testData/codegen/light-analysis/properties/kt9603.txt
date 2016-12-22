@@ -6,7 +6,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 
-
 public final class Kt9603Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -4,7 +4,6 @@ public class C {
     public final @org.jetbrains.annotations.NotNull method getA(): java.lang.Object
 }
 
-
 public final class LambdaInLocalClassSuperCallKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

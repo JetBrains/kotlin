@@ -6,14 +6,12 @@ public final class Foo {
     public final @org.jetbrains.annotations.NotNull method getF(): Foo.Inner
 }
 
-
 public final class Foo/Inner {
     synthetic final field this$0: Foo
     private final field x: java.lang.String
     inner class Foo/Inner
     public method <init>(p0: Foo): void
 }
-
 
 public final class Kt4106Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

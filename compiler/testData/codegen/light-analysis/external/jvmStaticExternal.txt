@@ -2,13 +2,11 @@ public final class foo/JvmStaticExternalKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class foo/ObjWithNative {
     public final static field INSTANCE: foo.ObjWithNative
     private method <init>(): void
     public final static @kotlin.jvm.JvmStatic method bar(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String): double
 }
-
 
 public final class foo/WithNative {
     public final static field Companion: foo.WithNative.Companion
@@ -16,7 +14,6 @@ public final class foo/WithNative {
     public method <init>(): void
     public final static @kotlin.jvm.JvmStatic method bar(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String): double
 }
-
 
 public final static class foo/WithNative/Companion {
     inner class foo/WithNative/Companion

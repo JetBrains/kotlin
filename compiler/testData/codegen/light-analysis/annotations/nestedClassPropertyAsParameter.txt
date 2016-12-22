@@ -3,7 +3,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/B {
     public final static field Companion: A.B.Companion
     public final static field i: int
@@ -11,7 +10,6 @@ public final static class A/B {
     inner class A/B/Companion
     public method <init>(): void
 }
-
 
 public final static class A/B/Companion {
     inner class A/B
@@ -29,7 +27,6 @@ public annotation class Ann {
 public final class MyClass {
     public method <init>(): void
 }
-
 
 public final class NestedClassPropertyAsParameterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

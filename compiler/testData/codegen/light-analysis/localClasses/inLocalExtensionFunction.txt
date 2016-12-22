@@ -4,7 +4,6 @@ public final class test/A {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class test/C {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -12,7 +11,6 @@ public final class test/C {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: test.A): java.lang.String
 }
-
 
 public final class test/InLocalExtensionFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

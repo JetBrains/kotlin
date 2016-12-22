@@ -2,12 +2,10 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class Delegate {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
 }
-
 
 public final class DelegateForExtPropertyKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]

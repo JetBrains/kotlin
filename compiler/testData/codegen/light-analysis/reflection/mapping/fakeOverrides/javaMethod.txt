@@ -2,12 +2,10 @@ public final class JavaMethodKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class TestBase {
     public method <init>(): void
     public final method id(): long
 }
-
 
 public final class TestChild {
     public method <init>(): void

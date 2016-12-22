@@ -5,7 +5,6 @@ public abstract class Base {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
 public final class DataClass {
     private final @org.jetbrains.annotations.NotNull field field: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -17,7 +16,6 @@ public final class DataClass {
     public method hashCode(): int
     public method toString(): java.lang.String
 }
-
 
 public final class NonTrivialMemberInSuperClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

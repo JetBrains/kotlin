@@ -2,7 +2,6 @@ public final class ClassForEnumEntryKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public enum class IssueState {
     public final static field DEFAULT: IssueState
     public final static field FIXED: IssueState
@@ -12,7 +11,6 @@ public enum class IssueState {
     public static method valueOf(p0: java.lang.String): IssueState
     public static method values(): IssueState[]
 }
-
 
 final static class IssueState/FIXED {
     inner class IssueState/FIXED

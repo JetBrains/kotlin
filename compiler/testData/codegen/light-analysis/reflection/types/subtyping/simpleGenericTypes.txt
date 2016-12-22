@@ -2,11 +2,9 @@ public final class A {
     public method <init>(): void
 }
 
-
 public class G {
     public method <init>(): void
 }
-
 
 public final class SimpleGenericTypesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -2,7 +2,6 @@ public class test/Actor {
     public method <init>(): void
 }
 
-
 public abstract class test/O2dScriptAction {
     private @org.jetbrains.annotations.Nullable field owner: test.Actor
     public method <init>(): void
@@ -11,16 +10,13 @@ public abstract class test/O2dScriptAction {
     private final method setOwner(p0: test.Actor): void
 }
 
-
 public final class test2/AKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class test2/CompositeActor {
     public method <init>(): void
 }
-
 
 public class test2/O2dDialog {
     public method <init>(): void

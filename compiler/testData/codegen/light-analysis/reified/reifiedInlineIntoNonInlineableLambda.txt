@@ -3,7 +3,6 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method g(): java.lang.String
 }
 
-
 public final class ReifiedInlineIntoNonInlineableLambdaKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method className(): java.lang.String

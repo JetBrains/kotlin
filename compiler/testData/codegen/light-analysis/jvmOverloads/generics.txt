@@ -5,7 +5,6 @@ public final class C {
     public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
 
-
 public final class GenericsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

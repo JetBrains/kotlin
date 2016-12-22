@@ -2,7 +2,6 @@ public class K {
     public method <init>(): void
 }
 
-
 public final class KKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

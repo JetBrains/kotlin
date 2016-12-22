@@ -4,22 +4,18 @@ public abstract class A {
     public final method getX(): java.lang.Object
 }
 
-
 public class B {
     public method <init>(): void
 }
-
 
 public final class C {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): T
 }
 
-
 public final class InPropertyFromSuperSuperClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface T {
     public abstract @org.jetbrains.annotations.NotNull method result(): java.lang.String

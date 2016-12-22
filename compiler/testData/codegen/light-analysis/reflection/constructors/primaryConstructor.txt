@@ -4,12 +4,10 @@ public final class C {
     public method <init>(): void
 }
 
-
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
 }
-
 
 public enum class En {
     protected method <init>(p0: java.lang.String, p1: int): void
@@ -17,30 +15,24 @@ public enum class En {
     public static method values(): En[]
 }
 
-
 public interface I
-
 
 public final class O {
     public final static field INSTANCE: O
     private method <init>(): void
 }
 
-
 public final class OnlyPrimary {
     public method <init>(): void
 }
-
 
 public final class OnlySecondary {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class PrimaryConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class PrimaryWithSecondary {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
@@ -49,7 +41,6 @@ public final class PrimaryWithSecondary {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
-
 
 public final class TwoSecondaries {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

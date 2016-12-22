@@ -14,7 +14,6 @@ public final class C {
     public method <init>(): void
 }
 
-
 public final class Kt10136Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

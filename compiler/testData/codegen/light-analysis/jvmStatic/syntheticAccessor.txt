@@ -6,14 +6,12 @@ public final class C {
     private final static @kotlin.jvm.JvmStatic method foo(): java.lang.String
 }
 
-
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
     public synthetic final static @org.jetbrains.annotations.NotNull method access$foo(p0: C.Companion): java.lang.String
     private final @kotlin.jvm.JvmStatic method foo(): java.lang.String
 }
-
 
 public final class SyntheticAccessorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

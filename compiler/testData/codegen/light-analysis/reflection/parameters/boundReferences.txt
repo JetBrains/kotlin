@@ -4,7 +4,6 @@ public final class BoundReferencesKt {
     public final static method extFun(@org.jetbrains.annotations.NotNull p0: C, p1: int): void
 }
 
-
 public final class C {
     private @org.jetbrains.annotations.NotNull field bar: java.lang.String
     public method <init>(): void

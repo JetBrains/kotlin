@@ -6,7 +6,6 @@ public final class A {
     public final method setProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class BasicNoPrimaryManySinksKt {
     private static @org.jetbrains.annotations.NotNull field sideEffects: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

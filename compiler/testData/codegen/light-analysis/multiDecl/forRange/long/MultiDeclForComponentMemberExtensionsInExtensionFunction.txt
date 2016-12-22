@@ -4,7 +4,6 @@ public final class M {
     public final method component2(p0: long): long
 }
 
-
 public final class MultiDeclForComponentMemberExtensionsInExtensionFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method doTest(@org.jetbrains.annotations.NotNull p0: M): java.lang.String

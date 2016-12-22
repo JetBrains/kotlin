@@ -5,11 +5,9 @@ public final class A {
     public final method getProp(): int
 }
 
-
 public final class Delegate {
     public method <init>(): void
 }
-
 
 public final class GetAsExtensionFunKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

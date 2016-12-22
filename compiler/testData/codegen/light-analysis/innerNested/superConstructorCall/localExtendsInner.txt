@@ -6,7 +6,6 @@ public class Father {
     public final @org.jetbrains.annotations.NotNull method getParam(): java.lang.String
 }
 
-
 public final class Father/Child {
     synthetic final field this$0: Father
     inner class Father/Child
@@ -14,14 +13,12 @@ public final class Father/Child {
     public final @org.jetbrains.annotations.NotNull method test(): Father.InClass
 }
 
-
 public abstract class Father/InClass {
     synthetic final field this$0: Father
     inner class Father/InClass
     public method <init>(p0: Father): void
     public final @org.jetbrains.annotations.NotNull method work(): java.lang.String
 }
-
 
 public final class LocalExtendsInnerKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

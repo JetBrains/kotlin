@@ -3,7 +3,6 @@ public annotation class Anno {
     public abstract method equals(): boolean
 }
 
-
 public final class ParameterNamedEqualsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

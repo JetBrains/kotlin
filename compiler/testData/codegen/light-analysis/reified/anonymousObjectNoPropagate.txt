@@ -4,7 +4,6 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method f3(): java.lang.String
 }
 
-
 public final class AnonymousObjectNoPropagateKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method doWork(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.String

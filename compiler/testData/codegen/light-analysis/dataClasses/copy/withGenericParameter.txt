@@ -10,13 +10,11 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
 public final class Foo {
     private final field a: java.lang.Object
     public method <init>(p0: java.lang.Object): void
     public final method getA(): java.lang.Object
 }
-
 
 public final class WithGenericParameterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

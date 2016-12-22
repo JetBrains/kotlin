@@ -2,11 +2,9 @@ public final class GenericBackingFieldSignatureKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class TParam {
     public method <init>(): void
 }
-
 
 public final class Test {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
@@ -27,16 +25,13 @@ public final class Test {
     public final @org.jetbrains.annotations.Nullable method getDelegateNotNull(): Z
 }
 
-
 public final class Z {
     public method <init>(): void
 }
 
-
 public final class Zin {
     public method <init>(): void
 }
-
 
 public final class Zout {
     public method <init>(): void

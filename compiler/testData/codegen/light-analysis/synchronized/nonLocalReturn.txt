@@ -11,11 +11,9 @@ public enum class ExecutionType {
     public static method values(): ExecutionType[]
 }
 
-
 public final class MyException {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class NonLocalReturnKt {
     private final static field count: int
@@ -37,7 +35,6 @@ public final class NonLocalReturnKt {
     public final static method setIndex(p0: int): void
     public final static @org.jetbrains.annotations.NotNull method testTemplate(@org.jetbrains.annotations.NotNull p0: ExecutionType, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.lang.String
 }
-
 
 public final class TestLocal {
     private final @org.jetbrains.annotations.NotNull field executionType: ExecutionType

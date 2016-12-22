@@ -8,7 +8,6 @@ public annotation class F {
     public abstract method f(): float
 }
 
-
 public final class FloatingPointParametersKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method check(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.Object): void

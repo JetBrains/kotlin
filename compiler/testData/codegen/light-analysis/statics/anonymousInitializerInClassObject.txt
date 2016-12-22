@@ -2,14 +2,12 @@ public final class AnonymousInitializerInClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Foo {
     public final static field Companion: Foo.Companion
     private final static @org.jetbrains.annotations.NotNull field bar: java.lang.String
     inner class Foo/Companion
     public method <init>(): void
 }
-
 
 public final static class Foo/Companion {
     inner class Foo/Companion

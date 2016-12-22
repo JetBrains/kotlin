@@ -3,7 +3,6 @@ public final class FunctionLiteralInTopLevelKt {
     public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: Season, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.lang.String
 }
 
-
 public enum class Season {
     public final static field AUTUMN: Season
     public final static field SPRING: Season

@@ -4,13 +4,11 @@ public class while_bug_1/AllEvenNum {
     public method <init>(): void
 }
 
-
 public final static class while_bug_1/AllEvenNum/Companion {
     inner class while_bug_1/AllEvenNum/Companion
     private method <init>(): void
     public method main(@org.jetbrains.annotations.Nullable p0: java.lang.String[]): void
 }
-
 
 public final class while_bug_1/Kt560Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

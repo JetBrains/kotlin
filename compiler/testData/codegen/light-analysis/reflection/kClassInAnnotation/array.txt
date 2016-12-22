@@ -4,11 +4,9 @@ public annotation class Ann {
     public abstract method args(): java.lang.Class[]
 }
 
-
 public final class ArrayKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class K {
     public method <init>(): void
@@ -18,7 +16,6 @@ public final class K {
 public final class MyClass {
     public method <init>(): void
 }
-
 
 public final class O {
     public method <init>(): void

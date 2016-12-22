@@ -2,7 +2,6 @@ public final class InnerKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class Outer {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     inner class Outer/Inner
@@ -12,14 +11,12 @@ public class Outer {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     inner class Outer/Inner
     public method <init>(p0: Outer): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final static class Outer/Nested {
     inner class Outer/Nested

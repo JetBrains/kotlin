@@ -7,14 +7,12 @@ public final class A {
     public final method setMyStr(): void
 }
 
-
 private final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
     private final method getStr(): java.lang.String
     private final method setStr(p0: java.lang.String): void
 }
-
 
 public final class AccessorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

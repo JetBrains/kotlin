@@ -6,11 +6,9 @@ public final class ComplexClass {
     public final @org.jetbrains.annotations.NotNull method qux(): java.lang.String
 }
 
-
 public final class Kt285Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class SimpleClass {
     public method <init>(): void
@@ -18,13 +16,11 @@ public final class SimpleClass {
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public interface Trait {
     inner class Trait/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.String
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final class Trait/DefaultImpls {
     inner class Trait/DefaultImpls

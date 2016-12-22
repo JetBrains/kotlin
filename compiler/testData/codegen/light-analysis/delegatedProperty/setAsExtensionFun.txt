@@ -6,7 +6,6 @@ public final class A {
     public final method setProp(p0: int): void
 }
 
-
 public final class Delegate {
     private field inner: int
     public method <init>(): void
@@ -14,7 +13,6 @@ public final class Delegate {
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
     public final method setInner(p0: int): void
 }
-
 
 public final class SetAsExtensionFunKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

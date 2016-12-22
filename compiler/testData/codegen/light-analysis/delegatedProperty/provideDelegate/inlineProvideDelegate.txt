@@ -1,4 +1,3 @@
-
 public final class InlineProvideDelegateKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String

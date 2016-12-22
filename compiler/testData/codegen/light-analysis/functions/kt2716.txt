@@ -2,7 +2,6 @@ public final class someTest/Kt2716Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class someTest/Some {
     public final static field Companion: someTest.Some.Companion
     private final @org.jetbrains.annotations.NotNull field v: java.lang.String
@@ -10,7 +9,6 @@ public final class someTest/Some {
     private method <init>(p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getV(): java.lang.String
 }
-
 
 public final static class someTest/Some/Companion {
     inner class someTest/Some/Companion

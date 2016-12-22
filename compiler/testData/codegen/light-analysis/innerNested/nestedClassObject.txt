@@ -2,13 +2,11 @@ public final class NestedClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Outer {
     inner class Outer/Nested
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method O(): java.lang.String
 }
-
 
 public final static class Outer/Nested {
     public final static field Companion: Outer.Nested.Companion
@@ -18,7 +16,6 @@ public final static class Outer/Nested {
     inner class Outer/Nested/Companion
     public method <init>(): void
 }
-
 
 public final static class Outer/Nested/Companion {
     inner class Outer/Nested

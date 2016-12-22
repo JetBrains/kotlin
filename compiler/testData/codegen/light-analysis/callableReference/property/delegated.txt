@@ -5,14 +5,12 @@ public final class A {
     public final method getTwo(): int
 }
 
-
 public final class DelegatedKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field four$delegate: NumberDecrypter
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method getFour(): int
 }
-
 
 public final class NumberDecrypter {
     public final static field INSTANCE: NumberDecrypter

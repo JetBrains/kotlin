@@ -2,12 +2,10 @@ public interface A {
     public abstract method foo(): int
 }
 
-
 public final class B1 {
     public method <init>(): void
     public method foo(): int
 }
-
 
 public final class B2 {
     private final field z: int
@@ -15,7 +13,6 @@ public final class B2 {
     public method foo(): int
     public final method getZ(): int
 }
-
 
 public final class Kt2224Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

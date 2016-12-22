@@ -69,7 +69,6 @@ public final class A {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
 public final class B {
     private final field a: int
     private final field aa: int
@@ -156,7 +155,6 @@ public final class B {
     public final method getZ(): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
-
 
 public final class C {
     private final field a: int
@@ -304,7 +302,6 @@ public final class C {
     public final method getZz(): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
-
 
 public final class ManyArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

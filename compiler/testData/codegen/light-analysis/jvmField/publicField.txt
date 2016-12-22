@@ -6,19 +6,16 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
 }
-
 
 public final class Object {
     public final static field INSTANCE: Object
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field field: java.lang.String
     private method <init>(): void
 }
-
 
 public final class PublicFieldKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

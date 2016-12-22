@@ -2,11 +2,9 @@ public final class Klass {
     public method <init>(): void
 }
 
-
 public final class Other {
     public method <init>(): void
 }
-
 
 public final class ReifiedTypeClassLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

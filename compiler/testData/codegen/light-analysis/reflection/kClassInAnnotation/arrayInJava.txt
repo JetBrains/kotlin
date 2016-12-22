@@ -4,7 +4,6 @@ public annotation class Ann {
     public abstract method args(): java.lang.Class[]
 }
 
-
 public final class ArrayKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

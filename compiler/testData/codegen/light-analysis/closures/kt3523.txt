@@ -3,12 +3,10 @@ public class Base {
     public final method doSomething(): void
 }
 
-
 public final class Foo {
     inner class Foo/Bar
     public method <init>(): void
 }
-
 
 public final class Foo/Bar {
     synthetic final field this$0: Foo
@@ -18,11 +16,9 @@ public final class Foo/Bar {
     public final @org.jetbrains.annotations.NotNull method getX(): X
 }
 
-
 public final class Kt3523Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class X {
     private final @org.jetbrains.annotations.NotNull field action: kotlin.jvm.functions.Function0

@@ -4,7 +4,6 @@ public final class PrivateMethod {
     private final method foo(): java.lang.String
 }
 
-
 public final class PrivateMethod/Inner {
     private final @org.jetbrains.annotations.NotNull field a: java.lang.String
     synthetic final field this$0: PrivateMethod
@@ -13,13 +12,11 @@ public final class PrivateMethod/Inner {
     public final @org.jetbrains.annotations.NotNull method getA(): java.lang.String
 }
 
-
 public final class PrivatePropertyGet {
     private final field x: int
     inner class PrivatePropertyGet/Inner
     public method <init>(): void
 }
-
 
 public final class PrivatePropertyGet/Inner {
     private final field a: int
@@ -29,20 +26,17 @@ public final class PrivatePropertyGet/Inner {
     public final method getA(): int
 }
 
-
 public final class PrivatePropertySet {
     private field x: java.lang.String
     inner class PrivatePropertySet/Inner
     public method <init>(): void
 }
 
-
 public final class PrivatePropertySet/Inner {
     synthetic final field this$0: PrivatePropertySet
     inner class PrivatePropertySet/Inner
     public method <init>(p0: PrivatePropertySet): void
 }
-
 
 public final class SyntheticAccessorNamesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

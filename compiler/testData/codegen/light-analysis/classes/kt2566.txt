@@ -3,21 +3,17 @@ public class A {
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public class B {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final class C {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public interface I
-
 
 public final class Kt2566Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

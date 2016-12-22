@@ -3,7 +3,6 @@ public annotation class Ann {
     public abstract method v(): java.lang.String
 }
 
-
 public final class AnnotatedObjectLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

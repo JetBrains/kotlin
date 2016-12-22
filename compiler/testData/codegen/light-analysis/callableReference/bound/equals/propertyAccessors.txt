@@ -5,7 +5,6 @@ public final class C {
     public final method setProp(p0: int): void
 }
 
-
 public final class PropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field C_prop: kotlin.reflect.KMutableProperty1
     private final static @org.jetbrains.annotations.NotNull field C_propReflect: kotlin.reflect.KMutableProperty1

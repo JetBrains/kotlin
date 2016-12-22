@@ -2,7 +2,6 @@ public final class LocalFunctionInConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Test {
     private final field property: int
     public method <init>(): void

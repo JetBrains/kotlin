@@ -2,7 +2,6 @@ public final class NoClassForSimpleEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public enum class State {
     public final static field K: State
     public final static field O: State

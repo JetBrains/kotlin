@@ -4,7 +4,6 @@ public final class A {
     public final method getP(): int
 }
 
-
 public final class TryCatchExpressionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

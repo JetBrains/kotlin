@@ -4,7 +4,6 @@ public class Bar {
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
 }
 
-
 public final class Foo {
     public final static field INSTANCE: Foo
     private final static @org.jetbrains.annotations.NotNull field p2: java.lang.String
@@ -15,7 +14,6 @@ public final class Foo {
     public final @org.jetbrains.annotations.NotNull method getP2(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getP3(): java.lang.String
 }
-
 
 public final class InheritedPropertyInObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

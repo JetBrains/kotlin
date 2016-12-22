@@ -4,11 +4,9 @@ public abstract class AImpl {
     public final method length(): int
 }
 
-
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class X {
     public method <init>(): void

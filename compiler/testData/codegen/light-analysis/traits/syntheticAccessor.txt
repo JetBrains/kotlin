@@ -3,12 +3,10 @@ public interface B {
     inner class B/Z
 }
 
-
 public final class B/DefaultImpls {
     inner class B/DefaultImpls
     private static method test(p0: B): void
 }
-
 
 public final static class B/Z {
     inner class B/Z
@@ -16,11 +14,9 @@ public final static class B/Z {
     public final method ztest(@org.jetbrains.annotations.NotNull p0: B): void
 }
 
-
 public final class C {
     public method <init>(): void
 }
-
 
 public final class SyntheticAccessorKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String

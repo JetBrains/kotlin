@@ -2,12 +2,10 @@ public final class NestedEnumConstantKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Outer {
     inner class Outer/Nested
     public method <init>(): void
 }
-
 
 public static enum class Outer/Nested {
     public final static field K: Outer.Nested

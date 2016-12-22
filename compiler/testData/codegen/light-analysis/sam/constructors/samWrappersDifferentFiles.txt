@@ -2,11 +2,9 @@ public final class BoxKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Wrapped2Kt {
     public final static @org.jetbrains.annotations.NotNull method getWrapped2(): java.lang.Runnable
 }
-
 
 public final class WrappedKt {
     public final static @org.jetbrains.annotations.NotNull method getWrapped1(): java.lang.Runnable

@@ -7,7 +7,6 @@ public final class C {
     public final static method getP1(): int
 }
 
-
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
@@ -16,11 +15,9 @@ public final static class C/Companion {
     private synthetic deprecated static @kotlin.jvm.JvmStatic method p1$annotations(): void
 }
 
-
 public final class ImportStaticMemberFromObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class O {
     public final static field INSTANCE: O

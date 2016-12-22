@@ -83,7 +83,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                     val visitor = TextCollectingVisitor()
                     cr.accept(visitor, ClassReader.SKIP_CODE)
                     KotlinTestUtils.replaceHash(visitor.text, "HASH")
-                }.joinToString("\n\n")
+                }.joinToString("\n\n", postfix = "\n")
 
         KotlinTestUtils.assertEqualsToFile(txtFile, generatedFiles)
     }
@@ -130,7 +130,9 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
         val text: String
             get() = StringBuilder().apply {
-                append(classAnnotations.joinToString("\n", postfix = "\n"))
+                if (classAnnotations.isNotEmpty()) {
+                    append(classAnnotations.joinToString("\n", postfix = "\n"))
+                }
                 arrayListOf<String>().apply { handleModifiers(classAccess, this) }.forEach { append(it) }
                 append(classOrInterface(classAccess))
                 append(" ")

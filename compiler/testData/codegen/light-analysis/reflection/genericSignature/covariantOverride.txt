@@ -2,12 +2,10 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.util.Collection
 }
 
-
 public abstract class B {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.util.Collection
 }
-
 
 public final class CovariantOverrideKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

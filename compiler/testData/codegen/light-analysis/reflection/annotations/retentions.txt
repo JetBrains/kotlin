@@ -2,7 +2,6 @@
 @java.lang.annotation.Retention
 public annotation class BinaryAnno
 
-
 public final class RetentionsKt {
     public final static @RuntimeAnno @SourceAnno @BinaryAnno @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

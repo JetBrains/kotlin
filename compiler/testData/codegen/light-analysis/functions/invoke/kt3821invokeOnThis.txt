@@ -4,7 +4,6 @@ public final class A {
     public final method invoke(): int
 }
 
-
 public final class Kt3821invokeOnThisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

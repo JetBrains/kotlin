@@ -2,7 +2,6 @@ public interface AsyncGenerator {
     public abstract @org.jetbrains.annotations.Nullable method yield(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
-
 public final class AsyncGeneratorIterator {
     private @org.jetbrains.annotations.Nullable field computeContinuation: kotlin.coroutines.Continuation
     private field computedNext: boolean
@@ -32,12 +31,10 @@ public final class AsyncGeneratorIterator {
     public @org.jetbrains.annotations.Nullable method yield(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
-
 public interface AsyncIterator {
     public abstract @org.jetbrains.annotations.Nullable method hasNext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public abstract @org.jetbrains.annotations.Nullable method next(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }
-
 
 public final class AsyncIteratorKt {
     public final static @org.jetbrains.annotations.NotNull method asyncGenerate(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): AsyncSequence
@@ -45,17 +42,14 @@ public final class AsyncIteratorKt {
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
 }
 
-
 public interface AsyncSequence {
     public abstract @org.jetbrains.annotations.NotNull method iterator(): AsyncIterator
 }
-
 
 public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
-
 
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation

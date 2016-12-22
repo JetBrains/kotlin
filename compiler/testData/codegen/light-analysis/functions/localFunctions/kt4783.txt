@@ -3,7 +3,6 @@ public final class Kt4783Kt {
     public final static method local(): int
 }
 
-
 public final class T {
     private final field value: int
     public method <init>(p0: int): void

@@ -2,7 +2,6 @@ public final class InClassWithPrivateSetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Test {
     private @org.jetbrains.annotations.NotNull field storage: java.lang.String
     public method <init>(): void

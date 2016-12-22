@@ -5,7 +5,6 @@ public final class Obj {
     private synthetic deprecated static @kotlin.jvm.JvmStatic method result$annotations(): void
 }
 
-
 public final class PrivateJvmStaticVarInObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

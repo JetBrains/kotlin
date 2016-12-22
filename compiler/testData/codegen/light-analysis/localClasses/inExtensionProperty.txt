@@ -4,7 +4,6 @@ public final class test/A {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class test/InExtensionPropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getA(@org.jetbrains.annotations.NotNull p0: test.A): java.lang.String

@@ -7,13 +7,11 @@ public class Outer {
     public final @org.jetbrains.annotations.Nullable method getP(): Outer
 }
 
-
 public final class Outer/Another {
     public final static field INSTANCE: Outer.Another
     inner class Outer/Another
     private method <init>(): void
 }
-
 
 public final class Outer/Inner {
     public final static field INSTANCE: Outer.Inner
@@ -21,13 +19,11 @@ public final class Outer/Inner {
     private method <init>(): void
 }
 
-
 public final class Outer/Other {
     public final static field INSTANCE: Outer.Other
     inner class Outer/Other
     private method <init>(): void
 }
-
 
 public final class WithLinkedObjectsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

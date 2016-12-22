@@ -14,7 +14,6 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
 public final class B {
     private final @org.jetbrains.annotations.Nullable field a: java.lang.Object
     public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
@@ -26,7 +25,6 @@ public final class B {
     public method hashCode(): int
     public method toString(): java.lang.String
 }
-
 
 public final class C {
     private final field a: int
@@ -44,7 +42,6 @@ public final class C {
     public method toString(): java.lang.String
 }
 
-
 public final class D {
     private final @org.jetbrains.annotations.Nullable field a: java.lang.Integer
     public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
@@ -56,7 +53,6 @@ public final class D {
     public method hashCode(): int
     public method toString(): java.lang.String
 }
-
 
 public final class NullKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

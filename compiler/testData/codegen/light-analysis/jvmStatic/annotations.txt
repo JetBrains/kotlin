@@ -6,14 +6,12 @@ public final class A {
     public final static @kotlin.jvm.JvmStatic @testAnnotation @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
     public final @kotlin.jvm.JvmStatic @testAnnotation @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
-
 
 public final class B {
     public final static field INSTANCE: B
@@ -22,7 +20,6 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
     public final static @kotlin.jvm.JvmStatic @testAnnotation @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
-
 
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

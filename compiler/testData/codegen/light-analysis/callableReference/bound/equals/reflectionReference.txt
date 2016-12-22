@@ -5,7 +5,6 @@ public final class C {
     public final method getBar(): int
 }
 
-
 public final class ReflectionReferenceKt {
     private final static @org.jetbrains.annotations.NotNull field C_bar: kotlin.reflect.KProperty1
     private final static @org.jetbrains.annotations.NotNull field C_barReflect: kotlin.reflect.KProperty1

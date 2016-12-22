@@ -6,7 +6,6 @@ public final class MyThrowable {
     public @org.jetbrains.annotations.Nullable method getMessage(): java.lang.String
 }
 
-
 public final class ThrowableImplKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

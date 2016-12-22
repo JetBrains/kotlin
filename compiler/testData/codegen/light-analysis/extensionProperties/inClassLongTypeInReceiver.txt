@@ -2,7 +2,6 @@ public final class InClassLongTypeInReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Test {
     private @org.jetbrains.annotations.NotNull field doubleStorage: java.lang.String
     private @org.jetbrains.annotations.NotNull field longStorage: java.lang.String

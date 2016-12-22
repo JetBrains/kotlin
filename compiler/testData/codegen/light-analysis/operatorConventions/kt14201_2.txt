@@ -4,12 +4,10 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
 }
 
-
 public final class B {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method invoke(@org.jetbrains.annotations.NotNull p0: A): java.lang.String
 }
-
 
 public final class ClassB {
     private final @org.jetbrains.annotations.NotNull field x: A
@@ -18,7 +16,6 @@ public final class ClassB {
     public final @org.jetbrains.annotations.NotNull method getX(): A
     public final @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: B): java.lang.String
 }
-
 
 public final class Kt14201_2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -14,11 +14,9 @@ public class BaseStringList {
     public final method size(): int
 }
 
-
 public final class Kt2498Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class StringList {
     public method <init>(): void

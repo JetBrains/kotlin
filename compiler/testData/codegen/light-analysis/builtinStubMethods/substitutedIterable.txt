@@ -2,9 +2,7 @@ public final class E {
     public method <init>(): void
 }
 
-
 public interface MyIterable
-
 
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

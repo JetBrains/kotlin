@@ -6,7 +6,6 @@ public final class C {
     public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull @synthetic.kotlin.jvm.GeneratedByJvmOverloads method foo(p0: int, p1: int): java.lang.String
 }
 
-
 public final class DefaultsNotAtEndKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

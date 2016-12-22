@@ -3,12 +3,10 @@ public final class Kt2811Kt {
     public final static @org.jetbrains.annotations.NotNull method test2(@org.jetbrains.annotations.NotNull p0: Test1): java.lang.String
 }
 
-
 public class Test1 {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
-
 
 public final class Test2 {
     public method <init>(): void

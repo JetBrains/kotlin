@@ -4,7 +4,6 @@ public final class EnclosingThisKt {
     public final static @org.jetbrains.annotations.NotNull method getM(): kotlin.jvm.functions.Function1
 }
 
-
 public final class Point {
     private final field x: int
     private final field y: int

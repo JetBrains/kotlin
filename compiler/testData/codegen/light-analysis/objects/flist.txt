@@ -9,13 +9,11 @@ public abstract class FList {
     public final @org.jetbrains.annotations.NotNull method plus(p0: java.lang.Object): FList
 }
 
-
 public final static class FList/Companion {
     inner class FList/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getEmptyFList(): FList
 }
-
 
 public final class FlistKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -6,7 +6,6 @@ final class p/C {
     public final method getY(): int
 }
 
-
 public final class p/ObjectLiteralInClosureKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

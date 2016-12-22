@@ -2,12 +2,10 @@ public final class Bar {
     public method <init>(): void
 }
 
-
 public abstract class Foo {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method hello(p0: java.lang.Object): java.lang.String
 }
-
 
 public final class Kt1600Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -5,19 +5,16 @@ public class A {
     public final method setSize(p0: java.lang.Object): void
 }
 
-
 public final class B {
     public method <init>(): void
     public synthetic method getSize(): int
     public synthetic method setSize(p0: int): void
 }
 
-
 public interface C {
     public abstract method getSize(): int
     public abstract method setSize(p0: int): void
 }
-
 
 public final class GenericPropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

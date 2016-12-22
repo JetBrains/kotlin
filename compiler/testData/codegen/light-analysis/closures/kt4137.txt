@@ -4,11 +4,9 @@ public class A {
     public final method getS(): int
 }
 
-
 public class B {
     public method <init>(): void
 }
-
 
 public final class Kt4137Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

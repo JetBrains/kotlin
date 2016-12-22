@@ -34,7 +34,6 @@ public final class StrList {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class StrListContainsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method forceContains(@org.jetbrains.annotations.NotNull p0: java.util.Collection, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean

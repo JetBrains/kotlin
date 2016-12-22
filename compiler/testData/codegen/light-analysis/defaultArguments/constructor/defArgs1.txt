@@ -6,7 +6,6 @@ public final class A {
     public final method getA(): int
 }
 
-
 public final class DefArgs1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

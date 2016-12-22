@@ -11,7 +11,6 @@ public final class Host {
     public final method setYy(p0: int): void
 }
 
-
 public final class ObjectPropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field c_x: kotlin.reflect.KProperty0
     private final static @org.jetbrains.annotations.NotNull field c_xx: kotlin.reflect.KProperty0

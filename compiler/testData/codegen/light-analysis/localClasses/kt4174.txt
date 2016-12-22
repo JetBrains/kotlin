@@ -7,14 +7,12 @@ public final class B {
     public final method setX(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public class C {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
-
 
 public final class Kt4174Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -2,7 +2,6 @@ public final class AnnotatedEnumEntryKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public enum class E {
     public final static @First field E1: E
     public final static @Second field E2: E

@@ -20,7 +20,6 @@ public annotation class Anno {
     public abstract method za(): boolean[]
 }
 
-
 public final class PrimitivesAndArraysKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @Anno method foo(): void

@@ -8,12 +8,10 @@ public class K {
     public final method setPublicKProp(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): void
 }
 
-
 public final class KKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method test(p0: java.lang.String[]): void
 }
-
 
 public final class L {
     private field privateLProp: kotlin.Unit

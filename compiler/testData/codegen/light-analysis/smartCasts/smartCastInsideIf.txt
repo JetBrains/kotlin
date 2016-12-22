@@ -6,7 +6,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class SmartCastInsideIfKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method foo(p0: A, p1: A): A

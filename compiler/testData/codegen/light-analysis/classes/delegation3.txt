@@ -2,26 +2,22 @@ public final class Delegation3Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public interface One {
     inner class One/DefaultImpls
     public abstract method faz(): int
     public abstract method foo(): int
 }
 
-
 public final class One/DefaultImpls {
     inner class One/DefaultImpls
     public static method faz(p0: One): int
 }
-
 
 public final class OneImpl {
     public method <init>(): void
     public method faz(): int
     public method foo(): int
 }
-
 
 public final class Test2 {
     private synthetic final field $$delegate_0: Two
@@ -32,19 +28,16 @@ public final class Test2 {
     public method quux(): int
 }
 
-
 public interface Two {
     inner class Two/DefaultImpls
     public abstract method foo(): int
     public abstract method quux(): int
 }
 
-
 public final class Two/DefaultImpls {
     inner class Two/DefaultImpls
     public static method quux(p0: Two): int
 }
-
 
 public final class TwoImpl {
     public method <init>(): void

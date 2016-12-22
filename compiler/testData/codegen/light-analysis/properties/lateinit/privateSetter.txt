@@ -6,7 +6,6 @@ public final class My {
     private final method setX(p0: java.lang.String): void
 }
 
-
 public final class PrivateSetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

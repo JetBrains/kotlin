@@ -6,7 +6,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
 }
 
-
 public final class B {
     private final @org.jetbrains.annotations.NotNull field p: java.lang.String
     private final @org.jetbrains.annotations.NotNull field prop: java.lang.String
@@ -14,7 +13,6 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method getP(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
 }
-
 
 public final class ExceptionInFieldInitializerKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

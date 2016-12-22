@@ -3,7 +3,6 @@ public final class A {
     public final method foo(): void
 }
 
-
 public final class IsFunKSmallKt {
     private final static @org.jetbrains.annotations.NotNull field lambda0: kotlin.jvm.functions.Function0
     private final static @org.jetbrains.annotations.NotNull field lambda1: kotlin.jvm.functions.Function1

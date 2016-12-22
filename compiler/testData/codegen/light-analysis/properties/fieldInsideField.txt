@@ -4,7 +4,6 @@ public final class FieldInsideFieldKt {
     public final static @org.jetbrains.annotations.NotNull method getMy(): java.lang.String
 }
 
-
 public abstract class Your {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String

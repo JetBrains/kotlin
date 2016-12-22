@@ -6,7 +6,6 @@ public final class Bad {
     public final method test(): int
 }
 
-
 public final class Kt3189Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

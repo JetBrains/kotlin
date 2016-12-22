@@ -7,7 +7,6 @@ public enum class Color {
     public static method values(): Color[]
 }
 
-
 public final class ExhaustiveBreakContinueKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: Color[]): Color

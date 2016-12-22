@@ -5,7 +5,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method x(): java.lang.String
 }
 
-
 public final class OverloadedFunVsValKt {
     private final static @org.jetbrains.annotations.NotNull field f1: kotlin.reflect.KProperty1
     private final static @org.jetbrains.annotations.NotNull field f2: kotlin.jvm.functions.Function1

@@ -2,7 +2,6 @@ public final class InitializerBlockDImplKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class World {
     private final @org.jetbrains.annotations.NotNull field foo: World.Item
     private final @org.jetbrains.annotations.NotNull field items: java.util.ArrayList
@@ -11,7 +10,6 @@ public final class World {
     public final @org.jetbrains.annotations.NotNull method getFoo(): World.Item
     public final @org.jetbrains.annotations.NotNull method getItems(): java.util.ArrayList
 }
-
 
 public final class World/Item {
     synthetic final field this$0: World

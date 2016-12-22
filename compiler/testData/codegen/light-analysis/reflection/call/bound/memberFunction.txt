@@ -5,7 +5,6 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method getK(): java.lang.String
 }
 
-
 public final class MemberFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

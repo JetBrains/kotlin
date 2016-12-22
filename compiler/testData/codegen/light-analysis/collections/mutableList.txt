@@ -27,7 +27,6 @@ public class KList {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class TestKt {
     public final static method box(): java.lang.String
 }

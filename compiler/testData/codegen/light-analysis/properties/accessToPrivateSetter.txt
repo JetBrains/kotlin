@@ -2,7 +2,6 @@ public final class AccessToPrivateSetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class D {
     private field foo: int
     public method <init>(): void

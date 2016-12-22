@@ -6,7 +6,6 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method getStatus(): java.lang.String
 }
 
-
 public final class PrimaryConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

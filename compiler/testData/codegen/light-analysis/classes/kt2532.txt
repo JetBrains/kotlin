@@ -6,18 +6,15 @@ public final class foo/A {
     public method getC(): int
 }
 
-
 public interface foo/B {
     inner class foo/B/DefaultImpls
     public abstract method getC(): int
 }
 
-
 public final class foo/B/DefaultImpls {
     inner class foo/B/DefaultImpls
     public static method getC(p0: foo.B): int
 }
-
 
 public final class foo/Kt2532Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

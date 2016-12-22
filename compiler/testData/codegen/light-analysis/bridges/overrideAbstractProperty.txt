@@ -3,13 +3,11 @@ public abstract class AbstractClass {
     public abstract method getSome(): java.lang.Object
 }
 
-
 public final class Class {
     public method <init>(): void
     public synthetic method getSome(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getSome(): java.lang.String
 }
-
 
 public final class OverrideAbstractPropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

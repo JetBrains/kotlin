@@ -3,7 +3,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class A/B {
     private final @org.jetbrains.annotations.NotNull field a: java.lang.String
     private final field b: int
@@ -16,7 +15,6 @@ public final class A/B {
     public final method getB(): int
     public final @org.jetbrains.annotations.NotNull method getC(): java.lang.String
 }
-
 
 public final class DefArgs1InnerClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -5,13 +5,11 @@ public final class A {
     public method setFoo(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[]): void
 }
 
-
 public abstract class B {
     public method <init>(): void
     public abstract @org.jetbrains.annotations.NotNull method getFoo(): java.lang.Integer[]
     public abstract method setFoo(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[]): void
 }
-
 
 public final class Kt2509Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

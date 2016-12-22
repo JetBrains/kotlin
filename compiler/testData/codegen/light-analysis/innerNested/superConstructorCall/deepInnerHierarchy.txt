@@ -9,13 +9,11 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public class A/B {
     synthetic final field this$0: A
     inner class A/B
     public method <init>(@java.lang.Synthetic p0: A, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
 }
-
 
 public class A/C {
     synthetic final field this$0: A
@@ -23,13 +21,11 @@ public class A/C {
     public method <init>(@java.lang.Synthetic p0: A, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: double): void
 }
 
-
 public class A/D {
     synthetic final field this$0: A
     inner class A/D
     public method <init>(@java.lang.Synthetic p0: A, p1: int, p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
 }
-
 
 public class A/E {
     synthetic final field this$0: A
@@ -37,13 +33,11 @@ public class A/E {
     public method <init>(p0: A): void
 }
 
-
 public final class A/F {
     synthetic final field this$0: A
     inner class A/F
     public method <init>(p0: A): void
 }
-
 
 public final class DeepInnerHierarchyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

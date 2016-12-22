@@ -2,7 +2,6 @@ public final class Kt1136Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class SomeClass {
     private final field list: java.util.ArrayList
     private @org.jetbrains.annotations.Nullable field status: java.lang.Throwable
@@ -13,7 +12,6 @@ public final class SomeClass {
     public final method setStatus(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
 }
 
-
 public final class SomeClass/Inner {
     private final @org.jetbrains.annotations.NotNull field copy: java.util.ArrayList
     synthetic final field this$0: SomeClass
@@ -21,7 +19,6 @@ public final class SomeClass/Inner {
     public method <init>(p0: SomeClass): void
     public final @org.jetbrains.annotations.NotNull method getCopy(): java.util.ArrayList
 }
-
 
 public final class SomeObject {
     public final static field INSTANCE: SomeObject

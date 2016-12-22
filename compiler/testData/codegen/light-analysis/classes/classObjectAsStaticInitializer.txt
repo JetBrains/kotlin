@@ -4,12 +4,10 @@ public final class C {
     public method <init>(): void
 }
 
-
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
 }
-
 
 public final class ClassObjectAsStaticInitializerKt {
     private static field global: int

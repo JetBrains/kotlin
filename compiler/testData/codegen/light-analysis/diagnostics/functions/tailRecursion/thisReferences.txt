@@ -5,7 +5,6 @@ public final class A {
     public final method f3(@org.jetbrains.annotations.NotNull p0: A): void
 }
 
-
 public final class ThisReferencesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

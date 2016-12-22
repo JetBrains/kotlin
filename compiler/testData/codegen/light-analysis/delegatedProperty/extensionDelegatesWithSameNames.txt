@@ -2,14 +2,12 @@ public class C {
     public method <init>(): void
 }
 
-
 public final class D {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: C, @org.jetbrains.annotations.NotNull p1: java.lang.Object): java.lang.String
 }
-
 
 public final class ExtensionDelegatesWithSameNamesKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
@@ -20,12 +18,10 @@ public final class ExtensionDelegatesWithSameNamesKt {
     public final static @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: O): java.lang.String
 }
 
-
 public final class K {
     public final static field INSTANCE: K
     private method <init>(): void
 }
-
 
 public final class O {
     public final static field INSTANCE: O

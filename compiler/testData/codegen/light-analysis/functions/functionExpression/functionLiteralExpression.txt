@@ -6,7 +6,6 @@ public final class FunctionLiteralExpressionKt {
     public final static @org.jetbrains.annotations.NotNull method fooT2(p0: java.lang.Object): kotlin.jvm.functions.Function1
 }
 
-
 public final class t {
     public final static field INSTANCE: t
     private method <init>(): void

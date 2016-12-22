@@ -2,7 +2,6 @@ public final class BoxKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public class test/SingletonCollection {
     private final field size: int
     private final field value: java.lang.Object
@@ -13,7 +12,6 @@ public class test/SingletonCollection {
     public final @org.jetbrains.annotations.NotNull method toArray(): java.lang.Object[]
     public final @org.jetbrains.annotations.NotNull method toArray(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.Object[]
 }
-
 
 public final class test2/DerivedSingletonCollection {
     public method <init>(p0: java.lang.Object): void

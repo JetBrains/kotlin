@@ -3,7 +3,6 @@ public final class test/InPackageKt {
     public final static @org.jetbrains.annotations.NotNull method foo(): test.Season
 }
 
-
 public enum class test/Season {
     public final static field AUTUMN: test.Season
     public final static field SPRING: test.Season

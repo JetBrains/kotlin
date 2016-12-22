@@ -18,7 +18,6 @@ public class KMap {
     public final method values(): java.util.Collection
 }
 
-
 public final class TestKt {
     public final static method box(): java.lang.String
 }

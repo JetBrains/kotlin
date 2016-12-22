@@ -6,12 +6,10 @@ public final class KotlinClass {
     public method <init>(): void
 }
 
-
 public final static class KotlinClass/Companion {
     inner class KotlinClass/Companion
     private method <init>(): void
 }
-
 
 public final class KotlinClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

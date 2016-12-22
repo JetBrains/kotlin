@@ -8,7 +8,6 @@ public final class Foo {
     public final method setState(p0: int): void
 }
 
-
 public final class Kt1726Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

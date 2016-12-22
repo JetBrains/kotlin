@@ -5,20 +5,17 @@ public final class CompanionOwner {
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final static class CompanionOwner/Companion {
     inner class CompanionOwner/Companion
     private method <init>(): void
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final class Host {
     public final static field INSTANCE: Host
     private method <init>(): void
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
-
 
 public final class JvmStaticObjectFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

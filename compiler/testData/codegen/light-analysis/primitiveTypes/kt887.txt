@@ -6,7 +6,6 @@ public final class Book {
     public final @org.jetbrains.annotations.NotNull method getName(): java.lang.String
 }
 
-
 public final class Kt887Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

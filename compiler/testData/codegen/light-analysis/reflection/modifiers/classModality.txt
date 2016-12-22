@@ -5,18 +5,15 @@ public abstract class AbstractClass {
 @java.lang.annotation.Retention
 public annotation class AnnotationClass
 
-
 public final class ClassModalityKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public enum class EnumClass {
     protected method <init>(p0: java.lang.String, p1: int): void
     public static method valueOf(p0: java.lang.String): EnumClass
     public static method values(): EnumClass[]
 }
-
 
 public abstract enum class EnumClassWithAbstractMember {
     protected method <init>(p0: java.lang.String, p1: int): void
@@ -25,28 +22,23 @@ public abstract enum class EnumClassWithAbstractMember {
     public static method values(): EnumClassWithAbstractMember[]
 }
 
-
 public final class FinalClass {
     public final static field Companion: FinalClass.Companion
     inner class FinalClass/Companion
     public method <init>(): void
 }
 
-
 public final static class FinalClass/Companion {
     inner class FinalClass/Companion
     private method <init>(): void
 }
 
-
 public interface Interface
-
 
 public final class Object {
     public final static field INSTANCE: Object
     private method <init>(): void
 }
-
 
 public class OpenClass {
     public method <init>(): void

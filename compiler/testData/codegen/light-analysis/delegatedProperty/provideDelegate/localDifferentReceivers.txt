@@ -1,4 +1,3 @@
-
 public final class LocalDifferentReceiversKt {
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -9,7 +8,6 @@ public final class LocalDifferentReceiversKt {
     public final static @org.jetbrains.annotations.NotNull method runLogged2(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): MyClass
     public final static method setLog(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class MyClass {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String

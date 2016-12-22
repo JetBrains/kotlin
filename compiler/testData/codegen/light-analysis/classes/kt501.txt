@@ -3,7 +3,6 @@ public final class Kt501Kt {
     public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
 
-
 public final class Reluctant {
     public method <init>(): void
 }

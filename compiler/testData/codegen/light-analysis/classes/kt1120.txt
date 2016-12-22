@@ -2,7 +2,6 @@ public final class Kt1120Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class RefreshQueue {
     public final static field INSTANCE: RefreshQueue
     private final static @org.jetbrains.annotations.NotNull field any: java.lang.Object

@@ -2,7 +2,6 @@ public final class Kt3850Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 final class One {
     private final @org.jetbrains.annotations.NotNull field a1: One$a1$1[]
     public method <init>(): void

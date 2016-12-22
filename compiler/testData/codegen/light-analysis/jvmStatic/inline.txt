@@ -5,7 +5,6 @@ public final class A {
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final class InlineKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

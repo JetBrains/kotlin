@@ -5,18 +5,15 @@ public final class test/ErrorsJvmClass {
     public method <init>(): void
 }
 
-
 public final static class test/ErrorsJvmClass/Companion {
     inner class test/ErrorsJvmClass/Companion
     private method <init>(): void
 }
 
-
 public interface test/ErrorsJvmTrait {
     public final static field Companion: test.ErrorsJvmTrait.Companion
     inner class test/ErrorsJvmTrait/Companion
 }
-
 
 public final static class test/ErrorsJvmTrait/Companion {
     private final static @org.jetbrains.annotations.NotNull field param: test.G
@@ -25,13 +22,11 @@ public final static class test/ErrorsJvmTrait/Companion {
     public final @org.jetbrains.annotations.NotNull method getParam(): test.G
 }
 
-
 public final class test/G {
     private final field s: java.lang.Object
     public method <init>(p0: java.lang.Object): void
     public final method getS(): java.lang.Object
 }
-
 
 public final class test/Kt5112Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

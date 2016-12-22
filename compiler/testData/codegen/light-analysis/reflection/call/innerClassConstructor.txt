@@ -4,7 +4,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class A/Inner {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     synthetic final field this$0: A
@@ -13,14 +12,12 @@ public final class A/Inner {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
-
 public final static class A/Nested {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     inner class A/Nested
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
-
 
 public final class InnerClassConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

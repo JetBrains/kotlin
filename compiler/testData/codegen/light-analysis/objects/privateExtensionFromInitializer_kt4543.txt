@@ -4,7 +4,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
-
 public final class C {
     public final static field INSTANCE: C
     private final static @org.jetbrains.annotations.NotNull field g: java.lang.String
@@ -12,7 +11,6 @@ public final class C {
     private final method f(@org.jetbrains.annotations.NotNull p0: A): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getG(): java.lang.String
 }
-
 
 public final class PrivateExtensionFromInitializer_kt4543Kt {
     public final static @org.jetbrains.annotations.NotNull method a(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): java.lang.String

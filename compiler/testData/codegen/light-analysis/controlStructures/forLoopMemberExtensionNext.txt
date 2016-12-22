@@ -3,12 +3,10 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method iterator(): It
 }
 
-
 public final class ForLoopMemberExtensionNextKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method foo(p0: int): void
 }
-
 
 public final class It {
     private field hasNext: boolean
@@ -17,7 +15,6 @@ public final class It {
     public final method hasNext(): boolean
     public final method setHasNext(p0: boolean): void
 }
-
 
 public final class X {
     public method <init>(): void

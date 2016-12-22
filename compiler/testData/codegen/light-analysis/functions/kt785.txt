@@ -8,7 +8,6 @@ public final class A {
     public final method setZ(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
 }
 
-
 public final class Kt785Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -5,7 +5,6 @@ public abstract class BaseGeneric {
     public abstract method iterate(): void
 }
 
-
 public final class Derived {
     private field test: int
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
@@ -13,7 +12,6 @@ public final class Derived {
     public method iterate(): void
     public final method setTest(p0: int): void
 }
-
 
 public final class Kt12983_forInSpecificCollectionIndicesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

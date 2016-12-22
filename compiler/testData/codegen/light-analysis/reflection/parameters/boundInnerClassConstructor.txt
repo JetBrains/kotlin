@@ -3,14 +3,12 @@ public final class BoundInnerClassConstructorKt {
     public final static method check(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KParameter, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
 }
 
-
 public final class Outer {
     private final @org.jetbrains.annotations.NotNull field s1: java.lang.String
     inner class Outer/Inner
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getS1(): java.lang.String
 }
-
 
 public final class Outer/Inner {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String

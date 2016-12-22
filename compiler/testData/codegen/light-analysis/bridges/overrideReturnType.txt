@@ -3,13 +3,11 @@ public class C {
     public @org.jetbrains.annotations.NotNull method f(): java.lang.Object
 }
 
-
 public final class D {
     public method <init>(): void
     public synthetic method f(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
-
 
 public final class OverrideReturnTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

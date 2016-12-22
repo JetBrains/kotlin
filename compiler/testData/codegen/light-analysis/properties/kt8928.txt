@@ -6,14 +6,12 @@ public final class App {
     public final method init(): void
 }
 
-
 public final static class App/Companion {
     inner class App/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     private final method setS(p0: java.lang.String): void
 }
-
 
 public final class Kt8928Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

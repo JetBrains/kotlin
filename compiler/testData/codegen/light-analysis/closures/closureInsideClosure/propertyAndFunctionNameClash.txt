@@ -4,21 +4,17 @@ public abstract class d/A {
     public abstract method setText(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public class d/HtmlTag {
     public method <init>(): void
 }
-
 
 public final class d/LI {
     public method <init>(): void
 }
 
-
 public class d/ListTag {
     public method <init>(): void
 }
-
 
 public final class d/PropertyAndFunctionNameClashKt {
     public final static method a(@org.jetbrains.annotations.NotNull p0: d.HtmlTag, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void

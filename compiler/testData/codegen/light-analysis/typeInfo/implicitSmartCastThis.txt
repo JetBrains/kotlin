@@ -2,12 +2,10 @@ public class A {
     public method <init>(): void
 }
 
-
 public final class B {
     public method <init>(): void
     public final method foo(p0: int): int
 }
-
 
 public final class ImplicitSmartCastThisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

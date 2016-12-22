@@ -3,13 +3,11 @@ public final class A {
     public final method getP2(p0: int): int
 }
 
-
 public final class B {
     public method <init>(): void
     public final method getMp2(p0: int): int
     public final method setMp2(p0: int, p1: int): void
 }
-
 
 public final class PropertyAccessorsKt {
     private static field globalCounter: int

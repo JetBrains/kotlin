@@ -4,7 +4,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getA(): java.lang.Object[][]
 }
 
-
 public final class Kt2210Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

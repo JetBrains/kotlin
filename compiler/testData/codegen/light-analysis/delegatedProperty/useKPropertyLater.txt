@@ -5,7 +5,6 @@ public final class Delegate {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
 }
 
-
 public final class O {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field INSTANCE: O
@@ -17,7 +16,6 @@ public final class O {
     public final method setMemExt(@org.jetbrains.annotations.NotNull p0: O, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final method setMember(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class UseKPropertyLaterKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]

@@ -4,7 +4,6 @@ public final class LocalClassSimpleNameKt {
     public final static method localInMethod(): void
 }
 
-
 public final class LocalInConstructor {
     public method <init>(): void
 }

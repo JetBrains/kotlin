@@ -4,7 +4,6 @@ public final class Foo {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class LambdaArgumentWithoutTypeKt {
     private final static @org.jetbrains.annotations.NotNull field foo: Foo
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

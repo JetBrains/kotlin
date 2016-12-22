@@ -5,14 +5,12 @@ public final class A {
     public final method setMem(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class B {
     private @org.jetbrains.annotations.NotNull field mem: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getMem(): java.lang.String
     public final method setMem(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class PropertyEqualsHashCodeKt {
     private static field top2: int

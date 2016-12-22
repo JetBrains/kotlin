@@ -4,7 +4,6 @@ public final class IfOrWhenSpecialCallKt {
     public final static @org.jetbrains.annotations.NotNull method whenTest(p0: int): Option
 }
 
-
 public final class None {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
@@ -13,11 +12,9 @@ public final class None {
     public @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public interface Option {
     public abstract @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
-
 
 public final class Some {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String

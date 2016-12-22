@@ -4,14 +4,12 @@ public final class A {
     private method <init>(): void
 }
 
-
 public final class A/B {
     public final static field INSTANCE: A.B
     inner class A/B
     inner class A/B/C
     private method <init>(): void
 }
-
 
 public final class A/B/C {
     public final static field INSTANCE: A.B.C
@@ -21,7 +19,6 @@ public final class A/B/C {
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getOk(): java.lang.String
 }
-
 
 public final class NestedObjectsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

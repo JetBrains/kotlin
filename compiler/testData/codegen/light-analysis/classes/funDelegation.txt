@@ -1,21 +1,17 @@
 public interface Abstract
 
-
 public class Base {
     public method <init>(): void
     public final method n(p0: int): int
 }
 
-
 public final class Derived1 {
     public method <init>(): void
 }
 
-
 public final class Derived2 {
     public method <init>(): void
 }
-
 
 public final class FunDelegationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

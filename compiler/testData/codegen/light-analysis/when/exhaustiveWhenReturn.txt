@@ -5,7 +5,6 @@ public enum class A {
     public static method values(): A[]
 }
 
-
 public final class ExhaustiveWhenReturnKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

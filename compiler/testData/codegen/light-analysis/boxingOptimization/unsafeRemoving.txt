@@ -7,7 +7,6 @@ public final class A {
     public final method setX(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
 }
 
-
 public final class UnsafeRemovingKt {
     public final static @org.jetbrains.annotations.Nullable method acceptingBoxed(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): java.lang.Integer
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

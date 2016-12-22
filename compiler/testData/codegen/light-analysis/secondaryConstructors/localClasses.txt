@@ -4,7 +4,6 @@ public class C {
     public final @org.jetbrains.annotations.NotNull method getGrandParentProp(): java.lang.String
 }
 
-
 public final class LocalClassesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

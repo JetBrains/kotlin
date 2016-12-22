@@ -19,7 +19,6 @@ public final class MyCollection {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class NonTrivialSubstitutionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

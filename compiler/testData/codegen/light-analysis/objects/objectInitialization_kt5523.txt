@@ -7,7 +7,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
 }
 
-
 public final class ObjectInitialization_kt5523Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

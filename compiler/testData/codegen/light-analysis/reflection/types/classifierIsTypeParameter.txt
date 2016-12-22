@@ -4,7 +4,6 @@ public final class A {
     public final method foo(): java.lang.Object
 }
 
-
 public final class ClassifierIsTypeParameterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -6,11 +6,9 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
-
 public final class B {
     public method <init>(p0: int): void
 }
-
 
 public final class CallFromPrimaryWithOptionalArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

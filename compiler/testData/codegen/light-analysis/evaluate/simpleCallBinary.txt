@@ -13,7 +13,6 @@ public final class MyClass {
     public method <init>(): void
 }
 
-
 public final class SimpleCallBinaryKt {
     public final static field prop1: int
     public final static field prop2: int

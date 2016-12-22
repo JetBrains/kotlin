@@ -6,13 +6,11 @@ public final class A {
     private final method getP(): int
 }
 
-
 public final static class A/B {
     inner class A/B
     private method <init>(): void
     public final method getP(): int
 }
-
 
 public final class DefaultObjectSameNamesAsInOuterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

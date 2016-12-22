@@ -2,7 +2,6 @@ public final class Kt1770Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class MyElement {
     private synthetic final field $$delegate_0: org.w3c.dom.Element
     public method <init>(@org.jetbrains.annotations.NotNull p0: org.w3c.dom.Element): void

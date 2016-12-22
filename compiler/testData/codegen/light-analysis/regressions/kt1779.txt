@@ -2,7 +2,6 @@ public final class Kt1779Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class MyIterator {
     private field i: int
     public method <init>(): void

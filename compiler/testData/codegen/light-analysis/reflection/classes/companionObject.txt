@@ -4,17 +4,14 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/C {
     inner class A/C
     private method <init>(): void
 }
 
-
 public final class CompanionObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public enum class E {
     public final static field Companion: E.Companion
@@ -24,7 +21,6 @@ public enum class E {
     public static method valueOf(p0: java.lang.String): E
     public static method values(): E[]
 }
-
 
 public final static class E/Companion {
     inner class E/Companion

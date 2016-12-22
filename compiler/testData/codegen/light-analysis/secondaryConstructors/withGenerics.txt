@@ -6,7 +6,6 @@ public class A {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
 public final class WithGenericsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

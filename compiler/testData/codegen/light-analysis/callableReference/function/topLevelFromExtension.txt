@@ -2,7 +2,6 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class TopLevelFromExtensionKt {
     public final static method bar(@org.jetbrains.annotations.NotNull p0: A): int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

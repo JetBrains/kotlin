@@ -3,15 +3,12 @@ public final class D {
     public method f(): int
 }
 
-
 public interface Left
-
 
 public class Right {
     public method <init>(): void
     public method f(): int
 }
-
 
 public final class RightHandOverrideKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

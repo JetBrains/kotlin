@@ -6,7 +6,6 @@ public final class Cls {
     public final @org.jetbrains.annotations.NotNull method getString(): java.lang.String
 }
 
-
 public final class Obj {
     public final static field INSTANCE: Obj
     private final static @org.jetbrains.annotations.NotNull field buffer: java.lang.StringBuilder
@@ -15,7 +14,6 @@ public final class Obj {
     public final @org.jetbrains.annotations.NotNull method getBuffer(): java.lang.StringBuilder
     public final @org.jetbrains.annotations.NotNull method getString(): java.lang.String
 }
-
 
 public final class ObjectVsClassInitialization_kt5291Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

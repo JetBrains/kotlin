@@ -5,11 +5,9 @@ public final class A {
     public synthetic method foo(): java.lang.Object
 }
 
-
 public interface I {
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
 }
-
 
 public final class OverrideAnyWithPrimitiveKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

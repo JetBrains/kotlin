@@ -7,7 +7,6 @@ public final class A {
     public final method getJ(): int
 }
 
-
 public final class Kt2270Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

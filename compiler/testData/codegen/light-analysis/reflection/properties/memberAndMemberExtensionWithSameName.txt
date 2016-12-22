@@ -5,7 +5,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getFoo(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): java.lang.String
 }
 
-
 public final class MemberAndMemberExtensionWithSameNameKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

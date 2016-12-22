@@ -2,7 +2,6 @@ public final class LocalClassCaptureExtensionReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class Outer {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method id(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String

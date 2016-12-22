@@ -1,6 +1,5 @@
 public interface Abstract
 
-
 public class Base {
     private final field plain: int
     private field readwrite: int
@@ -11,16 +10,13 @@ public class Base {
     public final method setReadwrite(p0: int): void
 }
 
-
 public final class Derived1 {
     public method <init>(): void
 }
 
-
 public final class Derived2 {
     public method <init>(): void
 }
-
 
 public final class PropertyDelegationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

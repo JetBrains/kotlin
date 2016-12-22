@@ -12,7 +12,6 @@ final class C {
     public method toString(): java.lang.String
 }
 
-
 public final class PrivateClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

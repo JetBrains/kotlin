@@ -3,7 +3,6 @@ public final class Kt707Kt {
     public final static @org.jetbrains.annotations.NotNull method mapHead(@org.jetbrains.annotations.NotNull p0: List, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): List
 }
 
-
 public final class List {
     private final field head: java.lang.Object
     private final @org.jetbrains.annotations.Nullable field tail: List

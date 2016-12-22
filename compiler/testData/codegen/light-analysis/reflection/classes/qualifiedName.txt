@@ -5,18 +5,15 @@ public final class Klass {
     public method <init>(): void
 }
 
-
 public final static class Klass/Companion {
     inner class Klass/Companion
     private method <init>(): void
 }
 
-
 public final static class Klass/Nested {
     inner class Klass/Nested
     public method <init>(): void
 }
-
 
 public final class QualifiedNameKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -5,7 +5,6 @@ public final class Foo {
     private final method unaryPlus(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final class Kt3298Kt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

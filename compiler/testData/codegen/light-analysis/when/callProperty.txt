@@ -4,7 +4,6 @@ public final class C {
     public final method getP(): boolean
 }
 
-
 public final class CallPropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

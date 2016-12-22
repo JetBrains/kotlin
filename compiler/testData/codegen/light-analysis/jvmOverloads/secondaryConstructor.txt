@@ -10,7 +10,6 @@ public final class C {
     public final method setStatus(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class SecondaryConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

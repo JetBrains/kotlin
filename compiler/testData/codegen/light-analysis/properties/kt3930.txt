@@ -3,7 +3,6 @@ public final class Bar {
     public method <init>(): void
 }
 
-
 public final class Bar/Baz {
     synthetic final field this$0: Bar
     inner class Bar/Baz
@@ -11,14 +10,12 @@ public final class Bar/Baz {
     public final method call(): void
 }
 
-
 public abstract class Foo {
     private field isOpen: boolean
     public method <init>(): void
     public final method isOpen(): boolean
     private final method setOpen(p0: boolean): void
 }
-
 
 public final class Kt3930Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -10,7 +10,6 @@ public final class A {
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test3(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
@@ -21,7 +20,6 @@ public final static class A/Companion {
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test2(): java.lang.String
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test3(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
-
 
 public final class SimpleCompanionObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

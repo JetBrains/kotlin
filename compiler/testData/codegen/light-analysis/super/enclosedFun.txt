@@ -3,42 +3,35 @@ public interface BK {
     public abstract method x(): int
 }
 
-
 public final class BK/DefaultImpls {
     inner class BK/DefaultImpls
     public static method x(p0: BK): int
 }
 
-
 public final class EnclosedFunKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface K {
     inner class K/DefaultImpls
     public abstract method x(): int
 }
 
-
 public final class K/DefaultImpls {
     inner class K/DefaultImpls
     public static method x(p0: K): int
 }
-
 
 public class M {
     public method <init>(): void
     public method x(): int
 }
 
-
 public class N {
     inner class N/C
     public method <init>(): void
     public method x(): int
 }
-
 
 public class N/C {
     synthetic final field this$0: N

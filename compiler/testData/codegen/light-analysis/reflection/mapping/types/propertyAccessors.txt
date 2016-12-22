@@ -3,14 +3,12 @@ public final class A {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class O {
     public final static field INSTANCE: O
     private static field bar: java.lang.String
     private method <init>(): void
     private synthetic deprecated static @kotlin.jvm.JvmStatic method bar$annotations(): void
 }
-
 
 public final class PropertyAccessorsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

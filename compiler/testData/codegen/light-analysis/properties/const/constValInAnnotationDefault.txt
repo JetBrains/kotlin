@@ -3,7 +3,6 @@ public annotation class A {
     public abstract method value(): java.lang.String
 }
 
-
 public final class ConstValInAnnotationDefaultKt {
     public final static @org.jetbrains.annotations.NotNull field z: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

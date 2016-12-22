@@ -7,7 +7,6 @@ public final class A {
     public final method setProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public abstract class B {
     private final field arg: int
     private final @org.jetbrains.annotations.NotNull field parentProp: java.lang.String
@@ -15,7 +14,6 @@ public abstract class B {
     public final method getArg(): int
     public final @org.jetbrains.annotations.NotNull method getParentProp(): java.lang.String
 }
-
 
 public final class SuperCallPrimaryKt {
     private static @org.jetbrains.annotations.NotNull field sideEffects: java.lang.String

@@ -3,12 +3,10 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public final class A/DefaultImpls {
     inner class A/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method foo(p0: A): java.lang.String
 }
-
 
 public final class MainKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

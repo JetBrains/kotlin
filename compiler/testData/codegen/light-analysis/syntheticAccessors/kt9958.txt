@@ -2,25 +2,21 @@ public final class a/AKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class a/B {
     public final static field Companion: a.B.Companion
     inner class a/B/Companion
     public method <init>(): void
 }
 
-
 public final static class a/B/Companion {
     inner class a/B/Companion
     private method <init>(): void
 }
 
-
 public abstract class b/A {
     public method <init>(): void
     protected final method foo(): void
 }
-
 
 public final class b/BKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String

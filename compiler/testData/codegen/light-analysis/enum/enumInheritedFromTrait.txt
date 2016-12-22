@@ -2,7 +2,6 @@ public final class test/EnumInheritedFromTraitKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public abstract enum class test/MyEnum {
     public final static field E1: test.MyEnum
     public final static field E2: test.MyEnum
@@ -13,20 +12,17 @@ public abstract enum class test/MyEnum {
     public static method values(): test.MyEnum[]
 }
 
-
 final static class test/MyEnum/E1 {
     inner class test/MyEnum/E1
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
 
-
 final static class test/MyEnum/E2 {
     inner class test/MyEnum/E2
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
-
 
 public interface test/T {
     public abstract @org.jetbrains.annotations.NotNull method f(): java.lang.String

@@ -6,7 +6,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): java.lang.String
 }
 
-
 public final class Kt3450getAndInvokeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String

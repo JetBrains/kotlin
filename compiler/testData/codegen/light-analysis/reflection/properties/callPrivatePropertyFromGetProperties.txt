@@ -2,7 +2,6 @@ public final class CallPrivatePropertyFromGetPropertiesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class K {
     private final field value: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

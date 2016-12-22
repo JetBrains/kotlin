@@ -3,13 +3,11 @@ public final class C {
     public method <init>(): void
 }
 
-
 public final static class C/D {
     inner class C/D
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
 }
-
 
 public final class LambdaInMemberFunctionInNestedClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

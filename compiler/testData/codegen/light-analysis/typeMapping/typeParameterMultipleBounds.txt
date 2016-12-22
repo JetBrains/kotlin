@@ -2,12 +2,9 @@ public class C {
     public method <init>(): void
 }
 
-
 public interface I1
 
-
 public interface I2
-
 
 public interface K {
     public abstract method c1(@org.jetbrains.annotations.NotNull p0: C): void
@@ -17,7 +14,6 @@ public interface K {
     public abstract method i1(@org.jetbrains.annotations.NotNull p0: I1): void
     public abstract method i2(@org.jetbrains.annotations.NotNull p0: I2): void
 }
-
 
 public final class TypeParameterMultipleBoundsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

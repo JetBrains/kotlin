@@ -4,11 +4,9 @@ public final class Broken {
     public @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
 }
 
-
 public final class Kt1535Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class Works {
     public method <init>(): void

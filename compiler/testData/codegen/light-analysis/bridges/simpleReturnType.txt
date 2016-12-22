@@ -5,11 +5,9 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getT(): java.lang.Number
 }
 
-
 public final class SimpleReturnTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class Z {
     public method <init>(): void

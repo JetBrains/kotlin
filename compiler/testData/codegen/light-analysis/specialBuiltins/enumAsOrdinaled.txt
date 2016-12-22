@@ -6,11 +6,9 @@ public enum class A {
     public static method values(): A[]
 }
 
-
 public final class EnumAsOrdinaledKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface Ordinaled {
     public abstract method getOrdinal(): int

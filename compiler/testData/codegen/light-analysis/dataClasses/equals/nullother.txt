@@ -10,12 +10,10 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
 public final class Dummy {
     public method <init>(): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
 }
-
 
 public final class NullotherKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

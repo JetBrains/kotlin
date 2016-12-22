@@ -8,7 +8,6 @@ public final class Outer {
     public final @org.jetbrains.annotations.NotNull method getX(): Outer.InnerDerived
 }
 
-
 public class Outer/InnerBase {
     private final @org.jetbrains.annotations.NotNull field name: java.lang.String
     synthetic final field this$0: Outer
@@ -17,13 +16,11 @@ public class Outer/InnerBase {
     public final @org.jetbrains.annotations.NotNull method getName(): java.lang.String
 }
 
-
 public final class Outer/InnerDerived {
     synthetic final field this$0: Outer
     inner class Outer/InnerDerived
     public method <init>(p0: Outer): void
 }
-
 
 public final class PropertyInInitializerKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

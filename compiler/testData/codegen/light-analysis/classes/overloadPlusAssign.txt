@@ -7,7 +7,6 @@ public final class ArrayWrapper {
     public final method plusAssign(@org.jetbrains.annotations.NotNull p0: ArrayWrapper): void
 }
 
-
 public final class OverloadPlusAssignKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

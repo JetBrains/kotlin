@@ -6,13 +6,11 @@ public final class D {
     public method <init>(): void
 }
 
-
 public final static class D/Companion {
     inner class D/Companion
     private method <init>(): void
     protected final @org.jetbrains.annotations.NotNull method getF(): java.lang.String
 }
-
 
 public final class D/E {
     synthetic final field this$0: D
@@ -20,7 +18,6 @@ public final class D/E {
     public method <init>(p0: D): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final class Kt5395Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

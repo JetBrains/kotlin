@@ -2,11 +2,9 @@ public final class Bar {
     public method <init>(): void
 }
 
-
 public interface Foo {
     public abstract @org.jetbrains.annotations.NotNull method xyzzy(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.String
 }
-
 
 public final class Kt1918Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

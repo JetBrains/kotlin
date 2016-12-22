@@ -3,7 +3,6 @@ public final class Kt694Kt {
     public final static method checkA(@org.jetbrains.annotations.NotNull p0: Test): boolean
 }
 
-
 public enum class Test {
     public final static field A: Test
     public final static field B: Test

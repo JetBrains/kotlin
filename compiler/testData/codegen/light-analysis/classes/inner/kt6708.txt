@@ -3,26 +3,22 @@ public class A {
     public method <init>(): void
 }
 
-
 public class A/InnerA {
     synthetic final field this$0: A
     inner class A/InnerA
     public method <init>(p0: A): void
 }
 
-
 public final class B {
     inner class B/InnerB
     public method <init>(): void
 }
-
 
 public final class B/InnerB {
     synthetic final field this$0: B
     inner class B/InnerB
     public method <init>(p0: B): void
 }
-
 
 public final class Kt6708Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

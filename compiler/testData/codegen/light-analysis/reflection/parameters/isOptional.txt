@@ -4,17 +4,14 @@ public class A {
     public method foo(p0: int, p1: int): void
 }
 
-
 public final class B {
     public method <init>(): void
     public method foo(p0: int, p1: int): void
 }
 
-
 public final class C {
     public method <init>(): void
 }
-
 
 public final class IsOptionalKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

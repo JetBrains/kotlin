@@ -7,7 +7,6 @@ public final class AByte {
     public final method setValue(p0: byte): void
 }
 
-
 public final class ADouble {
     private field value: double
     public method <init>(p0: double): void
@@ -16,7 +15,6 @@ public final class ADouble {
     public final method set(p0: int, p1: double): void
     public final method setValue(p0: double): void
 }
-
 
 public final class AFloat {
     private field value: float
@@ -27,7 +25,6 @@ public final class AFloat {
     public final method setValue(p0: float): void
 }
 
-
 public final class AInt {
     private field value: int
     public method <init>(p0: int): void
@@ -36,7 +33,6 @@ public final class AInt {
     public final method set(p0: int, p1: int): void
     public final method setValue(p0: int): void
 }
-
 
 public final class ALong {
     private field value: long
@@ -47,7 +43,6 @@ public final class ALong {
     public final method setValue(p0: long): void
 }
 
-
 public final class AShort {
     private field value: short
     public method <init>(p0: short): void
@@ -56,7 +51,6 @@ public final class AShort {
     public final method set(p0: int, p1: short): void
     public final method setValue(p0: short): void
 }
-
 
 public final class ClassWithGetSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

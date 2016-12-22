@@ -7,13 +7,11 @@ public class K {
     public final @org.jetbrains.annotations.NotNull method getPublicMemberK(): java.lang.String
 }
 
-
 public final class KKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method check(@org.jetbrains.annotations.NotNull p0: java.util.Collection, @org.jetbrains.annotations.NotNull p1: java.util.Set): void
     public final static @org.jetbrains.annotations.NotNull method names(@org.jetbrains.annotations.NotNull p0: java.util.Collection): java.util.Set
 }
-
 
 public final class L {
     public method <init>(): void

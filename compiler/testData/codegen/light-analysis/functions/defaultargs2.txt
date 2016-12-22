@@ -4,7 +4,6 @@ public final class Defaultargs2Kt {
     public final static @org.jetbrains.annotations.NotNull method reformat(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: boolean, p2: boolean, p3: boolean, @org.jetbrains.annotations.NotNull p4: java.lang.String): T4
 }
 
-
 public final class T4 {
     private final field c1: boolean
     private final field c2: boolean

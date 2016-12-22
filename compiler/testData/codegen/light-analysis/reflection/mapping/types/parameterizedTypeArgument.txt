@@ -2,11 +2,9 @@ public final class Bar {
     public method <init>(): void
 }
 
-
 public final class Foo {
     public method <init>(): void
 }
-
 
 public final class ParameterizedTypeArgumentKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

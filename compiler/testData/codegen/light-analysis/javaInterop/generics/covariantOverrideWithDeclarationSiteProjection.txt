@@ -3,24 +3,20 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method foo(): OutPair
 }
 
-
 public abstract class B {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method bar(): In
     public @org.jetbrains.annotations.NotNull method foo(): OutPair
 }
 
-
 public final class In {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method make(p0: java.lang.Object): java.lang.String
 }
 
-
 public final class MainKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class OutPair {
     private final field x: java.lang.Object

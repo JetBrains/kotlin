@@ -40,7 +40,6 @@ public final class CalculatorConstants {
     public final method getTravelClassOne(): double
 }
 
-
 public final class Kt6816Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

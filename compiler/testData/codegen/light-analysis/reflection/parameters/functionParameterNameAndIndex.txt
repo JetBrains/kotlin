@@ -6,7 +6,6 @@ public final class A {
     public final method mext(p0: double, p1: long): void
 }
 
-
 public final class FunctionParameterNameAndIndexKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method checkParameters(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KFunction, @org.jetbrains.annotations.NotNull p1: java.util.List): void

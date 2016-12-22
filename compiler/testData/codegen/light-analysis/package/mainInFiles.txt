@@ -2,16 +2,13 @@ public final class pkg/AKt {
     public final static method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void
 }
 
-
 public final class pkg/BKt {
     public final static method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void
 }
 
-
 public final class test/A {
     public method <init>(): void
 }
-
 
 public final class test/_1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

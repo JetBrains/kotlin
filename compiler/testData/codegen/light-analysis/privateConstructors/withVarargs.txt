@@ -7,24 +7,20 @@ public class Outer {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final static class Outer/Another {
     inner class Outer/Another
     public method <init>(): void
 }
-
 
 public final static class Outer/Inner {
     inner class Outer/Inner
     public method <init>(): void
 }
 
-
 public final static class Outer/Other {
     inner class Outer/Other
     public method <init>(): void
 }
-
 
 public final class WithVarargsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -6,13 +6,11 @@ public final class A {
     private final method foo(p0: java.lang.String): java.lang.String
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method bar(): java.lang.String
 }
-
 
 public final class MemberFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

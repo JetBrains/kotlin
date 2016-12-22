@@ -5,7 +5,6 @@ public final class A {
     public final method setA(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class LocalClassInInitializerKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

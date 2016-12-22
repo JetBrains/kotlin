@@ -6,11 +6,9 @@ public class B {
     public method setProperty(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
 public final class Kt1936_1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface MyTrait {
     inner class MyTrait/DefaultImpls
@@ -18,7 +16,6 @@ public interface MyTrait {
     public abstract @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
     public abstract method setProperty(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class MyTrait/DefaultImpls {
     inner class MyTrait/DefaultImpls

@@ -4,7 +4,6 @@ public final class A {
     public final method test(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList): void
 }
 
-
 public final class Kt513Kt {
     public final static method add2(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList, p1: java.lang.Object): boolean
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

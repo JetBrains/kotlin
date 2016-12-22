@@ -5,7 +5,6 @@ public class A {
     public method setX(p0: java.lang.Object): void
 }
 
-
 public final class B {
     private @org.jetbrains.annotations.NotNull field x: java.lang.String
     public method <init>(): void
@@ -14,7 +13,6 @@ public final class B {
     public method setX(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public synthetic method setX(p0: java.lang.Object): void
 }
-
 
 public final class PropertyAccessorsWithoutBodyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

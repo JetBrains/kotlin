@@ -6,14 +6,12 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
     public final method getI1(): int
     public final method getI2(): int
 }
-
 
 public final class B {
     public final static field Named: B.Named
@@ -23,14 +21,12 @@ public final class B {
     public method <init>(): void
 }
 
-
 public final static class B/Named {
     inner class B/Named
     private method <init>(): void
     public final method getI1(): int
     public final method getI2(): int
 }
-
 
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -3,7 +3,6 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method g(): java.lang.String
 }
 
-
 public final class ReifiedInlineFunOfObjectWithinReifiedKt {
     private final static method AFactory(): A
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

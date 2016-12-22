@@ -8,12 +8,10 @@ public enum class Enoom {
     public static method values(): Enoom[]
 }
 
-
 public final static class Enoom/Companion {
     inner class Enoom/Companion
     private method <init>(): void
 }
-
 
 public final class Klass {
     public final static field Companion: Klass.Companion
@@ -23,24 +21,20 @@ public final class Klass {
     public method <init>(): void
 }
 
-
 public final static class Klass/Companion {
     inner class Klass/Companion
     private method <init>(): void
 }
 
-
 public final class TestKt {
     public final static method box(): java.lang.String
 }
-
 
 public interface Trait {
     public final static field Companion: Trait.Companion
     public final static @org.jetbrains.annotations.NotNull field NAME: java.lang.String
     inner class Trait/Companion
 }
-
 
 public final static class Trait/Companion {
     public final static @org.jetbrains.annotations.NotNull field NAME: java.lang.String

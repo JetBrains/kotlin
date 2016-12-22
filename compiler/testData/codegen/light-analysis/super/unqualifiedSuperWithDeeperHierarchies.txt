@@ -2,7 +2,6 @@ public class DeepBase {
     public method <init>(): void
 }
 
-
 public final class DeepDerived {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method callsSuperDeepInterfaceFun(): java.lang.String
@@ -17,12 +16,10 @@ public final class DeepDerived {
     public final @org.jetbrains.annotations.NotNull method getsSuperDeeperInterfaceProp(): java.lang.String
 }
 
-
 public interface DeepInterface {
     inner class DeepInterface/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method deepInterfaceFun(): java.lang.String
 }
-
 
 public final class DeepInterface/DefaultImpls {
     inner class DeepInterface/DefaultImpls
@@ -31,13 +28,11 @@ public final class DeepInterface/DefaultImpls {
     public static @org.jetbrains.annotations.NotNull method getDeeperInterfaceProp(p0: DeepInterface): java.lang.String
 }
 
-
 public class DeeperBase {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method deeperBaseFun(): java.lang.String
     public @org.jetbrains.annotations.NotNull method getDeeperBaseProp(): java.lang.String
 }
-
 
 public interface DeeperInterface {
     inner class DeeperInterface/DefaultImpls
@@ -45,13 +40,11 @@ public interface DeeperInterface {
     public abstract @org.jetbrains.annotations.NotNull method getDeeperInterfaceProp(): java.lang.String
 }
 
-
 public final class DeeperInterface/DefaultImpls {
     inner class DeeperInterface/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method deeperInterfaceFun(p0: DeeperInterface): java.lang.String
     public static @org.jetbrains.annotations.NotNull method getDeeperInterfaceProp(p0: DeeperInterface): java.lang.String
 }
-
 
 public final class UnqualifiedSuperWithDeeperHierarchiesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

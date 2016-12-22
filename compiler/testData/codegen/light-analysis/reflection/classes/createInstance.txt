@@ -4,7 +4,6 @@ public final class CreateInstanceKt {
     private final static method testFail(): void
 }
 
-
 public final class DefaultPrimaryAndDefaultSecondary {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
@@ -15,13 +14,11 @@ public final class DefaultPrimaryAndDefaultSecondary {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class NoArgAndDefault {
     public method <init>(): void
     public method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
 }
-
 
 public final class NoNoArgConstructor {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
@@ -30,12 +27,10 @@ public final class NoNoArgConstructor {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class Object {
     public final static field INSTANCE: Object
     private method <init>(): void
 }
-
 
 public final class PrimaryWithDefaults {
     private final @org.jetbrains.annotations.NotNull field d1: java.lang.String
@@ -47,11 +42,9 @@ public final class PrimaryWithDefaults {
     public final method getD2(): int
 }
 
-
 public final class PrivateConstructor {
     private method <init>(): void
 }
-
 
 public final class Secondary {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
@@ -59,7 +52,6 @@ public final class Secondary {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
-
 
 public final class SecondaryWithDefaults {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
@@ -69,13 +61,11 @@ public final class SecondaryWithDefaults {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
 public final class SecondaryWithDefaultsNoPrimary {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public method <init>(p0: int): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
 }
-
 
 public final class SeveralDefaultSecondaries {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -85,7 +75,6 @@ public final class SeveralDefaultSecondaries {
     public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
 }
-
 
 public final class Simple {
     public method <init>(): void

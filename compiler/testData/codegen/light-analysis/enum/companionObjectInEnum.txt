@@ -2,7 +2,6 @@ public final class CompanionObjectInEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public enum class Game {
     public final static field Companion: Game.Companion
     public final static field PAPER: Game
@@ -16,7 +15,6 @@ public enum class Game {
     public static method valueOf(p0: java.lang.String): Game
     public static method values(): Game[]
 }
-
 
 public final static class Game/Companion {
     inner class Game/Companion

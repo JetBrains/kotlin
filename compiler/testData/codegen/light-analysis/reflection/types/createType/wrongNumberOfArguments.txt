@@ -4,19 +4,16 @@ public final class Outer {
     public method <init>(): void
 }
 
-
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     inner class Outer/Inner
     public method <init>(p0: Outer): void
 }
 
-
 public final static class Outer/Nested {
     inner class Outer/Nested
     public method <init>(): void
 }
-
 
 public final class WrongNumberOfArgumentsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -2,12 +2,10 @@ public final class BoxKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 synthetic final class a/MultifileClass__Part1Kt {
     private final static field ok: java.lang.String
     private final static method getOk$MultifileClass__Part1Kt(): java.lang.String
 }
-
 
 public final class a/OK {
     public final static field INSTANCE: a.OK

@@ -3,13 +3,11 @@ public final class Kt3863Kt {
     public final static @org.jetbrains.annotations.NotNull method notImplemented(): java.lang.Void
 }
 
-
 public final class NotImplemented {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: java.lang.Object): java.lang.Void
 }
-
 
 public final class Test {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]

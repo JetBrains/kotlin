@@ -7,12 +7,10 @@ public final class EmptyForKt {
     public final static method setIndex(p0: int): void
 }
 
-
 public interface IterableIterator {
     inner class IterableIterator/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
 }
-
 
 public final class IterableIterator/DefaultImpls {
     inner class IterableIterator/DefaultImpls

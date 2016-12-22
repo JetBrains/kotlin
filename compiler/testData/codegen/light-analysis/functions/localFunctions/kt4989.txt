@@ -4,7 +4,6 @@ public final class It {
     public final @org.jetbrains.annotations.NotNull method getId(): java.lang.String
 }
 
-
 public final class Kt4989Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

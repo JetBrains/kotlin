@@ -10,7 +10,6 @@ public final class A {
     public final method setAnyVar(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
 }
 
-
 public final class SimpleGetPropertiesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

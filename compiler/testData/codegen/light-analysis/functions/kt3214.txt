@@ -3,12 +3,10 @@ public final class A {
     public final method get(@org.jetbrains.annotations.NotNull p0: int[]): int
 }
 
-
 public final class B {
     public method <init>(): void
     public final method get(@org.jetbrains.annotations.NotNull p0: kotlin.Unit[]): int
 }
-
 
 public final class Kt3214Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

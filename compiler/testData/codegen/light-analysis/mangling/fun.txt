@@ -3,7 +3,6 @@ public final class test/FunKt {
     public final static method noMangling(): int
 }
 
-
 public final class test/Z {
     public method <init>(): void
     public final method mangled$test_module(): int

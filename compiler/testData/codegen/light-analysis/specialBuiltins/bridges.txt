@@ -3,19 +3,16 @@ public interface A0 {
     public abstract method getSize(): int
 }
 
-
 public final class A0/DefaultImpls {
     inner class A0/DefaultImpls
     public static method getSize(p0: A0): int
 }
-
 
 public class A1 {
     private final field size: int
     public method <init>(): void
     public final method getSize(): int
 }
-
 
 public final class B0 {
     public method <init>(): void
@@ -40,7 +37,6 @@ public final class B0 {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class B1 {
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): boolean
@@ -63,7 +59,6 @@ public final class B1 {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class B2 {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -79,7 +74,6 @@ public final class B2 {
     public method removeAt(p0: int): java.lang.String
     public final method size(): int
 }
-
 
 public final class B3 {
     public method <init>(): void
@@ -97,7 +91,6 @@ public final class B3 {
     public method removeAt(p0: int): java.lang.String
     public final method size(): int
 }
-
 
 public final class B4 {
     public method <init>(): void
@@ -123,7 +116,6 @@ public final class B4 {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class B5 {
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): boolean
@@ -147,41 +139,34 @@ public final class B5 {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class BridgesKt {
     private final static @org.jetbrains.annotations.NotNull field list: java.util.ArrayList
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getList(): java.util.ArrayList
 }
 
-
 public interface I2 {
     public abstract method getSize(): int
 }
 
-
 public interface I3 {
     public abstract method getSize(): java.lang.Object
 }
-
 
 public interface I4 {
     inner class I4/DefaultImpls
     public abstract method getSize(): java.lang.Object
 }
 
-
 public final class I4/DefaultImpls {
     inner class I4/DefaultImpls
     public static method getSize(p0: I4): java.lang.Object
 }
 
-
 public interface I5 {
     inner class I5/DefaultImpls
     public abstract method getSize(): int
 }
-
 
 public final class I5/DefaultImpls {
     inner class I5/DefaultImpls

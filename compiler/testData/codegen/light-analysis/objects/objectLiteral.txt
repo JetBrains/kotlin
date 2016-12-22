@@ -7,7 +7,6 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method initChild(p0: int): java.lang.Object
 }
 
-
 public final class ObjectLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

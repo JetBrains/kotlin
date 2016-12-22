@@ -4,11 +4,9 @@ public final class Bar {
     public final @org.jetbrains.annotations.NotNull method getName(): java.lang.String
 }
 
-
 public final class CopyInObjectNestedDataClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public abstract class Foo {
     public method <init>(): void

@@ -4,7 +4,6 @@ public final class A {
     public final method getX(): int
 }
 
-
 public final class SimpleMemberKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

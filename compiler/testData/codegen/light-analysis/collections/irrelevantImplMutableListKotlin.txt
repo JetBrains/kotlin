@@ -23,11 +23,9 @@ public abstract class AImpl {
     public final @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
 }
 
-
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class X {
     public method <init>(): void

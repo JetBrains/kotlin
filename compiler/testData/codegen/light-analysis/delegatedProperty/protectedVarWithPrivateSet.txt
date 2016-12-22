@@ -6,11 +6,9 @@ public class A {
     private final method setValue(p0: java.lang.Object): void
 }
 
-
 public final class B {
     public method <init>(): void
 }
-
 
 public final class ProtectedVarWithPrivateSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

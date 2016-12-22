@@ -5,17 +5,14 @@ public class A {
     public method <init>(): void
 }
 
-
 public class B {
     public method <init>(): void
 }
-
 
 public class C {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
-
 
 public final class SuperCall2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

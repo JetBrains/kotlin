@@ -5,11 +5,9 @@ public final class _1Kt {
 @java.lang.annotation.Retention
 public annotation class a/A
 
-
 public final class a/MultifileClass {
     public final static @org.jetbrains.annotations.NotNull field OK: java.lang.String
     private synthetic deprecated static @a.A method OK$annotations(): void
 }
-
 
 synthetic final class a/MultifileClass___2Kt

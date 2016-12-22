@@ -5,7 +5,6 @@ public final class KeySpan {
     public final method matches(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
 }
 
-
 public final class Kt3114Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

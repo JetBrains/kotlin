@@ -5,7 +5,6 @@ public final class C {
     public final method getX(): int
 }
 
-
 public final class CheckCastKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

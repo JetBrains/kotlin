@@ -3,7 +3,6 @@ public final class External {
     public final method external(): void
 }
 
-
 public final class FunctionsKt {
     private final static @org.jetbrains.annotations.NotNull field externalGetter: kotlin.Unit
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

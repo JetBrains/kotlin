@@ -3,7 +3,6 @@ public final class A {
     private final method foo(): java.lang.String
 }
 
-
 public final class PrivateMemberFunctionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

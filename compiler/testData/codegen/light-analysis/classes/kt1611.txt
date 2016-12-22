@@ -5,7 +5,6 @@ public final class Foo {
     public final @org.jetbrains.annotations.NotNull method getBar(): kotlin.jvm.functions.Function1
 }
 
-
 public final class Kt1611Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

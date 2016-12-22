@@ -7,7 +7,6 @@ public annotation class Ann {
     public abstract method p5(): int
 }
 
-
 public final class MaxValueIntKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

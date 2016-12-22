@@ -8,7 +8,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
 }
 
-
 public final class DefArgs2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

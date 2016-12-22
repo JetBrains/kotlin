@@ -2,37 +2,30 @@ public final class DefaultBound {
     public method <init>(): void
 }
 
-
 public final class FunctionTypeParameter {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.Cloneable
 }
 
-
 public final class NotNullAnyBound {
     public method <init>(): void
 }
-
 
 public final class NullableAnyBound {
     public method <init>(): void
 }
 
-
 public final class OtherParameterBound {
     public method <init>(): void
 }
-
 
 public final class RecursiveGeneric {
     public method <init>(): void
 }
 
-
 public final class TwoBounds {
     public method <init>(): void
 }
-
 
 public final class UpperBoundsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

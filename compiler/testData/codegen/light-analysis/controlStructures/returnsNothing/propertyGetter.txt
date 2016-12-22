@@ -5,7 +5,6 @@ public final class PropertyGetterKt {
     public final static method setFlag(p0: boolean): void
 }
 
-
 public final class Test {
     public final static field INSTANCE: Test
     private method <init>(): void

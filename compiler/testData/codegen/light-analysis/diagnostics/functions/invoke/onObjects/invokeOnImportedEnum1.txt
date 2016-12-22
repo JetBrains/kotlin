@@ -7,7 +7,6 @@ public enum class A {
     public static method values(): A[]
 }
 
-
 public final class InvokeOnImportedEnum1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

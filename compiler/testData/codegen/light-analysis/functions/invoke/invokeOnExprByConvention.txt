@@ -4,7 +4,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method invoke(p0: int): java.lang.String
 }
 
-
 public final class InvokeOnExprByConventionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(): A

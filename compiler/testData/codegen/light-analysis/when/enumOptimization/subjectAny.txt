@@ -8,7 +8,6 @@ public enum class Season {
     public static method values(): Season[]
 }
 
-
 public final class SubjectAnyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String

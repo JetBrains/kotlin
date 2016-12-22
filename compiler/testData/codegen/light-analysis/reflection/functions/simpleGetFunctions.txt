@@ -4,11 +4,9 @@ public class A {
     public final method memExt(p0: int): void
 }
 
-
 public final class B {
     public method <init>(): void
 }
-
 
 public final class SimpleGetFunctionsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

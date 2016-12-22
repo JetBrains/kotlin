@@ -5,13 +5,11 @@ public final class C {
     public method <init>(): void
 }
 
-
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
     private final method create(): C
 }
-
 
 public final static class C/ZZZ {
     private final @org.jetbrains.annotations.NotNull field c: C
@@ -19,7 +17,6 @@ public final static class C/ZZZ {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getC(): C
 }
-
 
 public final class ClassObjectWithPrivateGenericMemberKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

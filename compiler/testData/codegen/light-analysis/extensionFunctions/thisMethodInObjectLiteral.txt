@@ -4,7 +4,6 @@ public final class Test {
     private final method self(@org.jetbrains.annotations.NotNull p0: java.lang.Object): Test$self$1
 }
 
-
 public final class ThisMethodInObjectLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

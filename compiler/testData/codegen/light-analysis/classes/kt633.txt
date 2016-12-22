@@ -2,7 +2,6 @@ public final class Kt633Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class MyArray {
     private final @org.jetbrains.annotations.NotNull field a: mInt[]
     public method <init>(): void
@@ -10,7 +9,6 @@ public final class MyArray {
     public final @org.jetbrains.annotations.NotNull method getA(): mInt[]
     public final method set(@org.jetbrains.annotations.NotNull p0: mInt, @org.jetbrains.annotations.NotNull p1: mInt): void
 }
-
 
 public final class mInt {
     private final field i: int

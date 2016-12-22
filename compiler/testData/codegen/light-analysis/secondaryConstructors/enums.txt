@@ -18,13 +18,11 @@ public enum class A1 {
     public static method values(): A1[]
 }
 
-
 final static class A1/Y {
     inner class A1/Y
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
-
 
 public enum class A2 {
     public final static field X: A2
@@ -46,13 +44,11 @@ public enum class A2 {
     public static method values(): A2[]
 }
 
-
 final static class A2/Y {
     inner class A2/Y
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
-
 
 public final class EnumsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

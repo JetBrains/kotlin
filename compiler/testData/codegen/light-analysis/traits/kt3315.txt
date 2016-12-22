@@ -4,18 +4,15 @@ public final class A {
     public synthetic method foo(p0: java.lang.Object): java.lang.Object
 }
 
-
 public interface B {
     inner class B/DefaultImpls
     public abstract method foo(p0: java.lang.Object): java.lang.Object
 }
 
-
 public final class B/DefaultImpls {
     inner class B/DefaultImpls
     public static method foo(p0: B, p1: java.lang.Object): java.lang.Object
 }
-
 
 public final class Kt3315Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

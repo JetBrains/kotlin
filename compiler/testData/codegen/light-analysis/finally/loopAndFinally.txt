@@ -5,7 +5,6 @@ public final class LoopAndFinallyKt {
     public final static @org.jetbrains.annotations.NotNull method test3(): MyString
 }
 
-
 public final class MyString {
     private @org.jetbrains.annotations.NotNull field s: java.lang.String
     public method <init>(): void

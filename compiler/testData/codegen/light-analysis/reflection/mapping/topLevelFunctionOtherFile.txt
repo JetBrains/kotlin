@@ -3,7 +3,6 @@ public final class MainKt {
     public final static method test1(): void
 }
 
-
 public final class TestKt {
     public final static method test2(): void
 }

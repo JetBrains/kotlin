@@ -6,7 +6,6 @@ public final class C {
     public final method getI(): int
 }
 
-
 public final class MultiDeclForKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method doTest(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList): java.lang.String

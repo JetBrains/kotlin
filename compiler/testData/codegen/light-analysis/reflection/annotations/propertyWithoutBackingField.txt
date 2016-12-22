@@ -3,7 +3,6 @@ public annotation class Ann {
     public abstract method value(): java.lang.String
 }
 
-
 public final class PropertyWithoutBackingFieldKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String

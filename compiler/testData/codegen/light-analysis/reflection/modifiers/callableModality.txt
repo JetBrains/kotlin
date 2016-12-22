@@ -8,18 +8,15 @@ public abstract class AbstractClass {
     public abstract method setAbstractVar(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): void
 }
 
-
 public final class CallableModalityKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public interface Interface {
     inner class Interface/DefaultImpls
     public abstract method abstractFun(): void
     public abstract method openFun(): void
 }
-
 
 public final class Interface/DefaultImpls {
     inner class Interface/DefaultImpls

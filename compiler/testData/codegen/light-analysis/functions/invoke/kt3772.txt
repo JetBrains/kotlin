@@ -3,22 +3,18 @@ public class A {
     public final method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): int
 }
 
-
 public final class B {
     public method <init>(): void
     public final method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): int
 }
 
-
 public class C {
     public method <init>(): void
 }
 
-
 public class D {
     public method <init>(): void
 }
-
 
 public final class Kt3772Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

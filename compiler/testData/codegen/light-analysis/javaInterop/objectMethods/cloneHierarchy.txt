@@ -4,7 +4,6 @@ public class A {
     public synthetic method clone(): java.lang.Object
 }
 
-
 public class B {
     private @org.jetbrains.annotations.NotNull field s: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -14,7 +13,6 @@ public class B {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public final method setS(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public class C {
     private @org.jetbrains.annotations.NotNull field l: java.util.ArrayList
@@ -26,7 +24,6 @@ public class C {
     public final @org.jetbrains.annotations.NotNull method getL(): java.util.ArrayList
     public final method setL(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList): void
 }
-
 
 public final class CloneHierarchyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

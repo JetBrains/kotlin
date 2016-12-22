@@ -6,7 +6,6 @@ public final class P {
     public final @org.jetbrains.annotations.NotNull method getExpected(): java.lang.String
 }
 
-
 public final class RawStringsWithManyQuotesKt {
     public final static @org.jetbrains.annotations.NotNull method array(@org.jetbrains.annotations.NotNull p0: P[]): P[]
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

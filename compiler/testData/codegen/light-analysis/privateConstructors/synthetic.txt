@@ -3,14 +3,12 @@ public final class PrivateConstructor {
     private method <init>(): void
 }
 
-
 public final static class PrivateConstructor/Nested {
     private final @org.jetbrains.annotations.NotNull field a: PrivateConstructor
     inner class PrivateConstructor/Nested
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getA(): PrivateConstructor
 }
-
 
 public final class SyntheticKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

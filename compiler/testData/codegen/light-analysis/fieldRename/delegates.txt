@@ -2,11 +2,9 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final class B {
     public method <init>(): void
 }
-
 
 public final class DelegatesKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
@@ -16,7 +14,6 @@ public final class DelegatesKt {
     public final static @org.jetbrains.annotations.NotNull method getS(@org.jetbrains.annotations.NotNull p0: A): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getS(@org.jetbrains.annotations.NotNull p0: B): java.lang.String
 }
-
 
 public class TestDelegate {
     private final field initializer: kotlin.jvm.functions.Function0

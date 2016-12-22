@@ -3,11 +3,9 @@ public abstract class A {
     public abstract method remove(): void
 }
 
-
 public final class AbstractMemberKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class B {
     private @org.jetbrains.annotations.NotNull field result: java.lang.String

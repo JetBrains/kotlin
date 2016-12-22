@@ -3,7 +3,6 @@ public final class foo/Delegate {
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
 }
 
-
 public final class foo/LocalValNoExplicitTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

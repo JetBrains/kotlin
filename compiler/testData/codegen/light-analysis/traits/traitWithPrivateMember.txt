@@ -2,13 +2,11 @@ public final class TraitWithPrivateMemberKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public interface Z {
     inner class Z/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method testFun(): java.lang.String
     public abstract @org.jetbrains.annotations.NotNull method testProperty(): java.lang.String
 }
-
 
 public final class Z/DefaultImpls {
     inner class Z/DefaultImpls
@@ -17,7 +15,6 @@ public final class Z/DefaultImpls {
     public static @org.jetbrains.annotations.NotNull method testFun(p0: Z): java.lang.String
     public static @org.jetbrains.annotations.NotNull method testProperty(p0: Z): java.lang.String
 }
-
 
 public final class Z2 {
     public final static field INSTANCE: Z2

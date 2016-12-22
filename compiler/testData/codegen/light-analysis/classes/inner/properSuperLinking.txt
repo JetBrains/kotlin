@@ -8,14 +8,12 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 
-
 public class A/B {
     synthetic final field this$0: A
     inner class A/B
     public method <init>(@java.lang.Synthetic p0: A, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method testB(): java.lang.String
 }
-
 
 public final class ProperSuperLinkingKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

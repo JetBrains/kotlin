@@ -2,7 +2,6 @@ public final class anotherPackage/FirstKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class anotherPackage/Second {
     private final @org.jetbrains.annotations.NotNull field some2: kotlin.jvm.functions.Function0
     private final @org.jetbrains.annotations.NotNull field some: kotlin.jvm.functions.Function0

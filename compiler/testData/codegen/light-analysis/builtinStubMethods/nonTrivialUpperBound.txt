@@ -7,7 +7,6 @@ public final class MyIterator {
     public method remove(): void
 }
 
-
 public final class NonTrivialUpperBoundKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

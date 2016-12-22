@@ -5,7 +5,6 @@ public final class M {
     public final @org.jetbrains.annotations.NotNull method doTest(@org.jetbrains.annotations.NotNull p0: java.lang.Long[]): java.lang.String
 }
 
-
 public final class MultiDeclForComponentMemberExtensionsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

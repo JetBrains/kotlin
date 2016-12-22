@@ -3,23 +3,19 @@ public interface A {
     public abstract @org.jetbrains.annotations.Nullable method foo(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.Number): java.lang.Object
 }
 
-
 public final class A/DefaultImpls {
     inner class A/DefaultImpls
     public static @org.jetbrains.annotations.Nullable method foo(p0: A, @org.jetbrains.annotations.NotNull p1: java.lang.Object, p2: java.lang.Number): java.lang.Object
 }
 
-
 public interface B {
     inner class B/DefaultImpls
 }
-
 
 public final class B/DefaultImpls {
     inner class B/DefaultImpls
     public static @org.jetbrains.annotations.Nullable method foo(p0: B, p1: java.lang.Object, p2: int): java.lang.Object
 }
-
 
 public final class C {
     public method <init>(): void
@@ -28,11 +24,9 @@ public final class C {
     public synthetic method foo(p0: java.lang.Object, p1: java.lang.Number): java.lang.Object
 }
 
-
 public interface Runnable {
     public abstract method run(): void
 }
-
 
 public final class TraitImplGenericDelegationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

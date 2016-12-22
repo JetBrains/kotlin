@@ -7,7 +7,6 @@ public annotation class A2 {
     public abstract method s(): A1
 }
 
-
 public final class AnnotationClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

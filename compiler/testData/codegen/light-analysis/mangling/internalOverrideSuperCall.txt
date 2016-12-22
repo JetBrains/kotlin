@@ -5,11 +5,9 @@ public class A {
     public @org.jetbrains.annotations.NotNull method test$test_module(): java.lang.String
 }
 
-
 public final class InternalOverrideSuperCallKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
-
 
 public final class Z {
     private final @org.jetbrains.annotations.NotNull field field: java.lang.String

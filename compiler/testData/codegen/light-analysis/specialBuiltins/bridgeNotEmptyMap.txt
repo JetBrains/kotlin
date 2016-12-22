@@ -2,7 +2,6 @@ public final class BridgeNotEmptyMapKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 final class NotEmptyMap {
     public final static field INSTANCE: NotEmptyMap
     private method <init>(): void

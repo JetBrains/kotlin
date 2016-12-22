@@ -7,13 +7,11 @@ public abstract class ClassValAbstract {
     public abstract method setA(p0: int): void
 }
 
-
 public final static class ClassValAbstract/Companion {
     inner class ClassValAbstract/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getMethods(): java.lang.reflect.Method[]
 }
-
 
 public final class Kt1482_2279Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

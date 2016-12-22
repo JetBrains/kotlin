@@ -7,7 +7,6 @@ public final class Kt1291Kt {
     public final static method setResult(p0: int): void
 }
 
-
 public final class Selector {
     private final @org.jetbrains.annotations.NotNull field f: kotlin.jvm.functions.Function1
     private final @org.jetbrains.annotations.NotNull field source: java.util.Iterator

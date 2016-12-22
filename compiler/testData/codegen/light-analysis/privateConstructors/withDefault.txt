@@ -7,18 +7,15 @@ public class Outer {
     public final method getX(): int
 }
 
-
 public final static class Outer/Inner {
     inner class Outer/Inner
     public method <init>(): void
 }
 
-
 public final static class Outer/Other {
     inner class Outer/Other
     public method <init>(): void
 }
-
 
 public final class WithDefaultKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -14,7 +14,6 @@ public class As/A {
     public final method setBackingField(p0: int): void
 }
 
-
 public class As/B {
     private final @org.jetbrains.annotations.NotNull field property: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -22,7 +21,6 @@ public class As/B {
     public @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getWithBackingFieldProperty(): java.lang.String
 }
-
 
 public final class As/GeneralAccessKt {
     private final static @org.jetbrains.annotations.NotNull field staticProperty: java.lang.String

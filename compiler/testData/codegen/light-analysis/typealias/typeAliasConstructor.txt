@@ -4,7 +4,6 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
 }
 
-
 public final class TypeAliasConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

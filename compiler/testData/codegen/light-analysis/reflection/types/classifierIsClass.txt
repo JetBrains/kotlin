@@ -6,20 +6,17 @@ public final class ClassifierIsClassKt {
     public final static @org.jetbrains.annotations.NotNull method outer(): Outer
 }
 
-
 public final class Outer {
     inner class Outer/Inner
     inner class Outer/Nested
     public method <init>(): void
 }
 
-
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     inner class Outer/Inner
     public method <init>(p0: Outer): void
 }
-
 
 public final static class Outer/Nested {
     inner class Outer/Nested

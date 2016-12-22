@@ -2,12 +2,10 @@ public interface A {
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public final class B {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final class C {
     private synthetic final field $$delegate_0: B
@@ -15,7 +13,6 @@ public final class C {
     public method <init>(p0: int): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final class DelegationWithPrimaryKt {
     private final static @org.jetbrains.annotations.NotNull field global: B

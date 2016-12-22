@@ -2,7 +2,6 @@ public final class CallbackBlock {
     public method <init>(): void
 }
 
-
 public final class Foo {
     public final static field Companion: Foo.Companion
     private static field bar: int
@@ -11,14 +10,12 @@ public final class Foo {
     public final method getBar(): int
 }
 
-
 public final static class Foo/Companion {
     inner class Foo/Companion
     private method <init>(): void
     private final method getBar(): int
     private final method setBar(p0: int): void
 }
-
 
 public final class Kt4252Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

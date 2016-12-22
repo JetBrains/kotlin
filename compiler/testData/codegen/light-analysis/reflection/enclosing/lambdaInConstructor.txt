@@ -4,7 +4,6 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method getL(): java.lang.Object
 }
 
-
 public final class LambdaInConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

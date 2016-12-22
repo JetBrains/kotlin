@@ -3,7 +3,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method bar(): java.lang.String
 }
 
-
 public final class SimpleNamesKt {
     public final static method baz(p0: int): int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

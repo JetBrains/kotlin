@@ -6,14 +6,12 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getMyStr(): java.lang.String
 }
 
-
 private final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
     private final method getStr(): java.lang.String
     private final method setStr(p0: java.lang.String): void
 }
-
 
 public final class AccessorExceptionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

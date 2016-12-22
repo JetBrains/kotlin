@@ -4,17 +4,14 @@ public class A {
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
-
 public class B {
     public method <init>(): void
 }
-
 
 public class C {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
-
 
 public final class ImplicitToGrandSonKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

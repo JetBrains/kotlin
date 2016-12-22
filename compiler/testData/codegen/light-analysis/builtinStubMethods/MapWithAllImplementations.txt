@@ -2,7 +2,6 @@ public final class MapWithAllImplementationsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class MyMap {
     public method <init>(): void
     public final method clear(): void

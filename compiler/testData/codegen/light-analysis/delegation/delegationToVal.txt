@@ -7,16 +7,13 @@ public final class CActing {
     public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
 }
 
-
 public final class DelegationToValKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public interface IActing {
     public abstract @org.jetbrains.annotations.NotNull method act(): java.lang.String
 }
-
 
 public final class Test {
     private final @org.jetbrains.annotations.NotNull field acting: CActing
@@ -27,7 +24,6 @@ public final class Test {
     public final @org.jetbrains.annotations.NotNull method getActing(): CActing
 }
 
-
 public class Test2 {
     private final @org.jetbrains.annotations.NotNull field acting: CActing
     public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
@@ -36,7 +32,6 @@ public class Test2 {
     public @org.jetbrains.annotations.NotNull method act(): java.lang.String
     public @org.jetbrains.annotations.NotNull method getActing(): CActing
 }
-
 
 public final class Test3 {
     private final @org.jetbrains.annotations.NotNull field acting: CActing

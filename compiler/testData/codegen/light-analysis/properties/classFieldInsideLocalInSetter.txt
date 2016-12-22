@@ -2,7 +2,6 @@ public final class ClassFieldInsideLocalInSetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
 public final class My {
     private @org.jetbrains.annotations.NotNull field my: java.lang.String
     public method <init>(): void

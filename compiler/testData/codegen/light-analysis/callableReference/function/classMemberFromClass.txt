@@ -4,7 +4,6 @@ public final class A {
     public final method result(): int
 }
 
-
 public final class ClassMemberFromClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

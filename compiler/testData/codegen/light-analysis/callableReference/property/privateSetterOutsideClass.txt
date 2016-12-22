@@ -5,12 +5,10 @@ public class Bar {
     private final method setFoo(p0: java.lang.String): void
 }
 
-
 public final class Baz {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method ref(): kotlin.reflect.KProperty1
 }
-
 
 public final class PrivateSetterOutsideClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

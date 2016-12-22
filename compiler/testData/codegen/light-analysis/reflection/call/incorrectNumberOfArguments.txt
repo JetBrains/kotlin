@@ -6,7 +6,6 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getBar(): kotlin.reflect.KMutableProperty1
 }
 
-
 public final class IncorrectNumberOfArgumentsKt {
     private static @org.jetbrains.annotations.NotNull field foo: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -14,7 +13,6 @@ public final class IncorrectNumberOfArgumentsKt {
     public final static @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
     public final static method setFoo(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
-
 
 public final class O {
     public final static field INSTANCE: O

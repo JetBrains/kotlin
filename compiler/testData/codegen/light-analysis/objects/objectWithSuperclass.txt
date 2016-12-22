@@ -3,13 +3,11 @@ public class A {
     public method foo(): int
 }
 
-
 public final class O {
     public final static field INSTANCE: O
     private method <init>(): void
     public method foo(): int
 }
-
 
 public final class ObjectWithSuperclassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

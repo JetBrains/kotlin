@@ -18,7 +18,6 @@ public final class MySet {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

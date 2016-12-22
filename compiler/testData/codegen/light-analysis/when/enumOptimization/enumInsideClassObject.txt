@@ -4,13 +4,11 @@ public final class A {
     public method <init>(): void
 }
 
-
 public final static class A/Companion {
     inner class A/Companion
     inner class A/Companion/Season
     private method <init>(): void
 }
-
 
 public static enum class A/Companion/Season {
     public final static field AUTUMN: A.Companion.Season
@@ -23,7 +21,6 @@ public static enum class A/Companion/Season {
     public static method valueOf(p0: java.lang.String): A.Companion.Season
     public static method values(): A.Companion.Season[]
 }
-
 
 public final class EnumInsideClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
