@@ -2,26 +2,26 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.Context
 
-class KonanPhase (val description: String, 
-    var enabled: Boolean = true, var verbose: Boolean = false) {
+enum class KonanPhase(val description: String,
+                      var enabled: Boolean = true, var verbose: Boolean = false) {
+
+    BACKEND("All backend"), // TODO: it is unused
+    OPTIMIZER("IR Optimizer"),
+    LOWER_BUILTIN_OPERATORS("BuiltIn Operators Lowering"),
+    LOWER_SHARED_VARIABLES("Shared Variable Lowering"),
+    LOWER_LOCAL_FUNCTIONS("Local Function Lowering"),
+    LOWER_CALLABLES("Callable references Lowering"),
+    AUTOBOX("Autoboxing of primitive types"),
+    LOWER("IR Lowering"), // TODO: it is unused
+    BITCODE("LLVM BitCode Generation"),
+    RTTI("RTTI Generation"),
+    CODEGEN("Code Generation"),
+    METADATOR("Metadata Generation"),
+    LINKER("Link Stage");
 }
 
 object KonanPhases {
-    val phases = mapOf<String, KonanPhase> (
-        "Backend" to KonanPhase("All backend"),
-        "Optimizer" to KonanPhase("IR Optimizer"),
-        "Lower_builtin_operators" to KonanPhase("BuiltIn Operators Lowering"),
-        "Lower_shared_variables" to KonanPhase("Shared Variable Lowering"),
-        "Lower_local_functions" to KonanPhase("Local Function Lowering"),
-        "Lower_callables" to KonanPhase("Callable references Lowering"),
-        "Autobox" to KonanPhase("Autoboxing of primitive types"),
-        "Lower" to KonanPhase("IR Lowering"),
-        "Bitcode" to KonanPhase("LLVM BitCode Generation"),
-        "RTTI" to KonanPhase("RTTI Generation"),
-        "Codegen" to KonanPhase("Code Generation"),
-        "Metadator" to KonanPhase("Metadata Generation"),
-        "Linker" to KonanPhase("Link Stage")
-    )
+    val phases = KonanPhase.values().associate { it.name to it }
 
     fun config(config: KonanConfig) {
         val disabled = config.configuration.get(KonanConfigKeys.DISABLED_PHASES)
@@ -46,10 +46,8 @@ object KonanPhases {
 
 internal class PhaseManager(val context: Context)  {
 
-    internal fun phase(shortName: String, body: () -> Unit) {
+    internal fun phase(phase: KonanPhase, body: () -> Unit) {
 
-        val phase = KonanPhases.phases[shortName]
-        if (phase == null) throw Error("Unknown backend phase: $shortName")
         if (!phase .enabled) return
 
         val savePhase = context.phase

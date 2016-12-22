@@ -17,20 +17,20 @@ internal class KonanLower(val context: Context) {
     fun lower(irFile: IrFile) {
         val phaser = PhaseManager(context)
 
-        phaser.phase("Lower_builtin_operators") {
+        phaser.phase(KonanPhase.LOWER_BUILTIN_OPERATORS) {
             BuiltinOperatorLowering(context).runOnFilePostfix(irFile)
         }
 
-        phaser.phase("Lower_shared_variables") {
+        phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }
-        phaser.phase("Lower_local_functions") {
+        phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
             LocalFunctionsLowering(context).runOnFilePostfix(irFile)
         }
-        phaser.phase("Lower_callables") {
+        phaser.phase(KonanPhase.LOWER_CALLABLES) {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)
         }
-        phaser.phase("Autobox") {
+        phaser.phase(KonanPhase.AUTOBOX) {
             Autoboxing(context).lower(irFile)
         }
     }

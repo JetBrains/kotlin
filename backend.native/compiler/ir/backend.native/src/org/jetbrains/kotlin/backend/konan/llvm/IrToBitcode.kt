@@ -39,15 +39,15 @@ internal fun emitLLVM(context: Context) {
 
         val phaser = PhaseManager(context)
 
-        phaser.phase("RTTI") {
+        phaser.phase(KonanPhase.RTTI) {
             irModule.acceptVoid(RTTIGeneratorVisitor(context))
         }
 
-        phaser.phase("Codegen") {
+        phaser.phase(KonanPhase.CODEGEN) {
             irModule.acceptVoid(CodeGeneratorVisitor(context))
         }
 
-        phaser.phase("Metadator") {
+        phaser.phase(KonanPhase.METADATOR) {
             irModule.acceptVoid(MetadatorVisitor(context))
         }
 

@@ -60,15 +60,15 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
     context.irModule = module
     val phaser = PhaseManager(context)
 
-    phaser.phase("Optimizer") {
+    phaser.phase(KonanPhase.OPTIMIZER) {
         KonanLower(context).lower(module)
     }
 
-    phaser.phase("Bitcode") {
+    phaser.phase(KonanPhase.BITCODE) {
         emitLLVM(context)
     }
 
-    phaser.phase("Linker") {
+    phaser.phase(KonanPhase.LINKER) {
         //TODO: We don't have it yet.
         // invokeLinker()
     }
