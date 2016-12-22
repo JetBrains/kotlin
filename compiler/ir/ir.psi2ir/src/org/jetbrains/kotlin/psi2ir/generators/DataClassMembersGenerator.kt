@@ -103,7 +103,7 @@ class DataClassMembersGenerator(
 
     override fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
-            val result = defineTemporary(irInt(0), "result")
+            val result = defineTemporaryVar(irInt(0), "result")
             var first = true
             for (property in properties) {
                 val hashCodeOfProperty = getHashCodeOfProperty(irThis(), property)

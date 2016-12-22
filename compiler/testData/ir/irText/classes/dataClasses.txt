@@ -72,7 +72,7 @@ FILE /dataClasses.kt
             CONST String type=kotlin.String value=')'
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
       BLOCK_BODY
-        VAR IR_TEMPORARY_VARIABLE val tmp0_result: kotlin.Int
+        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
           CONST Int type=kotlin.Int value='0'
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           CALL 'hashCode(): Int' type=kotlin.Int origin=null

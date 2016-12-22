@@ -29,7 +29,8 @@ interface IrTemporaryVariableDescriptor : VariableDescriptor
 class IrTemporaryVariableDescriptorImpl(
         containingDeclaration: DeclarationDescriptor,
         name: Name,
-        outType: KotlinType
+        outType: KotlinType,
+        private val isMutable: Boolean = false
 ): VariableDescriptorImpl(containingDeclaration, Annotations.EMPTY, name, outType, SourceElement.NO_SOURCE),
         IrTemporaryVariableDescriptor
 {
@@ -41,7 +42,7 @@ class IrTemporaryVariableDescriptorImpl(
         throw UnsupportedOperationException("Temporary variable descriptor shouldn't be substituted (so far): $this")
     }
 
-    override fun isVar(): Boolean = false
+    override fun isVar(): Boolean = isMutable
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
             visitor.visitVariableDescriptor(this, data)

@@ -48,6 +48,12 @@ fun <T : IrElement> IrStatementsBuilder<T>.defineTemporary(value: IrExpression, 
     return temporary.descriptor
 }
 
+fun <T : IrElement> IrStatementsBuilder<T>.defineTemporaryVar(value: IrExpression, nameHint: String? = null): VariableDescriptor {
+    val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true)
+    +temporary
+    return temporary.descriptor
+}
+
 fun IrBuilderWithScope.irReturn(value: IrExpression) =
         IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, scope.assertCastOwner(), value)
 
