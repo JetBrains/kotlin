@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.jvm.accessible
+import kotlin.reflect.jvm.isAccessible
 
 class Result {
     public val value: String = "OK"
@@ -11,7 +11,7 @@ class Result {
 
 fun box(): String {
     val p = Result::value
-    p.accessible = false
+    p.isAccessible = false
     // setAccessible(false) should have no effect on the accessibility of a public reflection object
     return p.get(Result())
 }

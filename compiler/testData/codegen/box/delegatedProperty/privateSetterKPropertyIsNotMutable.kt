@@ -19,7 +19,7 @@ object Delegate {
             // OK
         }
 
-        property.accessible = true
+        property.isAccessible = true
         property.set(thiz, "")
 
         return "OK"
