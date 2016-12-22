@@ -1192,7 +1192,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(expression, leftType));
         }
-        else if (KtPsiUtil.isNullConstant(right)) {
+        else if (KtPsiUtil.isNullConstant(right) && leftType != null && !FlexibleTypesKt.isNullabilityFlexible(leftType)) {
             context.trace.report(USELESS_ELVIS_RIGHT_IS_NULL.on(expression));
         }
         KotlinTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
