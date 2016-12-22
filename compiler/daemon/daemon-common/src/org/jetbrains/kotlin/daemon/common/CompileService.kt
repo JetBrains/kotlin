@@ -122,4 +122,14 @@ interface CompileService : Remote {
             serviceOutputStream: RemoteOutputStream,
             operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun serverSideJvmIC(
+            sessionId: Int,
+            args: Array<out String>,
+            servicesFacade: IncrementalCompilationServicesFacade,
+            compilerOutputStream: RemoteOutputStream,
+            serviceOutputStream: RemoteOutputStream,
+            operationsTracer: RemoteOperationsTracer?
+    ): CallResult<Int>
 }

@@ -22,16 +22,22 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
+import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.incremental.makeModuleFile
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
+import java.io.*
+import java.rmi.server.UnicastRemoteObject
 import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
@@ -58,11 +64,13 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             environment: GradleCompilerEnvironment
     ): ExitCode {
         val outputDir = args.destinationAsFile
-        log.debug("Removing all kotlin classes in $outputDir")
         log.info("Using kotlin compiler jar: ${environment.compilerJar}")
 
-        // we're free to delete all classes since only we know about that directory
-        outputDir.deleteRecursively()
+        if (environment !is GradleIncrementalCompilerEnvironment) {
+            log.debug("Removing all kotlin classes in $outputDir")
+            // we're free to delete all classes since only we know about that directory
+            outputDir.deleteRecursively()
+        }
 
         val moduleFile = makeModuleFile(
                 args.moduleName,
@@ -121,10 +129,39 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         }
     }
 
-    override fun compileWithDaemon(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment, retryOnConnectionError: Boolean): ExitCode? {
-        val exitCode = super.compileWithDaemon(compilerClassName, argsArray, environment, retryOnConnectionError)
+    override fun compileWithDaemon(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment): ExitCode? {
+        val exitCode = if (environment is GradleIncrementalCompilerEnvironment) {
+            performIncrementalCompilationWithDaemon(argsArray, environment)
+        }
+        else {
+            super.compileWithDaemon(compilerClassName, argsArray, environment)
+        }
         exitCode?.let {
             logFinish(DAEMON_EXECUTION_STRATEGY)
+        }
+        return exitCode
+    }
+
+    private fun performIncrementalCompilationWithDaemon(argsArray: Array<String>, environment: GradleIncrementalCompilerEnvironment): ExitCode? {
+        val port = SOCKET_ANY_FREE_PORT
+        val services = IncrementalCompilationFacadeImpl(environment, port)
+        val compilerOut = ByteArrayOutputStream()
+        val daemonOut = ByteArrayOutputStream()
+
+        val res = withDaemon(environment) { daemon, sessionId ->
+            val remoteCompilerOut = RemoteOutputStreamServer(compilerOut, port)
+            val remoteDaemonOut = RemoteOutputStreamServer(daemonOut, port)
+            daemon.serverSideJvmIC(sessionId, argsArray, services, remoteCompilerOut, remoteDaemonOut, null)
+        }
+
+        val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
+        if (exitCode == null) {
+            log.warn("Could not perform incremental compilation with Kotlin compile daemon, " +
+                    "non-incremental compilation in fallback mode will be performed")
+        }
+        processCompilerOutput(environment, compilerOut, exitCode)
+        BufferedReader(StringReader(daemonOut.toString())).forEachLine {
+            environment.messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
         }
         return exitCode
     }

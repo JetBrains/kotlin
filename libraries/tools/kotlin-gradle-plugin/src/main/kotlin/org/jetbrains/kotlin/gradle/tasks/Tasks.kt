@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
@@ -183,36 +180,27 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.classpathAsList = compileClasspath.toList()
         args.destinationAsFile = destinationDir
         val outputItemCollector = OutputItemsCollectorImpl()
+        val compilerRunner = GradleCompilerRunner(project)
 
-        if (!incremental) {
-            anyClassesCompiled = true
-            val compilerRunner = GradleCompilerRunner(project)
-            val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
-            val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
-            processCompilerExitCode(exitCode)
-            return
+        val environment = when {
+            !incremental -> GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
+            else -> {
+                logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
+                val reporter = GradleICReporter(project.rootProject.projectDir)
+                GradleIncrementalCompilerEnvironment(compilerJar, changedFiles, reporter, taskBuildDirectory,
+                        messageCollector, outputItemCollector, kaptAnnotationsFileUpdater)
+            }
         }
 
-        logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
-        val reporter = GradleICReporter(project.rootProject.projectDir)
-        val compiler = IncrementalJvmCompilerRunner(
-                taskBuildDirectory,
-                sourceRoots.javaSourceRoots,
-                cacheVersions,
-                reporter,
-                kaptAnnotationsFileUpdater,
-                artifactDifferenceRegistryProvider,
-                artifactFile
-        )
         try {
-            val exitCode = compiler.compile(sourceRoots.kotlinSourceFiles, args, messageCollector, { changedFiles })
+            val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
             processCompilerExitCode(exitCode)
         }
         catch (e: Throwable) {
             cleanupOnError()
             throw e
         }
-        anyClassesCompiled = compiler.anyClassesCompiled
+        anyClassesCompiled = true
     }
 
     private fun cleanupOnError() {
