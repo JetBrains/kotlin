@@ -108,8 +108,8 @@ class ClasspathBasedKapt3Extension(
 }
 
 abstract class AbstractKapt3Extension(
-        val compileClasspath: List<File>,
-        val annotationProcessingClasspath: List<File>,
+        compileClasspath: List<File>,
+        annotationProcessingClasspath: List<File>,
         val javaSourceRoots: List<File>,
         val sourcesOutputDir: File,
         val classFilesOutputDir: File,
@@ -118,6 +118,9 @@ abstract class AbstractKapt3Extension(
         val pluginInitializedTime: Long,
         val logger: KaptLogger
 ) : PartialAnalysisHandlerExtension() {
+    val compileClasspath = compileClasspath.distinct()
+    val annotationProcessingClasspath = annotationProcessingClasspath.distinct()
+
     private var annotationProcessingComplete = false
 
     private fun setAnnotationProcessingComplete(): Boolean {
