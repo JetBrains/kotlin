@@ -80,7 +80,7 @@ class ClangFlags {
         if (platform.isLinux()) {
             linkCppAbi= ["-Wl,-Bstatic", "-lc++abi", "-Wl,-Bdynamic"]
             linkPlatform= ["-ldl", "-lpthread", "-lm", "-rdynamic"]
-            optArgs = ["-O3"]
+            optArgs = ["-O3", "-fuse-ld=gold", "-flto", "-ffunction-sections", "-Wl,--gc-sections"]
         } else if (platform.isMac()) {
             // Life is hard. MacOS linker is harder.
             // This is how we force the linker to link statically.
