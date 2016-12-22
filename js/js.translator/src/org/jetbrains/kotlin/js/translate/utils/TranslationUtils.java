@@ -38,10 +38,8 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
