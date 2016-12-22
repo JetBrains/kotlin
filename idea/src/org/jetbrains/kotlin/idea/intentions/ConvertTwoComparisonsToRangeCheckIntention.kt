@@ -20,12 +20,17 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
+
+class ConvertTwoComparisonsToRangeCheckInspection : IntentionBasedInspection<KtBinaryExpression>(
+        ConvertTwoComparisonsToRangeCheckIntention::class
+)
 
 class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
         KtBinaryExpression::class.java,
