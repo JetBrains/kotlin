@@ -29,7 +29,6 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.util.*
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
-import kotlin.reflect.KotlinReflectionInternalError
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     abstract inner class Data {

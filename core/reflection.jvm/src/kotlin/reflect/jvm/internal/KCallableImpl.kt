@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.javaType
 
 internal abstract class KCallableImpl<out R> : KCallable<R> {

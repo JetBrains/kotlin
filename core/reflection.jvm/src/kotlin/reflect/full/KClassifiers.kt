@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.types.*
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KClassifierImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 /**
  * Creates a [KType] instance with the given classifier, type arguments, nullability and annotations.

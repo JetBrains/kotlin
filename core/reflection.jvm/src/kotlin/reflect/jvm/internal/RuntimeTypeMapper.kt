@@ -45,7 +45,6 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
-import kotlin.reflect.KotlinReflectionInternalError
 
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String

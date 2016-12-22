@@ -27,7 +27,6 @@ import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionImpl
 import kotlin.reflect.KFunction
-import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
 import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.CallMode.POSITIONAL_CALL
 import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.Origin.JAVA

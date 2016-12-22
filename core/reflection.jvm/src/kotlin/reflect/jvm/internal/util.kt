@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
-import kotlin.reflect.IllegalCallableAccessException
+import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.KVisibility
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")

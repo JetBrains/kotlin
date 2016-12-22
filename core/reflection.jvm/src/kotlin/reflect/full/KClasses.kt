@@ -28,6 +28,7 @@ import kotlin.reflect.jvm.internal.KCallableImpl
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KFunctionImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.

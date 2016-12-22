@@ -24,7 +24,8 @@ package kotlin.reflect
  *
  * @see [kotlin.reflect.jvm.isAccessible]
  */
-class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.message) {
+@Deprecated("Use 'IllegalCallableAccessException' from kotlin.reflect.full package", ReplaceWith("IllegalCallableAccessException", "kotlin.reflect.full.IllegalCallableAccessException"), level = DeprecationLevel.WARNING)
+open class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.message) {
     init {
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         (this as java.lang.Throwable).initCause(cause)
@@ -35,7 +36,8 @@ class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(
  * An exception that is thrown when the code tries to introspect a property of a class or a package
  * and that class or the package no longer has that property.
  */
-class NoSuchPropertyException(cause: Exception? = null) : Exception() {
+@Deprecated("Use 'NoSuchPropertyException' from kotlin.reflect.full package", ReplaceWith("NoSuchPropertyException", "kotlin.reflect.full.NoSuchPropertyException"), level = DeprecationLevel.WARNING)
+open class NoSuchPropertyException(cause: Exception? = null) : Exception() {
     init {
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         if (cause != null) {
@@ -47,4 +49,5 @@ class NoSuchPropertyException(cause: Exception? = null) : Exception() {
 /**
  * Signals that Kotlin reflection had reached an inconsistent state from which it cannot recover.
  */
-class KotlinReflectionInternalError(message: String) : Error(message)
+@Deprecated("Use 'KotlinReflectionInternalError' from kotlin.reflect.jvm.internal package", ReplaceWith("KotlinReflectionInternalError", "kotlin.reflect.jvm.internal.KotlinReflectionInternalError"), level = DeprecationLevel.WARNING)
+open class KotlinReflectionInternalError(message: String) : Error(message)

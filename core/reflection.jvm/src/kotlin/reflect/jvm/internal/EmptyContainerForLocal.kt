@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KCallable
-import kotlin.reflect.KotlinReflectionInternalError
 
 internal object EmptyContainerForLocal : KDeclarationContainerImpl() {
     override val jClass: Class<*>

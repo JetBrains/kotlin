@@ -29,7 +29,6 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 
 internal abstract class KPropertyImpl<out R> private constructor(
