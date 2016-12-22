@@ -137,6 +137,9 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             super.compileWithDaemon(compilerClassName, argsArray, environment)
         }
         exitCode?.let {
+            withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
+                daemon.clearJarCache()
+            }
             logFinish(DAEMON_EXECUTION_STRATEGY)
         }
         return exitCode

@@ -132,4 +132,7 @@ interface CompileService : Remote {
             serviceOutputStream: RemoteOutputStream,
             operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun clearJarCache()
 }
