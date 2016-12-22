@@ -135,9 +135,18 @@ class ClassFileToSourceStubConverter(
         val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
         val isInner = isNested && (descriptor as? ClassDescriptor)?.isInner ?: false
 
-        val modifiers = convertModifiers(
-                if (!isInner && isNested) (clazz.access or Opcodes.ACC_STATIC) else clazz.access,
-                ElementKind.CLASS, packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations)
+        val flags = when {
+            (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE -> {
+                // Classes inside interfaces should always be public and static.
+                // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
+                (clazz.access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
+                        Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
+            }
+            !isInner && isNested -> clazz.access or Opcodes.ACC_STATIC
+            else -> clazz.access
+        }
+
+        val modifiers = convertModifiers(flags, ElementKind.CLASS, packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations)
 
         val isEnum = clazz.isEnum()
         val isAnnotation = clazz.isAnnotation()
