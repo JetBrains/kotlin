@@ -52,9 +52,11 @@ open class KaptTask : AbstractCompile() {
         val sourceRoots = SourceRoots.ForJvm.create(getSource(), rawSourceRoots)
         val compileClasspath = classpath.filter(File::exists)
 
+        val pluginOptionsForKotlinCompile = kotlinCompileTask.pluginOptions
+
         args.moduleName = kotlinCompileTask.moduleName
-        args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
-        args.pluginOptions = pluginOptions.arguments.toTypedArray()
+        args.pluginClasspaths = (pluginOptions.classpath + pluginOptionsForKotlinCompile.classpath).toSet().toTypedArray()
+        args.pluginOptions = (pluginOptions.arguments + pluginOptionsForKotlinCompile.arguments).toTypedArray()
         kotlinCompileTask.friendTaskName?.let { kotlinCompileTask.addFriendPathForTestTask(it, args) }
         kotlinCompileTask.parentKotlinOptionsImpl?.updateArguments(args)
         KotlinJvmOptionsImpl().updateArguments(args)
