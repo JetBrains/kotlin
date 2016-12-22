@@ -54,7 +54,7 @@ private var log = ""
 
 private var inAwait = false
 
-suspend fun <S> await(value: Promise<S>): S = CoroutineIntrinsics.suspendCoroutineOrReturn { continuation: Continuation<S> ->
+suspend fun <S> await(value: Promise<S>): S = suspendCoroutine { continuation ->
     if (inAwait) {
         throw IllegalStateException("Can't call await recursively")
     }

@@ -73,6 +73,21 @@ public fun <T> (suspend  () -> T).startCoroutine(
     createCoroutine(completion, dispatcher).resume(Unit)
 }
 
+/**
+ * Obtains the current continuation instance inside suspend functions and suspends
+ * currently running coroutine.
+ *
+ * In this function both [Continuation.resume] and [Continuation.resumeWithException] can be used either synchronously in
+ * the same stack-frame where suspension function is run or asynchronously later in the same thread or
+ * from a different thread of execution. Repeated invocation of any resume function produces [IllegalStateException].
+ */
+@SinceKotlin("1.1")
+public suspend fun <T> suspendCoroutine(block: (Continuation<T>) -> Unit): T = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+    val safe = SafeContinuation(c)
+    block(safe)
+    safe.getResult()
+}
+
 // ------- internal stuff -------
 
 internal interface DispatchedContinuation {
@@ -149,6 +164,62 @@ private class ContinuationFacade(val innerContinuation: Continuation<Any?>, val 
     override fun resumeWithException(exception: Throwable) {
         if (!dispatcher.dispatchResumeWithException(exception, innerContinuation)) {
             innerContinuation.resumeWithException(exception)
+        }
+    }
+}
+
+private val UNDECIDED: Any? = Any()
+private val RESUMED: Any? = Any()
+private class Fail(val exception: Throwable)
+
+internal class SafeContinuation<in T> internal constructor(private val delegate: Continuation<T>) : Continuation<T> {
+    private var result: Any? = UNDECIDED
+
+    override fun resume(value: T) {
+        when (result) {
+            UNDECIDED -> {
+                result = value
+            }
+            CoroutineIntrinsics.SUSPENDED -> {
+                result = RESUMED
+                delegate.resume(value)
+            }
+            else -> {
+                throw IllegalStateException("Already resumed")
+            }
+        }
+    }
+
+    override fun resumeWithException(exception: Throwable) {
+        when (result) {
+            UNDECIDED -> {
+                result = Fail(exception)
+            }
+            CoroutineIntrinsics.SUSPENDED -> {
+                result = RESUMED
+                delegate.resumeWithException(exception)
+            }
+            else -> {
+                throw IllegalStateException("Already resumed")
+            }
+        }
+    }
+
+    internal fun getResult(): Any? {
+        if (result == UNDECIDED) {
+            result = CoroutineIntrinsics.SUSPENDED
+        }
+        val result = this.result
+        return when (result) {
+            RESUMED -> {
+                CoroutineIntrinsics.SUSPENDED // already called continuation, indicate SUSPENDED upstream
+            }
+            is Fail -> {
+                throw result.exception
+            }
+            else -> {
+                result // either SUSPENDED or data
+            }
         }
     }
 }
