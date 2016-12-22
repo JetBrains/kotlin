@@ -1,0 +1,36 @@
+@kotlin.Metadata
+public final class Delegate {
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Foo {
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class MemberExtensions {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field bar$delegate$1: Delegate
+    private final @org.jetbrains.annotations.NotNull field bar$delegate$2: Delegate
+    private final @org.jetbrains.annotations.NotNull field bar$delegate: Delegate
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.Nullable p0: Foo): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.Nullable p0: kotlin.Unit): java.lang.String
+}
+
+@kotlin.Metadata
+public final class NameClashExtensionPropertiesKt {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final static @org.jetbrains.annotations.NotNull field bar$delegate$1: Delegate
+    private final static @org.jetbrains.annotations.NotNull field bar$delegate$2: Delegate
+    private final static @org.jetbrains.annotations.NotNull field bar$delegate: Delegate
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): java.lang.String
+}

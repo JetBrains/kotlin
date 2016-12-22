@@ -1,0 +1,29 @@
+@kotlin.Metadata
+public class Base {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field x$delegate: Delegate
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Delegate {
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Derived {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field x$delegate: Delegate
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class OverrideDelegatedByDelegatedKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method check(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object): void
+}

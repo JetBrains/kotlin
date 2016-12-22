@@ -41,4 +41,9 @@ public abstract class PropertyReference1 extends PropertyReference implements KP
     public KProperty1.Getter getGetter() {
         return ((KProperty1) getReflected()).getGetter();
     }
+
+    @Override
+    public Object getDelegate(Object receiver) {
+        return ((KProperty1) getReflected()).getDelegate(receiver);
+    }
 }

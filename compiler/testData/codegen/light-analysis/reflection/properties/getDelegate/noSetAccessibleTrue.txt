@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class Delegate {
+    public final static field INSTANCE: Delegate
+    private method <init>(): void
+    public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): boolean
+}
+
+@kotlin.Metadata
+public final class Foo {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field member$delegate: Delegate
+    private final @org.jetbrains.annotations.NotNull field memberExtension$delegate: Delegate
+    public method <init>(): void
+    public final method getMember(): boolean
+    public final method getMemberExtension(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+}
+
+@kotlin.Metadata
+public final class NoSetAccessibleTrueKt {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final static @org.jetbrains.annotations.NotNull field extension$delegate: Delegate
+    private final static @org.jetbrains.annotations.NotNull field topLevel$delegate: Delegate
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method check(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
+    public final static method getExtension(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public final static method getTopLevel(): boolean
+}

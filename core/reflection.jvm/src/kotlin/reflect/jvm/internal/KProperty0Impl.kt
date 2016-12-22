@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
@@ -30,6 +31,10 @@ internal open class KProperty0Impl<out R> : KProperty0<R>, KPropertyImpl<R> {
     override val getter: Getter<R> get() = getter_()
 
     override fun get(): R = getter.call()
+
+    private val delegateFieldValue = lazy(PUBLICATION) { getDelegate(computeDelegateField(), boundReceiver) }
+
+    override fun getDelegate(): Any? = delegateFieldValue.value
 
     override fun invoke(): R = get()
 

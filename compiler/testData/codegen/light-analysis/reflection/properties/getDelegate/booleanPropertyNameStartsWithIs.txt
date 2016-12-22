@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public final class BooleanPropertyNameStartsWithIsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Delegate {
+    public final static field INSTANCE: Delegate
+    private method <init>(): void
+    public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): boolean
+}
+
+@kotlin.Metadata
+public final class Foo {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field isOK$delegate: Delegate
+    public method <init>(): void
+    public final method isOK(): boolean
+}

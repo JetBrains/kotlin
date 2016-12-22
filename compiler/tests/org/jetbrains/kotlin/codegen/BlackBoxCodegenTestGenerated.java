@@ -6032,6 +6032,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("getDelegateWithoutReflection.kt")
+        public void testGetDelegateWithoutReflection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/getDelegateWithoutReflection.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inClassVal.kt")
         public void testInClassVal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/inClassVal.kt");
@@ -14553,6 +14559,99 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("topLevelPropertyAccessors.kt")
                 public void testTopLevelPropertyAccessors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/accessors/topLevelPropertyAccessors.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class GetDelegate extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInGetDelegate() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("booleanPropertyNameStartsWithIs.kt")
+                public void testBooleanPropertyNameStartsWithIs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/booleanPropertyNameStartsWithIs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundExtensionProperty.kt")
+                public void testBoundExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/boundExtensionProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("boundMemberProperty.kt")
+                public void testBoundMemberProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/boundMemberProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionProperty.kt")
+                public void testExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/extensionProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("fakeOverride.kt")
+                public void testFakeOverride() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/fakeOverride.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kPropertyForDelegatedProperty.kt")
+                public void testKPropertyForDelegatedProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/kPropertyForDelegatedProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberExtensionProperty.kt")
+                public void testMemberExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/memberExtensionProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberProperty.kt")
+                public void testMemberProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/memberProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nameClashClassAndCompanion.kt")
+                public void testNameClashClassAndCompanion() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/nameClashClassAndCompanion.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nameClashExtensionProperties.kt")
+                public void testNameClashExtensionProperties() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/nameClashExtensionProperties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noSetAccessibleTrue.kt")
+                public void testNoSetAccessibleTrue() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/noSetAccessibleTrue.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("notDelegatedProperty.kt")
+                public void testNotDelegatedProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/notDelegatedProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("overrideDelegatedByDelegated.kt")
+                public void testOverrideDelegatedByDelegated() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/overrideDelegatedByDelegated.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevelProperty.kt")
+                public void testTopLevelProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/topLevelProperty.kt");
                     doTest(fileName);
                 }
             }

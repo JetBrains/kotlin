@@ -47,4 +47,9 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     public KMutableProperty0.Setter getSetter() {
         return ((KMutableProperty0) getReflected()).getSetter();
     }
+
+    @Override
+    public Object getDelegate() {
+        return ((KMutableProperty0) getReflected()).getDelegate();
+    }
 }

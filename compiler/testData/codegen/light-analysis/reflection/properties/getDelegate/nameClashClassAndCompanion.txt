@@ -1,0 +1,31 @@
+@kotlin.Metadata
+public final class Delegate {
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Foo {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    public final static field Companion: Foo.Companion
+    private final @org.jetbrains.annotations.NotNull field x$delegate$1: Delegate
+    private final static @org.jetbrains.annotations.NotNull field x$delegate: Delegate
+    inner class Foo/Companion
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.Metadata
+public final static class Foo/Companion {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    inner class Foo/Companion
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class NameClashClassAndCompanionKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class Delegate {
+    public final static field INSTANCE: Delegate
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+}
+
+@kotlin.Metadata
+public final class GetDelegateWithoutReflectionKt {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final static @org.jetbrains.annotations.NotNull field foo$delegate: Delegate
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
+}

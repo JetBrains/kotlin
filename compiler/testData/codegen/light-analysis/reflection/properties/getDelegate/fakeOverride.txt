@@ -1,0 +1,24 @@
+@kotlin.Metadata
+public class Base {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field x$delegate: Delegate
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Delegate {
+    public final static field INSTANCE: Delegate
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Derived {
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class FakeOverrideKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

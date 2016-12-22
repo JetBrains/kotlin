@@ -1,0 +1,24 @@
+@kotlin.Metadata
+public final class BoundMemberPropertyKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Delegate {
+    public final static field INSTANCE: Delegate
+    private static @org.jetbrains.annotations.NotNull field storage: java.lang.String
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getStorage(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+    public final method setStorage(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class Foo {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field result$delegate: Delegate
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
+    public final method setResult(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}

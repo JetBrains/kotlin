@@ -29,6 +29,7 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 
 internal abstract class KPropertyImpl<out R> private constructor(
@@ -80,6 +81,17 @@ internal abstract class KPropertyImpl<out R> private constructor(
     }
 
     val javaField: Field? get() = javaField_()
+
+    protected fun computeDelegateField(): Field? =
+            if (@Suppress("DEPRECATION") descriptor.isDelegated) javaField else null
+
+    protected fun getDelegate(field: Field?, receiver: Any?): Any? =
+            try {
+                field?.get(receiver)
+            }
+            catch (e: IllegalAccessException) {
+                throw IllegalPropertyDelegateAccessException(e)
+            }
 
     override abstract val getter: Getter<R>
 

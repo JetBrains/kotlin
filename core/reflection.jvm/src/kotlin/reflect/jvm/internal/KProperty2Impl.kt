@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
@@ -31,6 +32,10 @@ internal open class KProperty2Impl<D, E, out R> : KProperty2<D, E, R>, KProperty
     override val getter: Getter<D, E, R> get() = getter_()
 
     override fun get(receiver1: D, receiver2: E): R = getter.call(receiver1, receiver2)
+
+    private val delegateField = lazy(PUBLICATION) { computeDelegateField() }
+
+    override fun getDelegate(receiver1: D, receiver2: E): Any? = getDelegate(delegateField.value, receiver1)
 
     override fun invoke(receiver1: D, receiver2: E): R = get(receiver1, receiver2)
 

@@ -6861,6 +6861,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("getDelegateWithoutReflection.kt")
+        public void testGetDelegateWithoutReflection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/getDelegateWithoutReflection.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
         @TestMetadata("inClassVal.kt")
         public void testInClassVal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/inClassVal.kt");
@@ -18358,6 +18370,183 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("topLevelPropertyAccessors.kt")
                 public void testTopLevelPropertyAccessors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/accessors/topLevelPropertyAccessors.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class GetDelegate extends AbstractJsCodegenBoxTest {
+                public void testAllFilesPresentInGetDelegate() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                }
+
+                @TestMetadata("booleanPropertyNameStartsWithIs.kt")
+                public void testBooleanPropertyNameStartsWithIs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/booleanPropertyNameStartsWithIs.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("boundExtensionProperty.kt")
+                public void testBoundExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/boundExtensionProperty.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("boundMemberProperty.kt")
+                public void testBoundMemberProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/boundMemberProperty.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("extensionProperty.kt")
+                public void testExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/extensionProperty.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("fakeOverride.kt")
+                public void testFakeOverride() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/fakeOverride.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("kPropertyForDelegatedProperty.kt")
+                public void testKPropertyForDelegatedProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/kPropertyForDelegatedProperty.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("memberExtensionProperty.kt")
+                public void testMemberExtensionProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/memberExtensionProperty.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("memberProperty.kt")
+                public void testMemberProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/memberProperty.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("nameClashClassAndCompanion.kt")
+                public void testNameClashClassAndCompanion() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/nameClashClassAndCompanion.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("nameClashExtensionProperties.kt")
+                public void testNameClashExtensionProperties() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/nameClashExtensionProperties.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("noSetAccessibleTrue.kt")
+                public void testNoSetAccessibleTrue() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/noSetAccessibleTrue.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("notDelegatedProperty.kt")
+                public void testNotDelegatedProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/notDelegatedProperty.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("overrideDelegatedByDelegated.kt")
+                public void testOverrideDelegatedByDelegated() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/overrideDelegatedByDelegated.kt");
+                    try {
+                        doTest(fileName);
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
+                @TestMetadata("topLevelProperty.kt")
+                public void testTopLevelProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/topLevelProperty.kt");
                     try {
                         doTest(fileName);
                     }

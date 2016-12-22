@@ -16,6 +16,8 @@
 
 package kotlin.reflect.full
 
+import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * An exception that is thrown when `call` is invoked on a callable or `get` or `set` is invoked on a property
@@ -26,6 +28,20 @@ package kotlin.reflect.full
  * @see [kotlin.reflect.jvm.isAccessible]
  */
 class IllegalCallableAccessException(cause: IllegalAccessException) : kotlin.reflect.IllegalCallableAccessException(cause)
+
+/**
+ * An exception that is thrown when `getDelegate` is invoked on a [KProperty] object that was not made accessible
+ * with [isAccessible].
+ *
+ * @see [kotlin.reflect.KProperty0.getDelegate]
+ * @see [kotlin.reflect.KProperty1.getDelegate]
+ * @see [kotlin.reflect.KProperty2.getDelegate]
+ * @see [kotlin.reflect.jvm.isAccessible]
+ */
+class IllegalPropertyDelegateAccessException(cause: IllegalAccessException) : Exception(
+        "Cannot obtain the delegate of a non-accessible property. Use \"isAccessible = true\" to make the property accessible",
+        cause
+)
 
 /**
  * An exception that is thrown when the code tries to introspect a property of a class or a package
