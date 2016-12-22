@@ -101,6 +101,8 @@
         <include name="compiler/plugin-api/src"/>
         <include name="compiler/daemon/src"/>
         <include name="compiler/daemon/daemon-common/src"/>
+        <include name="build-common/src"/>
+        <include name="compiler/incremental-compilation-impl/src"/>
         <include name="compiler/serialization/src"/>
         <include name="compiler/util/src"/>
         <include name="js/js.dart-ast/src"/>
@@ -129,6 +131,8 @@
         <include name="conditional-preprocessor/**"/>
         <include name="daemon/**"/>
         <include name="daemon-common/**"/>
+        <include name="build-common/**"/>
+        <include name="incremental-compilation-impl/**"/>
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
@@ -229,6 +233,8 @@
             <fileset dir="compiler/conditional-preprocessor/src"/>
             <fileset dir="compiler/daemon/src"/>
             <fileset dir="compiler/daemon/daemon-common/src"/>
+            <fileset dir="build-common/src"/>
+            <fileset dir="compiler/incremental-compilation-impl/src"/>
             <fileset dir="compiler/container/src"/>
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="compiler/resolution/src"/>
@@ -627,53 +633,6 @@
         </jar>
     </target>
 
-    <target name="kotlin-build-common">
-        <cleandir dir="${output}/classes/kotlin-build-common"/>
-
-        <javac2 destdir="${output}/classes/kotlin-build-common" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-                source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-build-common">
-                <compilerarg value="-version"/>
-            </withKotlin>
-            <skip pattern="kotlin/Metadata"/>
-            <src>
-                <pathelement path="build-common/src"/>
-            </src>
-            <classpath>
-                <pathelement path="${bootstrap.runtime}"/>
-                <pathelement path="${bootstrap.reflect}"/>
-                <pathelement path="${idea.sdk}/lib/util.jar"/>
-                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-            </classpath>
-        </javac2>
-
-        <jar destfile="${kotlin-home}/lib/kotlin-build-common.jar">
-            <fileset dir="${output}/classes/kotlin-build-common"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build.common}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
-
-        <jar jarfile="${output}/kotlin-build-common-sources.jar">
-            <fileset dir="build-common/src"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build.common.sources}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
-    </target>
-
     <target name="kotlin-build-common-test">
         <cleandir dir="${output}/classes/kotlin-build-common-test"/>
 
@@ -681,14 +640,16 @@
                 source="${java.target}" target="${java.target}">
             <withKotlin modulename="kotlin-build-common"/>
             <skip pattern="kotlin/Metadata"/>
-            <src path="build-common/test"/>
+            <src>
+                <pathelement path="build-common/test"/>
+                <pathelement path="compiler/incremental-compilation-impl/test"/>
+            </src>
             <classpath>
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
                 <pathelement path="${bootstrap.kotlin.test}"/>
                 <pathelement path="${protobuf.jar}"/>
                 <pathelement path="${idea.sdk}/lib/junit-4.12.jar"/>
-                <pathelement path="${kotlin-home}/lib/kotlin-build-common.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </classpath>
         </javac2>
@@ -806,7 +767,7 @@
             <fileset dir="${basedir}/plugins/noarg/noarg-cli/src" includes="META-INF/services/**"/>
         </jar>
     </target>
-    
+
     <target name="annotation-processing-under-jdk8">
         <property environment="env"/>
 
@@ -1190,7 +1151,7 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"

@@ -75,7 +75,6 @@
         <module>tools/kotlin-compiler-embeddable</module>
         <module>tools/native-platform</module>
         <module>tools/kotlin-compiler-runner</module>
-        <module>tools/kotlin-build-common</module>
         <module>tools/kotlin-build-common-test</module>
         <module>tools/kotlin-maven-plugin</module>
 
