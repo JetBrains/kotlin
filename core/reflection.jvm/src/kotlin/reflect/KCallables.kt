@@ -26,7 +26,7 @@ import kotlin.reflect.full.valueParameters
  * Returns a parameter representing the `this` instance needed to call this callable,
  * or `null` if this callable is not a member of a class and thus doesn't take such parameter.
  */
-@Deprecated("Use 'instanceParameter' from kotlin.reflect.full package", ReplaceWith("this.instanceParameter", "kotlin.reflect.full.instanceParameter"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'instanceParameter' from kotlin.reflect.full package", ReplaceWith("this.instanceParameter", "kotlin.reflect.full.instanceParameter"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.1")
 inline val KCallable<*>.instanceParameter: KParameter?
     get() = this.instanceParameter
@@ -35,7 +35,7 @@ inline val KCallable<*>.instanceParameter: KParameter?
  * Returns a parameter representing the extension receiver instance needed to call this callable,
  * or `null` if this callable is not an extension.
  */
-@Deprecated("Use 'extensionReceiverParameter' from kotlin.reflect.full package", ReplaceWith("this.extensionReceiverParameter", "kotlin.reflect.full.extensionReceiverParameter"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'extensionReceiverParameter' from kotlin.reflect.full package", ReplaceWith("this.extensionReceiverParameter", "kotlin.reflect.full.extensionReceiverParameter"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.1")
 inline val KCallable<*>.extensionReceiverParameter: KParameter?
     get() = this.extensionReceiverParameter
@@ -43,7 +43,7 @@ inline val KCallable<*>.extensionReceiverParameter: KParameter?
 /**
  * Returns parameters of this callable, excluding the `this` instance and the extension receiver parameter.
  */
-@Deprecated("Use 'valueParameters' from kotlin.reflect.full package", ReplaceWith("this.valueParameters", "kotlin.reflect.full.valueParameters"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'valueParameters' from kotlin.reflect.full package", ReplaceWith("this.valueParameters", "kotlin.reflect.full.valueParameters"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.1")
 inline val KCallable<*>.valueParameters: List<KParameter>
     get() = this.valueParameters
@@ -51,7 +51,7 @@ inline val KCallable<*>.valueParameters: List<KParameter>
 /**
  * Returns the parameter of this callable with the given name, or `null` if there's no such parameter.
  */
-@Deprecated("Use 'findParameterByName' from kotlin.reflect.full package", ReplaceWith("this.findParameterByName", "kotlin.reflect.full.findParameterByName"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'findParameterByName' from kotlin.reflect.full package", ReplaceWith("this.findParameterByName", "kotlin.reflect.full.findParameterByName"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.1")
 inline fun KCallable<*>.findParameterByName(name: String): KParameter? {
     return this.findParameterByName(name)

@@ -32,7 +32,7 @@ import kotlin.reflect.full.starProjectedType
  * not `inner`, or is declared on the top level.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'createType' from kotlin.reflect.full package", ReplaceWith("this.createType(arguments, nullable, annotations)", "kotlin.reflect.full.createType"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'createType' from kotlin.reflect.full package", ReplaceWith("this.createType(arguments, nullable, annotations)", "kotlin.reflect.full.createType"), level = DeprecationLevel.ERROR)
 inline fun KClassifier.createType(
         arguments: List<KTypeProjection> = emptyList(),
         nullable: Boolean = false,
@@ -46,6 +46,6 @@ inline fun KClassifier.createType(
  * @see [KClassifier.createType]
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'starProjectedType' from kotlin.reflect.full package", ReplaceWith("this.starProjectedType", "kotlin.reflect.full.starProjectedType"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'starProjectedType' from kotlin.reflect.full package", ReplaceWith("this.starProjectedType", "kotlin.reflect.full.starProjectedType"), level = DeprecationLevel.ERROR)
 inline val KClassifier.starProjectedType: KType
     get() = this.starProjectedType

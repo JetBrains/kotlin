@@ -86,7 +86,7 @@ inline val KClass<*>.defaultType: KType
  * Does not include members declared in supertypes.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'declaredMembers' from kotlin.reflect.full package", ReplaceWith("this.declaredMembers", "kotlin.reflect.full.declaredMembers"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'declaredMembers' from kotlin.reflect.full package", ReplaceWith("this.declaredMembers", "kotlin.reflect.full.declaredMembers"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.declaredMembers: Collection<KCallable<*>>
     get() = this.declaredMembers
 
@@ -184,7 +184,7 @@ inline val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KPr
  * Includes superclasses and superinterfaces of the class, but does not include the class itself.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'superclasses' from kotlin.reflect.full package", ReplaceWith("this.superclasses", "kotlin.reflect.full.superclasses"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'superclasses' from kotlin.reflect.full package", ReplaceWith("this.superclasses", "kotlin.reflect.full.superclasses"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.superclasses: List<KClass<*>>
     get() = this.superclasses
 
@@ -193,7 +193,7 @@ inline val KClass<*>.superclasses: List<KClass<*>>
  * There is not more than one type in the returned collection that has any given classifier.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'allSupertypes' from kotlin.reflect.full package", ReplaceWith("this.allSupertypes", "kotlin.reflect.full.allSupertypes"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'allSupertypes' from kotlin.reflect.full package", ReplaceWith("this.allSupertypes", "kotlin.reflect.full.allSupertypes"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.allSupertypes: Collection<KType>
     get() = this.allSupertypes
 /**
@@ -202,14 +202,14 @@ inline val KClass<*>.allSupertypes: Collection<KType>
  * The returned collection does not contain more than one instance of any given class.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'allSuperclasses' from kotlin.reflect.full package", ReplaceWith("this.allSuperclasses", "kotlin.reflect.full.allSuperclasses"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'allSuperclasses' from kotlin.reflect.full package", ReplaceWith("this.allSuperclasses", "kotlin.reflect.full.allSuperclasses"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.allSuperclasses: Collection<KClass<*>>
     get() = this.allSuperclasses
 /**
  * Returns `true` if `this` class is the same or is a (possibly indirect) subclass of [base], `false` otherwise.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'isSubclassOf' from kotlin.reflect.full package", ReplaceWith("this.isSubclassOf(base)", "kotlin.reflect.full.isSubclassOf"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'isSubclassOf' from kotlin.reflect.full package", ReplaceWith("this.isSubclassOf(base)", "kotlin.reflect.full.isSubclassOf"), level = DeprecationLevel.ERROR)
 inline fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
     this.isSubclassOf(base)
 
@@ -217,7 +217,7 @@ inline fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
  * Returns `true` if `this` class is the same or is a (possibly indirect) superclass of [derived], `false` otherwise.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'isSuperclassOf' from kotlin.reflect.full package", ReplaceWith("this.isSuperclassOf(derived)", "kotlin.reflect.full.isSuperclassOf"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'isSuperclassOf' from kotlin.reflect.full package", ReplaceWith("this.isSuperclassOf(derived)", "kotlin.reflect.full.isSuperclassOf"), level = DeprecationLevel.ERROR)
 inline fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
         this.isSuperclassOf(derived)
 
@@ -230,7 +230,7 @@ inline fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
  * @see [KClass.safeCast]
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'cast' from kotlin.reflect.full package", ReplaceWith("this.cast(value)", "kotlin.reflect.full.cast"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'cast' from kotlin.reflect.full package", ReplaceWith("this.cast(value)", "kotlin.reflect.full.cast"), level = DeprecationLevel.ERROR)
 inline fun <T : Any> KClass<T>.cast(value: Any?): T {
     return this.cast(value)
 }
@@ -243,7 +243,7 @@ inline fun <T : Any> KClass<T>.cast(value: Any?): T {
  * @see [KClass.cast]
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'safeCast' from kotlin.reflect.full package", ReplaceWith("this.safeCast(value)", "kotlin.reflect.full.safeCast"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'safeCast' from kotlin.reflect.full package", ReplaceWith("this.safeCast(value)", "kotlin.reflect.full.safeCast"), level = DeprecationLevel.ERROR)
 inline fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
     return this.safeCast(value)
 }
@@ -254,7 +254,7 @@ inline fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
  * (see [KParameter.isOptional]). If there are no or many such constructors, an exception is thrown.
  */
 @SinceKotlin("1.1")
-@Deprecated("Use 'createInstance' from kotlin.reflect.full package", ReplaceWith("this.createInstance()", "kotlin.reflect.full.createInstance"), level = DeprecationLevel.WARNING)
+@Deprecated("Use 'createInstance' from kotlin.reflect.full package", ReplaceWith("this.createInstance()", "kotlin.reflect.full.createInstance"), level = DeprecationLevel.ERROR)
 inline fun <T : Any> KClass<T>.createInstance(): T {
     return this.createInstance()
 }
