@@ -16,3 +16,9 @@ annotation class ExportForCppRuntime(val name: String = "")
 // in the absence of IR.
 annotation class HasBackingField
 
+/**
+ * This annotation denotes that the element is intrinsic and its usages require special handling in compiler.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+annotation class Intrinsic

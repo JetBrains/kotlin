@@ -17,6 +17,10 @@ internal class KonanLower(val context: Context) {
     fun lower(irFile: IrFile) {
         val phaser = PhaseManager(context)
 
+        phaser.phase("Lower_builtin_operators") {
+            BuiltinOperatorLowering(context).runOnFilePostfix(irFile)
+        }
+
         phaser.phase("Lower_shared_variables") {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }

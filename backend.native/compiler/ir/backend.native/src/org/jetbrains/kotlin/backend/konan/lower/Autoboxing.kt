@@ -109,15 +109,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
     }
 
-    override fun IrExpression.useAsArgument(parameter: ParameterDescriptor): IrExpression {
-        return if (parameter.containingDeclaration == irBuiltins.eqeq) {
-            this // Do not box arguments of `==` because codegen expects them to be unboxed.
-            // TODO: implement `==` lowering at IR level and remove this hack.
-        } else {
-            this.useAsValue(parameter)
-        }
-    }
-
     /**
      * @return the element of [primitiveTypes] if given type is represented as primitive type in generated code,
      * or `null` if represented as object reference.
@@ -168,7 +159,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
     private fun IrExpression.box(primitiveType: KotlinType): IrExpression {
         val primitiveTypeClass = TypeUtils.getClassDescriptor(primitiveType)!!
-        val boxFunction = context.builtIns.getKonanInternalFunctions("box${primitiveTypeClass.name}").single()
+        val boxFunction = context.builtIns.getKonanInternalFunctions("box${primitiveTypeClass.name}").singleOrNull() ?:
+                TODO(primitiveType.toString())
 
         return IrCallImpl(startOffset, endOffset, boxFunction).apply {
             putValueArgument(0, this@box)

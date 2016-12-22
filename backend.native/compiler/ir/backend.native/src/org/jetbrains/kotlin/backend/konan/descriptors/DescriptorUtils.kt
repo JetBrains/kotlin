@@ -43,6 +43,12 @@ internal val FunctionDescriptor.implementation: FunctionDescriptor
         }
     }
 
+private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
+
+// TODO: check it is external?
+internal val FunctionDescriptor.isIntrinsic: Boolean
+    get() = this.annotations.findAnnotation(intrinsicAnnotation) != null
+
 private val intrinsicTypes = setOf(
         "kotlin.Unit",
         "kotlin.Boolean", "kotlin.Char",

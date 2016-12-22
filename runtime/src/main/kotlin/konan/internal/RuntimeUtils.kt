@@ -1,17 +1,17 @@
 package konan.internal
 
 @ExportForCppRuntime
-internal fun ThrowNullPointerException() {
+internal fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
 }
 
 @ExportForCppRuntime
-internal fun ThrowArrayIndexOutOfBoundsException() {
+internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
     throw IndexOutOfBoundsException()
 }
 
 @ExportForCppRuntime
-internal fun ThrowClassCastException() {
+internal fun ThrowClassCastException(): Nothing {
     throw ClassCastException()
 }
 

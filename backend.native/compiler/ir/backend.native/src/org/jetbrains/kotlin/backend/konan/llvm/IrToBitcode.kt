@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -1723,6 +1724,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return evaluateFunctionInvoke(descriptor, args)
         }
 
+        if (descriptor.isIntrinsic) {
+            return evaluateIntrinsicCall(callee, args)
+        }
+
         when (descriptor) {
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (callee, args)
             is ClassConstructorDescriptor      -> return evaluateConstructorCall   (callee, args)
@@ -1808,14 +1813,31 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-    private val kEqeq        = Name.identifier("EQEQ")
-    private val ktEqeqeq     = Name.identifier("EQEQEQ")
-    private val kGt0         = Name.identifier("GT0")
-    private val kGteq0       = Name.identifier("GTEQ0")
-    private val kLt0         = Name.identifier("LT0")
-    private val kLteq0       = Name.identifier("LTEQ0")
-    private val kNot         = Name.identifier("NOT")
-    private val kThrowNpe    = Name.identifier("THROW_NPE")
+
+    private fun evaluateIntrinsicCall(callee: IrCall, args: List<LLVMValueRef?>): LLVMValueRef {
+        val descriptor = callee.descriptor
+        val name = descriptor.fqNameUnsafe.asString()
+
+        return when (name) {
+            "konan.internal.areEqualByValue" -> {
+                val arg0 = args[0]!!
+                val arg1 = args[1]!!
+                assert (arg0.type == arg1.type)
+
+                when (LLVMGetTypeKind(arg0.type)) {
+                    LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind ->
+                        codegen.fcmpEq(arg0, arg1)
+
+                    else ->
+                        codegen.icmpEq(arg0, arg1)
+                }
+            }
+
+            else -> TODO(name)
+        }
+    }
+
+    //-------------------------------------------------------------------------//
     private val kImmZero     = LLVMConstInt(LLVMInt32Type(),  0, 1)!!
     private val kImmOne      = LLVMConstInt(LLVMInt32Type(),  1, 1)!!
     private val kTrue        = LLVMConstInt(LLVMInt1Type(),   1, 1)!!
@@ -1825,16 +1847,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef?>): LLVMValueRef {
         context.log("evaluateCall               : origin:${ir2string(callee)}")
         val descriptor = callee.descriptor
-        when (descriptor.name) {
-            kEqeq     -> return evaluateOperatorEqeq  (callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!)
-            ktEqeqeq  -> return evaluateOperatorEqeqeq(callee as IrBinaryPrimitiveImpl, args[0]!!, args[1]!!)
-            kGt0      -> return codegen.icmpGt(args[0]!!, kImmZero)
-            kGteq0    -> return codegen.icmpGe(args[0]!!, kImmZero)
-            kLt0      -> return codegen.icmpLt(args[0]!!, kImmZero)
-            kLteq0    -> return codegen.icmpLe(args[0]!!, kImmZero)
-            kNot      -> return codegen.icmpNe(args[0]!!, kTrue)
-            // TODO: reconsider.
-            kThrowNpe -> return evaluateOperatorThrowNpe()
+        val ib = context.irModule!!.irBuiltins
+        when (descriptor) {
+            ib.eqeqeq     -> return codegen.icmpEq(args[0]!!, args[1]!!)
+            ib.gt0        -> return codegen.icmpGt(args[0]!!, kImmZero)
+            ib.gteq0      -> return codegen.icmpGe(args[0]!!, kImmZero)
+            ib.lt0        -> return codegen.icmpLt(args[0]!!, kImmZero)
+            ib.lteq0      -> return codegen.icmpLe(args[0]!!, kImmZero)
+            ib.booleanNot -> return codegen.icmpNe(args[0]!!, kTrue)
             else -> {
                 TODO(descriptor.name.toString())
             }
@@ -1843,97 +1863,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun getEquals(type: KotlinType) : SimpleFunctionDescriptor {
-
-        val name = Name.identifier("equals")
-        val descriptors = type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).filter {
-            it.valueParameters.size == 1 && KotlinBuiltIns.isAnyOrNullableAny(it.valueParameters[0].type)
-        }
-        assert(descriptors.size == 1)
-        val descriptor = descriptors.first()
-        return descriptor
-    }
-
-    //-------------------------------------------------------------------------//
-
     private fun getToString(type: KotlinType): SimpleFunctionDescriptor {
         val descriptor = type.memberScope.getContributedFunctions(kNameToString, NoLookupLocation.FROM_BACKEND).first()
         return descriptor
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun getThrowNpe(): SimpleFunctionDescriptor {
-        val name = Name.identifier("ThrowNullPointerException")
-        val moduleDescriptor = KonanPlatform.builtIns.builtInsModule
-        val packageDescriptor = moduleDescriptor.getPackage(FqName("konan.internal"))
-        val descriptor =  packageDescriptor.memberScope.getContributedFunctions(
-                name, NoLookupLocation.FROM_BACKEND).first()
-        return descriptor
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun evaluateOperatorEqeq(callee: IrBinaryPrimitiveImpl, arg0: LLVMValueRef, arg1: LLVMValueRef): LLVMValueRef {
-
-        val arg0Type = callee.argument0.type
-        val isFp = KotlinBuiltIns.isDouble(arg0Type) || KotlinBuiltIns.isFloat(arg0Type)
-        val isInt = KotlinBuiltIns.isPrimitiveType(arg0Type) && !isFp
-        when {
-            isFp  -> return codegen.fcmpEq(arg0, arg1)
-            isInt -> return codegen.icmpEq(arg0, arg1)
-            else  -> return generateEqeqForObjects(callee, arg0, arg1)
-        }
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun generateEqeqForObjects(callee: IrBinaryPrimitiveImpl, arg0: LLVMValueRef, arg1: LLVMValueRef): LLVMValueRef {
-        val arg0Type = callee.argument0.type
-        val descriptor = getEquals(arg0Type)                                    // Get descriptor for "arg0.equals".
-        if (arg0Type.isMarkedNullable) {                                        // If arg0 is nullable.
-            val bbEq2  = codegen.basicBlock()                                   // Block to process "eqeq".
-            val bbEq3  = codegen.basicBlock()                                   // Block to process "eqeqeq".
-            val bbExit = codegen.basicBlock()                                   // Exit block for feather generation.
-            val result = codegen.alloca(callee.type)
-
-            val condition = codegen.icmpEq(arg0, codegen.kNullObjHeaderPtr)     // Compare arg0 with "null".
-            codegen.condBr(condition, bbEq3, bbEq2)                             // If (arg0 == null) bbEq3 else bbEq2.
-
-            codegen.positionAtEnd(bbEq3)                                        // Get generation to bbEq3.
-            val resultIdentityEq = evaluateOperatorEqeqeq(callee, arg0, arg1)
-            codegen.store(resultIdentityEq, result)                             // Store "eqeq" result in "result".
-            codegen.br(bbExit)                                                  //
-
-            codegen.positionAtEnd(bbEq2)                                        // Get generation to bbEq2.
-            val resultEquals = evaluateSimpleFunctionCall(descriptor, listOf(arg0, arg1))
-            codegen.store(resultEquals, result)                                 // Store "eqeqeq" result in "result".
-            codegen.br(bbExit)                                                  //
-
-            codegen.positionAtEnd(bbExit)                                       // Get generation to bbExit.
-            return codegen.load(result)                                         // Load result.
-        } else {
-            return evaluateSimpleFunctionCall(descriptor, listOf(arg0, arg1))
-        }
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun evaluateOperatorEqeqeq(callee: IrBinaryPrimitiveImpl,
-                                       arg0: LLVMValueRef, arg1: LLVMValueRef): LLVMValueRef {
-
-        val arg0Type = callee.argument0.type
-
-        return when {
-            KotlinBuiltIns.isPrimitiveType(arg0Type) -> TODO("${ir2string(callee)}")
-            else -> codegen.icmpEq(arg0, arg1)
-        }
-    }
-
-    private fun evaluateOperatorThrowNpe(): LLVMValueRef {
-        val result = evaluateSimpleFunctionCall(getThrowNpe(), listOf())
-        codegen.unreachable()
-        return result
     }
 
     //-------------------------------------------------------------------------//
@@ -2001,7 +1933,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     // In such case it would be possible to check that all args are available and in the correct order.
     // However, it currently requires some refactoring to be performed.
     private fun call(descriptor: FunctionDescriptor, function: LLVMValueRef, args: List<LLVMValueRef>): LLVMValueRef {
-        return currentCodeContext.genCall(function, args)
+        val result = currentCodeContext.genCall(function, args)
+        if (descriptor.returnType?.isNothing() == true) {
+            codegen.unreachable()
+        }
+        return result
     }
 
     //-------------------------------------------------------------------------//

@@ -10,6 +10,7 @@ object KonanPhases {
     val phases = mapOf<String, KonanPhase> (
         "Backend" to KonanPhase("All backend"),
         "Optimizer" to KonanPhase("IR Optimizer"),
+        "Lower_builtin_operators" to KonanPhase("BuiltIn Operators Lowering"),
         "Lower_shared_variables" to KonanPhase("Shared Variable Lowering"),
         "Lower_local_functions" to KonanPhase("Local Function Lowering"),
         "Lower_callables" to KonanPhase("Callable references Lowering"),

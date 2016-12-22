@@ -528,6 +528,11 @@ task boxing12(type: RunKonanTest) {
     source = "codegen/boxing/boxing12.kt"
 }
 
+task boxing13(type: RunKonanTest) {
+    goldValue = "false\nfalse\ntrue\ntrue\nfalse\nfalse\n"
+    source = "codegen/boxing/boxing13.kt"
+}
+
 task interface0(type: RunKonanTest) {
     goldValue = "PASSED\n"
     source = "runtime/basic/interface0.kt"
