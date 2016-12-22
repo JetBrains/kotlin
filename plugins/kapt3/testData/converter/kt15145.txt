@@ -1,0 +1,11 @@
+public abstract interface MyInterface {
+
+    public abstract void someFun();
+
+    public static final class MyDefaultInferface {
+
+        public MyDefaultInferface() {
+            super();
+        }
+    }
+}
