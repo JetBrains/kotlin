@@ -259,4 +259,13 @@ class KotlinGradleIT: BaseGradleIT() {
             assertContains("Connected to daemon")
         }
     }
+
+    @Test
+    fun testKotlinBuiltins() {
+        val project = Project("kotlinBuiltins", "3.2")
+
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
 }
