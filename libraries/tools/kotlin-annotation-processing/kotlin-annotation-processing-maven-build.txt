@@ -1,0 +1,9 @@
+The presence of this file enables the "tools_jar_profile" profile in kotlin-annotation-processing,
+    which adds "tools.jar" to the compile dependencies.
+
+When Gradle loads this artifact, the "tools_jar_profile" profile should not be activated
+    (cause it adds an extra dependency from the path based on the environment variable).
+
+It wouldn't in fact because:
+1. This file is normally absent when Gradle build with kapt is launched;
+2. Gradle poorly supports Maven profiles.
