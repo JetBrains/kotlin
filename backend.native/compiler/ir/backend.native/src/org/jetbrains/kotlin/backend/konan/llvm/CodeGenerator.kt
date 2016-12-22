@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
@@ -17,6 +16,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     val returns: MutableMap<LLVMBasicBlockRef, LLVMValueRef> = mutableMapOf()
     // TODO: remove, to make CodeGenerator descriptor-agnostic.
     var constructedClass: ClassDescriptor? = null
+    val vars = VariableManager(this)
 
     fun prologue(descriptor: FunctionDescriptor) {
         prologue(llvmFunction(descriptor),
@@ -46,10 +46,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
         appendingTo(epilogueBb!!) {
             when {
-               returnType == voidType -> LLVMBuildRetVoid(builder)
+               returnType == voidType -> {
+                   vars.releaseVars()
+                   LLVMBuildRetVoid(builder)
+               }
                returns.size > 0 -> {
                     val returnPhi = phi(returnType!!)
                     addPhiIncoming(returnPhi, *returns.toList().toTypedArray())
+                    vars.releaseVars()
                     LLVMBuildRet(builder, returnPhi)
                }
                // Do nothing, all paths throw.
@@ -58,6 +62,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
 
         returns.clear()
+        vars.clear()
     }
 
     private var prologueBb: LLVMBasicBlockRef? = null

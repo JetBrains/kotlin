@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetterCallImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -116,6 +114,47 @@ internal class MetadatorVisitor(val context: Context) : IrElementVisitorVoid {
     }
 }
 
+/**
+ * Defines how to generate context-dependent operations.
+ */
+interface CodeContext {
+
+    fun genReturn(target: CallableDescriptor, value: LLVMValueRef?)
+
+    fun genBreak(destination: IrBreak)
+
+    fun genContinue(destination: IrContinue)
+
+    fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>): LLVMValueRef
+
+    fun genThrow(exception: LLVMValueRef)
+
+    /**
+     * Declares the variable.
+     * @return index of declared variable.
+     */
+    fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?): Int
+
+    /**
+     * @return index of variable declared before, or -1 if no such variable has been declared yet.
+     */
+    fun getDeclaredVariable(descriptor: VariableDescriptor): Int
+
+    /**
+     * Generates the code to obtain a value available in this context.
+     *
+     * @return the requested value
+     */
+    fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef
+
+    /**
+     * Returns owning function scope.
+     *
+     * @return the requested value
+     */
+    fun functionScope(): CodeContext
+
+}
 
 //-------------------------------------------------------------------------//
 
@@ -128,47 +167,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     // TODO: consider eliminating mutable state
     private var currentCodeContext: CodeContext = TopLevelCodeContext
 
-    /**
-     * Defines how to generate context-dependent operations.
-     */
-    private interface CodeContext {
-
-        fun genReturn(target: CallableDescriptor, value: LLVMValueRef?)
-
-        fun genBreak(destination: IrBreak)
-
-        fun genContinue(destination: IrContinue)
-
-        fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>): LLVMValueRef
-
-        fun genThrow(exception: LLVMValueRef)
-
-        /**
-         * Declares the variable.
-         * @return pointer to the declared variable.
-         */
-        fun genDeclareVariable(descriptor: VariableDescriptor): LLVMValueRef
-
-        /**
-         * @return pointer to the variable declared before, or `null` if no such variable has been declared yet.
-         */
-        fun getDeclaredVariable(descriptor: VariableDescriptor): LLVMValueRef?
-
-        /**
-         * Generates the code to obtain a value available in this context.
-         *
-         * @return the requested value
-         */
-        fun genGetValue(descriptor: ValueDescriptor, result: String = ""): LLVMValueRef
-
-        /**
-         * Returns owning function scope.
-         *
-         * @return the requested value
-         */
-        fun functionScope(): CodeContext
-
-    }
 
     /**
      * Fake [CodeContext] that doesn't support any operation.
@@ -188,11 +186,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         override fun genThrow(exception: LLVMValueRef) = unsupported()
 
-        override fun genDeclareVariable(descriptor: VariableDescriptor) = unsupported(descriptor)
+        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?) = unsupported(descriptor)
 
-        override fun getDeclaredVariable(descriptor: VariableDescriptor) = null
+        override fun getDeclaredVariable(descriptor: VariableDescriptor) = -1
 
-        override fun genGetValue(descriptor: ValueDescriptor, result: String) = unsupported(descriptor)
+        override fun genGetValue(descriptor: ValueDescriptor) = unsupported(descriptor)
 
         override fun functionScope(): CodeContext = unsupported()
     }
@@ -294,6 +292,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         if (context.llvm.fileInitializers.isEmpty())
             return
+
+        // Create global initialization records.
         val fileName = declaration.name.takeLastWhile { it != '/' }.dropLastWhile { it != '.' }.dropLast(1)
         val initName = "${fileName}_init_${context.llvm.globalInitIndex}"
         val nodeName = "${fileName}_node_${context.llvm.globalInitIndex}"
@@ -324,14 +324,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val loopExit  = codegen.basicBlock()
 
         override fun genBreak(destination: IrBreak) {
-            if (destination.label == loop.label)
+            if (destination.label == null || destination.label == loop.label)
                 codegen.br(loopExit)
             else
                 super.genBreak(destination)
         }
 
         override fun genContinue(destination: IrContinue) {
-            if (destination.label == loop.label)
+            if (destination.label == null || destination.label == loop.label)
                 codegen.br(loopCheck)
             else
                 super.genContinue(destination)
@@ -380,7 +380,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         using(FunctionScope(constructorDeclaration)) {
 
-            val thisPtr = currentCodeContext.genGetValue(classDescriptor.thisAsReceiverParameter, "this")
+            val thisPtr = currentCodeContext.genGetValue(classDescriptor.thisAsReceiverParameter)
 
             /**
              * IR for kotlin.Any is:
@@ -494,30 +494,21 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      */
     private inner class VariableScope : InnerScopeImpl() {
 
-        private val variables = mutableMapOf<ValueDescriptor, LLVMValueRef>()
-
-        override fun genDeclareVariable(descriptor: VariableDescriptor): LLVMValueRef {
-            // Check that the variable is not declared yet:
-            assert (this.getDeclaredVariable(descriptor) == null)
-
-            val res = codegen.alloca(descriptor.type, descriptor.name.asString())
-
-            val previous = variables.put(descriptor, res)
-            assert (previous == null)
-
-            return res
+        override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?): Int {
+            return codegen.vars.createVariable(descriptor to this, value)
         }
 
-        override fun getDeclaredVariable(descriptor: VariableDescriptor): LLVMValueRef? {
-            return variables[descriptor] ?: super.getDeclaredVariable(descriptor)
+        override fun getDeclaredVariable(descriptor: VariableDescriptor): Int {
+            val index = codegen.vars.indexOf(descriptor to this)
+            return if (index < 0) super.getDeclaredVariable(descriptor) else return index
         }
 
-        override fun genGetValue(descriptor: ValueDescriptor, result: String): LLVMValueRef {
-            val variable = variables[descriptor]
-            if (variable != null) {
-                return codegen.load(variable, result)
+        override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
+            val index = codegen.vars.indexOf(descriptor to this)
+            if (index < 0) {
+                return super.genGetValue(descriptor)
             } else {
-                return super.genGetValue(descriptor, result)
+                return codegen.vars.load(index)
             }
         }
     }
@@ -526,23 +517,24 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      * The scope of parameter visibility.
      */
     private open inner class ParameterScope(
-            private val parameters: Map<ParameterDescriptor, LLVMValueRef>): InnerScopeImpl() {
+            parameters: Map<ParameterDescriptor, LLVMValueRef>): InnerScopeImpl() {
 
         // Note: it is possible to generate access to a parameter without any variables,
         // however variables are named and thus the resulting bitcode can be more readable.
 
-        private val parameterVars = parameters.map { (descriptor, value) ->
-            val variable = codegen.alloca(descriptor.type, descriptor.name.asString())
-            codegen.store(value, variable)
-            descriptor to variable
-        }.toMap()
+        init {
+            parameters.map { (descriptor, value) ->
+                codegen.vars.createImmutable(descriptor to this, value)
+            }
 
-        override fun genGetValue(descriptor: ValueDescriptor, result: String): LLVMValueRef {
-            val variable = parameterVars[descriptor]
-            if (variable != null) {
-                return codegen.load(variable, result)
+        }
+
+        override fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef {
+            val index = codegen.vars.indexOf(descriptor to this)
+            if (index < 0) {
+                return super.genGetValue(descriptor)
             } else {
-                return super.genGetValue(descriptor, result)
+                return codegen.vars.load(index)
             }
         }
     }
@@ -1082,7 +1074,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
                 codegen.appendingTo(body) {
                     using(VariableScope()) {
-                        createVariable(it.parameter, exception)
+                        currentCodeContext.genDeclareVariable(it.parameter, exception)
                         evaluateExpressionAndJump(it.result, success)
                     }
                 }
@@ -1250,7 +1242,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val isUnit                = KotlinBuiltIns.isUnit(expression.type)
         val isNothing             = KotlinBuiltIns.isNothing(expression.type)
         val neitherUnitNorNothing = !isNothing && !isUnit
-        val tmpLlvmVariablePtr    = if (!isUnit) codegen.alloca(expression.type) else null
+        val tmpLlvmVariable       = if (!isUnit) codegen.vars.createAnonymousMutable(expression.type) else -1
 
         expression.branches.forEach {                       // Iterate through "when" branches (clauses).
             var bbNext = bbExit                             // For last clause bbNext coincides with bbExit.
@@ -1258,10 +1250,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 bbNext = codegen.basicBlock()               // Create new basic block for next clause.
             val isUnitBranch = KotlinBuiltIns.isUnit(it.result.type)
             val isNothingBranch = KotlinBuiltIns.isNothing(it.result.type)
-            generateWhenCase(isUnitBranch, isNothingBranch, tmpLlvmVariablePtr, it, bbNext, bbExit) // Generate code for current clause.
+            generateWhenCase(isUnitBranch, isNothingBranch, tmpLlvmVariable, it, bbNext, bbExit) // Generate code for current clause.
         }
         if  (neitherUnitNorNothing)                                      // If result hasn't Unit type and block doesn't end with return
-            return codegen.load(tmpLlvmVariablePtr!!)                    // load value from variable.
+            return codegen.vars.load(tmpLlvmVariable)                    // load value from variable.
         return null
     }
 
@@ -1319,8 +1311,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateSetVariable(value: IrSetVariable): LLVMValueRef? {
         context.log("evaluateSetVariable        : ${ir2string(value)}")
         val ret = evaluateExpression(value.value)!!
-        val variable = currentCodeContext.getDeclaredVariable(value.descriptor)!!
-        codegen.store(ret, variable)
+        val variable = currentCodeContext.getDeclaredVariable(value.descriptor)
+        codegen.vars.store(ret, variable)
         return null
     }
 
@@ -1329,18 +1321,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateVariable(value: IrVariable): LLVMValueRef? {
         context.log("evaluateVariable           : ${ir2string(value)}")
         val ret = value.initializer?.let { evaluateExpression(it)!! }
-        createVariable(value.descriptor, ret)
+        currentCodeContext.genDeclareVariable(value.descriptor, ret)
         return null
-    }
-
-    private fun createVariable(descriptor: VariableDescriptor, value: LLVMValueRef? = null): LLVMValueRef {
-
-        val newVariable = currentCodeContext.genDeclareVariable(descriptor)
-
-        if (value != null) {
-            codegen.store(value, newVariable)
-        }
-        return newVariable
     }
 
     //-------------------------------------------------------------------------//
@@ -1366,23 +1348,23 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val bbExit  = codegen.basicBlock()
 
         val resultLlvmType = codegen.getLLVMType(value.type)
-        val result  = codegen.alloca(resultLlvmType)
+        val result = codegen.vars.createAnonymousMutable(resultLlvmType)
 
         val condition = evaluateInstanceOf(value)
         codegen.condBr(condition, bbTrue, bbFalse)
 
         codegen.positionAtEnd(bbTrue)
         val castResult = evaluateExpression(value.argument)
-        codegen.store(castResult!!, result)
+        codegen.vars.store(castResult!!, result)
         codegen.br(bbExit)
 
         codegen.positionAtEnd(bbFalse)
         val nullResult = LLVMConstNull(resultLlvmType)!!
-        codegen.store(nullResult, result)
+        codegen.vars.store(nullResult, result)
         codegen.br(bbExit)
 
         codegen.positionAtEnd(bbExit)
-        return codegen.load(result)
+        return codegen.vars.load(result)
     }
 
     //-------------------------------------------------------------------------//
@@ -1870,13 +1852,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun generateWhenCase(isUnit:Boolean, isNothing:Boolean, resultPtr: LLVMValueRef?, branch: IrBranch, bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
+    private fun generateWhenCase(isUnit:Boolean, isNothing:Boolean, resultPtr: Int,
+                                 branch: IrBranch, bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
         val neitherUnitNorNothing = !isNothing && !isUnit                            // If branches doesn't end with 'return' either result hasn't got 'unit' type.
         val branchResult = branch.result
         if (isUnconditional(branch)) {                                               // It is the "else" clause.
             val brResult = evaluateExpression(branchResult)                          // Generate clause body.
             if (neitherUnitNorNothing)                                               // If nor unit neither result ends with return
-                codegen.store(brResult!!, resultPtr!!)                               // we store result to temporal variable.
+                codegen.vars.store(brResult!!, resultPtr)                               // we store result to temporal variable.
             if (bbExit == null) return                                               // If 'bbExit' isn't defined just return
             codegen.br(bbExit)                                                       // Generate branch to bbExit.
             codegen.positionAtEnd(bbExit)                                            // Switch generation to bbExit.
@@ -1887,7 +1870,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             codegen.positionAtEnd(bbCurr)                                            // Switch generation to block for clause body.
             val brResult = evaluateExpression(branch.result)                         // Generate clause body.
             if (neitherUnitNorNothing)                                               // If nor unit neither result ends with return
-                codegen.store(brResult!!, resultPtr!!)                               // we store result to temporal variable.
+                codegen.vars.store(brResult!!, resultPtr)                            // we store result to temporal variable.
             if (!isNothing)                                                          // If basic block doesn't end with 'return'
                 codegen.br(bbExit!!)                                                 // generate branch to bbExit.
             codegen.positionAtEnd(bbNext!!)                                          // Switch generation to bbNextClause.
