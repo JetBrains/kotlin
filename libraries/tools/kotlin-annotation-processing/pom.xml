@@ -56,13 +56,6 @@
             <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>jdk</groupId>
-            <artifactId>tools</artifactId>
-            <scope>system</scope>
-            <version>1.8</version>
-            <systemPath>${env.JDK_18}/lib/tools.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <build>
@@ -184,4 +177,28 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>tools_jar_profile</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <file>
+                    <exists>kotlin-annotation-processing-maven-build.txt</exists>
+                </file>
+            </activation>
+            <properties>
+                <toolsjar>${env.JDK_18}/lib/tools.jar</toolsjar>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                    <version>1.8.0</version>
+                    <scope>system</scope>
+                    <systemPath>${toolsjar}</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
