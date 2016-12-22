@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceTask
@@ -70,6 +72,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         }
 
     var compilerJarFile: File? = null
+    protected val compilerJar: File
+            get() = compilerJarFile
+                    ?: findKotlinCompilerJar(project)
+                    ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
+    protected abstract fun findKotlinCompilerJar(project: Project): File?
+
     internal var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)
     internal var anyClassesCompiled: Boolean = false
@@ -142,6 +150,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     // created only if kapt2 is active
     internal var sourceAnnotationsRegistry: SourceAnnotationsRegistry? = null
 
+    override fun findKotlinCompilerJar(project: Project): File? =
+            findKotlinJvmCompilerJar(project)
+
     override fun populateCompilerArguments(): K2JVMCompilerArguments {
         val args = K2JVMCompilerArguments().apply { fillDefaultValues() }
 
@@ -174,9 +185,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.classpathAsList = compileClasspath.toList()
         args.destinationAsFile = destinationDir
         val outputItemCollector = OutputItemsCollectorImpl()
-        val compilerJar = compilerJarFile
-                ?: findKotlinJvmCompilerJar(project)
-                ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
 
         if (!incremental) {
             anyClassesCompiled = true
@@ -298,9 +306,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     private val defaultOutputFile: File
             get() = File(destinationDir, "$moduleName.js")
 
-    private val defaultOutputFile: File
-            get() = File(destinationDir, "$moduleName.js")
-
     @Suppress("unused")
     val outputFile: String
         get() = kotlinOptions.outputFile ?: defaultOutputFile.canonicalPath
@@ -309,6 +314,9 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         @Suppress("LeakingThis")
         outputs.file(MethodClosure(this, "getOutputFile"))
     }
+
+    override fun findKotlinCompilerJar(project: Project): File? =
+            findKotlinJsCompilerJar(project)
 
     override fun populateCompilerArguments(): K2JSCompilerArguments {
         val args = K2JSCompilerArguments().apply { fillDefaultValues() }
@@ -345,7 +353,12 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
-        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
+
+        val messageCollector = GradleMessageCollector(logger)
+        val outputItemCollector = OutputItemsCollectorImpl()
+
+        val compilerRunner = GradleCompilerRunner(project)
+        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, messageCollector, outputItemCollector, compilerJar)
 
         when (exitCode) {
             ExitCode.OK -> {
