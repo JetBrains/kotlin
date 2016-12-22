@@ -68,6 +68,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
+    var compilerJarFile: File? = null
     internal var compilerCalled: Boolean = false
     // TODO: consider more reliable approach (see usage)
     internal var anyClassesCompiled: Boolean = false
@@ -172,10 +173,15 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.classpathAsList = compileClasspath.toList()
         args.destinationAsFile = destinationDir
         val outputItemCollector = OutputItemsCollectorImpl()
+        val compilerJar = compilerJarFile
+                ?: findKotlinJvmCompilerJar(project)
+                ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
 
         if (!incremental) {
             anyClassesCompiled = true
-            val exitCode = GradleCompilerRunner(project).runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, messageCollector, outputItemCollector)
+            val compilerRunner = GradleCompilerRunner(project)
+            val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, messageCollector,
+                    outputItemCollector, compilerJar)
             processCompilerExitCode(exitCode)
             return
         }
@@ -294,6 +300,9 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     private val kotlinOptionsImpl = KotlinJsOptionsImpl()
     override val kotlinOptions: KotlinJsOptions
             get() = kotlinOptionsImpl
+
+    private val defaultOutputFile: File
+            get() = File(destinationDir, "$moduleName.js")
 
     @Suppress("unused")
     val outputFile: String?
