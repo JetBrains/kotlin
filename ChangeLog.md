@@ -476,6 +476,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 
 - [`KT-15068`](https://youtrack.jetbrains.com/issue/KT-15068) Implement intention which rename file according to the top-level class name
 - Implement quickfix which enables/disables coroutine support in module or project
+- [`KT-15056`](https://youtrack.jetbrains.com/issue/KT-15056) Implement intention which converts object literal to class
 
 ## 1.0.6
 

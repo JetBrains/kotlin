@@ -4680,6 +4680,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertObjectLiteralToClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertObjectLiteralToClass extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertObjectLiteralToClass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertObjectLiteralToClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("objectLiteralNoCapture.kt")
+        public void testObjectLiteralNoCapture() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/objectLiteralNoCapture.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectLiteralNoSupers.kt")
+        public void testObjectLiteralNoSupers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/objectLiteralNoSupers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectLiteralWithCapture.kt")
+        public void testObjectLiteralWithCapture() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertObjectLiteralToClass/objectLiteralWithCapture.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertParameterToReceiver")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
