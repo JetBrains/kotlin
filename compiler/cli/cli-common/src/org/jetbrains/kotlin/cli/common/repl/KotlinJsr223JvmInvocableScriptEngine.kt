@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import javax.script.Invocable
 import javax.script.ScriptException
 import kotlin.reflect.*
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.safeCast
 
 @Suppress("unused") // used externally (kotlin.script.utils)
 interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
