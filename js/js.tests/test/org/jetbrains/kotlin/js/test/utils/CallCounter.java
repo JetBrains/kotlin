@@ -81,8 +81,8 @@ public class CallCounter extends RecursiveJsVisitor {
         int count = 0;
 
         for (JsNameRef callNameRef : callsNameRefs) {
-            JsName name = callNameRef.getName();
-            if (name != null && name.getIdent().equals(expectedName)) {
+            String name = callNameRef.getIdent();
+            if (name.equals(expectedName)) {
                 count++;
             }
         }
@@ -134,8 +134,8 @@ public class CallCounter extends RecursiveJsVisitor {
             }
 
             JsNameRef currentNameRef = (JsNameRef) currentQualifier;
-            JsName name = currentNameRef.getName();
-            if (name == null || !name.getIdent().equals(expectedQualifier)) {
+            String name = currentNameRef.getIdent();
+            if (!name.equals(expectedQualifier)) {
                 return false;
             }
 
