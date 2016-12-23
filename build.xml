@@ -41,9 +41,10 @@
 
     <include file="jslib_files.xml" />
 
+    <property name="compiled.builtins.js" value="builtins.js"/>
     <property name="compiled.stdlib.js" value="stdlib.js"/>
     <property name="compiled.stdlib.meta.js" value="kotlin.meta.js"/>
-    <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
+    <property name="stdlib.js.dir" value="${basedir}/js/js.libraries/src/js"/>
 
     <!--
     The compiler produced on the first step of the build (Bootstrap No Tests) is only guaranteed to work against the OLD runtime
@@ -366,16 +367,16 @@
             output="${js.stdlib.output.dir}/kotlin.js"
             outputWrapperFile="${stdlib.js.dir}/closure-wrapper.txt">
 
-            <sources dir="${stdlib.js.dir}">
-                <file name="kotlin_lib_ecma5.js"/>
-                <file name="kotlin_lib.js"/>
-                <file name="long.js"/>
-            </sources>
-
-            <sources dir="${js.stdlib.output.dir}">
-                <file name="builtins.js"/>
-                <file name="${compiled.stdlib.js}"/>
-            </sources>
+            <path>
+                <fileset dir="${stdlib.js.dir}">
+                    <include name="**/*.js"/>
+                    <exclude name="externs.js"/>
+                </fileset>
+                <fileset dir="${js.stdlib.output.dir}">
+                    <include name="${compiled.builtins.js}"/>
+                    <include name="${compiled.stdlib.js}"/>
+                </fileset>
+            </path>
 
             <externs dir="${stdlib.js.dir}">
                 <file name="externs.js"/>
@@ -426,7 +427,7 @@
             </src>
         </new-kotlin2js>
 
-        <move file="${js.stdlib.output.dir}/tmp-builtins/kotlin.js" tofile="${js.stdlib.output.dir}/builtins.js" />
+        <move file="${js.stdlib.output.dir}/tmp-builtins/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.builtins.js}" />
         <move file="${js.stdlib.output.dir}/tmp/kotlin.js" tofile="${js.stdlib.output.dir}/${compiled.stdlib.js}" />
         <move file="${js.stdlib.output.dir}/tmp/kotlin" todir="${js.stdlib.output.dir}" />
         <move file="${js.stdlib.output.dir}/tmp/${compiled.stdlib.meta.js}" tofile="${js.stdlib.output.dir}/${compiled.stdlib.meta.js}" />
