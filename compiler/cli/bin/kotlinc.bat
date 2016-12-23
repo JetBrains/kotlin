@@ -25,13 +25,13 @@ if not "%JAVA_HOME%"=="" (
 if "%_JAVACMD%"=="" set _JAVACMD=java
 
 rem We use the value of the JAVA_OPTS environment variable if defined
-set _JAVA_OPTS=-Xmx256M -Xms32M
+if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx256M -Xms32M
 
 if not "%_KOTLIN_RUNNER%"=="" (
-  "%_JAVACMD%" %_JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
+  "%_JAVACMD%" %JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
     org.jetbrains.kotlin.runner.Main %*
 ) else (
-  "%_JAVACMD%" %_JAVA_OPTS% -noverify -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
+  "%_JAVACMD%" %JAVA_OPTS% -noverify -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
     org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
     %_KOTLIN_COMPILER% %*
 )
