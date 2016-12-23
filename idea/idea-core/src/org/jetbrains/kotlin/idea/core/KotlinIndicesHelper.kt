@@ -21,6 +21,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiModifier
+import com.intellij.psi.impl.CompositeShortNamesCache
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
@@ -28,6 +29,7 @@ import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -51,6 +53,8 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.util.*
 
 class KotlinIndicesHelper(
@@ -221,8 +225,7 @@ class KotlinIndicesHelper(
             filter: (PsiMember) -> Boolean,
             processor: (CallableDescriptor) -> Unit
     ) {
-        val javaDeclarations = PsiShortNamesCache.getInstance(project).getFieldsByName(name, scopeWithoutKotlin).asSequence() +
-                               PsiShortNamesCache.getInstance(project).getMethodsByName(name, scopeWithoutKotlin).asSequence()
+        val javaDeclarations = getJavaCallables(name, PsiShortNamesCache.getInstance(project))
         val processed = HashSet<CallableDescriptor>()
         for (javaDeclaration in javaDeclarations) {
             ProgressManager.checkCanceled()
@@ -232,6 +235,57 @@ class KotlinIndicesHelper(
             if (!processed.add(descriptor)) continue
             if (!descriptorFilter(descriptor)) continue
             processor(descriptor)
+        }
+    }
+
+    /*
+     * This is a dirty work-around to filter out results from BrShortNamesCache.
+     * BrShortNamesCache creates a synthetic class (LightBrClass), which traverses all annotated properties
+     *     in a module inside "myFieldCache" (and in Kotlin light classes too, of course).
+     * It triggers the light classes compilation in the UI thread inside our static field import quick-fix.
+     */
+    private fun getJavaCallables(name: String, shortNamesCache: PsiShortNamesCache): Sequence<Any> {
+        if (shortNamesCache is CompositeShortNamesCache) {
+            try {
+                fun getMyCachesField(clazz: Class<PsiShortNamesCache>): Field {
+                    try {
+                        return clazz.getDeclaredField("myCaches")
+                    }
+                    catch (e: NoSuchFieldException) {
+                        // In case the class is proguarded
+                        return clazz.declaredFields.first {
+                            Modifier.isPrivate(it.modifiers) && Modifier.isFinal(it.modifiers) && !Modifier.isStatic(it.modifiers)
+                                && it.type.isArray && it.type.componentType == PsiShortNamesCache::class.java
+                        }
+                    }
+                }
+
+                val myCachesField = getMyCachesField(shortNamesCache.javaClass)
+                val previousIsAccessible = myCachesField.isAccessible
+                try {
+                    myCachesField.isAccessible = true
+                    @Suppress("UNCHECKED_CAST")
+                    val caches = (myCachesField.get(shortNamesCache) as Array<PsiShortNamesCache>).filter {
+                        it !is KotlinShortNamesCache && it.javaClass.name != "com.android.tools.idea.databinding.BrShortNamesCache"
+                    }
+                    return getCallablesByName(name, scopeWithoutKotlin, caches)
+                }
+                finally {
+                    myCachesField.isAccessible = previousIsAccessible
+                }
+            }
+            catch (thr: Throwable) {
+                // Our dirty hack isn't working
+            }
+        }
+
+        return shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).asSequence() +
+               shortNamesCache.getMethodsByName(name, scopeWithoutKotlin).asSequence()
+    }
+
+    private fun getCallablesByName(name: String, scope: GlobalSearchScope, caches: List<PsiShortNamesCache>): Sequence<Any> {
+        return caches.asSequence().flatMap { cache ->
+            cache.getMethodsByName(name, scope).asSequence() + cache.getFieldsByName(name, scope).asSequence()
         }
     }
 
