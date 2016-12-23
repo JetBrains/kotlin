@@ -140,6 +140,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         UNRESOLVED_REFERENCE.registerFactory(ImportMemberFix)
         UNRESOLVED_REFERENCE.registerFactory(ImportFix)
+        UNRESOLVED_REFERENCE.registerFactory(ImportConstructorReferenceFix)
 
         TOO_MANY_ARGUMENTS.registerFactory(ImportForMismatchingArgumentsFix)
         NO_VALUE_FOR_PARAMETER.registerFactory(ImportForMismatchingArgumentsFix)

@@ -96,6 +96,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("constructorReference.before.Main.kt")
+        public void testConstructorReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/constructorReference.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("delegateExtensionBoth.test")
         public void testDelegateExtensionBoth() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/delegateExtensionBoth.test");
@@ -471,6 +477,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("noImportInSafeQualifiedExpressionNotFirst.before.Main.kt")
         public void testNoImportInSafeQualifiedExpressionNotFirst() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportInSafeQualifiedExpressionNotFirst.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noImportInterfaceRefAsConstructor.before.Main.kt")
+        public void testNoImportInterfaceRefAsConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportInterfaceRefAsConstructor.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
 
