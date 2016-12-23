@@ -61,7 +61,7 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
             }
 
             private fun ProblemsHolder.registerUnusedEqualsProblem(expression: KtBinaryExpression) {
-                registerProblem(expression,
+                registerProblem(expression.operationReference,
                                 "Unused equals expression",
                                 ProblemHighlightType.LIKE_UNUSED_SYMBOL)
             }
