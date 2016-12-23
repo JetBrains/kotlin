@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.actions.createGroupedImportsAction
 import org.jetbrains.kotlin.idea.actions.createSingleImportAction
+import org.jetbrains.kotlin.idea.actions.createSingleImportActionForConstructor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -49,10 +50,12 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -66,6 +69,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
@@ -156,7 +160,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
         val file = element.getContainingKtFile()
 
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
         if (!checkErrorStillPresent(bindingContext)) return emptyList()
 
         val searchScope = getResolveScope(file)
@@ -236,19 +240,9 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
 
         if (expression is KtSimpleNameExpression) {
             if (!expression.isImportDirectiveExpression() && !isSelectorInQualified(expression)) {
-                val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
+                val filterByCallType = callTypeAndReceiver.toFilter()
 
-                if (ProjectStructureUtil.isJsKotlinModule(expression.getContainingKtFile())) {
-                    indicesHelper
-                            .getKotlinClasses(
-                                    { it == name },
-                                    psiFilter = { classOrObject -> classOrObject !is KtEnumEntry },
-                                    kindFilter = { kind -> kind != ClassKind.ENUM_ENTRY })
-                            .filterTo(result, filterByCallType)
-                }
-                else {
-                    indicesHelper.getJvmClassesByName(name).filterTo(result, filterByCallType)
-                }
+                indicesHelper.getClassesByName(expression, name).filterTo(result, filterByCallType)
 
                 indicesHelper.getTopLevelCallablesByName(name).filterTo(result, filterByCallType)
             }
@@ -270,6 +264,31 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
     }
 }
 
+internal class ImportConstructorReferenceFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
+    override fun getCallTypeAndReceiver() = element?.let {
+        CallTypeAndReceiver.detect(it) as? CallTypeAndReceiver.CALLABLE_REFERENCE
+    }
+
+    override fun fillCandidates(name: String, callTypeAndReceiver: CallTypeAndReceiver<*, *>, bindingContext: BindingContext, indicesHelper: KotlinIndicesHelper): List<DeclarationDescriptor> {
+        val expression = element ?: return emptyList()
+
+        val filterByCallType = callTypeAndReceiver.toFilter()
+        // TODO Type-aliases
+        return indicesHelper.getClassesByName(expression, name).asSequence().map { it.constructors }.flatten().filter(filterByCallType).toList()
+    }
+
+    override fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
+        return createSingleImportActionForConstructor(project, editor, element, suggestions)
+    }
+
+    override val importNames = element?.mainReference?.resolvesByNames ?: emptyList()
+
+    companion object MyFactory : Factory() {
+        override fun createAction(diagnostic: Diagnostic) =
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportConstructorReferenceFix)
+    }
+}
+
 internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression, MyFactory) {
     override val importNames = OperatorNameConventions.INVOKE.singletonList()
 
@@ -277,7 +296,7 @@ internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase
 
     companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtExpression)?.let { InvokeImportFix(it) }
+                (diagnostic.psiElement as? KtExpression)?.let(::InvokeImportFix)
     }
 }
 
@@ -404,7 +423,7 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
 
         val result = ArrayList<DeclarationDescriptor>()
 
-        val filterByCallType = { descriptor: DeclarationDescriptor -> callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor) }
+        val filterByCallType = callTypeAndReceiver.toFilter()
 
         indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
 
@@ -551,3 +570,16 @@ object ImportForMissingOperatorFactory : KotlinSingleIntentionActionFactory() {
         return null
     }
 }
+
+
+private fun KotlinIndicesHelper.getClassesByName(expressionForPlatform: KtExpression, name: String) =
+        when (TargetPlatformDetector.getPlatform(expressionForPlatform.getContainingKtFile())) {
+            JsPlatform -> getKotlinClasses({ it == name },
+                    // Enum entries should be contributes with members import fix
+                                           psiFilter = { ktDeclaration -> ktDeclaration !is KtEnumEntry },
+                                           kindFilter = { kind -> kind != ClassKind.ENUM_ENTRY })
+            JvmPlatform -> getJvmClassesByName(name)
+            else -> emptyList()
+        }
+
+private fun CallTypeAndReceiver<*, *>.toFilter() = { descriptor: DeclarationDescriptor -> this.callType.descriptorKindFilter.accepts(descriptor) }
