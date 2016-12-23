@@ -31,9 +31,14 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.roots.DependencyScope;
+import com.intellij.openapi.roots.ModuleOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -111,4 +116,49 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
   protected abstract ExternalProjectSettings getCurrentExternalProjectSettings();
 
   protected abstract ProjectSystemId getExternalSystemId();
+
+  protected void assertModuleModuleDepScope(String moduleName, String depName, DependencyScope... scopes) {
+    List<ModuleOrderEntry> deps = getModuleModuleDeps(moduleName, depName);
+    Set<DependencyScope> actualScopes = new HashSet<DependencyScope>();
+    for (ModuleOrderEntry dep : deps) {
+      actualScopes.add(dep.getScope());
+    }
+    HashSet<DependencyScope> expectedScopes = new HashSet<DependencyScope>(Arrays.asList(scopes));
+    assertEquals("Dependency '" + depName + "' for module '" + moduleName + "' has unexpected scope",
+                 expectedScopes, actualScopes);
+  }
+
+  @NotNull
+  private List<ModuleOrderEntry> getModuleModuleDeps(@NotNull String moduleName, @NotNull String depName) {
+    return getModuleDep(moduleName, depName, ModuleOrderEntry.class);
+  }
+
+  private ModuleRootManager getRootManager(String module) {
+    return ModuleRootManager.getInstance(getModule(module));
+  }
+
+  @NotNull
+  private <T> List<T> getModuleDep(@NotNull String moduleName, @NotNull String depName, @NotNull Class<T> clazz) {
+    List<T> deps = ContainerUtil.newArrayList();
+
+    for (OrderEntry e : getRootManager(moduleName).getOrderEntries()) {
+      if (clazz.isInstance(e) && e.getPresentableName().equals(depName)) {
+        deps.add((T)e);
+      }
+    }
+    assertTrue("Dependency '" + depName + "' for module '" + moduleName + "' not found among: " + collectModuleDepsNames(moduleName, clazz),
+               !deps.isEmpty());
+    return deps;
+  }
+
+  private List<String> collectModuleDepsNames(String moduleName, Class clazz) {
+    List<String> actual = new ArrayList<String>();
+
+    for (OrderEntry e : getRootManager(moduleName).getOrderEntries()) {
+      if (clazz.isInstance(e)) {
+        actual.add(e.getPresentableName());
+      }
+    }
+    return actual;
+  }
 }
