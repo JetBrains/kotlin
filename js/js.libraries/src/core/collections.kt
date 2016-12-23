@@ -18,8 +18,11 @@ package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
 
+/** Returns the array if it's not `null`, or an empty array otherwise. */
+public inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()
+
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
+public inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
 @JsName("copyToArray")
 internal fun <T> copyToArray(collection: Collection<T>): Array<T> {

@@ -23,6 +23,9 @@ package kotlin.collections
 import java.nio.charset.Charset
 
 
+/** Returns the array if it's not `null`, or an empty array otherwise. */
+public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()
+
 /**
  * Converts the contents of this byte array to a string using the specified [charset].
  */

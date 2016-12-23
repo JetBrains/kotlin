@@ -19,7 +19,7 @@ package kotlin
 /**
  * Returns an empty array of the specified type [T].
  */
-public inline fun <reified T> emptyArray(): Array<T> = js("[]")
+public inline fun <T> emptyArray(): Array<T> = js("[]")
 
 @library
 public fun <T> arrayOf(vararg elements: T): Array<T> = noImpl

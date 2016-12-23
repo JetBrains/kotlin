@@ -21,9 +21,6 @@
 package kotlin.collections
 
 
-/** Returns the array if it's not `null`, or an empty array otherwise. */
-public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()
-
 
 /**
  * Returns a single list of all elements from all arrays in the given array.

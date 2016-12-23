@@ -143,6 +143,10 @@ header abstract class AbstractMutableList<E> : MutableList<E> {
 
 // From collections.kt
 
+/** Returns the array if it's not `null`, or an empty array otherwise. */
+header inline fun <reified T> Array<out T>?.orEmpty(): Array<out T>
+
+
 header inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
 
 header fun <T : Comparable<T>> MutableList<T>.sort(): Unit
