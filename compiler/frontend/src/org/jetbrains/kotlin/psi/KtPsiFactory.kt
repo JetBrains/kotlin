@@ -176,6 +176,10 @@ class KtPsiFactory(private val project: Project) {
         return createDeclaration(text)
     }
 
+    fun createObject(text: String): KtObjectDeclaration {
+        return createDeclaration(text)
+    }
+
     fun createCompanionObject(): KtObjectDeclaration {
         return createClass("class A {\n companion object{\n}\n}").getCompanionObjects().first()
     }

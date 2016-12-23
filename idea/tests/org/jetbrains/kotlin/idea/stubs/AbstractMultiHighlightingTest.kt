@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.stubs
 
 import com.intellij.codeInsight.completion.CompletionTestCase
+import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.ApplicationManager
@@ -29,7 +30,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.testFramework.ExpectedHighlightingData
 
-abstract class AbstractMultiHighlightingTest : CompletionTestCase() {
+abstract class AbstractMultiHighlightingTest : AbstractMultiModuleTest() {
 
     protected open val shouldCheckLineMarkers = false
 

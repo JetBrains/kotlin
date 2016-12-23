@@ -16,32 +16,14 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.StdModuleTypes
-import com.intellij.openapi.roots.DependencyScope
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.PsiTestUtil
-import com.sampullara.cli.Argument
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.Assert
-import java.io.File
 
 abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {
 
-    protected open val testPath = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
+    override val testPath = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
 
     protected fun checkHighlightingInAllFiles() {
         var atLeastOneFile = false
@@ -53,70 +35,5 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
             }
         }
         Assert.assertTrue(atLeastOneFile)
-    }
-
-    protected fun module(name: String, hasTestRoot: Boolean = false, useFullJdk: Boolean = false): Module {
-        val srcDir = testPath + "${getTestName(true)}/$name"
-        val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)!!
-        if (hasTestRoot) {
-            setTestRoot(moduleWithSrcRootSet, name)
-        }
-
-        val jdkToUse = if (useFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, jdkToUse)
-
-        return moduleWithSrcRootSet
-    }
-
-    protected fun setTestRoot(module: Module, name: String) {
-        val testDir = testPath + "${getTestName(true)}/${name}Test"
-        val testRootDirInTestData = File(testDir)
-        val testRootDir = createTempDirectory()!!
-        FileUtil.copyDir(testRootDirInTestData, testRootDir)
-        val testRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(testRootDir)!!
-        object : WriteCommandAction.Simple<Unit>(project) {
-            override fun run() {
-                testRoot.refresh(false, true)
-            }
-        }.execute().throwException()
-        PsiTestUtil.addSourceRoot(module, testRoot, true)
-    }
-
-    protected fun Module.addDependency(
-            other: Module,
-            dependencyScope: DependencyScope = DependencyScope.COMPILE,
-            exported: Boolean = false
-    ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
-
-    private fun Module.createFacet() {
-        val accessToken = WriteAction.start()
-        try {
-            val modelsProvider = IdeModifiableModelsProviderImpl(project)
-            getOrCreateFacet(modelsProvider)
-            modelsProvider.commit()
-        }
-        finally {
-            accessToken.finish()
-        }
-    }
-
-    protected fun Module.setPlatformKind(platformKind: TargetPlatformKind<*>) {
-        createFacet()
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
-        val versionInfo = facetSettings.versionInfo
-        versionInfo.targetPlatformKind = platformKind
-    }
-
-    protected fun Module.enableMultiPlatform() {
-        createFacet()
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
-        val compilerInfo = facetSettings.compilerInfo
-        val compilerSettings = CompilerSettings()
-        compilerSettings.additionalArguments += " -$multiPlatformArg"
-        compilerInfo.compilerSettings = compilerSettings
-    }
-
-    companion object {
-        private val multiPlatformArg = CommonCompilerArguments::multiPlatform.annotations.filterIsInstance<Argument>().single().value
     }
 }

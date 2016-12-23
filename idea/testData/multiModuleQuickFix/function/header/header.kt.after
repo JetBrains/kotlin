@@ -1,0 +1,3 @@
+// "Create header function implementation for platform JVM" "true"
+
+header fun foo(arg: Int): String
