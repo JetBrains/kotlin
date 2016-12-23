@@ -681,6 +681,11 @@ task scope1(type: RunKonanTest) {
     source = "codegen/dataflow/scope1.kt"
 }
 
+task uninitialized_val(type: RunKonanTest) {
+    goldValue = "1\n2\n"
+    source = "codegen/dataflow/uninitialized_val.kt"
+}
+
 task try1(type: RunKonanTest) {
     goldValue = "5\n"
     source = "codegen/try/try1.kt"
@@ -712,7 +717,6 @@ task break_continue(type: RunKonanTest) {
 }
 
 task break1(type: RunKonanTest) {
-    disabled = true
     goldValue = "Body\nDone\n"
     source = "codegen/controlflow/break1.kt"
 }
@@ -841,4 +845,15 @@ task initializers2(type: RunKonanTest) {
                 "globalValue2\n" +
                 "globalValue3\n"
     source = "runtime/basic/initializers2.kt"
+}
+
+task initializers3(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "runtime/basic/initializers3.kt"
+}
+
+task expression_as_statement(type: RunKonanTest) {
+    disabled = true
+    goldValue = "Ok\n"
+    source = "codegen/basics/expression_as_statement.kt"
 }
