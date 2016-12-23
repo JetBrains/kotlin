@@ -86,7 +86,7 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
 class TopLevelSectionTokensEnumerator(script: CharSequence, identifier: String) : Enumeration<KotlinLexer> {
 
     private val lexer = KotlinLexer().apply {
-        start(script)
+        start(script.replace(Regex.fromLiteral("\r"), ""))
         var depth = 0
 
         loop@ while (tokenType != null) {
