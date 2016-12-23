@@ -19,18 +19,12 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
-import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
-import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 
 class UnusedEqualsInspection : AbstractKotlinInspection() {
 
@@ -38,25 +32,10 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             override fun visitBinaryExpression(expression: KtBinaryExpression) {
                 super.visitBinaryExpression(expression)
-                if (expression.operationToken != KtTokens.EQEQ) return
-                val parent = expression.parent as? KtBlockExpression ?: return
-                val lastBlockStatement = parent.lastBlockStatementOrThis()
-                when {
-                    expression.evaluatesTo(lastBlockStatement) && expression.getLineNumber() == lastBlockStatement.getLineNumber() ->
-                        expression.getStrictParentOfType<KtLambdaExpression>()?.visitLambdaExpression(holder, expression) ?: holder.registerUnusedEqualsProblem(expression)
-                    else -> holder.registerUnusedEqualsProblem(expression)
-                }
-            }
-
-            private fun KtLambdaExpression.visitLambdaExpression(holder: ProblemsHolder, expression: KtBinaryExpression) {
-                val lambdaTypeArguments = getType(analyze())?.arguments ?: return
-                if (lambdaTypeArguments.size != 1) return
-                when {
-                    KotlinBuiltIns.isBoolean(lambdaTypeArguments[0].type) -> {
-                        val lastBlockStatementOrThis = bodyExpression?.lastBlockStatementOrThis() ?: return
-                        if (!expression.evaluatesTo(lastBlockStatementOrThis)) holder.registerUnusedEqualsProblem(expression)
-                    }
-                    else -> holder.registerUnusedEqualsProblem(expression)
+                if (expression.operationToken == KtTokens.EQEQ
+                    && expression.parent is KtBlockExpression
+                    && !expression.isUsedAsResultOfLambda(expression.analyze())) {
+                    holder.registerUnusedEqualsProblem(expression)
                 }
             }
 
