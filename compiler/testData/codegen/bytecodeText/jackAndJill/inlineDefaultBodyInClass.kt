@@ -1,4 +1,4 @@
-class A {
+open class A {
     inline fun test(a: Int = 1, b: Long = 1L, c: String = "123") {
         val d = 1
     }

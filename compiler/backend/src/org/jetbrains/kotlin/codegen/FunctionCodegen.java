@@ -918,7 +918,7 @@ public class FunctionCodegen {
         CallGenerator generator = codegen.getOrCreateCallGeneratorForDefaultImplBody(functionDescriptor, function);
 
         InstructionAdapter iv = new InstructionAdapter(mv);
-        genDefaultSuperCallCheckIfNeeded(iv, defaultMethod);
+        genDefaultSuperCallCheckIfNeeded(iv, functionDescriptor, defaultMethod);
 
         loadExplicitArgumentsOnStack(OBJECT_TYPE, isStatic, signature, generator);
 
@@ -961,19 +961,23 @@ public class FunctionCodegen {
         iv.areturn(signature.getReturnType());
     }
 
-    private static void genDefaultSuperCallCheckIfNeeded(@NotNull InstructionAdapter iv, @NotNull Method defaultMethod) {
-        String defaultMethodName = defaultMethod.getName();
-        if ("<init>".equals(defaultMethodName)) {
-            return;
-        }
+    private static void genDefaultSuperCallCheckIfNeeded(
+            @NotNull InstructionAdapter iv, @NotNull FunctionDescriptor descriptor, @NotNull Method defaultMethod
+    ) {
+        if (descriptor instanceof ConstructorDescriptor) return;
+
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (!(container instanceof ClassDescriptor)) return;
+        if (((ClassDescriptor) container).getModality() == Modality.FINAL) return;
+
         Label end = new Label();
         int handleIndex = (Type.getArgumentsAndReturnSizes(defaultMethod.getDescriptor()) >> 2) - 2; /*-1 for this, and -1 for handle*/
         iv.load(handleIndex, OBJECT_TYPE);
         iv.ifnull(end);
-        AsmUtil.genThrow(iv,
-                         "java/lang/UnsupportedOperationException",
-                         "Super calls with default arguments not supported in this target, function: " +
-                         StringsKt.substringBeforeLast(defaultMethodName, JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodName));
+        AsmUtil.genThrow(
+                iv, "java/lang/UnsupportedOperationException",
+                "Super calls with default arguments not supported in this target, function: " + descriptor.getName().asString()
+        );
         iv.visitLabel(end);
     }
 
