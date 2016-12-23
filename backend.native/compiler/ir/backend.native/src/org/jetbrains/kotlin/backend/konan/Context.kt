@@ -37,6 +37,9 @@ internal final class Context(val config: KonanConfig,
 
     lateinit var ir: Ir
 
+    override val irBuiltIns
+        get() = ir.irModule.irBuiltins
+
     var llvmModule: LLVMModuleRef? = null
         set(module: LLVMModuleRef?) {
             if (field != null) {

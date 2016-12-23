@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 
-open internal class KonanBackendContext : BackendContext {
+abstract internal class KonanBackendContext : BackendContext {
     override val builtIns = KonanPlatform.builtIns
 
     override val sharedVariablesManager by lazy {
