@@ -810,7 +810,9 @@ public abstract class StackValue {
                 v.aconst(value);
             }
 
-            coerceTo(type, v);
+            if (value != null || AsmUtil.isPrimitive(type)) {
+                coerceTo(type, v);
+            }
         }
     }
 
