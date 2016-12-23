@@ -1,0 +1,7 @@
+// "Create label foo@" "true"
+
+fun test() {
+    foo@ while (true) {
+        <caret>break@foo
+    }
+}

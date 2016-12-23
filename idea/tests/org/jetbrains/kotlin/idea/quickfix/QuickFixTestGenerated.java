@@ -4151,6 +4151,69 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/createLabel")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CreateLabel extends AbstractQuickFixTest {
+        public void testAllFilesPresentInCreateLabel() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createLabel"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("breakInLoop.kt")
+        public void testBreakInLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/breakInLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("breakInOuterLoop.kt")
+        public void testBreakInOuterLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/breakInOuterLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("breakInlambdaBeforeLoop.kt")
+        public void testBreakInlambdaBeforeLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/breakInlambdaBeforeLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("breakNoLoop.kt")
+        public void testBreakNoLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/breakNoLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("continueInLoop.kt")
+        public void testContinueInLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/continueInLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("continueNoLoop.kt")
+        public void testContinueNoLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/continueNoLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnInLambda.kt")
+        public void testReturnInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/returnInLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnInOuterLambda.kt")
+        public void testReturnInOuterLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/returnInOuterLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnNoLambda.kt")
+        public void testReturnNoLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createLabel/returnNoLambda.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/decreaseVisibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

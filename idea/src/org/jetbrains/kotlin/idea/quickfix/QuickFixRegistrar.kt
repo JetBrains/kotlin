@@ -472,5 +472,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeCoroutineSupportFix)
         EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeCoroutineSupportFix)
+
+        UNRESOLVED_REFERENCE.registerFactory(CreateLabelFix)
     }
 }
