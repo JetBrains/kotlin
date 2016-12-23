@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.createFunctionIrGenerator
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -10,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -134,42 +136,44 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
         // Create new function descriptor:
         val newDescriptor = createSimpleFunctionImplTargetDescriptor(descriptor, unboundParams)
 
-        // Create new function declaration:
-
-        val boundArgsArray = IrCallImpl(startOffset, endOffset, simpleFunctionImplBoundArgsGetter, null).apply {
-            dispatchReceiver = IrGetValueImpl(startOffset, endOffset, newDescriptor.valueParameters[0])
-        }
-        // TODO: do not call boundArgs getter for each bound argument.
-
-        val arrayGet = boundArgsArray.type.memberScope.getContributedDescriptors()
-                .filterIsInstance<FunctionDescriptor>().single { it.name.asString() == "get" }
-
-        // TODO: some handling for type parameters is probably required here.
-
-        // Call to old function from new function:
-        val call = IrCallImpl(startOffset, endOffset, descriptor)
-
-        // unboundParams are received as all new function parameters except first:
-        val newUnboundParams = newDescriptor.valueParameters.drop(1)
-        assert (unboundParams.size == newUnboundParams.size)
-        call.addArguments(unboundParams.mapIndexed { index, param ->
-            param to IrGetValueImpl(startOffset, endOffset, newUnboundParams[index])
-        })
-
-        // boundParams are received in `SimpleFunctionImpl.boundArgs`:
-        call.addArguments(boundParams.mapIndexed { index, param ->
-            param to IrCallImpl(startOffset, endOffset, arrayGet).apply {
-                dispatchReceiver = boundArgsArray
-                putValueArgument(0, IrConstImpl.int(startOffset, endOffset, builtIns.intType, index))
+        val generator = lower.context.createFunctionIrGenerator(newDescriptor)
+        val blockBody = generator.irBlockBody(startOffset, endOffset) {
+            val boundArgsGet = irCall(simpleFunctionImplBoundArgsGetter).apply {
+                dispatchReceiver = irGet(newDescriptor.valueParameters[0])
             }
-        })
 
-        val ret = IrReturnImpl(startOffset, endOffset, newDescriptor, call)
+            +irLet(boundArgsGet) { boundArgs ->
+                val arrayGet = boundArgs.type.memberScope.getContributedDescriptors()
+                        .filterIsInstance<FunctionDescriptor>().single { it.name.asString() == "get" }
+
+                // TODO: some handling for type parameters is probably required here.
+
+                // Call to old function from new function:
+                val call = irCall(descriptor).apply {
+                    // unboundParams are received as all new function parameters except first:
+                    val newUnboundParams = newDescriptor.valueParameters.drop(1)
+                    assert (unboundParams.size == newUnboundParams.size)
+                    addArguments(unboundParams.mapIndexed { index, param ->
+                        param to irGet(newUnboundParams[index])
+                    })
+
+                    // boundParams are received in `SimpleFunctionImpl.boundArgs`:
+                    addArguments(boundParams.mapIndexed { index, param ->
+                        param to irCall(arrayGet).apply {
+                            dispatchReceiver = irGet(boundArgs)
+                            putValueArgument(0, irInt(index))
+                        }
+                    })
+                }
+
+                irReturn(call)
+            }
+        }
 
         val newFunction = IrFunctionImpl(
                 startOffset, endOffset, DECLARATION_ORIGIN_FUNCTION_FOR_CALLABLE_REFERENCE,
                 newDescriptor,
-                IrBlockBodyImpl(startOffset, endOffset, listOf(ret))
+                blockBody
         )
 
         return newFunction
