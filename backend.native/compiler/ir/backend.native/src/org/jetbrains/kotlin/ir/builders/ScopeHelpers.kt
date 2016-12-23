@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.builders
+package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi2ir.generators.Scope
 
 inline fun <reified T> Scope.assertCastOwner() =
         scopeOwner as? T ?:

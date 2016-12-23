@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.builders
+package org.jetbrains.kotlin.ir.builders
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.ir.IrElement
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.generators.Generator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
-import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.generators
+package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
