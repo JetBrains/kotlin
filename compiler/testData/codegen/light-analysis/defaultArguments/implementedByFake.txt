@@ -1,0 +1,33 @@
+public class A {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method g(p0: java.lang.Object): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method h(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+}
+
+public final class B {
+    public method <init>(): void
+    public synthetic method g(p0: java.lang.String): java.lang.String
+    public synthetic method getProp(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public synthetic method h(p0: java.lang.Object): java.lang.Object
+}
+
+public interface I {
+    inner class I/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public abstract @org.jetbrains.annotations.NotNull method g(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public abstract method getProp(): java.lang.Object
+    public abstract method h(p0: java.lang.Object): java.lang.Object
+}
+
+public final class I/DefaultImpls {
+    inner class I/DefaultImpls
+    public synthetic static method f$default(p0: I, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    public synthetic static method g$default(p0: I, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    public synthetic static method h$default(p0: I, p1: java.lang.Object, p2: int, p3: java.lang.Object): java.lang.Object
+}
+
+public final class ImplementedByFakeKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

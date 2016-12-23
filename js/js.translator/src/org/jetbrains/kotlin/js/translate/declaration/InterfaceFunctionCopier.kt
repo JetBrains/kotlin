@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.prototypeOf
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.identity
@@ -82,6 +80,10 @@ class InterfaceFunctionCopier(val context: StaticContext) {
             }
         }
 
+        for (member in members.filterIsInstance<FunctionDescriptor>()) {
+            moveDefaultFunction(member, context)
+        }
+
         for (member in members.filterIsInstance<FunctionDescriptor>()
                 .filter { it.kind.isReal && it.hasOwnParametersWithDefaultValue() }) {
             val names = generateAllNames(member, context)
@@ -92,10 +94,11 @@ class InterfaceFunctionCopier(val context: StaticContext) {
         val superModels = DescriptorUtils.getSuperclassDescriptors(descriptor)
                 .filter { it.kind == ClassKind.INTERFACE && !isNativeObject(it) }
                 .map { classModels[it]!! }
+
         for (superModel in superModels) {
             for (name in superModel.copiedFunctions) {
                 if (classModel.copiedFunctions.add(name)) {
-                    addDefaultMethodFromInterface(name, superModel.descriptor, descriptor, context)
+                    addDefaultMethodFromInterface(name, name, superModel.descriptor, descriptor, context)
                 }
             }
             for (name in superModel.copiedProperties) {
@@ -106,8 +109,37 @@ class InterfaceFunctionCopier(val context: StaticContext) {
         }
     }
 
+    private fun moveDefaultFunction(function: FunctionDescriptor, context: StaticContext) {
+        if (function.kind.isReal || function.modality == Modality.ABSTRACT) return
+
+        val overriddenWithDefaultArg = function.overriddenDescriptors
+                .firstOrNull { it.hasOwnParametersWithDefaultValue() } ?: return
+
+        if (!DescriptorUtils.isInterface(overriddenWithDefaultArg.containingDeclaration)) return
+        val fakeImplementation = function.overriddenDescriptors.first { it.modality != Modality.ABSTRACT }
+
+        val interfaceFunctionName = context.getNameForDescriptor(overriddenWithDefaultArg).ident
+        val targetName = interfaceFunctionName + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX
+        val sourceName = context.getNameForDescriptor(fakeImplementation).ident
+
+        addDefaultMethodFromInterface(sourceName, targetName, fakeImplementation.containingDeclaration as ClassDescriptor,
+                                      function.containingDeclaration as ClassDescriptor, context)
+
+        val overrideNames = generateAllNames(function, context).map { it.ident }
+        val namesFromBaseClass = function.overriddenDescriptors
+                .filter { !DescriptorUtils.isInterface(it.containingDeclaration) }
+                .flatMap { generateAllNames(it, context).map { it.ident }.asIterable() }
+                .distinct()
+
+        for (name in overrideNames.filter { it in namesFromBaseClass }) {
+            addDefaultMethodFromInterface(interfaceFunctionName, name, overriddenWithDefaultArg.containingDeclaration as ClassDescriptor,
+                                          function.containingDeclaration as ClassDescriptor, context)
+        }
+    }
+
     private fun addDefaultMethodFromInterface(
-            name: String,
+            sourceName: String,
+            targetName: String,
             sourceDescriptor: ClassDescriptor,
             targetDescriptor: ClassDescriptor,
             context: StaticContext
@@ -116,8 +148,8 @@ class InterfaceFunctionCopier(val context: StaticContext) {
 
         val targetPrototype = prototypeOf(pureFqn(context.getInnerNameForDescriptor(targetDescriptor), null))
         val sourcePrototype = prototypeOf(pureFqn(context.getInnerNameForDescriptor(sourceDescriptor), null))
-        val targetFunction = JsNameRef(name, targetPrototype)
-        val sourceFunction = JsNameRef(name, sourcePrototype)
+        val targetFunction = JsNameRef(targetName, targetPrototype)
+        val sourceFunction = JsNameRef(sourceName, sourcePrototype)
         context.declarationStatements += JsAstUtils.assignment(targetFunction, sourceFunction).makeStmt()
     }
 
