@@ -332,7 +332,7 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsExpression throwIllegalStateExcpetionFunRef() {
+    public static JsExpression throwIllegalStateExceptionFunRef() {
         return new JsNameRef(THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME, kotlinObject());
     }
 

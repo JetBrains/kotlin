@@ -59,7 +59,7 @@ class EnumTranslator(
         val message = JsBinaryOperation(JsBinaryOperator.ADD,
                 context().program().getStringLiteral("No enum constant ${descriptor.fqNameSafe}."),
                 nameParam.makeRef())
-        val throwStatement = JsExpressionStatement(JsInvocation(Namer.throwIllegalStateExcpetionFunRef(), message))
+        val throwStatement = JsExpressionStatement(JsInvocation(Namer.throwIllegalStateExceptionFunRef(), message))
 
         if (clauses.isNotEmpty()) {
             val defaultCase = JsDefault().apply { statements += throwStatement }
