@@ -258,7 +258,8 @@ class InlineChecker implements CallChecker {
             checkPrivateClassMemberAccess(calledDescriptor, expression, context);
         }
 
-        if (isInlineFunPublicOrPublishedApi &&
+        if (!(calledDescriptor instanceof ConstructorDescriptor) &&
+            isInlineFunPublicOrPublishedApi &&
             inlineFunEffectiveVisibility.toVisibility() != Visibilities.PROTECTED &&
             calledFunEffectiveVisibility.toVisibility() == Visibilities.PROTECTED) {
             context.getTrace().report(Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor));
