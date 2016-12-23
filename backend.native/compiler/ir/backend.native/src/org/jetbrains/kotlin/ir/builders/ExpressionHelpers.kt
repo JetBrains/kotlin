@@ -116,11 +116,17 @@ fun IrBuilderWithScope.irCallOp(callee: CallableDescriptor, dispatchReceiver: Ir
             putValueArgument(0, argument)
         }
 
+fun IrBuilderWithScope.irIs(argument: IrExpression, type: KotlinType) =
+        IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.INSTANCEOF, type, argument)
+
 fun IrBuilderWithScope.irNotIs(argument: IrExpression, type: KotlinType) =
         IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.NOT_INSTANCEOF, type, argument)
 
 fun IrBuilderWithScope.irAs(argument: IrExpression, type: KotlinType) =
         IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, argument)
+
+fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: KotlinType) =
+        IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, argument)
 
 fun IrBuilderWithScope.irInt(value: Int) =
         IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, value)
