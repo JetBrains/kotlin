@@ -13,8 +13,15 @@ public fun json(vararg pairs: Pair<String, Any?>): Json {
     return res
 }
 
-@library("jsonAddProperties")
-public fun Json.add(other: Json): Json = noImpl
+public fun Json.add(other: Json): Json {
+    val keys: Array<String> = js("Object").keys(other)
+    for (key in keys) {
+        if (other.asDynamic().hasOwnProperty(key)) {
+            this[key] = other[key];
+        }
+    }
+    return this
+}
 
 public external interface JsonClass {
     public fun stringify(o: Any): String
