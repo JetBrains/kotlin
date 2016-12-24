@@ -27,7 +27,7 @@ external var buffer: String = noImpl
 fun test(expected: String, initCode: String, getResult: () -> String) {
     buffer = ""
 
-    eval("kotlin.out = new $initCode")
+    eval("kotlin.kotlin.io.output = new $initCode")
 
     print("Hello")
     print(", World")
@@ -44,19 +44,19 @@ fun test(expected: String, initCode: String, getResult: () -> String) {
 }
 
 fun box(): String {
-    test(EXPECTED, "kotlin.NodeJsOutput(outputStream)") {
+    test(EXPECTED, "kotlin.kotlin.io.NodeJsOutput(outputStream)") {
         buffer
     }
 
-    test(EXPECTED_NEWLINE_FOR_EACH, "kotlin.OutputToConsoleLog()") {
+    test(EXPECTED_NEWLINE_FOR_EACH, "kotlin.kotlin.io.OutputToConsoleLog()") {
         buffer
     }
 
-    test(EXPECTED, "kotlin.BufferedOutput()") {
-        eval("kotlin.out.buffer") as String
+    test(EXPECTED, "kotlin.kotlin.io.BufferedOutput()") {
+        eval("kotlin.kotlin.io.output.buffer") as String
     }
 
-    test(EXPECTED, "kotlin.BufferedOutputToConsoleLog()") {
+    test(EXPECTED, "kotlin.kotlin.io.BufferedOutputToConsoleLog()") {
         buffer
     }
 

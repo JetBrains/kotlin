@@ -274,14 +274,6 @@ Kotlin.arrayDeepHashCode = function (arr) {
     return result;
 };
 
-Kotlin.println = function (s) {
-    Kotlin.out.println(s);
-};
-
-Kotlin.print = function (s) {
-    Kotlin.out.print(s);
-};
-
 Kotlin.collectionsSort = function (mutableList, comparator) {
     var boundComparator = void 0;
     if (comparator !== void 0) {

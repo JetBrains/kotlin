@@ -2,6 +2,7 @@ var buffer = "";
 
 function writeToBuffer(a) {
     var type = typeof a;
+    if (type === "undefined") return;
     if (type !== "string") throw Error("Expected string argument type, but got: " + type);
 
     buffer += a;

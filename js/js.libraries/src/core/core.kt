@@ -8,15 +8,6 @@ public external fun eval(expr: String): dynamic = noImpl
 public external val undefined: Nothing? = noImpl
 
 
-@library
-public fun println() {}
-
-@library
-public fun println(s: Any?) {}
-
-@library
-public fun print(s: Any?) {}
-
 //TODO: consistent parseInt
 public external fun parseInt(s: String, radix: Int = noImpl): Int = noImpl
 

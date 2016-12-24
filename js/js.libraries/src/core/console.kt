@@ -14,45 +14,52 @@
  * limitations under the License.
  */
 
-@JsName("BaseOutput")
-internal abstract class BaseOutput {
-    @JsName("println")
-    open fun println(a: Any?) {
-        if (jsTypeOf(a) != "undefined") {
-            print(a)
-        }
+package kotlin.io
+
+private abstract class BaseOutput {
+    open fun println() {
         print("\n")
     }
 
-    @JsName("print")
-    abstract fun print(a: Any?)
+    open fun println(message: Any?) {
+        print(message)
+        println()
+    }
 
-    @JsName("flush")
+    abstract fun print(message: Any?)
+
     open fun flush() {}
 }
 
+/** JsName used to make the declaration available outside of module to test it */
 @JsName("NodeJsOutput")
-internal class NodeJsOutput(val outputStream: dynamic) : BaseOutput() {
-    override fun print(a: dynamic) = outputStream.write(a)
+private class NodeJsOutput(val outputStream: dynamic) : BaseOutput() {
+    override fun print(message: Any?) = outputStream.write(message)
 }
 
+/** JsName used to make the declaration available outside of module to test it */
 @JsName("OutputToConsoleLog")
-internal class OutputToConsoleLog : BaseOutput() {
-    override fun print(a: Any?) {
-        console.log(a)
+private class OutputToConsoleLog : BaseOutput() {
+    override fun print(message: Any?) {
+        console.log(message)
     }
 
-    override fun println(a: Any?) {
-        console.log(if (jsTypeOf(a) != "undefined") a else "")
+    override fun println(message: Any?) {
+        console.log(message)
+    }
+
+    override fun println() {
+        console.log()
     }
 }
 
+/** JsName used to make the declaration available outside of module to test it and use at try.kotl.in */
 @JsName("BufferedOutput")
-internal open class BufferedOutput : BaseOutput() {
+private open class BufferedOutput : BaseOutput() {
     var buffer = ""
 
-    override fun print(a: Any?) {
-        buffer += String(a)
+    override fun print(message: Any?) {
+        buffer += String(message)
     }
 
     override fun flush() {
@@ -60,10 +67,11 @@ internal open class BufferedOutput : BaseOutput() {
     }
 }
 
+/** JsName used to make the declaration available outside of module to test it */
 @JsName("BufferedOutputToConsoleLog")
-internal class BufferedOutputToConsoleLog : BufferedOutput() {
-    override fun print(a: Any?) {
-        var s = String(a)
+private class BufferedOutputToConsoleLog : BufferedOutput() {
+    override fun print(message: Any?) {
+        var s = String(message)
         val i = s.lastIndexOf('\n')
         if (i >= 0) {
             buffer += s.substring(0, i)
@@ -79,10 +87,26 @@ internal class BufferedOutputToConsoleLog : BufferedOutput() {
     }
 }
 
-@JsName("out")
-internal var `out` = {
+/** JsName used to make the declaration available outside of module to test it and use at try.kotl.in */
+@JsName("output")
+private var output = run {
     val isNode: Boolean = js("typeof process !== 'undefined' && process.versions && !!process.versions.node")
     if (isNode) NodeJsOutput(js("process.stdout")) else BufferedOutputToConsoleLog()
-}()
+}
 
 private inline fun String(value: Any?): String = js("String")(value)
+
+/** Prints a newline to the standard output stream. */
+public fun println() {
+    output.println()
+}
+
+/** Prints the given message and newline to the standard output stream. */
+public fun println(message: Any?) {
+    output.println(message)
+}
+
+/** Prints the given message to the standard output stream. */
+public fun print(message: Any?) {
+    output.print(message)
+}

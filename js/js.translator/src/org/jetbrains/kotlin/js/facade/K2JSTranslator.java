@@ -47,9 +47,6 @@ import static org.jetbrains.kotlin.js.translate.utils.ExpandIsCallsKt.expandIsCa
  */
 public final class K2JSTranslator {
 
-    public static final String FLUSH_SYSTEM_OUT = "kotlin.out.flush();\n";
-    public static final String GET_SYSTEM_OUT = "kotlin.out.buffer;\n";
-
     @NotNull
     private final JsConfig config;
 

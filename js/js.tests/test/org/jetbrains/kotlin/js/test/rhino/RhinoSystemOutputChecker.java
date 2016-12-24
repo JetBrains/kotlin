@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
+import static org.jetbrains.kotlin.js.test.rhino.RhinoUtils.GET_KOTLIN_OUTPUT;
 import static org.junit.Assert.assertTrue;
 
 public final class RhinoSystemOutputChecker implements RhinoResultChecker {
@@ -44,7 +44,7 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
 
     @NotNull
     private static String getSystemOutput(@NotNull Context context, @NotNull Scriptable scope) {
-        Object output = context.evaluateString(scope, K2JSTranslator.GET_SYSTEM_OUT, "test", 0, null);
+        Object output = context.evaluateString(scope, GET_KOTLIN_OUTPUT, "test", 0, null);
         RhinoUtils.flushSystemOut(context, scope);
         assertTrue("Output should be a string.", output instanceof String);
         return (String) output;

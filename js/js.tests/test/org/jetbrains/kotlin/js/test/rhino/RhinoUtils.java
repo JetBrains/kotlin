@@ -22,7 +22,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
-import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.mozilla.javascript.*;
 
@@ -47,7 +46,11 @@ public final class RhinoUtils {
 
     public static final int OPTIMIZATION_OFF = -1;
 
-    public static final int OPTIMIZATION_DEFAULT = 0;
+    private static final int OPTIMIZATION_DEFAULT = 0;
+
+    private static final String SETUP_KOTLIN_OUTPUT = "kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput();";
+    private static final String FLUSH_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.flush();";
+    public static final String GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;";
 
     @NotNull
     private static final Map<EcmaVersion, ScriptableObject> versionToScope = ContainerUtil.newHashMap();
@@ -140,7 +143,7 @@ public final class RhinoUtils {
             Scriptable scope = getScope(ecmaVersion, context, jsLibraries);
             putGlobalVariablesIntoScope(scope, variables);
 
-            context.evaluateString(scope, "kotlin.out = new kotlin.BufferedOutput();", "setup Kotlin.out", 0, null);
+            context.evaluateString(scope, SETUP_KOTLIN_OUTPUT, "setup kotlin output", 0, null);
 
             for (String filename : fileNames) {
                 runFileWithRhino(filename, context, scope);
@@ -219,7 +222,7 @@ public final class RhinoUtils {
     }
 
     static void flushSystemOut(@NotNull Context context, @NotNull Scriptable scope) {
-        context.evaluateString(scope, K2JSTranslator.FLUSH_SYSTEM_OUT, "test", 0, null);
+        context.evaluateString(scope, FLUSH_KOTLIN_OUTPUT, "test", 0, null);
     }
 
     @Nullable
