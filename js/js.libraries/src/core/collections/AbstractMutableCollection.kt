@@ -51,9 +51,6 @@ public abstract class AbstractMutableCollection<E> protected constructor() : Abs
         }
     }
 
-    // TODO: move somehow to AbstractCollection: can't move now, because it cannot be protected on JVM, just public
-    protected open fun toArray(): Array<Any?> = copyToArrayImpl(this)
-
     open fun toJSON(): Any = this.toArray()
 }
 

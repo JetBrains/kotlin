@@ -31,7 +31,14 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
         if (it === this) "(this Collection)" else it.toString()
     }
 
+    /**
+     * Returns new array of type `Array<Any?>` with the elements of this collection.
+     */
+    protected open fun toArray(): Array<Any?> = copyToArrayImpl(this)
 
+    /**
+     * Fills the provided [array] or creates new array of the same type
+     * and fills it with the elements of this collection.
+     */
+    protected open fun <T> toArray(array: Array<T>): Array<T> = copyToArrayImpl(this, array)
 }
-
-

@@ -8,10 +8,10 @@ open class SingletonCollection<T>(val value: T) : AbstractCollection<T>() {
     override val size = 1
     override fun iterator(): Iterator<T> = listOf(value).iterator()
 
-    protected fun toArray(): Array<Any?> =
+    protected override final fun toArray(): Array<Any?> =
             arrayOf<Any?>(value)
 
-    protected fun <E> toArray(a: Array<E>): Array<E> {
+    protected override final fun <E> toArray(a: Array<E>): Array<E> {
         a[0] = value as E
         return a
     }
