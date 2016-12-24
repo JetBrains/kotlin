@@ -27,7 +27,7 @@ public inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 @JsName("copyToArray")
 internal fun <T> copyToArray(collection: Collection<T>): Array<T> {
     return if (collection.asDynamic().toArray !== undefined)
-        collection.asDynamic().toArray()
+        collection.asDynamic().toArray().unsafeCast<Array<T>>()
     else
         copyToArrayImpl(collection).unsafeCast<Array<T>>()
 }
@@ -38,6 +38,22 @@ internal fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
     val iterator = collection.iterator()
     while (iterator.hasNext())
         array.asDynamic().push(iterator.next())
+    return array
+}
+
+@JsName("copyToExistingArrayImpl")
+internal fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
+    if (array.size < collection.size)
+        return copyToArrayImpl(collection).unsafeCast<Array<T>>()
+
+    val iterator = collection.iterator()
+    var index = 0
+    while (iterator.hasNext()) {
+        array[index++] = iterator.next().unsafeCast<T>()
+    }
+    if (index < array.size) {
+        array[index] = null.unsafeCast<T>()
+    }
     return array
 }
 
