@@ -80,17 +80,24 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
  * Sorts elements in the list in-place according to their natural sort order.
  */
 public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
-    if (size > 1) collectionsSort(this, naturalOrder())
+    collectionsSort(this, naturalOrder())
 }
 
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
  */
 public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1) collectionsSort(this, comparator)
+    collectionsSort(this, comparator)
 }
 
-@library("collectionsSort")
-private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in T>): Unit = noImpl
+private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in T>) {
+    if (list.size <= 1) return
 
+    val array = copyToArray(list)
 
+    array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
+
+    for (i in 0..array.size - 1) {
+        list[i] = array[i]
+    }
+}

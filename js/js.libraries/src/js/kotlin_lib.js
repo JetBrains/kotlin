@@ -274,23 +274,6 @@ Kotlin.arrayDeepHashCode = function (arr) {
     return result;
 };
 
-Kotlin.collectionsSort = function (mutableList, comparator) {
-    var boundComparator = void 0;
-    if (comparator !== void 0) {
-        boundComparator = comparator.compare.bind(comparator);
-    }
-
-    if (mutableList.size > 1) {
-        var array = _.kotlin.collections.copyToArray(mutableList);
-
-        array.sort(boundComparator);
-
-        for (var i = 0, n = array.length; i < n; i++) {
-            mutableList.set_vux3hl$(i, array[i]);
-        }
-    }
-};
-
 Kotlin.primitiveArraySort = function(array) {
     array.sort(Kotlin.primitiveCompareTo)
 };
