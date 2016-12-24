@@ -4,18 +4,15 @@ public final class A {
     public method <init>(p0: long): void
 }
 
-
 public final class B {
     public method <init>(p0: int): void
 }
-
 
 public class Base {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
-
 
 public final class DelegateWithComplexExpressionKt {
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String
