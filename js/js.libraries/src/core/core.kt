@@ -24,5 +24,6 @@ public external fun js(code: String): dynamic = noImpl
  */
 public inline fun jsTypeOf(a: Any?): String = js("typeof a")
 
-@library
-internal fun deleteProperty(`object`: Any, property: Any): Unit = noImpl
+internal inline fun deleteProperty(obj: Any, property: Any){
+    js("delete obj[property]")
+}

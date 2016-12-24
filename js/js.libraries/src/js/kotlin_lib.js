@@ -340,10 +340,6 @@ Kotlin.arrayFromFun = function (size, initFun) {
     return result;
 };
 
-Kotlin.deleteProperty = function (object, property) {
-    delete object[property];
-};
-
 Kotlin.jsonAddProperties = function (obj1, obj2) {
     for (var p in obj2) {
         if (obj2.hasOwnProperty(p)) {
