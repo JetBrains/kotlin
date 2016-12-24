@@ -18,8 +18,8 @@ import bar.*
     /*p:foo*/A./*c:foo.A*/Companion./*c:foo.A.Companion*/baz()
     /*p:foo c:foo.A(O)*/A./*c:foo.A.Companion c:foo.A*/O
     /*p:foo p:kotlin(String)*/A./*c:foo.A*/O./*c:foo.A.O*/v = /*p:kotlin(String)*/"OK"
-    /*p:foo*/A./*c:foo.A.Companion c:foo.A c:foo.A.Companion(getVala) c:foo.A.Companion(getVALA) p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io*/vala
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion c:foo.A.Companion(getVara) c:foo.A.Companion(getVARA) p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io*/vara()
+    /*p:foo*/A./*c:foo.A.Companion c:foo.A c:foo.A.Companion(getVala) c:foo.A.Companion(getVALA) p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm*/vala
+    /*p:foo*/A./*c:foo.A c:foo.A.Companion c:foo.A.Companion(getVara) c:foo.A.Companion(getVARA) p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm*/vara()
 
     /*p:foo(I) p:kotlin(Int)*/i./*c:foo.I*/a = /*p:kotlin(Int)*/2
     /*p:foo p:kotlin(Int)*/Obj./*c:foo.Obj*/a
@@ -31,13 +31,13 @@ import bar.*
     val iii = /*p:foo p:foo(I)*/Obj./*c:foo.Obj*/bar()
     /*p:foo(I)*/iii./*c:foo.I*/foo()
 
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/X
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io p:kotlin(Int)*/E./*c:foo.E*/X./*c:foo.E*/a
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/Y./*c:foo.E*/foo()
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io p:kotlin(Array)*/E./*c:foo.E*/values()
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/valueOf(/*p:kotlin(String)*/"")
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/foo
-    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:java.lang p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/bar()
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm*/E./*c:foo.E*/X
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm p:kotlin(Int)*/E./*c:foo.E*/X./*c:foo.E*/a
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm*/E./*c:foo.E*/Y./*c:foo.E*/foo()
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm p:kotlin(Array)*/E./*c:foo.E*/values()
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm*/E./*c:foo.E*/valueOf(/*p:kotlin(String)*/"")
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm*/E./*c:foo.E*/foo
+    /*p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:java.lang p:kotlin.jvm*/E./*c:foo.E*/bar()
 }
 
 /*p:foo*/fun classifiers(
