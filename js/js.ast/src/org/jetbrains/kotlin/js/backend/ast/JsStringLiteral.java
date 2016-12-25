@@ -5,6 +5,9 @@
 package org.jetbrains.kotlin.js.backend.ast;
 
 public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
+    public static JsStringLiteral createCharZero() {
+        return new JsStringLiteral("\0");
+    }
 
     private final String value;
 
