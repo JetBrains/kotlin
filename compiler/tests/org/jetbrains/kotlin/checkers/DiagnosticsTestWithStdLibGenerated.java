@@ -1195,6 +1195,30 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/samConstructorVsFun.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("samOverloadsWithGenerics.kt")
+        public void testSamOverloadsWithGenerics() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/samOverloadsWithGenerics.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("samOverloadsWithGenericsWithoutRefinedSams.kt")
+        public void testSamOverloadsWithGenericsWithoutRefinedSams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/samOverloadsWithGenericsWithoutRefinedSams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("samOverloadsWithKtFunction.kt")
+        public void testSamOverloadsWithKtFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/samOverloadsWithKtFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("samOverloadsWithKtFunctionWithoutRefinedSams.kt")
+        public void testSamOverloadsWithKtFunctionWithoutRefinedSams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/samOverloadsWithKtFunctionWithoutRefinedSams.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts")

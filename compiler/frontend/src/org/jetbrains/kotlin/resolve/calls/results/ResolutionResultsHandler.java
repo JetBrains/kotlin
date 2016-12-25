@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.results;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -26,11 +28,9 @@ import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.calls.tower.TowerUtilsKt;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 
@@ -49,7 +49,8 @@ public class ResolutionResultsHandler {
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
             @NotNull CallResolutionContext context,
             @NotNull TracingStrategy tracing,
-            @NotNull Collection<MutableResolvedCall<D>> candidates
+            @NotNull Collection<MutableResolvedCall<D>> candidates,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         Set<MutableResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<MutableResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
@@ -74,10 +75,11 @@ public class ResolutionResultsHandler {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (!successfulCandidates.isEmpty() || !incompleteCandidates.isEmpty()) {
-            return computeSuccessfulResult(context, tracing, successfulCandidates, incompleteCandidates, context.checkArguments);
+            return computeSuccessfulResult(
+                    context, tracing, successfulCandidates, incompleteCandidates, context.checkArguments, languageVersionSettings);
         }
         else if (!failedCandidates.isEmpty()) {
-            return computeFailedResult(tracing, context.trace, failedCandidates, context.checkArguments);
+            return computeFailedResult(tracing, context.trace, failedCandidates, context.checkArguments, languageVersionSettings);
         }
         if (!candidatesWithWrongReceiver.isEmpty()) {
             tracing.unresolvedReferenceWrongReceiver(context.trace, candidatesWithWrongReceiver);
@@ -93,13 +95,14 @@ public class ResolutionResultsHandler {
             @NotNull TracingStrategy tracing,
             @NotNull Set<MutableResolvedCall<D>> successfulCandidates,
             @NotNull Set<MutableResolvedCall<D>> incompleteCandidates,
-            @NotNull CheckArgumentTypesMode checkArgumentsMode
+            @NotNull CheckArgumentTypesMode checkArgumentsMode,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         Set<MutableResolvedCall<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
         successfulAndIncomplete.addAll(successfulCandidates);
         successfulAndIncomplete.addAll(incompleteCandidates);
         OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(
-                successfulAndIncomplete, true, context.isDebuggerContext, checkArgumentsMode);
+                successfulAndIncomplete, true, context.isDebuggerContext, checkArgumentsMode, languageVersionSettings);
         if (results.isSingleResult()) {
             MutableResolvedCall<D> resultingCall = results.getResultingCall();
             resultingCall.getTrace().moveAllMyDataTo(context.trace);
@@ -133,7 +136,8 @@ public class ResolutionResultsHandler {
             @NotNull TracingStrategy tracing,
             @NotNull BindingTrace trace,
             @NotNull Set<MutableResolvedCall<D>> failedCandidates,
-            @NotNull CheckArgumentTypesMode checkArgumentsMode
+            @NotNull CheckArgumentTypesMode checkArgumentsMode,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         if (failedCandidates.size() == 1) {
             return recordFailedInfo(tracing, trace, failedCandidates);
@@ -152,7 +156,8 @@ public class ResolutionResultsHandler {
                     OverloadingConflictResolver<MutableResolvedCall<D>> myResolver = (OverloadingConflictResolver) overloadingConflictResolver;
                     return recordFailedInfo(tracing, trace, myResolver.filterOutEquivalentCalls(new LinkedHashSet<MutableResolvedCall<D>>(thisLevel)));
                 }
-                OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, false, checkArgumentsMode);
+                OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(
+                        thisLevel, false, false, checkArgumentsMode, languageVersionSettings);
                 return recordFailedInfo(tracing, trace, results.getResultingCalls());
             }
         }
@@ -188,12 +193,27 @@ public class ResolutionResultsHandler {
             @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenerics,
             boolean isDebuggerContext,
-            @NotNull CheckArgumentTypesMode checkArgumentsMode
+            @NotNull CheckArgumentTypesMode checkArgumentsMode,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         OverloadingConflictResolver<MutableResolvedCall<D>> myResolver = (OverloadingConflictResolver) overloadingConflictResolver;
 
+        Set<MutableResolvedCall<D>> refinedCandidates = candidates;
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority)) {
+            Set<MutableResolvedCall<D>> nonSynthesized = new HashSet<MutableResolvedCall<D>>();
+            for (MutableResolvedCall<D> candidate : candidates) {
+                if (!TowerUtilsKt.isSynthesized(candidate.getCandidateDescriptor())) {
+                    nonSynthesized.add(candidate);
+                }
+            }
+
+            if (!nonSynthesized.isEmpty()) {
+                refinedCandidates = nonSynthesized;
+            }
+        }
+
         Set<MutableResolvedCall<D>> specificCalls =
-                myResolver.chooseMaximallySpecificCandidates(candidates, checkArgumentsMode, discriminateGenerics, isDebuggerContext);
+                myResolver.chooseMaximallySpecificCandidates(refinedCandidates, checkArgumentsMode, discriminateGenerics, isDebuggerContext);
 
         if (specificCalls.size() == 1) {
             return OverloadResolutionResultsImpl.success(specificCalls.iterator().next());

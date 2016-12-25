@@ -1,0 +1,22 @@
+package
+
+public fun bar(): kotlin.Unit
+
+public open class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun test(/*0*/ f: ((kotlin.Int!) -> kotlin.Unit!)!): kotlin.Int
+    public open fun test(/*0*/ f: Foo.FObject!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public/*package*/ interface FObject {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract operator fun invoke(/*0*/ i: kotlin.Any!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public/*package*/ final /*synthesized*/ fun FObject(/*0*/ function: (i: kotlin.Any!) -> kotlin.Unit): Foo.FObject
+}

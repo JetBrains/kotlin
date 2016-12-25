@@ -21414,6 +21414,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("overloadResolutionStaticWithoutRefinedSams.kt")
+                public void testOverloadResolutionStaticWithoutRefinedSams() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/overloadResolutionStaticWithoutRefinedSams.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("overloadResolutionWithoutRefinedSams.kt")
+                public void testOverloadResolutionWithoutRefinedSams() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/overloadResolutionWithoutRefinedSams.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("PackageLocal.kt")
                 public void testPackageLocal() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/PackageLocal.kt");

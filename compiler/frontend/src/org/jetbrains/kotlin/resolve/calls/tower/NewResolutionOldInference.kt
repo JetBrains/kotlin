@@ -191,7 +191,7 @@ class NewResolutionOldInference(
             }
         }
 
-        val overloadResults = convertToOverloadResults(candidates, tracing, context)
+        val overloadResults = convertToOverloadResults(candidates, tracing, context, languageVersionSettings)
         coroutineInferenceSupport.checkCoroutineCalls(context, tracing, overloadResults)
         return overloadResults
     }
@@ -227,7 +227,7 @@ class NewResolutionOldInference(
         val processedCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolvedCandidates),
                                                     TowerResolver.SuccessfulResultCollector { it.candidateStatus }, useOrder = true)
 
-        return convertToOverloadResults(processedCandidates, tracing, basicCallContext)
+        return convertToOverloadResults(processedCandidates, tracing, basicCallContext, languageVersionSettings)
     }
 
     private fun <D: CallableDescriptor> allCandidatesResult(allCandidates: Collection<MyCandidate<D>>)
@@ -238,7 +238,8 @@ class NewResolutionOldInference(
     private fun <D : CallableDescriptor> convertToOverloadResults(
             candidates: Collection<MyCandidate<D>>,
             tracing: TracingStrategy,
-            basicCallContext: BasicCallResolutionContext
+            basicCallContext: BasicCallResolutionContext,
+            languageVersionSettings: LanguageVersionSettings
     ): OverloadResolutionResultsImpl<D> {
         val resolvedCalls = candidates.mapNotNull {
             val (status, resolvedCall) = it
@@ -274,7 +275,7 @@ class NewResolutionOldInference(
             resolvedCall
         }
 
-        return resolutionResultsHandler.computeResultAndReportErrors(basicCallContext, tracing, resolvedCalls)
+        return resolutionResultsHandler.computeResultAndReportErrors(basicCallContext, tracing, resolvedCalls, languageVersionSettings)
     }
 
     // true if we found something
