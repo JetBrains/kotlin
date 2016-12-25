@@ -33,9 +33,6 @@ fun box(): String {
 
     val longX: Long = 9223372034707292481L
     assertEquals("9223372034707292481", longX.toString())
-    val doubleX: Double = safeParseDouble("9223372034707292481")!!
-    assertEquals(doubleX, longX.toDouble())
-    assertEquals(doubleX, longX.toFloat())
 
     assertEquals(-2147483327, longX.toInt())
     assertEquals(321, longX.toShort())

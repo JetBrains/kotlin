@@ -8,14 +8,9 @@ public external fun eval(expr: String): dynamic = noImpl
 public external val undefined: Nothing? = noImpl
 
 
-//TODO: consistent parseInt
-public external fun parseInt(s: String, radix: Int = noImpl): Int = noImpl
+public external fun parseInt(s: String, radix: Int = noImpl): Int
 
-@library
-public fun safeParseInt(s: String): Int? = noImpl
-
-@library
-public fun safeParseDouble(s: String): Double? = noImpl
+public external fun parseFloat(s: String, radix: Int = noImpl): Double
 
 public external fun js(code: String): dynamic = noImpl
 
@@ -24,6 +19,6 @@ public external fun js(code: String): dynamic = noImpl
  */
 public inline fun jsTypeOf(a: Any?): String = js("typeof a")
 
-internal inline fun deleteProperty(obj: Any, property: Any){
+internal inline fun deleteProperty(obj: Any, property: Any) {
     js("delete obj[property]")
 }

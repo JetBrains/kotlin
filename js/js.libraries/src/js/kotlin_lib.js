@@ -203,16 +203,6 @@ function getStringHashCode(str) {
     return hash;
 }
 
-Kotlin.safeParseInt = function (str) {
-    var r = parseInt(str, 10);
-    return isNaN(r) ? null : r;
-};
-
-Kotlin.safeParseDouble = function (str) {
-    var r = parseFloat(str);
-    return isNaN(r) ? null : r;
-};
-
 Kotlin.arrayEquals = function (a, b) {
     if (a === b) {
         return true;
