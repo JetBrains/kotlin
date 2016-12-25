@@ -278,10 +278,6 @@ Kotlin.primitiveArraySort = function(array) {
     array.sort(Kotlin.primitiveCompareTo)
 };
 
-Kotlin.splitString = function (str, regex, limit) {
-    return str.split(new RegExp(regex), limit);
-};
-
 Kotlin.nullArray = function (size) {
     var res = [];
     var i = size;

@@ -14,14 +14,6 @@ internal inline fun String.nativeStartsWith(s: String, position: Int): Boolean =
 
 internal inline fun String.nativeEndsWith(s: String): Boolean = asDynamic().endsWith(s)
 
-@Deprecated("Use split(Regex) instead.", ReplaceWith("split(regex.toRegex()).toTypedArray()"))
-@library("splitString")
-public fun String.splitWithRegex(regex: String): Array<String> = noImpl
-
-@Deprecated("Use split(Regex) instead.", ReplaceWith("split(regex.toRegex(), limit = limit).toTypedArray()"))
-@library("splitString")
-public fun String.splitWithRegex(regex: String, limit: Int): Array<String> = noImpl
-
 public inline fun String.substring(startIndex: Int): String = asDynamic().substring(startIndex)
 
 public inline fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
