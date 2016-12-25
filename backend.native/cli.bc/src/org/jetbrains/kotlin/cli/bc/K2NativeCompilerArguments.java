@@ -5,17 +5,30 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ValueDescription;
 
 public class K2NativeCompilerArguments extends CommonCompilerArguments {
-    @Argument(value = "output", description = "Output file path")
+    @Argument(value = "output", alias = "o", description = "Output file path")
     @ValueDescription("<path>")
     public String outputFile;
 
-    @Argument(value = "runtime", description = "Runtime file path")
+    @Argument(value = "runtime", description = "Override standard \'runtime.bc\' location")
     @ValueDescription("<path>")
     public String runtimeFile;
 
-    @Argument(value = "library", description = "Bitcode file with metadata attached")
+    @Argument(value = "properties", description = "Override standard \'konan.properties\' location")
+    @ValueDescription("<path>")
+    public String propertyFile;
+
+    @Argument(value = "library", alias = "l", description = "Link with the library")
     @ValueDescription("<path>")
     public String[] libraries;
+
+    @Argument(value = "nolink", description = "Don't link, just produce a bitcode file")
+    public boolean nolink;
+
+    @Argument(value = "nostdlib", description = "Don't link with stdlib")
+    public boolean nostdlib;
+
+    @Argument(value = "opt", description = "Enable optimizations during compilation")
+    public boolean optimization;
 
     @Argument(value = "print_ir", description = "Print IR")
     public boolean printIr;

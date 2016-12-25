@@ -40,7 +40,6 @@ allprojects {
         }
         // TODO: probably we should use kotlin-compiler without bundled runtime
     }
-
 }
 
 sourceSets {
@@ -182,69 +181,47 @@ dependencies {
 
 build.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 
+// These files are built before the 'dist' is complete,
+// so we provide custom values for
+// -runtime, -properties, -library and -Djava.library.path
+
 task stdlib(type: JavaExec) {
-    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-    classpath configurations.cli_bc
-
-    args project(':runtime').file('src/main/kotlin')
-
-    args '-output', project(':runtime').file('build/stdlib.kt.bc')
-
-    args project.globalArgs
-
-    jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
-
-    dependsOn ':runtime:build'
+    main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+    classpath = project.configurations.cli_bc
+    jvmArgs "-ea", 
+        "-Dkonan.home=${project.parent.file('dist')}",
+        "-Djava.library.path=${project.buildDir}/nativelibs"
+    args('-output', project(':runtime').file('build/stdlib.kt.bc'), 
+        '-nolink', '-nostdlib', 
+        '-runtime', project(':runtime').file('build/runtime.bc'),
+        '-properties', project(':backend.native').file('konan.properties'),
+        project(':runtime').file('src/main/kotlin'), 
+        *project.globalArgs)
     outputs.file(project(':runtime').file('build/stdlib.kt.bc'))
-
-    doFirst {
-    args '-runtime', project(':runtime').build.outputs.files.singleFile
-    }
-    environment 'LD_LIBRARY_PATH' : "${llvmDir}/lib:${project.buildDir}/nativelibs"
+    dependsOn ':runtime:build'
 }
 
 task start(type: JavaExec) {
-    main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-    classpath configurations.cli_bc
-
-    args project(':runtime').file('src/launcher/kotlin')
-
-    args '-library', project(':runtime').file('build/stdlib.kt.bc')
-
-    args '-output', project(':runtime').file('build/start.kt.bc')
-
-    args project.globalArgs
-
-    jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
-
-    dependsOn 'stdlib'
+    main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+    classpath = project.configurations.cli_bc
+    jvmArgs "-ea", 
+        "-Dkonan.home=${project.parent.file('dist')}",
+        "-Djava.library.path=${project.buildDir}/nativelibs"
+    args('-output', project(':runtime').file('build/start.kt.bc'), 
+        '-nolink', '-nostdlib',
+        '-library', project(':runtime').file('build/stdlib.kt.bc'),
+        '-runtime', project(':runtime').file('build/runtime.bc'),
+        '-properties', project(':backend.native').file('konan.properties'),
+        project(':runtime').file('src/launcher/kotlin'), 
+        *project.globalArgs)
     outputs.file(project(':runtime').file('build/start.kt.bc'))
-
-    doFirst {
-    args '-runtime', project(':runtime').build.outputs.files.singleFile
-    }
-    environment 'LD_LIBRARY_PATH' : "${llvmDir}/lib:${project.buildDir}/nativelibs"
+    dependsOn ':runtime:build', 'stdlib'
 }
 
-task run(type: JavaExec) {
-   main 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-   classpath configurations.cli_bc
-
-   args 'tests/codegen/function/sum.kt'
-
-   args '-library', project(':runtime').file('build/stdlib.kt.bc')
-
-   args '-output', "$buildDir/out.bc"
-
-   jvmArgs '-ea', "-Djava.library.path=${project.buildDir}/nativelibs"
-
-   dependsOn ':runtime:build'
-   dependsOn 'stdlib'
-
-   doFirst {
-       args '-runtime', project(':runtime').build.outputs.files.singleFile
-   }
-   environment 'LD_LIBRARY_PATH' : "${llvmDir}/lib:${project.buildDir}/nativelibs"
+task run {
+    doLast {
+    logger.quiet("Run the outer project 'demo' target to compile the test source." )
+    }
 }
 
 task jars(type: Jar) {

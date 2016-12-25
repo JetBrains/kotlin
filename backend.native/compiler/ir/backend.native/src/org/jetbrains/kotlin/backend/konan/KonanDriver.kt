@@ -71,8 +71,7 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
     }
 
     phaser.phase(KonanPhase.LINKER) {
-        //TODO: We don't have it yet.
-        // invokeLinker()
+        LinkStage(context).linkStage()
     }
 }
 

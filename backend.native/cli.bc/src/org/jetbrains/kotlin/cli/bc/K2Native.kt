@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
@@ -56,31 +57,51 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         configuration.addKotlinSourceRoots(arguments.freeArgs)
 
-        // This is a decision we could change
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.outputFile)
+        with (KonanConfigKeys) { with (configuration) {
 
-        configuration.put(KonanConfigKeys.LIBRARY_FILES, 
-            arguments.libraries.toNonNullList())
-        configuration.put(KonanConfigKeys.RUNTIME_FILE, arguments.runtimeFile)
-        configuration.put(KonanConfigKeys.OUTPUT_FILE, arguments.outputFile)
+            put(NOSTDLIB, arguments.nostdlib)
+            put(NOLINK, arguments.nolink)
+            put(LIBRARY_FILES, 
+                arguments.libraries.toNonNullList())
 
-        configuration.put(KonanConfigKeys.ABI_VERSION, 1)
+            // TODO: Collect all the explicit file names into an object 
+            // and teach the compiler to work with temporaries and -save-temps.
+            val bitcodeFile = if (arguments.nolink) {
+                arguments.outputFile ?: "program.kt.bc"
+            } else {
+                "${arguments.outputFile ?: "program"}.kt.bc"
+            }
+            put(BITCODE_FILE, bitcodeFile)
 
-        configuration.put(KonanConfigKeys.PRINT_IR, arguments.printIr)
-        configuration.put(KonanConfigKeys.PRINT_DESCRIPTORS, arguments.printDescriptors)
-        configuration.put(KonanConfigKeys.PRINT_BITCODE, arguments.printBitCode)
+            // This is a decision we could change
+            put(CommonConfigurationKeys.MODULE_NAME, bitcodeFile)
+            put(ABI_VERSION, 1)
 
-        configuration.put(KonanConfigKeys.VERIFY_IR, arguments.verifyIr)
-        configuration.put(KonanConfigKeys.VERIFY_DESCRIPTORS, arguments.verifyDescriptors)
-        configuration.put(KonanConfigKeys.VERIFY_BITCODE, arguments.verifyBitCode)
+            put(EXECUTABLE_FILE, 
+                arguments.outputFile ?: "program.kexe")
+            put(RUNTIME_FILE, 
+                arguments.runtimeFile ?: Distribution.runtime)
+            put(PROPERTY_FILE, 
+                arguments.propertyFile ?: Distribution.propertyFile)
 
-        configuration.put(KonanConfigKeys.ENABLED_PHASES, 
-            arguments.enablePhases.toNonNullList())
-        configuration.put(KonanConfigKeys.DISABLED_PHASES, 
-            arguments.disablePhases.toNonNullList())
-        configuration.put(KonanConfigKeys.VERBOSE_PHASES, 
-            arguments.verbosePhases.toNonNullList())
-        configuration.put(KonanConfigKeys.LIST_PHASES, arguments.listPhases)
+            put(OPTIMIZATION, arguments.optimization)
+
+            put(PRINT_IR, arguments.printIr)
+            put(PRINT_DESCRIPTORS, arguments.printDescriptors)
+            put(PRINT_BITCODE, arguments.printBitCode)
+
+            put(VERIFY_IR, arguments.verifyIr)
+            put(VERIFY_DESCRIPTORS, arguments.verifyDescriptors)
+            put(VERIFY_BITCODE, arguments.verifyBitCode)
+
+            put(ENABLED_PHASES, 
+                arguments.enablePhases.toNonNullList())
+            put(DISABLED_PHASES, 
+                arguments.disablePhases.toNonNullList())
+            put(VERBOSE_PHASES, 
+                arguments.verbosePhases.toNonNullList())
+            put(LIST_PHASES, arguments.listPhases)
+        }}
     }
 
     override fun createArguments(): K2NativeCompilerArguments {

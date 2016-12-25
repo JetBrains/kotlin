@@ -33,6 +33,10 @@ object KonanPhases {
 
         val verbose = config.configuration.get(KonanConfigKeys.VERBOSE_PHASES)
         verbose?.forEach { phases[it]!!.verbose = true }
+
+        if (config.configuration.get(KonanConfigKeys.NOLINK) ?: false ) {
+            KonanPhase.LINKER.enabled = false
+        }
     }
 
     fun list() {

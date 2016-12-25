@@ -7,12 +7,22 @@ class KonanConfigKeys {
     companion object {
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("library file paths");
-        val RUNTIME_FILE: CompilerConfigurationKey<String> 
-                = CompilerConfigurationKey.create("runtime file path");
-        val OUTPUT_FILE: CompilerConfigurationKey<String> 
-                = CompilerConfigurationKey.create("output file path");
+        val BITCODE_FILE: CompilerConfigurationKey<String> 
+                = CompilerConfigurationKey.create("emitted bitcode file path");
+        val EXECUTABLE_FILE: CompilerConfigurationKey<String> 
+                = CompilerConfigurationKey.create("final executable file path");
+        val RUNTIME_FILE: CompilerConfigurationKey<String?> 
+                = CompilerConfigurationKey.create("override default runtime file path");
+        val PROPERTY_FILE: CompilerConfigurationKey<String?> 
+                = CompilerConfigurationKey.create("override default property file path");
         val ABI_VERSION: CompilerConfigurationKey<Int> 
                 = CompilerConfigurationKey.create("current abi version");
+        val OPTIMIZATION: CompilerConfigurationKey<Boolean> 
+                = CompilerConfigurationKey.create("optimized compilation");
+        val NOSTDLIB: CompilerConfigurationKey<Boolean> 
+                = CompilerConfigurationKey.create("don't link with stdlib");
+        val NOLINK: CompilerConfigurationKey<Boolean> 
+                = CompilerConfigurationKey.create("don't link, only produce a bitcode file ");
 
         val SOURCE_MAP: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("generate source map");

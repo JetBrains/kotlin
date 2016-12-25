@@ -12,11 +12,12 @@ abstract class KonanTest extends DefaultTask {
     protected String source
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")
+    def dist = project.parent.parent.file("dist")
     def llvmLlc = llvmTool("llc")
-    def runtimeBc = new File("${runtimeProject.buildDir.canonicalPath}/runtime.bc")
-    def launcherBc = new File("${runtimeProject.buildDir.canonicalPath}/launcher.bc")
-    def startKtBc = new File("${runtimeProject.buildDir.canonicalPath}/start.kt.bc")
-    def stdlibKtBc = new File("${runtimeProject.buildDir.canonicalPath}/stdlib.kt.bc")
+    def runtimeBc = new File("${dist.canonicalPath}/lib/runtime.bc").absolutePath
+    def launcherBc = new File("${dist.canonicalPath}/lib/launcher.bc").absolutePath
+    def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
+    def stdlibKtBc = new File("${dist.canonicalPath}/lib/stdlib.kt.bc").absolutePath
     def mainC = 'main.c'
     String goldValue = null
     String testData = null
@@ -29,50 +30,38 @@ abstract class KonanTest extends DefaultTask {
     }
 
     public KonanTest(){
-        dependsOn([project.project(":runtime").tasks['build'],
-                   project.parent.tasks['build'],
-                   project.project(":backend.native").tasks['stdlib'],
-                   project.project(":backend.native").tasks['start']
-        ])
+        // TODO: that's a long reach up the project tree.
+        // May be we should reorganize a little.
+        dependsOn(project.parent.parent.tasks['dist'])
     }
 
+    abstract void compileTest(String source, String exe)
 
-
-    abstract void compileTest(File sourceS, File runtimeS, File libraryPath, File out)
-
-    private  File kt2bc(String ktSource) {
-        def sourceKt = project.file(ktSource)
-        def sourceBc = new File("${sourceKt.absolutePath}.bc")
-        println "${runtimeBc}"
-
+    protected void runCompiler(String source, String output, List<String> moreArgs) {
         project.javaexec {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
-            jvmArgs "-ea"
-            args("-output", "${sourceBc.absolutePath}",
-                 "-runtime", "${runtimeBc.absolutePath}",
-                 "-library", "${stdlibKtBc.absolutePath}",
-                 "${sourceKt.absolutePath}", 
+            jvmArgs "-ea", 
+                "-Dkonan.home=${dist.canonicalPath}",
+                "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
+            args("-output", output,
+                 source, 
+                 *moreArgs,
                  *project.globalArgs)
-
-            String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
-            environment 'LD_LIBRARY_PATH'   : libraryPath
-            environment 'DYLD_LIBRARY_PATH' : libraryPath
         }
-        return sourceBc
     }
 
     @TaskAction
     void executeTest() {
-        def sourceS = bc2s(kt2bc(source))
-        def exe = new File(sourceS.absolutePath.replace(".kt.S", ".kt.exe"))
-        def libraryPath = new File("${runtimeProject.file('src/main/bc').absolutePath}")
-        compileTest(sourceS, bc2s(runtimeBc), stdlibKtBc, exe)
-        println "execution :${exe.absolutePath}"
+        def sourceKt = project.file(source).absolutePath
+        def exe = sourceKt.replace(".kt", ".kt.exe")
+
+        compileTest(sourceKt, exe)
+        println "execution :$exe"
 
         def out = null
         project.exec {
-            commandLine "${exe.absolutePath}"
+            commandLine exe
             if (arguments != null) {
                 args arguments
             }
@@ -88,17 +77,6 @@ abstract class KonanTest extends DefaultTask {
             throw new RuntimeException("test failed")
     }
 
-    private File bc2s(File bcFile) {
-        def outputFile = new File("${bcFile.absolutePath.replace(".bc",".S")}")
-        println "${bcFile.absolutePath} -> ${outputFile.absolutePath}"
-        println "tool: ${llvmLlc}"
-        project.exec {
-            commandLine "${llvmLlc}", "-o", "${outputFile.absolutePath}" , "${bcFile}",
-                    '-disable-fp-elim' // currently required for stack traces
-        }
-        return outputFile
-    }
-
     private String llvmTool(String tool) {
         return "${project.llvmDir}/bin/${tool}"
     }
@@ -109,88 +87,23 @@ abstract class KonanTest extends DefaultTask {
 }
 
 class RunKonanTest extends KonanTest {
-    void compileTest(File sourceS, File runtimeS, File libraryPath, File exe) {
-        project.execClang {
-            executable "clang"
-            def argList = []
-            argList.addAll([ launcherBc.absolutePath, startKtBc.absolutePath, 
-                runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath, "-o", exe.absolutePath ])
-            argList.addAll(clangLinkArgs())
-            args argList
-        }
+    void compileTest(String source, String exe) {
+        runCompiler(source, exe, []) 
     }
 }
 
 class LinkKonanTest extends KonanTest {
     protected String lib
 
-    private File dir2bc(String ktSources) {
-        def sourcesKt = project.file(ktSources)
-        def libBc = new File("${sourcesKt.absolutePath}/libout.kt.bc")
-        def libPath = "${libBc.absolutePath}"
-
-        project.javaexec {
-            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-            classpath = project.configurations.cli_bc
-            jvmArgs "-ea"
-            args("-output", "${libPath}",
-                 "-runtime", "${runtimeBc.absolutePath}",
-                 sourcesKt, *project.globalArgs)
-
-            String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
-            environment 'LD_LIBRARY_PATH'   : libraryPath
-            environment 'DYLD_LIBRARY_PATH' : libraryPath
-
-        }
-        return libBc
+    void compileTest(String source, String exe) {
+        def libDir = project.file(lib).absolutePath
+        def libBc = "${libDir}.bc"
+        
+        runCompiler(lib, libBc, ['-nolink', '-nostdlib'])
+        runCompiler(source, exe, ['-library', libBc])
     }
-
-    private File link(String ktSource, File libBc) {
-        def sourceKt = project.file(ktSource)
-        def outPath = "${sourceKt.absolutePath.replace('.kt', '.kt.bc')}"
-        def outBc = new File(outPath)
-
-        project.javaexec {
-            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-            classpath = project.configurations.cli_bc
-            jvmArgs "-ea"
-            args("-output", outPath,
-                 "-runtime", "${runtimeBc.absolutePath}",
-                 "-library", "${stdlibKtBc.absolutePath}",
-                 "-library", "${libBc.absolutePath}",
-                 "${sourceKt.absolutePath}",
-                 *project.globalArgs)
-
-            String libraryPath = "${project.llvmDir}/lib:${backendNative.buildDir.canonicalPath}/nativelibs"
-            environment 'LD_LIBRARY_PATH'   : libraryPath
-            environment 'DYLD_LIBRARY_PATH' : libraryPath
-
-        }
-        return outBc
-    }
-
-    void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
-        def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
-        project.execClang {
-            executable "clang"
-            def argList = []
-            argList.addAll([ runtimeS.absolutePath, stdlibKtBc.absolutePath, 
-                sourceS.absolutePath, "-o", exe.absolutePath, testC, mainC ])
-            argList.addAll(clangLinkArgs())
-            args argList
-        }
-    }
-
-
-    @TaskAction
-    void executeTest() {
-            def libBc = dir2bc(lib)
-            def outBc = link(source, libBc)
-    }
-
-
-
 }
+
 
 task run() {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
@@ -418,6 +331,7 @@ task empty_string(type: RunKonanTest) {
 task intrinsic(type: RunKonanTest) {
     source = "codegen/function/intrinsic.kt"
 }
+
 /*
     Disabled until we extract the classes that should be 
     always present from stdlib.kt.bc into a separate binary.

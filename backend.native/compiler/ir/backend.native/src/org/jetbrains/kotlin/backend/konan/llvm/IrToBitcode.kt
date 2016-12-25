@@ -49,7 +49,7 @@ internal fun emitLLVM(context: Context) {
             irModule.acceptVoid(MetadatorVisitor(context))
         }
 
-        val outFile = context.config.configuration.get(KonanConfigKeys.OUTPUT_FILE)!!
+        val outFile = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE)!!
         LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
 

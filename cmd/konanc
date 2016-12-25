@@ -1,15 +1,15 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash 
 
 if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
     JAVACMD="$JAVA_HOME/bin/java"
 else
     JAVACMD=java
 fi
+[ -n "$JAVACMD" ] || JAVACMD=java
+[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
 
 declare -a java_args
 declare -a konan_args
-declare -a clang_args
-declare -a clang_opt_args
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -21,31 +21,8 @@ while [ $# -gt 0 ]; do
       java_args=("${java_args[@]}" "${1:2}")
       shift
       ;;
-    -library)
-      clang_args=("${clang_args[@]}" "${libraries[@]}" "$2")
-      konan_args=("${konan_args[@]}" "$1" "$2")
-      shift
-      shift
-      ;;
-    -nolink)
-      NOLINK=YES
-      shift
-      ;;
-    -nostdlib)
-      NOSTDLIB=YES
-      shift
-      ;;
-    -opt)
-     OPTIMIZE=YES
-     shift
-     ;;
-    -o|-output)
-      OUTPUT_NAME=$2
-      shift
-      shift
-      ;;
     -X*)
-      clang_args=("${clang_args[@]}" "${1:2}")
+      echo "TODO: need to pass arguments to all the tools somehow."
       shift
       ;;
      *)
@@ -54,10 +31,6 @@ while [ $# -gt 0 ]; do
       ;;
   esac
 done
-
-[ -n "$KONAN_COMPILER" ] || KONAN_COMPILER=org.jetbrains.kotlin.cli.bc.K2NativeKt
-[ -n "$JAVACMD" ] || JAVACMD=java
-[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
 
 # Based on findScalaHome() from scalac script
 findHome() {
@@ -72,76 +45,19 @@ findHome() {
 
 KONAN_HOME="$(findHome)"
 
-echo $KONAN_HOME
-
 KONAN_JAR="${KONAN_HOME}/konan/lib/backend.native.jar"
 KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
 INTEROP_JAR="${KONAN_HOME}/konan/lib/Runtime.jar"
-PROTOBUF_JAR="${KONAN_HOME}/konan/lib/protobuf-java-3.0.0.jar"
-
-KONAN_CLASSPATH="$KOTLIN_JAR:$INTEROP_JAR:$PROTOBUF_JAR:$KONAN_JAR"
-
 NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
-DYLD=$DYLD_LIBRARY_PATH:$NATIVE_LIB
+KONAN_CLASSPATH="$KOTLIN_JAR:$INTEROP_JAR:$KONAN_JAR"
+KONAN_COMPILER=org.jetbrains.kotlin.cli.bc.K2NativeKt
 
-RUNTIME="$KONAN_HOME/lib/runtime.bc"
-STDLIB="$KONAN_HOME/lib/stdlib.kt.bc"
 
 #
 # KONAN BACKEND INVOCATION
 #
 
-java_args=("${java_args[@]} -noverify -Djava.library.path=${KONAN_HOME}/konan/nativelib")
+java_args=("${java_args[@]} -noverify -Dkonan.home=${KONAN_HOME} -Djava.library.path=${NATIVE_LIB}")
 
-konan_args=("-runtime" $RUNTIME "${konan_args[@]}")
-[ -z $NOSTDLIB ] && konan_args=("-library" $STDLIB "${konan_args[@]}")
+$JAVACMD $JAVA_OPTS ${java_args[@]} -cp $KONAN_CLASSPATH $KONAN_COMPILER ${konan_args[@]}
 
-if [ -z $OUTPUT_NAME ] ; then
-    if [ -z $NOLINK ] ; then
-	OUTPUT_NAME="program.kexe"
-	KTBC_NAME="program.kt.bc"
-    else
-	KTBC_NAME="program.kt.bc"
-    fi
-else
-    if [ -z $NOLINK ] ; then
-	KTBC_NAME="${OUTPUT_NAME}.kt.bc"
-    else
-	KTBC_NAME="${OUTPUT_NAME}"
-    fi
-fi
-
-DYLD_LIBRARY_PATH=$DYLD LD_LIBRARY_PATH=$DYLD $JAVACMD $JAVA_OPTS ${java_args[@]} -cp $KONAN_CLASSPATH $KONAN_COMPILER -output ${KTBC_NAME} ${konan_args[@]}
-
-COMPILER_EXIT_CODE="$?"
-[ -z $NOLINK ] || exit $COMPILER_EXIT_CODE
-
-#
-# LINK STAGE
-#
-
-# TODO: We should probably copy the dependencies into dist.
-DEPENDENCIES="$KONAN_HOME/../dependencies/all"
-
-LAUNCHER="${KONAN_HOME}/lib/launcher.bc"
-START="${KONAN_HOME}/lib/start.kt.bc"
-
-# We filter this script during installation
-# substituting the proper platform dependent arguments here.
-CLANG_PLATFORM_ARGS="FILTER_CLANG_PLATFORM_ARGS"
-CLANG_PLATFORM_OPT="FILTER_CLANG_PLATFORM_OPT"
-CLANG_BIN_PATH="FILTER_CLANG_BIN_PATH"
-
-clang_opt_args=("$CLANG_PLATFORM_OPT")
-
-CLANG="$CLANG_BIN_PATH/clang"
-
-# TODO: Compilation without stdlib.kt.bc doesn't work because 'start' requires stdlib, for example.
-# Probably, we need a .klib compilation mode.
-# [ -z $NOSTDLIB ] && clang_args=($STDLIB "${clang_args[@]}")
-[ "$OPTIMIZE" == "YES" ] && clang_args=("${clang_opt_args[@]} ${clang_args[@]}")
-clang_args=($STDLIB "${clang_args[@]}")
-clang_args=($LAUNCHER $START $RUNTIME "${clang_args[@]}")
-clang_args=("${clang_args[@]} $CLANG_PLATFORM_ARGS")
-
-$CLANG $KTBC_NAME -o $OUTPUT_NAME ${clang_args[@]}

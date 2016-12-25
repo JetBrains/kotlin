@@ -179,36 +179,18 @@ task dist_compiler(type: Copy) {
 
         into('bin')
     }
-}
 
-task stdlib(type: Exec) {
-    dependsOn 'dist_compiler', 'list_dist'
-
-    commandLine('./dist/bin/konanc', 
-        "-J${jvmArgs.join(' ')}",
-        '-nolink', '-nostdlib', 'runtime/src/main/kotlin', '-o', 
-        'dist/lib/stdlib.kt.bc', *globalArgs)
-
-    outputs.file(project.file('dist/lib/stdlib.kt.bc'))
+    from(project(':backend.native').file('konan.properties')) {
+        into('konan')
+    }
 }
 
 task list_dist(type: Exec) {
     commandLine 'find', 'dist'
 }
 
-task start(type: Exec) {
-    dependsOn 'dist_compiler', 'stdlib'
-
-    commandLine('./dist/bin/konanc', 
-        "-J${jvmArgs.join(' ')}",
-        '-nolink', 'runtime/src/launcher/kotlin', '-o', 
-        'dist/lib/start.kt.bc', *globalArgs)
-
-    outputs.file(project.file('dist/lib/start.kt.bc'))
-}
-
 task dist_runtime(type: Copy) {
-    dependsOn ':runtime:build'
+    dependsOn ':runtime:build', ':backend.native:stdlib', ':backend.native:start'
 
     destinationDir file('dist')
 
@@ -219,7 +201,7 @@ task dist_runtime(type: Copy) {
 }
 
 task dist {
-    dependsOn 'dist_compiler', 'dist_runtime', 'stdlib', 'start'
+    dependsOn 'dist_compiler', 'dist_runtime'
 }
 
 task demo(type: Exec) {
@@ -229,6 +211,8 @@ task demo(type: Exec) {
 }
 
 task clean {
-    delete 'dist'
+    doLast {
+        delete 'dist'
+    }
 }
 

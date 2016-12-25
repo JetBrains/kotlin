@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.backend.konan.llvm.loadMetadata
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -14,7 +15,14 @@ import java.io.File
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
-    private val libraries = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
+    internal val libraries: List<String> 
+        get() {
+            val fromCommandLine = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
+            if (configuration.get(KonanConfigKeys.NOSTDLIB) ?: false) {
+                return fromCommandLine
+            }
+            return fromCommandLine + Distribution.stdlib
+        }
 
     private val loadedDescriptors = loadLibMetadata(libraries)
 
