@@ -168,18 +168,6 @@ Kotlin.numberToChar = function (a) {
     return Kotlin.toChar(Kotlin.numberToInt(a));
 };
 
-Kotlin.throwNPE = function (message) {
-    throw new Kotlin.kotlin.NullPointerException(message);
-};
-
-Kotlin.throwCCE = function () {
-    throw new Kotlin.kotlin.ClassCastException("Illegal cast");
-};
-
-Kotlin.throwISE = function (message) {
-    throw new Kotlin.kotlin.IllegalStateException(message);
-};
-
 /** @const */
 var POW_2_32 = 4294967296;
 // TODO: consider switching to Symbol type once we are on ES6.
