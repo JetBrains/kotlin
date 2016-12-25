@@ -168,14 +168,6 @@ Kotlin.numberToChar = function (a) {
     return Kotlin.toChar(Kotlin.numberToInt(a));
 };
 
-Kotlin.intUpto = function (from, to) {
-    return new Kotlin.kotlin.ranges.IntRange(from, to);
-};
-
-Kotlin.intDownto = function (from, to) {
-    return new Kotlin.kotlin.ranges.IntProgression(from, to, -1);
-};
-
 Kotlin.throwNPE = function (message) {
     throw new Kotlin.kotlin.NullPointerException(message);
 };
