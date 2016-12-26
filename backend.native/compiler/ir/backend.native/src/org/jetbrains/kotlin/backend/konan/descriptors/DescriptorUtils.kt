@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -147,3 +148,5 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
         return dispatchReceiver.type.isFunctionType &&
                 this.isOperator && this.name == OperatorNameConventions.INVOKE
     }
+
+internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()

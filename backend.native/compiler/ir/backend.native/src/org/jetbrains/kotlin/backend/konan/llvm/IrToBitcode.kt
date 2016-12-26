@@ -395,9 +395,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
             if (constructorDescriptor.isPrimary) {
                 if (DescriptorUtils.isObject(classDescriptor)) {
-                    val objectPtr = objectPtrByName(classDescriptor)
+                    if (classDescriptor.isUnit()) {
+                        context.llvm.staticData.createUnitInstance(classDescriptor)
+                    } else {
+                        val objectPtr = objectPtrByName(classDescriptor)
 
-                    LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
+                        LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
+                    }
                 }
                 val irOfCurrentClass = context.ir.moduleIndex.classes[classDescriptor.classId]
                 irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
@@ -732,7 +736,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef? {
+    private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef {
+        if (value.descriptor.isUnit()) {
+            return codegen.theUnitInstanceRef.llvm
+        }
+
         var objectPtr = objectPtrByName(value.descriptor)
         val bbCurrent = codegen.currentBlock
         val bbInit    = codegen.basicBlock("label_init")
@@ -1421,6 +1429,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun objectPtrByName(descriptor: ClassDescriptor): LLVMValueRef? {
+        assert (!descriptor.isUnit())
         val objName = descriptor.fqNameSafe.asString()
         var objectPtr = LLVMGetNamedGlobal(context.llvmModule, objName)
         if (objectPtr == null) {

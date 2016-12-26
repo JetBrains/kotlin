@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -115,3 +116,17 @@ internal fun StaticData.createArrayList(elementType: TypeProjection, array: Cons
 
     return createKotlinObject(type, body)
 }
+
+private val theUnitInstanceName = "kobj:kotlin.Unit"
+
+internal fun StaticData.createUnitInstance(descriptor: ClassDescriptor): ConstPointer {
+    assert (descriptor.isUnit())
+    assert (descriptor.fields.isEmpty())
+    val typeInfo = descriptor.defaultType.typeInfoPtr!!
+    val objHeader = objHeader(typeInfo)
+    val global = this.placeGlobal(theUnitInstanceName, objHeader)
+    return global.pointer
+}
+
+internal val ContextUtils.theUnitInstanceRef: ConstPointer
+    get() = constPointer(externalGlobal(theUnitInstanceName, context.llvm.runtime.objHeaderType))
