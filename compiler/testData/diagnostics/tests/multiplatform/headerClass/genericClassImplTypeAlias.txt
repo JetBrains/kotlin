@@ -8,64 +8,55 @@ public final header class C1 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C10</*0*/ L> {
-    public constructor C10</*0*/ L>()
+public header interface C10</*0*/ L> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C2</*0*/ A> {
-    public constructor C2</*0*/ A>()
+public header interface C2</*0*/ A> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C3</*0*/ B> {
-    public constructor C3</*0*/ B>()
+public header interface C3</*0*/ B> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C4</*0*/ D, /*1*/ E> {
-    public constructor C4</*0*/ D, /*1*/ E>()
+public header interface C4</*0*/ D, /*1*/ E> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C5</*0*/ F, /*1*/ G> {
-    public constructor C5</*0*/ F, /*1*/ G>()
+public header interface C5</*0*/ F, /*1*/ G> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C6</*0*/ H> {
-    public constructor C6</*0*/ H>()
+public header interface C6</*0*/ H> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C7</*0*/ I> {
-    public constructor C7</*0*/ I>()
+public header interface C7</*0*/ I> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C8</*0*/ J> {
-    public constructor C8</*0*/ J>()
+public header interface C8</*0*/ J> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final header class C9</*0*/ K> {
-    public constructor C9</*0*/ K>()
+public header interface C9</*0*/ K> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
