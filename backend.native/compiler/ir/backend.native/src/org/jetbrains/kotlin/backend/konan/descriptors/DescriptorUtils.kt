@@ -51,7 +51,6 @@ internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.annotations.findAnnotation(intrinsicAnnotation) != null
 
 private val intrinsicTypes = setOf(
-        "kotlin.Unit",
         "kotlin.Boolean", "kotlin.Char",
         "kotlin.Byte", "kotlin.Short",
         "kotlin.Int", "kotlin.Long",

@@ -614,12 +614,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return
         }
 
-        if (KotlinBuiltIns.isUnit(declaration.descriptor.defaultType)) {
-            // Do not generate any code for Unit.
-            // TODO: Unit has toString() operation, which we may want to support.
-            return
-        }
-
         super.visitClass(declaration)
     }
 
@@ -1543,17 +1537,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         context.log("evaluateReturn             : ${ir2string(expression)}")
         val value = expression.value
 
-        val evaluated = if (value is IrGetObjectValue && value.type.isUnit()) {
-            // hack to make "return without value" work
-            null
-        } else {
-            evaluateExpression(value)
-        }
+        val evaluated = evaluateExpression(value)
 
         val ret = if (!value.type.isUnit()) {
             evaluated
         } else {
-            null // hack for bad Unit type handling
+            null // `Unit` return type is generated as `void`.
         }
 
         currentCodeContext.genReturn(expression.returnTarget, ret)
