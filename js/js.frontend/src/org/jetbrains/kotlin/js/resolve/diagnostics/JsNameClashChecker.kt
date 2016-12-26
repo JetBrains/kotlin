@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -29,6 +30,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JsNameClashChecker : SimpleDeclarationChecker {
+    companion object {
+        private val COMMON_DIAGNOSTICS = setOf(
+                Errors.REDECLARATION,
+                Errors.CONFLICTING_OVERLOADS,
+                Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION)
+    }
+
     private val nameSuggestion = NameSuggestion()
     private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
     private val clashedFakeOverrides = mutableMapOf<DeclarationDescriptor, Pair<DeclarationDescriptor, DeclarationDescriptor>>()
@@ -43,11 +51,14 @@ class JsNameClashChecker : SimpleDeclarationChecker {
         // We don't generate JS properties for extension properties, we generate methods instead, so in this case
         // check name clash only for accessors, not properties
         if (!descriptor.isExtensionProperty) {
-            checkDescriptor(descriptor, declaration, diagnosticHolder)
+            checkDescriptor(descriptor, declaration, diagnosticHolder, bindingContext)
         }
     }
 
-    private fun checkDescriptor(descriptor: DeclarationDescriptor, declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
+    private fun checkDescriptor(
+            descriptor: DeclarationDescriptor, declaration: KtDeclaration,
+            diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
+    ) {
         if (descriptor is ConstructorDescriptor && descriptor.isPrimary) return
 
         val suggested = nameSuggestion.suggest(descriptor)!!
@@ -58,7 +69,8 @@ class JsNameClashChecker : SimpleDeclarationChecker {
             if (existing != null &&
                 existing != descriptor &&
                 existing.isImpl == descriptor.isImpl &&
-                existing.isHeader == descriptor.isHeader
+                existing.isHeader == descriptor.isHeader &&
+                !bindingContext.isCommonDiagnosticReported(declaration)
             ) {
                 diagnosticHolder.report(ErrorsJs.JS_NAME_CLASH.on(declaration, name, existing))
                 val existingDeclaration = existing.findPsi()
@@ -91,6 +103,10 @@ class JsNameClashChecker : SimpleDeclarationChecker {
                 }
             }
         }
+    }
+
+    private fun BindingContext.isCommonDiagnosticReported(declaration: KtDeclaration): Boolean {
+        return diagnostics.forElement(declaration).any { it.factory in COMMON_DIAGNOSTICS }
     }
 
     private val DeclarationDescriptor.isImpl: Boolean
