@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.isNullOrEmpty
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunction
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
@@ -189,16 +191,27 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             val argumentExpression = parentIf ?: diagnosticElement
             val valueArgument = resolvedCall.call.getValueArgumentForExpression(argumentExpression)
             if (valueArgument != null) {
-                val correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument)
+                val correspondingParameterDescriptor = resolvedCall.getParameterForArgument(valueArgument)
+                val correspondingParameter = QuickFixUtil.safeGetDeclaration(correspondingParameterDescriptor) as? KtParameter
                 val expressionFromArgument = valueArgument.getArgumentExpression()
                 val valueArgumentType = if (diagnostic.factory === Errors.NULL_FOR_NONNULL_TYPE)
                     expressionType
-                else if (expressionFromArgument != null) context.getType(expressionFromArgument) else null
-                if (correspondingParameter != null && valueArgumentType != null) {
-                    val callable = PsiTreeUtil.getParentOfType(correspondingParameter, KtCallableDeclaration::class.java, true)
-                    val scope = callable?.getResolutionScope(context, callable.getResolutionFacade())
-                    val typeToInsert = valueArgumentType.approximateWithResolvableType(scope, true)
-                    actions.add(ChangeParameterTypeFix(correspondingParameter, typeToInsert))
+                else
+                    expressionFromArgument?.let { context.getType(it) }
+                if (valueArgumentType != null) {
+                    if (correspondingParameter != null) {
+                        val callable = PsiTreeUtil.getParentOfType(correspondingParameter, KtCallableDeclaration::class.java, true)
+                        val scope = callable?.getResolutionScope(context, callable.getResolutionFacade())
+                        val typeToInsert = valueArgumentType.approximateWithResolvableType(scope, true)
+                        actions.add(ChangeParameterTypeFix(correspondingParameter, typeToInsert))
+                    }
+                    if (correspondingParameterDescriptor != null
+                        && correspondingParameterDescriptor.varargElementType != null
+                        && KotlinBuiltIns.isArray(valueArgumentType)
+                        && !expressionType.arguments.isNullOrEmpty()
+                        && expressionType.arguments[0].type.constructor == expectedType.constructor) {
+                        actions.add(ChangeToUseSpreadOperatorFix(diagnosticElement))
+                    }
                 }
             }
         }
