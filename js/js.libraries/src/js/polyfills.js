@@ -31,7 +31,3 @@ if (typeof String.prototype.endsWith === "undefined") {
         return lastIndex !== -1 && lastIndex === position;
     };
 }
-
-String.prototype.contains = function (s) {
-    return this.indexOf(s) !== -1;
-};
