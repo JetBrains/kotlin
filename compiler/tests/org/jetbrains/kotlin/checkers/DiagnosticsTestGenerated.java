@@ -9928,6 +9928,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("intersectionTypeMultipleBoundsAsReceiver.kt")
+            public void testIntersectionTypeMultipleBoundsAsReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/intersectionTypeMultipleBoundsAsReceiver.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1293.kt")
             public void testKt1293() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/kt1293.kt");

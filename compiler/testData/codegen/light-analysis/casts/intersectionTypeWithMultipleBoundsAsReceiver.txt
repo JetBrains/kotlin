@@ -1,0 +1,12 @@
+public interface Bar
+
+public final class Baz {
+    public method <init>(): void
+}
+
+public interface Foo
+
+public final class IntersectionTypeWithMultipleBoundsAsReceiverKt {
+    public final static @org.jetbrains.annotations.NotNull method bip(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

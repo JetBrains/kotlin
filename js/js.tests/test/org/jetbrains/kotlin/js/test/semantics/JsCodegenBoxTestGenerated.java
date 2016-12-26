@@ -2727,9 +2727,27 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intersectionTypeMultipleBoundsImplicitReceiver.kt")
+        public void testIntersectionTypeMultipleBoundsImplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeMultipleBoundsImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("intersectionTypeSmartcast.kt")
         public void testIntersectionTypeSmartcast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeSmartcast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intersectionTypeWithMultipleBoundsAsReceiver.kt")
+        public void testIntersectionTypeWithMultipleBoundsAsReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeWithMultipleBoundsAsReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intersectionTypeWithoutGenericsAsReceiver.kt")
+        public void testIntersectionTypeWithoutGenericsAsReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeWithoutGenericsAsReceiver.kt");
             doTest(fileName);
         }
 
