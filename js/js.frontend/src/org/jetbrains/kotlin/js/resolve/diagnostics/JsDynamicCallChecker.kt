@@ -18,37 +18,64 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtWhenConditionInRange
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 
 object JsDynamicCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val callee = resolvedCall.resultingDescriptor
-        if (callee.dispatchReceiverParameter?.type?.isDynamic() != true) return
+        if (!callee.isDynamic()) {
+            return checkSpreadOperator(resolvedCall, context)
+        }
 
         val element = resolvedCall.call.callElement
-        if (element is KtArrayAccessExpression && element.indexExpressions.size > 1) {
-            context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "indexed access with more than one index"))
+        when (element) {
+            is KtArrayAccessExpression -> {
+                if (element.indexExpressions.size > 1) {
+                    context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "indexed access with more than one index"))
+                }
+            }
+
+            is KtWhenConditionInRange -> {
+                reportInOperation(context, reportOn)
+            }
+
+            is KtBinaryExpression -> {
+                val token = element.operationToken
+                when (token) {
+                    in OperatorConventions.IN_OPERATIONS -> {
+                        reportInOperation(context, reportOn)
+                    }
+                    KtTokens.RANGE -> {
+                        context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "`..` operation"))
+                    }
+                }
+            }
+
+            is KtDestructuringDeclarationEntry -> {
+                if (!reportedOn(context, element.node.treeParent.psi)) {
+                    context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(element.parent, "destructuring declaration"))
+                }
+            }
         }
 
-        if (element is KtWhenConditionInRange) {
-            reportInOperation(context, reportOn)
+        for (argument in resolvedCall.call.valueArguments) {
+            argument.getSpreadElement()?.let {
+                context.trace.report(ErrorsJs.SPREAD_OPERATOR_IN_DYNAMIC_CALL.on(it))
+            }
         }
-        else if (element is KtBinaryExpression) {
-            val token = element.operationToken
-            when (token) {
-                in OperatorConventions.IN_OPERATIONS -> {
-                    reportInOperation(context, reportOn)
-                }
-                KtTokens.RANGE -> {
-                    context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "`..` operation"))
-                }
+    }
+
+    private fun checkSpreadOperator(resolvedCall: ResolvedCall<*>, context: CallCheckerContext) {
+        for (arg in resolvedCall.call.valueArguments) {
+            val argExpression = arg.getArgumentExpression() ?: continue
+            if (context.trace.bindingContext.getType(argExpression)?.isDynamic() == true && arg.getSpreadElement() != null) {
+                context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(arg.asElement(), "spread operator"))
             }
         }
     }
@@ -56,4 +83,7 @@ object JsDynamicCallChecker : CallChecker {
     private fun reportInOperation(context: CallCheckerContext, reportOn: PsiElement) {
         context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "`in` operation"))
     }
+
+    private fun reportedOn(context: CallCheckerContext, element: PsiElement) =
+            context.trace.bindingContext.diagnostics.forElement(element).any { it.factory == ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC }
 }

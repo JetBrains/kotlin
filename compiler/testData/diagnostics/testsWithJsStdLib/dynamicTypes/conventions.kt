@@ -55,11 +55,6 @@ fun test(d: dynamic) {
         i.<!DEBUG_INFO_DYNAMIC!>foo<!>()
     }
 
-    val (<!DEBUG_INFO_DYNAMIC!>a<!>, <!DEBUG_INFO_DYNAMIC!>b<!>, <!DEBUG_INFO_DYNAMIC!>c<!>) = d
-    a.<!DEBUG_INFO_DYNAMIC!>foo<!>()
-    b.<!DEBUG_INFO_DYNAMIC!>foo<!>()
-    c.<!DEBUG_INFO_DYNAMIC!>foo<!>()
-
     var dVar = d
     dVar<!DEBUG_INFO_DYNAMIC!>++<!>
     <!DEBUG_INFO_DYNAMIC!>++<!>dVar

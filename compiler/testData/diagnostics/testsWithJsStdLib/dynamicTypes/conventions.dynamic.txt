@@ -28,12 +28,6 @@ public final fun compareTo(/*0*/ p0: dynamic): dynamic
 public final fun compareTo(/*0*/ p0: dynamic): dynamic
 public final fun compareTo(/*0*/ p0: dynamic): dynamic
 public final fun foo(): dynamic
-public final fun component1(): dynamic
-public final fun component2(): dynamic
-public final fun component3(): dynamic
-public final fun foo(): dynamic
-public final fun foo(): dynamic
-public final fun foo(): dynamic
 public final fun inc(): dynamic
 public final fun inc(): dynamic
 public final fun dec(): dynamic

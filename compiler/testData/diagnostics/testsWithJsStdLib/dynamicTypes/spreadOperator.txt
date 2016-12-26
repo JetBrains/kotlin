@@ -1,3 +1,4 @@
 package
 
+public fun bar(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 public fun test(/*0*/ d: dynamic): kotlin.Unit

@@ -68,7 +68,10 @@ public interface ErrorsJs {
     DiagnosticFactory1<PsiElement, KotlinType> NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtElement> EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE = DiagnosticFactory0.create(
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+
     DiagnosticFactory1<PsiElement, String> WRONG_OPERATION_WITH_DYNAMIC = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> SPREAD_OPERATOR_IN_DYNAMIC_CALL = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<PsiElement> RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<PsiElement> RUNTIME_ANNOTATION_NOT_SUPPORTED = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
