@@ -505,10 +505,12 @@ internal class ImportForMismatchingArgumentsFix(
         val resolutionFacade = file.getResolutionFacade()
         val resolutionScope = elementToAnalyze.getResolutionScope(bindingContext, resolutionFacade)
 
+        val imported = resolutionScope.collectFunctions(identifier, NoLookupLocation.FROM_IDE)
+
         fun filterFunction(descriptor: FunctionDescriptor): Boolean {
             if (!callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor)) return false
 
-            if (descriptor in resolutionScope.collectFunctions(identifier, NoLookupLocation.FROM_IDE)) return false // already imported
+            if (descriptor.original in imported) return false // already imported
 
             // check that this function matches all arguments
             val resolutionScopeWithAddedImport = resolutionScope.addImportingScope(ExplicitImportsScope(listOf(descriptor)))
