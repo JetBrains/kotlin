@@ -111,6 +111,12 @@ public final class Namer {
     public static final String LOCAL_MODULE_PREFIX = "$module$";
     public static final String METADATA = "$metadata$";
     public static final String METADATA_SUPERTYPES = "baseClasses";
+    public static final String METADATA_SIMPLE_NAME = "simpleName";
+    public static final String METADATA_CLASS_KIND = "kind";
+    public static final String CLASS_KIND_ENUM = "Kind";
+    public static final String CLASS_KIND_CLASS = "CLASS";
+    public static final String CLASS_KIND_INTERFACE = "INTERFACE";
+    public static final String CLASS_KIND_OBJECT = "OBJECT";
 
     public static final String OBJECT_INSTANCE_VAR_SUFFIX = "_instance";
     public static final String OBJECT_INSTANCE_FUNCTION_SUFFIX = "_getInstance";

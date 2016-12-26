@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-Kotlin.TYPE = {
+Kotlin.Kind = {
     CLASS: "class",
     INTERFACE: "interface",
     OBJECT: "object"
@@ -99,7 +99,7 @@ Kotlin.isType = function (object, klass) {
     var constructor = proto != null ? proto.constructor : null;
     if (constructor != null && "$metadata$" in constructor) {
         var metadata = constructor.$metadata$;
-        if (metadata.type === Kotlin.TYPE.OBJECT) {
+        if (metadata.kind === Kotlin.Kind.OBJECT) {
             return object === klass;
         }
     }
@@ -111,7 +111,7 @@ Kotlin.isType = function (object, klass) {
         return object instanceof klass;
     }
 
-    if (klassMetadata.type === Kotlin.TYPE.INTERFACE && object.constructor != null) {
+    if (klassMetadata.kind === Kotlin.Kind.INTERFACE && object.constructor != null) {
         metadata = object.constructor.$metadata$;
         if (metadata != null) {
             return isInheritanceFromInterface(metadata, klass);

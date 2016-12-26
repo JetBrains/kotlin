@@ -118,11 +118,13 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
     private fun generateCoroutineMetadata(constructorName: JsName): JsStatement {
         val baseClassRefRef = function.coroutineMetadata!!.baseClassRef.deepCopy()
 
-        val metadataObject = JsObjectLiteral(true)
-        metadataObject.propertyInitializers += JsPropertyInitializer(
-                JsNameRef("type"), JsNameRef("CLASS", JsNameRef("TYPE", Namer.KOTLIN_NAME)))
-        metadataObject.propertyInitializers += JsPropertyInitializer(JsNameRef("simpleName"), JsLiteral.NULL)
-        metadataObject.propertyInitializers += JsPropertyInitializer(JsNameRef("baseClasses"), JsArrayLiteral(listOf(baseClassRefRef)))
+        val metadataObject = JsObjectLiteral(true).apply {
+            propertyInitializers +=
+                    JsPropertyInitializer(JsNameRef(Namer.METADATA_CLASS_KIND),
+                                          JsNameRef(Namer.CLASS_KIND_CLASS, JsNameRef(Namer.CLASS_KIND_ENUM, Namer.KOTLIN_NAME)))
+            propertyInitializers += JsPropertyInitializer(JsNameRef(Namer.METADATA_SIMPLE_NAME), JsLiteral.NULL)
+            propertyInitializers += JsPropertyInitializer(JsNameRef(Namer.METADATA_SUPERTYPES), JsArrayLiteral(listOf(baseClassRefRef)))
+        }
 
         return JsAstUtils.assignment(JsNameRef(Namer.METADATA, constructorName.makeRef()), metadataObject).makeStmt()
     }
