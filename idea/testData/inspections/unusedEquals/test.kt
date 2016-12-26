@@ -47,3 +47,14 @@ fun foo7(a: Int) {
 
     if (a == b) return // used
 }
+
+fun foo8(a: Int) {
+    val eq = if (a > 1) a == 10 else a == -1 // used
+
+    val eq2 = if (a > 1) {
+        a == 10 // used
+    }
+    else {
+        a == -1 // used
+    }
+}

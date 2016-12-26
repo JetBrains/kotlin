@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 
 class UnusedEqualsInspection : AbstractKotlinInspection() {
@@ -32,10 +33,11 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             override fun visitBinaryExpression(expression: KtBinaryExpression) {
                 super.visitBinaryExpression(expression)
-                if (expression.operationToken == KtTokens.EQEQ
-                    && expression.parent is KtBlockExpression
-                    && !expression.isUsedAsResultOfLambda(expression.analyze())) {
-                    holder.registerUnusedEqualsProblem(expression)
+                if (expression.operationToken == KtTokens.EQEQ && expression.parent is KtBlockExpression) {
+                    val context = expression.analyze()
+                    if (!expression.isUsedAsResultOfLambda(context) && !expression.isUsedAsExpression(context)) {
+                        holder.registerUnusedEqualsProblem(expression)
+                    }
                 }
             }
 
