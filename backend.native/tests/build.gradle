@@ -173,6 +173,23 @@ task sum2(type: RunKonanTest) {
     source = "codegen/function/sum_imm.kt"
 }
 
+task defaults(type: RunKonanTest) {
+    source = "codegen/function/defaults.kt"
+}
+
+task defaults1(type: RunKonanTest) {
+    source = "codegen/function/defaults1.kt"
+}
+
+task defaults2(type: RunKonanTest) {
+    source = "codegen/function/defaults2.kt"
+}
+
+task defaults3(type: RunKonanTest) {
+    source = "codegen/function/defaults3.kt"
+}
+
+
 task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
@@ -306,6 +323,11 @@ task advanced_when5(type: RunKonanTest) {
 task bool_yes(type: RunKonanTest) {
     source = "codegen/function/boolean.kt"
 }
+
+task named(type: RunKonanTest) {
+    source = "codegen/function/named.kt"
+}
+
 
 task plus_eq(type: RunKonanTest) {
     source = "codegen/function/plus_eq.kt"
