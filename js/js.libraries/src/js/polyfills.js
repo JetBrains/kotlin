@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-// Shims for String
 if (typeof String.prototype.startsWith === "undefined") {
     String.prototype.startsWith = function(searchString, position) {
         position = position || 0;
