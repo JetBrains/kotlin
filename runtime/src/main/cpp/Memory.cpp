@@ -16,6 +16,8 @@
 // Define to 1 to use in multithreaded environment.
 #define CONCURRENT 0
 
+ContainerHeader ObjHeader::theStaticObjectsContainer = { CONTAINER_TAG_NOCOUNT };
+
 namespace {
 
 // Current number of allocated containers.

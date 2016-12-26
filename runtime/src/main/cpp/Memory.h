@@ -63,9 +63,15 @@ struct ObjHeader {
     type_info_ = type_info;
   }
 
+  static ContainerHeader theStaticObjectsContainer;
+
   ContainerHeader* container() const {
-    return reinterpret_cast<ContainerHeader*>(
-        reinterpret_cast<uintptr_t>(this) - container_offset_negative_);
+    if (container_offset_negative_ == 0) {
+      return &theStaticObjectsContainer;
+    } else {
+      return reinterpret_cast<ContainerHeader*>(
+          reinterpret_cast<uintptr_t>(this) - container_offset_negative_);
+    }
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!
