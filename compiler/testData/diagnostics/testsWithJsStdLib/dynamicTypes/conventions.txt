@@ -1,6 +1,3 @@
 package
 
-public var bar: kotlin.Int
-public val dyn: dynamic = null
-public val foo: kotlin.Int
 public fun test(/*0*/ d: dynamic): kotlin.Unit

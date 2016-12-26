@@ -81,6 +81,3 @@ fun test(d: dynamic) {
     <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>%=<!> 1
 }
 
-val dyn: dynamic = null
-val foo : Int <!DEBUG_INFO_DYNAMIC!>by dyn<!>
-var bar : Int <!DEBUG_INFO_DYNAMIC, DEBUG_INFO_DYNAMIC!>by dyn<!>

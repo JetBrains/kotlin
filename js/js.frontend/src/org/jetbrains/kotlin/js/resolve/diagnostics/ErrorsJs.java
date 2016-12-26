@@ -71,6 +71,8 @@ public interface ErrorsJs {
 
     DiagnosticFactory1<PsiElement, String> WRONG_OPERATION_WITH_DYNAMIC = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> SPREAD_OPERATOR_IN_DYNAMIC_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> DELEGATION_BY_DYNAMIC = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PROPERTY_DELEGATION_BY_DYNAMIC = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);

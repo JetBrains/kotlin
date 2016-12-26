@@ -71,6 +71,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
 
         put(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC, "Wrong operation with dynamic value: {0}", Renderers.STRING)
         put(ErrorsJs.SPREAD_OPERATOR_IN_DYNAMIC_CALL, "Can't apply spread operator in dynamic call")
+        put(ErrorsJs.DELEGATION_BY_DYNAMIC, "Can't delegate to dynamic value")
+        put(ErrorsJs.PROPERTY_DELEGATION_BY_DYNAMIC, "Can't apply property delegation by dynamic handler")
 
         put(ErrorsJs.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION, "Runtime annotation can't be put on external declaration")
         put(ErrorsJs.RUNTIME_ANNOTATION_NOT_SUPPORTED, "Reflection is not supported in JavaScript target, therefore you won't be able " +

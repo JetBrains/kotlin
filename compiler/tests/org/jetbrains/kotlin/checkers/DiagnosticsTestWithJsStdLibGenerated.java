@@ -86,6 +86,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("classDelegateBy.kt")
+        public void testClassDelegateBy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/classDelegateBy.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("comparisonToNull.kt")
         public void testComparisonToNull() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/comparisonToNull.kt");
@@ -101,12 +107,6 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("conventions.kt")
         public void testConventions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/conventions.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("delegationBy.kt")
-        public void testDelegationBy() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/delegationBy.kt");
             doTest(fileName);
         }
 
@@ -239,6 +239,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @TestMetadata("overrides.kt")
         public void testOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/overrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyDelegateBy.kt")
+        public void testPropertyDelegateBy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/propertyDelegateBy.kt");
             doTest(fileName);
         }
 
