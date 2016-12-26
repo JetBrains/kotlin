@@ -1,13 +1,14 @@
 @Suppress("NOTHING_TO_INLINE")
-inline fun foo(i: Int): Int {
-    return i + 1
+inline fun foo() {
+    println("Ok")
 }
 
-fun bar(i: Int): Int {
-    return foo(i)
+fun bar(i: Int, j: Int): Int {
+    foo()
+    return i + j
 }
 
 fun main(args: Array<String>) {
-    println(bar(1).toString())
+    println(bar(1, 2).toString())
 }
 

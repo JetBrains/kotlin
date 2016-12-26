@@ -826,3 +826,8 @@ task unit4(type: RunKonanTest) {
     goldValue = "Done\n"
     source = "codegen/basics/unit4.kt"
 }
+
+task inline0(type: RunKonanTest) {
+    goldValue = "Ok\n3\n"
+    source = "codegen/inline/inline0.kt"
+}
