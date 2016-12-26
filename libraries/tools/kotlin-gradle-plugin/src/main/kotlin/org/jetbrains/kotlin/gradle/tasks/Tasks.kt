@@ -26,6 +26,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdaterImpl
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -33,6 +34,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
@@ -302,7 +305,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     override fun callCompiler(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.KotlinOnly
 
-        val messageCollector = GradleMessageCollector(logger)
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
         args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
@@ -315,15 +317,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val compilerRunner = GradleCompilerRunner(project)
         val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
         val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
-
-        when (exitCode) {
-            ExitCode.OK -> {
-                logger.kotlinInfo("Compilation succeeded")
-            }
-            ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
-            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
-            else -> throw GradleException("Unexpected exit code: $exitCode")
-        }
+        throwGradleExceptionIfError(exitCode)
     }
 }
 
