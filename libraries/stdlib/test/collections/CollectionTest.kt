@@ -24,6 +24,12 @@ import kotlin.comparisons.*
 
 class CollectionTest {
 
+    @Test fun createListWithInit() {
+        val list = List(3) { index -> "x".repeat(index + 1) }
+        assertEquals(3, list.size)
+        assertEquals(listOf("x", "xx", "xxx"), list)
+    }
+
     @Test fun joinTo() {
         val data = listOf("foo", "bar")
         val buffer = StringBuilder()
