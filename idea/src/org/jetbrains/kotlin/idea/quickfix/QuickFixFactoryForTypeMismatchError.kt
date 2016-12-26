@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.isNullOrEmpty
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -199,6 +200,10 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                     val scope = callable?.getResolutionScope(context, callable.getResolutionFacade())
                     val typeToInsert = valueArgumentType.approximateWithResolvableType(scope, true)
                     actions.add(ChangeParameterTypeFix(correspondingParameter, typeToInsert))
+                    if (correspondingParameter.isVarArg && KotlinBuiltIns.isArray(valueArgumentType)
+                        && !expressionType.arguments.isNullOrEmpty() && expressionType.arguments[0].type == expectedType) {
+                        actions.add(ChangeToUseSpreadOperatorFix(diagnosticElement))
+                    }
                 }
             }
         }
