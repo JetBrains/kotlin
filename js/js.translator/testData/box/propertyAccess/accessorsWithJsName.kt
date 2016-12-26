@@ -14,7 +14,7 @@ class A {
 val A.z: Int
     @JsName("getZ_") get() = 42
 
-fun getPackage() = js("return Kotlin.modules.JS_TESTS.foo")
+fun getPackage() = js("return JS_TESTS.foo")
 
 fun box(): String {
     val a = A()

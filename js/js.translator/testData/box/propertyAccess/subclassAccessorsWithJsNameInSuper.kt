@@ -28,7 +28,7 @@ class B : A(), C {
     override val z = 55
 }
 
-fun getPackage() = js("return Kotlin.modules.JS_TESTS.foo")
+fun getPackage() = js("return JS_TESTS.foo")
 
 fun box(): String {
     val a = B()

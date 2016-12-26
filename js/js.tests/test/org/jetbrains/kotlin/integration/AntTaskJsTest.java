@@ -49,6 +49,10 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
     }
 
     private void doJsAntTest(String... jsFiles) throws Exception {
+        doJsAntTest(false, jsFiles);
+    }
+
+    private void doJsAntTest(boolean withModuleSystem, String... jsFiles) throws Exception {
         doTest();
 
         List<String> fileNames = new ArrayList<String>(Arrays.asList(jsFiles));
@@ -61,7 +65,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
             }
         });
 
-        RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK"));
+        RhinoUtils.runRhinoTest(filePaths, new RhinoFunctionResultChecker("out", "foo", "box", "OK", withModuleSystem));
     }
 
     private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {
@@ -121,7 +125,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
     }
 
     public void testSimpleWithStdlibAndJsFileAsAnotherLibModuleKind() throws Exception {
-        doJsAntTest("amd.js", "jslib-example.js");
+        doJsAntTest(true, "amd.js", "jslib-example.js");
     }
 
     public void testSimpleWithStdlibAndTwoJsFilesAsLibraries() throws Exception {

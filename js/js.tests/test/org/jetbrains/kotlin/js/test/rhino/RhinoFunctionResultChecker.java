@@ -30,12 +30,24 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     private final String packageName;
     private final String functionName;
     private final Object expectedResult;
+    private final boolean withModuleSystem;
 
     public RhinoFunctionResultChecker(@NotNull String moduleId, @Nullable String packageName, @NotNull String functionName, @NotNull Object expectedResult) {
+        this(moduleId, packageName, functionName, expectedResult, false);
+    }
+
+    public RhinoFunctionResultChecker(
+            @NotNull String moduleId,
+            @Nullable String packageName,
+            @NotNull String functionName,
+            @NotNull Object expectedResult,
+            boolean withModuleSystem
+    ) {
         this.moduleId = moduleId;
         this.packageName = packageName;
         this.functionName = functionName;
         this.expectedResult = expectedResult;
+        this.withModuleSystem = withModuleSystem;
     }
 
     @Override
@@ -56,12 +68,17 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
     private String functionCallString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("kotlin.modules");
-        if (moduleId.contains(".")) {
-            sb.append("['").append(moduleId).append("']");
-        } else {
-            sb.append(".").append(moduleId);
+
+        if (withModuleSystem) {
+            sb.append("require('").append(moduleId).append("')");
         }
+        else if (moduleId.contains(".")) {
+            sb.append("this['").append(moduleId).append("']");
+        }
+        else {
+            sb.append(moduleId);
+        }
+
         if (packageName != null) {
             sb.append('.').append(packageName);
         }

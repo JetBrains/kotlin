@@ -10,7 +10,7 @@ var y: Int = 0
     }
 
 
-fun getPackage() = js("return Kotlin.modules.JS_TESTS.foo")
+fun getPackage() = js("return JS_TESTS.foo")
 
 fun box(): String {
     assertEquals(23, x)

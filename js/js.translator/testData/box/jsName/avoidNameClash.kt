@@ -7,7 +7,7 @@ object A {
 }
 
 fun test() = js("""
-var a = Kotlin.modules.JS_TESTS.foo.A;
+var a = JS_TESTS.foo.A;
 return a.js_method() + ";" + a.js_property;
 """)
 

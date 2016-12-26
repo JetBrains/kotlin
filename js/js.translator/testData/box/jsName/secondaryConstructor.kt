@@ -5,7 +5,7 @@ class A(val x: String) {
 }
 
 fun test() = js("""
-return Kotlin.modules.JS_TESTS.foo.A_int(23).x;
+return JS_TESTS.foo.A_int(23).x;
 """)
 
 fun box(): String {

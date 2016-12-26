@@ -1,6 +1,6 @@
 package kotlin.test
 
-fun init() {
+val init = run {
     asserter = JsTestsAsserter()
 }
 

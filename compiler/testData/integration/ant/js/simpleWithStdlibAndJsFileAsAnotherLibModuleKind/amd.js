@@ -17,5 +17,10 @@
     }
     define.amd = {};
 
+    function require(name) {
+        return modules[name];
+    }
+
     global.define = define;
+    global.require = require;
 })(this);

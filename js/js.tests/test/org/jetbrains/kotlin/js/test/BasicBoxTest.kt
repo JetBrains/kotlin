@@ -99,7 +99,6 @@ abstract class BasicBoxTest(
             val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
             val mainModule = modules[mainModuleName]!!
 
-            val checker = RhinoFunctionResultChecker(mainModuleName, testFactory.testPackage, TEST_FUNCTION, "OK")
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                     TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION)
             val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + JavaScript.DOT_EXTENSION
@@ -118,9 +117,13 @@ abstract class BasicBoxTest(
                     }
 
             val additionalFiles = mutableListOf<String>()
-            if ((modules.size > 1 || MODULE_KIND_PATTERN.matcher(expectedText).find()) &&
-                !NO_MODULE_SYSTEM_PATTERN.matcher(expectedText).find()
-            ) {
+
+            val moduleKindMatcher = MODULE_KIND_PATTERN.matcher(expectedText)
+            val moduleKind = if (moduleKindMatcher.find()) ModuleKind.valueOf(moduleKindMatcher.group(1)) else ModuleKind.PLAIN
+
+            val withModuleSystem = moduleKind != ModuleKind.PLAIN && !NO_MODULE_SYSTEM_PATTERN.matcher(expectedText).find()
+
+            if (withModuleSystem) {
                 additionalFiles += MODULE_EMULATION_FILE
             }
 
@@ -138,6 +141,7 @@ abstract class BasicBoxTest(
                 FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
             }
 
+            val checker = RhinoFunctionResultChecker(mainModuleName, testFactory.testPackage, TEST_FUNCTION, "OK", withModuleSystem)
             RhinoUtils.runRhinoTest(allJsFiles, checker)
         }
     }
@@ -153,7 +157,7 @@ abstract class BasicBoxTest(
             val fileName = FileUtil.getRelativePath(dir, File(file))!!
             sb.append("text += fs.readFileSync(__dirname + \"/$fileName\") + \"\\n\";\n")
         }
-        sb.append("text += 'return kotlin.modules.$moduleName;';\n")
+        sb.append("text += 'return $moduleName;';\n")
         sb.append("text += \"};\";\n")
 
         val fqn = testPackage?.let { ".$it" } ?: ""

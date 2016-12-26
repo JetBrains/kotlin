@@ -9,7 +9,7 @@ class B : A() {
 }
 
 fun test() = js("""
-var module = Kotlin.modules.JS_TESTS.foo;
+var module = JS_TESTS.foo;
 return new (module.A)().js_f(23) + ";" + new (module.B)().js_f(42);
 """)
 

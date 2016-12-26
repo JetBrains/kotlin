@@ -30,14 +30,7 @@ var JsTests = (function () {
         throw failedTest;
     };
 
-    var init = function () {
-        init = function() {};
-        kotlin.modules.JS_TESTS.kotlin.test.init();
-    };
-
     var test = function (testName, testFun) {
-        init();
-
         reporter.testStart(testName);
         try {
             testFun();

@@ -272,14 +272,11 @@
 
 ////////////////////////////////// packages & modules //////////////////////////////
 
-    Kotlin.modules = {};
-
     /**
      * @param {string} id
      * @param {Object} declaration
      */
     Kotlin.defineModule = function (id, declaration) {
-        Kotlin.modules[id] = declaration;
     };
 
     Kotlin.defineInlineFunction = function(tag, fun) {
@@ -303,7 +300,7 @@
             return object == null || fn(object);
         }
     };
-    
+
     Kotlin.andPredicate = function (a, b) {
         return function (object) {
             return a(object) && b(object);
