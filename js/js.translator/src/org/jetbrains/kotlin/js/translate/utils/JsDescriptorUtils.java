@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -137,8 +138,8 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean sideEffectsPossibleOnRead(@NotNull PropertyDescriptor property) {
-        return !isDefaultAccessor(property.getGetter()) || ModalityKt.isOverridableOrOverrides(property) ||
-                isStaticInitializationPossible(property);
+        return DynamicCallsKt.isDynamic(property) || !isDefaultAccessor(property.getGetter()) ||
+               ModalityKt.isOverridableOrOverrides(property) || isStaticInitializationPossible(property);
     }
 
     private static boolean isStaticInitializationPossible(PropertyDescriptor property) {
