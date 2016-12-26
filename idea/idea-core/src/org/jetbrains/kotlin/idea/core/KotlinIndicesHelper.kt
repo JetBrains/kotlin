@@ -244,7 +244,8 @@ class KotlinIndicesHelper(
      *     in a module inside "myFieldCache" (and in Kotlin light classes too, of course).
      * It triggers the light classes compilation in the UI thread inside our static field import quick-fix.
      */
-    private fun getJavaCallables(name: String, shortNamesCache: PsiShortNamesCache): Sequence<Any> {
+    private val filteredShortNamesCaches: List<PsiShortNamesCache>? by lazy {
+        val shortNamesCache = PsiShortNamesCache.getInstance(project)
         if (shortNamesCache is CompositeShortNamesCache) {
             try {
                 fun getMyCachesField(clazz: Class<PsiShortNamesCache>): Field {
@@ -255,7 +256,7 @@ class KotlinIndicesHelper(
                         // In case the class is proguarded
                         return clazz.declaredFields.first {
                             Modifier.isPrivate(it.modifiers) && Modifier.isFinal(it.modifiers) && !Modifier.isStatic(it.modifiers)
-                                && it.type.isArray && it.type.componentType == PsiShortNamesCache::class.java
+                            && it.type.isArray && it.type.componentType == PsiShortNamesCache::class.java
                         }
                     }
                 }
@@ -265,10 +266,12 @@ class KotlinIndicesHelper(
                 try {
                     myCachesField.isAccessible = true
                     @Suppress("UNCHECKED_CAST")
-                    val caches = (myCachesField.get(shortNamesCache) as Array<PsiShortNamesCache>).filter {
-                        it !is KotlinShortNamesCache && it.javaClass.name != "com.android.tools.idea.databinding.BrShortNamesCache"
+                    return@lazy (myCachesField.get(shortNamesCache) as Array<PsiShortNamesCache>).filter {
+                        it !is KotlinShortNamesCache
+                        && it.javaClass.name != "com.android.tools.idea.databinding.BrShortNamesCache"
+                        && it.javaClass.name != "com.android.tools.idea.databinding.DataBindingComponentShortNamesCache"
+                        && it.javaClass.name != "com.android.tools.idea.databinding.DataBindingShortNamesCache"
                     }
-                    return getCallablesByName(name, scopeWithoutKotlin, caches)
                 }
                 finally {
                     myCachesField.isAccessible = previousIsAccessible
@@ -279,6 +282,10 @@ class KotlinIndicesHelper(
             }
         }
 
+        return@lazy null
+    }
+    private fun getJavaCallables(name: String, shortNamesCache: PsiShortNamesCache): Sequence<Any> {
+        filteredShortNamesCaches?.let { caches -> return getCallablesByName(name, scopeWithoutKotlin, caches) }
         return shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).asSequence() +
                shortNamesCache.getMethodsByName(name, scopeWithoutKotlin).asSequence()
     }
