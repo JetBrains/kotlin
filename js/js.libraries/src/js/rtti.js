@@ -16,9 +16,8 @@
 
 Kotlin.TYPE = {
     CLASS: "class",
-    TRAIT: "trait",
-    OBJECT: "object",
-    INIT_FUN: "init fun"
+    INTERFACE: "interface",
+    OBJECT: "object"
 };
 
 Kotlin.classCount = 0;
@@ -27,10 +26,6 @@ Kotlin.newClassIndex = function () {
     Kotlin.classCount++;
     return tmp;
 };
-
-function isNativeClass(obj) {
-    return !(obj == null) && obj.$metadata$ == null;
-}
 
 Kotlin.callGetter = function (thisObject, klass, propertyName) {
     var propertyDescriptor = Object.getOwnPropertyDescriptor(klass, propertyName);
@@ -64,20 +59,20 @@ Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
     }
 };
 
-function isInheritanceFromTrait(metadata, trait) {
+function isInheritanceFromInterface(metadata, iface) {
     // TODO: return this optimization
-    /*if (metadata == null || metadata.classIndex < trait.$metadata$.classIndex) {
+    /*if (metadata == null || metadata.classIndex < iface.$metadata$.classIndex) {
         return false;
     }*/
     var baseClasses = metadata.baseClasses;
     var i;
     for (i = 0; i < baseClasses.length; i++) {
-        if (baseClasses[i] === trait) {
+        if (baseClasses[i] === iface) {
             return true;
         }
     }
     for (i = 0; i < baseClasses.length; i++) {
-        if (isInheritanceFromTrait(baseClasses[i].$metadata$, trait)) {
+        if (isInheritanceFromInterface(baseClasses[i].$metadata$, iface)) {
             return true;
         }
     }
@@ -120,25 +115,22 @@ Kotlin.isType = function (object, klass) {
         }
     }
 
+    var klassMetadata = klass.$metadata$;
+
     // In WebKit (JavaScriptCore) for some interfaces from DOM typeof returns "object", nevertheless they can be used in RHS of instanceof
-    if (isNativeClass(klass)) {
+    if (klassMetadata == null) {
         return object instanceof klass;
     }
 
-    if (isTrait(klass) && object.constructor != null) {
+    if (klassMetadata.type === Kotlin.TYPE.INTERFACE && object.constructor != null) {
         metadata = object.constructor.$metadata$;
         if (metadata != null) {
-            return isInheritanceFromTrait(metadata, klass);
+            return isInheritanceFromInterface(metadata, klass);
         }
     }
 
     return false;
 };
-
-function isTrait(klass) {
-    var metadata = klass.$metadata$;
-    return metadata != null && metadata.type === Kotlin.TYPE.TRAIT;
-}
 
 Kotlin.isNumber = function (a) {
     return typeof a == "number" || a instanceof Kotlin.Long;

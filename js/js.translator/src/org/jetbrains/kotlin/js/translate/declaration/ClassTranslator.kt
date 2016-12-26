@@ -173,7 +173,7 @@ class ClassTranslator private constructor(
     private fun addMetadataType() {
         val kotlinType = JsNameRef("TYPE", Namer.KOTLIN_NAME)
         val typeRef = when {
-            DescriptorUtils.isInterface(descriptor) -> JsNameRef("TRAIT", kotlinType)
+            DescriptorUtils.isInterface(descriptor) -> JsNameRef("INTERFACE", kotlinType)
             DescriptorUtils.isObject(descriptor) -> JsNameRef("OBJECT", kotlinType)
             else -> JsNameRef("CLASS", kotlinType)
         }
