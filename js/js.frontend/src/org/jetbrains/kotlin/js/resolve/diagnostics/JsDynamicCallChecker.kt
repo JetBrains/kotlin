@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtWhenConditionInRange
@@ -36,10 +37,23 @@ object JsDynamicCallChecker : CallChecker {
             context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "indexed access with more than one index"))
         }
 
-        if (element is KtBinaryExpression && element.operationToken in OperatorConventions.IN_OPERATIONS ||
-            element is KtWhenConditionInRange
-        ) {
-            context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "`in` operation"))
+        if (element is KtWhenConditionInRange) {
+            reportInOperation(context, reportOn)
         }
+        else if (element is KtBinaryExpression) {
+            val token = element.operationToken
+            when (token) {
+                in OperatorConventions.IN_OPERATIONS -> {
+                    reportInOperation(context, reportOn)
+                }
+                KtTokens.RANGE -> {
+                    context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "`..` operation"))
+                }
+            }
+        }
+    }
+
+    private fun reportInOperation(context: CallCheckerContext, reportOn: PsiElement) {
+        context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(reportOn, "`in` operation"))
     }
 }

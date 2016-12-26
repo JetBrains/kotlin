@@ -16,8 +16,6 @@ fun test(d: dynamic) {
     d <!DEBUG_INFO_DYNAMIC!>/<!> d
     d <!DEBUG_INFO_DYNAMIC!>%<!> d
 
-    d<!DEBUG_INFO_DYNAMIC!>..<!>d
-
     d <!DEBUG_INFO_DYNAMIC!>and<!> d
 
     <!DEBUG_INFO_DYNAMIC!>d[1]<!>
