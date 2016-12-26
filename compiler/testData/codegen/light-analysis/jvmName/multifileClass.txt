@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class test/Test {
     public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -5,7 +6,7 @@ public final class test/Test {
     public final static @org.jetbrains.annotations.NotNull method qux(): java.lang.String
 }
 
-
+@kotlin.Metadata
 synthetic final class test/Test__MultifileClassKt {
     public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

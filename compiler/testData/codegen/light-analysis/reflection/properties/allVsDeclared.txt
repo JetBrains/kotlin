@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class AllVsDeclaredKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Sub {
     private final field c: double
     public method <init>(): void
@@ -10,7 +11,7 @@ public final class Sub {
     public final method getD(p0: char): char
 }
 
-
+@kotlin.Metadata
 public class Super {
     private final field a: int
     public method <init>(): void

@@ -1,16 +1,17 @@
+@kotlin.Metadata
 public interface A {
     inner class A/DefaultImpls
     public abstract method a(): java.lang.Object
     public abstract method getProperty(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class A/DefaultImpls {
     inner class A/DefaultImpls
     public static method a(p0: A): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public class B {
     private final @org.jetbrains.annotations.NotNull field property: java.lang.Object
     public method <init>(): void
@@ -18,14 +19,14 @@ public class B {
     public @org.jetbrains.annotations.NotNull method getProperty(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public class C {
     private final @org.jetbrains.annotations.NotNull field property: java.lang.Object
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getProperty(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class GenericMethodKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

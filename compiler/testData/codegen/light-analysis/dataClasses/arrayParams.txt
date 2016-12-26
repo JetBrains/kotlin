@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.NotNull field x: java.lang.Integer[]
     private final @org.jetbrains.annotations.NotNull field y: int[]
@@ -13,7 +14,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class ArrayParamsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[], @org.jetbrains.annotations.NotNull p1: int[]): A

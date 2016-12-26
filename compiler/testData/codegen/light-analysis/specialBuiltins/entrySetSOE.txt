@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class EntrySetSOEKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public class Map1 {
     public method <init>(): void
     public final method containsKey(p0: java.lang.Object): boolean
@@ -21,7 +22,7 @@ public class Map1 {
     public final method values(): java.util.Collection
 }
 
-
+@kotlin.Metadata
 public final class Map2 {
     public method <init>(): void
 }

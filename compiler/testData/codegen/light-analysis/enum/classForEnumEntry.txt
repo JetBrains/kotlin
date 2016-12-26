@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class ClassForEnumEntryKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public enum class IssueState {
     public final static field DEFAULT: IssueState
     public final static field FIXED: IssueState
@@ -13,7 +14,7 @@ public enum class IssueState {
     public static method values(): IssueState[]
 }
 
-
+@kotlin.Metadata
 final static class IssueState/FIXED {
     inner class IssueState/FIXED
     method <init>(p0: java.lang.String, p1: int): void

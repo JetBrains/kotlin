@@ -1,10 +1,11 @@
+@kotlin.Metadata
 public final class ExpressionKt {
     public final static @org.jetbrains.annotations.NotNull method bar1(@org.jetbrains.annotations.NotNull p0: Season): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method bar2(@org.jetbrains.annotations.NotNull p0: Season): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public enum class Season {
     public final static field AUTUMN: Season
     public final static field SPRING: Season

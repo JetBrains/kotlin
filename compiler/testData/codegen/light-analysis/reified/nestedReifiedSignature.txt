@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public class A {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class NestedReifiedSignatureKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method foo(): A[]

@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class ExtensionInClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Z {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public abstract class BaseGeneric {
     private final field t: java.lang.Object
     public method <init>(p0: java.lang.Object): void
@@ -5,7 +6,7 @@ public abstract class BaseGeneric {
     public abstract method iterate(): void
 }
 
-
+@kotlin.Metadata
 public final class Derived {
     private field test: int
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): void
@@ -14,7 +15,7 @@ public final class Derived {
     public final method setTest(p0: int): void
 }
 
-
+@kotlin.Metadata
 public final class Kt12983_forInGenericArrayIndicesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

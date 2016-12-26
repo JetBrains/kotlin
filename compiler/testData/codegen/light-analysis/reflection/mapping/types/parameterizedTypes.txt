@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public final class A {
     private field foo: java.util.List
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
 }
 
-
+@kotlin.Metadata
 public final class O {
     public final static field INSTANCE: O
     private static field bar: java.util.List
@@ -11,7 +12,7 @@ public final class O {
     private synthetic deprecated final static @kotlin.jvm.JvmStatic method bar$annotations(): void
 }
 
-
+@kotlin.Metadata
 public final class ParameterizedTypesKt {
     public final static method assertGenericType(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KType): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

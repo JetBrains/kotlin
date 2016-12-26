@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Kt1157Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class SomeClass {
     public final static field INSTANCE: SomeClass
     private final static field work: SomeClass$work$1

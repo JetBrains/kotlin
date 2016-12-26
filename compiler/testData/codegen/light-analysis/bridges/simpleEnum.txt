@@ -1,20 +1,21 @@
+@kotlin.Metadata
 public interface A {
     inner class A/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method foo(p0: java.lang.Object): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class A/DefaultImpls {
     inner class A/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method foo(p0: A, p1: java.lang.Object): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class SimpleEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public enum class Z {
     public final static field Z1: Z
     public final static field Z2: Z

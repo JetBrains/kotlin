@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Kt9711Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public abstract enum class X {
     public final static field B: X
     inner class X/B
@@ -12,7 +13,7 @@ public abstract enum class X {
     public static method values(): X[]
 }
 
-
+@kotlin.Metadata
 final static class X/B {
     private final @org.jetbrains.annotations.NotNull field value2: java.lang.String
     private final @org.jetbrains.annotations.NotNull field value: kotlin.jvm.functions.Function0

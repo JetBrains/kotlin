@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class FunctionsKt {
     public final static method bar(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
     public final static method baz(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
@@ -5,7 +6,7 @@ public final class FunctionsKt {
     public final static method check(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KFunction): void
 }
 
-
+@kotlin.Metadata
 public final class K {
     public method <init>(): void
     public final method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): int

@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class DelegateWithPrivateSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class My {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field delegate$delegate: kotlin.properties.ReadWriteProperty

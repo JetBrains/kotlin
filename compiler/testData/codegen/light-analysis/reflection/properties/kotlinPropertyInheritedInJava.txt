@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class K {
     private @org.jetbrains.annotations.NotNull field prop: java.lang.String
     public method <init>(): void
@@ -6,7 +7,7 @@ public class K {
     public final method setProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public final class KKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

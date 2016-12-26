@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class EnumWithTwoDoubleDefArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public enum class Foo {
     public final static field A: Foo
     public final static field B: Foo

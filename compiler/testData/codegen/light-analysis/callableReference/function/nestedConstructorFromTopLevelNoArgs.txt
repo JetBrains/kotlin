@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public final class A {
     inner class A/Nested
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final static class A/Nested {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     inner class A/Nested
@@ -11,7 +12,7 @@ public final static class A/Nested {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class NestedConstructorFromTopLevelNoArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,10 +1,11 @@
+@kotlin.Metadata
 public final class example2/Context {
     public final static field INSTANCE: example2.Context
     inner class example2/Context/OsType
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public static enum class example2/Context/OsType {
     public final static field LINUX: example2.Context.OsType
     public final static field MACOSX: example2.Context.OsType
@@ -18,7 +19,7 @@ public static enum class example2/Context/OsType {
     public static method values(): example2.Context.OsType[]
 }
 
-
+@kotlin.Metadata
 public final class example2/Kt2626Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

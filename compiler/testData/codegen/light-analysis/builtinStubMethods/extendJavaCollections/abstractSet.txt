@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public method contains(p0: java.lang.Long): boolean
@@ -8,7 +9,7 @@ public final class A {
     public final method size(): int
 }
 
-
+@kotlin.Metadata
 public final class AbstractSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

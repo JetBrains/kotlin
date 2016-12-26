@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final @org.jetbrains.annotations.NotNull field normalizedNums: java.util.Map
     private final @org.jetbrains.annotations.NotNull field nums: java.util.Map
@@ -7,7 +8,7 @@ public final class C {
     private final method loadNormalizedNums(): java.util.Map
 }
 
-
+@kotlin.Metadata
 public enum class E {
     public final static field VALUE2: E
     public final static field VALUE: E
@@ -16,7 +17,7 @@ public enum class E {
     public static method values(): E[]
 }
 
-
+@kotlin.Metadata
 public final class Kt6434Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

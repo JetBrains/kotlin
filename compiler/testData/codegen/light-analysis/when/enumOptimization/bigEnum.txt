@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class BigEnum {
     public final static field ITEM10: BigEnum
     public final static field ITEM11: BigEnum
@@ -24,7 +25,7 @@ public enum class BigEnum {
     public static method values(): BigEnum[]
 }
 
-
+@kotlin.Metadata
 public final class BigEnumKt {
     public final static @org.jetbrains.annotations.NotNull method bar1(@org.jetbrains.annotations.NotNull p0: BigEnum): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method bar2(@org.jetbrains.annotations.NotNull p0: BigEnum): java.lang.String

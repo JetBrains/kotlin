@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class test/E {
     public final static field E1: test.E
     public final static field E2: test.E
@@ -9,21 +10,21 @@ public enum class test/E {
     public static method values(): test.E[]
 }
 
-
+@kotlin.Metadata
 final static class test/E/E1 {
     inner class test/E/E1
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
 
-
+@kotlin.Metadata
 final static class test/E/E2 {
     inner class test/E/E2
     method <init>(p0: java.lang.String, p1: int): void
     public @org.jetbrains.annotations.NotNull method f(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class test/SuperCallInEnumLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

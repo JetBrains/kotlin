@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String
     inner class A/B
@@ -5,7 +6,7 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class A/B {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
@@ -16,13 +17,13 @@ public final class A/B {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class C {
     inner class C/X
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class C/X {
     synthetic final field this$0: C
     inner class C/X
@@ -35,7 +36,7 @@ public final class C/X {
     public final @org.jetbrains.annotations.NotNull method superXReceiver(): A.B
 }
 
-
+@kotlin.Metadata
 public final class InstantiateInDerivedLabeledKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Clazz {
     public final static field Companion: Clazz.Companion
     private final static @org.jetbrains.annotations.NotNull field a: java.lang.Object
@@ -5,14 +6,14 @@ public final class Clazz {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final static class Clazz/Companion {
     inner class Clazz/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getA(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class Kt2719Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class InstanceOfArraysKt {
     private final static method bar(p0: java.lang.Object): kotlin.Pair
     private final static method barNullable(p0: java.lang.Object): kotlin.Pair

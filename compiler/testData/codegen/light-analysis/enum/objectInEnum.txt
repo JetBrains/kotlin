@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class E {
     public final static field ENTRY: E
     public final static field SUBCLASS: E
@@ -9,7 +10,7 @@ public enum class E {
     public static method values(): E[]
 }
 
-
+@kotlin.Metadata
 public final class E/O {
     public final static field INSTANCE: E.O
     inner class E/O
@@ -17,7 +18,7 @@ public final class E/O {
     public final method foo(): int
 }
 
-
+@kotlin.Metadata
 final static class E/SUBCLASS {
     inner class E/SUBCLASS
     inner class E/SUBCLASS/O
@@ -25,7 +26,7 @@ final static class E/SUBCLASS {
     public method bar(): int
 }
 
-
+@kotlin.Metadata
 public final class E/SUBCLASS/O {
     public final static field INSTANCE: E.SUBCLASS.O
     inner class E/SUBCLASS
@@ -34,7 +35,7 @@ public final class E/SUBCLASS/O {
     public final method foo(): int
 }
 
-
+@kotlin.Metadata
 public final class ObjectInEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

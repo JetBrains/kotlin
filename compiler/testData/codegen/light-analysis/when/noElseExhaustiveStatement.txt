@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class En {
     public final static field A: En
     public final static field B: En
@@ -6,7 +7,7 @@ public enum class En {
     public static method values(): En[]
 }
 
-
+@kotlin.Metadata
 public final class NoElseExhaustiveStatementKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

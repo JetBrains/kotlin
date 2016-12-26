@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class IncrementPropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Slot {
     private field vitality: int
     public method <init>(): void

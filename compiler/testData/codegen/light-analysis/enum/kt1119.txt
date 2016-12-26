@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public abstract enum class Direction {
     public final static field NORTH: Direction
     inner class Direction/NORTH
@@ -7,7 +8,7 @@ public abstract enum class Direction {
     public static method values(): Direction[]
 }
 
-
+@kotlin.Metadata
 final static class Direction/NORTH {
     private final @org.jetbrains.annotations.NotNull field someSpecialValue: java.lang.String
     inner class Direction/NORTH
@@ -16,7 +17,7 @@ final static class Direction/NORTH {
     public final @org.jetbrains.annotations.NotNull method getSomeSpecialValue(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Kt1119Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,10 +1,11 @@
+@kotlin.Metadata
 public final class Kt1538Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method parseCatalogs(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public final static @org.jetbrains.annotations.NotNull method toHasMap(@org.jetbrains.annotations.Nullable p0: java.lang.Object): Pair
 }
 
-
+@kotlin.Metadata
 public final class Pair {
     private final field first: java.lang.Object
     private final field second: java.lang.Object

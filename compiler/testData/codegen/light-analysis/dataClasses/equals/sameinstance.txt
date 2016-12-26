@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.Nullable field arg: java.lang.Object
     public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
@@ -12,7 +13,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class SameinstanceKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

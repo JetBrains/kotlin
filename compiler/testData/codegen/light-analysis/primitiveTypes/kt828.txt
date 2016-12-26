@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class demo/Kt828Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

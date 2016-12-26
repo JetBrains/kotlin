@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Kt299Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class MyRange1 {
     public method <init>(): void
     public method contains(p0: int): boolean
@@ -14,7 +15,7 @@ public final class MyRange1 {
     public method isEmpty(): boolean
 }
 
-
+@kotlin.Metadata
 public final class MyRange2 {
     public method <init>(): void
     public final method contains(p0: int): boolean

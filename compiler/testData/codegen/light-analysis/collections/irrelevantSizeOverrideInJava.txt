@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public method add(p0: java.lang.Object): boolean
@@ -15,12 +16,12 @@ public final class A {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
+@kotlin.Metadata
 public interface Sized {
     public abstract method getSize(): int
 }
 
-
+@kotlin.Metadata
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

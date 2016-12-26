@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     private final @org.jetbrains.annotations.NotNull field z: java.lang.String
@@ -8,7 +9,7 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public class A/B {
     synthetic final field this$0: A
     inner class A/B
@@ -16,7 +17,7 @@ public class A/B {
     public final @org.jetbrains.annotations.NotNull method testB(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class ProperSuperLinkingKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

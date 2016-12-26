@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public final class A {
     private field foo: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public final class O {
     public final static field INSTANCE: O
     private static field bar: java.lang.String
@@ -11,7 +12,7 @@ public final class O {
     private synthetic deprecated final static @kotlin.jvm.JvmStatic method bar$annotations(): void
 }
 
-
+@kotlin.Metadata
 public final class PropertyAccessorsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

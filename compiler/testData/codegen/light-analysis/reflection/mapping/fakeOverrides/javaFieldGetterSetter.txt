@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class JavaFieldGetterSetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public class TestBase {
     private field id: long
     public method <init>(): void
@@ -10,7 +11,7 @@ public class TestBase {
     public final method setId(p0: long): void
 }
 
-
+@kotlin.Metadata
 public final class TestChild {
     public method <init>(): void
 }

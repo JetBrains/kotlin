@@ -1,7 +1,8 @@
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class Anno
 
-
+@kotlin.Metadata
 public final class TwoAnnotatedExtensionPropertiesWithoutBackingFieldsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private synthetic deprecated final static @Anno method foo$annotations(p0: int): void

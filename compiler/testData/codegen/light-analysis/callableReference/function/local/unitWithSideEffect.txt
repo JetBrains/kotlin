@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class UnitWithSideEffectKt {
     private static field state: int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

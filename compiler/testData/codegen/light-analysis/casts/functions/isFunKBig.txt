@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class IsFunKBigKt {
     private final static @org.jetbrains.annotations.NotNull field fns: java.lang.Object[]
     private final static @org.jetbrains.annotations.NotNull field tests: TestFnBase[]
@@ -29,7 +30,7 @@ public final class IsFunKBigKt {
     public final static @org.jetbrains.annotations.NotNull method getTests(): TestFnBase[]
 }
 
-
+@kotlin.Metadata
 public final class TestFn0 {
     public final static field INSTANCE: TestFn0
     private method <init>(): void
@@ -37,7 +38,7 @@ public final class TestFn0 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn1 {
     public final static field INSTANCE: TestFn1
     private method <init>(): void
@@ -45,7 +46,7 @@ public final class TestFn1 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn10 {
     public final static field INSTANCE: TestFn10
     private method <init>(): void
@@ -53,7 +54,7 @@ public final class TestFn10 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn11 {
     public final static field INSTANCE: TestFn11
     private method <init>(): void
@@ -61,7 +62,7 @@ public final class TestFn11 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn12 {
     public final static field INSTANCE: TestFn12
     private method <init>(): void
@@ -69,7 +70,7 @@ public final class TestFn12 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn13 {
     public final static field INSTANCE: TestFn13
     private method <init>(): void
@@ -77,7 +78,7 @@ public final class TestFn13 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn14 {
     public final static field INSTANCE: TestFn14
     private method <init>(): void
@@ -85,7 +86,7 @@ public final class TestFn14 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn15 {
     public final static field INSTANCE: TestFn15
     private method <init>(): void
@@ -93,7 +94,7 @@ public final class TestFn15 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn16 {
     public final static field INSTANCE: TestFn16
     private method <init>(): void
@@ -101,7 +102,7 @@ public final class TestFn16 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn17 {
     public final static field INSTANCE: TestFn17
     private method <init>(): void
@@ -109,7 +110,7 @@ public final class TestFn17 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn18 {
     public final static field INSTANCE: TestFn18
     private method <init>(): void
@@ -117,7 +118,7 @@ public final class TestFn18 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn19 {
     public final static field INSTANCE: TestFn19
     private method <init>(): void
@@ -125,7 +126,7 @@ public final class TestFn19 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn2 {
     public final static field INSTANCE: TestFn2
     private method <init>(): void
@@ -133,7 +134,7 @@ public final class TestFn2 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn20 {
     public final static field INSTANCE: TestFn20
     private method <init>(): void
@@ -141,7 +142,7 @@ public final class TestFn20 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn21 {
     public final static field INSTANCE: TestFn21
     private method <init>(): void
@@ -149,7 +150,7 @@ public final class TestFn21 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn22 {
     public final static field INSTANCE: TestFn22
     private method <init>(): void
@@ -157,7 +158,7 @@ public final class TestFn22 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn3 {
     public final static field INSTANCE: TestFn3
     private method <init>(): void
@@ -165,7 +166,7 @@ public final class TestFn3 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn4 {
     public final static field INSTANCE: TestFn4
     private method <init>(): void
@@ -173,7 +174,7 @@ public final class TestFn4 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn5 {
     public final static field INSTANCE: TestFn5
     private method <init>(): void
@@ -181,7 +182,7 @@ public final class TestFn5 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn6 {
     public final static field INSTANCE: TestFn6
     private method <init>(): void
@@ -189,7 +190,7 @@ public final class TestFn6 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn7 {
     public final static field INSTANCE: TestFn7
     private method <init>(): void
@@ -197,7 +198,7 @@ public final class TestFn7 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn8 {
     public final static field INSTANCE: TestFn8
     private method <init>(): void
@@ -205,7 +206,7 @@ public final class TestFn8 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class TestFn9 {
     public final static field INSTANCE: TestFn9
     private method <init>(): void
@@ -213,7 +214,7 @@ public final class TestFn9 {
     public method testGood(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public abstract class TestFnBase {
     private final @org.jetbrains.annotations.NotNull field type: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

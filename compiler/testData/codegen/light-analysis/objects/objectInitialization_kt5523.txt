@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     private final static @org.jetbrains.annotations.NotNull field a: java.lang.String
@@ -7,7 +8,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class ObjectInitialization_kt5523Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

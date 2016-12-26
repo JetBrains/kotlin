@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt715Kt {
     private final static @org.jetbrains.annotations.NotNull field test2: java.lang.Class
     private final static @org.jetbrains.annotations.NotNull field test: java.lang.Class

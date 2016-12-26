@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class Kt3969Kt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

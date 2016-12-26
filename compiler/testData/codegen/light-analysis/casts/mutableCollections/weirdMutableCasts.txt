@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Weird {
     public method <init>(): void
     public synthetic method getKey(): java.lang.Object
@@ -13,7 +14,7 @@ public final class Weird {
     public synthetic method setValue(p0: java.lang.Object): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class WeirdMutableCastsKt {
     public final static method asFailsWithCCE(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
     public final static method asSucceeds(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void

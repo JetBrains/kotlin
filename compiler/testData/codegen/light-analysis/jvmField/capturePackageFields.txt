@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class CapturePackageFieldsKt {
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field publicField: java.lang.String

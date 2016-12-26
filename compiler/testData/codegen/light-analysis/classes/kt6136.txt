@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Actor {
     private final @org.jetbrains.annotations.NotNull field firstName: java.lang.String
     private final field id: int
@@ -17,12 +18,12 @@ public final class Actor {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public interface Id {
     public abstract method getId(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class Kt6136Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

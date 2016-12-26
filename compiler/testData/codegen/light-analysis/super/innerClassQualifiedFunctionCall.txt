@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field foo: java.lang.String
     public method <init>(): void
@@ -6,7 +7,7 @@ public class A {
     public @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public class B {
     inner class B/E
     public method <init>(): void
@@ -14,7 +15,7 @@ public class B {
     public @org.jetbrains.annotations.NotNull method baz(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class B/E {
     private final @org.jetbrains.annotations.NotNull field foo: java.lang.String
     synthetic final field this$0: B
@@ -24,7 +25,7 @@ public final class B/E {
     public final @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class C {
     inner class C/D
     public method <init>(): void
@@ -32,7 +33,7 @@ public final class C {
     public @org.jetbrains.annotations.NotNull method boo(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class C/D {
     private final @org.jetbrains.annotations.NotNull field foo: java.lang.String
     synthetic final field this$0: C
@@ -42,18 +43,18 @@ public final class C/D {
     public final @org.jetbrains.annotations.NotNull method getFoo(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class InnerClassQualifiedFunctionCallKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public interface T {
     inner class T/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method baz(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class T/DefaultImpls {
     inner class T/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method baz(p0: T): java.lang.String

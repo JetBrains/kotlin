@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class SimpleKt {
     public final static method bar(p0: int): int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

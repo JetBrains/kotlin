@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class PropertySetterKt {
     private static field custom: int
     private static field default: int

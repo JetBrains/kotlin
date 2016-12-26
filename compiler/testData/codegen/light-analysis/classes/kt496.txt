@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt496Kt {
     private static field x: boolean
     private static field z: int

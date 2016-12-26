@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class C {
     private final field value: java.lang.Object
     public method <init>(p0: java.lang.Object): void
@@ -10,7 +11,7 @@ public final class C {
     public final method getValue(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class Kt237Kt {
     public final static method almostFilter(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[], @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

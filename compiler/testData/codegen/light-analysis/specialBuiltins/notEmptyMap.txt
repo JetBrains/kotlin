@@ -1,3 +1,4 @@
+@kotlin.Metadata
 final class NotEmptyMap {
     public final static field INSTANCE: NotEmptyMap
     private method <init>(): void
@@ -19,7 +20,7 @@ final class NotEmptyMap {
     public final method values(): java.util.Collection
 }
 
-
+@kotlin.Metadata
 public final class NotEmptyMapKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ConditionOfEmptyIfKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

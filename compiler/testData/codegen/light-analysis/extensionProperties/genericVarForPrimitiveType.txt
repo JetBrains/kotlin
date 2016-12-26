@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private field bool: boolean
     private field byte: byte
@@ -27,7 +28,7 @@ public final class A {
     public final method setShort(p0: short): void
 }
 
-
+@kotlin.Metadata
 public final class GenericVarForPrimitiveTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method getVarProp(p0: java.lang.Object): java.lang.Object

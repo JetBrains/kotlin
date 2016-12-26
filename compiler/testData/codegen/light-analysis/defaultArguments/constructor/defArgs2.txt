@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field a: int
     private final @org.jetbrains.annotations.NotNull field b: java.lang.String
@@ -8,7 +9,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class DefArgs2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public class B {
     private final field x: java.lang.Object
     private final field y: java.lang.Object
@@ -14,7 +15,7 @@ public class B {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class GenericsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

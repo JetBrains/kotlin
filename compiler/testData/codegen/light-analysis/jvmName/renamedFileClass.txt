@@ -1,3 +1,4 @@
+@kotlin.Metadata
 @kotlin.jvm.JvmName
 public final class test/Util {
     public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.String

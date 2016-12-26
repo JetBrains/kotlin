@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Kt3152Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Test {
     private final field content: int
     inner class Test/A
@@ -10,7 +11,7 @@ public final class Test {
     public final method getContent(): int
 }
 
-
+@kotlin.Metadata
 public final class Test/A {
     synthetic final field this$0: Test
     private final @org.jetbrains.annotations.NotNull field v: java.lang.Object

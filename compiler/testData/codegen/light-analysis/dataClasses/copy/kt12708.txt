@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public interface A {
     public abstract @org.jetbrains.annotations.NotNull method component1(): java.lang.Object
     public abstract @org.jetbrains.annotations.NotNull method copy(p0: int): A
 }
 
-
+@kotlin.Metadata
 public final class B {
     private final field x: int
     public method <init>(p0: int): void
@@ -18,7 +19,7 @@ public final class B {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Kt12708Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

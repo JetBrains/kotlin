@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class ListWithAllInheritedImplementationsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class MyList {
     public method <init>(p0: java.lang.Object): void
     public method contains(p0: java.lang.Object): boolean
@@ -24,7 +25,7 @@ public final class MyList {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
+@kotlin.Metadata
 public class Super {
     private final field v: java.lang.Object
     public method <init>(p0: java.lang.Object): void

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class OverloadedFunKt {
     private final static @org.jetbrains.annotations.NotNull field f1: kotlin.jvm.functions.Function0
     private final static @org.jetbrains.annotations.NotNull field f2: kotlin.jvm.functions.Function1

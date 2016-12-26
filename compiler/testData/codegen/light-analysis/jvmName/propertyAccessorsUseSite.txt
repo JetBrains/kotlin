@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Delegate {
     public final static field INSTANCE: Delegate
     private method <init>(): void
@@ -5,12 +6,12 @@ public final class Delegate {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object, p2: boolean): void
 }
 
-
+@kotlin.Metadata
 public final class PropertyAccessorsUseSiteKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class TestIt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private field isFries: boolean

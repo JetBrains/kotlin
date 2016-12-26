@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final field i: int
@@ -8,7 +9,7 @@ public final class A {
     public final method getProp(): int
 }
 
-
+@kotlin.Metadata
 public final class Delegate {
     private final @org.jetbrains.annotations.NotNull field f: kotlin.jvm.functions.Function1
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
@@ -16,7 +17,7 @@ public final class Delegate {
     public final method getValue(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
 }
 
-
+@kotlin.Metadata
 public final class TwoPropByOneDelegeteKt {
     private final static @org.jetbrains.annotations.NotNull field p: Delegate
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

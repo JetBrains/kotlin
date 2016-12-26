@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class Game {
     public final static field LIZARD: Game
     public final static field PAPER: Game
@@ -9,7 +10,7 @@ public enum class Game {
     public static method values(): Game[]
 }
 
-
+@kotlin.Metadata
 public final class SortEnumEntriesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class another/Outer {
     inner class another/Outer/My
     inner class another/Outer/Stage
@@ -5,7 +6,7 @@ public class another/Outer {
     protected final @org.jetbrains.annotations.NotNull method my(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): another.Outer.My
 }
 
-
+@kotlin.Metadata
 protected final static class another/Outer/My {
     private @org.jetbrains.annotations.Nullable field stage: another.Outer.Stage
     inner class another/Outer/My
@@ -17,7 +18,7 @@ protected final static class another/Outer/My {
     public final method setStage(@org.jetbrains.annotations.Nullable p0: another.Outer.Stage): void
 }
 
-
+@kotlin.Metadata
 protected final static class another/Outer/Stage {
     private final @org.jetbrains.annotations.NotNull field run: kotlin.jvm.functions.Function0
     inner class another/Outer/Stage
@@ -25,12 +26,12 @@ protected final static class another/Outer/Stage {
     public final @org.jetbrains.annotations.NotNull method getRun(): kotlin.jvm.functions.Function0
 }
 
-
+@kotlin.Metadata
 public final class other/Derived {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class other/MainKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

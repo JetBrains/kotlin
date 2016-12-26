@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class CompanionObjectInEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public enum class Game {
     public final static field Companion: Game.Companion
     public final static field PAPER: Game
@@ -17,7 +18,7 @@ public enum class Game {
     public static method values(): Game[]
 }
 
-
+@kotlin.Metadata
 public final static class Game/Companion {
     inner class Game/Companion
     private method <init>(): void

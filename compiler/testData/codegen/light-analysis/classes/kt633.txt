@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Kt633Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class MyArray {
     private final @org.jetbrains.annotations.NotNull field a: mInt[]
     public method <init>(): void
@@ -11,7 +12,7 @@ public final class MyArray {
     public final method set(@org.jetbrains.annotations.NotNull p0: mInt, @org.jetbrains.annotations.NotNull p1: mInt): void
 }
 
-
+@kotlin.Metadata
 public final class mInt {
     private final field i: int
     public method <init>(p0: int): void

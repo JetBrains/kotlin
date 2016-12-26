@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class E {
     public final static field A: E
     public final static field B: E
@@ -6,7 +7,7 @@ public enum class E {
     public static method values(): E[]
 }
 
-
+@kotlin.Metadata
 public final class NullableEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.Nullable p0: E): java.lang.String

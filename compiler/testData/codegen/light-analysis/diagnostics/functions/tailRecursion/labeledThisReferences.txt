@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class B {
     inner class B/C
     public method <init>(): void
@@ -5,7 +6,7 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method makeC(): B.C
 }
 
-
+@kotlin.Metadata
 public final class B/C {
     synthetic final field this$0: B
     inner class B/C
@@ -14,7 +15,7 @@ public final class B/C {
     public final method h2(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class LabeledThisReferencesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

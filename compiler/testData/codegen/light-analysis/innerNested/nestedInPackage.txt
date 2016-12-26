@@ -1,14 +1,15 @@
+@kotlin.Metadata
 public final class Package/NestedInPackageKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Package/Outer {
     inner class Package/Outer/Nested
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final static class Package/Outer/Nested {
     private final @org.jetbrains.annotations.NotNull field K: java.lang.String
     private final @org.jetbrains.annotations.NotNull field O: java.lang.String

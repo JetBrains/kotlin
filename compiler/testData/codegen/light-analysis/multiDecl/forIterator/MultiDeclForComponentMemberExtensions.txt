@@ -1,10 +1,11 @@
+@kotlin.Metadata
 public final class C {
     private final field i: int
     public method <init>(p0: int): void
     public final method getI(): int
 }
 
-
+@kotlin.Metadata
 public final class M {
     public method <init>(): void
     public final method component1(@org.jetbrains.annotations.NotNull p0: C): int
@@ -12,7 +13,7 @@ public final class M {
     public final @org.jetbrains.annotations.NotNull method doTest(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class MultiDeclForComponentMemberExtensionsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public final class Doggy {
     public method <init>(): void
     public method play(): void
 }
 
-
+@kotlin.Metadata
 public final class Kt3285Kt {
     private static @org.jetbrains.annotations.NotNull field sayResult: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -12,13 +13,13 @@ public final class Kt3285Kt {
     public final static method setSayResult(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public final class NoiseMaker {
     public method <init>(): void
     public final method say(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public abstract class Pet {
     public method <init>(): void
     public abstract method play(): void

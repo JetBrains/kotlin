@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class EnumWithLambdaParameterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public enum class Sign {
     private final @org.jetbrains.annotations.NotNull field func: kotlin.jvm.functions.Function2
     public final static field mult: Sign
@@ -16,7 +17,7 @@ public enum class Sign {
     public static method values(): Sign[]
 }
 
-
+@kotlin.Metadata
 final static class Sign/mult {
     inner class Sign/mult
     method <init>(p0: java.lang.String, p1: int): void

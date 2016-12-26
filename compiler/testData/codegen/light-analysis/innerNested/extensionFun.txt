@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class ExtensionFunKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Outer {
     inner class Outer/Inner
     inner class Outer/Nested
@@ -13,14 +14,14 @@ public final class Outer {
     public final method foo(@org.jetbrains.annotations.NotNull p0: Outer.Inner): void
 }
 
-
+@kotlin.Metadata
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     inner class Outer/Inner
     public method <init>(p0: Outer): void
 }
 
-
+@kotlin.Metadata
 public final static class Outer/Nested {
     inner class Outer/Nested
     public method <init>(): void

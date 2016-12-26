@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private field rwValue: int
     inner class C/Inner
@@ -18,13 +19,13 @@ public final class C {
     public final @kotlin.jvm.JvmName method set_rwProperty(p0: int): void
 }
 
-
+@kotlin.Metadata
 public final static class C/Inner {
     inner class C/Inner
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class ClassMembersKt {
     private final static @org.jetbrains.annotations.NotNull field ints: java.util.List
     private final static @org.jetbrains.annotations.NotNull field strs: java.util.List

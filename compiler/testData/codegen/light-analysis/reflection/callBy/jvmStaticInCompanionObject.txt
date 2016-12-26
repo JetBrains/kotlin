@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     public final static field Companion: C.Companion
     inner class C/Companion
@@ -5,7 +6,7 @@ public final class C {
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
@@ -13,7 +14,7 @@ public final static class C/Companion {
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class JvmStaticInCompanionObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

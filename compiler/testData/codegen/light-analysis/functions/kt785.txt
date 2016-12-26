@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private field x: int
     private @org.jetbrains.annotations.NotNull field z: kotlin.jvm.functions.Function0
@@ -8,7 +9,7 @@ public final class A {
     public final method setZ(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
 }
 
-
+@kotlin.Metadata
 public final class Kt785Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private final @org.jetbrains.annotations.NotNull field y: java.lang.String
@@ -10,7 +11,7 @@ public class A {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class B {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
@@ -18,7 +19,7 @@ public final class B {
     public synthetic method <init>(p0: java.lang.String, p1: java.lang.String, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
 }
 
-
+@kotlin.Metadata
 public final class ClashingDefaultConstructorsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

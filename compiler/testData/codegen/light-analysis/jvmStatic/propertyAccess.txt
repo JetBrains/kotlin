@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     private static field a: int
@@ -13,7 +14,7 @@ public final class A {
     public final static @kotlin.jvm.JvmStatic method setC(p0: int): void
 }
 
-
+@kotlin.Metadata
 public final class PropertyAccessKt {
     private static @org.jetbrains.annotations.NotNull field holder: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

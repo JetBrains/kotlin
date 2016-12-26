@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public interface A {
     public abstract method getV(): java.lang.Object
     public abstract method setV(p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class B {
     private @org.jetbrains.annotations.NotNull field v: java.lang.String
     public method <init>(): void
@@ -13,7 +14,7 @@ public final class B {
     public synthetic method setV(p0: java.lang.Object): void
 }
 
-
+@kotlin.Metadata
 public final class PropertySetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

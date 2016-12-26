@@ -16,14 +16,21 @@
 
 package org.jetbrains.kotlin.kapt3.util
 
-class KaptLogger(val isVerbose: Boolean) {
+import org.jetbrains.kotlin.cli.common.messages.*
+import java.io.ByteArrayOutputStream
+import java.io.PrintWriter
+
+class KaptLogger(
+        val isVerbose: Boolean,
+        val messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
+) {
     private companion object {
         val PREFIX = "[kapt] "
     }
 
     fun info(message: String) {
         if (isVerbose) {
-            println(PREFIX + message)
+            messageCollector.report(CompilerMessageSeverity.INFO, PREFIX + message, CompilerMessageLocation.NO_LOCATION)
         }
     }
 
@@ -34,15 +41,19 @@ class KaptLogger(val isVerbose: Boolean) {
     }
 
     fun warn(message: String) {
-        println(PREFIX + message)
+        messageCollector.report(CompilerMessageSeverity.WARNING, PREFIX + message, CompilerMessageLocation.NO_LOCATION)
     }
 
     fun error(message: String) {
-        System.err.println(PREFIX + message)
+        messageCollector.report(CompilerMessageSeverity.ERROR, PREFIX + message, CompilerMessageLocation.NO_LOCATION)
     }
 
     fun exception(e: Throwable) {
-        System.err.println(PREFIX + "An exception occurred:")
-        e.printStackTrace(System.err)
+        val stacktrace = run {
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            e.printStackTrace(PrintWriter(byteArrayOutputStream))
+            byteArrayOutputStream.toString("UTF-8")
+        }
+        messageCollector.report(CompilerMessageSeverity.EXCEPTION, PREFIX + "An exception occurred: " + stacktrace, CompilerMessageLocation.NO_LOCATION)
     }
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ComparisonWithNaNKt {
     public final static method _assert(p0: boolean): void
     public final static method _assertFalse(p0: boolean): void

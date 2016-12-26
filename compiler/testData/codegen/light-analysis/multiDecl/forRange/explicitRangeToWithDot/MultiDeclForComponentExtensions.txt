@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final field i: int
     public method <init>(p0: int): void
@@ -5,7 +6,7 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method rangeTo(@org.jetbrains.annotations.NotNull p0: C): Range
 }
 
-
+@kotlin.Metadata
 public final class It {
     private field c: int
     private final @org.jetbrains.annotations.NotNull field from: C
@@ -19,7 +20,7 @@ public final class It {
     public final method setC(p0: int): void
 }
 
-
+@kotlin.Metadata
 public final class MultiDeclForComponentExtensionsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method component1(@org.jetbrains.annotations.NotNull p0: C): int
@@ -27,7 +28,7 @@ public final class MultiDeclForComponentExtensionsKt {
     public final static @org.jetbrains.annotations.NotNull method doTest(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Range {
     private final @org.jetbrains.annotations.NotNull field from: C
     private final @org.jetbrains.annotations.NotNull field to: C

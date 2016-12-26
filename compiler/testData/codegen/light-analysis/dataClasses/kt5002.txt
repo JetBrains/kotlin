@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Kt5002Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Pair {
     private final field first: java.lang.Object
     private final field second: java.lang.Object

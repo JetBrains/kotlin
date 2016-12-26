@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class Color {
     public final static field BLUE: Color
     public final static field RED: Color
@@ -6,7 +7,7 @@ public enum class Color {
     public static method values(): Color[]
 }
 
-
+@kotlin.Metadata
 public final class ValueofKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

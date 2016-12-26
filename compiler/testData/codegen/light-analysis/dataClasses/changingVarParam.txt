@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private @org.jetbrains.annotations.NotNull field string: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -11,7 +12,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class ChangingVarParamKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

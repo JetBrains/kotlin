@@ -20,6 +20,9 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_OPTIONS
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -54,6 +57,9 @@ object Kapt3ConfigurationKeys {
     val STUBS_OUTPUT_DIR: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("stubs output directory")
 
+    val INCREMENTAL_DATA_OUTPUT_DIR: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("incremental data output directory")
+
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation processor classpath")
 
@@ -82,6 +88,9 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
         val STUBS_OUTPUT_DIR_OPTION: CliOption =
                 CliOption("stubs", "<path>", "Output path for the Java stubs", required = false)
+
+        val INCREMENTAL_DATA_OUTPUT_DIR_OPTION: CliOption =
+                CliOption("incrementalData", "<path>", "Output path for the incremental data", required = false)
 
         val ANNOTATION_PROCESSOR_CLASSPATH_OPTION: CliOption =
                 CliOption("apclasspath", "<classpath>", "Annotation processor classpath",
@@ -120,6 +129,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             SOURCE_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR, value)
             CLASS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR, value)
             STUBS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR, value)
+            INCREMENTAL_DATA_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.INCREMENTAL_DATA_OUTPUT_DIR, value)
             VERBOSE_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.VERBOSE_MODE, value)
             APT_ONLY_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_ONLY, value)
             USE_LIGHT_ANALYSIS_OPTION -> configuration.put(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS, value)
@@ -132,11 +142,14 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val isAptOnly = configuration.get(Kapt3ConfigurationKeys.APT_ONLY) == "true"
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
-        val logger = KaptLogger(isVerbose)
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                               ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
+        val logger = KaptLogger(isVerbose, messageCollector)
 
         val sourcesOutputDir = configuration.get(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR)?.let(::File)
         val classFilesOutputDir = configuration.get(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR)?.let(::File)
         val stubsOutputDir = configuration.get(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR)?.let(::File)
+        val incrementalDataOutputDir = configuration.get(Kapt3ConfigurationKeys.INCREMENTAL_DATA_OUTPUT_DIR)?.let(::File)
 
         val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File)
 
@@ -173,6 +186,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Source output directory: $sourcesOutputDir")
             logger.info("Classes output directory: $classFilesOutputDir")
             logger.info("Stubs output directory: $stubsOutputDir")
+            logger.info("Incremental data output directory: $incrementalDataOutputDir")
             logger.info("Compile classpath: " + compileClasspath.joinToString())
             logger.info("Annotation processing classpath: " + apClasspath.joinToString())
             logger.info("Java source roots: " + javaSourceRoots.joinToString())
@@ -180,7 +194,8 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         }
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
-                compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir, stubsOutputDir, apOptions,
+                compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
+                stubsOutputDir, incrementalDataOutputDir, apOptions,
                 isAptOnly, useLightAnalysis, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }

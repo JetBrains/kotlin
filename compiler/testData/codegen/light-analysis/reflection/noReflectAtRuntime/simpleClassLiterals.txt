@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Klass {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class SimpleClassLiteralsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

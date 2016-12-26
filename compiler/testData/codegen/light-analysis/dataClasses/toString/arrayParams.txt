@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.Nullable field x: java.lang.Integer[]
     private final @org.jetbrains.annotations.Nullable field y: int[]
@@ -13,7 +14,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class ArrayParamsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

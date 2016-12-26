@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public abstract class BaseClass {
     private final @org.jetbrains.annotations.NotNull field kind2: java.lang.String
     public method <init>(): void
@@ -6,12 +7,12 @@ public abstract class BaseClass {
     protected @org.jetbrains.annotations.NotNull method getKind2(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Kt1168Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Subclass {
     private final @org.jetbrains.annotations.NotNull field kind2: java.lang.String
     private final @org.jetbrains.annotations.NotNull field kind: java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class MultiDeclForComponentExtensionsValCapturedKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method component1(p0: long): long

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     private final static field privateConst: int
@@ -5,7 +6,7 @@ public final class A {
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class B {
     public final static field Companion: B.Companion
     private final static field privateConst: int
@@ -15,12 +16,13 @@ public final class B {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final static class B/Companion {
     inner class B/Companion
     private method <init>(): void
 }
 
+@kotlin.Metadata
 @kotlin.jvm.JvmName
 public final class XYZ {
     private final static field privateConst: int

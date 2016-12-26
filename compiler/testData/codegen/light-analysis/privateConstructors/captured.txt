@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class CapturedKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public class Outer {
     public final static field Companion: Outer.Companion
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
@@ -11,7 +12,7 @@ public class Outer {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final static class Outer/Companion {
     inner class Outer/Companion
     private method <init>(): void

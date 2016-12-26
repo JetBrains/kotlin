@@ -1,6 +1,7 @@
+@kotlin.Metadata
 public interface A
 
-
+@kotlin.Metadata
 public final class B {
     private final field x: int
     public method <init>(p0: int): void
@@ -9,7 +10,7 @@ public final class B {
     public final method getX(): int
 }
 
-
+@kotlin.Metadata
 public final class ComparableKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method checkLess(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: A): java.lang.String

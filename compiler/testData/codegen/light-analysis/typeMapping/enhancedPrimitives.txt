@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class BoxKt {
     public final static method box(): java.lang.String
 }

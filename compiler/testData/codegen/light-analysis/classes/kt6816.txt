@@ -1,4 +1,4 @@
-
+@kotlin.Metadata
 public final class CalculatorConstants {
     private final field airCondMult: double
     private final field autoTransMult: double
@@ -41,7 +41,7 @@ public final class CalculatorConstants {
     public final method getTravelClassOne(): double
 }
 
-
+@kotlin.Metadata
 public final class Kt6816Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,10 +1,11 @@
+@kotlin.Metadata
 public abstract class foo/Base {
     private final field x: int
     public method <init>(): void
     public final method getX(): int
 }
 
-
+@kotlin.Metadata
 public final class foo/Derived {
     private final field y: int
     public method <init>(): void
@@ -13,7 +14,7 @@ public final class foo/Derived {
     public final method getY(): int
 }
 
-
+@kotlin.Metadata
 public final class foo/ImplementComparableInSubclassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

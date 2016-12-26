@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class Kt2331Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class P {
     private field x: int
     public method <init>(): void

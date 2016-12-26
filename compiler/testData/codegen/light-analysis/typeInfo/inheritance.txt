@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public class A {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method plus(p0: java.lang.Object): B
 }
 
-
+@kotlin.Metadata
 public final class B {
     private final field e: java.lang.Object
     public method <init>(p0: java.lang.Object): void
@@ -11,7 +12,7 @@ public final class B {
     public final method getE(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class InheritanceKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

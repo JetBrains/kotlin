@@ -1,13 +1,14 @@
+@kotlin.Metadata
 public final class Klass {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class Other {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class ReifiedTypeClassLiteralKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method myJavaClass(): java.lang.Class

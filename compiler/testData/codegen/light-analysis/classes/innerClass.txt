@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class InnerClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Outer {
     private final @org.jetbrains.annotations.NotNull field foo: java.lang.StringBuilder
     inner class Outer/Inner
@@ -11,7 +12,7 @@ public final class Outer {
     public final @org.jetbrains.annotations.NotNull method test(): Outer.Inner
 }
 
-
+@kotlin.Metadata
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     inner class Outer/Inner

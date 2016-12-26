@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public final class C {
     inner class C/Obj
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class C/Obj {
     public final static field INSTANCE: C.Obj
     private final static @org.jetbrains.annotations.NotNull field o: java.lang.String
@@ -14,7 +15,7 @@ public final class C/Obj {
     public final @org.jetbrains.annotations.NotNull method getO(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final static class C/Obj/D {
     private final @org.jetbrains.annotations.NotNull field ko: java.lang.String
     inner class C/Obj
@@ -23,7 +24,7 @@ public final static class C/Obj/D {
     public final @org.jetbrains.annotations.NotNull method getKo(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class C/Obj/InnerObj {
     public final static field INSTANCE: C.Obj.InnerObj
     inner class C/Obj
@@ -32,7 +33,7 @@ public final class C/Obj/InnerObj {
     public final @org.jetbrains.annotations.NotNull method k(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Kt2398Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

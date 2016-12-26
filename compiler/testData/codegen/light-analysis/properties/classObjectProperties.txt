@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class ClassObjectPropertiesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Test {
     public final static field Companion: Test.Companion
     private final static field prop1: int
@@ -15,7 +16,7 @@ public final class Test {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final static class Test/Companion {
     inner class Test/Companion
     private method <init>(): void

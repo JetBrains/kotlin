@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Holder {
     private @org.jetbrains.annotations.NotNull field value: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -6,12 +7,12 @@ public final class Holder {
     public final method setValue(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public final class MyException {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public final class TestLocal {
     private @org.jetbrains.annotations.NotNull field status: Holder
     public method <init>(): void
@@ -29,7 +30,7 @@ public final class TestLocal {
     private final method underMutexFun(): void
 }
 
-
+@kotlin.Metadata
 public final class UseKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

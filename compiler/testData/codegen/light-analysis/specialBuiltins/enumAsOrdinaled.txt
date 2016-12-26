@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class A {
     public final static field X: A
     protected method <init>(p0: java.lang.String, p1: int): void
@@ -6,12 +7,12 @@ public enum class A {
     public static method values(): A[]
 }
 
-
+@kotlin.Metadata
 public final class EnumAsOrdinaledKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public interface Ordinaled {
     public abstract method getOrdinal(): int
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.Nullable field a: java.lang.Object
     private field x: int
@@ -14,7 +15,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class B {
     private final @org.jetbrains.annotations.Nullable field a: java.lang.Object
     public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
@@ -27,7 +28,7 @@ public final class B {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class C {
     private final field a: int
     private @org.jetbrains.annotations.Nullable field x: java.lang.Integer
@@ -44,7 +45,7 @@ public final class C {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class D {
     private final @org.jetbrains.annotations.Nullable field a: java.lang.Integer
     public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
@@ -57,7 +58,7 @@ public final class D {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class NullKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

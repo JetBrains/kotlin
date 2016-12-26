@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class AlreadyDeclaredWrongSignatureKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class B {
     private final field x: int
     public method <init>(p0: int): void
@@ -16,7 +17,7 @@ public final class B {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class C {
     private final field x: int
     public method <init>(p0: int): void
@@ -30,7 +31,7 @@ public final class C {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class D {
     private final field x: int
     public method <init>(p0: int): void
@@ -44,7 +45,7 @@ public final class D {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class E {
     private final field x: int
     public method <init>(p0: int): void

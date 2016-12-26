@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public final class A {
     inner class A/B
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class A/B {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
@@ -14,7 +15,7 @@ public final class A/B {
     public final method setProp(p0: int): void
 }
 
-
+@kotlin.Metadata
 public final class Delegate {
     private field inner: int
     public method <init>(): void
@@ -24,7 +25,7 @@ public final class Delegate {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: int): void
 }
 
-
+@kotlin.Metadata
 public final class VarInInnerClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

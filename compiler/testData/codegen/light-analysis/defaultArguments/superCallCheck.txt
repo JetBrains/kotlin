@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class SuperCallCheckKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public synthetic static method def$default(p0: int, p1: int, p2: java.lang.Object): int

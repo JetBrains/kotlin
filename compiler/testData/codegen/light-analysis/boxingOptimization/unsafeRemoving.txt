@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private @org.jetbrains.annotations.Nullable field x: java.lang.Integer
     public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
@@ -7,7 +8,7 @@ public final class A {
     public final method setX(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
 }
 
-
+@kotlin.Metadata
 public final class UnsafeRemovingKt {
     public final static @org.jetbrains.annotations.Nullable method acceptingBoxed(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): java.lang.Integer
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

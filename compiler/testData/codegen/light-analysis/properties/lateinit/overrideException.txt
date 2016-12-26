@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public @org.jetbrains.annotations.NotNull field str: java.lang.String
     public method <init>(): void
@@ -6,12 +7,12 @@ public final class A {
     public method setStr(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public interface Intf {
     public abstract @org.jetbrains.annotations.NotNull method getStr(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class OverrideExceptionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class TopLevelPropertyKt {
     private static @org.jetbrains.annotations.NotNull field topLevel: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

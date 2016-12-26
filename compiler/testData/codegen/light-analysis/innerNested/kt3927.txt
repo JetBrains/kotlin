@@ -1,9 +1,10 @@
+@kotlin.Metadata
 public abstract class Base {
     inner class Base/Inner
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class Base/Inner {
     synthetic final field this$0: Base
     inner class Base/Inner
@@ -12,12 +13,12 @@ public final class Base/Inner {
     public final @org.jetbrains.annotations.NotNull method o(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Child {
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class Kt3927Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

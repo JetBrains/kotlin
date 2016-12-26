@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt6368Kt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field a$delegate: kotlin.Lazy
@@ -5,7 +6,7 @@ public final class Kt6368Kt {
     public final static @org.jetbrains.annotations.NotNull method getA(): java.util.HashMap
 }
 
-
+@kotlin.Metadata
 public interface R {
     public abstract @org.jetbrains.annotations.NotNull method result(): java.lang.String
 }

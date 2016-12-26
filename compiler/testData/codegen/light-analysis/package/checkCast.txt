@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final field x: int
     public method <init>(p0: int): void
@@ -5,7 +6,7 @@ public final class C {
     public final method getX(): int
 }
 
-
+@kotlin.Metadata
 public final class CheckCastKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class KotlinKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public class TestApp {
     public final static field Companion: TestApp.Companion
     private static @org.jetbrains.annotations.NotNull field value: java.lang.String
@@ -12,7 +13,7 @@ public class TestApp {
     private final static method setValue(p0: java.lang.String): void
 }
 
-
+@kotlin.Metadata
 public final static class TestApp/Companion {
     inner class TestApp/Companion
     private method <init>(): void

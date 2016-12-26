@@ -1,15 +1,16 @@
+@kotlin.Metadata
 public class Base {
     public method <init>(): void
     public final method doSomething(): void
 }
 
-
+@kotlin.Metadata
 public final class Foo {
     inner class Foo/Bar
     public method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class Foo/Bar {
     synthetic final field this$0: Foo
     private final @org.jetbrains.annotations.NotNull field x: X
@@ -18,12 +19,12 @@ public final class Foo/Bar {
     public final @org.jetbrains.annotations.NotNull method getX(): X
 }
 
-
+@kotlin.Metadata
 public final class Kt3523Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class X {
     private final @org.jetbrains.annotations.NotNull field action: kotlin.jvm.functions.Function0
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void

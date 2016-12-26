@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Foo {
     public final static field Companion: Foo.Companion
     private final static field a: java.lang.String
@@ -10,7 +11,7 @@ public final class Foo {
     public final @org.jetbrains.annotations.NotNull method getC(): java.lang.Runnable
 }
 
-
+@kotlin.Metadata
 public final static class Foo/Companion {
     inner class Foo/Companion
     private method <init>(): void
@@ -19,7 +20,7 @@ public final static class Foo/Companion {
     private final method getA(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class PropertyAccessorsCompanionKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private field x: int
     private final @org.jetbrains.annotations.Nullable field z: java.lang.Integer
@@ -14,7 +15,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class MixedParamsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

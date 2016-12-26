@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class foo/A {
     private final @org.jetbrains.annotations.NotNull field b: foo.B
     private final field c: int
@@ -6,19 +7,19 @@ public final class foo/A {
     public method getC(): int
 }
 
-
+@kotlin.Metadata
 public interface foo/B {
     inner class foo/B/DefaultImpls
     public abstract method getC(): int
 }
 
-
+@kotlin.Metadata
 public final class foo/B/DefaultImpls {
     inner class foo/B/DefaultImpls
     public static method getC(p0: foo.B): int
 }
 
-
+@kotlin.Metadata
 public final class foo/Kt2532Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

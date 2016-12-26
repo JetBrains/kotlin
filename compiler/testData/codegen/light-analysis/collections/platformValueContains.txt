@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class MySet {
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): boolean
@@ -18,7 +19,7 @@ public final class MySet {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-
+@kotlin.Metadata
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

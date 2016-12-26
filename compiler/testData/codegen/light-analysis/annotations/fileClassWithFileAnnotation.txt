@@ -1,4 +1,5 @@
 @StringHolder
+@kotlin.Metadata
 @kotlin.jvm.JvmName
 public final class FileClass {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -8,6 +9,7 @@ public final class FileClass {
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
+@kotlin.Metadata
 public annotation class StringHolder {
     public abstract method value(): java.lang.String
 }

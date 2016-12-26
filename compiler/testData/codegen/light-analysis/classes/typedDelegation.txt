@@ -1,10 +1,11 @@
+@kotlin.Metadata
 public interface A {
     public abstract method getZzzValue(): java.lang.Object
     public abstract method setZzzValue(p0: java.lang.Object): void
     public abstract method zzz(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class Base {
     private @org.jetbrains.annotations.Nullable field zzzValue: java.lang.Object
     public method <init>(): void
@@ -13,12 +14,12 @@ public final class Base {
     public @org.jetbrains.annotations.Nullable method zzz(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class TypedDelegationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class X {
     private synthetic final field $$delegate_0: Base
     public method <init>(): void

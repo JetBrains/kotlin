@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class SafeAssignComplexKt {
     private static @org.jetbrains.annotations.NotNull field holder: java.lang.String
     private static @org.jetbrains.annotations.Nullable field mainShape: Shape
@@ -10,7 +11,7 @@ public final class SafeAssignComplexKt {
     public final static method setMainShape(@org.jetbrains.annotations.Nullable p0: Shape): void
 }
 
-
+@kotlin.Metadata
 public final class Shape {
     private @org.jetbrains.annotations.Nullable field innerShape: Shape
     private @org.jetbrains.annotations.NotNull field result: java.lang.String

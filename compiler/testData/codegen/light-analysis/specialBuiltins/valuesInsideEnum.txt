@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class ValuesInsideEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public enum class Variants {
     public final static field Companion: Variants.Companion
     public final static field K: Variants
@@ -14,7 +15,7 @@ public enum class Variants {
     public static method values(): Variants[]
 }
 
-
+@kotlin.Metadata
 public final static class Variants/Companion {
     inner class Variants/Companion
     private method <init>(): void

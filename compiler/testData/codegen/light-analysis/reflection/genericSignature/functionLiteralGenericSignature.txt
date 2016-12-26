@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class FunctionLiteralGenericSignatureKt {
     private final static @org.jetbrains.annotations.NotNull field extensionFun: kotlin.jvm.functions.Function1
     private final static @org.jetbrains.annotations.NotNull field extensionWithArgFun: kotlin.jvm.functions.Function2

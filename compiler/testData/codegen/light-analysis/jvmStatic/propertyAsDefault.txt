@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class PropertyAsDefaultKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class X {
     public final static field INSTANCE: X
     private final static @org.jetbrains.annotations.NotNull field x: java.lang.String

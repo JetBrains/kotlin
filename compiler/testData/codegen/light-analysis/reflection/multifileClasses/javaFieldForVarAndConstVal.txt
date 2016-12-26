@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class test/Test {
     public final static @org.jetbrains.annotations.NotNull field y: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -9,7 +10,7 @@ public final class test/Test {
     public final static method testZ(): void
 }
 
-
+@kotlin.Metadata
 synthetic final class test/Test___1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method testX(): void
@@ -17,7 +18,7 @@ synthetic final class test/Test___1Kt {
     public final static method testZ(): void
 }
 
-
+@kotlin.Metadata
 synthetic final class test/Test___2Kt {
     private final static @org.jetbrains.annotations.NotNull field refZ: kotlin.reflect.KProperty0
     private static @org.jetbrains.annotations.NotNull field x: java.lang.String

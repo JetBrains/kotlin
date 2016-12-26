@@ -1,10 +1,11 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     inner class A/B
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class A/B {
     public final static field INSTANCE: A.B
     inner class A/B
@@ -12,7 +13,7 @@ public final class A/B {
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class A/B/C {
     public final static field INSTANCE: A.B.C
     private final static @org.jetbrains.annotations.NotNull field ok: java.lang.String
@@ -22,7 +23,7 @@ public final class A/B/C {
     public final @org.jetbrains.annotations.NotNull method getOk(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class NestedObjectsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

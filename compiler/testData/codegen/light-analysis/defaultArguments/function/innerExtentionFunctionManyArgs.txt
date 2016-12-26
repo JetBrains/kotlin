@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public synthetic static method bar$default(p0: A, p1: java.lang.String, p2: int, p3: int, p4: int, p5: int, p6: int, p7: int, p8: int, p9: int, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: int, p17: int, p18: int, p19: int, p20: int, p21: int, p22: int, p23: int, p24: int, p25: int, p26: int, p27: int, p28: int, p29: int, p30: int, p31: int, p32: int, p33: int, p34: int, p35: int, p36: int, p37: int, p38: int, p39: int, p40: int, p41: int, p42: int, p43: int, p44: java.lang.Object): java.lang.String
@@ -9,7 +10,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class InnerExtentionFunctionManyArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

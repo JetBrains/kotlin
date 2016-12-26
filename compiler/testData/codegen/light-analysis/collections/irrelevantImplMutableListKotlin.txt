@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public abstract class AImpl {
     public method <init>(): void
     public final method add(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
@@ -23,12 +24,12 @@ public abstract class AImpl {
     public final @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
 }
 
-
+@kotlin.Metadata
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class X {
     public method <init>(): void
 }

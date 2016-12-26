@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class KotlinKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class Outer {
     private final field x: java.lang.Object
     inner class Outer/Inner
@@ -10,7 +11,7 @@ public final class Outer {
     public final method getX(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     private final field y: java.lang.Object
@@ -20,7 +21,7 @@ public final class Outer/Inner {
     public final method getY(): java.lang.Object
 }
 
-
+@kotlin.Metadata
 public final class Test {
     public final static field INSTANCE: Test
     private method <init>(): void

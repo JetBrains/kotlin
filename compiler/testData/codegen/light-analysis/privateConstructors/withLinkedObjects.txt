@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class Outer {
     private final @org.jetbrains.annotations.Nullable field p: Outer
     inner class Outer/Another
@@ -7,28 +8,28 @@ public class Outer {
     public final @org.jetbrains.annotations.Nullable method getP(): Outer
 }
 
-
+@kotlin.Metadata
 public final class Outer/Another {
     public final static field INSTANCE: Outer.Another
     inner class Outer/Another
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class Outer/Inner {
     public final static field INSTANCE: Outer.Inner
     inner class Outer/Inner
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class Outer/Other {
     public final static field INSTANCE: Outer.Other
     inner class Outer/Other
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class WithLinkedObjectsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Box {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -10,7 +11,7 @@ public final class Box {
     public method toString(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class SimpleTopLevelKt {
     private final static @org.jetbrains.annotations.NotNull field foo: Box
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

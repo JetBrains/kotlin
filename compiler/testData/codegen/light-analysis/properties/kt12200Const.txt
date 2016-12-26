@@ -1,22 +1,23 @@
+@kotlin.Metadata
 public final class Kt12200ConstKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class ThingTemplate {
     public final static field INSTANCE: ThingTemplate
     public final static field prop: int
     private method <init>(): void
 }
 
-
+@kotlin.Metadata
 public final class ThingVal {
     private final field prop: int
     public method <init>(): void
     public final method getProp(): int
 }
 
-
+@kotlin.Metadata
 public final class ThingVar {
     private field prop: int
     public method <init>(): void

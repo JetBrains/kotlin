@@ -1,8 +1,9 @@
+@kotlin.Metadata
 public final class GenericPropertyWithItselfKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
-
+@kotlin.Metadata
 public final class MPair {
     private final field first: java.lang.Object
     public method <init>(p0: java.lang.Object): void

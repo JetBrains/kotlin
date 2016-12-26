@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt3524Kt {
     private final static @org.jetbrains.annotations.NotNull field i: java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
