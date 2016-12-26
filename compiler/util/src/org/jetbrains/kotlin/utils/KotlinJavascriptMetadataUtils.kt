@@ -31,7 +31,7 @@ class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     companion object {
         @JvmField
-        val INSTANCE = JsBinaryVersion(0, 6, 0)
+        val INSTANCE = JsBinaryVersion(0, 7, 0)
 
         @JvmField
         val INVALID_VERSION = JsBinaryVersion()
