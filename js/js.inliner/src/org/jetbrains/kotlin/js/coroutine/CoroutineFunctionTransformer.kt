@@ -121,8 +121,6 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         val metadataObject = JsObjectLiteral(true)
         metadataObject.propertyInitializers += JsPropertyInitializer(
                 JsNameRef("type"), JsNameRef("CLASS", JsNameRef("TYPE", Namer.KOTLIN_NAME)))
-        metadataObject.propertyInitializers += JsPropertyInitializer(
-                JsNameRef("classIndex"), JsInvocation(JsNameRef("newClassIndex", Namer.KOTLIN_NAME)))
         metadataObject.propertyInitializers += JsPropertyInitializer(JsNameRef("simpleName"), JsLiteral.NULL)
         metadataObject.propertyInitializers += JsPropertyInitializer(JsNameRef("baseClasses"), JsArrayLiteral(listOf(baseClassRefRef)))
 

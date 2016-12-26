@@ -177,10 +177,8 @@ class ClassTranslator private constructor(
             DescriptorUtils.isObject(descriptor) -> JsNameRef("OBJECT", kotlinType)
             else -> JsNameRef("CLASS", kotlinType)
         }
-        val typeIndex = JsInvocation(JsNameRef("newClassIndex", Namer.KOTLIN_NAME))
 
         metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("type"), typeRef)
-        metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("classIndex"), typeIndex)
 
         val simpleName = descriptor.name
         if (!simpleName.isSpecial) {

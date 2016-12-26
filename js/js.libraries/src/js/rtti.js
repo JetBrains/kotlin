@@ -20,13 +20,6 @@ Kotlin.TYPE = {
     OBJECT: "object"
 };
 
-Kotlin.classCount = 0;
-Kotlin.newClassIndex = function () {
-    var tmp = Kotlin.classCount;
-    Kotlin.classCount++;
-    return tmp;
-};
-
 Kotlin.callGetter = function (thisObject, klass, propertyName) {
     var propertyDescriptor = Object.getOwnPropertyDescriptor(klass, propertyName);
     if (propertyDescriptor != null) {
@@ -60,10 +53,6 @@ Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
 };
 
 function isInheritanceFromInterface(metadata, iface) {
-    // TODO: return this optimization
-    /*if (metadata == null || metadata.classIndex < iface.$metadata$.classIndex) {
-        return false;
-    }*/
     var baseClasses = metadata.baseClasses;
     var i;
     for (i = 0; i < baseClasses.length; i++) {

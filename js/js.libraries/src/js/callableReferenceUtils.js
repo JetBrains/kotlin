@@ -133,7 +133,6 @@ function getPropertyRefMetadata(cache) {
         cache.value = {
             baseClasses: [cache.implementedInterface()],
             baseClass: null,
-            classIndex: Kotlin.newClassIndex(),
             functions: {},
             properties: {},
             types: {},
