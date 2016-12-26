@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <cstddef> // for offsetof
+
 #include "Assert.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -42,7 +44,7 @@ void ArrayContainer::Init(const TypeInfo* type_info, uint32_t elements) {
   if (header_) {
     header_->ref_count_ = CONTAINER_TAG_INCREMENT;
     GetPlace()->count_ = elements;
-    SetMeta(GetPlace(), type_info);
+    SetMeta(GetPlace()->obj(), type_info);
   }
 }
 
@@ -64,7 +66,7 @@ ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, int count) {
   if (!result) {
     return nullptr;
   }
-  SetMeta(result, type_info);
+  SetMeta(result->obj(), type_info);
   result->count_ = count;
   return result;
 }
@@ -74,6 +76,14 @@ extern "C" {
 #endif
 
 void InitMemory() {
+  RuntimeAssert(offsetof(ArrayHeader, type_info_)
+                ==
+                offsetof(ObjHeader,   type_info_),
+                "Layout mismatch");
+  RuntimeAssert(offsetof(ArrayHeader, container_offset_negative_)
+                ==
+                offsetof(ObjHeader  , container_offset_negative_),
+                "Layout mismatch");
   // TODO: initialize heap here.
 }
 
@@ -86,7 +96,7 @@ ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint) {
 ObjHeader* AllocArrayInstance(
     const TypeInfo* type_info, PlacementHint hint, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  return ArrayContainer(type_info, elements).GetPlace();
+  return ArrayContainer(type_info, elements).GetPlace()->obj();
 }
 
 ObjHeader* AllocStringInstance(
@@ -96,7 +106,7 @@ ObjHeader* AllocStringInstance(
       ByteArrayAddressOfElementAt(result, 0),
       data,
       length);
-  return result;
+  return result->obj();
 }
 
 ObjHeader* InitInstance(

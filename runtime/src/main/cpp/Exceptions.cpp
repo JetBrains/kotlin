@@ -36,8 +36,7 @@ class AutoFree {
 
 // TODO: this method ignores the encoding.
 KString CreateKotlinStringFromCString(const char* str) {
-  return static_cast<KString>(AllocStringInstance(
-      SCOPE_GLOBAL, str, strlen(str)));
+  return AllocStringInstance(SCOPE_GLOBAL, str, strlen(str))->array();
 }
 
 #ifdef __cplusplus
@@ -59,7 +58,7 @@ KRef GetCurrentStackTrace() {
 
   for (int i = 0; i < size; ++i) {
     KString symbol = CreateKotlinStringFromCString(symbols[i]);
-    Kotlin_Array_set(result, i, symbol);
+    Kotlin_Array_set(result, i, symbol->obj());
   }
 
   return result;

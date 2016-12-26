@@ -18,8 +18,7 @@ private fun StaticData.objHeader(containerOffsetNegative: Int, typeInfo: ConstPo
 
 private fun StaticData.arrayHeader(containerOffsetNegative: Int, typeInfo: ConstPointer, length: Int): Struct {
     assert (length >= 0)
-    val objHeader = objHeader(containerOffsetNegative, typeInfo)
-    return Struct(runtime.arrayHeaderType, objHeader, Int32(length))
+    return Struct(runtime.arrayHeaderType, typeInfo, Int32(containerOffsetNegative), Int32(length))
 }
 
 private fun requiredPadding(size: Int, align: Int): Int {

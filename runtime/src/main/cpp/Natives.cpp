@@ -77,7 +77,7 @@ KInt Kotlin_String_getStringLength(KString thiz) {
 }
 
 KString Kotlin_String_fromUtf8Array(KConstRef thiz, KInt start, KInt size) {
-  const ArrayHeader* array = static_cast<const ArrayHeader*>(thiz);
+  const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
   if (start < 0 || size < 0 || start + size > array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -97,7 +97,7 @@ KString Kotlin_String_fromUtf8Array(KConstRef thiz, KInt start, KInt size) {
 }
 
 KString Kotlin_String_fromCharArray(KConstRef thiz, KInt start, KInt size) {
-  const ArrayHeader* array = static_cast<const ArrayHeader*>(thiz);
+  const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theCharArrayTypeInfo, "Must use a byte array");
   if (start < 0 || size < 0 || start + size > array->count_) {
     ThrowArrayIndexOutOfBoundsException();
@@ -124,7 +124,7 @@ KRef Kotlin_String_toCharArray(KString string) {
     *PrimitiveArrayAddressOfElementAt<KChar>(result, index) =
         *ByteArrayAddressOfElementAt(string, index);
   }
-  return result;
+  return result->obj();
 }
 
 
@@ -151,8 +151,8 @@ KString Kotlin_String_plusImpl(KString thiz, KString other) {
 KBoolean Kotlin_String_equals(KString thiz, KConstRef other) {
   if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
   // Important, due to literal internalization.
-  if (thiz == other) return true;
-  KString otherString = reinterpret_cast<KString>(other);
+  KString otherString = other->array();
+  if (thiz == otherString) return true;
   return thiz->count_ == otherString->count_ &&
       memcmp(ByteArrayAddressOfElementAt(thiz, 0),
              ByteArrayAddressOfElementAt(otherString, 0),

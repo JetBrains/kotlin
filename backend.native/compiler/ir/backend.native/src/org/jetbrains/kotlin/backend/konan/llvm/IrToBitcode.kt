@@ -857,7 +857,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             if (it is IrSpreadElement) {
                 val exp = evaluateExpression(it.expression)!!
                 val array = codegen.bitcast(codegen.kArrayHeaderPtr, exp)
-                val sizePtr = LLVMBuildStructGEP(codegen.builder, array, 1, "")
+                val sizePtr = LLVMBuildStructGEP(codegen.builder, array, 2, "")
                 return@map Element(exp, codegen.load(sizePtr!!), true)
             }
             val exp = evaluateExpression(it)!!

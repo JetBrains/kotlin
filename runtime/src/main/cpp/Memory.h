@@ -39,6 +39,8 @@ struct ContainerHeader {
   volatile uint32_t ref_count_;
 };
 
+struct ArrayHeader;
+
 // Header of every object.
 struct ObjHeader {
   const TypeInfo* type_info_;
@@ -63,10 +65,40 @@ struct ObjHeader {
     return reinterpret_cast<ContainerHeader*>(
         reinterpret_cast<uintptr_t>(this) - container_offset_negative_);
   }
+
+  // Unsafe cast to ArrayHeader. Use carefully!
+  ArrayHeader* array() { return reinterpret_cast<ArrayHeader*>(this); }
+  const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 };
 
-// Header of value type array objects.
-struct ArrayHeader : public ObjHeader {
+// Header of value type array objects. Keep layout in sync with that of object header.
+struct ArrayHeader {
+  const TypeInfo* type_info_;
+  container_offset_t container_offset_negative_;
+
+  const TypeInfo* type_info() const {
+    // TODO: for moving collectors use meta-objects approach:
+    //  - store tag in lower bit TypeInfo, which marks if meta-object is in place
+    //  - when reading type_info_ check if it is unaligned
+    //  - if it is, pointer points to the MetaObject
+    //  - otherwise this is direct pointer to TypeInfo
+    // Meta-object allows storing additional data associated with some objects,
+    // such as stable hash code.
+    return type_info_;
+  }
+
+  void set_type_info(const TypeInfo* type_info) {
+    type_info_ = type_info;
+  }
+
+  ContainerHeader* container() const {
+    return reinterpret_cast<ContainerHeader*>(
+        reinterpret_cast<uintptr_t>(this) - container_offset_negative_);
+  }
+
+  ObjHeader* obj() { return reinterpret_cast<ObjHeader*>(this); }
+  const ObjHeader* obj() const { return reinterpret_cast<const ObjHeader*>(this); }
+
   // Elements count. Element size is stored in instanceSize_ field of TypeInfo, negated.
   uint32_t count_;
 };
