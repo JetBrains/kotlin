@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
+import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
@@ -42,7 +43,8 @@ object KonanPlatformConfigurator : PlatformConfigurator(
         identifierChecker = IdentifierChecker.DEFAULT,
         overloadFilter = OverloadFilter.DEFAULT,
         platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY,
-        delegationFilter = DelegationFilter.DEFAULT // TODO: fixme
+        delegationFilter = DelegationFilter.DEFAULT,
+        overridesBackwardCompatibilityHelper = OverridesBackwardCompatibilityHelper.DEFAULT
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(SyntheticScopes.Empty)
