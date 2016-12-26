@@ -282,18 +282,55 @@ class ArenaContainer : public Container {
 extern "C" {
 #endif
 
+#define OBJ_RESULT __result__
+#define OBJ_GETTER0(name) ObjHeader* name(ObjHeader** OBJ_RESULT)
+#define OBJ_GETTER(name, ...) ObjHeader* name(__VA_ARGS__, ObjHeader** OBJ_RESULT)
+#define RETURN_OBJ(value) UpdateLocalRef(OBJ_RESULT, value); return value;
+#define RETURN_OBJ_RESULT() return *OBJ_RESULT;
+#define RETURN_RESULT_OF0(name) name(OBJ_RESULT); return *OBJ_RESULT;
+#define RETURN_RESULT_OF(name, ...) name(__VA_ARGS__, OBJ_RESULT); return *OBJ_RESULT;
+
 void InitMemory();
-ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint);
-ObjHeader* AllocArrayInstance(
-    const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
-ObjHeader* AllocStringInstance(PlacementHint hint,
-                                 const char* data, uint32_t length);
-ObjHeader* InitInstance(
-    ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
-    ObjHeader* (*ctor)(ObjHeader*));
+OBJ_GETTER(AllocInstance, const TypeInfo* type_info, PlacementHint hint);
+OBJ_GETTER(AllocArrayInstance,
+           const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
+OBJ_GETTER(AllocStringInstance,
+           PlacementHint hint, const char* data, uint32_t length);
+OBJ_GETTER(InitInstance,
+           ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
+           void (*ctor)(ObjHeader*));
+
+// Sets locally visible location.
+void SetLocalRef(ObjHeader** location, const ObjHeader* object);
+// Sets potentially globally visible location.
+void SetGlobalRef(ObjHeader** location, const ObjHeader* object);
+// Update locally visible location.
+void UpdateLocalRef(ObjHeader** location, const ObjHeader* object);
+// Update potentially globally visible location.
+void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object);
 
 #ifdef __cplusplus
 }
 #endif
+
+// Class holding reference to an object, holding object during C++ scope.
+class ObjHolder {
+ public:
+   ObjHolder() : obj_(nullptr) {}
+
+   explicit ObjHolder(const ObjHeader* obj) {
+     ::SetLocalRef(&obj_, obj);
+   }
+   ~ObjHolder() {
+     ::UpdateLocalRef(&obj_, nullptr);
+   }
+
+   ObjHeader* obj() { return obj_; }
+   const ObjHeader* obj() const { return obj_; }
+   ObjHeader** slot() { return &obj_; }
+
+  private:
+   ObjHeader* obj_;
+};
 
 #endif // RUNTIME_MEMORY_H

@@ -4,6 +4,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allValueParameters
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 internal val LLVMValueRef.type: LLVMTypeRef
@@ -141,15 +142,30 @@ internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef = memScoped {
     LLVMStructType(allocArrayOf(types)[0].ptr, types.size, 0)!!
 }
 
+internal fun ContextUtils.isObjectType(type: LLVMTypeRef) : Boolean {
+    return type == kObjHeaderPtr || type == kArrayHeaderPtr
+}
+
 internal fun ContextUtils.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {
-    val returnType = getLLVMType(function.returnType!!)
-    val params = function.allValueParameters
-    val paramTypes = params.map { getLLVMType(it.type) }
+    val returnType = if (function is ConstructorDescriptor) voidType else getLLVMType(function.returnType!!)
+    val paramTypes = ArrayList(function.allValueParameters.map { getLLVMType(it.type) })
+    if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 
     memScoped {
         val paramTypesPtr = allocArrayOf(paramTypes)[0].ptr
         return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)!!
     }
+}
+
+internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
+    // Note that type is usually function pointer, so we have to dereference it.
+    return LLVMCountParamTypes(LLVMGetElementType(functionType))!!
+}
+
+internal fun ContextUtils.isObjectReturn(functionType: LLVMTypeRef) : Boolean {
+    // Note that type is usually function pointer, so we have to dereference it.
+    val returnType = LLVMGetReturnType(LLVMGetElementType(functionType))!!
+    return isObjectType(returnType)
 }
 
 /**
@@ -195,5 +211,10 @@ internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, va
 fun llvm2string(value: LLVMValueRef?): String {
   if (value == null) return "<null>"
   return LLVMPrintValueToString(value)!!.asCString().toString()
+}
+
+fun llvmtype2string(type: LLVMTypeRef?): String {
+    if (type == null) return "<null type>"
+    return LLVMPrintTypeToString(type)!!.asCString().toString()
 }
 

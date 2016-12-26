@@ -221,6 +221,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val initInstanceFunction = importRtFunction("InitInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
+    val setLocalRefFunction = importRtFunction("SetLocalRef")
+    val updateLocalRefFunction = importRtFunction("UpdateLocalRef")
     val setArrayFunction = importRtFunction("Kotlin_Array_set")
     val copyImplArrayFunction = importRtFunction("Kotlin_Array_copyImpl")
     val lookupFieldOffset = importRtFunction("LookupFieldOffset")

@@ -60,7 +60,7 @@ internal class VariableManager(val codegen: CodeGenerator) {
         // TODO: fix, due to the bug in frontend, we shall always create stack slot for variable now.
         // Note that we always create slot for object references for memory management.
         val descriptor = scoped.first
-        if (descriptor.isVar() || isObjectType(codegen.getLLVMType(descriptor.type)) || true) {
+        if (descriptor.isVar() || codegen.isObjectType(codegen.getLLVMType(descriptor.type)) || true) {
             return createMutable(scoped, value)
         } else {
             return createImmutable(scoped, value!!)
@@ -75,7 +75,7 @@ internal class VariableManager(val codegen: CodeGenerator) {
         val slot = codegen.alloca(type, descriptor.name.asString())
         if (value != null)
             codegen.store(value, slot)
-        variables.add(SlotRecord(slot, isObjectType(type)))
+        variables.add(SlotRecord(slot, codegen.isObjectType(type)))
         descriptors[scoped] = index
         return index
     }
@@ -85,12 +85,18 @@ internal class VariableManager(val codegen: CodeGenerator) {
         return createAnonymousMutable(codegen.getLLVMType(type), value)
     }
 
+    // Think of slot reuse.
+    fun createAnonymousSlot(value: LLVMValueRef? = null) : LLVMValueRef {
+        val index = createAnonymousMutable(codegen.kObjHeaderPtr, value)
+        return addressOf(index)
+    }
+
     fun createAnonymousMutable(type: LLVMTypeRef, value: LLVMValueRef? = null) : Int {
         val index = variables.size
         val slot = codegen.alloca(type)
         if (value != null)
             codegen.store(value, slot)
-        variables.add(SlotRecord(slot, isObjectType(type)))
+        variables.add(SlotRecord(slot, codegen.isObjectType(type)))
         return index
     }
 
@@ -117,9 +123,5 @@ internal class VariableManager(val codegen: CodeGenerator) {
 
     fun store(value: LLVMValueRef, index: Int) {
         variables[index].store(value)
-    }
-
-    private fun isObjectType(type: LLVMTypeRef) : Boolean {
-        return type == codegen.kObjHeaderPtr || type == codegen.kArrayHeaderPtr
     }
 }

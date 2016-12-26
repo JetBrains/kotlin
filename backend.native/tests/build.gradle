@@ -108,6 +108,7 @@ abstract class KonanTest extends DefaultTask {
     }
 }
 
+// Please do not use this framework anymore!
 class UnitKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
         def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
@@ -119,6 +120,11 @@ class UnitKonanTest extends KonanTest {
             argList.addAll(clangLinkArgs())
             args argList
         }
+    }
+
+    @TaskAction
+    void executeTest() {
+        // Do nothing, unit tests go away.
     }
 }
 

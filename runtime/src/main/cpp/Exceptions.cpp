@@ -4,6 +4,7 @@
 
 #include "Assert.h"
 #include "Exceptions.h"
+#include "Memory.h"
 #include "Natives.h"
 #include "Types.h"
 
@@ -34,18 +35,13 @@ class AutoFree {
   }
 };
 
-// TODO: this method ignores the encoding.
-KString CreateKotlinStringFromCString(const char* str) {
-  return AllocStringInstance(SCOPE_GLOBAL, str, strlen(str))->array();
-}
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
-KRef GetCurrentStackTrace() {
+OBJ_GETTER0(GetCurrentStackTrace) {
   const int maxSize = 32;
   void* buffer[maxSize];
 
@@ -54,20 +50,21 @@ KRef GetCurrentStackTrace() {
   RuntimeAssert(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
 
   AutoFree autoFree(symbols);
-  KRef result = AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, size);
+  AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, size, OBJ_RESULT);
 
-  for (int i = 0; i < size; ++i) {
-    KString symbol = CreateKotlinStringFromCString(symbols[i]);
-    Kotlin_Array_set(result, i, symbol->obj());
+  ArrayHeader* array = (*OBJ_RESULT)->array();
+  for (int index = 0; index < size; ++index) {
+    AllocStringInstance(
+        SCOPE_GLOBAL, symbols[index], strlen(symbols[index]),
+        ArrayAddressOfElementAt(array, index));
   }
 
-  return result;
+  RETURN_OBJ_RESULT();
 }
 
 void ThrowException(KRef exception) {
   RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
                 "Throwing something non-throwable");
-
   throw KotlinException(exception);
 }
 

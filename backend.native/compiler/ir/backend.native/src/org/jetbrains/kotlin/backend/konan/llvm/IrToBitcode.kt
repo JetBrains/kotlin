@@ -429,10 +429,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                     }
                 })
             }
-
-            codegen.ret(thisPtr)
         }
 
+        codegen.ret(null)
         codegen.epilogue()
         context.log("visitConstructor            : ${ir2string(constructorDeclaration)}")
     }
@@ -553,11 +552,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (declaration == null) {
-                codegen.ret(value)
-                return
-            }
-            if (target == declaration.descriptor) {
+            if (declaration == null || target == declaration.descriptor) {
                 codegen.ret(value)
             } else {
                 super.genReturn(target, value)
@@ -582,9 +577,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
         if (descriptor == null) return emptyMap()
         val paramDescriptors = descriptor.allValueParameters
-
-        assert(paramDescriptors.size == codegen.countParams(descriptor))
-
         return paramDescriptors.mapIndexed { i, paramDescriptor ->
             val param = codegen.param(descriptor, i)
             assert(codegen.getLLVMType(paramDescriptor.type) == param.type)
@@ -757,7 +749,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val initFunction = value.descriptor.constructors.first { it.valueParameters.size == 0 }
         val ctor = codegen.llvmFunction(initFunction)
         val args = listOf(objectPtr, typeInfo, allocHint, ctor)
-        val newValue = currentCodeContext.genCall(context.llvm.initInstanceFunction, args)
+        val newValue = call(context.llvm.initInstanceFunction, args)
         codegen.br(bbExit)
 
         codegen.positionAtEnd(bbExit)
@@ -846,7 +838,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
     }
 
-
     //-------------------------------------------------------------------------//
 
     private fun evaluateVararg(value: IrVararg): LLVMValueRef? {
@@ -879,14 +870,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         val typeInfo = codegen.typeInfoValue(value.type)!!
         val arrayCreationArgs = listOf(typeInfo, kImmInt32One, finalLength)
-        val array = currentCodeContext.genCall(context.llvm.allocArrayFunction, arrayCreationArgs)
-
+        val array = call(context.llvm.allocArrayFunction, arrayCreationArgs)
         elements.fold(kImmZero) { sum, (exp, size, isArray) ->
             if (!isArray) {
-                currentCodeContext.genCall(context.llvm.setArrayFunction, listOf(array, sum, exp))
+                call(context.llvm.setArrayFunction, listOf(array, sum, exp))
                 return@fold codegen.plus(sum, kImmOne)
             } else {
-                currentCodeContext.genCall(context.llvm.copyImplArrayFunction, listOf(exp, kImmZero, array, sum, size!!))
+                call(context.llvm.copyImplArrayFunction, listOf(exp, kImmZero, array, sum, size!!))
                 return@fold codegen.plus(sum, size)
             }
         }
@@ -920,7 +910,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val toStringDescriptor = getToString(it.type)
                 val string = if (KotlinBuiltIns.isString(it.type)) evaluationResult
                              else evaluateSimpleFunctionCall(toStringDescriptor, listOf(evaluationResult))
-                val length = currentCodeContext.genCall(codegen.llvmFunction(kStringLength!!), listOf(string))
+                val length = call(codegen.llvmFunction(kStringLength!!), listOf(string))
                 return@map Element(string, length, -1)
             }
         }
@@ -933,12 +923,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         val constructor = kStringBuilder!!.constructors
                 .firstOrNull { it -> it.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.valueParameters[0].type) }!!
-        val stringBuilderObjPtr = currentCodeContext.genCall(context.llvm.allocInstanceFunction,
+        val stringBuilderObj = call(context.llvm.allocInstanceFunction,
                 listOf(codegen.typeInfoValue(kStringBuilder.defaultType)!!, kImmOne))
-        val stringBuilderObj = currentCodeContext.genCall(codegen.llvmFunction(constructor), listOf(stringBuilderObjPtr, totalLength))
+        call(codegen.llvmFunction(constructor), listOf(stringBuilderObj, totalLength))
 
         stringsWithLengths.fold(stringBuilderObj) { sum, (string, _, _) ->
-            currentCodeContext.genCall(codegen.llvmFunction(kStringBuilderAppendStringFn!!), listOf(sum, string))
+            call(codegen.llvmFunction(kStringBuilderAppendStringFn!!), listOf(sum, string))
             return@fold sum
         }
 
@@ -1390,7 +1380,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val srcArg        = evaluateExpression(value.argument)!!                       // Evaluate src expression.
         val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, srcArg)             // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
-        currentCodeContext.genCall(context.llvm.checkInstanceFunction, args)           // Check if dst is subclass of src.
+        call(context.llvm.checkInstanceFunction, args)           // Check if dst is subclass of src.
         return srcArg
     }
 
@@ -1431,9 +1421,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, obj)                // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
 
-        val result = currentCodeContext.genCall(                                       // Check if dst is subclass of src.
-                context.llvm.isInstanceFunction, args)
-
+        val result = call(context.llvm.isInstanceFunction, args)                       // Check if dst is subclass of src.
         return LLVMBuildTrunc(codegen.builder, result, kInt1, "")!!                    // Truncate result to boolean
     }
 
@@ -1783,14 +1771,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val thisValue = if (containingClass.isArray) {
                 assert(args.size == 1 && args[0].type == int32Type)
                 val allocArrayInstanceArgs = listOf(typeInfo, allocHint, args[0])
-                currentCodeContext.genCall(context.llvm.allocArrayFunction, allocArrayInstanceArgs)
+                call(context.llvm.allocArrayFunction, allocArrayInstanceArgs)
             } else {
-                currentCodeContext.genCall(context.llvm.allocInstanceFunction, listOf(typeInfo, allocHint))
+                call(context.llvm.allocInstanceFunction, listOf(typeInfo, allocHint))
             }
             val constructorParams: MutableList<LLVMValueRef> = mutableListOf()
             constructorParams += thisValue
             constructorParams += args
-            return evaluateSimpleFunctionCall(callee.descriptor as FunctionDescriptor, constructorParams)
+            evaluateSimpleFunctionCall(callee.descriptor as FunctionDescriptor, constructorParams)
+            return thisValue
         }
     }
 
@@ -1900,8 +1889,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val typeInfoPtr     = codegen.bitcast(codegen.kTypeInfoPtr, typeInfoI8Ptr)   // Cast TypeInfo (i8*) to TypeInfo*.
         val methodHash      = codegen.functionHash(descriptor)                       // Calculate hash of the method to be invoked
         val lookupArgs      = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
-        val llvmMethod      = currentCodeContext.genCall(
-                context.llvm.lookupOpenMethodFunction,
+        val llvmMethod      = call(context.llvm.lookupOpenMethodFunction,
                 lookupArgs)                                                          // Get method ptr to be invoked
 
         val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))   // Construct type of the method to be invoked
@@ -1916,11 +1904,22 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     // In such case it would be possible to check that all args are available and in the correct order.
     // However, it currently requires some refactoring to be performed.
     private fun call(descriptor: FunctionDescriptor, function: LLVMValueRef, args: List<LLVMValueRef>): LLVMValueRef {
-        val result = currentCodeContext.genCall(function, args)
+        val result = call(function, args)
         if (descriptor.returnType?.isNothing() == true) {
             codegen.unreachable()
         }
         return result
+    }
+
+    private fun call(function: LLVMValueRef, args: List<LLVMValueRef>): LLVMValueRef {
+        if (codegen.isObjectReturn(function.type)) {
+            // If function returns an object - create slot for the returned value.
+            // This allows appropriate rootset accounting by just looking on stack slots.
+            val resultSlot = codegen.vars.createAnonymousSlot()
+            return currentCodeContext.genCall(function, args + resultSlot)
+        } else {
+            return currentCodeContext.genCall(function, args)
+        }
     }
 
     //-------------------------------------------------------------------------//

@@ -12,12 +12,12 @@ extern "C" {
 // TODO: those must be compiler intrinsics afterwards.
 
 // Array.kt
-KRef Kotlin_Array_get(KConstRef thiz, KInt index) {
+OBJ_GETTER(Kotlin_Array_get, KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (static_cast<uint32_t>(index) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
-  return *ArrayAddressOfElementAt(array, index);
+  RETURN_OBJ(*ArrayAddressOfElementAt(array, index));
 }
 
 void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
@@ -25,10 +25,10 @@ void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
   if (static_cast<uint32_t>(index) >= array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
-  *ArrayAddressOfElementAt(array, index) = value;
+  UpdateGlobalRef(ArrayAddressOfElementAt(array, index), value);
 }
 
-KRef Kotlin_Array_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_Array_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       array->type_info(), array->count_).GetPlace();
@@ -36,7 +36,7 @@ KRef Kotlin_Array_clone(KConstRef thiz) {
       ArrayAddressOfElementAt(result, 0),
       ArrayAddressOfElementAt(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_Array_getArrayLength(KConstRef thiz) {
@@ -85,7 +85,7 @@ void Kotlin_ByteArray_set(KRef thiz, KInt index, KByte value) {
   *ByteArrayAddressOfElementAt(array, index) = value;
 }
 
-KRef Kotlin_ByteArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_ByteArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theByteArrayTypeInfo, array->count_).GetPlace();
@@ -93,7 +93,7 @@ KRef Kotlin_ByteArray_clone(KConstRef thiz) {
       ByteArrayAddressOfElementAt(result, 0),
       ByteArrayAddressOfElementAt(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_ByteArray_getArrayLength(KConstRef thiz) {
@@ -117,7 +117,7 @@ void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value) {
   *PrimitiveArrayAddressOfElementAt<KChar>(array, index) = value;
 }
 
-KRef Kotlin_CharArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_CharArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theCharArrayTypeInfo, array->count_).GetPlace();
@@ -125,10 +125,10 @@ KRef Kotlin_CharArray_clone(KConstRef thiz) {
       PrimitiveArrayAddressOfElementAt<KChar>(result, 0),
       PrimitiveArrayAddressOfElementAt<KChar>(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
-KRef Kotlin_CharArray_copyOf(KConstRef thiz, KInt newSize) {
+OBJ_GETTER(Kotlin_CharArray_copyOf, KConstRef thiz, KInt newSize) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theCharArrayTypeInfo, newSize).GetPlace();
@@ -137,7 +137,7 @@ KRef Kotlin_CharArray_copyOf(KConstRef thiz, KInt newSize) {
       PrimitiveArrayAddressOfElementAt<KChar>(result, 0),
       PrimitiveArrayAddressOfElementAt<KChar>(array, 0),
       toCopy * sizeof(KChar));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_CharArray_getArrayLength(KConstRef thiz) {
@@ -161,7 +161,7 @@ void Kotlin_ShortArray_set(KRef thiz, KInt index, KShort value) {
   *PrimitiveArrayAddressOfElementAt<KShort>(array, index) = value;
 }
 
-KRef Kotlin_ShortArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_ShortArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theShortArrayTypeInfo, array->count_).GetPlace();
@@ -169,7 +169,7 @@ KRef Kotlin_ShortArray_clone(KConstRef thiz) {
       PrimitiveArrayAddressOfElementAt<KShort>(result, 0),
       PrimitiveArrayAddressOfElementAt<KShort>(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_ShortArray_getArrayLength(KConstRef thiz) {
@@ -193,7 +193,7 @@ void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value) {
   *PrimitiveArrayAddressOfElementAt<KInt>(array, index) = value;
 }
 
-KRef Kotlin_IntArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_IntArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theIntArrayTypeInfo, array->count_).GetPlace();
@@ -201,7 +201,7 @@ KRef Kotlin_IntArray_clone(KConstRef thiz) {
       PrimitiveArrayAddressOfElementAt<KInt>(result, 0),
       PrimitiveArrayAddressOfElementAt<KInt>(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_IntArray_getArrayLength(KConstRef thiz) {
@@ -249,7 +249,7 @@ void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value) {
   *PrimitiveArrayAddressOfElementAt<KLong>(array, index) = value;
 }
 
-KRef Kotlin_LongArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_LongArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theLongArrayTypeInfo, array->count_).GetPlace();
@@ -257,7 +257,7 @@ KRef Kotlin_LongArray_clone(KConstRef thiz) {
       PrimitiveArrayAddressOfElementAt<KLong>(result, 0),
       PrimitiveArrayAddressOfElementAt<KLong>(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_LongArray_getArrayLength(KConstRef thiz) {
@@ -281,7 +281,7 @@ void Kotlin_FloatArray_set(KRef thiz, KInt index, KFloat value) {
   *PrimitiveArrayAddressOfElementAt<KFloat>(array, index) = value;
 }
 
-KRef Kotlin_FloatArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_FloatArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theFloatArrayTypeInfo, array->count_).GetPlace();
@@ -289,7 +289,7 @@ KRef Kotlin_FloatArray_clone(KConstRef thiz) {
       PrimitiveArrayAddressOfElementAt<KFloat>(result, 0),
       PrimitiveArrayAddressOfElementAt<KFloat>(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_FloatArray_getArrayLength(KConstRef thiz) {
@@ -313,7 +313,7 @@ void Kotlin_DoubleArray_set(KRef thiz, KInt index, KDouble value) {
   *PrimitiveArrayAddressOfElementAt<KDouble>(array, index) = value;
 }
 
-KRef Kotlin_DoubleArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_DoubleArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theDoubleArrayTypeInfo, array->count_).GetPlace();
@@ -321,7 +321,7 @@ KRef Kotlin_DoubleArray_clone(KConstRef thiz) {
       PrimitiveArrayAddressOfElementAt<KDouble>(result, 0),
       PrimitiveArrayAddressOfElementAt<KDouble>(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_DoubleArray_getArrayLength(KConstRef thiz) {
@@ -345,7 +345,7 @@ void Kotlin_BooleanArray_set(KRef thiz, KInt index, KBoolean value) {
   *PrimitiveArrayAddressOfElementAt<KBoolean>(array, index) = value;
 }
 
-KRef Kotlin_BooleanArray_clone(KConstRef thiz) {
+OBJ_GETTER(Kotlin_BooleanArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       theBooleanArrayTypeInfo, array->count_).GetPlace();
@@ -353,7 +353,7 @@ KRef Kotlin_BooleanArray_clone(KConstRef thiz) {
       PrimitiveArrayAddressOfElementAt<KBoolean>(result, 0),
       PrimitiveArrayAddressOfElementAt<KBoolean>(array, 0),
       ArrayDataSizeBytes(array));
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_BooleanArray_getArrayLength(KConstRef thiz) {

@@ -88,30 +88,30 @@ void InitMemory() {
 }
 
 // Now we ignore all placement hints and always allocate heap space for new object.
-ObjHeader* AllocInstance(const TypeInfo* type_info, PlacementHint hint) {
+OBJ_GETTER(AllocInstance, const TypeInfo* type_info, PlacementHint hint) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
-  return ObjectContainer(type_info).GetPlace();
+  RETURN_OBJ(ObjectContainer(type_info).GetPlace());
 }
 
-ObjHeader* AllocArrayInstance(
-    const TypeInfo* type_info, PlacementHint hint, uint32_t elements) {
+OBJ_GETTER(AllocArrayInstance,
+           const TypeInfo* type_info, PlacementHint hint, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  return ArrayContainer(type_info, elements).GetPlace()->obj();
+  RETURN_OBJ(ArrayContainer(type_info, elements).GetPlace()->obj());
 }
 
-ObjHeader* AllocStringInstance(
-    PlacementHint hint, const char* data, uint32_t length) {
-  ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
+OBJ_GETTER(AllocStringInstance,
+  PlacementHint hint, const char* data, uint32_t length) {
+  ArrayHeader* array = ArrayContainer(theStringTypeInfo, length).GetPlace();
   memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
+      ByteArrayAddressOfElementAt(array, 0),
       data,
       length);
-  return result->obj();
+  RETURN_OBJ(array->obj());
 }
 
-ObjHeader* InitInstance(
+OBJ_GETTER(InitInstance,
     ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
-    ObjHeader* (*ctor)(ObjHeader*)) {
+    void (*ctor)(ObjHeader*)) {
   ObjHeader* sentinel = reinterpret_cast<ObjHeader*>(1);
   ObjHeader* value;
   // Wait until other initializers.
@@ -122,19 +122,32 @@ ObjHeader* InitInstance(
 
   if (value != nullptr) {
     // OK'ish, inited by someone else.
-    return value;
+    RETURN_OBJ(value);
   }
 
-  ObjHeader* instance = AllocInstance(type_info, hint);
+  AllocInstance(type_info, hint, OBJ_RESULT);
   try {
-    ctor(instance);
-    __sync_val_compare_and_swap(location, sentinel, instance);
-    return instance;
+    ctor(*OBJ_RESULT);
+    bool ok = __sync_bool_compare_and_swap(location, sentinel, *OBJ_RESULT);
+    RuntimeAssert(ok, "CAS must succeed");
+    RETURN_OBJ_RESULT();
   } catch (...) {
-    Release(instance->container());
     __sync_val_compare_and_swap(location, sentinel, nullptr);
-    return nullptr;
+    RETURN_OBJ(nullptr);
   }
+}
+
+// Just stubs.
+void SetLocalRef(ObjHeader** location, const ObjHeader* object) {
+  *const_cast<const ObjHeader**>(location) = object;
+}
+
+void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) {
+  *const_cast<const ObjHeader**>(location) = object;
+}
+
+void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
+  *const_cast<const ObjHeader**>(location) = object;
 }
 
 #ifdef __cplusplus

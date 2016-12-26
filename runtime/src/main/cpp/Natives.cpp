@@ -22,7 +22,8 @@ KInt Kotlin_Any_hashCode(KConstRef thiz) {
   return reinterpret_cast<uintptr_t>(thiz);
 }
 
-KString Kotlin_Any_toString(KConstRef thiz) {
+OBJ_GETTER(Kotlin_Any_toString, KConstRef thiz) {
+  // TODO: make it more sensible, such as address and type info.
   return nullptr;
 }
 
@@ -44,7 +45,7 @@ void Kotlin_io_Console_println0() {
   write(STDOUT_FILENO, "\n", 1);
 }
 
-KString Kotlin_io_Console_readLine() {
+OBJ_GETTER0(Kotlin_io_Console_readLine) {
   char data[2048];
   if (!fgets(data, sizeof(data) - 1, stdin)) {
     return nullptr;
@@ -54,7 +55,7 @@ KString Kotlin_io_Console_readLine() {
   memcpy(
       ByteArrayAddressOfElementAt(result, 0),
       data, length);
-  return result;
+  RETURN_OBJ(result->obj());
 }
 
 // String.kt
@@ -76,7 +77,7 @@ KInt Kotlin_String_getStringLength(KString thiz) {
   return thiz->count_;
 }
 
-KString Kotlin_String_fromUtf8Array(KConstRef thiz, KInt start, KInt size) {
+OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef thiz, KInt start, KInt size) {
   const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
   if (start < 0 || size < 0 || start + size > array->count_) {
@@ -84,7 +85,7 @@ KString Kotlin_String_fromUtf8Array(KConstRef thiz, KInt start, KInt size) {
   }
 
   if (size == 0) {
-    return TheEmptyString();
+    RETURN_RESULT_OF0(TheEmptyString);
   }
 
   // TODO: support full UTF-8.
@@ -93,10 +94,10 @@ KString Kotlin_String_fromUtf8Array(KConstRef thiz, KInt start, KInt size) {
       ByteArrayAddressOfElementAt(result, 0),
       ByteArrayAddressOfElementAt(array, start),
       size);
-  return result;
+  RETURN_OBJ(result->obj());
 }
 
-KString Kotlin_String_fromCharArray(KConstRef thiz, KInt start, KInt size) {
+OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef thiz, KInt start, KInt size) {
   const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theCharArrayTypeInfo, "Must use a byte array");
   if (start < 0 || size < 0 || start + size > array->count_) {
@@ -104,7 +105,7 @@ KString Kotlin_String_fromCharArray(KConstRef thiz, KInt start, KInt size) {
   }
 
   if (size == 0) {
-    return TheEmptyString();
+    RETURN_RESULT_OF0(TheEmptyString);
   }
 
   // TODO: support full UTF-8.
@@ -113,10 +114,10 @@ KString Kotlin_String_fromCharArray(KConstRef thiz, KInt start, KInt size) {
     *ByteArrayAddressOfElementAt(result, index) =
         *PrimitiveArrayAddressOfElementAt<KChar>(array, start + index);
   }
-  return result;
+  RETURN_OBJ(result->obj());
 }
 
-KRef Kotlin_String_toCharArray(KString string) {
+OBJ_GETTER(Kotlin_String_toCharArray, KString string) {
   // TODO: support full UTF-8.
   ArrayHeader* result = ArrayContainer(
       theCharArrayTypeInfo, string->count_).GetPlace();
@@ -124,11 +125,11 @@ KRef Kotlin_String_toCharArray(KString string) {
     *PrimitiveArrayAddressOfElementAt<KChar>(result, index) =
         *ByteArrayAddressOfElementAt(string, index);
   }
-  return result->obj();
+  RETURN_OBJ(result->obj());
 }
 
 
-KString Kotlin_String_plusImpl(KString thiz, KString other) {
+OBJ_GETTER(Kotlin_String_plusImpl, KString thiz, KString other) {
   // TODO: support UTF-8
   RuntimeAssert(thiz != nullptr, "this cannot be null");
   RuntimeAssert(other != nullptr, "other cannot be null");
@@ -145,7 +146,7 @@ KString Kotlin_String_plusImpl(KString thiz, KString other) {
       ByteArrayAddressOfElementAt(result, thiz->count_),
       ByteArrayAddressOfElementAt(other, 0),
       other->count_);
-  return result;
+  RETURN_OBJ(result->obj());
 }
 
 KBoolean Kotlin_String_equals(KString thiz, KConstRef other) {
@@ -165,13 +166,13 @@ KInt Kotlin_String_hashCode(KString thiz) {
   return CityHash64(ByteArrayAddressOfElementAt(thiz, 0), thiz->count_);
 }
 
-KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex) {
+OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endIndex) {
   if (startIndex < 0 || endIndex >= thiz->count_ || startIndex > endIndex) {
     // TODO: is it correct exception?
     ThrowArrayIndexOutOfBoundsException();
   }
   if (startIndex == endIndex) {
-    return TheEmptyString();
+    RETURN_RESULT_OF0(TheEmptyString);
   }
   // TODO: support UTF-8.
   KInt length = endIndex - startIndex;
@@ -179,16 +180,16 @@ KString Kotlin_String_subSequence(KString thiz, KInt startIndex, KInt endIndex) 
   memcpy(ByteArrayAddressOfElementAt(result, 0),
          ByteArrayAddressOfElementAt(thiz, startIndex),
          length);
-  return result;
+  RETURN_OBJ(result->obj());
 }
 
-KConstRef Kotlin_getCurrentStackTrace() {
-  return GetCurrentStackTrace();
+OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
+  RETURN_RESULT_OF0(GetCurrentStackTrace);
 }
 
 // TODO: consider handling it with compiler magic instead.
-KRef Kotlin_konan_internal_undefined() {
-  return nullptr;
+OBJ_GETTER0(Kotlin_konan_internal_undefined) {
+  RETURN_OBJ(nullptr);
 }
 
 }  // extern "C"

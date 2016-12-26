@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 // Returns current stacktrace as Array<String>.
-KRef GetCurrentStackTrace();
+OBJ_GETTER0(GetCurrentStackTrace);
 
 // Throws arbitrary exception.
 void ThrowException(KRef exception);

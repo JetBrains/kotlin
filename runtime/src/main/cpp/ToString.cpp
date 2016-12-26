@@ -9,7 +9,7 @@
 
 namespace {
 
-KString makeString(const char* cstring) {
+OBJ_GETTER(makeString, const char* cstring) {
   uint32_t length = strlen(cstring);
   ArrayHeader* result = ArrayContainer(
       theStringTypeInfo, length).GetPlace();
@@ -17,59 +17,59 @@ KString makeString(const char* cstring) {
       ByteArrayAddressOfElementAt(result, 0),
       cstring,
       length);
-  return result;
+  RETURN_OBJ(result->obj());
 }
 
 } // namespace
 
 extern "C" {
 
-KString Kotlin_Byte_toString(KByte value) {
+OBJ_GETTER(Kotlin_Byte_toString, KByte value) {
   char cstring[8];
   snprintf(cstring, sizeof(cstring), "%d", value);
-  return makeString(cstring);
+  RETURN_RESULT_OF(makeString, cstring);
 }
 
-KString Kotlin_Char_toString(KChar value) {
+OBJ_GETTER(Kotlin_Char_toString, KChar value) {
   char cstring[5];
   // TODO: support UTF-8.
   snprintf(cstring, sizeof(cstring), "%c", value);
-  return makeString(cstring);
+  RETURN_RESULT_OF(makeString, cstring);
 }
 
-KString Kotlin_Short_toString(KShort value) {
+OBJ_GETTER(Kotlin_Short_toString, KShort value) {
   char cstring[8];
   snprintf(cstring, sizeof(cstring), "%d", value);
-  return makeString(cstring);
+  RETURN_RESULT_OF(makeString, cstring);
 }
 
-KString Kotlin_Int_toString(KInt value) {
+OBJ_GETTER(Kotlin_Int_toString, KInt value) {
   char cstring[16];
   snprintf(cstring, sizeof(cstring), "%d", value);
-  return makeString(cstring);
+  RETURN_RESULT_OF(makeString, cstring);
 }
 
-KString Kotlin_Long_toString(KLong value) {
+OBJ_GETTER(Kotlin_Long_toString, KLong value) {
   char cstring[32];
   snprintf(cstring, sizeof(cstring), "%lld", static_cast<long long>(value));
-  return makeString(cstring);
+  RETURN_RESULT_OF(makeString, cstring);
 }
 
 // TODO: use David Gay's dtoa() here instead. It's *very* big and ugly.
-KString Kotlin_Float_toString(KFloat value) {
+OBJ_GETTER(Kotlin_Float_toString, KFloat value) {
   char cstring[32];
   snprintf(cstring, sizeof(cstring), "%G", value);
-  return makeString(cstring);
+  RETURN_RESULT_OF(makeString, cstring);
 }
 
-KString Kotlin_Double_toString(KDouble value) {
+OBJ_GETTER(Kotlin_Double_toString, KDouble value) {
   char cstring[32];
   snprintf(cstring, sizeof(cstring), "%G", value);
-  return makeString(cstring);
+  RETURN_RESULT_OF(makeString, cstring);
 }
 
-KString Kotlin_Boolean_toString(KBoolean value) {
-  return  makeString(value ? "true" : "false");
+OBJ_GETTER(Kotlin_Boolean_toString, KBoolean value) {
+  RETURN_RESULT_OF(makeString, value ? "true" : "false");
 }
 
 } // extern "C"

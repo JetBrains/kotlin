@@ -17,6 +17,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     // TODO: remove, to make CodeGenerator descriptor-agnostic.
     var constructedClass: ClassDescriptor? = null
     val vars = VariableManager(this)
+    var returnSlot: LLVMValueRef? = null
 
     fun prologue(descriptor: FunctionDescriptor) {
         prologue(llvmFunction(descriptor),
@@ -28,8 +29,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun prologue(function:LLVMValueRef, returnType:LLVMTypeRef) {
         assert(returns.size == 0)
-
         assert(this.function != function)
+
+        if (isObjectType(returnType)) {
+            this.returnSlot = LLVMGetParam(function, numParameters(function.type) - 1)
+        }
         this.function = function
         this.returnType = returnType
         this.constructedClass = null
@@ -48,11 +52,15 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
             when {
                returnType == voidType -> {
                    vars.releaseVars()
+                   assert(returnSlot == null)
                    LLVMBuildRetVoid(builder)
                }
                returns.size > 0 -> {
                     val returnPhi = phi(returnType!!)
                     addPhiIncoming(returnPhi, *returns.toList().toTypedArray())
+                    if (returnSlot != null) {
+                        updateLocalRef(returnPhi, returnSlot!!)
+                    }
                     vars.releaseVars()
                     LLVMBuildRet(builder, returnPhi)
                }
@@ -63,6 +71,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
         returns.clear()
         vars.clear()
+        returnSlot = null
     }
 
     private var prologueBb: LLVMBasicBlockRef? = null
@@ -102,6 +111,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
     fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildLoad(builder, value, name)!!
     fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(builder, value, ptr)!!
+
+    fun updateLocalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
+        call(if (ignoreOld) context.llvm.setLocalRefFunction else context.llvm.updateLocalRefFunction,
+                listOf(address, value))
+    }
 
     fun isConst(value: LLVMValueRef): Boolean = (LLVMIsConstant(value) == 1)
 
