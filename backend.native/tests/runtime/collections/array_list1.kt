@@ -10,12 +10,12 @@ fun assertFalse(cond: Boolean) {
 
 fun assertEquals(value1: Any?, value2: Any?) {
     if (value1 != value2)
-        println("FAIL")
+        throw Error("FAIL " + value1 + " " + value2)
 }
 
 fun assertEquals(value1: Int, value2: Int) {
     if (value1 != value2)
-        println("FAIL")
+        throw Error("FAIL " + value1 + " " + value2)
 }
 
 fun testBasic() {

@@ -142,10 +142,6 @@ internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef = memScoped {
     LLVMStructType(allocArrayOf(types)[0].ptr, types.size, 0)!!
 }
 
-internal fun ContextUtils.isObjectType(type: LLVMTypeRef) : Boolean {
-    return type == kObjHeaderPtr || type == kArrayHeaderPtr
-}
-
 internal fun ContextUtils.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {
     val returnType = if (function is ConstructorDescriptor) voidType else getLLVMType(function.returnType!!)
     val paramTypes = ArrayList(function.allValueParameters.map { getLLVMType(it.type) })
@@ -166,6 +162,14 @@ internal fun ContextUtils.isObjectReturn(functionType: LLVMTypeRef) : Boolean {
     // Note that type is usually function pointer, so we have to dereference it.
     val returnType = LLVMGetReturnType(LLVMGetElementType(functionType))!!
     return isObjectType(returnType)
+}
+
+internal fun ContextUtils.isObjectRef(value: LLVMValueRef): Boolean {
+    return isObjectType(value.type)
+}
+
+internal fun ContextUtils.isObjectType(type: LLVMTypeRef): Boolean {
+    return type == kObjHeaderPtr || type == kArrayHeaderPtr
 }
 
 /**
@@ -207,6 +211,7 @@ internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, va
             val paramTypesPtr = allocArrayOf(*paramTypes)[0].ptr
             LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, if (isVarArg) 1 else 0)!!
         }
+
 
 fun llvm2string(value: LLVMValueRef?): String {
   if (value == null) return "<null>"

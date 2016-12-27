@@ -32,10 +32,10 @@ OBJ_GETTER(Kotlin_Array_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* result = ArrayContainer(
       array->type_info(), array->count_).GetPlace();
-  memcpy(
-      ArrayAddressOfElementAt(result, 0),
-      ArrayAddressOfElementAt(array, 0),
-      ArrayDataSizeBytes(array));
+  for (int index = 0; index < array->count_; index++) {
+    SetGlobalRef(
+         ArrayAddressOfElementAt(result, index), *ArrayAddressOfElementAt(array, index));
+  }
   RETURN_OBJ(result->obj());
 }
 
@@ -49,9 +49,8 @@ void Kotlin_Array_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KRef value) 
   if (fromIndex < 0 || toIndex < fromIndex || toIndex > array->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
-  // TODO: refcounting!
   for (KInt index = fromIndex; index < toIndex; ++index) {
-    *ArrayAddressOfElementAt(array, index) = value;
+    UpdateGlobalRef(ArrayAddressOfElementAt(array, index), value);
   }
 }
 
@@ -59,13 +58,21 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
                            KRef destination, KInt toIndex, KInt count) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* destinationArray = destination->array();
-   if (fromIndex < 0 || fromIndex + count > array->count_ ||
-       toIndex < 0 || toIndex + count > destinationArray->count_) {
-        ThrowArrayIndexOutOfBoundsException();
+  if (fromIndex < 0 || fromIndex + count > array->count_ ||
+      toIndex < 0 || toIndex + count > destinationArray->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+  if (fromIndex >= toIndex) {
+    for (int index = 0; index < count; index++) {
+      UpdateGlobalRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
+                      *ArrayAddressOfElementAt(array, fromIndex + index));
     }
-    // TODO: refcounting!
-    memmove(ArrayAddressOfElementAt(destinationArray, toIndex),
-        ArrayAddressOfElementAt(array, fromIndex), count * sizeof(KRef));
+  } else {
+    for (int index = count - 1; index >= 0; index--) {
+      UpdateGlobalRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
+                      *ArrayAddressOfElementAt(array, fromIndex + index));
+    }
+  }
 }
 
 // Arrays.kt

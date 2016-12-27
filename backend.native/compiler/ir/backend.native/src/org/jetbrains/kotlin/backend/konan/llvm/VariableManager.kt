@@ -18,7 +18,7 @@ internal class VariableManager(val codegen: CodeGenerator) {
             return codegen.load(address)
         }
         override fun store(value: LLVMValueRef) {
-            codegen.store(value, address)
+            codegen.storeAnyLocal(value, address)
         }
         override fun address() : LLVMValueRef {
             return this.address
@@ -54,10 +54,13 @@ internal class VariableManager(val codegen: CodeGenerator) {
 
     fun releaseVars() {
         // This function is called by codegen to cleanup local references when leaving frame.
+        for (variable in variables) {
+            if (variable.isRefSlot())
+                codegen.updateLocalRef(codegen.kNullObjHeaderPtr, variable.address())
+        }
     }
 
     fun createVariable(scoped: Pair<VariableDescriptor, CodeContext>, value: LLVMValueRef? = null) : Int {
-        // TODO: fix, due to the bug in frontend, we shall always create stack slot for variable now.
         // Note that we always create slot for object references for memory management.
         val descriptor = scoped.first
         if (descriptor.isVar() || codegen.isObjectType(codegen.getLLVMType(descriptor.type)) || true) {
@@ -74,7 +77,7 @@ internal class VariableManager(val codegen: CodeGenerator) {
         val type = codegen.getLLVMType(descriptor.type)
         val slot = codegen.alloca(type, descriptor.name.asString())
         if (value != null)
-            codegen.store(value, slot)
+            codegen.storeAnyLocal(value, slot)
         variables.add(SlotRecord(slot, codegen.isObjectType(type)))
         descriptors[scoped] = index
         return index
@@ -95,7 +98,7 @@ internal class VariableManager(val codegen: CodeGenerator) {
         val index = variables.size
         val slot = codegen.alloca(type)
         if (value != null)
-            codegen.store(value, slot)
+            codegen.storeAnyLocal(value, slot)
         variables.add(SlotRecord(slot, codegen.isObjectType(type)))
         return index
     }

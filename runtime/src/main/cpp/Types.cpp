@@ -24,6 +24,11 @@ KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) {
   return obj_type_info != nullptr;
 }
 
+KBoolean IsArray(KConstRef obj) {
+  RuntimeAssert(obj != nullptr, "Object must not be null");
+  return obj->type_info()->instanceSize_ < 0;
+}
+
 void CheckInstance(const ObjHeader* obj, const TypeInfo* type_info) {
   if (IsInstance(obj, type_info)) {
     return;

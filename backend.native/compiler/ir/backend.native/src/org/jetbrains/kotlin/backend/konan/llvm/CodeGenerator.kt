@@ -103,17 +103,44 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun intToPtr(imm: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, imm, DestTy, Name)
 
-    fun alloca(type: KotlinType, name: String = ""): LLVMValueRef = alloca(getLLVMType(type), name)
     fun alloca(type: LLVMTypeRef?, name: String = ""): LLVMValueRef {
         appendingTo(prologueBb!!) {
-            return LLVMBuildAlloca(builder, type, name)!!
+            val result = LLVMBuildAlloca(builder, type, name)!!
+            if (isObjectType(type!!))
+                LLVMBuildStore(builder, kNullObjHeaderPtr, result)
+            return result
         }
     }
     fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildLoad(builder, value, name)!!
-    fun store(value: LLVMValueRef, ptr: LLVMValueRef): LLVMValueRef = LLVMBuildStore(builder, value, ptr)!!
+    fun store(value: LLVMValueRef, ptr: LLVMValueRef) {
+        // Use updateRef() or storeAny() API for that.
+        assert(!isObjectRef(value))
+        LLVMBuildStore(builder, value, ptr)
+    }
+    fun storeAnyLocal(value: LLVMValueRef, ptr: LLVMValueRef) {
+        if (isObjectRef(value)) {
+            updateLocalRef(value, ptr)
+        } else {
+            LLVMBuildStore(builder, value, ptr)
+        }
+    }
+    fun storeAnyGlobal(value: LLVMValueRef, ptr: LLVMValueRef) {
+        if (isObjectRef(value)) {
+            updateGlobalRef(value, ptr)
+        } else {
+            LLVMBuildStore(builder, value, ptr)
+        }
+    }
 
+
+    // Only use ignoreOld, when sure that memory is freshly inited and have no value.
     fun updateLocalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
         call(if (ignoreOld) context.llvm.setLocalRefFunction else context.llvm.updateLocalRefFunction,
+                listOf(address, value))
+    }
+
+    fun updateGlobalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
+        call(if (ignoreOld) context.llvm.setGlobalRefFunction else context.llvm.updateGlobalRefFunction,
                 listOf(address, value))
     }
 

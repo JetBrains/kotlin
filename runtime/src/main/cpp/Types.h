@@ -38,6 +38,7 @@ extern const TypeInfo* theThrowableTypeInfo;
 
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info);
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
+KBoolean IsArray(KConstRef obj);
 
 typedef void (*Initializer)();
 struct InitNode {

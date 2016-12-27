@@ -10,7 +10,9 @@ typedef enum {
   // Allocation is generic global allocation.
   SCOPE_GLOBAL = 1,
   // Allocation shall take place in current arena.
-  SCOPE_ARENA = 2
+  SCOPE_ARENA = 2,
+  // Allocation is permanent.
+  SCOPE_PERMANENT = 3
 } PlacementHint;
 
 // Must fit in two bits.
@@ -116,6 +118,8 @@ inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
   return -obj->type_info()->instanceSize_ * obj->count_;
 }
 
+void FreeContainer(ContainerHeader* header);
+
 // Those two operations are implemented by translator when storing references
 // to objects.
 inline void AddRef(ContainerHeader* header) {
@@ -136,13 +140,11 @@ inline void AddRef(ContainerHeader* header) {
   }
 }
 
-void FreeObject(ContainerHeader* header);
-
 inline void Release(ContainerHeader* header) {
   switch (header->ref_count_ & CONTAINER_TAG_MASK) {
     case CONTAINER_TAG_NORMAL:
       if ((header->ref_count_ -= CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_NORMAL) {
-        FreeObject(header);
+        FreeContainer(header);
       }
       break;
     case CONTAINER_TAG_NOCOUNT:
@@ -163,7 +165,7 @@ inline void Release(ContainerHeader* header) {
     case CONTAINER_TAG_SHARED:
       if (__sync_sub_and_fetch(
               &header->ref_count_, CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_SHARED) {
-        FreeObject(header);
+        FreeContainer(header);
       }
       break;
     case CONTAINER_TAG_INVALID:
@@ -182,6 +184,7 @@ class Container {
     obj->container_offset_negative_ =
         reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(header_);
     obj->set_type_info(type_info);
+    RuntimeAssert(obj->container() == header_, "Placement must match");
   }
 
  public:
@@ -207,7 +210,8 @@ class ObjectContainer : public Container {
     Init(type_info);
   }
 
-  // Object container shalln't have any dtor, as it's being freed by ::Release().
+  // Object container shalln't have any dtor, as it's being freed by
+  // ::Release().
   ObjHeader* GetPlace() const {
     return reinterpret_cast<ObjHeader*>(
         reinterpret_cast<uint8_t*>(header_) + sizeof(ContainerHeader));
@@ -272,7 +276,7 @@ class ArenaContainer : public Container {
   // Dispose whole container ignoring non-zero refcount. Use with care.
   void Dispose() {
     if (header_) {
-      FreeObject(header_);
+      FreeContainer(header_);
       header_ = nullptr;
     }
   }
@@ -285,12 +289,14 @@ extern "C" {
 #define OBJ_RESULT __result__
 #define OBJ_GETTER0(name) ObjHeader* name(ObjHeader** OBJ_RESULT)
 #define OBJ_GETTER(name, ...) ObjHeader* name(__VA_ARGS__, ObjHeader** OBJ_RESULT)
-#define RETURN_OBJ(value) UpdateLocalRef(OBJ_RESULT, value); return value;
+#define RETURN_OBJ(value) { ObjHeader* obj = value; UpdateLocalRef(OBJ_RESULT, obj); return obj; }
 #define RETURN_OBJ_RESULT() return *OBJ_RESULT;
 #define RETURN_RESULT_OF0(name) name(OBJ_RESULT); return *OBJ_RESULT;
 #define RETURN_RESULT_OF(name, ...) name(__VA_ARGS__, OBJ_RESULT); return *OBJ_RESULT;
 
 void InitMemory();
+void DeinitMemory();
+
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info, PlacementHint hint);
 OBJ_GETTER(AllocArrayInstance,
            const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
@@ -299,6 +305,37 @@ OBJ_GETTER(AllocStringInstance,
 OBJ_GETTER(InitInstance,
            ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
            void (*ctor)(ObjHeader*));
+
+// Sets locally visible location.
+void SetLocalRef(ObjHeader** location, const ObjHeader* object);
+// Sets potentially globally visible location.
+void SetGlobalRef(ObjHeader** location, const ObjHeader* object);
+// Update locally visible location.
+void UpdateLocalRef(ObjHeader** location, const ObjHeader* object);
+// Update potentially globally visible location.
+void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object);
+
+//
+// Object reference management.
+//
+// Reference management scheme we use assumes significant degree of flexibility, so that
+// one could implement either pure reference counting scheme, or tracing collector without
+// much ado.
+// Most important primitive is UpdateRef() API, which modifies location to use new
+// object reference. In pure reference counted scheme it will check old value,
+// decrement reference, increment counter on the new value, and store it into the field.
+// In tracing collector-like scheme, only field updates counts, and all other operations are
+// essentially no-ops.
+//
+// On codegeneration phase we adopt following approaches:
+//  - every stack frame has several slots, holding object references (allRefs)
+//  - those are known by compiler (and shall be grouped together)
+//  - it keeps all locally allocated objects in such slot
+//  - all local variables keeping an object also allocate a slot
+//  - most manipulations on objects happens in SSA variables and do no affect slots
+//  - exception handlers knowns slot locations for every function, and can update references
+//    in intermediate frames when throwing
+//
 
 // Sets locally visible location.
 void SetLocalRef(ObjHeader** location, const ObjHeader* object);

@@ -160,7 +160,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val refFieldIndices = classDesc.fields.mapIndexedNotNull { index, field ->
             val type = field.returnType!!
-            if (!KotlinBuiltIns.isPrimitiveType(type)) {
+            if (isObjectType(getLLVMType(type))) {
                 index
             } else {
                 null

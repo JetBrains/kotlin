@@ -204,7 +204,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      * Convenient [InnerScope] implementation that is bound to the [currentCodeContext].
      */
     private abstract inner class InnerScopeImpl : InnerScope(currentCodeContext)
-
     /**
      * Executes [block] with [codeContext] substituted as [currentCodeContext].
      */
@@ -250,7 +249,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val descriptor = irField.descriptor
                 val initialization = evaluateExpression(irField.initializer)
                 val globalPtr = LLVMGetNamedGlobal(context.llvmModule, descriptor.symbolName)
-                codegen.store(initialization!!, globalPtr!!)
+                codegen.storeAnyGlobal(initialization!!, globalPtr!!)
             }
             codegen.ret(null)
         }
@@ -412,7 +411,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                         fieldDeclaration.initializer?.let {
                             val value = evaluateExpression(it)!!
                             val fieldPtr = fieldPtrOfClass(thisPtr, fieldDescriptor)
-                            codegen.store(value, fieldPtr)
+                            codegen.storeAnyGlobal(value, fieldPtr)
                         }
                     }
 
@@ -1450,11 +1449,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val valueToAssign = evaluateExpression(value.value)!!
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = instanceFieldAccessReceiver(value)
-            codegen.store(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
+            codegen.storeAnyGlobal(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
         }
         else {
             val globalValue = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)
-            codegen.store(valueToAssign, globalValue!!)
+            codegen.storeAnyGlobal(valueToAssign, globalValue!!)
         }
 
         return null
@@ -1818,6 +1817,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                                  branch: IrBranch, bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
         val neitherUnitNorNothing = !isNothing && !isUnit                            // If branches doesn't end with 'return' either result hasn't got 'unit' type.
         val branchResult = branch.result
+        // TODO: use phis here!
         if (isUnconditional(branch)) {                                               // It is the "else" clause.
             val brResult = evaluateExpression(branchResult)                          // Generate clause body.
             if (neitherUnitNorNothing)                                               // If nor unit neither result ends with return
