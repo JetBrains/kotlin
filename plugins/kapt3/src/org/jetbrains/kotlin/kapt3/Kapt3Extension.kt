@@ -20,7 +20,10 @@ import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -45,15 +48,15 @@ class ClasspathBasedKapt3Extension(
         javaSourceRoots: List<File>,
         sourcesOutputDir: File,
         classFilesOutputDir: File,
-        val stubsOutputDir: File?,
-        val incrementalDataOutputDir: File?,
+        stubsOutputDir: File?,
+        incrementalDataOutputDir: File?,
         options: Map<String, String>,
         aptOnly: Boolean,
         val useLightAnalysis: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, options, aptOnly, pluginInitializedTime, logger) {
+                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, aptOnly, pluginInitializedTime, logger) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
 
@@ -86,24 +89,6 @@ class ClasspathBasedKapt3Extension(
 
         return processors
     }
-
-    override fun saveStubs(stubs: JavacList<JCCompilationUnit>) {
-        val outputDir = stubsOutputDir ?: return
-        for (stub in stubs) {
-            val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
-
-            val packageName = stub.packageName?.toString() ?: ""
-            val packageDir = if (packageName.isEmpty()) outputDir else File(outputDir, packageName.replace('.', '/'))
-            packageDir.mkdirs()
-            File(packageDir, className + ".java").writeText(stub.toString())
-        }
-    }
-
-    override fun saveIncrementalData(generationState: GenerationState, messageCollector: MessageCollector) {
-        if (incrementalDataOutputDir != null) {
-            generationState.factory.writeAll(incrementalDataOutputDir, messageCollector)
-        }
-    }
 }
 
 abstract class AbstractKapt3Extension(
@@ -112,6 +97,8 @@ abstract class AbstractKapt3Extension(
         val javaSourceRoots: List<File>,
         val sourcesOutputDir: File,
         val classFilesOutputDir: File,
+        val stubsOutputDir: File?,
+        val incrementalDataOutputDir: File?,
         val options: Map<String, String>,
         val aptOnly: Boolean,
         val pluginInitializedTime: Long,
@@ -216,15 +203,17 @@ abstract class AbstractKapt3Extension(
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext, generationState: GenerationState): JavacList<JCCompilationUnit> {
+        val converter = ClassFileToSourceStubConverter(kaptContext, generationState.typeMapper, generateNonExistentClass = true)
+
         val (stubGenerationTime, kotlinSourceStubs) = measureTimeMillis {
-            ClassFileToSourceStubConverter(kaptContext, generationState.typeMapper, generateNonExistentClass = true).convert()
+            converter.convert()
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info { "Stubs for Kotlin classes: " + kotlinSourceStubs.joinToString { it.sourcefile.name } }
 
         saveStubs(kotlinSourceStubs)
-        saveIncrementalData(generationState, logger.messageCollector)
+        saveIncrementalData(generationState, logger.messageCollector, converter)
         return kotlinSourceStubs
     }
 
@@ -237,9 +226,39 @@ abstract class AbstractKapt3Extension(
         return javaFilesFromJavaSourceRoots
     }
 
-    protected abstract fun saveStubs(stubs: JavacList<JCTree.JCCompilationUnit>)
+    protected open fun saveStubs(stubs: JavacList<JCTree.JCCompilationUnit>) {
+        val outputDir = stubsOutputDir ?: return
+        for (stub in stubs) {
+            val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
-    protected abstract fun saveIncrementalData(generationState: GenerationState, messageCollector: MessageCollector)
+            val packageName = stub.packageName?.toString() ?: ""
+            val packageDir = if (packageName.isEmpty()) outputDir else File(outputDir, packageName.replace('.', '/'))
+            packageDir.mkdirs()
+            File(packageDir, className + ".java").writeText(stub.toString())
+        }
+    }
+
+    protected open fun saveIncrementalData(
+            generationState: GenerationState,
+            messageCollector: MessageCollector,
+            converter: ClassFileToSourceStubConverter) {
+        val incrementalDataOutputDir = this.incrementalDataOutputDir ?: return
+
+        generationState.factory.writeAll(incrementalDataOutputDir) { file, sources, output ->
+            val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
+            if (stubFileObject != null && stubsOutputDir != null) {
+                val stubFile = File(stubsOutputDir, stubFileObject.name)
+                if (stubFile.exists()) {
+                    messageCollector.report(CompilerMessageSeverity.OUTPUT,
+                                            OutputMessageUtil.formatOutputMessage(sources, stubFile), CompilerMessageLocation.NO_LOCATION)
+                }
+            }
+
+            messageCollector.report(CompilerMessageSeverity.OUTPUT,
+                                    OutputMessageUtil.formatOutputMessage(sources, output), CompilerMessageLocation.NO_LOCATION)
+        }
+
+    }
 
     protected abstract fun loadProcessors(): List<Processor>
 }

@@ -36,6 +36,12 @@ public class KotlinKaptContextTestGenerated extends AbstractKotlinKaptContextTes
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("NestedClasses.kt")
+    public void testNestedClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/kotlinRunner/NestedClasses.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Overloads.kt")
     public void testOverloads() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/kotlinRunner/Overloads.kt");

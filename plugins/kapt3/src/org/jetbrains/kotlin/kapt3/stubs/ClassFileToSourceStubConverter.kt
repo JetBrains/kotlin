@@ -70,6 +70,11 @@ class ClassFileToSourceStubConverter(
         )
     }
 
+    private val _bindings = mutableMapOf<String, KaptJavaFileObject>()
+
+    val bindings: Map<String, KaptJavaFileObject>
+        get() = _bindings
+
     private val fileManager = kaptContext.context.get(JavaFileManager::class.java) as JavacFileManager
     private val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
     private val signatureParser = SignatureParser(treeMaker)
@@ -100,6 +105,8 @@ class ClassFileToSourceStubConverter(
 
         val topLevel = treeMaker.TopLevel(JavacList.nil(), treeMaker.SimpleName("error"), JavacList.of(nonExistentClass))
         topLevel.sourcefile = KaptJavaFileObject(topLevel, nonExistentClass, fileManager)
+
+        // We basically don't need to add binding for NonExistentClass
         return topLevel
     }
 
@@ -121,7 +128,12 @@ class ClassFileToSourceStubConverter(
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevel(packageAnnotations, packageClause, imports + classes)
-        topLevel.sourcefile = KaptJavaFileObject(topLevel, classDeclaration, fileManager)
+
+        KaptJavaFileObject(topLevel, classDeclaration, fileManager).apply {
+            topLevel.sourcefile = this
+            _bindings[clazz.name] = this
+        }
+
         return topLevel
     }
 

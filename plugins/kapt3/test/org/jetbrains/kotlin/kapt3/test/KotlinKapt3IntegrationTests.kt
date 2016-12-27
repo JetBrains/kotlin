@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.Test
+import java.io.File
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 
@@ -27,6 +31,48 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
         val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
         assertEquals(1, annotatedElements.size)
         assertEquals("myMethod", annotatedElements.single().simpleName.toString())
+    }
+
+    @Test
+    fun testSimpleStubsAndIncrementalData() = bindingsTest("Simple") { stubsOutputDir, incrementalDataOutputDir, bindings ->
+        assert(File(stubsOutputDir, "error/NonExistentClass.java").exists())
+        assert(File(stubsOutputDir, "test/Simple.java").exists())
+        assert(File(stubsOutputDir, "test/EnumClass.java").exists())
+
+        assert(File(incrementalDataOutputDir, "test/Simple.class").exists())
+        assert(File(incrementalDataOutputDir, "test/EnumClass.class").exists())
+
+        assert(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
+        assert(bindings.any { it.key == "test/EnumClass" && it.value.name == "test/EnumClass.java" })
+    }
+
+    @Test
+    fun testStubsAndIncrementalDataForNestedClasses() = bindingsTest("NestedClasses") { stubsOutputDir, incrementalDataOutputDir, bindings ->
+        assert(File(stubsOutputDir, "test/Simple.java").exists())
+        assert(!File(stubsOutputDir, "test/Simple/InnerClass.java").exists())
+
+        assert(File(incrementalDataOutputDir, "test/Simple.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple/Companion.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple/InnerClass.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple/NestedClass.class").exists())
+        assert(File(incrementalDataOutputDir, "test/Simple/NestedClass/NestedNestedClass.class").exists())
+
+        assert(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
+        assert(bindings.none { it.key.contains("Companion") })
+        assert(bindings.none { it.key.contains("InnerClass") })
+    }
+
+    private fun bindingsTest(name: String, test: (File, File, Map<String, KaptJavaFileObject>) -> Unit) {
+        test(name, "test.MyAnnotation") { set, roundEnv, env ->
+            val kaptExtension = AnalysisHandlerExtension.getInstances(myEnvironment.project).firstIsInstance<Kapt3ExtensionForTests>()
+
+            val stubsOutputDir = kaptExtension.stubsOutputDir
+            val incrementalDataOutputDir = kaptExtension.incrementalDataOutputDir
+
+            val bindings = kaptExtension.savedBindings!!
+
+            test(stubsOutputDir!!, incrementalDataOutputDir!!, bindings)
+        }
     }
 
     @Test
