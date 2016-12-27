@@ -130,10 +130,10 @@ sealed class BuiltInDefinitionFile {
 
             val proto = BuiltInsProtoBuf.BuiltIns.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
             val result = BuiltInDefinitionFile.Compatible(proto, file.parent, file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION)
+            val packageProto = result.proto.`package`
             if (result.classesToDecompile.isEmpty() &&
-                result.proto.`package`.functionCount == 0 &&
-                result.proto.`package`.propertyCount == 0) {
-                // No callables or top-level classes to decompile: should skip this file
+                packageProto.typeAliasCount == 0 && packageProto.functionCount == 0 && packageProto.propertyCount == 0) {
+                // No declarations to decompile: should skip this file
                 return null
             }
 
