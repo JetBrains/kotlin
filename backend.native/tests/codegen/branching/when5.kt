@@ -8,3 +8,7 @@ fun when5(i: Int): Int {
     else -> return 24
   }
 }
+
+fun main(args: Array<String>) {
+  if (when5(2) != 3) throw Error()
+}

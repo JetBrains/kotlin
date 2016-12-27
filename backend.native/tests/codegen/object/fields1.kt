@@ -6,3 +6,8 @@ class B(val a:Int, b:Int) {
 fun primaryConstructorCall(a:Int, b:Int) = B(a, b).pos
 
 fun secondaryConstructorCall(a:Int) = B(a).pos
+
+fun main(args:Array<String>) {
+    if (primaryConstructorCall(0xdeadbeef.toInt(), 41) != 42) throw Error()
+    if (secondaryConstructorCall(41)                   != 42) throw Error()
+}

@@ -21,3 +21,10 @@ fun null_check_eqeqeq1() : Boolean {
 fun null_check_eqeqeq2() : Boolean {
   return check_eqeqeq(null)
 }
+
+fun main(args: Array<String>) {
+  if (null_check_eqeq1())    throw Error()
+  if (!null_check_eqeq2())   throw Error()
+  if (null_check_eqeqeq1())  throw Error()
+  if (!null_check_eqeqeq2()) throw Error()
+}

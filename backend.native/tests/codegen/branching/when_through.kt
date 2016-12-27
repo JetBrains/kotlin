@@ -8,3 +8,7 @@ fun when_through(i: Int): Int {
 
   return value
 }
+
+fun main(args: Array<String>) {
+  if (when_through(2) != 1) throw Error()
+}

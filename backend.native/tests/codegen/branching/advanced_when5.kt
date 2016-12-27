@@ -8,3 +8,7 @@ fun advanced_when5(i: Int): Int {
     else -> return 24
   }
 }
+
+fun main(args: Array<String>) {
+  if (advanced_when5(5) != 24) throw Error()
+}

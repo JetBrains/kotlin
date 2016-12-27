@@ -9,3 +9,6 @@ fun advanced_when2(i: Int): Int {
   return value
 }
 
+fun main(args: Array<String>) {
+  if (advanced_when2(10) != 42) throw Error()
+}

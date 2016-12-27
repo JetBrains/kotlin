@@ -108,26 +108,6 @@ abstract class KonanTest extends DefaultTask {
     }
 }
 
-// Please do not use this framework anymore!
-class UnitKonanTest extends KonanTest {
-    void compileTest(File sourceS, File runtimeS, File stdlibKtBc, File exe) {
-        def testC = sourceS.absolutePath.replace(".kt.S", "-test.c")
-        project.execClang {
-            executable "clang"
-            def argList = []
-            argList.addAll([ runtimeS.absolutePath, stdlibKtBc.absolutePath, sourceS.absolutePath,
-                    "-o", exe.absolutePath, testC, mainC ])
-            argList.addAll(clangLinkArgs())
-            args argList
-        }
-    }
-
-    @TaskAction
-    void executeTest() {
-        // Do nothing, unit tests go away.
-    }
-}
-
 class RunKonanTest extends KonanTest {
     void compileTest(File sourceS, File runtimeS, File libraryPath, File exe) {
         project.execClang {
@@ -216,34 +196,30 @@ task run() {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
 }
 
-task sum (type:UnitKonanTest) {
+task sum (type:RunKonanTest) {
     source = "codegen/function/sum.kt"
 }
 
-task method_call(type: UnitKonanTest) {
+task method_call(type: RunKonanTest) {
     source = "codegen/object/method_call.kt"
 }
 
-task fields(type: UnitKonanTest) {
+task fields(type: RunKonanTest) {
     source = "codegen/object/fields.kt"
 }
 
 
-task fields1(type: UnitKonanTest) {
+task fields1(type: RunKonanTest) {
     source = "codegen/object/fields1.kt"
 }
+// This test checks object layout can't be done in
+// RunKonanTest paradigm
+//task constructor(type: UnitKonanTest) {
+//    source = "codegen/object/constructor.kt"
+//}
 
-task constructor(type: UnitKonanTest) {
-    source = "codegen/object/constructor.kt"
-}
-
-task objectInitialization(type: UnitKonanTest) {
+task objectInitialization(type: RunKonanTest) {
     source = "codegen/object/initialization.kt"
-}
-
-task objectBasic(type: UnitKonanTest) {
-    disabled = true
-    source = "codegen/klass/basic.kt"
 }
 
 task check_type(type: RunKonanTest) {
@@ -257,24 +233,24 @@ task safe_cast(type: RunKonanTest) {
     source = "codegen/basics/safe_cast.kt"
 }
 
-task aritmetic(type: UnitKonanTest) {
+task aritmetic(type: RunKonanTest) {
     source = "codegen/function/arithmetic.kt"
 }
 
-task sum1(type: UnitKonanTest) {
+task sum1(type: RunKonanTest) {
     source = "codegen/function/sum_foo_bar.kt"
 
 }
 
-task sum2(type: UnitKonanTest) {
+task sum2(type: RunKonanTest) {
     source = "codegen/function/sum_imm.kt"
 }
 
-task sum_3const(type: UnitKonanTest) {
+task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
 
-task local_variable(type: UnitKonanTest) {
+task local_variable(type: RunKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }
 
@@ -283,11 +259,11 @@ task canonical_name(type: RunKonanTest) {
     source = "codegen/basics/canonical_name.kt"
 }
 
-task cast_simple(type: UnitKonanTest) {
+task cast_simple(type: RunKonanTest) {
     source = "codegen/basics/cast_simple.kt"
 }
 
-task null_check(type: UnitKonanTest) {
+task null_check(type: RunKonanTest) {
     source = "codegen/basics/null_check.kt"
 }
 
@@ -364,59 +340,59 @@ task array1(type: RunKonanTest) {
     source = "runtime/collections/array1.kt"
 }
 
-task if_else(type: UnitKonanTest) {
+task if_else(type: RunKonanTest) {
     source = "codegen/branching/if_else.kt"
 }
 
-task when2(type: UnitKonanTest) {
+task when2(type: RunKonanTest) {
     source = "codegen/branching/when2.kt"
 }
 
-task when5(type: UnitKonanTest) {
+task when5(type: RunKonanTest) {
     source = "codegen/branching/when5.kt"
 }
 
-task when_through(type: UnitKonanTest) {
+task when_through(type: RunKonanTest) {
     source = "codegen/branching/when_through.kt"
 }
 
-task advanced_when2(type: UnitKonanTest) {
+task advanced_when2(type: RunKonanTest) {
     source = "codegen/branching/advanced_when2.kt"
 }
 
-task advanced_when5(type: UnitKonanTest) {
+task advanced_when5(type: RunKonanTest) {
     source = "codegen/branching/advanced_when5.kt"
 }
 
-task bool_yes(type: UnitKonanTest) {
+task bool_yes(type: RunKonanTest) {
     source = "codegen/function/boolean.kt"
 }
 
-task plus_eq(type: UnitKonanTest) {
+task plus_eq(type: RunKonanTest) {
     source = "codegen/function/plus_eq.kt"
 }
 
-task minus_eq(type: UnitKonanTest) {
+task minus_eq(type: RunKonanTest) {
     source = "codegen/function/minus_eq.kt"
 }
 
-task eqeq(type: UnitKonanTest) {
+task eqeq(type: RunKonanTest) {
     source = "codegen/function/eqeq.kt"
 }
 
-task cycle(type: UnitKonanTest) {
+task cycle(type: RunKonanTest) {
     source = "codegen/cycles/cycle.kt"
 }
 
-task cycle_do(type: UnitKonanTest) {
+task cycle_do(type: RunKonanTest) {
     source = "codegen/cycles/cycle_do.kt"
 }
 
-task abstract_super(type: UnitKonanTest) {
+task abstract_super(type: RunKonanTest) {
     source = "datagen/rtti/abstract_super.kt"
 }
 
-task vtable1(type: UnitKonanTest) {
+task vtable1(type: RunKonanTest) {
     source = "datagen/rtti/vtable1.kt"
 }
 
@@ -439,7 +415,7 @@ task empty_string(type: RunKonanTest) {
     source = "datagen/literals/empty_string.kt"
 }
 
-task intrinsic(type: UnitKonanTest) {
+task intrinsic(type: RunKonanTest) {
     source = "codegen/function/intrinsic.kt"
 }
 /*

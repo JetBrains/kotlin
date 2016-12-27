@@ -5,3 +5,8 @@ fun cycle(cnt: Int): Int {
   }
   return sum
 }
+
+fun main(args: Array<String>) {
+  if (cycle(1) != 2) throw Error()
+  if (cycle(0) != 1) throw Error()
+}

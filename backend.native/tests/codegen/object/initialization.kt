@@ -18,3 +18,7 @@ fun foo(i:Int, j:Int):Int {
    val c = D(i, j)
    return c.c
 }
+
+fun main(args:Array<String>) {
+   if (foo(2, 3) != 5) throw Error()
+}

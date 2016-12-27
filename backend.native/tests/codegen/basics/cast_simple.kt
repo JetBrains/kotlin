@@ -8,3 +8,7 @@ fun castTest(): Boolean {
   castSimple(b)
   return true
 }
+
+fun main(args: Array<String>) {
+  if (!castTest()) throw Error()
+}

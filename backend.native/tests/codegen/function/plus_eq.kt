@@ -3,3 +3,7 @@ fun plus_eq(a: Int): Int {
   b += a
   return b
 }
+
+fun main(args: Array<String>) {
+  if (plus_eq(3) != 14) throw Error()
+}

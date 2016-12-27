@@ -3,3 +3,7 @@ class A(val a:Int) {
 }
 
 fun fortyTwo() = A(41).foo(1)
+
+fun main(args:Array<String>) {
+  if (fortyTwo() != 42) throw Error()
+}

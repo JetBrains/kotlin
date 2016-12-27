@@ -9,3 +9,7 @@ fun intrinsic(b: Int): Int {
   sum = sum + b
   return sum
 }
+
+fun main(args: Array<String>) {
+  if (intrinsic(3) != 4) throw Error()
+}
