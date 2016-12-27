@@ -120,7 +120,7 @@ class NameSuggestion {
                         var liftedName = ownName
                         var hasInline = false
                         while (container is FunctionDescriptor) {
-                            if (container.isInline && container.visibility.isPublicAPI) {
+                            if (container.isInline && container.ownEffectiveVisibility.isPublicAPI) {
                                 hasInline = true
                             }
                             liftedName = getSuggestedName(container) + "$" + liftedName
@@ -257,20 +257,24 @@ class NameSuggestion {
             fun mangledAndStable() = NameAndStability(getStableMangledName(baseName, getArgumentTypesAsString(descriptor)), true)
             fun mangledPrivate() = NameAndStability(getPrivateMangledName(baseName, descriptor), false)
 
+            val effectiveVisibility = descriptor.ownEffectiveVisibility
+
             val containingDeclaration = descriptor.containingDeclaration
             return when (containingDeclaration) {
-                is PackageFragmentDescriptor -> if (descriptor.visibility.isPublicAPI) mangledAndStable() else regularAndUnstable()
+                is PackageFragmentDescriptor -> if (effectiveVisibility.isPublicAPI) mangledAndStable() else regularAndUnstable()
                 is ClassDescriptor -> {
                     // valueOf() is created in the library with a mangled name for every enum class
                     if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return mangledAndStable()
 
                     // Make all public declarations stable
-                    if (descriptor.visibility == Visibilities.PUBLIC) return mangledAndStable()
+                    if (effectiveVisibility == Visibilities.PUBLIC) {
+                        return mangledAndStable()
+                    }
 
                     if (descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides) return mangledAndStable()
 
                     // Make all protected declarations of non-final public classes stable
-                    if (descriptor.visibility == Visibilities.PROTECTED &&
+                    if (effectiveVisibility == Visibilities.PROTECTED &&
                         !containingDeclaration.isFinalClass &&
                         containingDeclaration.visibility.isPublicAPI
                     ) {
@@ -323,5 +327,8 @@ class NameSuggestion {
             val absHashCode = Math.abs(forCalculateId.hashCode())
             return if (absHashCode != 0) Integer.toString(absHashCode, Character.MAX_RADIX) else ""
         }
+
+        private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility
+            get() = visibility.effectiveVisibility(this, checkPublishedApi = true).toVisibility()
     }
 }

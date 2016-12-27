@@ -5330,6 +5330,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("publishedApiMangling.kt")
+        public void testPublishedApiMangling() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/publishedApiMangling.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
         public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");

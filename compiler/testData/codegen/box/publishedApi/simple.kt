@@ -1,3 +1,5 @@
+// MODULE: lib
+// FILE: lib.kt
 class A {
 
     @PublishedApi
@@ -7,6 +9,8 @@ class A {
 
 }
 
-fun box() : String {
+// MODULE: main(lib)
+// FILE: main.kt
+fun box(): String {
     return A().test()
 }

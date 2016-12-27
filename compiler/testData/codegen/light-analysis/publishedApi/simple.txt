@@ -6,6 +6,6 @@ public final class A {
 }
 
 @kotlin.Metadata
-public final class SimpleKt {
+public final class MainKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

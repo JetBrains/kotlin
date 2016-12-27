@@ -11899,6 +11899,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/publishedApi/simple.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/publishedApi/topLevel.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/ranges")

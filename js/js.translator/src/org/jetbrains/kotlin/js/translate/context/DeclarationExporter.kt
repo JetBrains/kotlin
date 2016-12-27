@@ -142,4 +142,4 @@ internal class DeclarationExporter(val context: StaticContext) {
 }
 
 private fun MemberDescriptor.shouldBeExported(force: Boolean) =
-        force || isEffectivelyPublicApi || AnnotationsUtils.getJsNameAnnotation(this) != null
+        force || effectiveVisibility(checkPublishedApi = true).publicApi || AnnotationsUtils.getJsNameAnnotation(this) != null
