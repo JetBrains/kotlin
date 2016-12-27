@@ -20,10 +20,10 @@ package kotlin.text
 public fun Char.isWhitespace(): Boolean = toString().matches("[\\s\\xA0]")
 
 @kotlin.internal.InlineOnly
-public inline fun Char.toLowerCase(): Char = asDynamic().toLowerCase()
+public inline fun Char.toLowerCase(): Char = js("String.fromCharCode")(this).toLowerCase().charCodeAt(0)
 
 @kotlin.internal.InlineOnly
-public inline fun Char.toUpperCase(): Char = asDynamic().toUpperCase()
+public inline fun Char.toUpperCase(): Char = js("String.fromCharCode")(this).toUpperCase().charCodeAt(0)
 
 /**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).

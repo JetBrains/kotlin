@@ -128,7 +128,7 @@ Kotlin.isNumber = function (a) {
 };
 
 Kotlin.isChar = function (value) {
-    return (typeof value) == "string" && value.length == 1;
+    return value instanceof Kotlin.BoxedChar
 };
 
 Kotlin.isComparable = function (value) {

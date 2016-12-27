@@ -1,3 +1,4 @@
+
 package foo
 
 class Fail(message: String) : Exception(message)
@@ -22,7 +23,7 @@ fun box(): String {
     try {
         test("arrayOf", arrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
         test("booleanArrayOf", booleanArrayOf(true, false, false, true, true), "true, false, false, true, true")
-        test("charArray'", charArrayOf('0', '1', '2', '3', '4'), "'0', '1', '2', '3', '4'")
+        test("charArray'", charArrayOf('0', '1', '2', '3', '4'), "48, 49, 50, 51, 52")
         test("byteArrayOf", byteArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
         test("shortArrayOf", shortArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")
         test("intArray,", intArrayOf(0, 1, 2, 3, 4), "0, 1, 2, 3, 4")

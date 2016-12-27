@@ -21,6 +21,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
@@ -35,9 +36,7 @@ import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.reference.*;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
+import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 
 import java.util.ArrayList;
@@ -132,6 +132,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         else {
             JsExpression jsReturnExpression = translateAsExpression(returned, context);
+
+            KotlinType returnedType = context.bindingContext().getType(returned);
+
+            if (KotlinBuiltIns.isCharOrNullableChar(returnedType) &&
+                TranslationUtils.shouldBoxReturnValue((CallableDescriptor)context.getDeclarationDescriptor())) {
+                jsReturnExpression = JsAstUtils.charToBoxedChar(jsReturnExpression);
+            }
 
             jsReturn = new JsReturn(jsReturnExpression);
         }

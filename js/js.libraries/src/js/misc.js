@@ -34,11 +34,11 @@ Kotlin.primitiveCompareTo = function (a, b) {
 };
 
 Kotlin.charInc = function (value) {
-    return String.fromCharCode(value.charCodeAt(0)+1);
+    return Kotlin.toChar(value+1);
 };
 
 Kotlin.charDec = function (value) {
-    return String.fromCharCode(value.charCodeAt(0)-1);
+    return Kotlin.toChar(value-1);
 };
 
 Kotlin.imul = Math.imul || imul;

@@ -164,10 +164,23 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
     @NotNull
+    public static final FunctionIntrinsic CHAR_TO_STRING = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallInfo callInfo, @NotNull List<? extends JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            return JsAstUtils.charToString(callInfo.getDispatchReceiver());
+        }
+    };
+
+
+    @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
         add(EQUALS_IN_ANY, KOTLIN_ANY_EQUALS);
+        add(pattern("Char.toString"), CHAR_TO_STRING);
         add(pattern("kotlin", "toString").isExtensionOf(FQ_NAMES.any.asString()), TO_STRING);
         add(pattern("kotlin", "equals").isExtensionOf(FQ_NAMES.any.asString()), KOTLIN_EQUALS);
         add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);

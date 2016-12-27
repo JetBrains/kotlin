@@ -12944,7 +12944,7 @@ public inline fun BooleanArray.asList(): List<Boolean> {
  * Returns a [List] that wraps the original array.
  */
 public inline fun CharArray.asList(): List<Char> {
-    return this.unsafeCast<Array<Char>>().asList()
+    return this.toTypedArray().asList()
 }
 
 /**
@@ -13072,7 +13072,7 @@ public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  * Returns new array which is a copy of the original array, resized to the given [newSize].
  */
 public fun CharArray.copyOf(newSize: Int): CharArray {
-    return arrayCopyResize(this, newSize, '\u0000')
+    return arrayCopyResize(this, newSize, 0)
 }
 
 /**
@@ -13494,7 +13494,7 @@ public fun BooleanArray.toTypedArray(): Array<Boolean> {
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun CharArray.toTypedArray(): Array<Char> {
-    return copyOf().unsafeCast<Array<Char>>()
+    return Array<Char>(size, { i -> this[i] })
 }
 
 /**
