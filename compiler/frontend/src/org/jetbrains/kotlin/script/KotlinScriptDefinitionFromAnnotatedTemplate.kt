@@ -148,6 +148,10 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         override val text: CharSequence? by lazy { getFileContents(myFile) }
     }
 
+    override fun toString(): String {
+        return "KotlinScriptDefinitionFromAnnotatedTemplate - ${template.simpleName}"
+    }
+
     companion object {
         internal val log = Logger.getInstance(KotlinScriptDefinitionFromAnnotatedTemplate::class.java)
     }
