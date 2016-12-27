@@ -19,12 +19,30 @@ package org.jetbrains.kotlin.cli.common.messages;
 import java.util.EnumSet;
 
 public enum CompilerMessageSeverity {
-    INFO,
-    ERROR,
-    WARNING,
-    EXCEPTION,
-    LOGGING,
-    OUTPUT;
+    ERROR(0),
+    EXCEPTION(5),
+    WARNING(10),
+    INFO(15),
+    OUTPUT(20),
+    LOGGING(25);
+
+    private final int value;
+
+    CompilerMessageSeverity(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    static CompilerMessageSeverity fromValue(int value) {
+        for (CompilerMessageSeverity severity : CompilerMessageSeverity.values()) {
+            if (severity.value == value) return severity;
+        }
+
+        return null;
+    }
 
     public static final EnumSet<CompilerMessageSeverity> ERRORS = EnumSet.of(ERROR, EXCEPTION);
     public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(OUTPUT, LOGGING);
