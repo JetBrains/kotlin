@@ -769,7 +769,6 @@ task initializers4(type: RunKonanTest) {
 }
 
 task expression_as_statement(type: RunKonanTest) {
-    disabled = true
     goldValue = "Ok\n"
     source = "codegen/basics/expression_as_statement.kt"
 }
@@ -792,4 +791,24 @@ task memory_var3(type: RunKonanTest) {
 task memory_var4(type: RunKonanTest) {
     disabled = true
     source = "runtime/memory/var4.kt"
+}
+
+task unit1(type: RunKonanTest) {
+    goldValue = "First\nkotlin.Unit\n"
+    source = "codegen/basics/unit1.kt"
+}
+
+task unit2(type: RunKonanTest) {
+    goldValue = "kotlin.Unit\n"
+    source = "codegen/basics/unit2.kt"
+}
+
+task unit3(type: RunKonanTest) {
+    goldValue = "kotlin.Unit\n"
+    source = "codegen/basics/unit3.kt"
+}
+
+task unit4(type: RunKonanTest) {
+    goldValue = "Done\n"
+    source = "codegen/basics/unit4.kt"
 }
