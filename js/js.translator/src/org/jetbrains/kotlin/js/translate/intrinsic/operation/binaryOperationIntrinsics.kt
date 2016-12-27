@@ -37,7 +37,7 @@ class BinaryOperationIntrinsics {
 
     private val intrinsicCache = mutableMapOf<IntrinsicKey, BinaryOperationIntrinsic>()
 
-    private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF)
+    private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF, StringPlusCharBOIF, AssignmentBOIF)
 
     fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
         val token = getOperationToken(expression)

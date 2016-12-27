@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsName;
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +94,11 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
             FunctionDescriptor candidateDescriptor = entryInitCall.getCandidateDescriptor();
             if (CallExpressionTranslator.shouldBeInlined(candidateDescriptor, context())) {
                 setInlineCallMetadata(entryInitializer, entry, entryInitCall, context());
+            }
+
+            KotlinType returnType = candidateDescriptor.getReturnType();
+            if (returnType != null && KotlinBuiltIns.isCharOrNullableChar(returnType) && !KotlinBuiltIns.isCharOrNullableChar(descriptor.getType())) {
+                entryInitializer = JsAstUtils.charToBoxedChar(entryInitializer);
             }
 
             JsName name =  context().getNameForDescriptor(descriptor);

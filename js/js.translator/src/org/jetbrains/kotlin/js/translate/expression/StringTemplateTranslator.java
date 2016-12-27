@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -82,14 +84,19 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             assert entryExpression != null :
                     "JetStringTemplateEntryWithExpression must have not null entry expression.";
             JsExpression translatedExpression = Translation.translateAsExpression(entryExpression, context());
+
+            KotlinType type = context().bindingContext().getType(entryExpression);
+
             if (translatedExpression instanceof JsNumberLiteral) {
                 append(context().program().getStringLiteral(translatedExpression.toString()));
                 return;
             }
 
-            KotlinType type = context().bindingContext().getType(entryExpression);
             if (type == null || type.isMarkedNullable()) {
                 append(TopLevelFIF.TO_STRING.apply((JsExpression) null, new SmartList<JsExpression>(translatedExpression), context()));
+            }
+            else if (KotlinBuiltIns.isChar(type)) {
+                append(JsAstUtils.charToString(translatedExpression));
             }
             else if (mustCallToString(type)) {
                 append(new JsInvocation(new JsNameRef("toString", translatedExpression)));

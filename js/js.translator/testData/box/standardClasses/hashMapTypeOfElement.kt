@@ -66,7 +66,7 @@ fun box(): String {
 
     val mapWithCharKeys = HashMap<Char, Int>()
     mapWithCharKeys['A'] = 1
-    assertEquals("string", jsTypeOf (mapWithCharKeys.keys.iterator().next()), "mapWithCharKeys")
+    assertEquals("object", jsTypeOf (mapWithCharKeys.keys.iterator().next()), "mapWithCharKeys")
 
     val mapWithLongKeys = HashMap<Long, Int>()
     mapWithLongKeys[1L] = 1

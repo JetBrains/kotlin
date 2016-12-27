@@ -82,15 +82,33 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
     override fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS!!
 
-    override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? =
-            when {
-                isEnumIntrinsicApplicable(descriptor, leftType, rightType) -> EnumEqualsIntrinsic
+    override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
+        val result = when {
+            isEnumIntrinsicApplicable(descriptor, leftType, rightType) -> EnumEqualsIntrinsic
 
-                KotlinBuiltIns.isBuiltIn(descriptor) ||
-                TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic
+            KotlinBuiltIns.isBuiltIn(descriptor) ||
+            TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic
 
-                else -> null
+            else -> null
+        }
+
+        if (result != null && leftType != rightType) {
+            val leftChar = (leftType != null && KotlinBuiltIns.isCharOrNullableChar(leftType))
+            val rightChar = (rightType != null && KotlinBuiltIns.isCharOrNullableChar(rightType))
+
+            if (leftChar xor rightChar) {
+                return object : AbstractBinaryOperationIntrinsic() {
+                    override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+                        val maybeBoxedLeft = if (leftChar) JsAstUtils.charToBoxedChar(left) else left
+                        val maybeBoxedRight = if (rightChar) JsAstUtils.charToBoxedChar(right) else right
+                        return result.apply(expression, maybeBoxedLeft, maybeBoxedRight, context)
+                    }
+                }
             }
+        }
+
+        return result
+    }
 
     private fun isEnumIntrinsicApplicable(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): Boolean {
         return DescriptorUtils.isEnumClass(descriptor.containingDeclaration) && leftType != null && rightType != null &&

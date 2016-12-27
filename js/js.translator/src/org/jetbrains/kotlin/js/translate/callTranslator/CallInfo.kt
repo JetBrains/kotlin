@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsConditional
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsLiteral
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -83,21 +86,30 @@ fun TranslationContext.getCallInfo(
 ): FunctionCallInfo {
     val argsBlock = JsBlock()
     val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.extensionOrDispatchReceiver, this, argsBlock)
+
     val explicitReceiversCorrected =
-        if (!argsBlock.isEmpty && explicitReceivers.extensionOrDispatchReceiver != null) {
-            val receiverOrThisRef = cacheExpressionIfNeeded(explicitReceivers.extensionOrDispatchReceiver)
-            var receiverRef = explicitReceivers.extensionReceiver
-            if (receiverRef != null) {
-                receiverRef = defineTemporary(explicitReceivers.extensionReceiver!!)
+            if (!argsBlock.isEmpty && explicitReceivers.extensionOrDispatchReceiver != null) {
+                val receiverOrThisRef = cacheExpressionIfNeeded(explicitReceivers.extensionOrDispatchReceiver)
+                var receiverRef = explicitReceivers.extensionReceiver
+                if (receiverRef != null) {
+                    receiverRef = defineTemporary(explicitReceivers.extensionReceiver!!)
+                }
+                ExplicitReceivers(receiverOrThisRef, receiverRef)
             }
-            ExplicitReceivers(receiverOrThisRef, receiverRef)
-        }
-        else {
-            explicitReceivers
-        }
+            else {
+                explicitReceivers
+            }
     this.addStatementsToCurrentBlockFrom(argsBlock)
     val callInfo = createCallInfo(resolvedCall, explicitReceiversCorrected)
     return FunctionCallInfo(callInfo, argumentsInfo)
+}
+
+private fun boxIfNeedeed(v: ReceiverValue?, d: ReceiverParameterDescriptor?, r: JsExpression?): JsExpression? {
+    if (r != null && v != null && KotlinBuiltIns.isCharOrNullableChar(v.type) &&
+        (d == null || !KotlinBuiltIns.isCharOrNullableChar(d.type))) {
+        return JsAstUtils.charToBoxedChar(r)
+    }
+    return r
 }
 
 private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue): JsExpression {
@@ -154,6 +166,15 @@ private fun TranslationContext.createCallInfo(
         }
     }
 
+    dispatchReceiver = boxIfNeedeed(resolvedCall.dispatchReceiver,
+                                    resolvedCall.candidateDescriptor.dispatchReceiverParameter,
+                                    dispatchReceiver)
+
+    extensionReceiver = boxIfNeedeed(resolvedCall.extensionReceiver,
+                                     resolvedCall.candidateDescriptor.extensionReceiverParameter,
+                                     extensionReceiver)
+
+
     return object : AbstractCallInfo(), CallInfo {
         override val context: TranslationContext = this@createCallInfo
         override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall
@@ -165,7 +186,8 @@ private fun TranslationContext.createCallInfo(
         override fun constructSafeCallIfNeeded(result: JsExpression): JsExpression {
             if (notNullConditionalForSafeCall == null) {
                 return result
-            } else {
+            }
+            else {
                 notNullConditionalForSafeCall.thenExpression = result
                 return notNullConditionalForSafeCall
             }

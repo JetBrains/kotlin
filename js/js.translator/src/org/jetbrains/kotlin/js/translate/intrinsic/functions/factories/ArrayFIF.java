@@ -126,7 +126,7 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "iterator"), new KotlinFunctionIntrinsic("arrayIterator"));
 
         add(pattern(NUMBER_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("newArray", JsNumberLiteral.ZERO));
-        add(pattern(CHAR_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("newArray", JsStringLiteral.createCharZero()));
+        add(pattern(CHAR_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("newArray", JsNumberLiteral.ZERO));
         add(pattern(BOOLEAN_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("newArray", JsLiteral.FALSE));
         add(pattern(LONG_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("newArray", new JsNameRef(Namer.LONG_ZERO, Namer.kotlinLong())));
 
