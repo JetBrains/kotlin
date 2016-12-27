@@ -1,0 +1,55 @@
+package test;
+
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
+package test;
+
+public final class Simple {
+    public static final test.Simple.Companion Companion = null;
+
+    @MyAnnotation()
+    public final void myMethod() {
+    }
+
+    public Simple() {
+        super();
+    }
+
+    public static final class NestedClass {
+
+        public NestedClass() {
+            super();
+        }
+
+        public static final class NestedNestedClass {
+
+            public NestedNestedClass() {
+                super();
+            }
+        }
+    }
+
+    public final class InnerClass {
+
+        public InnerClass() {
+            super();
+        }
+    }
+
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
+}

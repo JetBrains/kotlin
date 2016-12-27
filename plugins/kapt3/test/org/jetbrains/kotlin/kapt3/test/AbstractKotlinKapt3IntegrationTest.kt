@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -24,8 +25,12 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
+import org.jetbrains.kotlin.kapt3.diagnostic.DefaultErrorMessagesKapt3
+import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -121,10 +126,17 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".it.txt")
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+        val stubsDir = Files.createTempDirectory("kaptStubs").toFile()
+        val incrementalDataDir = Files.createTempDirectory("kaptIncrementalData").toFile()
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
-        val kapt3Extension = Kapt3ExtensionForTests(processors, javaSources.toList(), sourceOutputDir, this.options)
+
+        val kapt3Extension = Kapt3ExtensionForTests(processors, javaSources.toList(), sourceOutputDir, this.options,
+                                                    stubsOutputDir = stubsDir, incrementalDataOutputDir = incrementalDataDir)
+
         AnalysisHandlerExtension.registerExtension(myEnvironment.project, kapt3Extension)
+
+        Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesKapt3())
 
         try {
             loadMultiFiles(files)
@@ -137,18 +149,22 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             KotlinTestUtils.assertEqualsToFile(txtFile, actual)
         } finally {
             sourceOutputDir.deleteRecursively()
+            incrementalDataDir.deleteRecursively()
         }
     }
 
-    private class Kapt3ExtensionForTests(
+    protected class Kapt3ExtensionForTests(
             private val processors: List<Processor>,
             javaSourceRoots: List<File>,
             outputDir: File,
-            options: Map<String, String>
+            options: Map<String, String>,
+            stubsOutputDir: File,
+            incrementalDataOutputDir: File
     ) : AbstractKapt3Extension(PathUtil.getJdkClassesRoots(), emptyList(), javaSourceRoots, outputDir, outputDir,
-                               options, true, System.currentTimeMillis(), KaptLogger(true, messageCollector)
+                               stubsOutputDir, incrementalDataOutputDir, options, true, System.currentTimeMillis(), KaptLogger(true)
     ) {
         internal var savedStubs: String? = null
+        internal var savedBindings: Map<String, KaptJavaFileObject>? = null
 
         override fun loadProcessors() = processors
 
@@ -161,8 +177,22 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
                     .map { it.toString() }
                     .sortedBy(String::hashCode)
                     .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
+
+            super.saveStubs(stubs)
         }
 
-        override fun saveIncrementalData(generationState: GenerationState, messageCollector: MessageCollector) {}
+        override fun saveIncrementalData(
+                generationState: GenerationState,
+                messageCollector: MessageCollector,
+                converter: ClassFileToSourceStubConverter
+        ) {
+            if (this.savedBindings != null) {
+                error("Bindings are already saved")
+            }
+
+            this.savedBindings = converter.bindings
+
+            super.saveIncrementalData(generationState, messageCollector, converter)
+        }
     }
 }

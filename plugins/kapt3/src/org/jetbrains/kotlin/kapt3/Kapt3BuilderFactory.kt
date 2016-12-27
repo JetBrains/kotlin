@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -37,37 +38,44 @@ internal class Kapt3BuilderFactory : ClassBuilderFactory {
         val classNode = ClassNode()
         compiledClasses += classNode
         origins.put(classNode, origin)
+        return Kapt3ClassBuilder(classNode)
+    }
 
-        return object : AbstractClassBuilder.Concrete(classNode) {
-            override fun newField(
-                    origin: JvmDeclarationOrigin,
-                    access: Int,
-                    name: String,
-                    desc: String,
-                    signature: String?,
-                    value: Any?
-            ): FieldVisitor {
-                val fieldNode = super.newField(origin, access, name, desc, signature, value) as FieldNode
-                origins.put(fieldNode, origin)
-                return fieldNode
-            }
+    private inner class Kapt3ClassBuilder(val classNode: ClassNode) : AbstractClassBuilder.Concrete(classNode) {
+        override fun newField(
+                origin: JvmDeclarationOrigin,
+                access: Int,
+                name: String,
+                desc: String,
+                signature: String?,
+                value: Any?
+        ): FieldVisitor {
+            val fieldNode = super.newField(origin, access, name, desc, signature, value) as FieldNode
+            origins.put(fieldNode, origin)
+            return fieldNode
+        }
 
-            override fun newMethod(
-                    origin: JvmDeclarationOrigin,
-                    access: Int,
-                    name: String,
-                    desc: String,
-                    signature: String?,
-                    exceptions: Array<out String>?
-            ): MethodVisitor {
-                val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
-                origins.put(methodNode, origin)
-                return methodNode
-            }
+        override fun newMethod(
+                origin: JvmDeclarationOrigin,
+                access: Int,
+                name: String,
+                desc: String,
+                signature: String?,
+                exceptions: Array<out String>?
+        ): MethodVisitor {
+            val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
+            origins.put(methodNode, origin)
+            return methodNode
         }
     }
 
+    override fun asBytes(builder: ClassBuilder): ByteArray {
+        val classWriter = ClassWriter(0)
+        (builder as Kapt3ClassBuilder).classNode.accept(classWriter)
+        return classWriter.toByteArray()
+    }
+
     override fun asText(builder: ClassBuilder) = throw UnsupportedOperationException()
-    override fun asBytes(builder: ClassBuilder) = throw UnsupportedOperationException()
+
     override fun close() {}
 }
