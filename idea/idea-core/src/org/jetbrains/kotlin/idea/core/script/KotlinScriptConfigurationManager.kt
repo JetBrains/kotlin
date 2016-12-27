@@ -122,9 +122,7 @@ class KotlinScriptConfigurationManager(
 
     private fun reloadScriptDefinitions() {
         makeScriptDefsFromTemplatesProviderExtensions(project, { ep, ex -> log.warn("[kts] Error loading definition from ${ep.id}", ex) }).let {
-            if (it.isNotEmpty()) {
-                scriptDefinitionProvider.setScriptDefinitions(it + StandardScriptDefinition)
-            }
+            scriptDefinitionProvider.setScriptDefinitions(it)
         }
     }
 

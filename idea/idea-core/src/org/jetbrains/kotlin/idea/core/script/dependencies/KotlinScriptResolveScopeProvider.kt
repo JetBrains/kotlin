@@ -32,7 +32,7 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
         return when {
             scriptDefinition == null -> null
             // This is a workaround for completion in scripts and REPL to provide module dependencies
-            scriptDefinition == StandardScriptDefinition || scriptDefinition.template == Any::class -> null
+            scriptDefinition.template == Any::class -> null
             scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate -> // TODO: should include the file itself
                 KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
             else -> null

@@ -22,5 +22,9 @@
         <scriptTemplatesProvider
             id="ScriptTemplatesFromCompilerSettingsProvider"
             implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromCompilerSettingsProvider"/>
+
+        <scriptTemplatesProvider id="StandardKotlinScriptTemplateProvider"
+                                 order="last"
+                                 implementation="org.jetbrains.kotlin.idea.script.StandardKotlinScriptTemplateProvider"/>
     </extensions>
 </idea-plugin>
