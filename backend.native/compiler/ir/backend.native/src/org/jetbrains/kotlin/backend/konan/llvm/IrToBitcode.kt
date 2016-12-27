@@ -767,12 +767,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateExpressionAndJump(expression: IrExpression, destination: ContinuationBlock) {
         val result = evaluateExpression(expression)
 
-        if (!codegen.isAfterTerminator()) {
-            jump(destination, result)
-        } else {
-            // Workaround for unreachable code handling.
-            // Note: cannot rely on checking that expression type is Nothing.
-        }
+        // It is possible to check here whether the generated code has the normal continuation path
+        // and do not generate any jump if not;
+        // however such optimization can lead to phi functions with zero entries, which is not allowed by LLVM;
+        // TODO: find the better solution.
+
+        jump(destination, result)
     }
 
     //-------------------------------------------------------------------------//
