@@ -4,7 +4,9 @@
 // WITH_REFLECT
 
 import java.io.Serializable
-import kotlin.reflect.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KCallable
+import kotlin.reflect.full.*
 import kotlin.test.assertEquals
 
 inline fun <reified T : Any> check(vararg callables: KCallable<*>) {

@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.allSupertypes
+import kotlin.reflect.full.allSupertypes
 import kotlin.test.assertEquals
 
 interface A<A1, A2>

@@ -10,7 +10,7 @@ public class J {
 
 // FILE: K.kt
 
-import kotlin.reflect.findParameterByName
+import kotlin.reflect.full.findParameterByName
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 

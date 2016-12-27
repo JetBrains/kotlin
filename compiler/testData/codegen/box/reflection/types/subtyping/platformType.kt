@@ -10,7 +10,8 @@ public interface J {
 
 // FILE: K.kt
 
-import kotlin.reflect.*
+import kotlin.reflect.KCallable
+import kotlin.reflect.full.*
 import kotlin.test.assertTrue
 
 fun string(): String = null!!

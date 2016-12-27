@@ -4,8 +4,8 @@
 // WITH_REFLECT
 
 import kotlin.reflect.KClass
-import kotlin.reflect.cast
-import kotlin.reflect.safeCast
+import kotlin.reflect.full.cast
+import kotlin.reflect.full.safeCast
 import kotlin.test.*
 
 fun testInstance(value: Any?, klass: KClass<*>) {

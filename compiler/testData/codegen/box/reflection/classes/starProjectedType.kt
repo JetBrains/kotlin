@@ -4,8 +4,8 @@
 // WITH_REFLECT
 
 import kotlin.reflect.KTypeProjection
-import kotlin.reflect.createType
-import kotlin.reflect.starProjectedType
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.starProjectedType
 import kotlin.test.assertEquals
 
 class Foo<K, V>

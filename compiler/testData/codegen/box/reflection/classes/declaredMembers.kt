@@ -22,7 +22,7 @@ public class J extends I {
 
 // FILE: K.kt
 
-import kotlin.reflect.declaredMembers
+import kotlin.reflect.full.declaredMembers
 import kotlin.test.assertEquals
 
 open class K : J() {

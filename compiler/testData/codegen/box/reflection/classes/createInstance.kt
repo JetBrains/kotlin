@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.createInstance
+import kotlin.reflect.full.createInstance
 import kotlin.test.assertTrue
 import kotlin.test.fail
 

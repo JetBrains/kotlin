@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.createType
+import kotlin.reflect.full.createType
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KTypeProjection
 

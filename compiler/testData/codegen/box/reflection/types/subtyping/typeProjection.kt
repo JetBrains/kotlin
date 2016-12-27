@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.isSubtypeOf
+import kotlin.reflect.full.isSubtypeOf
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 

@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.createType
+import kotlin.reflect.full.createType
 import kotlin.reflect.KTypeProjection
 import kotlin.test.assertEquals
 

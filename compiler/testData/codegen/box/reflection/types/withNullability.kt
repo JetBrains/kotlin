@@ -10,7 +10,7 @@ public interface J {
 
 // FILE: K.kt
 
-import kotlin.reflect.withNullability
+import kotlin.reflect.full.withNullability
 import kotlin.test.assertEquals
 
 fun nonNull(): String = ""
