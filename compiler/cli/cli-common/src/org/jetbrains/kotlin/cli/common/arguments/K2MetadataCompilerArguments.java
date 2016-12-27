@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.cli.common.arguments;
 import com.sampullara.cli.Argument;
 
 public class K2MetadataCompilerArguments extends CommonCompilerArguments {
+    public static final long serialVersionUID = 0L;
+
     @Argument(value = "d", description = "Destination for generated .kotlin_metadata files")
     @ValueDescription("<directory|jar>")
     public String destination;

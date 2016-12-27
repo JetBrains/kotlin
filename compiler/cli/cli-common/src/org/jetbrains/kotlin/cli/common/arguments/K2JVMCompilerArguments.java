@@ -20,6 +20,8 @@ import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
+    public static final long serialVersionUID = 0L;
+
     @Argument(value = "d", description = "Destination for generated class files")
     @ValueDescription("<directory|jar>")
     public String destination;

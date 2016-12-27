@@ -20,9 +20,12 @@ import com.intellij.util.SmartList;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class CommonCompilerArguments {
+public abstract class CommonCompilerArguments implements Serializable {
+    public static final long serialVersionUID = 0L;
+
     public static final String PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>";
 
     @GradleOption(DefaultValues.LanguageVersions.class)
