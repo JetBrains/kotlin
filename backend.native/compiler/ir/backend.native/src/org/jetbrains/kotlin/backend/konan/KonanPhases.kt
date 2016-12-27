@@ -22,7 +22,7 @@ enum class KonanPhase(val description: String,
 }
 
 object KonanPhases {
-    val phases = KonanPhase.values().associate { it.name to it }
+    val phases = KonanPhase.values().associate { it.name.toLowerCase() to it }
 
     fun config(config: KonanConfig) {
         val disabled = config.configuration.get(KonanConfigKeys.DISABLED_PHASES)
