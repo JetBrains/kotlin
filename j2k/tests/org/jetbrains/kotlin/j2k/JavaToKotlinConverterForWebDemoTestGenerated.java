@@ -4164,6 +4164,51 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
+    @TestMetadata("j2k/testData/fileOrElement/primaryTypeConstFields")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PrimaryTypeConstFields extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInPrimaryTypeConstFields() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/primaryTypeConstFields"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("byteConsts.java")
+        public void testByteConsts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/primaryTypeConstFields/byteConsts.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleConsts.java")
+        public void testDoubleConsts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/primaryTypeConstFields/doubleConsts.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("floatConsts.java")
+        public void testFloatConsts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/primaryTypeConstFields/floatConsts.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("integerConsts.java")
+        public void testIntegerConsts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/primaryTypeConstFields/integerConsts.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longConsts.java")
+        public void testLongConsts() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/primaryTypeConstFields/longConsts.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortConst.java")
+        public void testShortConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/primaryTypeConstFields/shortConst.java");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("j2k/testData/fileOrElement/projections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,6 @@
+//expression
+Float.MIN_VALUE
+Float.MAX_VALUE
+Float.POSITIVE_INFINITY
+Float.NEGATIVE_INFINITY
+Float.NaN

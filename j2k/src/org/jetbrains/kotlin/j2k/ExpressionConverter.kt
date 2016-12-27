@@ -567,6 +567,13 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 result = codeConverter.convertExpression(qualifier)
                 return
             }
+            else if(target is PsiField){
+                val specialField = SpecialFiled.match(target)
+                if(specialField != null){
+                    result = specialField.convertField()
+                    return
+                }
+            }
         }
         else {
             if (target is PsiClass) {

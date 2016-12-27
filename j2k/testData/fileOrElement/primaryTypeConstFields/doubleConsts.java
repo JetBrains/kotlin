@@ -1,0 +1,6 @@
+//expression
+Double.MIN_VALUE
+Double.MAX_VALUE
+Double.POSITIVE_INFINITY
+Double.NEGATIVE_INFINITY
+Double.NaN
