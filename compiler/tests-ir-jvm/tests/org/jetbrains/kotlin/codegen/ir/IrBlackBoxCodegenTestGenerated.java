@@ -6115,6 +6115,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("hostCheck.kt")
+            public void testHostCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/hostCheck.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inClass.kt")
             public void testInClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inClass.kt");
@@ -6130,6 +6136,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("jvmStaticInObject.kt")
             public void testJvmStaticInObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/jvmStaticInObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt15437.kt")
+            public void testKt15437() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt15437.kt");
                 doTest(fileName);
             }
 

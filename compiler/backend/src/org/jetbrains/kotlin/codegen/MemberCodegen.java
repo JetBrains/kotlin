@@ -493,11 +493,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         int indexOfDelegatedProperty = PropertyCodegen.indexOfDelegatedProperty(property);
 
-        List<? extends ValueArgument> arguments = provideDelegateResolvedCall.getCall().getValueArguments();
-        assert arguments.size() == 2 :
-                "Resolved call for '" + OperatorNameConventions.PROVIDE_DELEGATE.asString() + "' should have exactly 2 value parameters";
-        codegen.tempVariables.put(arguments.get(0).asElement(), StackValue.LOCAL_0);
-
         StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethodWithReceiver(
                 codegen, typeMapper, provideDelegateResolvedCall, indexOfDelegatedProperty, 1, provideDelegateReceiver);
 

@@ -7016,6 +7016,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("hostCheck.kt")
+            public void testHostCheck() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/hostCheck.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inClass.kt")
             public void testInClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inClass.kt");
@@ -7038,6 +7044,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     return;
                 }
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("kt15437.kt")
+            public void testKt15437() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt15437.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("local.kt")
