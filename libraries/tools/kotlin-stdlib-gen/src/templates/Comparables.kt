@@ -136,6 +136,7 @@ fun comparables(): List<GenericFunction> {
         bodyForTypes(Primitives, PrimitiveType.Byte, PrimitiveType.Short) { p ->
             "return Math.min(a.toInt(), b.toInt()).to$p()"
         }
+        // TODO: custom body for JS minOf(Long, Long)
         body(Primitives) {
             "return Math.min(a, b)"
         }

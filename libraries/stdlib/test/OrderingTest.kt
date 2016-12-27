@@ -15,6 +15,7 @@ val STRING_CASE_INSENSITIVE_ORDER: Comparator<String> = compareBy { it: String -
 class OrderingTest {
     val v1 = Item("wine", 9)
     val v2 = Item("beer", 10)
+    val v3 = Item("apple", 20)
 
     @Test
     fun compareByCompareTo() {
@@ -143,6 +144,42 @@ class OrderingTest {
         val items = arrayListOf(v1, v2).sortedWith(comparator)
         assertEquals(v2, items[0])
         assertEquals(v1, items[1])
+    }
+
+    @Test fun maxOf() {
+        assertEquals(Int.MAX_VALUE, maxOf(Int.MAX_VALUE, Int.MIN_VALUE))
+        assertEquals(Int.MAX_VALUE, maxOf(Int.MAX_VALUE, Int.MIN_VALUE, 0))
+
+        assertEquals(Long.MAX_VALUE, maxOf(Long.MAX_VALUE, Long.MIN_VALUE))
+        assertEquals(Long.MAX_VALUE, maxOf(Long.MAX_VALUE, Long.MIN_VALUE, 0))
+
+        assertEquals(Double.POSITIVE_INFINITY, maxOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY))
+        assertEquals(Double.POSITIVE_INFINITY, maxOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
+    }
+
+    @Test fun maxOfWith() {
+        assertEquals(v1, maxOf(v1, v2, compareBy { it.name }))
+        assertEquals(v1, maxOf(v3, v2, v1, compareBy { it.name }))
+        assertEquals(v2, maxOf(v1, v2, compareBy { it.rating }))
+        assertEquals(v3, maxOf(v1, v2, v3, compareBy { it.rating }))
+    }
+
+    @Test fun minOf() {
+        assertEquals(Int.MIN_VALUE, minOf(Int.MAX_VALUE, Int.MIN_VALUE))
+        assertEquals(Int.MIN_VALUE, minOf(Int.MAX_VALUE, Int.MIN_VALUE, 0))
+
+        assertEquals(Long.MIN_VALUE, minOf(Long.MAX_VALUE, Long.MIN_VALUE))
+        assertEquals(Long.MIN_VALUE, minOf(Long.MAX_VALUE, Long.MIN_VALUE, 0))
+
+        assertEquals(Double.NEGATIVE_INFINITY, minOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY))
+        assertEquals(Double.MIN_VALUE, minOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
+    }
+
+    @Test fun minOfWith() {
+        assertEquals(v2, minOf(v1, v2, compareBy { it.name }))
+        assertEquals(v3, minOf(v3, v2, v1, compareBy { it.name }))
+        assertEquals(v1, minOf(v1, v2, compareBy { it.rating }))
+        assertEquals(v1, minOf(v1, v2, v3, compareBy { it.rating }))
     }
 
 }
