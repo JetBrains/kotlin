@@ -132,50 +132,34 @@ public inline fun println() {
     System.out.println()
 }
 
-// Since System.in can change its value on the course of program running,
-// we should always delegate to current value and cannot just pass it to InputStreamReader constructor.
-// We could use "by" implementation, but we can only use "by" with interfaces and InputStream is abstract class.
-private val stdin: BufferedReader by lazy { BufferedReader(InputStreamReader(object : InputStream() {
-    public override fun read(): Int {
-        return System.`in`.read()
-    }
-
-    public override fun reset() {
-        System.`in`.reset()
-    }
-
-    public override fun read(b: ByteArray): Int {
-        return System.`in`.read(b)
-    }
-
-    public override fun close() {
-        System.`in`.close()
-    }
-
-    public override fun mark(readlimit: Int) {
-        System.`in`.mark(readlimit)
-    }
-
-    public override fun skip(n: Long): Long {
-        return System.`in`.skip(n)
-    }
-
-    public override fun available(): Int {
-        return System.`in`.available()
-    }
-
-    public override fun markSupported(): Boolean {
-        return System.`in`.markSupported()
-    }
-
-    public override fun read(b: ByteArray, off: Int, len: Int): Int {
-        return System.`in`.read(b, off, len)
-    }
-}))}
-
 /**
  * Reads a line of input from the standard input stream.
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
-public fun readLine(): String? = stdin.readLine()
+
+public fun readLine(): String? {
+    val buffer = StringBuilder()
+    var c = System.`in`.read()
+    if(c < 0) return null
+    buffer.append(c.toChar())
+    do {
+        c = System.`in`.read()
+        if(c < 0) return buffer.toString()
+        val ch = c.toChar()
+        when (ch) {
+            '\r' -> {
+                val maybeLF = System.`in`.read()
+                if(maybeLF < 0) return buffer.append('\r').toString()
+                val maybeCharLF = maybeLF.toChar()
+                if(maybeCharLF == '\n') {
+                    return buffer.toString()
+                } else {
+                    buffer.append('\r').append(maybeCharLF)
+                }
+            }
+            '\n' -> return buffer.toString()
+            else -> buffer.append(ch)
+        }
+    } while(true)
+}
