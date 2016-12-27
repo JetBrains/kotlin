@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.kapt3.util
 import org.jetbrains.kotlin.cli.common.messages.*
 import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
+import java.io.StringWriter
 
 class KaptLogger(
         val isVerbose: Boolean,
@@ -50,9 +51,9 @@ class KaptLogger(
 
     fun exception(e: Throwable) {
         val stacktrace = run {
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            e.printStackTrace(PrintWriter(byteArrayOutputStream))
-            byteArrayOutputStream.toString("UTF-8")
+            val writer = StringWriter()
+            e.printStackTrace(PrintWriter(writer))
+            writer.toString()
         }
         messageCollector.report(CompilerMessageSeverity.EXCEPTION, PREFIX + "An exception occurred: " + stacktrace, CompilerMessageLocation.NO_LOCATION)
     }
