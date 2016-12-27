@@ -203,6 +203,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kaptTask.mapClasspath { kotlinCompile.classpath }
         kaptTask.destinationDir = sourcesOutputDir
+        kaptTask.dependsOn(javaCompile.dependsOn)
         kotlinCompile.dependsOn(kaptTask)
 
         // Add generated source dir as a source root for kotlinCompile and javaCompile
