@@ -99,14 +99,14 @@ sealed class BuiltInDefinitionFile {
         val packageFqName = nameResolver.getPackageFqName(proto.`package`.getExtension(BuiltInsProtoBuf.packageFqName))
 
         val classesToDecompile =
-                if (!isMetadata && FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES) proto.class_List.filter { classProto ->
-                    shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName))
+                proto.class_List.filterNot { proto -> nameResolver.getClassId(proto.fqName).isNestedClass }.let { classes ->
+                    if (isMetadata || !FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES) classes
+                    else classes.filter { classProto ->
+                        shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName))
+                    }
                 }
-                else proto.class_List
 
         private fun shouldDecompileBuiltInClass(classId: ClassId): Boolean {
-            if (classId.isNestedClass) return false
-
             val realJvmClassFileName = classId.shortClassName.asString() + "." + JavaClassFileType.INSTANCE.defaultExtension
             return packageDirectory.findChild(realJvmClassFileName) == null
         }
