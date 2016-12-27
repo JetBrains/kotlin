@@ -3040,6 +3040,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("exhaustiveCheckException.kt")
+            public void testExhaustiveCheckException() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/when/exhaustiveCheckException.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forWithOneStmWhen.kt")
             public void testForWithOneStmWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/when/forWithOneStmWhen.kt");

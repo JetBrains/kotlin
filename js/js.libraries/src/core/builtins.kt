@@ -34,3 +34,6 @@ internal fun arrayIterator(array: dynamic): MutableIterator<dynamic> {
 
 @JsName("PropertyMetadata")
 internal class PropertyMetadata(val name: String)
+
+@JsName("noWhenBranchMatched")
+internal fun noWhenBranchMatched(): Nothing = throw NoWhenBranchMatchedException()

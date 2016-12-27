@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -141,4 +142,16 @@ object CodegenUtil {
                         function.returnType != null &&
                         isReturnTypeOk(function.returnType!!)
                     }
+
+
+    @JvmStatic
+    fun BindingContext.isExhaustive(whenExpression: KtWhenExpression, isStatement: Boolean): Boolean {
+        val slice = if (isStatement && !whenExpression.isUsedAsExpression(this)) {
+            BindingContext.IMPLICIT_EXHAUSTIVE_WHEN
+        }
+        else {
+            BindingContext.EXHAUSTIVE_WHEN
+        }
+        return this[slice, whenExpression] == true
+    }
 }

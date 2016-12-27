@@ -4547,7 +4547,8 @@ The "returned" value of try expression with no finally is either the last expres
             @Override
             public Unit invoke(InstructionAdapter v) {
                 SwitchCodegen switchCodegen = SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(
-                        expression, isStatement, isExhaustive(expression, isStatement), ExpressionCodegen.this
+                        expression, isStatement, CodegenUtil.isExhaustive(bindingContext, expression, isStatement),
+                        ExpressionCodegen.this
                 );
                 if (switchCodegen != null) {
                     switchCodegen.generate();
@@ -4607,20 +4608,11 @@ The "returned" value of try expression with no finally is either the last expres
         });
     }
 
-    private boolean isExhaustive(@NotNull KtWhenExpression whenExpression, boolean isStatement) {
-        if (isStatement && !BindingContextUtilsKt.isUsedAsExpression(whenExpression, bindingContext)) {
-            return Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression));
-        }
-        else {
-            return Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
-        }
-    }
-
     public void putUnitInstanceOntoStackForNonExhaustiveWhen(
             @NotNull KtWhenExpression whenExpression,
             boolean isStatement
     ) {
-        if (isExhaustive(whenExpression, isStatement)) {
+        if (CodegenUtil.isExhaustive(bindingContext, whenExpression, isStatement)) {
             // when() is supposed to be exhaustive
             genThrow(v, "kotlin/NoWhenBranchMatchedException", null);
         }
