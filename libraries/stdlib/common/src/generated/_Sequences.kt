@@ -360,6 +360,13 @@ public header inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T
 public header inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
 
 /**
+ * Creates a [Grouping] source from a sequence to be used later with one of group-and-fold operations
+ * using the specified [keySelector] function to extract a key from each element.
+ */
+@SinceKotlin("1.1")
+public header inline fun <T, K> Sequence<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K>
+
+/**
  * Returns a sequence containing the results of applying the given [transform] function
  * to each element in the original sequence.
  */

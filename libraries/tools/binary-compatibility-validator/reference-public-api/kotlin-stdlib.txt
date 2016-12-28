@@ -663,6 +663,7 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun groupByTo ([SLjava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo ([ZLjava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo ([ZLjava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun groupingBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
 	public static final fun indexOf ([BB)I
 	public static final fun indexOf ([CC)I
 	public static final fun indexOf ([DD)I
@@ -1470,6 +1471,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun groupBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun groupingBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
 	public static final fun indexOf (Ljava/lang/Iterable;Ljava/lang/Object;)I
 	public static final fun indexOf (Ljava/util/List;Ljava/lang/Object;)I
 	public static final fun indexOfFirst (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
@@ -1605,6 +1607,26 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun zip (Ljava/lang/Iterable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;)Ljava/util/List;
 	public static final fun zip (Ljava/lang/Iterable;[Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+}
+
+public abstract interface class kotlin/collections/Grouping {
+	public abstract fun elementIterator ()Ljava/util/Iterator;
+	public abstract fun keyOf (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class kotlin/collections/GroupingKt {
+	public static final fun aggregate (Lkotlin/collections/Grouping;Lkotlin/jvm/functions/Function4;)Ljava/util/Map;
+	public static final fun aggregateTo (Lkotlin/collections/Grouping;Ljava/util/Map;Lkotlin/jvm/functions/Function4;)Ljava/util/Map;
+	public static final fun eachCount (Lkotlin/collections/Grouping;)Ljava/util/Map;
+	public static final fun eachCountTo (Lkotlin/collections/Grouping;Ljava/util/Map;)Ljava/util/Map;
+	public static final fun eachSumOf (Lkotlin/collections/Grouping;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun eachSumOfTo (Lkotlin/collections/Grouping;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun fold (Lkotlin/collections/Grouping;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/Map;
+	public static final fun fold (Lkotlin/collections/Grouping;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;)Ljava/util/Map;
+	public static final fun foldTo (Lkotlin/collections/Grouping;Ljava/util/Map;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/Map;
+	public static final fun foldTo (Lkotlin/collections/Grouping;Ljava/util/Map;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;)Ljava/util/Map;
+	public static final fun reduce (Lkotlin/collections/Grouping;Lkotlin/jvm/functions/Function3;)Ljava/util/Map;
+	public static final fun reduceTo (Lkotlin/collections/Grouping;Ljava/util/Map;Lkotlin/jvm/functions/Function3;)Ljava/util/Map;
 }
 
 public final class kotlin/collections/IndexedValue {
@@ -2085,6 +2107,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun groupBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun groupingBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
 	public static final fun indexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
 	public static final fun indexOfFirst (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfLast (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
@@ -2428,6 +2451,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun groupBy (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun groupByTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun groupingBy (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Lkotlin/collections/Grouping;
 	public static final fun hasSurrogatePairAt (Ljava/lang/CharSequence;I)Z
 	public static final fun indexOf (Ljava/lang/CharSequence;CIZ)I
 	public static final fun indexOf (Ljava/lang/CharSequence;Ljava/lang/String;IZ)I
