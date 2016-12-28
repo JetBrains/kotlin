@@ -169,10 +169,10 @@ class CString private constructor(override val rawPtr: NativePtr) : CPointed {
     override fun toString(): String {
         val array = reinterpret<CArray<CInt8Var>>()
 
-        val bytes = ByteArray(this.length())
-        bytes.forEachIndexed { i, byte ->
-            bytes[i] = array[i].value
-        }
+        val len = this.length()
+        val bytes = ByteArray(len)
+
+        nativeMemUtils.getByteArray(array[0], bytes, len)
         return String(bytes) // TODO: encoding
     }
 
@@ -188,9 +188,7 @@ fun CString.Companion.fromString(str: String?, placement: NativePlacement): CStr
     val len = bytes.size
     val nativeBytes = nativeHeap.allocArray<CInt8Var>(len + 1)
 
-    bytes.forEachIndexed { i, byte ->
-        nativeBytes[i].value = byte
-    }
+    nativeMemUtils.putByteArray(bytes, nativeBytes[0], len)
     nativeBytes[len].value = 0
 
     return CString.fromArray(nativeBytes)
