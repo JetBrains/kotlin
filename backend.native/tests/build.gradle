@@ -125,6 +125,20 @@ task fields(type: RunKonanTest) {
 task fields1(type: RunKonanTest) {
     source = "codegen/object/fields1.kt"
 }
+
+task fields2(type: RunKonanTest) {
+    disabled = true
+    goldValue =
+            "Set global = 1\n" +
+            "Set member = 42\n" +
+            "Get member = 42\n" +
+            "Set global = 42\n" +
+            "Get global = 42\n" +
+            "Set member = 42\n"
+
+    source = "codegen/object/fields2.kt"
+}
+
 // This test checks object layout can't be done in
 // RunKonanTest paradigm
 //task constructor(type: UnitKonanTest) {
