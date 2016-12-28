@@ -57,6 +57,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
         container.useInstance(SyntheticConstructorsProvider.Empty)
         container.useInstance(JsTypeSpecificityComparator)
         container.useInstance(JsNameClashChecker())
+        container.useInstance(JsNameCharsChecker())
         container.useImpl<JsReflectionAPICallChecker>()
         container.useImpl<JsNativeRttiChecker>()
         container.useImpl<JsReifiedNativeChecker>()

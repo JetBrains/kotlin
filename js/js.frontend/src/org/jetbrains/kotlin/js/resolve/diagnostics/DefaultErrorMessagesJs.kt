@@ -39,6 +39,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED, "Argument must be non-empty JavaScript code")
         put(ErrorsJs.NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
         put(ErrorsJs.WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) can't be external", Renderers.STRING)
+
         put(ErrorsJs.JS_NAME_CLASH, "JavaScript name ({0}) generated for this declaration clashes with another declaration: {1}",
             Renderers.STRING, Renderers.COMPACT)
         put(ErrorsJs.JS_FAKE_NAME_CLASH, "JavaScript name {0} is generated for different inherited members: {1} and {2}",
@@ -49,6 +50,9 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_OVERRIDE, "@JsName is prohibited for overridden members")
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
         put(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for external declaration with explicit name")
+
+        put(ErrorsJs.NAME_CONTAINS_ILLEGAL_CHARS, "Name contains illegal chars that can't appear in JavaScript identifier")
+
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_VAR, "@JsModule and @JsNonModule annotations prohibited for 'var' declarations. " +
                                                   "Use 'val' instead.")
         put(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE, "@JsModule and @JsNonModule annotations prohibited for non-external declarations.")

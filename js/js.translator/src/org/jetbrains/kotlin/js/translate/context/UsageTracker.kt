@@ -166,12 +166,12 @@ class UsageTracker(
 
             // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
             else -> {
-                val mangled = NameSuggestion().suggest(this)!!.names.last()
+                val mangled = NameSuggestion.sanitizeName(NameSuggestion().suggest(this)!!.names.last())
                 "closure\$$mangled"
             }
         }
 
-        return scope.declareFreshName(suggestedName)
+        return scope.declareTemporaryName(suggestedName)
     }
 }
 

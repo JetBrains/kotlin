@@ -5165,6 +5165,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("peculiarIdentifiers.kt")
+        public void testPeculiarIdentifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/peculiarIdentifiers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("privateMethod.kt")
         public void testPrivateMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/jsName/privateMethod.kt");

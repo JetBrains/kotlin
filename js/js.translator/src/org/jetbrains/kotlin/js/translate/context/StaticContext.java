@@ -368,7 +368,7 @@ public final class StaticContext {
             assert suggested.getNames().size() == 1 : "Private names must always consist of exactly one name";
             JsName name = nameCache.get(suggested.getDescriptor());
             if (name == null) {
-                String baseName = suggested.getNames().get(0);
+                String baseName = NameSuggestion.sanitizeName(suggested.getNames().get(0));
                 if (suggested.getDescriptor() instanceof LocalVariableDescriptor ||
                     suggested.getDescriptor() instanceof ValueParameterDescriptor
                 ) {
@@ -530,14 +530,14 @@ public final class StaticContext {
                 }
             }
             else {
-                suggestedName = descriptor.getName().asString();
+                suggestedName = NameSuggestion.sanitizeName(descriptor.getName().asString());
             }
         }
 
         if (!(descriptor instanceof PackageFragmentDescriptor) && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             DeclarationDescriptor container = descriptor.getContainingDeclaration();
             assert container != null : "We just figured out that descriptor is not for a top-level declaration: " + descriptor;
-            suggestedName = getSuggestedName(container) + "$" + suggestedName;
+            suggestedName = getSuggestedName(container) + "$" + NameSuggestion.sanitizeName(suggestedName);
         }
 
         return suggestedName;

@@ -440,6 +440,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("illegalName.kt")
+        public void testIllegalName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/illegalName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsNameAndNamedNative.kt")
         public void testJsNameAndNamedNative() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name/jsNameAndNamedNative.kt");

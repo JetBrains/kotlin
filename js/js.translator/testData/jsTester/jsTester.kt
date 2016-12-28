@@ -8,8 +8,6 @@ public class JsTestsAsserter() : Asserter {
     public override fun fail(message: String?): Nothing = failWithMessage(message)
 }
 
-@JsName("JsTests.assert")
-public external fun assert(value: Boolean, message: String?): Unit = noImpl
+public inline fun assert(value: Boolean, message: String?): Unit = js("JsTests").assert(value, message)
 
-@JsName("JsTests.fail")
-private external fun failWithMessage(message: String?): Nothing = noImpl
+private inline fun failWithMessage(message: String?): Nothing = js("JsTests").fail(message)

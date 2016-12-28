@@ -330,5 +330,12 @@ class NameSuggestion {
 
         private val DeclarationDescriptorWithVisibility.ownEffectiveVisibility
             get() = visibility.effectiveVisibility(this, checkPublishedApi = true).toVisibility()
+
+        @JvmStatic fun sanitizeName(name: String): String {
+            if (name.isEmpty()) return "_"
+
+            val first = name.first().let { if (java.lang.Character.isJavaIdentifierStart(it)) it else '_' }
+            return first.toString() + name.drop(1).map { if (java.lang.Character.isJavaIdentifierPart(it)) it else '_' }.joinToString("")
+        }
     }
 }
