@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.daemon.incremental
+package org.jetbrains.kotlin.daemon.common
 
-import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
-import org.jetbrains.kotlin.incremental.DirtyData
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
-import java.io.File
+import java.io.Serializable
 
-class RemoteArtifactChangesProvider(private val servicesFacade: IncrementalCompilerServicesFacade) : ArtifactChangesProvider {
-    override fun getChanges(artifact: File, sinceTS: Long): Iterable<DirtyData>? =
-            servicesFacade.getChanges(artifact, sinceTS)?.map { it.toDirtyData() }
+/**
+ * Allows daemon clients to specify report category and severities for that category that should be reported from daemon
+ */
+data class ReportingFilter(val category: ReportCategory, val severities: List<Int>) : Serializable {
+    companion object {
+        const val serialVersionUID: Long = 0
+    }
 }

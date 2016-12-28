@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.daemon.incremental
 
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
 import org.jetbrains.kotlin.incremental.ICReporter
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
-internal class RemoteAnnotationsFileUpdater(private val servicesFacade: IncrementalCompilationServicesFacade) : AnnotationFileUpdater {
+internal class RemoteAnnotationsFileUpdater(private val servicesFacade: IncrementalCompilerServicesFacade) : AnnotationFileUpdater {
     override fun updateAnnotations(outdatedClasses: Iterable<JvmClassName>) {
         servicesFacade.updateAnnotations(outdatedClasses.map { it.internalName })
     }

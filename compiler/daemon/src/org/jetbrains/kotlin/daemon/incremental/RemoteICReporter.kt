@@ -17,20 +17,37 @@
 package org.jetbrains.kotlin.daemon.incremental
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.daemon.report.FilteringReporterBase
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.AdditionalCompilerArguments
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
+import org.jetbrains.kotlin.daemon.common.ReportCategory
+import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity.COMPILED_FILES
+import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity.LOGGING
 import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 
-internal class RemoteICReporter(private val servicesFacade: IncrementalCompilationServicesFacade) : ICReporter() {
+internal class RemoteICReporter(
+        servicesFacade: CompilerServicesFacadeBase,
+        additionalCompilerArgs: AdditionalCompilerArguments
+) : FilteringReporterBase(servicesFacade, additionalCompilerArgs, ReportCategory.INCREMENTAL_COMPILATION), ICReporter {
     override fun report(message: () -> String) {
-        if (servicesFacade.shouldReportIC()) {
-            servicesFacade.reportIC(message())
+        if (shouldReport(LOGGING.value)) {
+            report(LOGGING.value, message())
         }
     }
 
-    override fun reportCompileIteration(sourceFiles: Iterable<File>, exitCode: ExitCode) {
-        if (servicesFacade.shouldReportIC()) {
-            servicesFacade.reportCompileIteration(sourceFiles, exitCode.code)
+    override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
+        if (shouldReport(COMPILED_FILES.value)) {
+            report(COMPILED_FILES.value, message = null, attachment = ArrayList(sourceFiles))
         }
     }
+}
+
+/**
+ * See [RemoteICReporter]
+ */
+enum class IncrementalCompilationSeverity(val value: Int) {
+    COMPILED_FILES(0),
+    LOGGING(10)
 }

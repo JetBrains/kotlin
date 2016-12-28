@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.repl.*
 import java.io.File
 import java.io.Serializable
@@ -33,6 +34,11 @@ interface CompileService : Remote {
         JVM,
         JS,
         METADATA
+    }
+
+    enum class CompilerMode : Serializable {
+        NON_INCREMENTAL_COMPILER,
+        INCREMENTAL_COMPILER
     }
 
     companion object {
@@ -127,12 +133,13 @@ interface CompileService : Remote {
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
-    fun serverSideJvmIC(
+    fun compile(
             sessionId: Int,
-            args: Array<out String>,
-            servicesFacade: IncrementalCompilationServicesFacade,
-            compilerOutputStream: RemoteOutputStream,
-            serviceOutputStream: RemoteOutputStream,
+            compilerMode: CompilerMode,
+            targetPlatform: TargetPlatform,
+            compilerArguments: CommonCompilerArguments,
+            additionalCompilerArguments: AdditionalCompilerArguments,
+            servicesFacade: CompilerServicesFacadeBase,
             operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
 

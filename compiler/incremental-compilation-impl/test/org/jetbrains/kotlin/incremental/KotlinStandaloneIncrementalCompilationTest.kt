@@ -128,7 +128,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
             override fun report(message: ()->String) {
             }
 
-            override fun reportCompileIteration(sourceFiles: Iterable<File>, exitCode: ExitCode) {
+            override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
                 compiledSources.addAll(sourceFiles)
                 resultExitCode = exitCode
             }

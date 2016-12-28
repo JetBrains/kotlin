@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.daemon.incremental
 
-import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 
-internal class RemoteChangesRegostry(private val servicesFacade: IncrementalCompilationServicesFacade) : ChangesRegistry {
+internal class RemoteChangesRegostry(private val servicesFacade: IncrementalCompilerServicesFacade) : ChangesRegistry {
     override fun unknownChanges(timestamp: Long) {
         servicesFacade.unknownChanges(timestamp)
     }
