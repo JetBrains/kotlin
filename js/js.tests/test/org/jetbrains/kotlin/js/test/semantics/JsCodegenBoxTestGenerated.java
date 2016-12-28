@@ -2549,6 +2549,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt15447.kt")
+            public void testKt15447() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/kt15447.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt6870_privatePropertyReference.kt")
             public void testKt6870_privatePropertyReference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/kt6870_privatePropertyReference.kt");

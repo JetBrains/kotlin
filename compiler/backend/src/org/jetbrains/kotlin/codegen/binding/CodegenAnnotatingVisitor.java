@@ -340,11 +340,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             closure.setCaptureReceiverType(receiverType);
         }
 
-        classStack.push(classDescriptor);
-        nameStack.push(name);
         super.visitCallableReferenceExpression(expression);
-        nameStack.pop();
-        classStack.pop();
     }
 
     @NotNull
