@@ -23,18 +23,23 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.incremental.*
+import org.jetbrains.kotlin.daemon.report.CompileServiceReporter
+import org.jetbrains.kotlin.daemon.report.CompileServiceReporterImpl
+import org.jetbrains.kotlin.daemon.report.CompileServiceReporterStreamAdapter
+import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.BufferedOutputStream
@@ -87,7 +92,6 @@ class CompileServiceImpl(
         val timer: Timer,
         val onShutdown: () -> Unit
 ) : CompileService {
-
     init {
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
     }
@@ -280,61 +284,93 @@ class CompileServiceImpl(
                 }
             }
 
-    override fun serverSideJvmIC(
+    override fun compile(
             sessionId: Int,
-            args: Array<out String>,
-            servicesFacade: IncrementalCompilationServicesFacade,
-            compilerOutputStream: RemoteOutputStream,
-            serviceOutputStream: RemoteOutputStream,
+            compilerMode: CompileService.CompilerMode,
+            targetPlatform: CompileService.TargetPlatform,
+            compilerArguments: CommonCompilerArguments,
+            additionalCompilerArguments: AdditionalCompilerArguments,
+            servicesFacade: CompilerServicesFacadeBase,
             operationsTracer: RemoteOperationsTracer?
     ): CompileService.CallResult<Int> {
-        return doCompile(sessionId, args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, eventManager, profiler ->
-            val reporter = RemoteICReporter(servicesFacade)
-            val annotationFileUpdater = if (servicesFacade.hasAnnotationsFileUpdater()) RemoteAnnotationsFileUpdater(servicesFacade) else null
+        val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, additionalCompilerArguments)
+        val serviceReporter = CompileServiceReporterImpl(servicesFacade, additionalCompilerArguments)
 
-            // these flags do not have any effect on the compiler (only on caches, incremental compilation logic, jps plugin)
-            // so it's OK to just set them true
-            IncrementalCompilation.setIsEnabled(true)
-            IncrementalCompilation.setIsExperimental(true)
-
-            val k2jvmArgs = K2JVMCompilerArguments()
-            (compiler[CompileService.TargetPlatform.JVM] as K2JVMCompiler).parseArguments(args, k2jvmArgs)
-
-            val moduleFile = k2jvmArgs.module?.let(::File)
-            assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.module}" }
-            val renderer = MessageRenderer.XML
-            val messageCollector = PrintingMessageCollector(printStream, renderer, k2jvmArgs.verbose)
-            val filteringMessageCollector = FilteringMessageCollector(messageCollector) { it == CompilerMessageSeverity.ERROR }
-
-            val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.module, filteringMessageCollector)
-            val javaSourceRoots = parsedModule.modules.flatMapTo(HashSet()) { it.getJavaSourceRoots().map { File(it.path) } }
-            val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(::File) }
-            k2jvmArgs.friendPaths = parsedModule.modules.flatMap(Module::getFriendPaths).toTypedArray()
-
-            val changedFiles = if (servicesFacade.areFileChangesKnown()) {
-                ChangedFiles.Known(servicesFacade.modifiedFiles()!!, servicesFacade.deletedFiles()!!)
+        return when (compilerMode) {
+            CompileService.CompilerMode.NON_INCREMENTAL_COMPILER -> {
+                doCompile(sessionId, serviceReporter, operationsTracer) { eventManger, profiler ->
+                    execCompiler(targetPlatform, Services.EMPTY, compilerArguments, messageCollector)
+                }
             }
-            else {
-                ChangedFiles.Unknown()
-            }
+            CompileService.CompilerMode.INCREMENTAL_COMPILER -> {
+                if (targetPlatform != CompileService.TargetPlatform.JVM) {
+                    throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
+                }
 
-            val artifactChanges = RemoteArtifactChangesProvider(servicesFacade)
-            val changesRegistry = RemoteChangesRegostry(servicesFacade)
+                val k2jvmArgs = compilerArguments as K2JVMCompilerArguments
+                val gradleIncrementalArgs = additionalCompilerArguments as IncrementalCompilerArguments
+                val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacade
 
-            val workingDir = servicesFacade.workingDir()
-            val versions = commonCacheVersions(workingDir) +
-                           customCacheVersion(servicesFacade.customCacheVersion(), servicesFacade.customCacheVersionFileName(), workingDir, forceEnable = true)
+                withIC {
+                    doCompile(sessionId, serviceReporter, operationsTracer) { eventManger, profiler ->
+                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, messageCollector)
+                    }
+                }
 
-            try {
-                printStream.print(renderer.renderPreamble())
-                IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater,
-                                             artifactChanges, changesRegistry)
-                        .compile(allKotlinFiles, k2jvmArgs, messageCollector, { changedFiles })
             }
-            finally {
-                printStream.print(renderer.renderConclusion())
-            }
+            else -> throw IllegalStateException("Unknown compilation mode $compilerMode")
         }
+    }
+
+    private fun execCompiler(
+            targetPlatform: CompileService.TargetPlatform,
+            services: Services,
+            args: CommonCompilerArguments,
+            messageCollector: MessageCollector
+    ): ExitCode =
+            when(targetPlatform) {
+                CompileService.TargetPlatform.JVM -> {
+                    K2JVMCompiler().exec(messageCollector, services, args as K2JVMCompilerArguments)
+                }
+                CompileService.TargetPlatform.JS -> {
+                    K2JSCompiler().exec(messageCollector, services, args as K2JSCompilerArguments)
+                }
+            }
+
+    private fun execIncrementalCompiler(
+            k2jvmArgs: K2JVMCompilerArguments,
+            incrementalCompilerArgs: IncrementalCompilerArguments,
+            servicesFacade: IncrementalCompilerServicesFacade,
+            messageCollector: CompileServicesFacadeMessageCollector
+    ): ExitCode {
+        val reporter = RemoteICReporter(servicesFacade, incrementalCompilerArgs)
+        val annotationFileUpdater = if (servicesFacade.hasAnnotationsFileUpdater()) RemoteAnnotationsFileUpdater(servicesFacade) else null
+
+        val moduleFile = k2jvmArgs.module?.let(::File)
+        assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.module}" }
+
+        val temporaryMessageCollectorForModuleParsing = FilteringMessageCollector(messageCollector) { it != CompilerMessageSeverity.ERROR }
+        val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.module, temporaryMessageCollectorForModuleParsing)
+        val javaSourceRoots = parsedModule.modules.flatMapTo(HashSet()) { it.getJavaSourceRoots().map { File(it.path) } }
+        val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(::File) }
+
+        val changedFiles = if (incrementalCompilerArgs.areFileChangesKnown) {
+            ChangedFiles.Known(incrementalCompilerArgs.modifiedFiles!!, incrementalCompilerArgs.deletedFiles!!)
+        }
+        else {
+            ChangedFiles.Unknown()
+        }
+
+        val artifactChanges = RemoteArtifactChangesProvider(servicesFacade)
+        val changesRegistry = RemoteChangesRegostry(servicesFacade)
+
+        val workingDir = incrementalCompilerArgs.workingDir
+        val versions = commonCacheVersions(workingDir) +
+                       customCacheVersion(incrementalCompilerArgs.customCacheVersion, incrementalCompilerArgs.customCacheVersionFileName, workingDir, forceEnable = true)
+
+        return IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater,
+                                            artifactChanges, changesRegistry)
+                .compile(allKotlinFiles, k2jvmArgs, messageCollector, { changedFiles })
     }
 
     // internal implementation stuff
@@ -493,6 +529,7 @@ class CompileServiceImpl(
         return res
     }
 
+    // todo: remove after remoteIncrementalCompile is removed
     private fun doCompile(sessionId: Int,
                           args: Array<out String>,
                           compilerMessagesStreamProxy: RemoteOutputStream,
@@ -507,14 +544,40 @@ class CompileServiceImpl(
                     val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
                     val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
                     try {
-                        CompileService.CallResult.Good(
-                                checkedCompile(args, serviceOutputStream, rpcProfiler) {
-                                    body(compilerMessagesStream, eventManger, rpcProfiler).code
-                                })
+                        val compileServiceReporter = CompileServiceReporterStreamAdapter(serviceOutputStream)
+                        if (args.none())
+                            throw IllegalArgumentException("Error: empty arguments list.")
+                        log.info("Starting compilation with args: " + args.joinToString(" "))
+                        val exitCode = checkedCompile(compileServiceReporter, rpcProfiler) {
+                            body(compilerMessagesStream, eventManger, rpcProfiler).code
+                        }
+                        CompileService.CallResult.Good(exitCode)
                     }
                     finally {
                         serviceOutputStream.flush()
                         compilerMessagesStream.flush()
+                        eventManger.fireCompilationFinished()
+                        operationsTracer?.after("compile")
+                    }
+                }
+            }
+
+    private fun doCompile(sessionId: Int,
+                          compileServiceReporter: CompileServiceReporter,
+                          operationsTracer: RemoteOperationsTracer?,
+                          body: (EventManger, Profiler) -> ExitCode): CompileService.CallResult<Int> =
+            ifAlive {
+                withValidClientOrSessionProxy(sessionId) { session ->
+                    operationsTracer?.before("compile")
+                    val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
+                    val eventManger = EventMangerImpl()
+                    try {
+                        val exitCode = checkedCompile(compileServiceReporter, rpcProfiler) {
+                            body(eventManger, rpcProfiler).code
+                        }
+                        CompileService.CallResult.Good(exitCode)
+                    }
+                    finally {
                         eventManger.fireCompilationFinished()
                         operationsTracer?.after("compile")
                     }
@@ -533,12 +596,8 @@ class CompileServiceImpl(
     }
 
 
-    private fun<R> checkedCompile(args: Array<out String>, serviceOut: PrintStream, rpcProfiler: Profiler, body: () -> R): R {
+    private fun<R> checkedCompile(compileServiceReporter: CompileServiceReporter, rpcProfiler: Profiler, body: () -> R): R {
         try {
-            if (args.none())
-                throw IllegalArgumentException("Error: empty arguments list.")
-            log.info("Starting compilation with args: " + args.joinToString(" "))
-
             val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
             val res = profiler.withMeasure(null, body)
@@ -554,14 +613,14 @@ class CompileServiceImpl(
                 val rpc = rpcProfiler.getTotalCounters()
 
                 "PERF: Compile on daemon: ${pc.time.ms()} ms; thread: user ${pc.threadUserTime.ms()} ms, sys ${(pc.threadTime - pc.threadUserTime).ms()} ms; rpc: ${rpc.count} calls, ${rpc.time.ms()} ms, thread ${rpc.threadTime.ms()} ms; memory: ${endMem.kb()} kb (${"%+d".format(pc.memory.kb())} kb)".let {
-                    serviceOut.println(it)
+                    compileServiceReporter.info(it)
                     log.info(it)
                 }
 
                 // this will only be reported if if appropriate (e.g. ByClass) profiler is used
                 for ((obj, counters) in rpcProfiler.getCounters()) {
                     "PERF: rpc by $obj: ${counters.count} calls, ${counters.time.ms()} ms, thread ${counters.threadTime.ms()} ms".let {
-                        serviceOut.println(it)
+                        compileServiceReporter.info(it)
                         log.info(it)
                     }
                 }

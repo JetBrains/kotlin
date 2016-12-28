@@ -24,7 +24,7 @@ interface ICReporter {
 
     // used in Gradle plugin
     @Suppress("unused")
-    fun reportCompileIteration(sourceFiles: Iterable<File>, exitCode: ExitCode) {}
+    fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {}
 
     fun pathsAsString(files: Iterable<File>): String =
             files.map { it.canonicalPath }.joinToString()
