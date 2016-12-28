@@ -762,6 +762,12 @@ task initializers3(type: RunKonanTest) {
     source = "runtime/basic/initializers3.kt"
 }
 
+task initializers4(type: RunKonanTest) {
+    disabled = true
+    goldValue = "fixme\n"
+    source = "runtime/basic/initializers4.kt"
+}
+
 task expression_as_statement(type: RunKonanTest) {
     disabled = true
     goldValue = "Ok\n"
