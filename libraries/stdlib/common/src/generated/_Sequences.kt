@@ -495,6 +495,18 @@ public header inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit
 /**
  * Returns the largest element or `null` if there are no elements.
  */
+@SinceKotlin("1.1")
+public header fun Sequence<Double>.max(): Double?
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Sequence<Float>.max(): Float?
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
 public header fun <T : Comparable<T>> Sequence<T>.max(): T?
 
 /**
@@ -506,6 +518,18 @@ public header inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) 
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
 public header fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T?
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Sequence<Double>.min(): Double?
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Sequence<Float>.min(): Float?
 
 /**
  * Returns the smallest element or `null` if there are no elements.

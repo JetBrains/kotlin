@@ -844,6 +844,40 @@ public inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit): Unit
 /**
  * Returns the largest element or `null` if there are no elements.
  */
+@SinceKotlin("1.1")
+public fun Sequence<Double>.max(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    if (max.isNaN()) return max
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public fun Sequence<Float>.max(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    if (max.isNaN()) return max
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
 public fun <T : Comparable<T>> Sequence<T>.max(): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
@@ -886,6 +920,40 @@ public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
         if (comparator.compare(max, e) < 0) max = e
     }
     return max
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public fun Sequence<Double>.min(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    if (min.isNaN()) return min
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public fun Sequence<Float>.min(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    if (min.isNaN()) return min
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (e.isNaN()) return e
+        if (min > e) min = e
+    }
+    return min
 }
 
 /**

@@ -137,36 +137,65 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("min()") {
-        doc { f -> "Returns the smallest ${f.element} or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        exclude(PrimitiveType.Boolean)
-        typeParam("T : Comparable<T>")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
 
-            var min = iterator.next()
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                if (min > e) min = e
+    templates addAll listOf("min", "max").flatMap { op ->
+        val genericSpecializations = PrimitiveType.numericPrimitives.filterNot { it.isIntegral() } + listOf(null)
+
+        listOf(
+            Iterables to genericSpecializations,
+            Sequences to genericSpecializations,
+            ArraysOfObjects to genericSpecializations,
+            ArraysOfPrimitives to (PrimitiveType.defaultPrimitives - PrimitiveType.Boolean),
+            CharSequences to setOf(null)
+        ).map { (f, primitives) -> primitives.map { primitive ->
+            f("$op()") {
+                val isFloat = primitive?.isIntegral() == false
+                val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
+
+                only(f)
+                typeParam("T : Comparable<T>")
+                if (primitive != null) {
+                    onlyPrimitives(f, primitive)
+                    if (isFloat && isGeneric)
+                        since("1.1")
+                }
+                doc { f -> "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element} or `null` if there are no ${f.element.pluralize()}." }
+                returns("T?")
+
+                body {
+                    if (f == ArraysOfObjects || f == ArraysOfPrimitives || f == CharSequences) {
+                        """
+                        if (isEmpty()) return null
+                        var $op = this[0]
+                        ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
+
+                        for (i in 1..lastIndex) {
+                            val e = this[i]
+                            ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
+                            if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        }
+                        return $op
+                        """
+                    }
+                    else {
+                        """
+                        val iterator = iterator()
+                        if (!iterator.hasNext()) return null
+                        var $op = iterator.next()
+                        ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
+
+                        while (iterator.hasNext()) {
+                            val e = iterator.next()
+                            ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
+                            if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        }
+                        return $op
+                        """
+                    }.replace(Regex("""^\s+\\\n""", RegexOption.MULTILINE), "") // trim lines ending with \
+                }
             }
-            return min
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            if (isEmpty()) return null
-            var min = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (min > e) min = e
-            }
-            return min
-            """
-        }
-    }
+        }}
+    }.flatten()
 
     templates add f("minBy(selector: (T) -> R)") {
         inline(true)
@@ -240,39 +269,6 @@ fun aggregates(): List<GenericFunction> {
             """
         }
         body(Maps) { "return entries.minWith(comparator)" }
-    }
-
-    templates add f("max()") {
-        doc { f -> "Returns the largest ${f.element} or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        exclude(PrimitiveType.Boolean)
-        typeParam("T : Comparable<T>")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var max = iterator.next()
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                if (max < e) max = e
-            }
-            return max
-            """
-        }
-
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            if (isEmpty()) return null
-
-            var max = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (max < e) max = e
-            }
-            return max
-            """
-        }
     }
 
     templates add f("maxBy(selector: (T) -> R)") {

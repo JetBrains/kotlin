@@ -5754,6 +5754,18 @@ public header inline fun CharArray.forEachIndexed(action: (Int, Char) -> Unit): 
 /**
  * Returns the largest element or `null` if there are no elements.
  */
+@SinceKotlin("1.1")
+public header fun Array<out Double>.max(): Double?
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Array<out Float>.max(): Float?
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
 public header fun <T : Comparable<T>> Array<out T>.max(): T?
 
 /**
@@ -5880,6 +5892,18 @@ public header fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Bool
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
 public header fun CharArray.maxWith(comparator: Comparator<in Char>): Char?
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Array<out Double>.min(): Double?
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Array<out Float>.min(): Float?
 
 /**
  * Returns the smallest element or `null` if there are no elements.

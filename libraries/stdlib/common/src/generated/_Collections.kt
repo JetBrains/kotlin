@@ -768,6 +768,18 @@ public header inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit
 /**
  * Returns the largest element or `null` if there are no elements.
  */
+@SinceKotlin("1.1")
+public header fun Iterable<Double>.max(): Double?
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Iterable<Float>.max(): Float?
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
 public header fun <T : Comparable<T>> Iterable<T>.max(): T?
 
 /**
@@ -779,6 +791,18 @@ public header inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) 
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
 public header fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T?
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Iterable<Double>.min(): Double?
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.1")
+public header fun Iterable<Float>.min(): Float?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
