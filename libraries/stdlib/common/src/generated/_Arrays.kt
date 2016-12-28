@@ -4446,6 +4446,13 @@ public header inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArr
 public header inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M
 
 /**
+ * Creates a [Grouping] source from an array to be used later with one of group-and-fold operations
+ * using the specified [keySelector] function to extract a key from each element.
+ */
+@SinceKotlin("1.1")
+public header inline fun <T, K> Array<out T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K>
+
+/**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original array.
  */

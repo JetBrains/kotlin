@@ -645,6 +645,18 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.gr
 }
 
 /**
+ * Creates a [Grouping] source from a sequence to be used later with one of group-and-fold operations
+ * using the specified [keySelector] function to extract a key from each element.
+ */
+@SinceKotlin("1.1")
+public inline fun <T, K> Sequence<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
+    return object : Grouping<T, K> {
+        override fun elementIterator(): Iterator<T> = this@groupingBy.iterator()
+        override fun keyOf(element: T): K = keySelector(element)
+    }
+}
+
+/**
  * Returns a sequence containing the results of applying the given [transform] function
  * to each element in the original sequence.
  */

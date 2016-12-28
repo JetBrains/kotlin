@@ -388,5 +388,32 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
+    templates add f("groupingBy(crossinline keySelector: (T) -> K)") {
+        since("1.1")
+        inline(true)
+        only(Iterables, Sequences, ArraysOfObjects, CharSequences)
+
+        typeParam("T")
+        typeParam("K")
+
+        returns("Grouping<T, K>")
+
+        doc { f ->
+            """
+            Creates a [Grouping] source from ${f.collection.prefixWithArticle()} to be used later with one of group-and-fold operations
+            using the specified [keySelector] function to extract a key from each ${f.element}.
+            """
+        }
+
+        body {
+            """
+            return object : Grouping<T, K> {
+                override fun elementIterator(): Iterator<T> = this@groupingBy.iterator()
+                override fun keyOf(element: T): K = keySelector(element)
+            }
+            """
+        }
+    }
+
     return templates
 }
