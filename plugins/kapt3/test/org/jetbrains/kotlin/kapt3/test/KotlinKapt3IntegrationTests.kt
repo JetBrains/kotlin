@@ -71,7 +71,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
 
             val bindings = kaptExtension.savedBindings!!
 
-            test(stubsOutputDir!!, incrementalDataOutputDir!!, bindings)
+            test(stubsOutputDir, incrementalDataOutputDir!!, bindings)
         }
     }
 

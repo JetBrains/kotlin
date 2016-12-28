@@ -153,10 +153,16 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File)
 
-        if (sourcesOutputDir == null || classFilesOutputDir == null || apClasspath == null) {
+        if (sourcesOutputDir == null || classFilesOutputDir == null || apClasspath == null || stubsOutputDir == null) {
             if (isAptOnly) {
-                val subject = if (apClasspath == null) "Annotation processing classpath" else "Generated files output directories"
-                logger.warn("$subject is not specified, skipping annotation processing")
+                val nonExistentOptionName = when {
+                    sourcesOutputDir == null -> "Sources output directory"
+                    classFilesOutputDir == null -> "Classes output directory"
+                    apClasspath == null -> "Annotation processing classpath"
+                    stubsOutputDir == null -> "Stubs output directory"
+                    else -> throw IllegalStateException()
+                }
+                logger.warn("$nonExistentOptionName is not specified, skipping annotation processing")
                 AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
             }
             return
