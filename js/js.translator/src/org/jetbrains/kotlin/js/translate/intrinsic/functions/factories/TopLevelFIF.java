@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfoExtensionsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
@@ -39,7 +40,6 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
-import static org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 
 public final class TopLevelFIF extends CompositeFIF {
     public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
@@ -48,7 +48,8 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         public JsExpression apply(
-                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @NotNull CallInfo callInfo,
+                @NotNull List<? extends JsExpression> arguments, @NotNull TranslationContext context
         ) {
             if (CallInfoExtensionsKt.isSuperInvocation(callInfo)) {
                 JsExpression dispatchReceiver = callInfo.getDispatchReceiver();
@@ -72,12 +73,12 @@ public final class TopLevelFIF extends CompositeFIF {
     private static final KotlinFunctionIntrinsic KOTLIN_HASH_CODE = new KotlinFunctionIntrinsic("hashCode");
 
     @NotNull
-    private static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
+    private static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
             assert receiver != null;
@@ -86,7 +87,7 @@ public final class TopLevelFIF extends CompositeFIF {
     };
 
 
-    private static final JsExpression getReferenceToOnlyTypeParameter(
+    private static JsExpression getReferenceToOnlyTypeParameter(
             @NotNull CallInfo callInfo, @NotNull TranslationContext context
     ) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = callInfo.getResolvedCall();
@@ -102,26 +103,22 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         public JsExpression apply(
-                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @NotNull CallInfo callInfo,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
         ) {
             return getReferenceToOnlyTypeParameter(callInfo, context);
-        }
-
-        @NotNull
-        @Override
-        public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
-        ) {
-            throw new IllegalStateException();
         }
     };
 
 
-    private static final FunctionIntrinsic ENUM_VALUES_INTRINSIC = new CallParametersAwareFunctionIntrinsic() {
+    private static final FunctionIntrinsic ENUM_VALUES_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override
         public JsExpression apply(
-                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @NotNull CallInfo callInfo,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
         ) {
             JsExpression enumClassRef = getReferenceToOnlyTypeParameter(callInfo, context);
 
@@ -132,11 +129,13 @@ public final class TopLevelFIF extends CompositeFIF {
     };
 
 
-    private static final FunctionIntrinsic ENUM_VALUE_OF_INTRINSIC = new CallParametersAwareFunctionIntrinsic() {
+    private static final FunctionIntrinsic ENUM_VALUE_OF_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override
         public JsExpression apply(
-                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @NotNull CallInfo callInfo,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
         ) {
             JsExpression arg = arguments.get(2); // The first two are reified parameters
 

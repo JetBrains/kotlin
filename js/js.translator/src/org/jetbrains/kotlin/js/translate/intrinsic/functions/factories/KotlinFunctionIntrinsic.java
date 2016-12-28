@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
+public class KotlinFunctionIntrinsic extends FunctionIntrinsicWithReceiverComputed {
     @NotNull
     private final String functionName;
     private final JsExpression[] additionalArguments;
@@ -43,7 +43,7 @@ public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
     @Override
     public JsExpression apply(
             @Nullable JsExpression receiver,
-            @NotNull List<JsExpression> arguments,
+            @NotNull List<? extends JsExpression> arguments,
             @NotNull TranslationContext context
     ) {
         JsExpression function = JsAstUtils.pureFqn(functionName, Namer.kotlinObject());

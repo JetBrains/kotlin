@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.name.Name;
 
 import java.util.List;
@@ -72,12 +73,12 @@ public final class ArrayFIF extends CompositeFIF {
         ARRAY_FACTORY_METHODS = pattern(Namer.KOTLIN_LOWER_NAME, new NamePredicate(arrayFactoryMethodNames));
     }
 
-    private static final FunctionIntrinsic ARRAY_INTRINSIC = new FunctionIntrinsic() {
+    private static final FunctionIntrinsic ARRAY_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
             assert arguments.size() == 1;
@@ -86,11 +87,11 @@ public final class ArrayFIF extends CompositeFIF {
     };
 
     @NotNull
-    public static final FunctionIntrinsic GET_INTRINSIC = new FunctionIntrinsic() {
+    public static final FunctionIntrinsic GET_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(@Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context) {
             assert receiver != null;
             assert arguments.size() == 1 : "Array get expression must have one argument.";
@@ -100,11 +101,11 @@ public final class ArrayFIF extends CompositeFIF {
     };
 
     @NotNull
-    public static final FunctionIntrinsic SET_INTRINSIC = new FunctionIntrinsic() {
+    public static final FunctionIntrinsic SET_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(@Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context) {
             assert receiver != null;
             assert arguments.size() == 2 : "Array set expression must have two arguments.";

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.js.translate.operation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo;
+import org.jetbrains.kotlin.js.translate.callTranslator.CallInfoKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
@@ -32,8 +34,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     @NotNull
     private final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
 
-    public IntrinsicIncrementTranslator(@NotNull KtUnaryExpression expression,
-                                        @NotNull TranslationContext context) {
+    public IntrinsicIncrementTranslator(@NotNull KtUnaryExpression expression, @NotNull TranslationContext context) {
         super(expression, context);
         this.resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
@@ -42,6 +43,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
         FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsic(resolvedCall.getResultingDescriptor());
-        return intrinsic.apply(receiver, Collections.<JsExpression>emptyList(), context());
+        CallInfo callInfo = CallInfoKt.getCallInfo(context(), resolvedCall, receiver);
+        return intrinsic.apply(callInfo, Collections.<JsExpression>emptyList(), context());
     }
 }

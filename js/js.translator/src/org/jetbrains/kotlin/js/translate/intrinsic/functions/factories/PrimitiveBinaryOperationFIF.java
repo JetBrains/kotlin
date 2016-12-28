@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeToIntrinsic;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
@@ -44,7 +45,7 @@ import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     INSTANCE;
 
-    private static abstract class BinaryOperationIntrinsicBase extends FunctionIntrinsic {
+    private static abstract class BinaryOperationIntrinsicBase extends FunctionIntrinsicWithReceiverComputed {
         @NotNull
         public abstract JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context);
 
@@ -52,7 +53,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context) {
             assert receiver != null;
             assert arguments.size() == 1;

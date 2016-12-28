@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import java.util.List;
 
 //TODO: find should be usages
-public final class BuiltInPropertyIntrinsic extends FunctionIntrinsic {
+public final class BuiltInPropertyIntrinsic extends FunctionIntrinsicWithReceiverComputed {
 
     @NotNull
     private final String propertyName;
@@ -36,7 +36,7 @@ public final class BuiltInPropertyIntrinsic extends FunctionIntrinsic {
 
     @NotNull
     @Override
-    public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
+    public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<? extends JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert receiver != null;
         assert arguments.isEmpty() : "Properties can't have arguments.";

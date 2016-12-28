@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
@@ -73,61 +74,67 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final DescriptorPredicate DEC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern("Float|Double.dec()");
 
-    private static class IntOverflowIntrinsic extends FunctionIntrinsic {
-        private final FunctionIntrinsic underlyingIntrinsic;
+    private static class IntOverflowIntrinsic extends FunctionIntrinsicWithReceiverComputed {
+        private final FunctionIntrinsicWithReceiverComputed underlyingIntrinsic;
 
-        public IntOverflowIntrinsic(FunctionIntrinsic underlyingIntrinsic) {
+        public IntOverflowIntrinsic(FunctionIntrinsicWithReceiverComputed underlyingIntrinsic) {
             this.underlyingIntrinsic = underlyingIntrinsic;
         }
 
         @NotNull
         @Override
         public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @Nullable JsExpression receiver,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
         ) {
             return JsAstUtils.toInt32(underlyingIntrinsic.apply(receiver, arguments, context));
         }
     }
 
-    private static class ShortOverflowIntrinsic extends FunctionIntrinsic {
-        private final FunctionIntrinsic underlyingIntrinsic;
+    private static class ShortOverflowIntrinsic extends FunctionIntrinsicWithReceiverComputed {
+        private final FunctionIntrinsicWithReceiverComputed underlyingIntrinsic;
 
-        public ShortOverflowIntrinsic(FunctionIntrinsic underlyingIntrinsic) {
+        public ShortOverflowIntrinsic(FunctionIntrinsicWithReceiverComputed underlyingIntrinsic) {
             this.underlyingIntrinsic = underlyingIntrinsic;
         }
 
         @NotNull
         @Override
         public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @Nullable JsExpression receiver,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
         ) {
             return JsAstUtils.toShort(underlyingIntrinsic.apply(receiver, arguments, context));
         }
     }
 
-    private static class ByteOverflowIntrinsic extends FunctionIntrinsic {
-        private final FunctionIntrinsic underlyingIntrinsic;
+    private static class ByteOverflowIntrinsic extends FunctionIntrinsicWithReceiverComputed {
+        private final FunctionIntrinsicWithReceiverComputed underlyingIntrinsic;
 
-        public ByteOverflowIntrinsic(FunctionIntrinsic underlyingIntrinsic) {
+        public ByteOverflowIntrinsic(FunctionIntrinsicWithReceiverComputed underlyingIntrinsic) {
             this.underlyingIntrinsic = underlyingIntrinsic;
         }
 
         @NotNull
         @Override
         public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @Nullable JsExpression receiver,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
         ) {
             return JsAstUtils.toByte(underlyingIntrinsic.apply(receiver, arguments, context));
         }
     }
 
     @NotNull
-    private static final FunctionIntrinsic NUMBER_INC_INTRINSIC = new FunctionIntrinsic() {
+    private static final FunctionIntrinsicWithReceiverComputed NUMBER_INC_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
             assert receiver != null;
@@ -137,12 +144,12 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     };
 
     @NotNull
-    private static final FunctionIntrinsic NUMBER_DEC_INTRINSIC = new FunctionIntrinsic() {
+    private static final FunctionIntrinsicWithReceiverComputed NUMBER_DEC_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
             assert receiver != null;
@@ -151,7 +158,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
         }
     };
 
-    private static abstract class UnaryOperationInstrinsicBase extends FunctionIntrinsic {
+    private static abstract class UnaryOperationInstrinsicBase extends FunctionIntrinsicWithReceiverComputed {
         @NotNull
         public abstract JsExpression doApply(@NotNull JsExpression receiver, @NotNull TranslationContext context);
 
@@ -159,7 +166,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
         @Override
         public JsExpression apply(
                 @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
+                @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
             assert receiver != null;
@@ -277,11 +284,11 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
         }
 
         final JsUnaryOperator finalJsOperator = jsOperator;
-        return new FunctionIntrinsic() {
+        return new FunctionIntrinsicWithReceiverComputed() {
             @NotNull
             @Override
             public JsExpression apply(@Nullable JsExpression receiver,
-                    @NotNull List<JsExpression> arguments,
+                    @NotNull List<? extends JsExpression> arguments,
                     @NotNull TranslationContext context) {
                 assert receiver != null;
                 assert arguments.size() == 0 : "Unary operator should not have arguments.";
