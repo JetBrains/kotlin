@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.util.nTabs
 import org.jetbrains.kotlin.renderer.*
 
 import org.jetbrains.kotlin.descriptors.*
@@ -20,7 +21,7 @@ public class DeepPrintVisitor(worker: DeclarationDescriptorVisitor<Boolean, Int>
 public class PrintVisitor: DeclarationDescriptorVisitor<Boolean, Int> {
 
     fun printDescriptor(descriptor: DeclarationDescriptor, amount: Int): Boolean {
-        println(String.format("%1$-${(amount+1)*4}s", "") + descriptor.toString())
+        println("${nTabs(amount)} ${descriptor.toString()}")
         return true;
     }
 

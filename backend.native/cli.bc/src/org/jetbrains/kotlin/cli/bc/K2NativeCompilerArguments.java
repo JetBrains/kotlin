@@ -62,5 +62,8 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "list", description = "List all backend phases")
     public boolean listPhases;
+
+    @Argument(value = "time", description = "Report execution time for compiler phases")
+    public boolean timePhases;
 }
 

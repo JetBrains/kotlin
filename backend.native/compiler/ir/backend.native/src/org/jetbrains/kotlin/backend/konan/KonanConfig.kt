@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.backend.konan.llvm.loadMetadata
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -36,14 +37,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         for (path in libraries) {
             val filePath = File(path)
             if (!filePath.exists()) {
-                error("Path '" + path + "' does not exist");
+                error("Path '" + path + "' does not exist")
             }
 
-            val moduleDescriptor = loadMetadata(configuration, filePath);
-
-            allMetadata.add(moduleDescriptor);
+            profile("Loading ${filePath}") {
+                val moduleDescriptor = loadMetadata(configuration, filePath)
+                allMetadata.add(moduleDescriptor)
+            }
         }
-        return allMetadata;
+        return allMetadata
     }
 
     internal val moduleDescriptors: List<ModuleDescriptorImpl> by lazy {

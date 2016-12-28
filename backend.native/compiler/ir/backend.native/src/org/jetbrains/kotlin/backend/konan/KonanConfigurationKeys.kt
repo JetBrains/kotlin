@@ -53,6 +53,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("verbose backend phases");
         val LIST_PHASES: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("list backend phases");
+        val TIME_PHASES: CompilerConfigurationKey<Boolean> 
+                = CompilerConfigurationKey.create("time backend phases");
     }
 }
 

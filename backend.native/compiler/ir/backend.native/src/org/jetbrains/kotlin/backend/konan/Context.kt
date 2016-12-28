@@ -19,11 +19,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import java.lang.System.out
 
-internal final class Context(val config: KonanConfig, 
-    // TODO: Need to eliminate when deserialization is fixed.
-    val bindingContext: BindingContext, 
-    val moduleDescriptor: ModuleDescriptor
-    ) : KonanBackendContext() {
+internal final class Context(val config: KonanConfig) : KonanBackendContext() {
+
+    var moduleDescriptor: ModuleDescriptor? = null
 
     var irModule: IrModuleFragment? = null
         set(module: IrModuleFragment?) {
@@ -53,6 +51,7 @@ internal final class Context(val config: KonanConfig,
     lateinit var llvm: Llvm
 
     var phase: KonanPhase? = null
+    var depth: Int = 0
 
     protected fun separator(title: String) {
         println("\n\n--- ${title} ----------------------\n")
@@ -63,8 +62,9 @@ internal final class Context(val config: KonanConfig,
     }
 
     fun printDescriptors() {
+        if (moduleDescriptor == null) return
         separator("Descriptors after: ${phase?.description}")
-        moduleDescriptor.deepPrint()
+        moduleDescriptor!!.deepPrint()
     }
 
     fun verifyIr() {
@@ -123,6 +123,10 @@ internal final class Context(val config: KonanConfig,
 
     fun shouldPrintBitCode(): Boolean {
         return config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE) 
+    }
+
+    fun shouldProfilePhases(): Boolean {
+        return config.configuration.getBoolean(KonanConfigKeys.TIME_PHASES) 
     }
 
     fun log(message: String) {

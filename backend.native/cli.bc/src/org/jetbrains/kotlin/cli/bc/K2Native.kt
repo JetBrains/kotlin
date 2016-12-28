@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.cli.bc
 
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.util.profile
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -29,9 +30,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                            configuration : CompilerConfiguration,
                            rootDisposable: Disposable
                           ): ExitCode {
-
-
-        configuration.get(KonanConfigKeys.LIBRARY_FILES)?.forEach{ println(it) }
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
             configuration, Arrays.asList<String>("extensions/common.xml"))
@@ -101,6 +99,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             put(VERBOSE_PHASES, 
                 arguments.verbosePhases.toNonNullList())
             put(LIST_PHASES, arguments.listPhases)
+            put(TIME_PHASES, arguments.timePhases)
         }}
     }
 
@@ -110,7 +109,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     companion object {
         @JvmStatic fun main(args: Array<String>) {
-            CLICompiler.doMain(K2Native(), args)
+            profile("Total compiler main()") {
+                CLICompiler.doMain(K2Native(), args)
+            }
         }
     }
 }

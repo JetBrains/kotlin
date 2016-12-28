@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.konan.llvm.emitLLVM
+import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -43,20 +44,22 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
 
     val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
 
-    // Build AST and binding info.
-    analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles(),
-        NativeAnalyzer(environment, environment.getSourceFiles(), konanConfig))
+    val context = Context(konanConfig)
+    val phaser = PhaseManager(context)
+
+    phaser.phase(KonanPhase.FRONTEND) {
+        // Build AST and binding info.
+        analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles(),
+            NativeAnalyzer(environment, environment.getSourceFiles(), konanConfig))
+        context.moduleDescriptor = analyzerWithCompilerReport.analysisResult.moduleDescriptor
+    }
 
     val bindingContext = analyzerWithCompilerReport.analysisResult.bindingContext
-    val moduleDescriptor = analyzerWithCompilerReport.analysisResult.moduleDescriptor
-
-    val context = Context(konanConfig, bindingContext, moduleDescriptor)
-    val phaser = PhaseManager(context)
 
     phaser.phase(KonanPhase.PSI_TO_IR) {
         // Translate AST to high level IR.
         val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
-        val module = translator.generateModule( moduleDescriptor,
+        val module = translator.generateModule( context.moduleDescriptor!!,
             environment.getSourceFiles(), bindingContext)
 
         context.irModule = module

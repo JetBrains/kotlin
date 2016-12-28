@@ -1,10 +1,12 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.util.*
 
 enum class KonanPhase(val description: String,
                       var enabled: Boolean = true, var verbose: Boolean = false) {
 
+    /* */ FRONTEND("Frontend builds AST"),
     /* */ PSI_TO_IR("Psi to IR conversion"),
     /* */ BACKEND("All backend"),
     /* ... */ LOWER("IR Lowering"), 
@@ -24,19 +26,28 @@ enum class KonanPhase(val description: String,
 object KonanPhases {
     val phases = KonanPhase.values().associate { it.name.toLowerCase() to it }
 
-    fun config(config: KonanConfig) {
-        val disabled = config.configuration.get(KonanConfigKeys.DISABLED_PHASES)
-        disabled?.forEach { phases[it]!!.enabled = false }
-
-        val enabled = config.configuration.get(KonanConfigKeys.ENABLED_PHASES)
-        enabled?.forEach { phases[it]!!.enabled = true }
-
-        val verbose = config.configuration.get(KonanConfigKeys.VERBOSE_PHASES)
-        verbose?.forEach { phases[it]!!.verbose = true }
-
-        if (config.configuration.get(KonanConfigKeys.NOLINK) ?: false ) {
-            KonanPhase.LINKER.enabled = false
+    fun known(name: String): String {
+        if (phases[name] == null) {
+            error("Unknown phase: $name. Use -list to see the list of phases.")
         }
+        return name
+    }
+
+    fun config(config: KonanConfig) {
+        with (config.configuration) { with (KonanConfigKeys) { 
+            val disabled = get(DISABLED_PHASES)
+            disabled?.forEach { phases[known(it)]!!.enabled = false }
+
+            val enabled = get(ENABLED_PHASES)
+            enabled?.forEach { phases[known(it)]!!.enabled = true }
+
+            val verbose = get(VERBOSE_PHASES)
+            verbose?.forEach { phases[known(it)]!!.verbose = true }
+
+            if (get(NOLINK) ?: false ) {
+                KonanPhase.LINKER.enabled = false
+            }
+        }}
     }
 
     fun list() {
@@ -57,10 +68,13 @@ internal class PhaseManager(val context: Context)  {
 
         val savePhase = context.phase
         context.phase = phase
-
-        body()
+        context.depth ++
 
         with (context) {
+            profileIf(shouldProfilePhases(), "Phase ${nTabs(depth)} ${phase.name}") {
+                body() 
+            }
+
             if (shouldVerifyDescriptors()) {
                 verifyDescriptors()
             }
@@ -82,6 +96,7 @@ internal class PhaseManager(val context: Context)  {
             }
         }
 
+        context.depth --
         context.phase = savePhase
     }
 }

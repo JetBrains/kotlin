@@ -6,7 +6,6 @@ else
     JAVACMD=java
 fi
 [ -n "$JAVACMD" ] || JAVACMD=java
-[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
 
 declare -a java_args
 declare -a konan_args
@@ -23,6 +22,12 @@ while [ $# -gt 0 ]; do
       ;;
     -X*)
       echo "TODO: need to pass arguments to all the tools somehow."
+      shift
+      ;;
+    -time)
+      konan_args=("${konan_args[@]}" -time)
+      java_args=("${java_args[@]}" -agentlib:hprof=cpu=samples -Dkonan.profile=true)
+      JAVACMD="time $JAVACMD"
       shift
       ;;
      *)
