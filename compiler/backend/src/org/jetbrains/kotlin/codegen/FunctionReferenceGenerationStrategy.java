@@ -42,13 +42,15 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     private final FunctionDescriptor functionDescriptor;
     private final Type receiverType; // non-null for bound references
     private final StackValue receiverValue;
+    private final boolean isInliningStrategy;
 
     public FunctionReferenceGenerationStrategy(
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull ResolvedCall<?> resolvedCall,
             @Nullable Type receiverType,
-            @Nullable StackValue receiverValue
+            @Nullable StackValue receiverValue,
+            boolean isInliningStrategy
     ) {
         super(state);
         this.resolvedCall = resolvedCall;
@@ -56,6 +58,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         this.functionDescriptor = functionDescriptor;
         this.receiverType = receiverType;
         this.receiverValue = receiverValue;
+        this.isInliningStrategy = isInliningStrategy;
         assert receiverType != null || receiverValue == null
                 : "A receiver value is provided for unbound function reference. Either this is a bound reference and you forgot " +
                   "to pass receiverType, or you accidentally passed some receiverValue for a reference without receiver";
@@ -187,7 +190,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         if (receiverType != null) {
             ClassDescriptor classDescriptor = (ClassDescriptor) codegen.getContext().getParentContext().getContextDescriptor();
             Type asmType = codegen.getState().getTypeMapper().mapClass(classDescriptor);
-            return CallableReferenceUtilKt.capturedBoundReferenceReceiver(asmType, receiverType);
+            return CallableReferenceUtilKt.capturedBoundReferenceReceiver(asmType, receiverType, isInliningStrategy);
         }
 
         // 0 is this (the callable reference class), 1 is the invoke() method's first parameter

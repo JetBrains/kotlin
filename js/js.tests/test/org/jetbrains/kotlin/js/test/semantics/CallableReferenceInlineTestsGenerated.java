@@ -78,6 +78,12 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
         throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
     }
 
+    @TestMetadata("kt15449.kt")
+    public void testKt15449() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/kt15449.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("propertyIntrinsic.kt")
     public void testPropertyIntrinsic() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");

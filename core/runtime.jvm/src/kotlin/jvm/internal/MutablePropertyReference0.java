@@ -24,8 +24,8 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     public MutablePropertyReference0() {
     }
 
-    public MutablePropertyReference0(Object receiver$0) {
-        super(receiver$0);
+    public MutablePropertyReference0(Object receiver) {
+        super(receiver);
     }
 
     @Override

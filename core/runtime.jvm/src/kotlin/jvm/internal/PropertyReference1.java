@@ -23,8 +23,8 @@ public abstract class PropertyReference1 extends PropertyReference implements KP
     public PropertyReference1() {
     }
 
-    public PropertyReference1(Object receiver$0) {
-        super(receiver$0);
+    public PropertyReference1(Object receiver) {
+        super(receiver);
     }
 
     @Override

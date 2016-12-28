@@ -146,12 +146,12 @@ class PropertyReferenceCodegen(
     private fun generateAccessors() {
         val getFunction = findGetFunction(localVariableDescriptorForReference)
         val getImpl = createFakeOpenDescriptor(getFunction, classDescriptor)
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, getImpl, PropertyReferenceGenerationStrategy(true, getFunction, target, asmType, receiverType, element, state))
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, getImpl, PropertyReferenceGenerationStrategy(true, getFunction, target, asmType, receiverType, element, state, false))
 
         if (!ReflectionTypes.isNumberedKMutablePropertyType(localVariableDescriptorForReference.type)) return
         val setFunction = localVariableDescriptorForReference.type.memberScope.getContributedFunctions(OperatorNameConventions.SET, NoLookupLocation.FROM_BACKEND).single()
         val setImpl = createFakeOpenDescriptor(setFunction, classDescriptor)
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, setImpl, PropertyReferenceGenerationStrategy(false, setFunction, target, asmType, receiverType, element, state))
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, setImpl, PropertyReferenceGenerationStrategy(false, setFunction, target, asmType, receiverType, element, state, false))
     }
 
 
@@ -243,7 +243,8 @@ class PropertyReferenceCodegen(
             val asmType: Type,
             val receiverType: Type?,
             val expression: KtElement,
-            state: GenerationState
+            state: GenerationState,
+            val isInliningStrategy: Boolean
     ) :
             FunctionGenerationStrategy.CodegenBased(state) {
         override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
@@ -258,7 +259,7 @@ class PropertyReferenceCodegen(
                 val expectedReceiver = target.dispatchReceiverParameter ?: target.extensionReceiverParameter ?:
                                        throw AssertionError("receiverType: $receiverType; no dispatch or extension receiver: $target")
                 val expectedReceiverType = typeMapper.mapType(expectedReceiver.type)
-                capturedBoundReferenceReceiver(asmType, expectedReceiverType).put(expectedReceiverType, v)
+                capturedBoundReferenceReceiver(asmType, expectedReceiverType, isInliningStrategy).put(expectedReceiverType, v)
             }
             else {
                 val receivers = originalFunctionDesc.valueParameters.dropLast(if (isGetter) 0 else 1)

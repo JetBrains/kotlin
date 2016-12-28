@@ -24,10 +24,15 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-fun capturedBoundReferenceReceiver(ownerType: Type, expectedReceiverType: Type): StackValue =
+fun capturedBoundReferenceReceiver(ownerType: Type, expectedReceiverType: Type, isInliningStrategy: Boolean): StackValue =
         StackValue.operation(expectedReceiverType) { iv ->
             iv.load(0, ownerType)
-            iv.getfield(ownerType.internalName, AsmUtil.CAPTURED_RECEIVER_FIELD, AsmTypes.OBJECT_TYPE.descriptor)
+            iv.getfield(
+                    ownerType.internalName,
+                    //HACK for inliner - it should recognize field as captured receiver
+                    if (isInliningStrategy) AsmUtil.CAPTURED_RECEIVER_FIELD else AsmUtil.BOUND_REFERENCE_RECEIVER,
+                    AsmTypes.OBJECT_TYPE.descriptor
+            )
             StackValue.coerce(AsmTypes.OBJECT_TYPE, expectedReceiverType, iv)
         }
 

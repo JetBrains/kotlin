@@ -24,8 +24,8 @@ public abstract class PropertyReference extends CallableReference implements KPr
         super();
     }
 
-    public PropertyReference(Object receiver$0) {
-        super(receiver$0);
+    public PropertyReference(Object receiver) {
+        super(receiver);
     }
 
     @Override

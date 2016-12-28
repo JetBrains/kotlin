@@ -22,7 +22,7 @@ public abstract class MutablePropertyReference extends PropertyReference impleme
     public MutablePropertyReference() {
     }
 
-    public MutablePropertyReference(Object receiver$0) {
-        super(receiver$0);
+    public MutablePropertyReference(Object receiver) {
+        super(receiver);
     }
 }
