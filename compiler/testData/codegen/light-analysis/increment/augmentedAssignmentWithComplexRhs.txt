@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class AugmentedAssignmentWithComplexRhsKt {
     private static field doubleResult: double
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String

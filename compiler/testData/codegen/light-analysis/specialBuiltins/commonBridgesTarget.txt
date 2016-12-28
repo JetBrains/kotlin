@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class Base {
     public method <init>(): void
     public method contains(p0: DatabaseEntity): boolean
@@ -8,20 +9,24 @@ public class Base {
     public final method size(): int
 }
 
+@kotlin.Metadata
 public final class CommonBridgesTargetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public class DatabaseEntity {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class Derived {
     public method <init>(): void
     public method remove(@org.jetbrains.annotations.NotNull p0: Issue): boolean
     public synthetic method remove(p0: DatabaseEntity): boolean
 }
 
+@kotlin.Metadata
 public final class Issue {
     public method <init>(): void
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class StrList {
     public method <init>(): void
     public synthetic method add(p0: int, p1: java.lang.Object): void
@@ -34,6 +35,7 @@ public final class StrList {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public final class StrListContainsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method forceContains(@org.jetbrains.annotations.NotNull p0: java.util.Collection, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean

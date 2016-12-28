@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     inner class A/B1
     inner class A/B2
@@ -6,11 +7,13 @@ public final class A {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class A/B1 {
     inner class A/B1
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class A/B2 {
     private final field x: int
     inner class A/B2
@@ -18,6 +21,7 @@ public final static class A/B2 {
     public final method getX(): int
 }
 
+@kotlin.Metadata
 public final static class A/B3 {
     private final field x: long
     private final field y: int
@@ -27,6 +31,7 @@ public final static class A/B3 {
     public final method getY(): int
 }
 
+@kotlin.Metadata
 public final static class A/B4 {
     private final @org.jetbrains.annotations.NotNull field str: java.lang.String
     inner class A/B4
@@ -34,6 +39,7 @@ public final static class A/B4 {
     public final @org.jetbrains.annotations.NotNull method getStr(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class CreateNestedClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

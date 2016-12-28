@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -6,10 +7,12 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class B {
     public method <init>(p0: int): void
 }
 
+@kotlin.Metadata
 public final class CallFromPrimaryWithOptionalArgsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class A {
     inner class A/Inner
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class A/Inner {
     private final field result: int
     synthetic final field this$0: A
@@ -11,6 +13,7 @@ public final class A/Inner {
     public final method getResult(): int
 }
 
+@kotlin.Metadata
 public final class InnerConstructorFromTopLevelOneStringArgKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

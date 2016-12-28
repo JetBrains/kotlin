@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class A {
     inner class A/Nested
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class A/Nested {
     public final static field Companion: A.Nested.Companion
     inner class A/Nested
@@ -10,6 +12,7 @@ public final static class A/Nested {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class A/Nested/Companion {
     inner class A/Nested
     inner class A/Nested/Companion
@@ -17,6 +20,7 @@ public final static class A/Nested/Companion {
     public final method invoke(p0: int): int
 }
 
+@kotlin.Metadata
 public final class InvokeOnClassObjectOfNestedClass2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

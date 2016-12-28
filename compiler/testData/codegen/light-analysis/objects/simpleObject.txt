@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     private final static field x: int
@@ -5,6 +6,7 @@ public final class A {
     public final method getX(): int
 }
 
+@kotlin.Metadata
 public final class SimpleObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

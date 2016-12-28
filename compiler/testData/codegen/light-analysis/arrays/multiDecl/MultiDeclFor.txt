@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final field i: int
     public method <init>(p0: int): void
@@ -6,6 +7,7 @@ public final class C {
     public final method getI(): int
 }
 
+@kotlin.Metadata
 public final class MultiDeclForKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method doTest(@org.jetbrains.annotations.NotNull p0: C[]): java.lang.String

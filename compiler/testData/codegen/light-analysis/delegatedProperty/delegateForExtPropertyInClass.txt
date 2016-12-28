@@ -1,12 +1,15 @@
+@kotlin.Metadata
 public final class Delegate {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.NotNull p0: F.A, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
 }
 
+@kotlin.Metadata
 public final class DelegateForExtPropertyInClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class F {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
@@ -16,6 +19,7 @@ public final class F {
     public final method getProp(@org.jetbrains.annotations.NotNull p0: F.A): int
 }
 
+@kotlin.Metadata
 public final static class F/A {
     inner class F/A
     public method <init>(): void

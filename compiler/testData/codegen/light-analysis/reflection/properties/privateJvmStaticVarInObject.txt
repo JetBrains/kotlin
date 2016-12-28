@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Obj {
     public final static field INSTANCE: Obj
     private static field result: java.lang.String
@@ -5,6 +6,7 @@ public final class Obj {
     private synthetic deprecated static @kotlin.jvm.JvmStatic method result$annotations(): void
 }
 
+@kotlin.Metadata
 public final class PrivateJvmStaticVarInObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

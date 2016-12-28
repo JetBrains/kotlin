@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class DifferentTypesKt {
     public final static @org.jetbrains.annotations.NotNull method bar(p0: int, p1: long, p2: byte, @org.jetbrains.annotations.NotNull p3: java.lang.String): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

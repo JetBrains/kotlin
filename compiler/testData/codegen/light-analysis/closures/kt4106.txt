@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Foo {
     private final @org.jetbrains.annotations.NotNull field f: Foo.Inner
     private final field s: java.lang.String
@@ -6,6 +7,7 @@ public final class Foo {
     public final @org.jetbrains.annotations.NotNull method getF(): Foo.Inner
 }
 
+@kotlin.Metadata
 public final class Foo/Inner {
     synthetic final field this$0: Foo
     private final field x: java.lang.String
@@ -13,6 +15,7 @@ public final class Foo/Inner {
     public method <init>(p0: Foo): void
 }
 
+@kotlin.Metadata
 public final class Kt4106Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

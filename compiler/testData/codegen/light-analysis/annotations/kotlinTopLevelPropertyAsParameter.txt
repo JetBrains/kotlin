@@ -1,5 +1,6 @@
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class Ann {
     public abstract method b(): byte
     public abstract method bool(): boolean
@@ -12,6 +13,7 @@ public annotation class Ann {
     public abstract method str(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class KotlinTopLevelPropertyAsParameterKt {
     public final static field b: byte
     public final static field bool: boolean
@@ -26,6 +28,7 @@ public final class KotlinTopLevelPropertyAsParameterKt {
 }
 
 @Ann
+@kotlin.Metadata
 public final class MyClass {
     public method <init>(): void
 }

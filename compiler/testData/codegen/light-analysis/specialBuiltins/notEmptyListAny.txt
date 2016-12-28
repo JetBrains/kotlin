@@ -1,3 +1,4 @@
+@kotlin.Metadata
 final class NotEmptyList {
     public final static field INSTANCE: NotEmptyList
     private method <init>(): void
@@ -28,6 +29,7 @@ final class NotEmptyList {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public final class NotEmptyListAnyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

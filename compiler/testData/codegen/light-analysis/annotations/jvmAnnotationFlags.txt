@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @kotlin.jvm.Transient @org.jetbrains.annotations.NotNull field del$delegate: CustomDelegate
@@ -12,11 +13,13 @@ public final class C {
     public final @kotlin.jvm.Synchronized method sync(): void
 }
 
+@kotlin.Metadata
 public final class CustomDelegate {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
 }
 
+@kotlin.Metadata
 public final class JvmAnnotationFlagsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

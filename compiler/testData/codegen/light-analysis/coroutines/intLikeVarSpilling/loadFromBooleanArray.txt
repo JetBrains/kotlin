@@ -1,13 +1,16 @@
+@kotlin.Metadata
 public final class Controller {
     public method <init>(): void
     public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
 
+@kotlin.Metadata
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation
     private method <init>(): void
@@ -15,6 +18,7 @@ public final class EmptyContinuation {
     public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
 }
 
+@kotlin.Metadata
 public final class LoadFromBooleanArrayKt {
     private static field booleanResult: boolean
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt5937Kt {
     private static field d: double
     private static field i: int

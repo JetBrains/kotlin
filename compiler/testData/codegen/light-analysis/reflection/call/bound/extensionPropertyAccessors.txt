@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final field x: int
     private field y: int
@@ -7,6 +8,7 @@ public final class C {
     public final method setY(p0: int): void
 }
 
+@kotlin.Metadata
 public final class ExtensionPropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field c: C
     private final static @org.jetbrains.annotations.NotNull field c_xx: kotlin.reflect.KProperty0

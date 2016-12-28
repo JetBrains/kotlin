@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class BasicmethodSuperClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class N {
     public method <init>(): void
     public method add(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field x: java.lang.Object
     public method <init>(p0: java.lang.Object): void
@@ -10,6 +11,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class GenericParamKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final @org.jetbrains.annotations.NotNull field status: java.lang.String
     public @kotlin.jvm.JvmOverloads @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -6,6 +7,7 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method getStatus(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class PrimaryConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

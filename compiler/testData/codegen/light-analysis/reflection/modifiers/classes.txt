@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class ClassesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public abstract class S {
     public final static field Companion: S.Companion
     inner class S/Companion
@@ -11,11 +13,13 @@ public abstract class S {
     private method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class S/Companion {
     inner class S/Companion
     private method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class S/DataClass {
     private final field x: int
     inner class S/DataClass
@@ -29,12 +33,14 @@ public final static class S/DataClass {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class S/InnerClass {
     synthetic final field this$0: S
     inner class S/InnerClass
     public method <init>(p0: S): void
 }
 
+@kotlin.Metadata
 public final class S/NonCompanionObject {
     public final static field INSTANCE: S.NonCompanionObject
     inner class S/NonCompanionObject

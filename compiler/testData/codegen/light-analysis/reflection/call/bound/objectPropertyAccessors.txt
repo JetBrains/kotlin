@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Host {
     public final static field INSTANCE: Host
     private final static field x: int
@@ -11,6 +12,7 @@ public final class Host {
     public final method setYy(p0: int): void
 }
 
+@kotlin.Metadata
 public final class ObjectPropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field c_x: kotlin.reflect.KProperty0
     private final static @org.jetbrains.annotations.NotNull field c_xx: kotlin.reflect.KProperty0

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class PrefixIncDecKt {
     private static field dec: int
     private static field inc: int

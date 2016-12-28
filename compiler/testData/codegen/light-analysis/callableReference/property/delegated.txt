@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field two$delegate: NumberDecrypter
@@ -5,6 +6,7 @@ public final class A {
     public final method getTwo(): int
 }
 
+@kotlin.Metadata
 public final class DelegatedKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field four$delegate: NumberDecrypter
@@ -12,6 +14,7 @@ public final class DelegatedKt {
     public final static method getFour(): int
 }
 
+@kotlin.Metadata
 public final class NumberDecrypter {
     public final static field INSTANCE: NumberDecrypter
     private method <init>(): void

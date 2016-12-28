@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     inner class A/B
     public method <init>(): void
@@ -5,6 +6,7 @@ public final class A {
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class A/B {
     synthetic final field this$0: A
     inner class A/B
@@ -19,20 +21,24 @@ public final class A/B {
     public final @org.jetbrains.annotations.NotNull method test6(): java.lang.String
 }
 
+@kotlin.Metadata
 public interface BK {
     public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.String
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class InnerClassLabeledSuperKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public interface K {
     inner class K/DefaultImpls
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class K/DefaultImpls {
     inner class K/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method foo(p0: K): java.lang.String

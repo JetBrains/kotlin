@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class A {
     inner class A/B
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class A/B {
     private final field a: double
     private final field b: int
@@ -16,6 +18,7 @@ public final class A/B {
     public final @org.jetbrains.annotations.NotNull method getC(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class DoubleDefArgs1InnerClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

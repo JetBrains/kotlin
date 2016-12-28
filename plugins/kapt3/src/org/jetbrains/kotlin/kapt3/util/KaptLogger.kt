@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.kapt3.util
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.*
 import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
 
-class KaptLogger(val isVerbose: Boolean, val messageCollector: MessageCollector) {
+class KaptLogger(
+        val isVerbose: Boolean,
+        val messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
+) {
     private companion object {
         val PREFIX = "[kapt] "
     }
@@ -40,7 +41,7 @@ class KaptLogger(val isVerbose: Boolean, val messageCollector: MessageCollector)
     }
 
     fun warn(message: String) {
-        println(PREFIX + message)
+        messageCollector.report(CompilerMessageSeverity.WARNING, PREFIX + message, CompilerMessageLocation.NO_LOCATION)
     }
 
     fun error(message: String) {
@@ -54,6 +55,5 @@ class KaptLogger(val isVerbose: Boolean, val messageCollector: MessageCollector)
             byteArrayOutputStream.toString("UTF-8")
         }
         messageCollector.report(CompilerMessageSeverity.EXCEPTION, PREFIX + "An exception occurred: " + stacktrace, CompilerMessageLocation.NO_LOCATION)
-
     }
 }

@@ -1,12 +1,15 @@
+@kotlin.Metadata
 public final class InnerSimpleKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Outer {
     inner class Outer/Inner
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class Outer/Inner {
     synthetic final field this$0: Outer
     inner class Outer/Inner

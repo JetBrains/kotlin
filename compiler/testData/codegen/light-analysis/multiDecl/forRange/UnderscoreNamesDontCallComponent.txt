@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method component1(): java.lang.String
@@ -5,6 +6,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method component3(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class UnderscoreNamesDontCallComponentKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt10934Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Parser {
     private final @org.jetbrains.annotations.NotNull field f: kotlin.jvm.functions.Function1
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
@@ -10,12 +12,14 @@ public final class Parser {
     public final @org.jetbrains.annotations.NotNull method mapJoin(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): Parser
 }
 
+@kotlin.Metadata
 public abstract class Result {
     inner class Result/ParseError
     inner class Result/Value
     private method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class Result/ParseError {
     private final @org.jetbrains.annotations.Nullable field child: Result.ParseError
     private final @org.jetbrains.annotations.NotNull field productionLabel: java.lang.String
@@ -27,6 +31,7 @@ public final static class Result/ParseError {
     public final method getRest(): java.lang.Object
 }
 
+@kotlin.Metadata
 public final static class Result/Value {
     private final field rest: java.lang.Object
     private final field value: java.lang.Object

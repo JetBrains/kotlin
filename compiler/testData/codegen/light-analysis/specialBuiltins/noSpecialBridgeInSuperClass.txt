@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public abstract class AbstractFoo {
     public method <init>(): void
     public method clear(): void
@@ -18,10 +19,12 @@ public abstract class AbstractFoo {
     public final method values(): java.util.Collection
 }
 
+@kotlin.Metadata
 public final class AnyFoo {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class IntFoo {
     public method <init>(): void
     public method containsKey(p0: int): boolean
@@ -30,6 +33,7 @@ public final class IntFoo {
     public final method get(p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class NoSpecialBridgeInSuperClassKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -37,6 +41,7 @@ public final class NoSpecialBridgeInSuperClassKt {
     public final static method setResult(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public class StringFoo {
     public method <init>(): void
     public final method containsKey(p0: java.lang.Object): boolean

@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Fourple {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class TypeArgumentsKt {
     public final static @org.jetbrains.annotations.NotNull method array(): java.lang.Number[]
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

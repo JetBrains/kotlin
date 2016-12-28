@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class CompanionObjectPropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field c_x: kotlin.reflect.KProperty0
     private final static @org.jetbrains.annotations.NotNull field c_xx: kotlin.reflect.KProperty0
@@ -10,6 +11,7 @@ public final class CompanionObjectPropertyAccessorsKt {
     public final static @org.jetbrains.annotations.NotNull method getC_yy(): kotlin.reflect.KMutableProperty0
 }
 
+@kotlin.Metadata
 public final class Host {
     public final static field Companion: Host.Companion
     private final static field x: int
@@ -18,6 +20,7 @@ public final class Host {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class Host/Companion {
     inner class Host/Companion
     private method <init>(): void

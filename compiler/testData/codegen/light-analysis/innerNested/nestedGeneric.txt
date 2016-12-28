@@ -1,12 +1,15 @@
+@kotlin.Metadata
 public final class NestedGenericKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Outer {
     inner class Outer/Nested
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class Outer/Nested {
     private final field t: java.lang.Object
     inner class Outer/Nested

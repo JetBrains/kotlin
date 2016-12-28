@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class AccessTopLevelDelegatedPropertyInClinitKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field a: java.lang.String
@@ -7,6 +8,7 @@ public final class AccessTopLevelDelegatedPropertyInClinitKt {
     public final static @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Delegate {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String

@@ -1,5 +1,6 @@
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class Ann {
     public abstract method b(): byte
     public abstract method bool(): boolean
@@ -12,10 +13,12 @@ public annotation class Ann {
 }
 
 @Ann
+@kotlin.Metadata
 public final class MyClass {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class ParameterWithPrimitiveTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

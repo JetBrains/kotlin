@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt1136Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class SomeClass {
     private final field list: java.util.ArrayList
     private @org.jetbrains.annotations.Nullable field status: java.lang.Throwable
@@ -12,6 +14,7 @@ public final class SomeClass {
     public final method setStatus(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
 }
 
+@kotlin.Metadata
 public final class SomeClass/Inner {
     private final @org.jetbrains.annotations.NotNull field copy: java.util.ArrayList
     synthetic final field this$0: SomeClass
@@ -20,6 +23,7 @@ public final class SomeClass/Inner {
     public final @org.jetbrains.annotations.NotNull method getCopy(): java.util.ArrayList
 }
 
+@kotlin.Metadata
 public final class SomeObject {
     public final static field INSTANCE: SomeObject
     private final static field workerThread: SomeObject$workerThread$1

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class GreaterFloatKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method greater1(p0: float, p1: float): boolean

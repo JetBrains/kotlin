@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt3634Kt {
     private final static @org.jetbrains.annotations.NotNull field c: kotlin.Unit
     private final static @org.jetbrains.annotations.NotNull field d: kotlin.Unit

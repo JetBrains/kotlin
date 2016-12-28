@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class B {
     public method <init>(): void
     public final method foo(): boolean
@@ -5,6 +6,7 @@ public final class B {
     public synthetic method invoke(): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class Kt3822invokeOnThisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

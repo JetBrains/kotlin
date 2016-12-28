@@ -20,8 +20,10 @@ import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
 import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
@@ -160,5 +162,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
                     .sortedBy(String::hashCode)
                     .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
         }
+
+        override fun saveIncrementalData(generationState: GenerationState, messageCollector: MessageCollector) {}
     }
 }

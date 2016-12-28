@@ -1,17 +1,21 @@
+@kotlin.Metadata
 public final class foo/A {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class foo/B {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public abstract class foo/C {
     public method <init>(): void
     public abstract @org.jetbrains.annotations.Nullable method bar(): foo.A
     public abstract @org.jetbrains.annotations.NotNull method getFoo(): foo.A
 }
 
+@kotlin.Metadata
 public final class foo/C1 {
     private final @org.jetbrains.annotations.NotNull field foo: foo.A
     public method <init>(): void
@@ -19,6 +23,7 @@ public final class foo/C1 {
     public @org.jetbrains.annotations.NotNull method getFoo(): foo.A
 }
 
+@kotlin.Metadata
 public final class foo/C2 {
     private final @org.jetbrains.annotations.NotNull field foo: foo.A
     public method <init>(): void
@@ -26,11 +31,13 @@ public final class foo/C2 {
     public @org.jetbrains.annotations.NotNull method getFoo(): foo.A
 }
 
+@kotlin.Metadata
 public final class foo/GenericTypeWithNothingKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.Nullable method testAllDeclaredMembers(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KClass, p1: boolean): java.lang.String
 }
 
+@kotlin.Metadata
 public final class foo/TestNotRaw {
     private final @org.jetbrains.annotations.NotNull field a1: foo.A
     private final @org.jetbrains.annotations.Nullable field a2: foo.A
@@ -53,6 +60,7 @@ public final class foo/TestNotRaw {
     public final @org.jetbrains.annotations.NotNull method test2(@org.jetbrains.annotations.Nullable p0: foo.A, @org.jetbrains.annotations.NotNull p1: foo.B): foo.B
 }
 
+@kotlin.Metadata
 public final class foo/TestRaw {
     private final @org.jetbrains.annotations.NotNull field a1: foo.A
     private final @org.jetbrains.annotations.Nullable field a2: foo.A

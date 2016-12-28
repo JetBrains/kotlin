@@ -1,11 +1,14 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public class G {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class SimpleGenericTypesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method gOfInt(): G

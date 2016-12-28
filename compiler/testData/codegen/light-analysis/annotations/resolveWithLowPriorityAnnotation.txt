@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ResolveWithLowPriorityAnnotationKt {
     public final static method bar(@org.jetbrains.annotations.NotNull p0: java.lang.Object): int
     public final static @kotlin.Suppress @kotlin.internal.LowPriorityInOverloadResolution method bar(@org.jetbrains.annotations.Nullable p0: java.lang.String): int

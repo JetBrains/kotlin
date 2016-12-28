@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt6895Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class UpdateableThing {
     private final field lock: java.util.concurrent.locks.ReentrantReadWriteLock
     private field updateCount: int

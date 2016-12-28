@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class ReturnInElvisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.Nullable method create(p0: boolean): Z
     public final static @org.jetbrains.annotations.NotNull method test(p0: boolean): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Z {
     private final @org.jetbrains.annotations.NotNull field k: java.lang.String
     private final @org.jetbrains.annotations.NotNull field p: java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class AX {
     public final static field INSTANCE: AX
     private final static @org.jetbrains.annotations.NotNull field c: java.lang.String
@@ -10,6 +11,7 @@ public final class AX {
     public final @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class ExplicitObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

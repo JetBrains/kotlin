@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class BasicpropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public class M {
     private field b: int
     public method <init>(): void
@@ -9,6 +11,7 @@ public class M {
     public method setB(p0: int): void
 }
 
+@kotlin.Metadata
 public final class N {
     private field b: int
     public method <init>(): void

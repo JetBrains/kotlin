@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private final @org.jetbrains.annotations.NotNull field y: java.lang.String
@@ -8,12 +9,14 @@ public final class A {
     public final method getZ(): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class B {
     public final static field INSTANCE: B
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method component2(@org.jetbrains.annotations.NotNull p0: A): java.lang.String
 }
 
+@kotlin.Metadata
 public final class ExtensionComponentsKt {
     public final static @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.NotNull p0: B): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

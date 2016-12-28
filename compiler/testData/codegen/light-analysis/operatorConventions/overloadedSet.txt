@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     private method <init>(): void
@@ -6,6 +7,7 @@ public final class A {
     public final method set(p0: int, p1: int): void
 }
 
+@kotlin.Metadata
 public final class OverloadedSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

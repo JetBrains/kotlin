@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private @org.jetbrains.annotations.NotNull field prop: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -7,6 +8,7 @@ public final class A {
     public final method setProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public abstract class B {
     private final field arg: int
     private final @org.jetbrains.annotations.NotNull field parentProp: java.lang.String
@@ -15,6 +17,7 @@ public abstract class B {
     public final @org.jetbrains.annotations.NotNull method getParentProp(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class SuperCallPrimaryKt {
     private static @org.jetbrains.annotations.NotNull field sideEffects: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

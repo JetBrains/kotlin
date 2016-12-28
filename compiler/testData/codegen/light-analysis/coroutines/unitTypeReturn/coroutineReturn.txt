@@ -1,14 +1,17 @@
+@kotlin.Metadata
 public final class CoroutineReturnKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
 
+@kotlin.Metadata
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation
     private method <init>(): void

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class State {
     public final static field K: State
     public final static field O: State
@@ -6,6 +7,7 @@ public enum class State {
     public static method values(): State[]
 }
 
+@kotlin.Metadata
 public final class ToStringKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

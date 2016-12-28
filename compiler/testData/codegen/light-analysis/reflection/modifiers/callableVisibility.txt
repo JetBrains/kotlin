@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class CallableVisibilityKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public class Foo {
     private final @org.jetbrains.annotations.NotNull field internalVal: kotlin.Unit
     private final field privateToThisVal: java.lang.Object

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field Companion: A.Companion
     inner class A/Companion
@@ -5,11 +6,13 @@ public final class A {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
 }
 
+@kotlin.Metadata
 public static enum class A/E {
     public final static field OK: A.E
     inner class A/E
@@ -18,6 +21,7 @@ public static enum class A/E {
     public static method values(): A.E[]
 }
 
+@kotlin.Metadata
 public final class InnerWithExistingClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

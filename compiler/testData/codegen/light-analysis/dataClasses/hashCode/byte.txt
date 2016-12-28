@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field a: byte
     public method <init>(p0: byte): void
@@ -10,6 +11,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class ByteKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

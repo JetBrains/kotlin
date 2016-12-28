@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class test/A {
     public method <init>(): void
     public final method bar(): void
     public final method foo(): void
 }
 
+@kotlin.Metadata
 public final class test/ReceiverInEqualsKt {
     private final static @org.jetbrains.annotations.NotNull field A_foo: kotlin.reflect.KFunction
     private final static @org.jetbrains.annotations.NotNull field a: test.A

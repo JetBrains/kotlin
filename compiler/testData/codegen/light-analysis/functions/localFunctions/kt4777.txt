@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt4777Kt {
     private final static @org.jetbrains.annotations.NotNull field p: java.lang.Runnable
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String

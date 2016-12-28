@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt3576Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class TestObject {
     public final static field INSTANCE: TestObject
     private final static field otherFloat: float

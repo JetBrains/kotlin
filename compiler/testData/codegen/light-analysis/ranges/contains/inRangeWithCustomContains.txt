@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class InRangeWithCustomContainsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method rangeTo(@org.jetbrains.annotations.NotNull p0: Value, @org.jetbrains.annotations.NotNull p1: Value): kotlin.ranges.ClosedRange
 }
 
+@kotlin.Metadata
 public final class Value {
     private final field x: int
     public method <init>(p0: int): void
@@ -11,6 +13,7 @@ public final class Value {
     public final method getX(): int
 }
 
+@kotlin.Metadata
 public final class ValueRange {
     private final @org.jetbrains.annotations.NotNull field endInclusive: Value
     private final @org.jetbrains.annotations.NotNull field start: Value

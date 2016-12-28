@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class Color {
     public final static field BLUE: Color
     public final static field GREEN: Color
@@ -9,6 +10,7 @@ public enum class Color {
     public static method values(): Color[]
 }
 
+@kotlin.Metadata
 public enum class Direction {
     public final static field EAST: Direction
     public final static field NORTH: Direction
@@ -19,6 +21,7 @@ public enum class Direction {
     public static method values(): Direction[]
 }
 
+@kotlin.Metadata
 public final class Kt1186Kt {
     public final static method bar(@org.jetbrains.annotations.NotNull p0: Color): int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

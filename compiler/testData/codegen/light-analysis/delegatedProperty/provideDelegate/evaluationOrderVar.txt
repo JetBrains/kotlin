@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class EvaluationOrderVarKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field dispatcher: java.util.HashMap

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private field v: int
     inner class C/Inner
@@ -5,6 +6,7 @@ public final class C {
     public final method foo(): int
 }
 
+@kotlin.Metadata
 private final class C/Inner {
     synthetic final field this$0: C
     inner class C/Inner
@@ -12,10 +14,12 @@ private final class C/Inner {
     public final method innerFun(): void
 }
 
+@kotlin.Metadata
 public final class PrivateOuterPropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public interface Runnable {
     public abstract method run(): void
 }

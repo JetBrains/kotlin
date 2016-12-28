@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class IntArrayList {
     public method <init>(): void
     public method contains(p0: java.lang.Integer): boolean
@@ -16,6 +17,7 @@ public final class IntArrayList {
     public final method size(): int
 }
 
+@kotlin.Metadata
 public final class Kt1397Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final field s: int
     public method <init>(p0: int): void
@@ -5,16 +6,19 @@ public class A {
     public final method getS(): int
 }
 
+@kotlin.Metadata
 public final class NestedObjectWithSuperclassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Outer {
     public final static field INSTANCE: Outer
     inner class Outer/O
     private method <init>(): void
 }
 
+@kotlin.Metadata
 public final class Outer/O {
     public final static field INSTANCE: Outer.O
     inner class Outer/O

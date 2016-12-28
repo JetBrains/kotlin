@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class JavaBeanConventionKt {
     private static field aBcde: int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

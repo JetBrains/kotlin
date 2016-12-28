@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.NotNull field x: kotlin.Unit
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): void
@@ -10,6 +11,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class UnitComponentKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

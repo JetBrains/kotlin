@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field Companion: A.Companion
@@ -9,6 +10,7 @@ public final class A {
     public final method setFoo(p0: int): void
 }
 
+@kotlin.Metadata
 public final static class A/Companion {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     inner class A/Companion
@@ -17,6 +19,7 @@ public final static class A/Companion {
     public final method setBar(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
 }
 
+@kotlin.Metadata
 public final class AnyHandler {
     public final static field INSTANCE: AnyHandler
     private method <init>(): void
@@ -24,6 +27,7 @@ public final class AnyHandler {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
 }
 
+@kotlin.Metadata
 public final class IntHandler {
     public final static field INSTANCE: IntHandler
     private method <init>(): void
@@ -31,6 +35,7 @@ public final class IntHandler {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: int): void
 }
 
+@kotlin.Metadata
 public final class PropertyMetadataShouldBeCachedKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field baz$delegate: StringHandler
@@ -41,6 +46,7 @@ public final class PropertyMetadataShouldBeCachedKt {
     public final static @org.jetbrains.annotations.Nullable method record(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KProperty): kotlin.Unit
 }
 
+@kotlin.Metadata
 public final class StringHandler {
     public final static field INSTANCE: StringHandler
     private method <init>(): void

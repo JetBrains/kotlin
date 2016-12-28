@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt882Kt {
     private final static field _0: double
     private final static field _0dbl: double

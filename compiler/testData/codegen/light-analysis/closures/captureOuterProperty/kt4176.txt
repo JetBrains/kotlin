@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class B {
     private final field x: int
     public method <init>(p0: int): void
@@ -5,10 +6,12 @@ public final class B {
     public final method getX(): int
 }
 
+@kotlin.Metadata
 public final class Kt4176Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public class Z {
     private final field s: int
     public method <init>(p0: int): void

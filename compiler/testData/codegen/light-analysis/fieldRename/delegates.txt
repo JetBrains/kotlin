@@ -1,11 +1,14 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class B {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class DelegatesKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field s$delegate$1: TestDelegate
@@ -15,6 +18,7 @@ public final class DelegatesKt {
     public final static @org.jetbrains.annotations.NotNull method getS(@org.jetbrains.annotations.NotNull p0: B): java.lang.String
 }
 
+@kotlin.Metadata
 public class TestDelegate {
     private final field initializer: kotlin.jvm.functions.Function0
     private field value: java.lang.Object

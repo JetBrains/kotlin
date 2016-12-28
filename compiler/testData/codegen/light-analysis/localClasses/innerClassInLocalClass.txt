@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field a: int
     public method <init>(): void
@@ -5,6 +6,7 @@ public final class A {
     public final method getA(): int
 }
 
+@kotlin.Metadata
 public final class InnerClassInLocalClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

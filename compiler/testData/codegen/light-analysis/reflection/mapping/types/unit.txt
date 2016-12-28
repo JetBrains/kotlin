@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class UnitKt {
     private static @org.jetbrains.annotations.NotNull field bar: kotlin.Unit
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

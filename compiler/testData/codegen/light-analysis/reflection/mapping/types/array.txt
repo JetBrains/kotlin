@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method baz(): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public final class ArrayKt {
     public final static @org.jetbrains.annotations.NotNull method bar(): java.util.List[]
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

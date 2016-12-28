@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class test/TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 synthetic final class test/TestKt__NoPrivateNoAccessorsInMultiFileFacadeKt {
     private static field prop: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

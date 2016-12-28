@@ -164,7 +164,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @Override
     public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
-        if (classBuilderMode == ClassBuilderMode.KAPT) {
+        if (classBuilderMode == ClassBuilderMode.KAPT || classBuilderMode == ClassBuilderMode.KAPT3) {
             builder.setClassName(stringTable.getStringIndex(TypeSignatureMappingKt.NON_EXISTENT_CLASS_NAME));
             return;
         }

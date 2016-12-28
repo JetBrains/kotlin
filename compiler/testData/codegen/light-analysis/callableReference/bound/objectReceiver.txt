@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class ObjectReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Singleton {
     public final static field INSTANCE: Singleton
     private method <init>(): void

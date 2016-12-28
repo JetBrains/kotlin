@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class P {
     private final @org.jetbrains.annotations.NotNull field actual: java.lang.String
     private final @org.jetbrains.annotations.NotNull field expected: java.lang.String
@@ -6,6 +7,7 @@ public final class P {
     public final @org.jetbrains.annotations.NotNull method getExpected(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class RawStringsWithManyQuotesKt {
     public final static @org.jetbrains.annotations.NotNull method array(@org.jetbrains.annotations.NotNull p0: P[]): P[]
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

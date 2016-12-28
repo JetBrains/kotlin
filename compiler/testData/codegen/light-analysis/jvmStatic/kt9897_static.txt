@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt9897_staticKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Test {
     public final static field INSTANCE: Test
     private static field l: long

@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class NullableReceiverInEqualsKt {
     private final static @org.jetbrains.annotations.NotNull field A_bar: kotlin.reflect.KMutableProperty1
     private final static @org.jetbrains.annotations.NotNull field A_foo: kotlin.reflect.KFunction

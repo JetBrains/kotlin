@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final field x: int
     private field y: int
@@ -10,6 +11,7 @@ public final class C {
     public final method setYy(p0: int): void
 }
 
+@kotlin.Metadata
 public final class MemberPropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field c: C
     private final static @org.jetbrains.annotations.NotNull field c_x: kotlin.reflect.KProperty0

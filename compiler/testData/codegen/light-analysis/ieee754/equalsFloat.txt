@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class EqualsFloatKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method equals1(p0: float, p1: float): boolean

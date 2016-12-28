@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt9897_topLevelKt {
     private static field l: long
     private static @org.jetbrains.annotations.NotNull field z: java.lang.String

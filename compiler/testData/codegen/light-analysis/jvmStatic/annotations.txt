@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field Companion: A.Companion
     private final static @org.jetbrains.annotations.NotNull field b: java.lang.String
@@ -6,6 +7,7 @@ public final class A {
     public final static @kotlin.jvm.JvmStatic @testAnnotation @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
 
+@kotlin.Metadata
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
@@ -13,6 +15,7 @@ public final static class A/Companion {
     public final @kotlin.jvm.JvmStatic @testAnnotation @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class B {
     public final static field INSTANCE: B
     private final static @org.jetbrains.annotations.NotNull field b: java.lang.String
@@ -21,10 +24,12 @@ public final class B {
     public final static @kotlin.jvm.JvmStatic @testAnnotation @org.jetbrains.annotations.NotNull method test1(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class TestKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class testAnnotation

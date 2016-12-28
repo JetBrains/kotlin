@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Identifier {
     public final static field Companion: Identifier.Companion
     private field myNullable: boolean
@@ -7,12 +8,14 @@ public final class Identifier {
     private final method setMyNullable(p0: boolean): void
 }
 
+@kotlin.Metadata
 public final static class Identifier/Companion {
     inner class Identifier/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method init(p0: boolean): Identifier
 }
 
+@kotlin.Metadata
 public final class Kt3551Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

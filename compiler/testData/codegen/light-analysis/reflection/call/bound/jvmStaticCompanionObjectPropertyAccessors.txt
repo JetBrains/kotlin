@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Host {
     public final static field Companion: Host.Companion
     private final static field x: int
@@ -12,6 +13,7 @@ public final class Host {
     public final static method setYy(p0: int): void
 }
 
+@kotlin.Metadata
 public final static class Host/Companion {
     inner class Host/Companion
     private method <init>(): void
@@ -27,6 +29,7 @@ public final static class Host/Companion {
     private synthetic deprecated static @kotlin.jvm.JvmStatic method yy$annotations(): void
 }
 
+@kotlin.Metadata
 public final class JvmStaticCompanionObjectPropertyAccessorsKt {
     private final static @org.jetbrains.annotations.NotNull field c_x: kotlin.reflect.KProperty0
     private final static @org.jetbrains.annotations.NotNull field c_xx: kotlin.reflect.KProperty0

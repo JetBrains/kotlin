@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class LocalKt {
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

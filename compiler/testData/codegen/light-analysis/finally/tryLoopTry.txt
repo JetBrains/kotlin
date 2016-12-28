@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class MyString {
     private @org.jetbrains.annotations.NotNull field s: java.lang.String
     public method <init>(): void
@@ -7,6 +8,7 @@ public final class MyString {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class TryLoopTryKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method test1(): MyString

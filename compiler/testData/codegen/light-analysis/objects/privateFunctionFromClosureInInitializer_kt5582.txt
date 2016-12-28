@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Foo {
     public final static field INSTANCE: Foo
     private final static field result: int
@@ -8,14 +9,17 @@ public final class Foo {
     public final method getResult(): int
 }
 
+@kotlin.Metadata
 private final class Foo/O {
     public final static field INSTANCE: Foo.O
     inner class Foo/O
     private method <init>(): void
 }
 
+@kotlin.Metadata
 public final class PrivateFunctionFromClosureInInitializer_kt5582Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public interface T

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final field i: int
     private @org.jetbrains.annotations.NotNull field status: java.lang.String
@@ -10,6 +11,7 @@ public final class C {
     public final method setStatus(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class SecondaryConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

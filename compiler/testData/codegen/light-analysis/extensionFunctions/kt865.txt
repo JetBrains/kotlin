@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt865Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Template {
     private final @org.jetbrains.annotations.NotNull field collected: java.util.ArrayList
     public method <init>(): void

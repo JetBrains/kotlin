@@ -1,5 +1,6 @@
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class Ann {
     public abstract method p1(): byte
     public abstract method p2(): short
@@ -9,6 +10,7 @@ public annotation class Ann {
     public abstract method p6(): float
 }
 
+@kotlin.Metadata
 public final class MultiplyKt {
     private final static field prop1: byte
     private final static field prop2: short
@@ -26,6 +28,7 @@ public final class MultiplyKt {
 }
 
 @Ann
+@kotlin.Metadata
 public final class MyClass {
     public method <init>(): void
 }

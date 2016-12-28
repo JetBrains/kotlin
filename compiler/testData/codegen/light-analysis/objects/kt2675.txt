@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class A {
     inner class A/Foo
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String
 }
 
+@kotlin.Metadata
 private final class A/Foo {
     public final static field INSTANCE: A.Foo
     private final static @org.jetbrains.annotations.NotNull field foov: java.lang.String
@@ -14,6 +16,7 @@ private final class A/Foo {
     public final @org.jetbrains.annotations.NotNull method getFoov(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class A/Foo/Bar {
     public final static field INSTANCE: A.Foo.Bar
     private final static @org.jetbrains.annotations.NotNull field barv: java.lang.String
@@ -24,6 +27,7 @@ public final class A/Foo/Bar {
     public final @org.jetbrains.annotations.NotNull method getBarv(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt2675Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

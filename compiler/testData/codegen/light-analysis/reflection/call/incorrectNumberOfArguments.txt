@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private field bar: java.lang.String
     public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
@@ -6,6 +7,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getBar(): kotlin.reflect.KMutableProperty1
 }
 
+@kotlin.Metadata
 public final class IncorrectNumberOfArgumentsKt {
     private static @org.jetbrains.annotations.NotNull field foo: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -14,6 +16,7 @@ public final class IncorrectNumberOfArgumentsKt {
     public final static method setFoo(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class O {
     public final static field INSTANCE: O
     private static field baz: java.lang.String

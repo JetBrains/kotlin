@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class NoClassForSimpleEnumKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public enum class State {
     public final static field K: State
     public final static field O: State

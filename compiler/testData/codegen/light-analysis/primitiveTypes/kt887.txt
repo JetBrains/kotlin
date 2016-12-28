@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Book {
     private final @org.jetbrains.annotations.NotNull field name: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -6,6 +7,7 @@ public final class Book {
     public final @org.jetbrains.annotations.NotNull method getName(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt887Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

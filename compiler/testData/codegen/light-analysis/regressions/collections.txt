@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class collections/CollectionsKt {
     public final static method assertEqualCollections(@org.jetbrains.annotations.NotNull p0: java.util.Collection, @org.jetbrains.annotations.NotNull p1: java.util.Collection): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

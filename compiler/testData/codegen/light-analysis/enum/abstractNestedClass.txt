@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class AbstractNestedClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public enum class E {
     public final static field ENTRY: E
     inner class E/Nested
@@ -10,6 +12,7 @@ public enum class E {
     public static method values(): E[]
 }
 
+@kotlin.Metadata
 public abstract static class E/Nested {
     inner class E/Nested
     public method <init>(): void

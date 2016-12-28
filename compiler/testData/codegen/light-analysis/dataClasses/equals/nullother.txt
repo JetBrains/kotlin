@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.Nullable field v: java.lang.Object
     public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
@@ -10,11 +11,13 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Dummy {
     public method <init>(): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
 }
 
+@kotlin.Metadata
 public final class NullotherKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

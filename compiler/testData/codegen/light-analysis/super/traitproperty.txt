@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public interface M {
     inner class M/DefaultImpls
     public abstract method getB(): int
@@ -6,12 +7,14 @@ public interface M {
     public abstract method setBackingB(p0: int): void
 }
 
+@kotlin.Metadata
 public final class M/DefaultImpls {
     inner class M/DefaultImpls
     public static method getB(p0: M): int
     public static method setB(p0: M, p1: int): void
 }
 
+@kotlin.Metadata
 public final class N {
     private field b: int
     private field backingB: int
@@ -24,6 +27,7 @@ public final class N {
     public method setBackingB(p0: int): void
 }
 
+@kotlin.Metadata
 public final class TraitpropertyKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

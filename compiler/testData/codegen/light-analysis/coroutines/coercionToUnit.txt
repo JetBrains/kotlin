@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class CoercionToUnitKt {
     private static field FALSE: boolean
     private static field TRUE: boolean
@@ -10,11 +11,13 @@ public final class CoercionToUnitKt {
     public final static method setTRUE(p0: boolean): void
 }
 
+@kotlin.Metadata
 public final class CoroutineUtilKt {
     public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
     public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
 }
 
+@kotlin.Metadata
 public final class EmptyContinuation {
     public final static field INSTANCE: EmptyContinuation
     private method <init>(): void

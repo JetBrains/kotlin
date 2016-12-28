@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class DataClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Test {
     private final field z1: double
     private final @org.jetbrains.annotations.Nullable field z2: java.lang.Double

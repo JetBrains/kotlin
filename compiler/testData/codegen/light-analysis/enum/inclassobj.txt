@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class Context {
     public final static field Companion: Context.Companion
     inner class Context/Companion
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class Context/Companion {
     inner class Context/Companion
     inner class Context/Companion/OsType
@@ -11,6 +13,7 @@ public final static class Context/Companion {
     public final @org.jetbrains.annotations.NotNull method getOperatingSystemType(): Context.Companion.OsType
 }
 
+@kotlin.Metadata
 public static enum class Context/Companion/OsType {
     public final static field LINUX: Context.Companion.OsType
     public final static field OTHER: Context.Companion.OsType
@@ -21,6 +24,7 @@ public static enum class Context/Companion/OsType {
     public static method values(): Context.Companion.OsType[]
 }
 
+@kotlin.Metadata
 public final class InclassobjKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

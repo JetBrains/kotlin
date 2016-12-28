@@ -1,14 +1,17 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public final method getP2(p0: int): int
 }
 
+@kotlin.Metadata
 public final class B {
     public method <init>(): void
     public final method getMp2(p0: int): int
     public final method setMp2(p0: int, p1: int): void
 }
 
+@kotlin.Metadata
 public final class PropertyAccessorsKt {
     private static field globalCounter: int
     private static field mp0: int

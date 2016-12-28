@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class InnerClassesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Outer {
     private final @org.jetbrains.annotations.NotNull field outerProp: java.lang.String
     private @org.jetbrains.annotations.NotNull field sideEffects: java.lang.String
@@ -13,6 +15,7 @@ public final class Outer {
     public final method setSideEffects(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class Outer/A1 {
     private @org.jetbrains.annotations.NotNull field prop: java.lang.String
     synthetic final field this$0: Outer
@@ -24,6 +27,7 @@ public final class Outer/A1 {
     public final method setProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class Outer/A2 {
     private @org.jetbrains.annotations.NotNull field prop: java.lang.String
     synthetic final field this$0: Outer

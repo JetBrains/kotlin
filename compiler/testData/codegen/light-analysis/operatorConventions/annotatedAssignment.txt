@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class AnnotatedAssignmentKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
@@ -5,4 +6,5 @@ public final class AnnotatedAssignmentKt {
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
+@kotlin.Metadata
 public annotation class Annotation

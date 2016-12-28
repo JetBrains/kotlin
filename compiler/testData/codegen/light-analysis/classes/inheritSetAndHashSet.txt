@@ -1,5 +1,7 @@
+@kotlin.Metadata
 public interface A
 
+@kotlin.Metadata
 public final class B {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -10,6 +12,7 @@ public final class B {
     public final method size(): int
 }
 
+@kotlin.Metadata
 public final class InheritSetAndHashSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

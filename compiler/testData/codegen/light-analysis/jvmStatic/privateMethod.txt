@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     inner class A/Z
@@ -5,6 +6,7 @@ public final class A {
     private final static @kotlin.jvm.JvmStatic method a(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class A/Z {
     public final static field INSTANCE: A.Z
     private final static @org.jetbrains.annotations.NotNull field p: java.lang.String
@@ -13,6 +15,7 @@ public final class A/Z {
     public final @org.jetbrains.annotations.NotNull method getP(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class PrivateMethodKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

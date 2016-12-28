@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt6192Kt {
     public final static @org.jetbrains.annotations.NotNull method barB(@org.jetbrains.annotations.NotNull p0: byte[]): byte[]
     public final static @org.jetbrains.annotations.NotNull method barC(@org.jetbrains.annotations.NotNull p0: char[]): char[]

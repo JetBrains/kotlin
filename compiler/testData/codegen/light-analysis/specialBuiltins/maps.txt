@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public method clear(): void
@@ -22,6 +23,7 @@ public final class A {
     public final method values(): java.util.Collection
 }
 
+@kotlin.Metadata
 public final class MapsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

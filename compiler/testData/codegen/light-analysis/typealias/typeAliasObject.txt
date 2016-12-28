@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class KHolder {
     public final static field Companion: KHolder.Companion
     private final static @org.jetbrains.annotations.NotNull field K: java.lang.String
@@ -5,12 +6,14 @@ public final class KHolder {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class KHolder/Companion {
     inner class KHolder/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getK(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class OHolder {
     public final static field INSTANCE: OHolder
     private final static @org.jetbrains.annotations.NotNull field O: java.lang.String
@@ -18,6 +21,7 @@ public final class OHolder {
     public final @org.jetbrains.annotations.NotNull method getO(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class TypeAliasObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

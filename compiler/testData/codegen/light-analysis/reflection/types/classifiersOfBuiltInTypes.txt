@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ClassifiersOfBuiltInTypesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method check(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KFunction, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KClass[]): void

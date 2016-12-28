@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class InIntRangeKt {
     private static field invocationCounter: int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

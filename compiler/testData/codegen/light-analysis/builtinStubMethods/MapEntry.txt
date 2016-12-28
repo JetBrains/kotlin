@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class MapEntryKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class MyMapEntry {
     public method <init>(): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean

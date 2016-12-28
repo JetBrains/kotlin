@@ -1,12 +1,15 @@
+@kotlin.Metadata
 public final class HelloServer {
     public method <init>(): void
     public method start(): void
 }
 
+@kotlin.Metadata
 public final class _1Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public abstract class testing/ClassWithInternals {
     private field some: int
     private field someGetter: int

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ArrayConventionKt {
     private static @org.jetbrains.annotations.NotNull field result: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -7,6 +8,7 @@ public final class ArrayConventionKt {
     public final static method setResult(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class X {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String

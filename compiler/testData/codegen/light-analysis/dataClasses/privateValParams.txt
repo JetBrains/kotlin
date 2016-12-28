@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class D {
     private final field x: long
     private final field y: char
@@ -12,6 +13,7 @@ public final class D {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class PrivateValParamsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     private method <init>(): void
@@ -5,6 +6,7 @@ public final class A {
     public final method test1(@org.jetbrains.annotations.NotNull p0: B): void
 }
 
+@kotlin.Metadata
 public final class B {
     private field s: int
     public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
@@ -14,6 +16,7 @@ public final class B {
     public final method setS(p0: int): void
 }
 
+@kotlin.Metadata
 public final class ConventionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

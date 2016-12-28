@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public method add(p0: char): boolean
@@ -19,10 +20,12 @@ public final class A {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public final class CustomReadOnlyIteratorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class MyIterator {
     public final static field INSTANCE: MyIterator
     private method <init>(): void

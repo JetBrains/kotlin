@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class O {
     public final static field INSTANCE: O
     private final static @org.jetbrains.annotations.NotNull field x: java.lang.String
@@ -6,6 +7,7 @@ public final class O {
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class TypeAliasObjectCallableKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private field f: int
     public method <init>(): void
@@ -5,6 +6,7 @@ public final class C {
     public final method setF(p0: int): void
 }
 
+@kotlin.Metadata
 public final class InitializerBlockKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

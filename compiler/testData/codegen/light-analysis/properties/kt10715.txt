@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Base {
     private field count: int
     public method <init>(): void
@@ -5,6 +6,7 @@ public final class Base {
     public final method setCount(p0: int): void
 }
 
+@kotlin.Metadata
 public final class Kt10715Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

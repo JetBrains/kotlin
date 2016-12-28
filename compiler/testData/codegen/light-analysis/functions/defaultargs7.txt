@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field expected: int
     public method <init>(p0: int): void
@@ -6,6 +7,7 @@ public final class A {
     public final method getExpected(): int
 }
 
+@kotlin.Metadata
 public final class Defaultargs7Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

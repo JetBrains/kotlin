@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class TopLevelLongTypeInReceiverKt {
     private static @org.jetbrains.annotations.NotNull field barStorage: java.lang.String
     private static @org.jetbrains.annotations.NotNull field fooStorage: java.lang.String

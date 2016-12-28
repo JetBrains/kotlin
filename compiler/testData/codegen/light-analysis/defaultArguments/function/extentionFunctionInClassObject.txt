@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class A {
     public final static field Companion: A.Companion
     inner class A/Companion
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
@@ -12,6 +14,7 @@ public final static class A/Companion {
     public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class ExtentionFunctionInClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

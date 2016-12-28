@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class DVal {
     private final @org.jetbrains.annotations.NotNull field kmember: kotlin.reflect.KProperty1
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KProperty1): void
@@ -5,6 +6,7 @@ public final class DVal {
     public final method getValue(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class GenericPropertyKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.Nullable field additionalText$delegate: DVal
@@ -14,6 +16,7 @@ public final class GenericPropertyKt {
     public final static method getAdditionalValue(@org.jetbrains.annotations.NotNull p0: Value): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class Value {
     private @org.jetbrains.annotations.Nullable field text: java.lang.String
     private field value: java.lang.Object

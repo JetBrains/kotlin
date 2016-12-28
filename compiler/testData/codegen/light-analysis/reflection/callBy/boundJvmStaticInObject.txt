@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class BoundJvmStaticInObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Host {
     public final static field INSTANCE: Host
     private method <init>(): void

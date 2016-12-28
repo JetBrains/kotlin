@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class InnerExtendsOuterKt {
     public final static method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public class Outer {
     private final @org.jetbrains.annotations.NotNull field chars: char[]
     inner class Outer/Inner
@@ -10,6 +12,7 @@ public class Outer {
     public final method value(): java.lang.String
 }
 
+@kotlin.Metadata
 public class Outer/Inner {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     synthetic final field this$0: Outer

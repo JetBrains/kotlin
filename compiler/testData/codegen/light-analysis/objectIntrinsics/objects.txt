@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class foo/ObjectsKt {
     private static field _field: int
     public final static @org.jetbrains.annotations.NotNull method TopFun(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.internal.IntCompanionObject): java.lang.String

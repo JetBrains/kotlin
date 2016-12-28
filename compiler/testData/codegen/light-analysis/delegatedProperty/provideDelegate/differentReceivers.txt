@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class DifferentReceiversKt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String
@@ -15,6 +16,7 @@ public final class DifferentReceiversKt {
     public final static method setLog(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class MyClass {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

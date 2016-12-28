@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
     protected final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field protectedfield: java.lang.String
@@ -6,6 +7,7 @@ public final class A {
     public final method testVisibilities(): void
 }
 
+@kotlin.Metadata
 public final class AWithCompanion {
     public final static field Companion: AWithCompanion.Companion
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
@@ -15,6 +17,7 @@ public final class AWithCompanion {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class AWithCompanion/Companion {
     inner class AWithCompanion/Companion
     private method <init>(): void
@@ -22,6 +25,7 @@ public final static class AWithCompanion/Companion {
     public final method testVisibilities(): void
 }
 
+@kotlin.Metadata
 public final class Object {
     public final static field INSTANCE: Object
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
@@ -31,6 +35,7 @@ public final class Object {
     public final method testVisibilities(): void
 }
 
+@kotlin.Metadata
 public final class VisibilityKt {
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field publicField: java.lang.String

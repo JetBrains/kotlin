@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class AImpl {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
@@ -5,10 +6,12 @@ public final class AImpl {
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.Number
 }
 
+@kotlin.Metadata
 public final class CastGetReturnTypeKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Delegate {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int

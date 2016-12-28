@@ -1,13 +1,16 @@
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class D {
     public abstract method d(): double
 }
 
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class F {
     public abstract method f(): float
 }
 
+@kotlin.Metadata
 public final class FloatingPointParametersKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method check(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.Object): void

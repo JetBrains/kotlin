@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field x: int
     private final @org.jetbrains.annotations.Nullable field y: java.lang.Object
@@ -16,6 +17,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class MultiDeclarationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

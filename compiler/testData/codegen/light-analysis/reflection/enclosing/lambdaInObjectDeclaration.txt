@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class LambdaInObjectDeclarationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class O {
     public final static field INSTANCE: O
     private final static @org.jetbrains.annotations.NotNull field f: kotlin.jvm.functions.Function0

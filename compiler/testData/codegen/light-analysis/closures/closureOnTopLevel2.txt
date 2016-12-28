@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ClosureOnTopLevel2Kt {
     private final static @org.jetbrains.annotations.NotNull field obj: kotlin.jvm.functions.Function0
     private final static @org.jetbrains.annotations.NotNull field p: java.lang.String

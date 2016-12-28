@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class External {
     public method <init>(): void
     public final method external(): void
 }
 
+@kotlin.Metadata
 public final class FunctionsKt {
     private final static @org.jetbrains.annotations.NotNull field externalGetter: kotlin.Unit
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

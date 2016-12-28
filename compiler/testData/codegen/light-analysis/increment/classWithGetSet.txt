@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class AByte {
     private field value: byte
     public method <init>(p0: byte): void
@@ -7,6 +8,7 @@ public final class AByte {
     public final method setValue(p0: byte): void
 }
 
+@kotlin.Metadata
 public final class ADouble {
     private field value: double
     public method <init>(p0: double): void
@@ -16,6 +18,7 @@ public final class ADouble {
     public final method setValue(p0: double): void
 }
 
+@kotlin.Metadata
 public final class AFloat {
     private field value: float
     public method <init>(p0: float): void
@@ -25,6 +28,7 @@ public final class AFloat {
     public final method setValue(p0: float): void
 }
 
+@kotlin.Metadata
 public final class AInt {
     private field value: int
     public method <init>(p0: int): void
@@ -34,6 +38,7 @@ public final class AInt {
     public final method setValue(p0: int): void
 }
 
+@kotlin.Metadata
 public final class ALong {
     private field value: long
     public method <init>(p0: long): void
@@ -43,6 +48,7 @@ public final class ALong {
     public final method setValue(p0: long): void
 }
 
+@kotlin.Metadata
 public final class AShort {
     private field value: short
     public method <init>(p0: short): void
@@ -52,6 +58,7 @@ public final class AShort {
     public final method setValue(p0: short): void
 }
 
+@kotlin.Metadata
 public final class ClassWithGetSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

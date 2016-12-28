@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt14330_2Kt {
     private static @org.jetbrains.annotations.Nullable field recivier: java.lang.Object
     private static @org.jetbrains.annotations.Nullable field value2: java.lang.Object

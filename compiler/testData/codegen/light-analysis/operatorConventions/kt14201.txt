@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ClassB {
     private final @org.jetbrains.annotations.NotNull field value: Intf
     private final @org.jetbrains.annotations.NotNull field x: kotlin.jvm.functions.Function0
@@ -6,10 +7,12 @@ public final class ClassB {
     public final @org.jetbrains.annotations.NotNull method getX(): kotlin.jvm.functions.Function0
 }
 
+@kotlin.Metadata
 public interface Intf {
     public abstract @org.jetbrains.annotations.NotNull method getAValue(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt14201Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

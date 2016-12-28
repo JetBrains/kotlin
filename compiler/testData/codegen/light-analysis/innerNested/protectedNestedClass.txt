@@ -1,14 +1,17 @@
+@kotlin.Metadata
 public abstract class a/A {
     inner class a/A/C
     public method <init>(): void
 }
 
+@kotlin.Metadata
 protected final static class a/A/C {
     inner class a/A/C
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method result(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class b/B {
     private final @org.jetbrains.annotations.NotNull field c: a.A.C
     public method <init>(): void
@@ -16,6 +19,7 @@ public final class b/B {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class b/BKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

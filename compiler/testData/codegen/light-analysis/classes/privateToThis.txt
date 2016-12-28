@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field init_k: java.lang.Object
     private final field o: java.lang.Object
@@ -6,6 +7,7 @@ public final class A {
     private final method k(): java.lang.Object
 }
 
+@kotlin.Metadata
 public final class PrivateToThisKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

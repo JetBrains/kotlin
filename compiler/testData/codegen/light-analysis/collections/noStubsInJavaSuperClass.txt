@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     public method <init>(): void
     public method add(p0: java.lang.Object): boolean
@@ -16,6 +17,7 @@ public class A {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public final class C {
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
@@ -30,8 +32,10 @@ public final class C {
     public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
 }
 
+@kotlin.Metadata
 public interface L
 
+@kotlin.Metadata
 public final class MainKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

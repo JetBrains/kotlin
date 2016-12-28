@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Delegate {
     private field inner: java.lang.Object
     public method <init>(p0: java.lang.Object): void
@@ -7,6 +8,7 @@ public final class Delegate {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: java.lang.Object): void
 }
 
+@kotlin.Metadata
 public final class Foo {
     private final static @org.jetbrains.annotations.NotNull field A$delegate: Delegate
     private final static @org.jetbrains.annotations.NotNull field B$delegate: Delegate
@@ -17,6 +19,7 @@ public final class Foo {
     public final method getF(): int
 }
 
+@kotlin.Metadata
 public final static class Foo/Companion {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     inner class Foo/Companion
@@ -26,11 +29,13 @@ public final static class Foo/Companion {
     public final method setB(@org.jetbrains.annotations.NotNull p0: Foo): void
 }
 
+@kotlin.Metadata
 public interface FooTrait {
     public final static field Companion: FooTrait.Companion
     inner class FooTrait/Companion
 }
 
+@kotlin.Metadata
 public final static class FooTrait/Companion {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field A$delegate: Delegate
@@ -42,6 +47,7 @@ public final static class FooTrait/Companion {
     public final method setB(@org.jetbrains.annotations.NotNull p0: Foo): void
 }
 
+@kotlin.Metadata
 public final class Kt4138Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

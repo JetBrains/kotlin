@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt2395Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class MyList {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean

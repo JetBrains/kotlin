@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public abstract class C {
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): boolean
@@ -16,16 +17,19 @@ public abstract class C {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public abstract class It {
     public method <init>(): void
     public method iterator(): java.util.Iterator
 }
 
+@kotlin.Metadata
 public abstract class Itr {
     public method <init>(): void
     public method remove(): void
 }
 
+@kotlin.Metadata
 public abstract class L {
     public method <init>(): void
     public synthetic method add(p0: int, p1: java.lang.Object): void
@@ -57,10 +61,12 @@ public abstract class L {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public abstract class L2 {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public abstract class LItr {
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): void
@@ -73,6 +79,7 @@ public abstract class LItr {
     public method set(p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public abstract class M {
     public method <init>(): void
     public method clear(): void
@@ -96,6 +103,7 @@ public abstract class M {
     public final method values(): java.util.Collection
 }
 
+@kotlin.Metadata
 public abstract class MC {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -108,20 +116,24 @@ public abstract class MC {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public abstract class ME {
     public method <init>(): void
     public synthetic method setValue(p0: java.lang.Object): java.lang.Object
     public method setValue(p0: java.lang.String): java.lang.String
 }
 
+@kotlin.Metadata
 public abstract class MIt {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public abstract class MItr {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public abstract class ML {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -141,15 +153,18 @@ public abstract class ML {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public abstract class ML2 {
     public method <init>(): void
     public synthetic method remove(p0: int): java.lang.Object
 }
 
+@kotlin.Metadata
 public abstract class MLItr {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public abstract class MM {
     public method <init>(): void
     public final method containsKey(p0: java.lang.Object): boolean
@@ -170,10 +185,12 @@ public abstract class MM {
     public final method values(): java.util.Collection
 }
 
+@kotlin.Metadata
 public abstract class MME {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public abstract class MS {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -186,11 +203,13 @@ public abstract class MS {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public final class MutabilityMarkerInterfacesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method expectInterfaces(@org.jetbrains.annotations.NotNull p0: java.lang.Class, @org.jetbrains.annotations.NotNull p1: java.util.Set): void
 }
 
+@kotlin.Metadata
 public abstract class S {
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): boolean
@@ -209,6 +228,7 @@ public abstract class S {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public abstract class Weird {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean

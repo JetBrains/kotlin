@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field x: java.lang.Object
     private final field y: java.lang.Object
@@ -13,6 +14,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class GenericKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private final field x: double
     public method <init>(p0: double): void
@@ -10,6 +11,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class DoubleParamKt {
     private final static field NAN: double
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

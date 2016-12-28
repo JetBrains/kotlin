@@ -1,19 +1,25 @@
+@kotlin.Metadata
 public final class ClassAndTwoInterfaces {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public interface Interface
 
+@kotlin.Metadata
 public interface Interface2
 
+@kotlin.Metadata
 public final class OneClass {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public class Simple {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class SimpleSupertypesKt {
     public final static @org.jetbrains.annotations.NotNull method any(): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String
     inner class C/B
@@ -12,6 +13,7 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method newCReceiver(): C.B
 }
 
+@kotlin.Metadata
 public final class C/B {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
@@ -22,6 +24,7 @@ public final class C/B {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class InstantiateInSameClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

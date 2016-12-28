@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class test/EmptyConstructorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public enum class test/My {
     public final static field ENTRY: test.My
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String

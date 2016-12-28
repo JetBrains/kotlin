@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class foo/Delegate {
     private field inner: int
     public method <init>(): void
@@ -7,6 +8,7 @@ public final class foo/Delegate {
     public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, p2: int): void
 }
 
+@kotlin.Metadata
 public final class foo/LocalVarKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

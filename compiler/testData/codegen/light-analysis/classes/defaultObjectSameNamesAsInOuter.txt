@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field B: A.B
     inner class A/B
@@ -6,12 +7,14 @@ public final class A {
     private final method getP(): int
 }
 
+@kotlin.Metadata
 public final static class A/B {
     inner class A/B
     private method <init>(): void
     public final method getP(): int
 }
 
+@kotlin.Metadata
 public final class DefaultObjectSameNamesAsInOuterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

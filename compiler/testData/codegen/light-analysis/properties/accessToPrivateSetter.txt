@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class AccessToPrivateSetterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class D {
     private field foo: int
     public method <init>(): void

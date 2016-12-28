@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field value$delegate: kotlin.properties.ReadWriteProperty
@@ -6,10 +7,12 @@ public class A {
     private final method setValue(p0: java.lang.Object): void
 }
 
+@kotlin.Metadata
 public final class B {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class ProtectedVarWithPrivateSetKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

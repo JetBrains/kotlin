@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public class O {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class SimpleSubtypeSupertypeKt {
     public final static @org.jetbrains.annotations.NotNull method any(): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -15,6 +17,7 @@ public final class SimpleSubtypeSupertypeKt {
     public final static @org.jetbrains.annotations.NotNull method string(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class X {
     public method <init>(): void
 }

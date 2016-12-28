@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class zzz/A {
     public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
     public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field publicField: java.lang.String
@@ -9,6 +10,7 @@ public final class zzz/A {
     public final method testAccessors(): void
 }
 
+@kotlin.Metadata
 public final class zzz/ClassFieldReferenceKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method checkAccessor(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KProperty1, p1: java.lang.Object, p2: java.lang.Object): void

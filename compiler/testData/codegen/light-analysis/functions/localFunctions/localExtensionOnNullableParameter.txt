@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class LocalExtensionOnNullableParameterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method localExtensionOnNullableParameter(): T
 }
 
+@kotlin.Metadata
 public class T {
     private field value: int
     public method <init>(p0: int): void

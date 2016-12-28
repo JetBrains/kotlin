@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public method add(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
@@ -35,15 +36,18 @@ public final class A {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public interface Container {
     public abstract @org.jetbrains.annotations.NotNull method removeAt(p0: int): java.lang.String
 }
 
+@kotlin.Metadata
 public class ContainerImpl {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method removeAt(p0: int): java.lang.String
 }
 
+@kotlin.Metadata
 public final class IrrelevantRemoveAtOverrideKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

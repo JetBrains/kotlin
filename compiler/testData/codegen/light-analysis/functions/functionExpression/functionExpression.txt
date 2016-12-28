@@ -1,6 +1,8 @@
 @java.lang.annotation.Retention
+@kotlin.Metadata
 public annotation class A
 
+@kotlin.Metadata
 public final class FunctionExpressionKt {
     private final static @org.jetbrains.annotations.NotNull field foo1: kotlin.jvm.functions.Function1
     private final static @org.jetbrains.annotations.NotNull field foo2: kotlin.jvm.functions.Function2

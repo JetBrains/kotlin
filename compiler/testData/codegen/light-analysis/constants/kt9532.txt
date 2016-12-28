@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public final static field INSTANCE: A
     public final static @org.jetbrains.annotations.NotNull field a: java.lang.String
@@ -10,6 +11,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getBNullable(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class B {
     public final static field INSTANCE: B
     public final static @org.jetbrains.annotations.NotNull field a: java.lang.String
@@ -22,6 +24,7 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method getBNullable(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt9532Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

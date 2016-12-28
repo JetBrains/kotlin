@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class InClassKt {
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -8,6 +9,7 @@ public final class InClassKt {
     public final static method setLog(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class Test {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field testK$delegate: java.lang.String

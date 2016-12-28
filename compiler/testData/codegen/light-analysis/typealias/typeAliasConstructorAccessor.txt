@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Outer {
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     inner class Outer/Nested
@@ -5,12 +6,14 @@ public final class Outer {
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
 }
 
+@kotlin.Metadata
 public final static class Outer/Nested {
     inner class Outer/Nested
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): Outer
 }
 
+@kotlin.Metadata
 public final class TypeAliasConstructorAccessorKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

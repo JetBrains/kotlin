@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class SyntheticVsRealKt {
     private static @org.jetbrains.annotations.NotNull field global: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method Runnable(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field field: java.lang.String
     public method <init>(): void
@@ -5,10 +6,12 @@ public class A {
     public @org.jetbrains.annotations.NotNull method test$test_module(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class PublicOverrideSuperCallKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Z {
     private final @org.jetbrains.annotations.NotNull field field: java.lang.String
     public method <init>(): void

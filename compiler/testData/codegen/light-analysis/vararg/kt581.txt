@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class whats/the/difference/Kt581Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getIndices(@org.jetbrains.annotations.NotNull p0: int[]): kotlin.ranges.IntRange

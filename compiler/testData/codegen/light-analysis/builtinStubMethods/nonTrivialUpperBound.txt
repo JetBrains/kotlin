@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class MyIterator {
     public method <init>(): void
     public synthetic method hasNext(): boolean
@@ -7,6 +8,7 @@ public final class MyIterator {
     public method remove(): void
 }
 
+@kotlin.Metadata
 public final class NonTrivialUpperBoundKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

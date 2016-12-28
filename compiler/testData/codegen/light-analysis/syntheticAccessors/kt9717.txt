@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class BoxKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Test {
     public final static field INSTANCE: Test
     private final static @org.jetbrains.annotations.NotNull field test: java.lang.String
@@ -9,6 +11,7 @@ public final class Test {
     public final @org.jetbrains.annotations.NotNull method getTest(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class VarsKt {
     private static @org.jetbrains.annotations.NotNull field OK: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getOK(): java.lang.String

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 final class EmptyStringMap {
     public final static field INSTANCE: EmptyStringMap
     private method <init>(): void
@@ -23,6 +24,7 @@ final class EmptyStringMap {
     public final method values(): java.util.Collection
 }
 
+@kotlin.Metadata
 public final class EmptyStringMapKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

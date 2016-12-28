@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt11969Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Test {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method callPrivateFun(): kotlin.jvm.functions.Function0
@@ -12,6 +14,7 @@ public final class Test {
     public @org.jetbrains.annotations.NotNull method publicFun(): kotlin.jvm.functions.Function0
 }
 
+@kotlin.Metadata
 public interface Z {
     inner class Z/DefaultImpls
     inner class Z/Nested
@@ -21,6 +24,7 @@ public interface Z {
     public abstract @org.jetbrains.annotations.NotNull method publicFun(): kotlin.jvm.functions.Function0
 }
 
+@kotlin.Metadata
 public final class Z/DefaultImpls {
     inner class Z/DefaultImpls
     public static @org.jetbrains.annotations.NotNull method callPrivateFun(p0: Z): kotlin.jvm.functions.Function0
@@ -30,6 +34,7 @@ public final class Z/DefaultImpls {
     public static @org.jetbrains.annotations.NotNull method publicFun(p0: Z): kotlin.jvm.functions.Function0
 }
 
+@kotlin.Metadata
 public final static class Z/Nested {
     inner class Z/Nested
     public method <init>(): void

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class FieldInsideLambdaKt {
     private final static @org.jetbrains.annotations.NotNull field my: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

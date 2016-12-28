@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class ListWithAllImplementationsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class MyList {
     private final field v: java.lang.Object
     public method <init>(p0: java.lang.Object): void

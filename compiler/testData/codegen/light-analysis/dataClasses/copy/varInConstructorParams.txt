@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private field a: int
     private @org.jetbrains.annotations.NotNull field b: java.lang.String
@@ -15,6 +16,7 @@ public final class A {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class VarInConstructorParamsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

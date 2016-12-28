@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class AnonymousInitializerInClassObjectKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Foo {
     public final static field Companion: Foo.Companion
     private final static @org.jetbrains.annotations.NotNull field bar: java.lang.String
@@ -9,6 +11,7 @@ public final class Foo {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class Foo/Companion {
     inner class Foo/Companion
     private method <init>(): void

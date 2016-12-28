@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class VarargsKt {
     private final static method bar(p0: kotlin.jvm.functions.Function0): java.lang.Object[]
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class ClassArtificialFieldInsideNestedKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class My {
     private final @org.jetbrains.annotations.NotNull field back: java.lang.String
     public method <init>(): void
@@ -9,6 +11,7 @@ public final class My {
     public final @org.jetbrains.annotations.NotNull method getMy(): java.lang.String
 }
 
+@kotlin.Metadata
 public abstract class Your {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String

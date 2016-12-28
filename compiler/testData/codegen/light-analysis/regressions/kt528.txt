@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class mask/Kt528Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method forEachChar(@org.jetbrains.annotations.NotNull p0: java.io.Reader, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
@@ -5,6 +6,7 @@ public final class mask/Kt528Kt {
     public final static method sum(@org.jetbrains.annotations.NotNull p0: java.util.LinkedList, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): int
 }
 
+@kotlin.Metadata
 public final class mask/Luhny {
     private final @org.jetbrains.annotations.NotNull field buffer: java.util.LinkedList
     private final @org.jetbrains.annotations.NotNull field digits: java.util.LinkedList

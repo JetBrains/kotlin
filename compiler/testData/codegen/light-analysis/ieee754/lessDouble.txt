@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class LessDoubleKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method less1(p0: double, p1: double): boolean

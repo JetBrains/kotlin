@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class TryAndContinueKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method foo(): int

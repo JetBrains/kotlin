@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Globals {
     public final static field INSTANCE: Globals
     private method <init>(): void
@@ -5,6 +6,7 @@ public final class Globals {
     public final @org.jetbrains.annotations.NotNull method get(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: boolean): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt3421Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

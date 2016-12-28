@@ -1,13 +1,17 @@
+@kotlin.Metadata
 public class A {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public class B {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public interface In
 
+@kotlin.Metadata
 public final class NestedIntersectionKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String

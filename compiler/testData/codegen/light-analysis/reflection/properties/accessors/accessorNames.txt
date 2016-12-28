@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private field baz: int
     public method <init>(p0: int): void
@@ -7,6 +8,7 @@ public final class A {
     public final method setQuux(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class AccessorNamesKt {
     private static @org.jetbrains.annotations.NotNull field foo: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

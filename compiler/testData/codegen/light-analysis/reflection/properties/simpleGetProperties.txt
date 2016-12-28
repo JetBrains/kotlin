@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private @org.jetbrains.annotations.Nullable field anyVar: java.lang.Object
     private final @org.jetbrains.annotations.NotNull field string: java.lang.String
@@ -10,6 +11,7 @@ public final class A {
     public final method setAnyVar(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
 }
 
+@kotlin.Metadata
 public final class SimpleGetPropertiesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

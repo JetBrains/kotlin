@@ -1,3 +1,4 @@
+@kotlin.Metadata
 final class p/C {
     private final @org.jetbrains.annotations.NotNull field initChild: kotlin.jvm.functions.Function0
     private final field y: int
@@ -6,6 +7,7 @@ final class p/C {
     public final method getY(): int
 }
 
+@kotlin.Metadata
 public final class p/ObjectLiteralInClosureKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

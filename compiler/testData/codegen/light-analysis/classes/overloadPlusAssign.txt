@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class ArrayWrapper {
     private final @org.jetbrains.annotations.NotNull field contents: java.util.ArrayList
     public method <init>(): void
@@ -7,6 +8,7 @@ public final class ArrayWrapper {
     public final method plusAssign(@org.jetbrains.annotations.NotNull p0: ArrayWrapper): void
 }
 
+@kotlin.Metadata
 public final class OverloadPlusAssignKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

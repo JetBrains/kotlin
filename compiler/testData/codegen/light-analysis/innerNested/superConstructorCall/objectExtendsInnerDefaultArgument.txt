@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class A {
     inner class A/Inner
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public class A/Inner {
     private final field int: int
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
@@ -15,6 +17,7 @@ public class A/Inner {
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class ObjectExtendsInnerDefaultArgumentKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

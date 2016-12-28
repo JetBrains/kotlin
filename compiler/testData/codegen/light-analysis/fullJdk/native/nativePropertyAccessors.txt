@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class C {
     public final static field Companion: C.Companion
     private final field defaultGetter$1: int
@@ -11,6 +12,7 @@ public final class C {
     public final method setDefaultSetter(p0: int): void
 }
 
+@kotlin.Metadata
 public final static class C/Companion {
     inner class C/Companion
     private method <init>(): void
@@ -19,6 +21,7 @@ public final static class C/Companion {
     public final method setDefaultSetter(p0: int): void
 }
 
+@kotlin.Metadata
 public final class NativePropertyAccessorsKt {
     private final static field defaultGetter: int
     private static field defaultSetter: int

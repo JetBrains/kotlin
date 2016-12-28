@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class MyCollection {
     private final @org.jetbrains.annotations.NotNull field delegate: java.util.Collection
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
@@ -18,6 +19,7 @@ public final class MyCollection {
     public final @org.jetbrains.annotations.NotNull method toArray(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.Object[]
 }
 
+@kotlin.Metadata
 public final class ToArrayAlreadyPresentKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

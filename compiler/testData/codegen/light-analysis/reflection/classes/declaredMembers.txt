@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class K {
     private final field privateKProp: kotlin.Unit
     private @org.jetbrains.annotations.NotNull field publicKProp: kotlin.Unit
@@ -8,11 +9,13 @@ public class K {
     public final method setPublicKProp(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): void
 }
 
+@kotlin.Metadata
 public final class KKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method test(p0: java.lang.String[]): void
 }
 
+@kotlin.Metadata
 public final class L {
     private field privateLProp: kotlin.Unit
     private final @org.jetbrains.annotations.NotNull field publicLProp: kotlin.Unit

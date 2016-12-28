@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class BoxPrimitiveTypeInClinitKt {
     private static field xb: byte
     private static @org.jetbrains.annotations.Nullable field xbn: java.lang.Byte

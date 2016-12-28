@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A1 {
     private final @org.jetbrains.annotations.NotNull field prop1: java.lang.String
     private final @org.jetbrains.annotations.NotNull field prop2: java.lang.String
@@ -18,6 +19,7 @@ public final class A1 {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class A2 {
     private @org.jetbrains.annotations.NotNull field prop1: java.lang.String
     private @org.jetbrains.annotations.NotNull field prop2: java.lang.String
@@ -35,6 +37,7 @@ public final class A2 {
     public final method setProp3(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
+@kotlin.Metadata
 public final class DataClassesKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

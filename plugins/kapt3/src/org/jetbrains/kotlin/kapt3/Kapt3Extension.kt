@@ -20,9 +20,10 @@ import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.kapt3.diagnostic.ErrorsKapt3
@@ -46,6 +47,7 @@ class ClasspathBasedKapt3Extension(
         sourcesOutputDir: File,
         classFilesOutputDir: File,
         val stubsOutputDir: File?,
+        val incrementalDataOutputDir: File?,
         options: Map<String, String>,
         aptOnly: Boolean,
         val useLightAnalysis: Boolean,
@@ -97,6 +99,12 @@ class ClasspathBasedKapt3Extension(
             File(packageDir, className + ".java").writeText(stub.toString())
         }
     }
+
+    override fun saveIncrementalData(generationState: GenerationState, messageCollector: MessageCollector) {
+        if (incrementalDataOutputDir != null) {
+            generationState.factory.writeAll(incrementalDataOutputDir, messageCollector)
+        }
+    }
 }
 
 abstract class AbstractKapt3Extension(
@@ -144,7 +152,7 @@ abstract class AbstractKapt3Extension(
 
         try {
             val javaSourceFiles = collectJavaSourceFiles()
-            val kotlinSourceStubs = generateKotlinSourceStubs(kaptContext, generationState.typeMapper)
+            val kotlinSourceStubs = generateKotlinSourceStubs(kaptContext, generationState)
 
             val (annotationProcessingTime) = measureTimeMillis {
                 kaptContext.doAnnotationProcessing(
@@ -204,15 +212,16 @@ abstract class AbstractKapt3Extension(
         return Pair(KaptContext(logger, compiledClasses, origins, options), generationState)
     }
 
-    private fun generateKotlinSourceStubs(kaptContext: KaptContext, typeMapper: KotlinTypeMapper): JavacList<JCCompilationUnit> {
+    private fun generateKotlinSourceStubs(kaptContext: KaptContext, generationState: GenerationState): JavacList<JCCompilationUnit> {
         val (stubGenerationTime, kotlinSourceStubs) = measureTimeMillis {
-            ClassFileToSourceStubConverter(kaptContext, typeMapper, generateNonExistentClass = true).convert()
+            ClassFileToSourceStubConverter(kaptContext, generationState.typeMapper, generateNonExistentClass = true).convert()
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info { "Stubs for Kotlin classes: " + kotlinSourceStubs.joinToString { it.sourcefile.name } }
 
         saveStubs(kotlinSourceStubs)
+        saveIncrementalData(generationState, logger.messageCollector)
         return kotlinSourceStubs
     }
 
@@ -226,6 +235,8 @@ abstract class AbstractKapt3Extension(
     }
 
     protected abstract fun saveStubs(stubs: JavacList<JCTree.JCCompilationUnit>)
+
+    protected abstract fun saveIncrementalData(generationState: GenerationState, messageCollector: MessageCollector)
 
     protected abstract fun loadProcessors(): List<Processor>
 }

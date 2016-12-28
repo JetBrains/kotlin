@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class Kt5363Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Outer {
     public final static field Companion: Outer.Companion
     inner class Outer/Companion
@@ -9,12 +11,14 @@ public final class Outer {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class Outer/Companion {
     inner class Outer/Companion
     private method <init>(): void
     private final method extension(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
+@kotlin.Metadata
 public final static class Outer/Nested {
     inner class Outer/Nested
     public method <init>(): void

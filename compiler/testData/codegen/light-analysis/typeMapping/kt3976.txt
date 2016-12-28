@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Kt3976Kt {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.Nullable field currentAccountId$delegate: SessionAccessor
@@ -6,6 +7,7 @@ public final class Kt3976Kt {
     public final static method setCurrentAccountId(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
 }
 
+@kotlin.Metadata
 public final class SessionAccessor {
     public method <init>(): void
     public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Void, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.Object

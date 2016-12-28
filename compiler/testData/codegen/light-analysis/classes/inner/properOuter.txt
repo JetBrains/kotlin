@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     inner class A/B
@@ -6,6 +7,7 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 
+@kotlin.Metadata
 public class A/B {
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     synthetic final field this$0: A
@@ -15,6 +17,7 @@ public class A/B {
     public final @org.jetbrains.annotations.NotNull method testB(): java.lang.String
 }
 
+@kotlin.Metadata
 public class A/C {
     synthetic final field this$0: A
     inner class A/C
@@ -22,6 +25,7 @@ public class A/C {
     public final @org.jetbrains.annotations.NotNull method testC(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class ProperOuterKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

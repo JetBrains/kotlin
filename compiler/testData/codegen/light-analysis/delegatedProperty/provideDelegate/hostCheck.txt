@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field result$delegate: Delegate
@@ -7,6 +8,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Delegate {
     private final @org.jetbrains.annotations.NotNull field value: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -15,6 +17,7 @@ public final class Delegate {
     public final @org.jetbrains.annotations.NotNull method provideDelegate(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): Delegate
 }
 
+@kotlin.Metadata
 public final class HostCheckKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

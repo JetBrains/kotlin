@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public enum class IssueState {
     public final static field FIXED: IssueState
     inner class IssueState/FIXED
@@ -7,6 +8,7 @@ public enum class IssueState {
     public static method values(): IssueState[]
 }
 
+@kotlin.Metadata
 final static class IssueState/FIXED {
     inner class IssueState/FIXED
     inner class IssueState/FIXED/D
@@ -15,6 +17,7 @@ final static class IssueState/FIXED {
     public final @org.jetbrains.annotations.NotNull method s(): java.lang.String
 }
 
+@kotlin.Metadata
 public final static class IssueState/FIXED/D {
     private final @org.jetbrains.annotations.NotNull field k: java.lang.String
     inner class IssueState/FIXED
@@ -23,6 +26,7 @@ public final static class IssueState/FIXED/D {
     public final @org.jetbrains.annotations.NotNull method getK(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt9711_2Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

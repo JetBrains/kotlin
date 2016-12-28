@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class B {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final field value$delegate: Delegate
@@ -7,10 +8,12 @@ public final class B {
     public final method test(): void
 }
 
+@kotlin.Metadata
 public final class CapturePropertyInClosureKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Delegate {
     private field inner: int
     public method <init>(): void

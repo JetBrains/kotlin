@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public class A {
     private final @org.jetbrains.annotations.NotNull field b: B
     public method <init>(@org.jetbrains.annotations.NotNull p0: B): void
@@ -5,10 +6,12 @@ public class A {
     public final @org.jetbrains.annotations.NotNull method getB(): B
 }
 
+@kotlin.Metadata
 public final class B {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class SelfcreateKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

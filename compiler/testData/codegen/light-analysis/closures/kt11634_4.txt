@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public interface A {
     public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
+@kotlin.Metadata
 public class Base {
     private final @org.jetbrains.annotations.NotNull field a: A
     private final @org.jetbrains.annotations.NotNull field p: java.lang.String
@@ -10,6 +12,7 @@ public class Base {
     public final @org.jetbrains.annotations.NotNull method getP(): java.lang.String
 }
 
+@kotlin.Metadata
 public class Derived1 {
     private final @org.jetbrains.annotations.NotNull field a: A
     inner class Derived1/Derived2
@@ -17,6 +20,7 @@ public class Derived1 {
     public @org.jetbrains.annotations.NotNull method getA(): A
 }
 
+@kotlin.Metadata
 public final class Derived1/Derived2 {
     synthetic final field this$0: Derived1
     private final @org.jetbrains.annotations.NotNull field x: A
@@ -25,6 +29,7 @@ public final class Derived1/Derived2 {
     public final @org.jetbrains.annotations.NotNull method getX(): A
 }
 
+@kotlin.Metadata
 public final class Kt11634_4Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

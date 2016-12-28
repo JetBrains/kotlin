@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class A {
     inner class A/Inner
     public method <init>(): void
     public final method result(): int
 }
 
+@kotlin.Metadata
 public final class A/Inner {
     private final field k: int
     private final field o: int
@@ -14,6 +16,7 @@ public final class A/Inner {
     public final method getO(): int
 }
 
+@kotlin.Metadata
 public final class InnerConstructorFromClassKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

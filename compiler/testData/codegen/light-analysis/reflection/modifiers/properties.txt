@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class A {
     public @org.jetbrains.annotations.NotNull field lateinit: kotlin.Unit
     private @org.jetbrains.annotations.NotNull field nonLateinit: kotlin.Unit
@@ -8,6 +9,7 @@ public final class A {
     public final method setNonLateinit(@org.jetbrains.annotations.NotNull p0: kotlin.Unit): void
 }
 
+@kotlin.Metadata
 public final class PropertiesKt {
     public final static @org.jetbrains.annotations.NotNull field const: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field nonConst: java.lang.String

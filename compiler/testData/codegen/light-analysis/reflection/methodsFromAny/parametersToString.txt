@@ -1,8 +1,10 @@
+@kotlin.Metadata
 public final class A {
     public method <init>(): void
     public final method bar(): void
 }
 
+@kotlin.Metadata
 public final class ParametersToStringKt {
     public final static method baz(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

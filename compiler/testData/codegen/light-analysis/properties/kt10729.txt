@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class IntentionsBundle {
     private final static field BUNDLE: java.lang.String
     public final static field Companion: IntentionsBundle.Companion
@@ -5,6 +6,7 @@ public final class IntentionsBundle {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class IntentionsBundle/Companion {
     inner class IntentionsBundle/Companion
     private method <init>(): void
@@ -12,6 +14,7 @@ public final static class IntentionsBundle/Companion {
     public final @org.jetbrains.annotations.NotNull method message2(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt10729Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

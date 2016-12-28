@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public interface KotlinInterface {
     public final static field Companion: KotlinInterface.Companion
     public final static field FOO_INT: int
@@ -5,6 +6,7 @@ public interface KotlinInterface {
     inner class KotlinInterface/Companion
 }
 
+@kotlin.Metadata
 public final static class KotlinInterface/Companion {
     public final static field FOO_INT: int
     public final static @org.jetbrains.annotations.NotNull field FOO_STRING: java.lang.String
@@ -12,6 +14,7 @@ public final static class KotlinInterface/Companion {
     private method <init>(): void
 }
 
+@kotlin.Metadata
 public final class KotlinInterfaceKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

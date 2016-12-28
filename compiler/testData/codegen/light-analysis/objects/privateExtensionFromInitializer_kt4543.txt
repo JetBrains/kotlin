@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public final class A {
     private final @org.jetbrains.annotations.NotNull field result: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class C {
     public final static field INSTANCE: C
     private final static @org.jetbrains.annotations.NotNull field g: java.lang.String
@@ -12,6 +14,7 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method getG(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class PrivateExtensionFromInitializer_kt4543Kt {
     public final static @org.jetbrains.annotations.NotNull method a(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

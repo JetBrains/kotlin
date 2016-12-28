@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class C {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final class ExtensionMethodKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public synthetic static method foo$default(p0: C, p1: java.lang.String, p2: java.lang.String, p3: int, p4: java.lang.Object): java.lang.String

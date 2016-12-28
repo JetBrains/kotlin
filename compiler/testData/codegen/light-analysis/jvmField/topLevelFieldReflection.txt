@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class test/TopLevelFieldReflectionKt {
     private static @org.jetbrains.annotations.NotNull field internalField: java.lang.String
     private static @org.jetbrains.annotations.NotNull field publicField: java.lang.String

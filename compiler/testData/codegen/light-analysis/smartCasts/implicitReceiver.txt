@@ -1,9 +1,11 @@
+@kotlin.Metadata
 public class A {
     inner class A/B
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
+@kotlin.Metadata
 public final static class A/B {
     private final @org.jetbrains.annotations.NotNull field a: java.lang.String
     inner class A/B
@@ -11,6 +13,7 @@ public final static class A/B {
     public final @org.jetbrains.annotations.NotNull method getA(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class ImplicitReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

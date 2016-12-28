@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class OrdinalKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public enum class State {
     public final static field _0: State
     public final static field _1: State

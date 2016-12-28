@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class D {
     public final static field Companion: D.Companion
     private final static @org.jetbrains.annotations.NotNull field F: java.lang.String
@@ -6,12 +7,14 @@ public final class D {
     public method <init>(): void
 }
 
+@kotlin.Metadata
 public final static class D/Companion {
     inner class D/Companion
     private method <init>(): void
     protected final @org.jetbrains.annotations.NotNull method getF(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class D/E {
     synthetic final field this$0: D
     inner class D/E
@@ -19,6 +22,7 @@ public final class D/E {
     public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt5395Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

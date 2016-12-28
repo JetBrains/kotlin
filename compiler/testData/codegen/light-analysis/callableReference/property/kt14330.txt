@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class Foo {
     private @org.jetbrains.annotations.Nullable field bar: java.lang.Integer
     public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
@@ -11,6 +12,7 @@ public final class Foo {
     public method toString(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class Kt14330Kt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

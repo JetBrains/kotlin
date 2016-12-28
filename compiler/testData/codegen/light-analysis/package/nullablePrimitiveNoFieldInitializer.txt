@@ -1,3 +1,4 @@
+@kotlin.Metadata
 public final class NullablePrimitiveNoFieldInitializerKt {
     private final static @org.jetbrains.annotations.Nullable field zbyte: java.lang.Byte
     private final static @org.jetbrains.annotations.Nullable field zchar: java.lang.Character

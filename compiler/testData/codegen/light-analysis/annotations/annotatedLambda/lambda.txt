@@ -2,10 +2,12 @@
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
+@kotlin.Metadata
 public annotation class Ann {
     public abstract method x(): java.lang.String
 }
 
+@kotlin.Metadata
 public final class LambdaKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method foo0(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Class

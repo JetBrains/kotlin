@@ -1,7 +1,9 @@
+@kotlin.Metadata
 public final class EnclosedVarKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
 public class M {
     private field y: int
     public method <init>(): void
@@ -9,6 +11,7 @@ public class M {
     public method setY(p0: int): void
 }
 
+@kotlin.Metadata
 public class N {
     private field y: int
     inner class N/C
@@ -17,6 +20,7 @@ public class N {
     public method setY(p0: int): void
 }
 
+@kotlin.Metadata
 public class N/C {
     synthetic final field this$0: N
     inner class N/C
