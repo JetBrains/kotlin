@@ -21,20 +21,16 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 
 object ScriptNameUtil {
-
     fun fileNameWithExtensionStripped(script: KtScript, vararg extensions: String): Name =
-            Name.identifier(generateNameByFileName(script.getContainingKtFile().name, *extensions))
+            Name.identifier(generateNameByFileName(script.containingKtFile.name, *extensions))
 
-    fun generateNameByFileName(fileName: String, vararg extensions: String): String {
-        val nameStart = fileName.lastIndexOf('/').let { if (it < 0) 0 else it + 1 }
-        val nameEnd = extensions.asSequence()
+    fun generateNameByFileName(filePath: String, vararg extensions: String): String {
+        val fileName = filePath.substringAfterLast('/')
+        val nameWithoutExtension = extensions.asSequence()
                 .map { if (it.startsWith('.')) it else ".$it" }
-                .firstOrNull { fileName.endsWith(it) }
-                ?.let { fileName.length - it.length }
-                ?: fileName.lastIndexOf('.').let { if (it < 0) fileName.length else it }
-                ?: fileName.length
-        return fileName
-                .substring(nameStart, nameEnd)
+                .firstOrNull { fileName.endsWith(it) }?.let { fileName.removeSuffix(it) }
+                ?: fileName
+        return nameWithoutExtension
                 .replace('.', '_')
                 .capitalize()
     }
