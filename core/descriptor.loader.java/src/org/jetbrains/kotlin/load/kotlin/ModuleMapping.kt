@@ -95,6 +95,11 @@ class PackageParts(val packageFqName: String) {
         }
     }
 
+    operator fun plusAssign(other: PackageParts) {
+        parts.addAll(other.parts)
+        metadataParts.addAll(other.metadataParts)
+    }
+
     override fun equals(other: Any?) =
             other is PackageParts && other.packageFqName == packageFqName && other.parts == parts && other.metadataParts == metadataParts
 

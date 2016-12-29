@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
 import java.io.EOFException
@@ -29,6 +31,8 @@ class JvmPackagePartProvider(
         private val env: KotlinCoreEnvironment,
         private val scope: GlobalSearchScope
 ) : PackagePartProvider {
+    private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping)
+
     private val notLoadedRoots by lazy(LazyThreadSafetyMode.NONE) {
         env.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)
                 .filterIsInstance<JvmClasspathRoot>()
@@ -37,18 +41,32 @@ class JvmPackagePartProvider(
                 .toMutableList()
     }
 
-    private val loadedModules: MutableList<ModuleMapping> = SmartList()
+    private val loadedModules: MutableList<ModuleMappingInfo> = SmartList()
 
-    override fun findPackageParts(packageFqName: String): List<String> =
-            getPackageParts(packageFqName).flatMap(PackageParts::parts).distinct()
+    override fun findPackageParts(packageFqName: String): List<String> {
+        val rootToPackageParts = getPackageParts(packageFqName)
+        if (rootToPackageParts.isEmpty()) return emptyList()
+
+        val result = arrayListOf<String>()
+        for ((_, packageParts) in rootToPackageParts) {
+            result.addAll(packageParts.parts)
+        }
+        return result.distinct()
+    }
 
     override fun findMetadataPackageParts(packageFqName: String): List<String> =
-            getPackageParts(packageFqName).flatMap(PackageParts::metadataParts).distinct()
+            getPackageParts(packageFqName).values.flatMap(PackageParts::metadataParts).distinct()
 
     @Synchronized
-    private fun getPackageParts(packageFqName: String): List<PackageParts> {
+    private fun getPackageParts(packageFqName: String): Map<VirtualFile, PackageParts> {
         processNotLoadedRelevantRoots(packageFqName)
-        return loadedModules.mapNotNull { it.findPackageParts(packageFqName) }
+
+        val result = mutableMapOf<VirtualFile, PackageParts>()
+        for ((root, mapping) in loadedModules) {
+            val newParts = mapping.findPackageParts(packageFqName) ?: continue
+            result[root]?.let { parts -> parts += newParts } ?: result.put(root, newParts)
+        }
+        return result
     }
 
     private fun processNotLoadedRelevantRoots(packageFqName: String) {
@@ -67,17 +85,19 @@ class JvmPackagePartProvider(
         }
         notLoadedRoots.removeAll(relevantRoots)
 
-        loadedModules.addAll(relevantRoots.mapNotNull {
-            it.findChild("META-INF")
-        }.flatMap {
-            it.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
-        }.map { file ->
-            try {
-                ModuleMapping.create(file.contentsToByteArray(), file.toString())
+        for (root in relevantRoots) {
+            val metaInf = root.findChild("META-INF") ?: continue
+            val moduleFiles = metaInf.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
+            for (moduleFile in moduleFiles) {
+                val mapping = try {
+                    ModuleMapping.create(moduleFile.contentsToByteArray(), moduleFile.toString())
+                }
+                catch (e: EOFException) {
+                    throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$moduleFile', " +
+                                           "roots: $notLoadedRoots", e)
+                }
+                loadedModules.add(ModuleMappingInfo(root, mapping))
             }
-            catch (e: EOFException) {
-                throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$file', roots: $notLoadedRoots", e)
-            }
-        })
+        }
     }
 }
