@@ -478,6 +478,7 @@ class PomFile(val xmlFile: XmlFile) {
         val TestCompile = "test-compile"
         val Js = "js"
         val TestJs = "test-js"
+        val MetaData = "metadata"
     }
 
     companion object {
