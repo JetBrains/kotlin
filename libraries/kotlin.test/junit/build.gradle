@@ -1,0 +1,5 @@
+
+description = ''
+dependencies {
+  compile project(':kotlin-test-parent:kotlin-test')
+}

@@ -1,0 +1,6 @@
+
+description = ''
+dependencies {
+  compile project(':kotlin-stdlib-jre7')
+  testCompile project(':kotlin-test-parent:kotlin-test-junit')
+}

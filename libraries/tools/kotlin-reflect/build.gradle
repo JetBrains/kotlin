@@ -1,0 +1,5 @@
+
+description = ''
+dependencies {
+  compile project(':kotlin-stdlib')
+}

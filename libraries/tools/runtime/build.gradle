@@ -1,0 +1,42 @@
+
+dependencies {
+    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "${rootDir}/../core/builtins/src"
+            srcDir "${rootDir}/../core/runtime.jvm/src"
+            exclude "org/jetbrains/annotations/**"
+        }
+        kotlin {
+            srcDir "${rootDir}/../core/builtins/src"
+            srcDir "${rootDir}/../core/runtime.jvm/src"
+            exclude "org/jetbrains/annotations/**"
+        }
+    }
+}
+
+jar {
+    baseName = project.name
+    from("${rootDir}/../dist/builtins")
+
+    manifest {
+        attributes 'Implementation-Title': 'Kotlin Runtime',
+                   'Implementation-Version': version,
+                   'Kotlin-Runtime-Component': 'Core'
+
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
+}
+
+
