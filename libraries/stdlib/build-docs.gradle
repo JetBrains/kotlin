@@ -18,7 +18,7 @@ task stdlib_docs(type: org.jetbrains.dokka.gradle.DokkaTask) {
     outputFormat = experimental_samples == "true" ? 'kotlin-website-samples' : 'kotlin-website'
     processConfigurations = ['compile']
     includes = ['src/Module.md']
-    samples = ['test/', 'samples/test/']
+    samples = ['test/']
     linkMapping {
         dir = "."
         url = "https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib"
