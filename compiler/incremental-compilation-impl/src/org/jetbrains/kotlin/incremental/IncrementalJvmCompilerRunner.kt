@@ -66,7 +66,7 @@ fun makeIncrementally(
     }
 }
 
-private object EmptyICReporter : ICReporter() {
+private object EmptyICReporter : ICReporter {
     override fun report(message: ()->String) {
     }
 }
