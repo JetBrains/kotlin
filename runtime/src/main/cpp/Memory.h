@@ -2,6 +2,7 @@
 #define RUNTIME_MEMORY_H
 
 #include "Assert.h"
+#include "Common.h"
 #include "TypeInfo.h"
 
 typedef enum {
@@ -312,15 +313,6 @@ OBJ_GETTER(InitInstance,
            ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
            void (*ctor)(ObjHeader*));
 
-// Sets locally visible location.
-void SetLocalRef(ObjHeader** location, const ObjHeader* object);
-// Sets potentially globally visible location.
-void SetGlobalRef(ObjHeader** location, const ObjHeader* object);
-// Update locally visible location.
-void UpdateLocalRef(ObjHeader** location, const ObjHeader* object);
-// Update potentially globally visible location.
-void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object);
-
 //
 // Object reference management.
 //
@@ -344,16 +336,16 @@ void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object);
 //
 
 // Sets locally visible location.
-void SetLocalRef(ObjHeader** location, const ObjHeader* object);
+void SetLocalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Sets potentially globally visible location.
-void SetGlobalRef(ObjHeader** location, const ObjHeader* object);
+void SetGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Update locally visible location.
-void UpdateLocalRef(ObjHeader** location, const ObjHeader* object);
+void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Update potentially globally visible location.
-void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object);
+void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Optimization: release all references in range.
-void ReleaseLocalRefs(ObjHeader** start, int count);
-void ReleaseGlobalRefs(ObjHeader** start, int count);
+void ReleaseLocalRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
+void ReleaseGlobalRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
 
 #ifdef __cplusplus
 }
