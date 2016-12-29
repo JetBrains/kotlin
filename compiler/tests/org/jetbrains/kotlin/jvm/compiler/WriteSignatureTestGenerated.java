@@ -54,12 +54,6 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
-    @TestMetadata("callableProperty.kt")
-    public void testCallableProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/callableProperty.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("Comparable.kt")
     public void testComparable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/Comparable.kt");
@@ -191,6 +185,27 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         @TestMetadata("kClassInt.kt")
         public void testKClassInt() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kClassInt.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/writeSignature/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractWriteSignatureTest {
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("constructorReferenceInReturnType.kt")
+        public void testConstructorReferenceInReturnType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/callableReference/constructorReferenceInReturnType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyReferenceGet.kt")
+        public void testPropertyReferenceGet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/callableReference/propertyReferenceGet.kt");
             doTest(fileName);
         }
     }
