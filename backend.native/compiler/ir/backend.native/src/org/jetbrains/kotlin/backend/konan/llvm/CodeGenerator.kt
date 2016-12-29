@@ -241,8 +241,12 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
 
 
-    fun basicBlock(function: LLVMValueRef, name: String = "label_"): LLVMBasicBlockRef =
-            LLVMAppendBasicBlock(function, name)!!
+    fun basicBlock(name: String = "label_"): LLVMBasicBlockRef {
+        val currentBlock = this.currentBlock
+        val result = LLVMInsertBasicBlock(currentBlock, name)!!
+        LLVMMoveBasicBlockAfter(result, currentBlock)
+        return result
+    }
 
     fun lastBasicBlock(): LLVMBasicBlockRef? = LLVMGetLastBasicBlock(function)
 
@@ -296,7 +300,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
         fun getBuilder(): LLVMBuilderRef {
             if (isAfterTerminator) {
-                positionAtEnd(basicBlock(function!!, "unreachable"))
+                positionAtEnd(basicBlock("unreachable"))
             }
 
             return builder

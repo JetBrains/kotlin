@@ -313,8 +313,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private inner class LoopScope(val loop: IrLoop) : InnerScopeImpl() {
-        val loopCheck = codegen.basicBlock()
         val loopExit  = codegen.basicBlock()
+        val loopCheck = codegen.basicBlock()
 
         override fun genBreak(destination: IrBreak) {
             if (destination.label == null || destination.label == loop.label)
@@ -950,7 +950,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         // The call inside [CatchingScope] must be configured to dispatch exception to the scope's handler.
         override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>): LLVMValueRef {
+            val landingpad = this.landingpad
             val then = codegen.basicBlock()
+
             val res = codegen.invoke(function, args, then, landingpad)
             codegen.positionAtEnd(then)
             return res
@@ -976,8 +978,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             // TODO: optimize for `Throwable` clause.
             catches.forEach {
                 val isInstance = genInstanceOf(exception, it.parameter.type)
-                val body = codegen.basicBlock("catch")
                 val nextCheck = codegen.basicBlock("catchCheck")
+                val body = codegen.basicBlock("catch")
                 codegen.condBr(isInstance, body, nextCheck)
 
                 codegen.appendingTo(body) {
@@ -1295,9 +1297,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val type     = value.typeOperand
         val srcArg   = evaluateExpression(value.argument)     // Evaluate src expression.
 
-        val bbNull       = codegen.basicBlock()
-        val bbInstanceOf = codegen.basicBlock()
         val bbExit       = codegen.basicBlock()
+        val bbInstanceOf = codegen.basicBlock()
+        val bbNull       = codegen.basicBlock()
 
         val condition = codegen.icmpEq(srcArg, codegen.kNullObjHeaderPtr)
         codegen.condBr(condition, bbNull, bbInstanceOf)
@@ -1931,10 +1933,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      * and working with local variables with [FunctionScope] and other enhancements.
      */
 
-    fun CodeGenerator.basicBlock(name: String = "label_"): LLVMBasicBlockRef {
-        val functionScope:FunctionScope = currentCodeContext.functionScope() as FunctionScope
-        return basicBlock(functionScope.llvmFunction!!)
-    }
+    // TODO: is described refactoring still comming?
 
     fun CodeGenerator.basicBlock(name: String, code: () -> Unit) = basicBlock(name).apply {
         appendingTo(this) {
