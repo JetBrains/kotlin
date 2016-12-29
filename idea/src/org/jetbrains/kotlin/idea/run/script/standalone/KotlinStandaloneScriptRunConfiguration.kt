@@ -101,7 +101,7 @@ class KotlinStandaloneScriptRunConfiguration(
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState = ScriptCommandLineState(environment, this)
 
-    override fun suggestedName() = filePath?.let { ScriptNameUtil.generateNameByFileName(it, KotlinParserDefinition.STD_SCRIPT_EXT) }
+    override fun suggestedName() = filePath?.substringAfterLast('/')
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         val group = SettingsEditorGroup<KotlinStandaloneScriptRunConfiguration>()
