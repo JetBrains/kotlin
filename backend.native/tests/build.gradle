@@ -828,6 +828,6 @@ task unit4(type: RunKonanTest) {
 }
 
 task inline0(type: RunKonanTest) {
-    goldValue = "Ok\n3\n"
+    goldValue = "84\n"
     source = "codegen/inline/inline0.kt"
 }
