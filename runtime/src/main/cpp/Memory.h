@@ -351,6 +351,9 @@ void SetGlobalRef(ObjHeader** location, const ObjHeader* object);
 void UpdateLocalRef(ObjHeader** location, const ObjHeader* object);
 // Update potentially globally visible location.
 void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object);
+// Optimization: release all references in range.
+void ReleaseLocalRefs(ObjHeader** start, int count);
+void ReleaseGlobalRefs(ObjHeader** start, int count);
 
 #ifdef __cplusplus
 }

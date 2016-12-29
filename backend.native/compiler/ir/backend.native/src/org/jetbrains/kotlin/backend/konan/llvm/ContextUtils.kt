@@ -205,6 +205,14 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return LLVMAddFunction(llvmModule, name, functionType)!!
     }
 
+    private fun importMemset() : LLVMValueRef {
+        memScoped {
+            val parameterTypes = allocArrayOf(int8TypePtr, int8Type, int32Type, int32Type, int1Type)
+            val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes[0].ptr, 5, 0)
+            return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
+        }
+    }
+
     val staticData = StaticData(context)
 
     val runtimeFile = context.config.configuration.get(KonanConfigKeys.RUNTIME_FILE)!!
@@ -226,6 +234,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val setGlobalRefFunction = importRtFunction("SetGlobalRef")
     val updateLocalRefFunction = importRtFunction("UpdateLocalRef")
     val updateGlobalRefFunction = importRtFunction("UpdateGlobalRef")
+    val releaseLocalRefsFunction = importRtFunction("ReleaseLocalRefs")
     val setArrayFunction = importRtFunction("Kotlin_Array_set")
     val copyImplArrayFunction = importRtFunction("Kotlin_Array_copyImpl")
     val lookupFieldOffset = importRtFunction("LookupFieldOffset")
@@ -234,6 +243,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val checkInstanceFunction = importRtFunction("CheckInstance")
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
+    val memsetFunction = importMemset()
     val usedFunctions = mutableListOf<LLVMValueRef>()
     val staticInitializers = mutableListOf<LLVMValueRef>()
     val fileInitializers = mutableListOf<IrElement>()

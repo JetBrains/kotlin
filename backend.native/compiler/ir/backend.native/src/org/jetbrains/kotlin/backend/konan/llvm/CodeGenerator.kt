@@ -18,6 +18,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     var constructedClass: ClassDescriptor? = null
     val vars = VariableManager(this)
     var returnSlot: LLVMValueRef? = null
+    var slotsPhi: LLVMValueRef? = null
+    var slotCount = 0
 
     fun prologue(descriptor: FunctionDescriptor) {
         prologue(llvmFunction(descriptor),
@@ -41,17 +43,34 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         entryBb = LLVMAppendBasicBlock(function, "entry")
         epilogueBb = LLVMAppendBasicBlock(function, "epilogue")
         positionAtEnd(entryBb!!)
+        slotsPhi = phi(kObjHeaderPtrPtr)
+        slotCount = 0
     }
 
     fun epilogue() {
         appendingTo(prologueBb!!) {
+            val slots = if (slotCount > 0)
+                LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
+            else
+                kNullObjHeaderPtrPtr
+            if (slotCount > 0) {
+                // Zero-init slots.
+                val slotsMem = bitcast(kInt8Ptr, slots)
+                val pointerSize = LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt()
+                val alignment = LLVMABIAlignmentOfType(llvmTargetData, kObjHeaderPtr)
+                call(context.llvm.memsetFunction,
+                        listOf(slotsMem, Int8(0).llvm,
+                                Int32(slotCount * pointerSize).llvm, Int32(alignment).llvm,
+                                Int1(0).llvm))
+            }
+            addPhiIncoming(slotsPhi!!, prologueBb!! to slots)
             br(entryBb!!)
         }
 
         appendingTo(epilogueBb!!) {
             when {
                returnType == voidType -> {
-                   vars.releaseVars()
+                   releaseVars()
                    assert(returnSlot == null)
                    LLVMBuildRetVoid(builder)
                }
@@ -61,7 +80,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                     if (returnSlot != null) {
                         updateLocalRef(returnPhi, returnSlot!!)
                     }
-                    vars.releaseVars()
+                    releaseVars()
                     LLVMBuildRet(builder, returnPhi)
                }
                // Do nothing, all paths throw.
@@ -72,6 +91,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         returns.clear()
         vars.clear()
         returnSlot = null
+        slotsPhi = null
+    }
+
+    fun releaseVars() {
+        if (slotCount > 0) {
+            call(context.llvm.releaseLocalRefsFunction,
+                    listOf(slotsPhi, Int32(slotCount).llvm))
+        }
     }
 
     private var prologueBb: LLVMBasicBlockRef? = null
@@ -104,11 +131,11 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun intToPtr(imm: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, imm, DestTy, Name)!!
 
     fun alloca(type: LLVMTypeRef?, name: String = ""): LLVMValueRef {
+        if (isObjectType(type!!)) {
+            return gep(slotsPhi!!, Int32(slotCount++).llvm)
+        }
         appendingTo(prologueBb!!) {
-            val result = LLVMBuildAlloca(builder, type, name)!!
-            if (isObjectType(type!!))
-                LLVMBuildStore(builder, kNullObjHeaderPtr, result)
-            return result
+            return LLVMBuildAlloca(builder, type, name)!!
         }
     }
     fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildLoad(builder, value, name)!!
@@ -132,6 +159,12 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
     }
 
+    fun gep(base: LLVMValueRef, index: LLVMValueRef): LLVMValueRef {
+        memScoped {
+            val args = allocArrayOf(index)
+            return LLVMBuildGEP(builder, base, args[0].ptr, 1, "")!!
+        }
+    }
 
     // Only use ignoreOld, when sure that memory is freshly inited and have no value.
     fun updateLocalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {

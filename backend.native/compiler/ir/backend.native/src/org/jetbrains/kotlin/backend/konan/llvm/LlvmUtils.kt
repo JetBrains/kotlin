@@ -68,6 +68,10 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
     }
 }
 
+internal class Int1(val value: Byte) : ConstValue {
+    override val llvm = LLVMConstInt(LLVMInt1Type(), value.toLong(), 1)!!
+}
+
 internal class Int8(val value: Byte) : ConstValue {
     override val llvm = LLVMConstInt(LLVMInt8Type(), value.toLong(), 1)!!
 }
@@ -96,6 +100,7 @@ internal fun constValue(value: LLVMValueRef) = object : ConstValue {
     override val llvm = value
 }
 
+internal val int1Type = LLVMInt1Type()!!
 internal val int8Type = LLVMInt8Type()!!
 internal val int32Type = LLVMInt32Type()!!
 internal val int8TypePtr = pointerType(int8Type)
@@ -129,6 +134,8 @@ internal val kImmInt32One  = Int32(1).llvm
 internal val kImmInt64One  = Int64(1).llvm
 internal val ContextUtils.kNullObjHeaderPtr: LLVMValueRef
     get() = LLVMConstNull(this.kObjHeaderPtr)!!
+internal val ContextUtils.kNullObjHeaderPtrPtr: LLVMValueRef
+    get() = LLVMConstNull(this.kObjHeaderPtrPtr)!!
 
 // Nothing type has no values, but we do generate unreachable code and thus need some fake value:
 internal val ContextUtils.kNothingFakeValue: LLVMValueRef

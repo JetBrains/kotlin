@@ -55,17 +55,16 @@ void FreeContainer(ContainerHeader* header) {
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(header + 1);
   const TypeInfo* typeInfo = obj->type_info();
 
+  // We use *local* versions as no other threads could see dead objects.
   for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
     ObjHeader** location = reinterpret_cast<ObjHeader**>(
         reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-    UpdateGlobalRef(location, nullptr);
+    UpdateLocalRef(location, nullptr);
   }
   // Object arrays are *special*.
   if (typeInfo == theArrayTypeInfo) {
     ArrayHeader* array = obj->array();
-    for (int index = 0; index < array->count_; index++) {
-       UpdateGlobalRef(ArrayAddressOfElementAt(array, index), nullptr);
-    }
+    ReleaseLocalRefs(ArrayAddressOfElementAt(array, 0), array->count_);
   }
 
   // And release underlying memory.
@@ -152,9 +151,7 @@ inline void ReleaseRef(const ObjHeader* object) {
   Release(object->container());
 }
 
-#ifdef __cplusplus
 extern "C" {
-#endif
 
 void InitMemory() {
   RuntimeAssert(offsetof(ArrayHeader, type_info_)
@@ -321,6 +318,50 @@ void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
 #endif
 }
 
-#ifdef __cplusplus
-}
+void ReleaseLocalRefs(ObjHeader** start, int count) {
+#if TRACE_MEMORY
+  printf("ReleaseLocalRefs %p .. %p\n", start, start + count);
 #endif
+  ObjHeader** current = start;
+  while (count-- > 0) {
+    ObjHeader* object = *current;
+    if (object != nullptr) {
+      ReleaseRef(object);
+      // Just for sanity, optional.
+      *current = nullptr;
+    }
+    current++;
+  }
+}
+
+void ReleaseGlobalRefs(ObjHeader** start, int count) {
+#if TRACE_MEMORY
+  printf("ReleaseGlobalRefs %p .. %p\n", start, start + count);
+#endif
+#if CONCURRENT
+  ObjHeader** current = start;
+  while (count-- > 0) {
+    ObjHeader* object = *current;
+    if (object != nullptr) {
+      bool written = __sync_bool_compare_and_swap(
+          current, object, nullptr);
+      if (written)
+        ReleaseRef(object);
+    }
+    current++;
+  }
+#else
+  ObjHeader** current = start;
+  while (count-- > 0) {
+    ObjHeader* object = *current;
+    if (object != nullptr) {
+      ReleaseRef(object);
+      // Usually required.
+      *current = nullptr;
+    }
+    current++;
+  }
+#endif
+}
+
+} // extern "C"

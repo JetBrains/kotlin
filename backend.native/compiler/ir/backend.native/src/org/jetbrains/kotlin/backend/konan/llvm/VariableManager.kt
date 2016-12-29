@@ -52,14 +52,6 @@ internal class VariableManager(val codegen: CodeGenerator) {
         descriptors.clear()
     }
 
-    fun releaseVars() {
-        // This function is called by codegen to cleanup local references when leaving frame.
-        for (variable in variables) {
-            if (variable.isRefSlot())
-                codegen.updateLocalRef(codegen.kNullObjHeaderPtr, variable.address())
-        }
-    }
-
     fun createVariable(scoped: Pair<VariableDescriptor, CodeContext>, value: LLVMValueRef? = null) : Int {
         // Note that we always create slot for object references for memory management.
         val descriptor = scoped.first
