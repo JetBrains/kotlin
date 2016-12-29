@@ -202,7 +202,14 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         val externalFunction = LLVMGetNamedFunction(otherModule, name)!!
 
         val functionType = getFunctionType(externalFunction)
-        return LLVMAddFunction(llvmModule, name, functionType)!!
+        val function = LLVMAddFunction(llvmModule, name, functionType)!!
+        val attributes = LLVMGetFunctionAttrSet(externalFunction)
+        for (attribute in LLVMAttribute.values()) {
+            if (attribute in attributes) {
+                LLVMAddFunctionAttr(function, attribute)
+            }
+        }
+        return function
     }
 
     private fun importMemset() : LLVMValueRef {

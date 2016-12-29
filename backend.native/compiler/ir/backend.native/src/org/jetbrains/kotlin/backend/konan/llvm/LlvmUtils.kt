@@ -230,3 +230,7 @@ fun llvmtype2string(type: LLVMTypeRef?): String {
     return LLVMPrintTypeToString(type)!!.asCString().toString()
 }
 
+internal operator fun LLVMAttributeSet.contains(attribute: LLVMAttribute): Boolean {
+    return (this and attribute.value) != 0
+}
+
