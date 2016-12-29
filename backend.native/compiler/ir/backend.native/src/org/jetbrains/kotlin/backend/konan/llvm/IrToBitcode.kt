@@ -1933,7 +1933,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      * and working with local variables with [FunctionScope] and other enhancements.
      */
 
-    // TODO: is described refactoring still comming?
+    // TODO: is described refactoring still coming?
 
     fun CodeGenerator.basicBlock(name: String, code: () -> Unit) = basicBlock(name).apply {
         appendingTo(this) {
