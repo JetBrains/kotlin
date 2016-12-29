@@ -138,7 +138,20 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
             return LLVMBuildAlloca(builder, type, name)!!
         }
     }
-    fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildLoad(builder, value, name)!!
+    fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef {
+        val result = LLVMBuildLoad(builder, value, name)!!
+        // Use loadSlot() API for that.
+        assert(!isObjectRef(value))
+        return result
+    }
+    fun loadSlot(address: LLVMValueRef, isVar: Boolean, name: String = "") : LLVMValueRef {
+        val value = LLVMBuildLoad(builder, address, name)!!
+        if (isObjectRef(value) && isVar) {
+            val slot = alloca(LLVMTypeOf(value))
+            storeAnyLocal(value, slot)
+        }
+        return value
+    }
     fun store(value: LLVMValueRef, ptr: LLVMValueRef) {
         // Use updateRef() or storeAny() API for that.
         assert(!isObjectRef(value))

@@ -670,7 +670,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val bbInit    = codegen.basicBlock("label_init")
         val bbExit    = codegen.basicBlock("label_continue")
         val onePtr    = codegen.intToPtr(kImmInt64One, codegen.kObjHeaderPtr)
-        val objectVal = codegen.load(objectPtr)
+        val objectVal = codegen.loadSlot(objectPtr, false)
         val condition = codegen.ucmpGt(objectVal, onePtr)
         codegen.condBr(condition, bbExit, bbInit)
 
@@ -938,7 +938,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val exceptionPtrPtr = bitcast(codegen.kObjHeaderPtrPtr, exceptionRawPtr, "")
 
                 // Pointer to Kotlin exception object:
-                val exceptionPtr = load(exceptionPtrPtr, "exception")
+                // We do need a slot here, as otherwise exception instance could be freed by _cxa_end_catch.
+                val exceptionPtr = loadSlot(exceptionPtrPtr, true, "exception")
 
                 // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
                 val endCatch = externalFunction("__cxa_end_catch", functionType(voidType, false))
@@ -1343,11 +1344,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         context.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = instanceFieldAccessReceiver(value)
-            return codegen.load(fieldPtrOfClass(thisPtr, value.descriptor))
+            return codegen.loadSlot(
+                    fieldPtrOfClass(thisPtr, value.descriptor), value.descriptor.isVar())
         }
         else {
             val ptr = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)!!
-            return codegen.load(ptr)
+            return codegen.loadSlot(ptr, value.descriptor.isVar())
         }
     }
 

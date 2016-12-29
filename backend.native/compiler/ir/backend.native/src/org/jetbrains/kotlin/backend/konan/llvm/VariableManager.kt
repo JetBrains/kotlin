@@ -10,36 +10,19 @@ internal class VariableManager(val codegen: CodeGenerator) {
         fun load() : LLVMValueRef
         fun store(value: LLVMValueRef)
         fun address() : LLVMValueRef
-        fun isRefSlot() : Boolean
     }
 
-    inner class SlotRecord(val address: LLVMValueRef, val refSlot: Boolean) : Record {
-        override fun load() : LLVMValueRef {
-            return codegen.load(address)
-        }
-        override fun store(value: LLVMValueRef) {
-            codegen.storeAnyLocal(value, address)
-        }
-        override fun address() : LLVMValueRef {
-            return this.address
-        }
-        override fun isRefSlot() = this.refSlot
-
+    inner class SlotRecord(val address: LLVMValueRef, val refSlot: Boolean, val isVar: Boolean) : Record {
+        override fun load() : LLVMValueRef = codegen.loadSlot(address, isVar)
+        override fun store(value: LLVMValueRef) = codegen.storeAnyLocal(value, address)
+        override fun address() : LLVMValueRef = this.address
         override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
     }
 
     class ValueRecord(val value: LLVMValueRef, val descriptor: ValueDescriptor) : Record {
-        override fun load() : LLVMValueRef {
-            return value
-        }
-        override fun store(value: LLVMValueRef) {
-            throw Error("writing to immutable: ${descriptor}")
-        }
-        override fun address() : LLVMValueRef {
-            throw Error("no address for: ${descriptor}")
-        }
-        override fun isRefSlot() : Boolean = false
-
+        override fun load() : LLVMValueRef = value
+        override fun store(value: LLVMValueRef) = throw Error("writing to immutable: ${descriptor}")
+        override fun address() : LLVMValueRef = throw Error("no address for: ${descriptor}")
         override fun toString() = "value of ${value} from ${descriptor}"
     }
 
@@ -55,14 +38,18 @@ internal class VariableManager(val codegen: CodeGenerator) {
     fun createVariable(scoped: Pair<VariableDescriptor, CodeContext>, value: LLVMValueRef? = null) : Int {
         // Note that we always create slot for object references for memory management.
         val descriptor = scoped.first
-        if (descriptor.isVar() || codegen.isObjectType(codegen.getLLVMType(descriptor.type)) || true) {
-            return createMutable(scoped, value)
-        } else {
-            return createImmutable(scoped, value!!)
-        }
+        if (!descriptor.isVar && value != null)
+            return createImmutable(scoped, value)
+        else
+            // Unfortunately, we have to create mutable slots here,
+            // as even vals can be assigned on multiple paths. However, we use varness
+            // knowledge, as anonymous slots are created only for true vars (for vals
+            // their single assigner already have slot).
+            return createMutable(scoped, descriptor.isVar, value)
     }
 
-    fun createMutable(scoped: Pair<VariableDescriptor, CodeContext>, value: LLVMValueRef? = null) : Int {
+    fun createMutable(scoped: Pair<VariableDescriptor, CodeContext>,
+                      isVar: Boolean, value: LLVMValueRef? = null) : Int {
         val descriptor = scoped.first
         assert(descriptors.get(scoped) == null)
         val index = variables.size
@@ -70,7 +57,7 @@ internal class VariableManager(val codegen: CodeGenerator) {
         val slot = codegen.alloca(type, descriptor.name.asString())
         if (value != null)
             codegen.storeAnyLocal(value, slot)
-        variables.add(SlotRecord(slot, codegen.isObjectType(type)))
+        variables.add(SlotRecord(slot, codegen.isObjectType(type), isVar))
         descriptors[scoped] = index
         return index
     }
@@ -91,7 +78,7 @@ internal class VariableManager(val codegen: CodeGenerator) {
         val slot = codegen.alloca(type)
         if (value != null)
             codegen.storeAnyLocal(value, slot)
-        variables.add(SlotRecord(slot, codegen.isObjectType(type)))
+        variables.add(SlotRecord(slot, codegen.isObjectType(type), true))
         return index
     }
 

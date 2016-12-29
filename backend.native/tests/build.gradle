@@ -774,22 +774,18 @@ task expression_as_statement(type: RunKonanTest) {
 }
 
 task memory_var1(type: RunKonanTest) {
-    disabled = true
     source = "runtime/memory/var1.kt"
 }
 
 task memory_var2(type: RunKonanTest) {
-    disabled = true
     source = "runtime/memory/var2.kt"
 }
 
 task memory_var3(type: RunKonanTest) {
-    disabled = true
     source = "runtime/memory/var3.kt"
 }
 
 task memory_var4(type: RunKonanTest) {
-    disabled = true
     source = "runtime/memory/var4.kt"
 }
 
