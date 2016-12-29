@@ -256,9 +256,8 @@ class PropertyReferenceCodegen(
             }
 
             if (receiverType != null) {
-                val expectedReceiver = target.dispatchReceiverParameter ?: target.extensionReceiverParameter ?:
-                                       throw AssertionError("receiverType: $receiverType; no dispatch or extension receiver: $target")
-                val expectedReceiverType = typeMapper.mapType(expectedReceiver.type)
+                val expectedReceiver = target.extensionReceiverParameter?.type ?: (target.containingDeclaration as? ClassDescriptor)?.defaultType
+                val expectedReceiverType = if (expectedReceiver != null) typeMapper.mapType(expectedReceiver) else receiverType
                 capturedBoundReferenceReceiver(asmType, expectedReceiverType, isInliningStrategy).put(expectedReceiverType, v)
             }
             else {

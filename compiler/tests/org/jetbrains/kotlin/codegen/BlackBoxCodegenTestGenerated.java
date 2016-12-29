@@ -1501,6 +1501,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("array.kt")
+            public void testArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/array.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("companionObjectReceiver.kt")
             public void testCompanionObjectReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/companionObjectReceiver.kt");
@@ -1522,6 +1528,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("kt12738.kt")
             public void testKt12738() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/kt12738.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt15446.kt")
+            public void testKt15446() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/kt15446.kt");
                 doTest(fileName);
             }
 

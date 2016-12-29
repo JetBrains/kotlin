@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public class A {
+    private @org.jetbrains.annotations.NotNull field f: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getF(): java.lang.String
+    public final method setF(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class ArrayKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class B {
+    public method <init>(): void
+}

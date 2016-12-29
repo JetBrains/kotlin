@@ -1868,6 +1868,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("array.kt")
+            public void testArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/array.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("companionObjectReceiver.kt")
             public void testCompanionObjectReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/companionObjectReceiver.kt");
@@ -1901,6 +1907,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt12738.kt")
             public void testKt12738() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/kt12738.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("kt15446.kt")
+            public void testKt15446() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/kt15446.kt");
                 try {
                     doTest(fileName);
                 }
