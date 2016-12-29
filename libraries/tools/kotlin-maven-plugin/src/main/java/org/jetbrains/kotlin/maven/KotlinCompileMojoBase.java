@@ -72,6 +72,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     private List<String> pluginOptions;
 
+    @Parameter
+    private boolean multiPlatform = false;
+
     private List<String> getAppliedCompilerPlugins() {
         return (compilerPlugins == null) ? Collections.<String>emptyList() : compilerPlugins;
     }
@@ -359,6 +362,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.suppressWarnings = nowarn;
         arguments.languageVersion = languageVersion;
         arguments.apiVersion = apiVersion;
+        arguments.multiPlatform = multiPlatform;
 
         getLog().info("Compiling Kotlin sources from " + sources);
 
