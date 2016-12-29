@@ -782,7 +782,7 @@ private fun CompilationResult.doProcessChanges(
     }
 }
 
-private class JpsICReporter : ICReporter() {
+private class JpsICReporter : ICReporter {
     override fun report(message: ()->String) {
         if (KotlinBuilder.LOG.isDebugEnabled) {
             KotlinBuilder.LOG.debug(message())
