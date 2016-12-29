@@ -105,7 +105,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun releaseVars() {
         if (slotCount > 0) {
             call(context.llvm.releaseLocalRefsFunction,
-                    listOf(slotsPhi, Int32(slotCount).llvm))
+                    listOf(slotsPhi!!, Int32(slotCount).llvm))
         }
     }
 
@@ -115,6 +115,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     private var cleanupLandingpad: LLVMBasicBlockRef? = null
 
     fun setName(value: LLVMValueRef, name: String) = LLVMSetValueName(value, name)
+    fun getName(value: LLVMValueRef) = LLVMGetValueName(value)?.asCString().toString()
 
     fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildAdd (builder, arg0, arg1, name)!!
     fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildMul (builder, arg0, arg1, name)!!
@@ -203,21 +204,36 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     //-------------------------------------------------------------------------//
 
-    fun invoke(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>,
-               then: LLVMBasicBlockRef, landingpad: LLVMBasicBlockRef,
-               name: String = ""): LLVMValueRef {
+    fun callAtFunctionScope(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>, name: String = "") =
+            call(llvmFunction, args, this::cleanupLandingpad, name)
+
+    fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
+             lazyLandingpad: () -> LLVMBasicBlockRef? = { null }, name: String = ""): LLVMValueRef {
 
         memScoped {
             val rargs = allocArrayOf(args)[0].ptr
-            return LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, then, landingpad, name)!!
-        }
 
-    }
+            if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
+                    LLVMAttribute.LLVMNoUnwindAttribute in LLVMGetFunctionAttrSet(llvmFunction)) {
 
-    fun call(llvmFunction: LLVMValueRef?, args: List<LLVMValueRef?>, name: String = ""): LLVMValueRef {
-        memScoped {
-            val rargs = allocArrayOf(args)[0].ptr
-            return LLVMBuildCall(builder, llvmFunction, rargs, args.size, name)!!
+                return LLVMBuildCall(builder, llvmFunction, rargs, args.size, name)!!
+            } else {
+                val landingpad = lazyLandingpad()
+
+                if (landingpad == null) {
+                    // When calling a function that is not marked as nounwind (can throw an exception),
+                    // it is required to specify a landingpad to handle exceptions properly.
+                    // Runtime C++ function can be marked as non-throwing using `RUNTIME_NOTHROW`.
+                    val functionName = getName(llvmFunction)
+                    val message = "no landingpad specified when calling function $functionName without nounwind attr"
+                    throw IllegalArgumentException(message)
+                }
+
+                val success = basicBlock()
+                val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, name)!!
+                positionAtEnd(success)
+                return result
+            }
         }
     }
 

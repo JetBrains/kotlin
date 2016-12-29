@@ -281,7 +281,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!   // Create constructor function.
         codegen.prologue(ctorFunction, voidType)
         val initNodePtr = LLVMGetNamedGlobal(context.llvmModule, nodeName)!!                // Get LLVM function initializing globals of current file.
-        codegen.call(context.llvm.appendToInitalizersTail, initNodePtr.singletonList(), "") // Add node to the tail of initializers list.
+        codegen.call(context.llvm.appendToInitalizersTail, initNodePtr.singletonList())     // Add node to the tail of initializers list.
         codegen.ret(null)
         codegen.epilogue()
 
@@ -527,12 +527,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         }
 
-        override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>) = codegen.call(function, args)
+        override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>) =
+                codegen.callAtFunctionScope(function, args)
 
         override fun genThrow(exception: LLVMValueRef) {
             val objHeaderPtr = codegen.bitcast(codegen.kObjHeaderPtr, exception)
             val args = listOf(objHeaderPtr)
-            codegen.call(context.llvm.throwExceptionFunction, args, "")
+
+            this.genCall(context.llvm.throwExceptionFunction, args)
             codegen.unreachable()
         }
 
@@ -681,12 +683,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val ctor = codegen.llvmFunction(initFunction)
         val args = listOf(objectPtr, typeInfo, allocHint, ctor)
         val newValue = call(context.llvm.initInstanceFunction, args)
+        val bbInitResult = codegen.currentBlock
         codegen.br(bbExit)
 
         codegen.positionAtEnd(bbExit)
         val valuePhi = codegen.phi(codegen.getLLVMType(value.type))
         codegen.addPhiIncoming(valuePhi,
-                bbCurrent to objectVal, bbInit to newValue)
+                bbCurrent to objectVal, bbInitResult to newValue)
 
         return valuePhi
     }
@@ -920,11 +923,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 // FIXME: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
                 // bypassing the finally block.
 
-                val exceptionRecord = LLVMBuildExtractValue(codegen.builder, landingpadResult, 0, "er")
+                val exceptionRecord = LLVMBuildExtractValue(codegen.builder, landingpadResult, 0, "er")!!
 
                 // __cxa_begin_catch returns pointer to C++ exception object.
                 val beginCatch = context.llvm.cxaBeginCatchFunction
-                val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord), "")
+                val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord))
 
                 // Pointer to KotlinException instance:
                 val exceptionPtrPtr = bitcast(codegen.kObjHeaderPtrPtr, exceptionRawPtr, "")
@@ -935,7 +938,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
                 // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
                 val endCatch = context.llvm.cxaEndCatchFunction
-                call(endCatch, listOf(), "")
+                call(endCatch, listOf())
 
                 jumpToHandler(exceptionPtr)
             }
@@ -943,11 +946,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         // The call inside [CatchingScope] must be configured to dispatch exception to the scope's handler.
         override fun genCall(function: LLVMValueRef, args: List<LLVMValueRef>): LLVMValueRef {
-            val landingpad = this.landingpad
-            val then = codegen.basicBlock()
-
-            val res = codegen.invoke(function, args, then, landingpad)
-            codegen.positionAtEnd(then)
+            val res = codegen.call(function, args, this::landingpad)
             return res
         }
 
@@ -1305,10 +1304,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         codegen.positionAtEnd(bbInstanceOf)
         val resultInstanceOf = genInstanceOf(srcArg, type)
         codegen.br(bbExit)
+        val bbInstanceOfResult = codegen.currentBlock
 
         codegen.positionAtEnd(bbExit)
         val result = codegen.phi(kBoolean)
-        codegen.addPhiIncoming(result, bbNull to resultNull, bbInstanceOf to resultInstanceOf)
+        codegen.addPhiIncoming(result, bbNull to resultNull, bbInstanceOfResult to resultInstanceOf)
         return result
     }
 
