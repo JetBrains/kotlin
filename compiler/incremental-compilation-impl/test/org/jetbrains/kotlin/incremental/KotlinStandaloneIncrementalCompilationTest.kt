@@ -124,7 +124,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
         val compiledSources = arrayListOf<File>()
         var resultExitCode = ExitCode.OK
 
-        val reporter = object : ICReporter() {
+        val reporter = object : ICReporter {
             override fun report(message: ()->String) {
             }
 
