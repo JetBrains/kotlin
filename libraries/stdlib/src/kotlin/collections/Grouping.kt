@@ -17,8 +17,8 @@ package kotlin.collections
  */
 @SinceKotlin("1.1")
 public interface Grouping<T, out K> {
-    /** Returns an [Iterator] which iterates through the elements of the source. */
-    fun elementIterator(): Iterator<T>
+    /** Returns an [Iterator] over the elements of the source of this grouping. */
+    fun sourceIterator(): Iterator<T>
     /** Extracts the key of an [element]. */
     fun keyOf(element: T): K
 }
@@ -65,7 +65,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.aggregateTo(
         destination: M,
         operation: (key: K, accumulator: R?, element: T, first: Boolean) -> R
 ): M {
-    for (e in this.elementIterator()) {
+    for (e in this.sourceIterator()) {
         val key = keyOf(e)
         val accumulator = destination[key]
         destination[key] = operation(key, accumulator, e, accumulator == null && !destination.containsKey(key))

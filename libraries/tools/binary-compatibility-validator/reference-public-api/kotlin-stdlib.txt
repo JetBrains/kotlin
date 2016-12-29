@@ -1601,8 +1601,8 @@ public final class kotlin/collections/CollectionsKt {
 }
 
 public abstract interface class kotlin/collections/Grouping {
-	public abstract fun elementIterator ()Ljava/util/Iterator;
 	public abstract fun keyOf (Ljava/lang/Object;)Ljava/lang/Object;
+	public abstract fun sourceIterator ()Ljava/util/Iterator;
 }
 
 public final class kotlin/collections/GroupingKt {
