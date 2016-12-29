@@ -134,6 +134,7 @@ List<String> llvmLinkerOpts() {
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
+     headers files('LlvmHacks.h')
      compilerOpts "-fPIC", "-I$llvmDir/include"
      linkerOpts llvmLinkerOpts()
    }
