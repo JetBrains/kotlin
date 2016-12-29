@@ -913,15 +913,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
          */
         private fun genLandingpad() {
             with(codegen) {
-                // Type of `landingpad` instruction result (depends on personality function):
-                val landingpadType = structType(int8TypePtr, int32Type)
-
-                val personalityFunction = externalFunction("__gxx_personality_v0", functionType(int32Type, true))
-                val personalityFunctionRaw = LLVMConstBitCast(personalityFunction, int8TypePtr)!!
-
-                val numClauses = 1
-                val landingpadResult =
-                        LLVMBuildLandingPad(codegen.builder, landingpadType, personalityFunctionRaw, numClauses, "lp")
+                val landingpadResult = codegen.gxxLandingpad(numClauses = 1, name = "lp")
 
                 LLVMAddClause(landingpadResult, LLVMConstNull(kInt8Ptr))
 
@@ -931,7 +923,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val exceptionRecord = LLVMBuildExtractValue(codegen.builder, landingpadResult, 0, "er")
 
                 // __cxa_begin_catch returns pointer to C++ exception object.
-                val beginCatch = externalFunction("__cxa_begin_catch", functionType(int8TypePtr, false, int8TypePtr))
+                val beginCatch = context.llvm.cxaBeginCatchFunction
                 val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord), "")
 
                 // Pointer to KotlinException instance:
@@ -942,7 +934,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 val exceptionPtr = loadSlot(exceptionPtrPtr, true, "exception")
 
                 // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
-                val endCatch = externalFunction("__cxa_end_catch", functionType(voidType, false))
+                val endCatch = context.llvm.cxaEndCatchFunction
                 call(endCatch, listOf(), "")
 
                 jumpToHandler(exceptionPtr)

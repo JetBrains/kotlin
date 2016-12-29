@@ -42,6 +42,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         prologueBb = LLVMAppendBasicBlock(function, "prologue")
         entryBb = LLVMAppendBasicBlock(function, "entry")
         epilogueBb = LLVMAppendBasicBlock(function, "epilogue")
+        cleanupLandingpad = LLVMAppendBasicBlock(function, "cleanup_landingpad")!!
         positionAtEnd(entryBb!!)
         slotsPhi = phi(kObjHeaderPtrPtr)
         slotCount = 0
@@ -88,6 +89,13 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
             }
         }
 
+        appendingTo(cleanupLandingpad!!) {
+            val landingpad = gxxLandingpad(numClauses = 0)
+            LLVMSetCleanup(landingpad, 1)
+            releaseVars()
+            LLVMBuildResume(builder, landingpad)
+        }
+
         returns.clear()
         vars.clear()
         returnSlot = null
@@ -104,6 +112,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     private var prologueBb: LLVMBasicBlockRef? = null
     private var entryBb: LLVMBasicBlockRef? = null
     private var epilogueBb: LLVMBasicBlockRef? = null
+    private var cleanupLandingpad: LLVMBasicBlockRef? = null
 
     fun setName(value: LLVMValueRef, name: String) = LLVMSetValueName(value, name)
 
@@ -298,6 +307,17 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         val res = LLVMBuildUnreachable(builder)
         currentPositionHolder.setAfterTerminator()
         return res
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun gxxLandingpad(numClauses: Int, name: String = ""): LLVMValueRef {
+        val personalityFunction = LLVMConstBitCast(context.llvm.gxxPersonalityFunction, int8TypePtr)
+
+        // Type of `landingpad` instruction result (depends on personality function):
+        val landingpadType = structType(int8TypePtr, int32Type)
+
+        return LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
     }
 
     //-------------------------------------------------------------------------//

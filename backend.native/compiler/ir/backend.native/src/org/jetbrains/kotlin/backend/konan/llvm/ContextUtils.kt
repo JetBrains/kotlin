@@ -220,6 +220,22 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
+    private fun externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
+        val found = LLVMGetNamedFunction(context.llvmModule, name)
+        if (found != null) {
+            assert (getFunctionType(found) == type)
+            return found
+        } else {
+            return LLVMAddFunction(context.llvmModule, name, type)!!
+        }
+    }
+
+    private fun externalNounwindFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
+        val function = externalFunction(name, type)
+        LLVMAddFunctionAttr(function, LLVMAttribute.LLVMNoUnwindAttribute)
+        return function
+    }
+
     val staticData = StaticData(context)
 
     val runtimeFile = context.config.configuration.get(KonanConfigKeys.RUNTIME_FILE)!!
@@ -250,7 +266,13 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val checkInstanceFunction = importRtFunction("CheckInstance")
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
+
+    val gxxPersonalityFunction = externalNounwindFunction("__gxx_personality_v0", functionType(int32Type, true))
+    val cxaBeginCatchFunction = externalNounwindFunction("__cxa_begin_catch", functionType(int8TypePtr, false, int8TypePtr))
+    val cxaEndCatchFunction = externalNounwindFunction("__cxa_end_catch", functionType(voidType, false))
+
     val memsetFunction = importMemset()
+
     val usedFunctions = mutableListOf<LLVMValueRef>()
     val staticInitializers = mutableListOf<LLVMValueRef>()
     val fileInitializers = mutableListOf<IrElement>()

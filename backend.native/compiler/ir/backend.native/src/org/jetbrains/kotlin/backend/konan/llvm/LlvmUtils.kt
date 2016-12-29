@@ -193,16 +193,6 @@ internal fun getGlobalType(ptrToGlobal: LLVMValueRef): LLVMTypeRef {
     return LLVMGetElementType(ptrToGlobal.type)!!
 }
 
-internal fun ContextUtils.externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
-    val found = LLVMGetNamedFunction(context.llvmModule, name)
-    if (found != null) {
-        assert (getFunctionType(found) == type)
-        return found
-    } else {
-        return LLVMAddFunction(context.llvmModule, name, type)!!
-    }
-}
-
 internal fun ContextUtils.externalGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
     val found = LLVMGetNamedGlobal(context.llvmModule, name)
     if (found != null) {
