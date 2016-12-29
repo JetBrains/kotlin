@@ -36,6 +36,21 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("compiler/testData/compileJavaAgainstKotlin/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractCompileJavaAgainstKotlinTest {
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("GenericSignature.kt")
+        public void testGenericSignature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/callableReference/GenericSignature.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/class")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -80,6 +80,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
@@ -505,49 +506,41 @@ public class KotlinTypeMapper {
             @Nullable JvmSignatureWriter signatureVisitor,
             @NotNull TypeMappingMode mode
     ) {
-        if (signatureVisitor != null) {
+        if (signatureVisitor == null) return;
 
-            // Nothing mapping rules:
-            //  Map<Nothing, Foo> -> Map
-            //  Map<Foo, List<Nothing>> -> Map<Foo, List>
-            //  In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
-            //  In<Nothing, Nothing> -> In
-            //  Inv<in Nothing, Foo> -> Inv
-            if (signatureVisitor.skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.getArguments().isEmpty()) {
-                signatureVisitor.writeAsmType(asmType);
-                return;
-            }
-
-            PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
-            assert possiblyInnerType != null : "possiblyInnerType with arguments should not be null";
-
-            List<PossiblyInnerType> innerTypesAsList = possiblyInnerType.segments();
-            PossiblyInnerType outermostInnerType = innerTypesAsList.get(0);
-            ClassDescriptor outermostClass = outermostInnerType.getClassDescriptor();
-
-            if (innerTypesAsList.size() == 1) {
-                signatureVisitor.writeClassBegin(asmType);
-            }
-            else {
-                signatureVisitor.writeOuterClassBegin(
-                        asmType,
-                        mapType(outermostClass.getDefaultType()).getInternalName());
-            }
-
-            writeGenericArguments(
-                    signatureVisitor,
-                    outermostInnerType.getArguments(), outermostClass.getDeclaredTypeParameters(), mode);
-
-            for (PossiblyInnerType innerPart : innerTypesAsList.subList(1, innerTypesAsList.size())) {
-                ClassDescriptor classDescriptor = innerPart.getClassDescriptor();
-                signatureVisitor.writeInnerClass(getJvmShortName(classDescriptor));
-                writeGenericArguments(
-                        signatureVisitor, innerPart.getArguments(),
-                        classDescriptor.getDeclaredTypeParameters(), mode);
-            }
-
-            signatureVisitor.writeClassEnd();
+        // Nothing mapping rules:
+        //  Map<Nothing, Foo> -> Map
+        //  Map<Foo, List<Nothing>> -> Map<Foo, List>
+        //  In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
+        //  In<Nothing, Nothing> -> In
+        //  Inv<in Nothing, Foo> -> Inv
+        if (signatureVisitor.skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.getArguments().isEmpty()) {
+            signatureVisitor.writeAsmType(asmType);
+            return;
         }
+
+        PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
+        assert possiblyInnerType != null : "possiblyInnerType with arguments should not be null";
+
+        List<PossiblyInnerType> innerTypesAsList = possiblyInnerType.segments();
+
+        if (innerTypesAsList.size() == 1) {
+            signatureVisitor.writeClassBegin(asmType);
+        }
+        else {
+            ClassDescriptor outermostClass = innerTypesAsList.get(0).getClassDescriptor();
+            signatureVisitor.writeOuterClassBegin(asmType, mapType(outermostClass.getDefaultType()).getInternalName());
+        }
+
+        for (int i = 0; i < innerTypesAsList.size(); i++) {
+            PossiblyInnerType innerPart = innerTypesAsList.get(i);
+            if (i > 0) {
+                signatureVisitor.writeInnerClass(getJvmShortName(innerPart.getClassDescriptor()));
+            }
+            writeGenericArguments(signatureVisitor, innerPart, mode);
+        }
+
+        signatureVisitor.writeClassEnd();
     }
 
     @Nullable
@@ -558,6 +551,31 @@ public class KotlinTypeMapper {
         }
 
         return SpecialNames.safeIdentifier(klass.getName()).getIdentifier();
+    }
+
+    private void writeGenericArguments(
+            @NotNull JvmSignatureWriter signatureVisitor,
+            @NotNull PossiblyInnerType type,
+            @NotNull TypeMappingMode mode
+    ) {
+        ClassDescriptor classDescriptor = type.getClassDescriptor();
+        List<TypeParameterDescriptor> parameters = classDescriptor.getDeclaredTypeParameters();
+        List<TypeProjection> arguments = type.getArguments();
+
+        if (classDescriptor instanceof FunctionClassDescriptor &&
+            ((FunctionClassDescriptor) classDescriptor).getFunctionKind() == FunctionClassDescriptor.Kind.KFunction) {
+            // kotlin.reflect.KFunction{n}<P1, ... Pn, R> is mapped to kotlin.reflect.KFunction<R> on JVM (see JavaToKotlinClassMap).
+            // So for these classes, we need to skip all type arguments except the very last one
+            writeGenericArguments(
+                    signatureVisitor,
+                    Collections.singletonList(CollectionsKt.last(arguments)),
+                    Collections.singletonList(CollectionsKt.last(parameters)),
+                    mode
+            );
+            return;
+        }
+
+        writeGenericArguments(signatureVisitor, arguments, parameters, mode);
     }
 
     private void writeGenericArguments(

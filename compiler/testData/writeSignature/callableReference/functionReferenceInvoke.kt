@@ -10,6 +10,6 @@ fun box(): String {
     return test(Foo()::test)
 }
 
-// method: CallableFunctionKt$box$1::invoke
+// method: FunctionReferenceInvokeKt$box$1::invoke
 // jvm signature:     ()Ljava/lang/String;
 // generic signature: null

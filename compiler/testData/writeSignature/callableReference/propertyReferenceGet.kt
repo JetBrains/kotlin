@@ -8,6 +8,6 @@ fun box(): String {
     return test(Foo("OK")::a)
 }
 
-// method: CallablePropertyKt$box$1::get
+// method: PropertyReferenceGetKt$box$1::get
 // jvm signature:     ()Ljava/lang/Object;
 // generic signature: null
