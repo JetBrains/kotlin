@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -399,4 +400,15 @@ public final class TranslationUtils {
                ModalityKt.isOverridable(descriptor);
     }
 
+
+    public static boolean isImmediateSubtypeOfError(@NotNull ClassDescriptor descriptor) {
+        if (!isExceptionClass(descriptor)) return false;
+        ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassOrAny(descriptor);
+        return TypeUtilsKt.isThrowable(superClass.getDefaultType()) || AnnotationsUtils.isNativeObject(superClass);
+    }
+
+    public static boolean isExceptionClass(@NotNull ClassDescriptor descriptor) {
+        ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
+        return TypeUtilsKt.isSubtypeOf(descriptor.getDefaultType(), module.getBuiltIns().getThrowable().getDefaultType());
+    }
 }

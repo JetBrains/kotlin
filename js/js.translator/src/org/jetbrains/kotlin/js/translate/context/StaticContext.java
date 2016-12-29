@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -247,6 +248,9 @@ public final class StaticContext {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (KotlinBuiltIns.isAny(classDescriptor)) {
                 return pureFqn("Object", null);
+            }
+            else if (TypeUtilsKt.isThrowable(classDescriptor.getDefaultType())) {
+                return pureFqn("Error", null);
             }
         }
 

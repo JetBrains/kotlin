@@ -46,6 +46,8 @@ public final class FunctionIntrinsics {
         register(ArrayFIF.INSTANCE);
         register(TopLevelFIF.INSTANCE);
         register(NumberAndCharConversionFIF.INSTANCE);
+        register(ThrowableConstructorIntrinsicFactory.INSTANCE);
+        register(ExceptionPropertyIntrinsicFactory.INSTANCE);
     }
 
     private void register(@NotNull FunctionIntrinsicFactory instance) {

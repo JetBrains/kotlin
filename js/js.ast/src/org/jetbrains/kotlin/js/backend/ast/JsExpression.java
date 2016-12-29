@@ -25,10 +25,10 @@ public abstract class JsExpression extends SourceInfoAwareJsNode {
         return new JsExpressionStatement(this);
     }
 
-    protected abstract static class JsExpressionHasArguments extends JsExpression implements HasArguments {
+    public abstract static class JsExpressionHasArguments extends JsExpression implements HasArguments {
         protected final List<JsExpression> arguments;
 
-        public JsExpressionHasArguments(List<JsExpression> arguments) {
+        protected JsExpressionHasArguments(List<JsExpression> arguments) {
             this.arguments = arguments;
         }
 

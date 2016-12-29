@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
@@ -87,6 +88,7 @@ class ClassTranslator private constructor(
         translatePropertiesAsConstructorParameters(nonConstructorContext)
         val bodyVisitor = DeclarationBodyVisitor(descriptor, nonConstructorContext, enumInitFunction)
         bodyVisitor.traverseContainer(classDeclaration, nonConstructorContext)
+        mayBeAddThrowableProperties(context)
         constructorFunction.body.statements += bodyVisitor.initializerStatements
         delegationTranslator.generateDelegated()
 
@@ -453,6 +455,23 @@ class ClassTranslator private constructor(
 
     private fun generateEnumStandardMethods(entries: List<ClassDescriptor>) {
         EnumTranslator(context(), descriptor, entries).generateStandardMethods()
+    }
+
+    private fun mayBeAddThrowableProperties(context: TranslationContext) {
+        if (!TranslationUtils.isImmediateSubtypeOfError(descriptor)) return
+
+        val properties = listOf("message", "cause")
+                .map { Name.identifier(it) }
+                .map { DescriptorUtils.getPropertyByName(descriptor.unsubstitutedMemberScope, it) }
+                .filter { !it.kind.isReal }
+        for (property in properties) {
+            val propertyTranslator = DefaultPropertyTranslator(property, context, JsLiteral.NULL)
+            val literal = JsObjectLiteral(true)
+            val getterFunction = context.getFunctionObject(property.getter!!)
+            propertyTranslator.generateDefaultGetterFunction(property.getter!!, getterFunction)
+            literal.propertyInitializers += JsPropertyInitializer(context.program().getStringLiteral("get"), getterFunction)
+            context.addAccessorsToPrototype(descriptor, property, literal)
+        }
     }
 
     private fun generatedBridgeMethods() {

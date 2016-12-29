@@ -602,6 +602,19 @@ public class DescriptorUtils {
     }
 
     @NotNull
+    public static PropertyDescriptor getPropertyByName(@NotNull MemberScope scope, @NotNull Name name) {
+        Collection<DeclarationDescriptor> callables = scope.getContributedDescriptors(
+                DescriptorKindFilter.CALLABLES, MemberScope.Companion.getALL_NAME_FILTER());
+        for (DeclarationDescriptor d : callables) {
+            if (d instanceof PropertyDescriptor && name.equals(d.getOriginal().getName())) {
+                return (PropertyDescriptor) d;
+            }
+        }
+
+        throw new IllegalStateException("Property not found");
+    }
+
+    @NotNull
     public static CallableMemberDescriptor getDirectMember(@NotNull CallableMemberDescriptor descriptor) {
         return descriptor instanceof PropertyAccessorDescriptor
                ? ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty()
