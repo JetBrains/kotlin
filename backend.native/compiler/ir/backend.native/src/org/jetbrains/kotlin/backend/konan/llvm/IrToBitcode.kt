@@ -1146,28 +1146,29 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateWhen(expression: IrWhen): LLVMValueRef {
         context.log("evaluateWhen               : ${ir2string(expression)}")
         var bbExit: LLVMBasicBlockRef? = null             // By default "when" does not have "exit".
-        if (!KotlinBuiltIns.isNothing(expression.type))     // If "when" has "exit".
-            bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
-
         val isUnit                = KotlinBuiltIns.isUnit(expression.type)
         val isNothing             = KotlinBuiltIns.isNothing(expression.type)
-        val neitherUnitNorNothing = !isNothing && !isUnit
-        val tmpLlvmVariable       = if (!isUnit) codegen.vars.createAnonymousMutable(expression.type) else -1
 
-        expression.branches.forEach {                       // Iterate through "when" branches (clauses).
-            var bbNext = bbExit                             // For last clause bbNext coincides with bbExit.
-            if (it != expression.branches.last())           // If it is not last clause.
-                bbNext = codegen.basicBlock()               // Create new basic block for next clause.
-            val isUnitBranch = KotlinBuiltIns.isUnit(it.result.type)
-            val isNothingBranch = KotlinBuiltIns.isNothing(it.result.type)
-            generateWhenCase(isUnitBranch, isNothingBranch, tmpLlvmVariable, it, bbNext, bbExit) // Generate code for current clause.
+        if (!isNothing)                                     // If "when" has "exit".
+            bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
+
+        val resultPhi = if (isUnit || isNothing) null else
+            codegen.appendingTo(bbExit!!) {
+                codegen.phi(codegen.getLLVMType(expression.type))
+            }
+
+        expression.branches.forEach {                           // Iterate through "when" branches (clauses).
+            var bbNext = bbExit                                 // For last clause bbNext coincides with bbExit.
+            if (it != expression.branches.last())               // If it is not last clause.
+                bbNext = codegen.basicBlock()                   // Create new basic block for next clause.
+            generateWhenCase(resultPhi, it, bbNext, bbExit)     // Generate code for current clause.
         }
 
         return when {
             // FIXME: remove the hacks.
             isUnit -> codegen.theUnitInstanceRef.llvm
             isNothing -> codegen.kNothingFakeValue
-            else -> codegen.vars.load(tmpLlvmVariable)
+            else -> resultPhi!!
         }
     }
 
@@ -1760,30 +1761,27 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun generateWhenCase(isUnit:Boolean, isNothing:Boolean, resultPtr: Int,
-                                 branch: IrBranch, bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
-        val neitherUnitNorNothing = !isNothing && !isUnit                            // If branches doesn't end with 'return' either result hasn't got 'unit' type.
+    private fun generateWhenCase(resultPhi: LLVMValueRef?, branch: IrBranch,
+                                 bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
         val branchResult = branch.result
-        // TODO: use phis here!
-        if (isUnconditional(branch)) {                                               // It is the "else" clause.
-            val brResult = evaluateExpression(branchResult)                          // Generate clause body.
-            if (neitherUnitNorNothing)                                               // If nor unit neither result ends with return
-                codegen.vars.store(brResult, resultPtr)                              // we store result to temporal variable.
-            if (bbExit == null) return                                               // If 'bbExit' isn't defined just return
-            codegen.br(bbExit)                                                       // Generate branch to bbExit.
-            codegen.positionAtEnd(bbExit)                                            // Switch generation to bbExit.
+        val isNothing = KotlinBuiltIns.isNothing(branchResult.type)
+        val brResult = if (isUnconditional(branch)) {                                // It is the "else" clause.
+            evaluateExpression(branchResult)                                         // Generate clause body.
         } else {                                                                     // It is conditional clause.
             val bbCurr = codegen.basicBlock()                                        // Create block for clause body.
             val condition = evaluateExpression(branch.condition)                     // Generate cmp instruction.
             codegen.condBr(condition, bbCurr, bbNext)                                // Conditional branch depending on cmp result.
             codegen.positionAtEnd(bbCurr)                                            // Switch generation to block for clause body.
-            val brResult = evaluateExpression(branch.result)                         // Generate clause body.
-            if (neitherUnitNorNothing)                                               // If nor unit neither result ends with return
-                codegen.vars.store(brResult, resultPtr)                              // we store result to temporal variable.
-            if (!isNothing)                                                          // If basic block doesn't end with 'return'
-                codegen.br(bbExit!!)                                                 // generate branch to bbExit.
-            codegen.positionAtEnd(bbNext!!)                                          // Switch generation to bbNextClause.
+            evaluateExpression(branch.result)                                        // Generate clause body.
         }
+        if (resultPhi != null && !isNothing)
+            codegen.assignPhis(resultPhi to brResult)
+        if (bbExit != null && !isNothing)
+            codegen.br(bbExit!!)
+        if (bbNext != null)                                                          // Switch generation to next or exit.
+            codegen.positionAtEnd(bbNext)
+        else if (bbExit != null)
+            codegen.positionAtEnd(bbExit)
     }
 
     //-------------------------------------------------------------------------//
