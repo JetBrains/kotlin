@@ -40,13 +40,7 @@ public interface Grouping<T, out K> {
 public inline fun <T, K, R> Grouping<T, K>.aggregate(
         operation: (key: K, value: R?, element: T, first: Boolean) -> R
 ): Map<K, R> {
-    val result = mutableMapOf<K, R>()
-    for (e in this.elementIterator()) {
-        val key = keyOf(e)
-        val value = result[key]
-        result[key] = operation(key, value, e, value == null && !result.containsKey(key))
-    }
-    return result
+    return aggregateTo(mutableMapOf<K, R>(), operation)
 }
 
 /**
@@ -73,8 +67,8 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.aggregateTo(
 ): M {
     for (e in this.elementIterator()) {
         val key = keyOf(e)
-        val acc = destination[key]
-        destination[key] = operation(key, acc, e, acc == null && !destination.containsKey(key))
+        val accumulator = destination[key]
+        destination[key] = operation(key, accumulator, e, accumulator == null && !destination.containsKey(key))
     }
     return destination
 }
@@ -222,10 +216,10 @@ public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo
 @JvmVersion
 public fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =
         // fold(0) { acc, e -> acc + 1 } optimized for boxing
-        fold(
+        foldTo( destination = mutableMapOf(),
                 initialValueSelector = { k, e -> kotlin.jvm.internal.Ref.IntRef() },
                 operation = { k, acc, e -> acc.apply { element += 1 } })
-        .mapValues { it.value.element }
+        .mapValuesInPlace { it.value.element }
 
 /**
  * Groups elements from the [Grouping] source by key and counts elements in each group to the given [destination] map.
@@ -245,10 +239,10 @@ public fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachCountTo(destinat
 @JvmVersion
 public inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Map<K, Int> =
         // fold(0) { acc, e -> acc + valueSelector(e)} optimized for boxing
-        fold(
+        foldTo( destination = mutableMapOf(),
                 initialValueSelector = { k, e -> kotlin.jvm.internal.Ref.IntRef() },
                 operation = { k, acc, e -> acc.apply { element += valueSelector(e) } })
-        .mapValues { it.value.element }
+        .mapValuesInPlace { it.value.element }
 
 /**
  * Groups elements from the [Grouping] source by key and sums values provided by the [valueSelector] function for elements in each group
@@ -260,6 +254,16 @@ public inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Ma
 public inline fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachSumOfTo(destination: M, valueSelector: (T) -> Int): M =
         foldTo(destination, 0) { acc, e -> acc + valueSelector(e)}
 
+
+@JvmVersion
+@PublishedApi
+@kotlin.internal.InlineOnly
+internal inline fun <K, V, R> MutableMap<K, V>.mapValuesInPlace(f: (Map.Entry<K, V>) -> R): MutableMap<K, R> {
+    entries.forEach {
+        (it as MutableMap.MutableEntry<K, R>).setValue(f(it))
+    }
+    return (this as MutableMap<K, R>)
+}
 
 /*
 // TODO: sum by long and by double overloads
