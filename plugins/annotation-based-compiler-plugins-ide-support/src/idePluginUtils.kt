@@ -40,7 +40,7 @@ internal fun modifyCompilerArgumentsForPlugin(
     val newPluginOptions = oldPluginOptions + annotationOptions
 
     val oldPluginClasspaths = (commonArguments.pluginClasspaths ?: emptyArray()).filterTo(mutableListOf()) {
-        !it.substringAfterLast('/', missingDelimiterValue = "").matches("(kotlin-)?$pluginName-.*\\.jar".toRegex())
+        !it.substringAfterLast('/', missingDelimiterValue = "").matches("(kotlin-)?(maven-)?$pluginName-.*\\.jar".toRegex())
     }
 
     val newPluginClasspaths = oldPluginClasspaths + (setup?.classpath ?: emptyList())
