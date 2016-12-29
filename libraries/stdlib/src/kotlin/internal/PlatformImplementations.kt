@@ -6,15 +6,8 @@ import java.util.regex.MatchResult
 
 internal open class PlatformImplementations {
 
-    public open fun closeSuppressed(instance: Closeable, cause: Throwable) {
-        try {
-            instance.close()
-        } catch (closeException: Throwable) {
-            // eat the closeException as we are already throwing the original cause
-            // and we don't want to mask the real exception;
-            // on Java 7 we should call
-            // e.addSuppressed(closeException)
-        }
+    public open fun addSuppressed(cause: Throwable, exception: Throwable) {
+        // do nothing
     }
 
     public open fun getMatchResultNamedGroup(matchResult: MatchResult, name: String): MatchGroup? {
@@ -22,9 +15,11 @@ internal open class PlatformImplementations {
     }
 }
 
+// TODO: drop before 1.1
 @SinceKotlin("1.1")
 @PublishedApi
-internal fun platformCloseSuppressed(instance: Closeable, cause: Throwable) = IMPLEMENTATIONS.closeSuppressed(instance, cause)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+internal fun platformCloseSuppressed(instance: Closeable, cause: Throwable) = instance.closeSuppressed(cause)
 
 
 @JvmField

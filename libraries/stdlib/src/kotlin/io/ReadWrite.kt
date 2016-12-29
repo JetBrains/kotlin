@@ -143,25 +143,3 @@ public inline fun URL.readText(charset: Charset = Charsets.UTF_8): String = read
  */
 public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
 
-/**
- * Executes the given [block] function on this resource and then closes it down correctly whether an exception
- * is thrown or not.
- *
- * @param block a function to process this [Closeable] resource.
- * @return the result of [block] function invoked on this resource.
- */
-@kotlin.internal.InlineOnly
-public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
-    var closed = false
-    try {
-        return block(this)
-    } catch (e: Throwable) {
-        closed = true
-        if (this != null) platformCloseSuppressed(this, e)
-        throw e
-    } finally {
-        if (this != null && !closed) {
-            close()
-        }
-    }
-}

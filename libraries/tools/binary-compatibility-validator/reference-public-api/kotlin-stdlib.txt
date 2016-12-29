@@ -1,4 +1,5 @@
 public final class kotlin/ExceptionsKt {
+	public static final fun addSuppressed (Ljava/lang/Throwable;Ljava/lang/Throwable;)V
 	public static final fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
 }
 
@@ -1740,7 +1741,7 @@ public final class kotlin/coroutines/SafeContinuation$Companion {
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {
-	public static final fun platformCloseSuppressed (Ljava/io/Closeable;Ljava/lang/Throwable;)V
+	public static final synthetic fun platformCloseSuppressed (Ljava/io/Closeable;Ljava/lang/Throwable;)V
 }
 
 public final class kotlin/io/AccessDeniedException : kotlin/io/FileSystemException {
@@ -1754,6 +1755,10 @@ public final class kotlin/io/ByteStreamsKt {
 	public static final fun iterator (Ljava/io/BufferedInputStream;)Lkotlin/collections/ByteIterator;
 	public static final fun readBytes (Ljava/io/InputStream;I)[B
 	public static synthetic fun readBytes$default (Ljava/io/InputStream;IILjava/lang/Object;)[B
+}
+
+public final class kotlin/io/CloseableKt {
+	public static final fun closeSuppressed (Ljava/io/Closeable;Ljava/lang/Throwable;)V
 }
 
 public final class kotlin/io/ConsoleKt {

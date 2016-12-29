@@ -6,6 +6,7 @@ package kotlin
 
 import java.io.PrintStream
 import java.io.PrintWriter
+import kotlin.internal.*
 
 /**
  * Prints the stack trace of this throwable to the standard output.
@@ -32,3 +33,9 @@ public inline fun Throwable.printStackTrace(stream: PrintStream): Unit = (this a
 @Suppress("ConflictingExtensionProperty")
 public val Throwable.stackTrace: Array<StackTraceElement>
     get() = (this as java.lang.Throwable).stackTrace!!
+
+/**
+ * When supported by the platform adds the specified exception to the list of exceptions that were
+ * suppressed in order to deliver this exception.
+ */
+public fun Throwable.addSuppressed(exception: Throwable) = IMPLEMENTATIONS.addSuppressed(this, exception)
