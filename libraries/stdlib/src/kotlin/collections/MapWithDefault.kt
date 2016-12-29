@@ -21,8 +21,9 @@ internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
 
 /**
  * Returns a wrapper of this read-only map, having the implicit default value provided with the specified function [defaultValue].
- * This implicit default value is used when properties are delegated to the returned map,
- * and that map doesn't contain a value for the key specified.
+ *
+ * This implicit default value is used when the original map doesn't contain a value for the key specified
+ * and a value is obtained with [Map.getValue] function, for example when properties are delegated to the map.
  *
  * When this map already has an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
@@ -34,8 +35,9 @@ public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> 
 
 /**
  * Returns a wrapper of this mutable map, having the implicit default value provided with the specified function [defaultValue].
- * This implicit default value is used when properties are delegated to the returned map,
- * and that map doesn't contain a value for the key specified.
+ *
+ * This implicit default value is used when the original map doesn't contain a value for the key specified
+ * and a value is obtained with [Map.getValue] function, for example when properties are delegated to the map.
  *
  * When this map already has an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */

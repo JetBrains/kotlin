@@ -216,7 +216,17 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
     }
 }
 
-
+/**
+ * Returns the value for the given [key] or throws an exception if there is no such key in the map.
+ *
+ * If the map was created by [withDefault], resorts to its `defaultValue` provider function
+ * instead of throwing an exception.
+ *
+ * @throws NoSuchElementException when the map doesn't contain a value for the specified key and
+ * no implicit default value was provided for that map.
+ */
+@SinceKotlin("1.1")
+public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
 
 /**
  * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,

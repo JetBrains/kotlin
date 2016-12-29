@@ -1630,6 +1630,7 @@ public final class kotlin/collections/MapsKt {
 	public static final fun getOrImplicitDefaultNullable (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun getOrPut (Ljava/util/Map;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static final fun getOrPut (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static final fun getValue (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun hashMapOf ([Lkotlin/Pair;)Ljava/util/HashMap;
 	public static final fun linkedMapOf ([Lkotlin/Pair;)Ljava/util/LinkedHashMap;
 	public static final fun map (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
