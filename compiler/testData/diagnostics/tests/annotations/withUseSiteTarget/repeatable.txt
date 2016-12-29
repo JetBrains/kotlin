@@ -26,11 +26,11 @@ public final annotation class Ann : kotlin.Annotation {
 }
 
 public final class B {
-    public constructor B(/*0*/ @param:fieldOrPropAnn x: kotlin.Int, /*1*/ y: kotlin.Int)
-    @getSetAndParamAnn @setparam:getSetAndParamAnn public final var w: kotlin.Int
-    @fieldOrPropAnn public final val x: kotlin.Int
-    @property:fieldOrPropAnn @fieldOrPropAnn public final val y: kotlin.Int
-    @fieldOrPropAnn @field:fieldOrPropAnn public final val z: kotlin.Int = 42
+    public constructor B(/*0*/ @param:fieldOrPropAnn() x: kotlin.Int, /*1*/ y: kotlin.Int)
+    @getSetAndParamAnn() @setparam:getSetAndParamAnn() public final var w: kotlin.Int
+    @fieldOrPropAnn() public final val x: kotlin.Int
+    @property:fieldOrPropAnn() @fieldOrPropAnn() public final val y: kotlin.Int
+    @fieldOrPropAnn() @field:fieldOrPropAnn() public final val z: kotlin.Int = 42
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
