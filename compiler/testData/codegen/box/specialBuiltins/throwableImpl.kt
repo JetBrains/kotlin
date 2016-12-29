@@ -17,5 +17,5 @@ fun box(): String {
         return "OK"
     }
 
-    return "fail: MyThrowable wasn't catched."
+    return "fail: MyThrowable wasn't caught."
 }

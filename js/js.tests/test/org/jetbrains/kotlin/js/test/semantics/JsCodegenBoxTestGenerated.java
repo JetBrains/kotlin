@@ -20499,6 +20499,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("throwableImplWithSecondaryConstructor.kt")
+        public void testThrowableImplWithSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/throwableImplWithSecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("valuesInsideEnum.kt")
         public void testValuesInsideEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/valuesInsideEnum.kt");

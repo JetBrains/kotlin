@@ -189,7 +189,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             }
 
             if (TranslationUtils.isImmediateSubtypeOfError(classDescriptor)) {
-                emulateSuperCallToNativeError(superCall);
+                emulateSuperCallToNativeError(context, classDescriptor, superCall, JsLiteral.THIS);
                 return;
             }
 
@@ -257,11 +257,17 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         }
     }
 
-    private void emulateSuperCallToNativeError(@NotNull ResolvedCall<FunctionDescriptor> superCall) {
+    public static void emulateSuperCallToNativeError(
+            @NotNull TranslationContext context,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull ResolvedCall<? extends FunctionDescriptor> superCall,
+            @NotNull JsExpression receiver
+    ) {
         ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassOrAny(classDescriptor);
         JsExpression superClassRef = ReferenceTranslator.translateAsTypeReference(superClass, context);
-        JsExpression superInvocation = new JsInvocation(Namer.getFunctionCallRef(superClassRef), JsLiteral.THIS);
-        initFunction.getBody().getStatements().add(JsAstUtils.asSyntheticStatement(superInvocation));
+        JsExpression superInvocation = new JsInvocation(Namer.getFunctionCallRef(superClassRef), receiver.deepCopy());
+        List<JsStatement> statements = context.getCurrentBlock().getStatements();
+        statements.add(JsAstUtils.asSyntheticStatement(superInvocation));
 
         JsExpression messageArgument = JsLiteral.NULL;
         JsExpression causeArgument = JsLiteral.NULL;
@@ -283,21 +289,19 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 causeArgument = jsValue;
             }
             else {
-                initFunction.getBody().getStatements().add(JsAstUtils.asSyntheticStatement(jsValue));
+                statements.add(JsAstUtils.asSyntheticStatement(jsValue));
             }
         }
 
         PropertyDescriptor messageProperty = DescriptorUtils.getPropertyByName(
                 classDescriptor.getUnsubstitutedMemberScope(), Name.identifier("message"));
-        JsExpression messageRef = pureFqn(context.getNameForBackingField(messageProperty), JsLiteral.THIS);
-        initFunction.getBody().getStatements().add(JsAstUtils.asSyntheticStatement(
-                JsAstUtils.assignment(messageRef, messageArgument)));
+        JsExpression messageRef = pureFqn(context.getNameForBackingField(messageProperty), receiver.deepCopy());
+        statements.add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(messageRef, messageArgument)));
 
         PropertyDescriptor causeProperty = DescriptorUtils.getPropertyByName(
                 classDescriptor.getUnsubstitutedMemberScope(), Name.identifier("cause"));
-        JsExpression causeRef = pureFqn(context.getNameForBackingField(causeProperty), JsLiteral.THIS);
-        initFunction.getBody().getStatements().add(JsAstUtils.asSyntheticStatement(
-                JsAstUtils.assignment(causeRef, causeArgument)));
+        JsExpression causeRef = pureFqn(context.getNameForBackingField(causeProperty), receiver.deepCopy());
+        statements.add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(causeRef, causeArgument)));
     }
 
     @NotNull

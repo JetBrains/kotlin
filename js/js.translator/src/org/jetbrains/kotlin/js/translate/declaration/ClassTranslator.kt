@@ -252,13 +252,23 @@ class ClassTranslator private constructor(
         val delegationClassDescriptor = (resolvedCall?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass
 
         if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
-            superCallGenerators += {
-                val delegationConstructor = resolvedCall.resultingDescriptor
-                val innerContext = context.innerBlock()
-                val statement = CallTranslator.translate(innerContext, resolvedCall)
-                        .toInvocationWith(leadingArgs, delegationConstructor.valueParameters.size, thisNameRef).makeStmt()
-                it += innerContext.currentBlock.statements
-                it += statement
+            if (TranslationUtils.isImmediateSubtypeOfError(classDescriptor)) {
+                superCallGenerators += {
+                    val innerContext = context().innerBlock()
+                    ClassInitializerTranslator.emulateSuperCallToNativeError(
+                            innerContext, classDescriptor, resolvedCall, thisNameRef.deepCopy())
+                    it += innerContext.currentBlock.statements
+                }
+            }
+            else {
+                superCallGenerators += {
+                    val delegationConstructor = resolvedCall.resultingDescriptor
+                    val innerContext = context.innerBlock()
+                    val statement = CallTranslator.translate(innerContext, resolvedCall)
+                            .toInvocationWith(leadingArgs, delegationConstructor.valueParameters.size, thisNameRef).makeStmt()
+                    it += innerContext.currentBlock.statements
+                    it += statement
+                }
             }
         }
 
