@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Processor;
 import kotlin.Pair;
 import kotlin.collections.SetsKt;
 import kotlin.io.FilesKt;
@@ -537,6 +538,29 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         MockLibraryUtil.createJarFile(tmpdir, new File(tmpdir, "library"), null, "library", false);
         File jarPath = new File(tmpdir, "library.jar");
         Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, jarPath);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    }
+
+    public void testInnerClassPackageConflict2() throws Exception {
+        final File library1 = compileJava("library1");
+        final File library2 = compileJava("library2");
+
+        // Copy everything from library2 to library1
+        FileUtil.visitFiles(library2, new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                if (!file.isDirectory()) {
+                    File newFile = new File(library1, FilesKt.relativeTo(file, library2).getPath());
+                    if (!newFile.getParentFile().exists()) {
+                        assert newFile.getParentFile().mkdirs();
+                    }
+                    assert file.renameTo(newFile);
+                }
+                return true;
+            }
+        });
+
+        Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1);
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 }
