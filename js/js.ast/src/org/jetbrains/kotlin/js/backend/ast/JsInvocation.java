@@ -14,8 +14,8 @@ public final class JsInvocation extends JsExpression.JsExpressionHasArguments {
     @NotNull
     private JsExpression qualifier;
 
-    public JsInvocation(@NotNull JsExpression qualifier, @NotNull List<JsExpression> arguments) {
-        super(arguments);
+    public JsInvocation(@NotNull JsExpression qualifier, @NotNull List<? extends JsExpression> arguments) {
+        super(new SmartList<JsExpression>(arguments));
         this.qualifier = qualifier;
     }
 

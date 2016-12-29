@@ -200,21 +200,25 @@ object ConstructorCallCase : FunctionCallCase() {
         val invocationArguments = mutableListOf<JsExpression>()
 
         val constructorDescriptor = callableDescriptor as ClassConstructorDescriptor
-        if (context.shouldBeDeferred(constructorDescriptor)) {
-            context.deferConstructorCall(constructorDescriptor, invocationArguments)
-        }
-        else {
+
+        if (!context.shouldBeDeferred(constructorDescriptor)) {
             val closure = context.getClassOrConstructorClosure(constructorDescriptor)
             invocationArguments += closure?.map { context.getArgumentForClosureConstructor(it) }.orEmpty()
         }
 
         invocationArguments += argumentsInfo.getArguments()
-        return if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
+        val result = if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
             JsNew(functionRef, invocationArguments)
         }
         else {
             JsInvocation(functionRef, invocationArguments)
         }
+
+        if (context.shouldBeDeferred(constructorDescriptor)) {
+            context.deferConstructorCall(constructorDescriptor, result.arguments)
+        }
+
+        return result
     }
 }
 

@@ -95,9 +95,9 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         JsExpression constructorRef = context.getInnerReference(constructor);
 
-        JsExpression returnExpression = new JsNew(constructorRef, constructorArguments);
+        JsNew returnExpression = new JsNew(constructorRef, constructorArguments);
         if (context.shouldBeDeferred(constructor)) {
-            context.deferConstructorCall(constructor, constructorArguments);
+            context.deferConstructorCall(constructor, returnExpression.getArguments());
         }
         functionObj.getBody().getStatements().add(new JsReturn(returnExpression));
     }

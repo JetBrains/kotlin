@@ -17,8 +17,8 @@ public final class JsNew extends JsExpression.JsExpressionHasArguments {
         this(constructorExpression, new SmartList<JsExpression>());
     }
 
-    public JsNew(JsExpression constructorExpression, List<JsExpression> arguments) {
-        super(arguments);
+    public JsNew(JsExpression constructorExpression, List<? extends JsExpression> arguments) {
+        super(new SmartList<JsExpression>(arguments));
         this.constructorExpression = constructorExpression;
     }
 
