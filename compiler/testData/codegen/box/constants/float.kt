@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 fun box(): String {
     if (1F != 1.toFloat()) return "fail 1"
     if (1.0F != 1.0.toFloat()) return "fail 2"

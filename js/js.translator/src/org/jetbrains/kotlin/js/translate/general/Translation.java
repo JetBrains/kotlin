@@ -138,6 +138,17 @@ public final class Translation {
         else if (value instanceof Long) {
             return JsAstUtils.newLong((Long) value, context);
         }
+        else if (value instanceof Float) {
+            float floatValue = (Float) value;
+            double doubleValue;
+            if (Float.isInfinite(floatValue) || Float.isNaN(floatValue)) {
+                doubleValue = floatValue;
+            }
+            else {
+                doubleValue = Double.parseDouble(Float.toString(floatValue));
+            }
+            return context.program().getNumberLiteral(doubleValue);
+        }
         else if (value instanceof Number) {
             return context.program().getNumberLiteral(((Number) value).doubleValue());
         }
