@@ -797,6 +797,11 @@ task memory_var4(type: RunKonanTest) {
     source = "runtime/memory/var4.kt"
 }
 
+task memory_throw_cleanup(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "runtime/memory/throw_cleanup.kt"
+}
+
 task unit1(type: RunKonanTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"
