@@ -22,7 +22,6 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
 import java.io.EOFException
@@ -47,11 +46,18 @@ class JvmPackagePartProvider(
         val rootToPackageParts = getPackageParts(packageFqName)
         if (rootToPackageParts.isEmpty()) return emptyList()
 
-        val result = arrayListOf<String>()
+        val result = linkedSetOf<String>()
+        val visitedMultifileFacades = linkedSetOf<String>()
         for ((_, packageParts) in rootToPackageParts) {
-            result.addAll(packageParts.parts)
+            for (name in packageParts.parts) {
+                val facadeName = packageParts.getMultifileFacadeName(name)
+                if (facadeName == null || facadeName !in visitedMultifileFacades) {
+                    result.add(name)
+                }
+            }
+            packageParts.parts.mapNotNullTo(visitedMultifileFacades, packageParts::getMultifileFacadeName)
         }
-        return result.distinct()
+        return result.toList()
     }
 
     override fun findMetadataPackageParts(packageFqName: String): List<String> =
