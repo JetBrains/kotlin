@@ -34,10 +34,12 @@ import org.jetbrains.idea.maven.project.*
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.CoroutineSupport
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.facet.mavenLibraryId
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.io.File
 import java.util.*
@@ -105,8 +107,25 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version
                               ?: return
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider)
-        kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, null, modifiableModelsProvider)
+        val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
+
+        kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, platform, modifiableModelsProvider)
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
+    }
+
+    private fun detectPlatformByExecutions(mavenProject: MavenProject): TargetPlatformKind<*>? {
+        return mavenProject.findPlugin(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_ARTIFACT_ID)?.executions?.flatMap { it.goals }?.mapNotNull { goal ->
+            when (goal) {
+                PomFile.KotlinGoals.Compile, PomFile.KotlinGoals.TestCompile -> TargetPlatformKind.Jvm.JVM_1_6
+                PomFile.KotlinGoals.Js, PomFile.KotlinGoals.TestJs -> TargetPlatformKind.JavaScript
+                PomFile.KotlinGoals.MetaData -> TargetPlatformKind.Common
+                else -> null
+            }
+        }?.singleOrNull()
+    }
+
+    private fun detectPlatformByLibraries(mavenProject: MavenProject): TargetPlatformKind<*>? {
+        return TargetPlatformKind.ALL_PLATFORMS.firstOrNull { mavenProject.findDependencies(KOTLIN_PLUGIN_GROUP_ID, it.mavenLibraryId).isNotEmpty() }
     }
 
     // TODO in theory it should work like this but it doesn't as it couldn't unmark source roots that are not roots anymore.
