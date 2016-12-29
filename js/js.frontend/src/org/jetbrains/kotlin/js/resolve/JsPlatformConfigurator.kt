@@ -42,7 +42,12 @@ object JsPlatformConfigurator : PlatformConfigurator(
                 JsDynamicDeclarationChecker,
                 HeaderImplDeclarationChecker()
         ),
-        additionalCallCheckers = listOf(ReifiedTypeParameterSubstitutionChecker(), JsModuleCallChecker, JsDynamicCallChecker),
+        additionalCallCheckers = listOf(
+                ReifiedTypeParameterSubstitutionChecker(),
+                JsModuleCallChecker,
+                JsDynamicCallChecker,
+                JsNoImplCallChecker
+        ),
         additionalTypeCheckers = listOf(),
         additionalClassifierUsageCheckers = listOf(),
         additionalAnnotationCheckers = listOf(),

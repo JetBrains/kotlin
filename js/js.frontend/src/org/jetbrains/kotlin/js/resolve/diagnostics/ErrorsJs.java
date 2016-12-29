@@ -97,6 +97,7 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtAnonymousInitializer> EXTERNAL_ANONYMOUS_INITIALIZER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtClassBody> EXTERNAL_ENUM_ENTRY_WITH_BODY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
