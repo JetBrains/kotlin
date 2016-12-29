@@ -47,7 +47,7 @@ object ThrowableConstructorIntrinsicFactory : FunctionIntrinsicFactory {
             }
 
             if (constructor.valueParameters.size == 1 && hasCauseParameter) {
-                argumentsToPass.add(0, JsLiteral.NULL)
+                argumentsToPass.add(0, Namer.getUndefinedExpression())
             }
 
             return JsInvocation(JsAstUtils.pureFqn("newThrowable", Namer.kotlinObject()), argumentsToPass)

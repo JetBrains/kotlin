@@ -1,0 +1,10 @@
+public final class CustomException {
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): void
+    public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
+}
+
+public final class ExceptionCauseKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -269,7 +269,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         List<JsStatement> statements = context.getCurrentBlock().getStatements();
         statements.add(JsAstUtils.asSyntheticStatement(superInvocation));
 
-        JsExpression messageArgument = JsLiteral.NULL;
+        JsExpression messageArgument = Namer.getUndefinedExpression();
         JsExpression causeArgument = JsLiteral.NULL;
         for (ValueParameterDescriptor param : superCall.getResultingDescriptor().getValueParameters()) {
             ResolvedValueArgument argument = superCall.getValueArguments().get(param);
@@ -283,10 +283,10 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             JsExpression jsValue = Translation.translateAsExpression(value, context);
 
             if (KotlinBuiltIns.isStringOrNullableString(param.getType())) {
-                messageArgument = jsValue;
+                messageArgument = context.cacheExpressionIfNeeded(jsValue);
             }
             else if (TypeUtilsKt.isConstructedFromClassWithGivenFqName(param.getType(), KotlinBuiltIns.FQ_NAMES.throwable)) {
-                causeArgument = jsValue;
+                causeArgument = context.cacheExpressionIfNeeded(jsValue);
             }
             else {
                 statements.add(JsAstUtils.asSyntheticStatement(jsValue));
@@ -296,12 +296,28 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         PropertyDescriptor messageProperty = DescriptorUtils.getPropertyByName(
                 classDescriptor.getUnsubstitutedMemberScope(), Name.identifier("message"));
         JsExpression messageRef = pureFqn(context.getNameForBackingField(messageProperty), receiver.deepCopy());
-        statements.add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(messageRef, messageArgument)));
+        JsExpression messageIsUndefined = JsAstUtils.typeOfIs(messageArgument, context.program().getStringLiteral("undefined"));
+        JsExpression causeIsNull = new JsBinaryOperation(JsBinaryOperator.NEQ, causeArgument, JsLiteral.NULL);
+        JsExpression causeToStringCond = JsAstUtils.and(messageIsUndefined, causeIsNull);
+        JsExpression causeToString = new JsInvocation(pureFqn("toString", Namer.kotlinObject()), causeArgument.deepCopy());
+
+        JsExpression correctedMessage;
+        if (causeArgument == JsLiteral.NULL) {
+             correctedMessage = messageArgument.deepCopy();
+        }
+        else  {
+            if (JsAstUtils.isUndefinedExpression(messageArgument)) {
+                causeToStringCond = causeIsNull;
+            }
+            correctedMessage = new JsConditional(causeToStringCond, causeToString, messageArgument);
+        }
+
+        statements.add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(messageRef, correctedMessage)));
 
         PropertyDescriptor causeProperty = DescriptorUtils.getPropertyByName(
                 classDescriptor.getUnsubstitutedMemberScope(), Name.identifier("cause"));
         JsExpression causeRef = pureFqn(context.getNameForBackingField(causeProperty), receiver.deepCopy());
-        statements.add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(causeRef, causeArgument)));
+        statements.add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(causeRef, causeArgument.deepCopy())));
     }
 
     @NotNull

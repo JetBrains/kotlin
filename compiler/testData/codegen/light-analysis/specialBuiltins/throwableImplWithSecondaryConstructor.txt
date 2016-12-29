@@ -1,0 +1,10 @@
+public final class MyThrowable {
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.Nullable p2: java.lang.Throwable): void
+    public synthetic method <init>(p0: java.lang.String, p1: java.lang.String, p2: java.lang.Throwable, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+public final class ThrowableImplWithSecondaryConstructorKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
