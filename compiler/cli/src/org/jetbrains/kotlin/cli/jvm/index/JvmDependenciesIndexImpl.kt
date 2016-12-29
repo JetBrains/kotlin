@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.IntArrayList
 import org.jetbrains.kotlin.name.ClassId
@@ -236,15 +239,19 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>): JvmDependenciesIndex {
     private fun VirtualFile.findChildPackage(subPackageName: String, rootType: JavaRoot.RootType): VirtualFile? {
         val childDirectory = findChild(subPackageName) ?: return null
 
-        // Resolve conflicts between files and packages with the same qualified name in favor of files
         val fileExtension = when (rootType) {
-            JavaRoot.RootType.BINARY -> ".class"
-            JavaRoot.RootType.SOURCE -> ".java"
+            JavaRoot.RootType.BINARY -> JavaClassFileType.INSTANCE.defaultExtension
+            JavaRoot.RootType.SOURCE -> JavaFileType.INSTANCE.defaultExtension
         }
 
-        if (findChild(subPackageName + fileExtension)?.isDirectory == false) {
-            return null
+        // If in addition to a directory "foo" there's a class file "foo.class" AND there are no classes anywhere in the directory "foo",
+        // then we ignore the directory and let the resolution choose the class "foo" instead.
+        if (findChild("$subPackageName.$fileExtension")?.isDirectory == false) {
+            if (VfsUtilCore.processFilesRecursively(childDirectory) { file -> file.extension != fileExtension }) {
+                return null
+            }
         }
+
         return childDirectory
     }
 
