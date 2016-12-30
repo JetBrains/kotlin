@@ -136,7 +136,7 @@ internal fun PsiElement.getMaybeLightElement(context: UElement): PsiElement? {
             val uElement = languagePlugin.convertElementWithParent(this, null)
             when (uElement) {
                 is UDeclaration -> uElement.psi
-                is UVariableDeclarationsExpression -> uElement.variables.firstOrNull()?.psi
+                is UDeclarationsExpression -> uElement.declarations.firstOrNull()?.psi
                 else -> null
             }
         }

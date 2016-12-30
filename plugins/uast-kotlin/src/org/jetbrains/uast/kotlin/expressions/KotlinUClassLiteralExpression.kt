@@ -16,10 +16,8 @@
 
 package org.jetbrains.uast.kotlin
 
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
@@ -30,7 +28,7 @@ class KotlinUClassLiteralExpression(
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(), UClassLiteralExpression, PsiElementBacked, KotlinUElementWithType {
     override val type by lz {
-        val ktType = psi.analyze(BodyResolveMode.PARTIAL)[DOUBLE_COLON_LHS, psi.receiverExpression]?.type ?: return@lz null
+        val ktType = psi.analyze()[DOUBLE_COLON_LHS, psi.receiverExpression]?.type ?: return@lz null
         ktType.toPsiType(this, psi, boxed = true)
     }
     

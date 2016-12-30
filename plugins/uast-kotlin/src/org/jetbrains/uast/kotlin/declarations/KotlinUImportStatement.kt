@@ -16,10 +16,12 @@
 
 package org.jetbrains.uast.kotlin
 
-import org.jetbrains.kotlin.idea.references.mainReference
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.USimpleNameReferenceExpression
@@ -31,22 +33,34 @@ class KotlinUImportStatement(
 ) : UImportStatement {
     override val isOnDemand: Boolean
         get() = psi.isAllUnder
-    
-    private val importRef by lz { psi.importedReference?.let { ImportReference(it, psi.name ?: psi.text, this) } }
+
+    private val importRef by lz {
+        psi.importedReference?.let {
+            ImportReference(it, psi.name ?: psi.text, this, psi)
+        }
+    }
     
     override val importReference: UElement?
         get() = importRef
 
     override fun resolve() = importRef?.resolve()
-    
+
     private class ImportReference(
             override val psi: KtExpression,
             override val identifier: String,
-            override val containingElement: UElement?
+            override val containingElement: UElement?,
+            private val importDirective: KtImportDirective
     ) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, PsiElementBacked {
         override val resolvedName: String?
             get() = identifier
 
-        override fun resolve() = psi.getQualifiedElementSelector()?.mainReference?.resolve()?.getMaybeLightElement(this)
+        override fun asRenderString(): String = importDirective.importedFqName?.asString() ?: psi.text
+
+        override fun resolve(): PsiElement? {
+            val reference = psi.getQualifiedElementSelector() as? KtReferenceExpression ?: return null
+            val bindingContext = reference.analyze()
+            val referenceTarget = bindingContext[BindingContext.REFERENCE_TARGET, reference] ?: return null
+            return referenceTarget.toSource()?.getMaybeLightElement(this)
+        }
     }
 }

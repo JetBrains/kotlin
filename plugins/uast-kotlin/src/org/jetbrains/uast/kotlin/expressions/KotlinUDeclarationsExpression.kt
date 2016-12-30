@@ -17,9 +17,9 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 
-class KotlinUVariableDeclarationsExpression(
+class KotlinUDeclarationsExpression(
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UVariableDeclarationsExpression {
-    override lateinit var variables: List<UVariable>
+) : KotlinAbstractUExpression(), UDeclarationsExpression {
+    override lateinit var declarations: List<UDeclaration>
         internal set
 }

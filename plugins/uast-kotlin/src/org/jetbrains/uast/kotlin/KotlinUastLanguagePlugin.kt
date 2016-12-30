@@ -174,9 +174,9 @@ internal inline fun <reified T : UElement> Class<out UElement>?.expr(f: () -> UE
 internal object KotlinConverter {
     internal fun convertPsiElement(element: PsiElement?, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
         return with (requiredType) { when (element) {
-            is KtParameterList -> el<UVariableDeclarationsExpression> {
-                KotlinUVariableDeclarationsExpression(parent).apply {
-                    variables = element.parameters.mapIndexed { i, p ->
+            is KtParameterList -> el<UDeclarationsExpression> {
+                KotlinUDeclarationsExpression(parent).apply {
+                    declarations = element.parameters.mapIndexed { i, p ->
                         KotlinUVariable.create(UastKotlinPsiParameter.create(p, element, parent!!, i), this)
                     }
                 }
@@ -200,10 +200,10 @@ internal object KotlinConverter {
     private fun convertVariablesDeclaration(
             psi: KtVariableDeclaration, 
             parent: UElement?
-    ): UVariableDeclarationsExpression {
+    ): UDeclarationsExpression {
         val parentPsiElement = (parent as? PsiElementBacked)?.psi
         val variable = KotlinUVariable.create(UastKotlinPsiVariable.create(psi, parentPsiElement, parent!!), parent)
-        return KotlinUVariableDeclarationsExpression(parent).apply { variables = listOf(variable) }
+        return KotlinUDeclarationsExpression(parent).apply { declarations = listOf(variable) }
     }
     
     private fun convertStringTemplateExpression(
@@ -230,7 +230,7 @@ internal object KotlinConverter {
 
     internal fun convertExpression(expression: KtExpression, parent: UElement?, requiredType: Class<out UElement>? = null): UExpression {
         return with (requiredType) { when (expression) {
-            is KtVariableDeclaration -> expr<UVariableDeclarationsExpression> { convertVariablesDeclaration(expression, parent) }
+            is KtVariableDeclaration -> expr<UDeclarationsExpression> { convertVariablesDeclaration(expression, parent) }
 
             is KtStringTemplateExpression -> expr<ULiteralExpression> {
                 if (expression.entries.isEmpty())
@@ -240,8 +240,8 @@ internal object KotlinConverter {
                 else
                     convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
             }
-            is KtDestructuringDeclaration -> expr<UVariableDeclarationsExpression> {
-                KotlinUVariableDeclarationsExpression(parent).apply {
+            is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
+                KotlinUDeclarationsExpression(parent).apply {
                     val tempAssignment = KotlinUVariable.create(UastKotlinPsiVariable.create(expression, parent!!), parent)
                     val destructuringAssignments = expression.entries.mapIndexed { i, entry ->
                         val psiFactory = KtPsiFactory(expression.project)
@@ -250,7 +250,7 @@ internal object KotlinConverter {
                         KotlinUVariable.create(UastKotlinPsiVariable.create(
                                 entry, tempAssignment.psi, parent, initializer), parent)
                     }
-                    variables = listOf(tempAssignment) + destructuringAssignments
+                    declarations = listOf(tempAssignment) + destructuringAssignments
                 }
             }
             is KtLabeledExpression -> expr<ULabeledExpression> { KotlinULabeledExpression(expression, parent) }

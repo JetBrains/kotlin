@@ -61,9 +61,9 @@ class KotlinUBinaryExpression(
         KtTokens.EQEQEQ -> UastBinaryOperator.IDENTITY_EQUALS
         KtTokens.EXCLEQEQEQ -> UastBinaryOperator.IDENTITY_NOT_EQUALS
         KtTokens.GT -> UastBinaryOperator.GREATER
-        KtTokens.GTEQ -> UastBinaryOperator.GREATER_OR_EQUAL
+        KtTokens.GTEQ -> UastBinaryOperator.GREATER_OR_EQUALS
         KtTokens.LT -> UastBinaryOperator.LESS
-        KtTokens.LTEQ -> UastBinaryOperator.LESS_OR_EQUAL
+        KtTokens.LTEQ -> UastBinaryOperator.LESS_OR_EQUALS
         KtTokens.PLUSEQ -> UastBinaryOperator.PLUS_ASSIGN
         KtTokens.MINUSEQ -> UastBinaryOperator.MINUS_ASSIGN
         KtTokens.MULTEQ -> UastBinaryOperator.MULTIPLY_ASSIGN
