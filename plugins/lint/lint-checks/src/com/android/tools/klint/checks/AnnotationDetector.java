@@ -253,7 +253,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                     return false;
                 }
                 // Only flag local variables and parameters (not classes, fields and methods)
-                if (!(parent instanceof UVariableDeclarationsExpression
+                if (!(parent instanceof UDeclarationsExpression
                       || parent instanceof ULocalVariable
                       || parent instanceof UParameter)) {
                     return false;
@@ -414,12 +414,12 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             UElement parent = node.getContainingElement();
             PsiType type;
 
-            if (parent instanceof UVariableDeclarationsExpression) {
-                List<UVariable> elements = ((UVariableDeclarationsExpression) parent).getVariables();
+            if (parent instanceof UDeclarationsExpression) {
+                List<UDeclaration> elements = ((UDeclarationsExpression) parent).getDeclarations();
                 if (!elements.isEmpty()) {
-                    UVariable element = elements.get(0);
+                    UDeclaration element = elements.get(0);
                     if (element instanceof ULocalVariable) {
-                        type = element.getType();
+                        type = ((ULocalVariable) element).getType();
                     } else {
                         return;
                     }
