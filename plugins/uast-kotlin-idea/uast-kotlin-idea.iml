@@ -7,11 +7,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="guava" level="project" />
-    <orderEntry type="library" exported="" name="uast-java" level="project" />
-    <orderEntry type="library" name="android-plugin" level="project" />
-    <orderEntry type="library" name="intellij-core" level="project" />
-    <orderEntry type="module" module-name="android-annotations" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="uast-kotlin" />
+    <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="ide-common" />
+    <orderEntry type="module" module-name="backend" />
+    <orderEntry type="module" module-name="frontend.java" />
   </component>
 </module>

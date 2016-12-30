@@ -1,0 +1,120 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.uast.kotlin
+
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.uast.*
+import org.jetbrains.uast.internal.acceptList
+import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.visitor.UastVisitor
+
+class KotlinUFunctionCallExpression(
+        override val psi: KtCallExpression,
+        override val containingElement: UElement?,
+        private val _resolvedCall: ResolvedCall<*>? = null
+) : KotlinAbstractUExpression(), UCallExpression, PsiElementBacked, KotlinUElementWithType {
+    companion object {
+        fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
+            if (descriptor is ConstructorDescriptor && descriptor.isPrimary
+                    && source is KtClassOrObject && source.getPrimaryConstructor() == null
+                    && source.getSecondaryConstructors().isEmpty()) {
+                return source.toLightClass()?.constructors?.firstOrNull()
+            }
+
+            return when (source) {
+                is KtFunction -> LightClassUtil.getLightClassMethod(source)
+                is PsiMethod -> source
+                else -> null
+            }
+        }
+    }
+
+    private val resolvedCall by lz {
+        _resolvedCall ?: psi.getResolvedCall(psi.analyze())
+    }
+
+    override val receiverType by lz {
+        val resolvedCall = this.resolvedCall ?: return@lz null
+        val receiver = resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver ?: return@lz null
+        receiver.type.toPsiType(this, psi, boxed = true)
+    }
+
+    override val methodName by lz { resolvedCall?.resultingDescriptor?.name?.asString() }
+
+    override val classReference by lz {
+        KotlinClassViaConstructorUSimpleReferenceExpression(psi, methodName.orAnonymous("class"), this)
+    }
+
+    override val methodIdentifier by lz {
+        val calleeExpression = psi.calleeExpression ?: return@lz null
+        UIdentifier(calleeExpression, this)
+    }
+
+    override val valueArgumentCount: Int
+        get() = psi.valueArguments.size
+
+    override val valueArguments by lz { psi.valueArguments.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), this) } }
+
+    override val typeArgumentCount: Int
+        get() = psi.typeArguments.size
+
+    override val typeArguments by lz { psi.typeArguments.map { it.typeReference.toPsiType(this, boxed = true) } }
+
+    override val returnType: PsiType?
+        get() = getExpressionType()
+
+    override val kind by lz {
+        when (resolvedCall?.resultingDescriptor) {
+            is ConstructorDescriptor -> UastCallKind.CONSTRUCTOR_CALL
+            else -> UastCallKind.METHOD_CALL
+        }
+    }
+
+    override val receiver: UExpression?
+        get() {
+            return if (containingElement is UQualifiedReferenceExpression && containingElement.selector == this)
+                containingElement.receiver
+            else
+                null
+        }
+
+    override fun resolve(): PsiMethod? {
+        val descriptor = resolvedCall?.resultingDescriptor ?: return null
+        val source = descriptor.toSource() ?: return null
+        return resolveSource(descriptor, source)
+    }
+
+    override fun accept(visitor: UastVisitor) {
+        if (visitor.visitCallExpression(this)) return
+        methodIdentifier?.accept(visitor)
+        classReference.accept(visitor)
+        valueArguments.acceptList(visitor)
+
+        visitor.afterVisitCallExpression(this)
+    }
+}

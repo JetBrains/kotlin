@@ -70,8 +70,10 @@
           <element id="module-output" name="lint-idea" />
           <element id="module-output" name="lint-checks" />
           <element id="module-output" name="lint-api" />
+          <element id="module-output" name="uast-kotlin" />
+          <element id="module-output" name="uast-kotlin-idea" />
         </element>
-        <element id="library" level="project" name="uast-kotlin" />
+        <element id="library" level="project" name="uast-java" />
         <element id="archive" name="allopen-ide-plugin.jar">
           <element id="module-output" name="allopen-ide" />
         </element>
