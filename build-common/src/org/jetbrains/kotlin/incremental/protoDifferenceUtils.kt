@@ -217,6 +217,9 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                 ProtoBufClassKind.ENUM_ENTRY_LIST -> {
                     isClassAffected = true
                 }
+                ProtoBufClassKind.SEALED_SUBCLASS_FQ_NAME_LIST -> {
+                    // TODO
+                }
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }

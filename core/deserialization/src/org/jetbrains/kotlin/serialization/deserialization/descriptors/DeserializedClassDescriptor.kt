@@ -150,7 +150,16 @@ class DeserializedClassDescriptor(
             name in memberScope.classNames
 
     private fun computeSubclassesForSealedClass(): Collection<ClassDescriptor> {
-        // TODO: store the list of subclasses to metadata
+        if (modality != Modality.SEALED) return emptyList()
+
+        val fqNames = classProto.sealedSubclassFqNameList
+        if (fqNames.isNotEmpty()) {
+            return fqNames.mapNotNull { index ->
+                c.components.deserializeClass(c.nameResolver.getClassId(index))
+            }
+        }
+
+        // This is needed because classes compiled with Kotlin 1.0 did not contain the sealed_subclass_fq_name field
         return computeSealedSubclasses(this)
     }
 

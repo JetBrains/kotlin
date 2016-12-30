@@ -206,6 +206,8 @@ message Class {
 
   repeated EnumEntry enum_entry = 13;
 
+  repeated int32 sealed_subclass_fq_name = 16 [packed = true, (fq_name_id_in_table) = true];
+
   optional TypeTable type_table = 30;
 
   // Index into the SinceKotlinInfoTable

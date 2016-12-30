@@ -204,6 +204,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("sealedClass.kt")
+    public void testSealedClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/sealedClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("secondaryConstructors.kt")
     public void testSecondaryConstructors() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/secondaryConstructors.kt");

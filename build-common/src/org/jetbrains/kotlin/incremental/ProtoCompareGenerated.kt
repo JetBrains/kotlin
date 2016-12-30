@@ -125,6 +125,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsClassEnumEntry(old, new)) return false
 
+        if (!checkEqualsClassSealedSubclassFqName(old, new)) return false
+
         if (old.hasTypeTable() != new.hasTypeTable()) return false
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) return false
@@ -160,6 +162,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         PROPERTY_LIST,
         TYPE_ALIAS_LIST,
         ENUM_ENTRY_LIST,
+        SEALED_SUBCLASS_FQ_NAME_LIST,
         TYPE_TABLE,
         SINCE_KOTLIN_INFO,
         SINCE_KOTLIN_INFO_TABLE,
@@ -198,6 +201,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (!checkEqualsClassTypeAlias(old, new)) result.add(ProtoBufClassKind.TYPE_ALIAS_LIST)
 
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
+
+        if (!checkEqualsClassSealedSubclassFqName(old, new)) result.add(ProtoBufClassKind.SEALED_SUBCLASS_FQ_NAME_LIST)
 
         if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufClassKind.TYPE_TABLE)
         if (old.hasTypeTable()) {
@@ -850,6 +855,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsClassSealedSubclassFqName(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.sealedSubclassFqNameCount != new.sealedSubclassFqNameCount) return false
+
+        for(i in 0..old.sealedSubclassFqNameCount - 1) {
+            if (!checkClassIdEquals(old.getSealedSubclassFqName(i), new.getSealedSubclassFqName(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionTypeParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -1088,6 +1103,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     for(i in 0..enumEntryCount - 1) {
         hashCode = 31 * hashCode + getEnumEntry(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..sealedSubclassFqNameCount - 1) {
+        hashCode = 31 * hashCode + fqNameIndexes(getSealedSubclassFqName(i))
     }
 
     if (hasTypeTable()) {

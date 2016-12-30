@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.Interner
 import java.io.ByteArrayOutputStream
@@ -114,6 +115,10 @@ class DescriptorSerializer private constructor(
                     builder.addNestedClassName(name)
                 }
             }
+        }
+
+        for (sealedSubclass in classDescriptor.sealedSubclasses) {
+            builder.addSealedSubclassFqName(getClassifierId(sealedSubclass))
         }
 
         val companionObjectDescriptor = classDescriptor.companionObjectDescriptor
