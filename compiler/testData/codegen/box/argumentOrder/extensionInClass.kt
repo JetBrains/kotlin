@@ -1,19 +1,16 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 fun box(): String {
     return Z().test()
 }
 
 class Z {
     fun Double.test(a: Int, b: Long, c: () -> String): String {
-        return "${this}_${a}_${b}_${c()}"
+        return "${this.toInt()}_${a}_${b}_${c()}"
     }
 
 
     fun test(): String {
         var invokeOrder = "";
-        val expectedResult = "1.0_0_1_L"
+        val expectedResult = "1_0_1_L"
         val expectedInvokeOrder = "1_0_L"
         var l = 1L
         var i = 0
