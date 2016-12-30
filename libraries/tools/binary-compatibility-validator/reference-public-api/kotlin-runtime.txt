@@ -399,7 +399,7 @@ public final class kotlin/jvm/internal/ByteSpreadBuilder : kotlin/jvm/internal/P
 
 public abstract class kotlin/jvm/internal/CallableReference : kotlin/reflect/KCallable {
 	public static final field NO_RECEIVER Ljava/lang/Object;
-	protected final field receiver$0 Ljava/lang/Object;
+	protected final field receiver Ljava/lang/Object;
 	public fun <init> ()V
 	protected fun <init> (Ljava/lang/Object;)V
 	public fun call ([Ljava/lang/Object;)Ljava/lang/Object;
