@@ -94,9 +94,8 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/serialization/serialization.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests-common/tests-common.iml" filepath="$PROJECT_DIR$/compiler/tests-common/tests-common.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests-ir-jvm/tests-ir-jvm.iml" filepath="$PROJECT_DIR$/compiler/tests-ir-jvm/tests-ir-jvm.iml" group="compiler/ir" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/uast-common/uast-common.iml" filepath="$PROJECT_DIR$/plugins/uast-common/uast-common.iml" group="plugins/lint" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/uast-java/uast-java.iml" filepath="$PROJECT_DIR$/plugins/uast-java/uast-java.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" filepath="$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/uast-kotlin-idea/uast-kotlin-idea.iml" filepath="$PROJECT_DIR$/plugins/uast-kotlin-idea/uast-kotlin-idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/util.runtime/util.runtime.iml" filepath="$PROJECT_DIR$/core/util.runtime/util.runtime.iml" group="core" />
     </modules>

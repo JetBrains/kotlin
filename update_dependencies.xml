@@ -31,6 +31,8 @@
         <os family="windows"/>
     </condition>
 
+    <property name="uast.version" value="1.0.8"/>
+
     <property name="generators" value="${basedir}/generators"/>
 
     <property name="idea.dir" value="ideaSDK"/>
@@ -230,6 +232,11 @@
 
         <!-- Rhino -->
         <get-maven-library prefix="org/mozilla" lib="rhino" version="1.7.6"/>
+
+        <!-- Uast -->
+        <property name="uast.server" value="http://dl.bintray.com/kotlin/uast"/>
+        <get-maven-library prefix="org/jetbrains/uast" lib="uast-common" version="${uast.version}" target.jar.name.base="uast-common" server="${uast.server}"/>
+        <get-maven-library prefix="org/jetbrains/uast" lib="uast-java" version="${uast.version}" target.jar.name.base="uast-java" server="${uast.server}"/>
 
         <!-- Closure Compiler -->
         <!-- A download url taken from http://code.google.com/p/closure-compiler/wiki/BinaryDownloads -->

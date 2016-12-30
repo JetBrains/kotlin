@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="uast-java">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/uast-common.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/uast-java.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/uast-common-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/uast-java-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

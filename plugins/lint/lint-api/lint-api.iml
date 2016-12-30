@@ -8,11 +8,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="guava" level="project" />
-    <orderEntry type="module" module-name="uast-common" exported="" />
-    <orderEntry type="module" module-name="uast-java" exported="" />
     <orderEntry type="library" name="android-plugin" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="android-annotations" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="library" exported="" name="uast-java" level="project" />
   </component>
 </module>
