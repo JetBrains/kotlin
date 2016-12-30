@@ -198,7 +198,10 @@ task stdlib(type: JavaExec) {
         '-properties', project(':backend.native').file('konan.properties'),
         project(':runtime').file('src/main/kotlin'), 
         *project.globalArgs)
+
+    inputs.dir(project(':runtime').file('src/main/kotlin'))
     outputs.file(project(':runtime').file('build/stdlib.kt.bc'))
+
     dependsOn ':runtime:build'
 }
 
@@ -215,7 +218,10 @@ task start(type: JavaExec) {
         '-properties', project(':backend.native').file('konan.properties'),
         project(':runtime').file('src/launcher/kotlin'), 
         *project.globalArgs)
+
+    inputs.dir(project(':runtime').file('src/launcher/kotlin'))
     outputs.file(project(':runtime').file('build/start.kt.bc'))
+
     dependsOn ':runtime:build', 'stdlib'
 }
 
