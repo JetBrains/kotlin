@@ -51,6 +51,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             boolean isExternal
     ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source, isExternal);
+        assert modality != Modality.SEALED : "Implement getSealedSubclasses() for this class: " + getClass();
         this.modality = modality;
         this.kind = kind;
 
@@ -159,6 +160,12 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getSealedSubclasses() {
         return Collections.emptyList();
     }
 }

@@ -135,6 +135,8 @@ class LazyJavaClassDescriptor(
 
     override fun getFunctionTypeForSamInterface(): SimpleType? = c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
 
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {

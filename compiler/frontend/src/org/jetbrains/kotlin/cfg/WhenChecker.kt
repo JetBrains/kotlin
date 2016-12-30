@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.cfg
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -36,11 +34,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
 
 interface WhenMissingCase {
@@ -150,11 +146,12 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
 
     protected fun getMissingClassCases(
             whenExpression: KtWhenExpression,
-            memberDescriptors: Set<ClassDescriptor>,
+            subclasses: Set<ClassDescriptor>,
             context: BindingContext
     ): List<WhenMissingCase> {
         // when on empty enum / sealed is considered non-exhaustive, see test whenOnEmptySealed
-        if (memberDescriptors.isEmpty()) return listOf(UnknownMissingCase)
+        if (subclasses.isEmpty()) return listOf(UnknownMissingCase)
+
         val checkedDescriptors = LinkedHashSet<ClassDescriptor>()
         for (whenEntry in whenExpression.entries) {
             for (condition in whenEntry.conditions) {
@@ -182,7 +179,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
                 // Checks are important only for nested subclasses of the sealed class
                 // In additional, check without "is" is important only for objects
                 if (checkedDescriptor == null ||
-                    !memberDescriptors.contains(checkedDescriptor) ||
+                    !subclasses.contains(checkedDescriptor) ||
                     (condition is KtWhenConditionWithExpression &&
                      !DescriptorUtils.isObject(checkedDescriptor) &&
                      !DescriptorUtils.isEnumEntry(checkedDescriptor))) {
@@ -190,7 +187,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
                 }
                 if (negated) {
                     if (checkedDescriptors.contains(checkedDescriptor)) return listOf() // all members are already there
-                    checkedDescriptors.addAll(memberDescriptors)
+                    checkedDescriptors.addAll(subclasses)
                     checkedDescriptors.remove(checkedDescriptor)
                 }
                 else {
@@ -198,7 +195,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
                 }
             }
         }
-        return (memberDescriptors - checkedDescriptors).toList().map { ClassMissingCase(it) }
+        return (subclasses - checkedDescriptors).toList().map { ClassMissingCase(it) }
     }
 }
 
@@ -234,40 +231,14 @@ internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChe
         assert(DescriptorUtils.isSealedClass(subjectDescriptor)) {
             "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor: $subjectDescriptor"
         }
-        val memberClassDescriptors = getNestedSubclasses(subjectDescriptor!!)
+        val subclasses = subjectDescriptor!!.sealedSubclasses
         // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
-        return getMissingClassCases(expression, memberClassDescriptors, context) +
+        return getMissingClassCases(expression, subclasses.toSet(), context) +
                WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
         return DescriptorUtils.isSealedClass(TypeUtils.getClassDescriptor(subjectType))
-    }
-
-    internal fun getNestedSubclasses(baseDescriptor: ClassDescriptor): Set<ClassDescriptor> {
-        val memberClassDescriptors = LinkedHashSet<ClassDescriptor>()
-        collectNestedSubclasses(baseDescriptor, baseDescriptor, memberClassDescriptors)
-        return memberClassDescriptors
-    }
-
-    private fun collectNestedSubclasses(
-            baseDescriptor: ClassDescriptor,
-            currentDescriptor: ClassDescriptor,
-            subclasses: MutableSet<ClassDescriptor>
-    ) {
-        fun collectSubclasses(scope: MemberScope, collectNested: Boolean) {
-            for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)) {
-                if (descriptor is ClassDescriptor) {
-                    if (DescriptorUtils.isDirectSubclass(descriptor, baseDescriptor)) subclasses.add(descriptor)
-
-                    if (collectNested) collectNestedSubclasses(baseDescriptor, descriptor, subclasses)
-                }
-            }
-        }
-        if (currentDescriptor == baseDescriptor && DescriptorUtils.isTopLevelDeclaration(currentDescriptor)) {
-            collectSubclasses((currentDescriptor.containingDeclaration as PackageFragmentDescriptor).getMemberScope(), collectNested = false)
-        }
-        collectSubclasses(currentDescriptor.unsubstitutedInnerClassesScope, collectNested = true)
     }
 }
 

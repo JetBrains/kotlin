@@ -83,6 +83,11 @@ class SyntheticClassOrObjectDescriptor(
     override fun getDeclaredTypeParameters() = emptyList<TypeParameterDescriptor>()
     override fun getStaticScope() = MemberScope.Empty
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
+    override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
+
+    init {
+        assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: $javaClass" }
+    }
 
     override fun getDeclaredCallableMembers(): List<CallableMemberDescriptor> =
         DescriptorUtils.getAllDescriptors(unsubstitutedMemberScope).filterIsInstance<CallableMemberDescriptor>().filter {

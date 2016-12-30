@@ -270,4 +270,10 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         getSubstitutor();
         return declaredTypeParameters;
     }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getSealedSubclasses() {
+        return original.getSealedSubclasses();
+    }
 }

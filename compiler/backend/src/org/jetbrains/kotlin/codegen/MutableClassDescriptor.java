@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
 
-public class MutableClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
+public class MutableClassDescriptor extends ClassDescriptorBase {
     private final ClassKind kind;
     private final boolean isInner;
 
@@ -71,6 +71,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     }
 
     public void setModality(@NotNull Modality modality) {
+        assert modality != Modality.SEALED : "Implement getSealedSubclasses() for this class: " + getClass();
         this.modality = modality;
     }
 
@@ -178,6 +179,12 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @Override
     public MemberScope getStaticScope() {
         return MemberScope.Empty.INSTANCE;
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getSealedSubclasses() {
+        return Collections.emptyList();
     }
 
     @Override

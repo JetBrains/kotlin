@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
@@ -46,7 +47,7 @@ class DeserializedClassDescriptor(
         val classProto: ProtoBuf.Class,
         nameResolver: NameResolver,
         private val sourceElement: SourceElement
-) : ClassDescriptor, AbstractClassDescriptor(
+) : AbstractClassDescriptor(
         outerContext.storageManager,
         nameResolver.getClassId(classProto.fqName).shortClassName
 ) {
@@ -67,6 +68,7 @@ class DeserializedClassDescriptor(
     private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
+    private val sealedSubclasses = c.storageManager.createLazyValue { computeSubclassesForSealedClass() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
             classProto, c.nameResolver, c.typeTable, sourceElement,
@@ -146,6 +148,13 @@ class DeserializedClassDescriptor(
 
     internal fun hasNestedClass(name: Name): Boolean =
             name in memberScope.classNames
+
+    private fun computeSubclassesForSealedClass(): Collection<ClassDescriptor> {
+        // TODO: store the list of subclasses to metadata
+        return computeSealedSubclasses(this)
+    }
+
+    override fun getSealedSubclasses() = sealedSubclasses()
 
     override fun toString() = "deserialized class $name" // not using descriptor render to preserve laziness
 

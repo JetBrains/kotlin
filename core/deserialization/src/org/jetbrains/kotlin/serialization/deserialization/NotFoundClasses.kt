@@ -110,6 +110,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         override fun getConstructors(): Collection<ClassConstructorDescriptor> = emptySet()
         override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = null
         override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
+        override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
 
         override fun toString() = "class $name (not found)"
     }

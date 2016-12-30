@@ -41,6 +41,10 @@ open class KnownClassDescriptor(
         private val visibility: Visibility,
         override val annotations: Annotations
 ) : ClassDescriptor {
+    init {
+        assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: $javaClass" }
+    }
+
     private lateinit var typeConstructor: TypeConstructor
     private lateinit var supertypes: List<KotlinType>
     private lateinit var defaultType: SimpleType
@@ -114,6 +118,7 @@ open class KnownClassDescriptor(
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = declaredTypeParameters
     override fun getKind(): ClassKind = kind
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
 
     override fun getMemberScope(typeArguments: MutableList<out TypeProjection>): MemberScope = MemberScope.Empty
     override fun getMemberScope(typeSubstitution: TypeSubstitution): MemberScope = MemberScope.Empty
@@ -153,4 +158,3 @@ open class KnownClassDescriptor(
     override fun toString(): String =
             "KnownClassDescriptor($fqNameUnsafe)"
 }
-

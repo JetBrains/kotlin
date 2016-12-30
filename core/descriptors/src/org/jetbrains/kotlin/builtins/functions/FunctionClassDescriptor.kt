@@ -106,7 +106,8 @@ class FunctionClassDescriptor(
     override fun isImpl() = false
     override fun isExternal() = false
     override val annotations: Annotations get() = Annotations.EMPTY
-    override fun getSource() = SourceElement.NO_SOURCE
+    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
+    override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
 
     override fun getDeclaredTypeParameters() = parameters
 

@@ -187,6 +187,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return Collections.emptyList();
     }
 
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getSealedSubclasses() {
+        return Collections.emptyList();
+    }
+
     private class EnumEntryScope extends MemberScopeImpl {
         private final MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> functions;
         private final MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> properties;

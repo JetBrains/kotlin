@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
@@ -111,6 +112,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters;
 
     private final NotNullLazyValue<LexicalScope> scopeForInitializerResolution;
+
+    private final NotNullLazyValue<Collection<ClassDescriptor>> sealedSubclasses;
 
     public LazyClassDescriptor(
             @NotNull final LazyClassContext c,
@@ -287,6 +290,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return ClassResolutionScopesSupportKt.scopeForInitializerResolution(LazyClassDescriptor.this,
                                                                                     createInitializerScopeParent(),
                                                                                     classLikeInfo.getPrimaryConstructorParameters());
+            }
+        });
+
+        this.sealedSubclasses = storageManager.createLazyValue(new Function0<Collection<ClassDescriptor>>() {
+            @Override
+            public Collection<ClassDescriptor> invoke() {
+                // TODO: only consider classes from the same file, not the whole package fragment
+                return DescriptorUtilsKt.computeSealedSubclasses(LazyClassDescriptor.this);
             }
         });
     }
@@ -547,6 +558,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     public Annotations getDanglingAnnotations() {
         return danglingAnnotations;
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getSealedSubclasses() {
+        return sealedSubclasses.invoke();
     }
 
     @Override

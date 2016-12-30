@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -350,4 +352,34 @@ fun ClassifierDescriptor.getAllSuperClassifiers(): Sequence<ClassifierDescriptor
         }
 
     return doGetAllSuperClassesAndInterfaces()
+}
+
+// Note this is a generic and slow implementation which would work almost for any subclass of ClassDescriptor.
+// Please avoid using it in new code.
+// TODO: do something more clever instead at call sites of this function
+fun computeSealedSubclasses(sealedClass: ClassDescriptor): Collection<ClassDescriptor> {
+    if (sealedClass.modality != Modality.SEALED) return emptyList()
+
+    val result = linkedSetOf<ClassDescriptor>()
+
+    fun collectSubclasses(scope: MemberScope, collectNested: Boolean) {
+        for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)) {
+            if (descriptor !is ClassDescriptor) continue
+
+            if (DescriptorUtils.isDirectSubclass(descriptor, sealedClass)) {
+                result.add(descriptor)
+            }
+
+            if (collectNested) {
+                collectSubclasses(descriptor.unsubstitutedInnerClassesScope, collectNested)
+            }
+        }
+    }
+
+    val container = sealedClass.containingDeclaration
+    if (container is PackageFragmentDescriptor) {
+        collectSubclasses(container.getMemberScope(), collectNested = false)
+    }
+    collectSubclasses(sealedClass.unsubstitutedInnerClassesScope, collectNested = true)
+    return result
 }
