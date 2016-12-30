@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 fun box(): String {
     var res = "";
     var call = Z("Z").test(b = {res += "K"; "K"}(), a = {res+="O"; "O"}(), c = {res += "L"; "L"})

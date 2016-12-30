@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.operation;
 
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation;
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
+import org.jetbrains.kotlin.js.backend.ast.JsBlock;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.util.AstUtil;
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
@@ -64,12 +66,15 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     protected final AccessTranslator accessTranslator;
 
+    @NotNull
+    private final JsBlock accessBlock = new JsBlock();
+
     protected IncrementTranslator(@NotNull KtUnaryExpression expression,
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
         KtExpression baseExpression = getBaseExpression(expression);
-        this.accessTranslator = getAccessTranslator(baseExpression, context()).getCached();
+        this.accessTranslator = getAccessTranslator(baseExpression, context().innerBlock(accessBlock)).getCached();
     }
 
     @NotNull
@@ -87,8 +92,17 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         // generate: expr(a = a.inc(), a)
         JsExpression getExpression = accessTranslator.translateAsGet();
         JsExpression reassignment = variableReassignment(getExpression);
+        accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(reassignment));
         JsExpression getNewValue = accessTranslator.translateAsGet();
-        JsExpression result = new JsBinaryOperation(JsBinaryOperator.COMMA, reassignment, getNewValue);
+
+        JsExpression result;
+        if (accessBlock.getStatements().size() == 1) {
+            result = new JsBinaryOperation(JsBinaryOperator.COMMA, reassignment, getNewValue);
+        }
+        else {
+            context().getCurrentBlock().getStatements().addAll(accessBlock.getStatements());
+            result = getNewValue;
+        }
         MetadataProperties.setSynthetic(result, true);
         return result;
     }
@@ -99,8 +113,19 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
         TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
+        accessBlock.getStatements().add(t1.assignmentStatement());
         JsExpression variableReassignment = variableReassignment(t1.reference());
-        JsExpression result = AstUtil.newSequence(t1.assignmentExpression(), variableReassignment, t1.reference());
+        accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(variableReassignment));
+
+        JsExpression result;
+        if (accessBlock.getStatements().size() == 2) {
+            result = AstUtil.newSequence(t1.assignmentExpression(), variableReassignment, t1.reference());
+        }
+        else {
+            context().getCurrentBlock().getStatements().addAll(accessBlock.getStatements());
+            result = t1.reference();
+        }
+
         MetadataProperties.setSynthetic(result, true);
         return result;
     }
@@ -116,6 +141,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
 
     private static boolean isDynamic(TranslationContext context, KtUnaryExpression expression) {
         CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
+        assert  operationDescriptor != null;
         return DynamicCallsKt.isDynamic(operationDescriptor);
     }
 }

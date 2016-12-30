@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.declaration
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -100,7 +101,10 @@ class DefaultPropertyTranslator(
             function: JsFunction
     ) {
         val host = translateHost(getterDescriptor, function)
-        val delegateContext = context().contextWithPropertyMetadataCreationIntrinsified(delegatedCall, descriptor, host)
+        val delegateContext = context()
+                .newDeclarationIfNecessary(getterDescriptor, function)
+                .contextWithPropertyMetadataCreationIntrinsified(delegatedCall, descriptor, host)
+
         val delegatedJsCall = CallTranslator.translate(delegateContext, delegatedCall, delegateReference)
 
         val returnResult = JsReturn(delegatedJsCall)
@@ -116,7 +120,9 @@ class DefaultPropertyTranslator(
 
         if (delegatedCall != null) {
             val host = translateHost(setterDescriptor, function)
-            val delegateContext = withAliased.contextWithPropertyMetadataCreationIntrinsified(delegatedCall, descriptor, host)
+            val delegateContext = withAliased
+                    .newDeclarationIfNecessary(setterDescriptor, function)
+                    .contextWithPropertyMetadataCreationIntrinsified(delegatedCall, descriptor, host)
             val delegatedJsCall = CallTranslator.translate(delegateContext, delegatedCall, delegateReference)
             function.addStatement(delegatedJsCall.makeStmt())
         }
@@ -125,6 +131,18 @@ class DefaultPropertyTranslator(
             assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
             val assignment = assignmentToBackingField(withAliased, descriptor as PropertyDescriptor, valueParameter.makeRef())
             function.addStatement(assignment.makeStmt())
+        }
+    }
+
+    private fun TranslationContext.newDeclarationIfNecessary(
+            descriptor: VariableAccessorDescriptor,
+            function: JsFunction
+    ): TranslationContext {
+        return if (descriptor.correspondingVariable !is LocalVariableDescriptor) {
+            newDeclaration(descriptor)
+        }
+        else {
+            innerBlock(function.body)
         }
     }
 

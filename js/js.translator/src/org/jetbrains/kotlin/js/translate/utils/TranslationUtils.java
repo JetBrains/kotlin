@@ -259,8 +259,31 @@ public final class TranslationUtils {
     }
 
     public static boolean isCacheNeeded(@NotNull JsExpression expression) {
-        return !(expression instanceof JsLiteral.JsValueLiteral) &&
-               (!(expression instanceof JsNameRef) || ((JsNameRef) expression).getQualifier() != null);
+        if (expression instanceof JsLiteral.JsValueLiteral) return false;
+        if (expression instanceof JsNameRef && ((JsNameRef) expression).getQualifier() == null) return false;
+        if (expression instanceof JsBinaryOperation) {
+            JsBinaryOperation operation = (JsBinaryOperation) expression;
+            JsBinaryOperator operator = operation.getOperator();
+            if (operator.isAssignment() || operator == COMMA) return true;
+            return isCacheNeeded(operation.getArg1()) || isCacheNeeded(operation.getArg2());
+        }
+        if (expression instanceof JsUnaryOperation) {
+            JsUnaryOperation operation = (JsUnaryOperation) expression;
+            JsUnaryOperator operator = operation.getOperator();
+            switch (operator) {
+                case BIT_NOT:
+                case NEG:
+                case POS:
+                case NOT:
+                case TYPEOF:
+                case VOID:
+                    return isCacheNeeded(operation.getArg());
+                default:
+                    return true;
+            }
+        }
+
+        return true;
     }
 
     @NotNull
