@@ -107,7 +107,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
         sourceRoots.log(this.name, logger)
         val args = populateCompilerArguments()
-        args.setupCoroutineSupportArgs()
+        args.setupCommonCompilerArgs()
 
         compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
@@ -116,10 +116,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal abstract fun getSourceRoots(): SourceRoots
     internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
-    private fun CommonCompilerArguments.setupCoroutineSupportArgs() {
+    private fun CommonCompilerArguments.setupCommonCompilerArgs() {
         coroutinesEnable = coroutines == CoroutineSupport.ENABLED
         coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
         coroutinesError = coroutines == CoroutineSupport.DISABLED
+
+        if (project.logger.isDebugEnabled) {
+            verbose = true
+        }
     }
 }
 
