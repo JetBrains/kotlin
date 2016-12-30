@@ -1,0 +1,30 @@
+
+description 'Kotlin Script Runtime'
+
+dependencies {
+    compile project(':kotlin-runtime')
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir "${rootDir}/../core/script.runtime/src"
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Kotlin-Runtime-Component': 'Core',
+            'Implementation-Title': "${project.description ?: project.name}"
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
+}

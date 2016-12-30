@@ -1,4 +1,6 @@
 
+description 'Kotlin Runtime'
+
 dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
 }
@@ -8,26 +10,22 @@ sourceSets {
         java {
             srcDir "${rootDir}/../core/builtins/src"
             srcDir "${rootDir}/../core/runtime.jvm/src"
-            exclude "org/jetbrains/annotations/**"
+            exclude 'org/jetbrains/annotations/**'
         }
         kotlin {
             srcDir "${rootDir}/../core/builtins/src"
             srcDir "${rootDir}/../core/runtime.jvm/src"
-            exclude "org/jetbrains/annotations/**"
+            exclude 'org/jetbrains/annotations/**'
         }
     }
 }
 
 jar {
-    baseName = project.name
-    from("${rootDir}/../dist/builtins")
-
     manifest {
-        attributes 'Implementation-Title': 'Kotlin Runtime',
-                   'Implementation-Version': version,
-                   'Kotlin-Runtime-Component': 'Core'
-
+        attributes 'Kotlin-Runtime-Component': 'Core',
+                'Implementation-Title': "${project.description ?: project.name}"
     }
+    from("${rootDir}/../dist/builtins")
 }
 
 artifacts {
@@ -38,5 +36,3 @@ artifacts {
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
 }
-
-

@@ -19,6 +19,19 @@ allprojects  {
 subprojects {
     apply plugin: 'kotlin'
 
+    jar {
+        baseName = project.name
+        manifest {
+            attributes 'Implementation-Vendor': 'JetBrains',
+                    'Implementation-Title': "${project.description ?: project.name}", // TODO: project.description is resolved after evaluating this, therefore this attribute is repeated in the projects; seek for a solution
+                    'Implementation-Version': version,
+                    'Build-Jdk': System.getProperty('java.version'),
+//                    'Kotlin-Version': kotlin.language.version, // TODO: if we need it - find the way to extract it
+                    'Built-By': 'JetBrains'
+        }
+        from("${rootDir}/../dist/kotlinc/build.txt") { into("META-INF/") }
+    }
+
     task sourcesJar(type: Jar, dependsOn:classes) {
         classifier = 'sources'
         from sourceSets.main.allSource
