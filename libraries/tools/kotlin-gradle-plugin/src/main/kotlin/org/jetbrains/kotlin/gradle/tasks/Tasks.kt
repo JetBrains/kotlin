@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
+import java.rmi.Remote
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -183,13 +184,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
-            !incremental -> GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
+            !incremental -> GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
             else -> {
                 logger.warn(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
                 GradleIncrementalCompilerEnvironment(compilerJar, changedFiles, reporter, taskBuildDirectory,
                         messageCollector, outputItemCollector, kaptAnnotationsFileUpdater,
                         artifactDifferenceRegistryProvider,
-                        artifactFile)
+                        artifactFile, args)
             }
         }
 
@@ -315,7 +316,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val outputItemCollector = OutputItemsCollectorImpl()
 
         val compilerRunner = GradleCompilerRunner(project)
-        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
+        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
         val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
         throwGradleExceptionIfError(exitCode)
     }

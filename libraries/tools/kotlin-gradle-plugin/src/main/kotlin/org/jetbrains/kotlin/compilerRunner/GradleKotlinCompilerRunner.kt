@@ -29,15 +29,13 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.CompilerId
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.tasks.SourceRoots
-import org.jetbrains.kotlin.incremental.classpathAsList
-import org.jetbrains.kotlin.incremental.destinationAsFile
-import org.jetbrains.kotlin.incremental.makeModuleFile
+import org.jetbrains.kotlin.incremental.*
+
 import java.io.*
 import java.rmi.server.UnicastRemoteObject
 import kotlin.concurrent.thread
@@ -132,10 +130,10 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
     override fun compileWithDaemon(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment): ExitCode? {
         val exitCode = if (environment is GradleIncrementalCompilerEnvironment) {
-            performIncrementalCompilationWithDaemon(argsArray, environment)
+            incrementalCompilationWithDaemon(environment)
         }
         else {
-            super.compileWithDaemon(compilerClassName, argsArray, environment)
+            nonIncrementalCompilationWithDaemon(compilerClassName, environment)
         }
         exitCode?.let {
             withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
@@ -146,16 +144,58 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         return exitCode
     }
 
-    private fun performIncrementalCompilationWithDaemon(argsArray: Array<String>, environment: GradleIncrementalCompilerEnvironment): ExitCode? {
-        val port = SOCKET_ANY_FREE_PORT
-        val services = IncrementalCompilationFacadeImpl(environment, port)
-        val compilerOut = ByteArrayOutputStream()
-        val daemonOut = ByteArrayOutputStream()
+    private fun nonIncrementalCompilationWithDaemon(
+            compilerClassName: String,
+            environment: GradleCompilerEnvironment
+    ): ExitCode? {
+        val targetPlatform = when (compilerClassName) {
+            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
+            K2JS_COMPILER -> CompileService.TargetPlatform.JS
+            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
+            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+        }
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            val remoteCompilerOut = RemoteOutputStreamServer(compilerOut, port)
-            val remoteDaemonOut = RemoteOutputStreamServer(daemonOut, port)
-            daemon.serverSideJvmIC(sessionId, argsArray, services, remoteCompilerOut, remoteDaemonOut, null)
+            daemon.compile(
+                    sessionId,
+                    CompileService.CompilerMode.NON_INCREMENTAL_COMPILER,
+                    targetPlatform,
+                    environment.compilerArgs,
+                    AdditionalCompilerArguments(reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose)),
+                    GradleCompilerServicesFacadeImpl(project, environment.messageCollector),
+                    operationsTracer = null)
+        }
+
+        val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
+        if (exitCode == null) {
+            log.warn("Could not perform non-incremental compilation with Kotlin compile daemon, " +
+                    "non-incremental compilation in fallback mode will be performed")
+        }
+        return exitCode
+    }
+
+    private fun incrementalCompilationWithDaemon(environment: GradleIncrementalCompilerEnvironment): ExitCode? {
+        val knownChangedFiles = environment.changedFiles as? ChangedFiles.Known
+
+        val additionalCompilerArguments = IncrementalCompilerArguments(
+                areFileChangesKnown = knownChangedFiles != null,
+                modifiedFiles = knownChangedFiles?.modified,
+                deletedFiles = knownChangedFiles?.removed,
+                workingDir = environment.workingDir,
+                customCacheVersion = GRADLE_CACHE_VERSION,
+                customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
+                reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose) +
+                        getIncrementalReportingFilters(environment.compilerArgs.verbose)
+        )
+        val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
+            daemon.compile(
+                    sessionId,
+                    CompileService.CompilerMode.INCREMENTAL_COMPILER,
+                    CompileService.TargetPlatform.JVM,
+                    environment.compilerArgs,
+                    additionalCompilerArguments,
+                    GradleIncrementalCompilerServicesFacadeImpl(project, environment),
+                    operationsTracer = null)
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
@@ -163,12 +203,39 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             log.warn("Could not perform incremental compilation with Kotlin compile daemon, " +
                     "non-incremental compilation in fallback mode will be performed")
         }
-        processCompilerOutput(environment, compilerOut, exitCode)
-        BufferedReader(StringReader(daemonOut.toString())).forEachLine {
-            environment.messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
-        }
         return exitCode
     }
+
+    private fun getNonIncrementalReportingFilters(verbose: Boolean): List<ReportingFilter> {
+        val result = ArrayList<ReportingFilter>()
+
+        val compilerMessagesSeverities = ArrayList<Int>().apply {
+            add(CompilerMessageSeverity.ERROR.value)
+            add(CompilerMessageSeverity.EXCEPTION.value)
+            add(CompilerMessageSeverity.WARNING.value)
+            add(CompilerMessageSeverity.INFO.value)
+
+            if (verbose) {
+                add(CompilerMessageSeverity.OUTPUT.value)
+                add(CompilerMessageSeverity.LOGGING.value)
+            }
+        }
+
+        if (verbose) {
+            result.add(ReportingFilter(ReportCategory.DAEMON_MESSAGE, emptyList()))
+        }
+
+        val compilerMessagesFilter = ReportingFilter(ReportCategory.COMPILER_MESSAGE, compilerMessagesSeverities)
+        result.add(compilerMessagesFilter)
+
+        return result
+    }
+
+    private fun getIncrementalReportingFilters(verbose: Boolean) =
+            if (verbose) {
+                listOf(ReportingFilter(ReportCategory.INCREMENTAL_COMPILATION, listOf(IncrementalCompilationSeverity.COMPILED_FILES.value, IncrementalCompilationSeverity.LOGGING.value)))
+            }
+            else emptyList()
 
     private fun compileOutOfProcess(
             argsArray: Array<String>,
