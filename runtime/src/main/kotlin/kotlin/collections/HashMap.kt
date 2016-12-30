@@ -13,9 +13,9 @@ class HashMap<K, V> private constructor(
     override var size: Int = 0
         private set
 
-    private var keysView: HashSet<K>? = null
-    private var valuesView: HashMapValues<V>? = null
-    private var entriesView: HashMapEntrySet<K, V>? = null
+    // private var keysView: HashSet<K>? = null
+    // private var valuesView: HashMapValues<V>? = null
+    // private var entriesView: HashMapEntrySet<K, V>? = null
 
     // ---------------------------- functions ----------------------------
 
@@ -85,30 +85,45 @@ class HashMap<K, V> private constructor(
     }
 
     override val keys: MutableSet<K> get() {
-        val cur = keysView
-        return if (cur == null) {
-            val new = HashSet(this)
-            keysView = new
-            new
-        } else cur
+        return HashSet(this)
+
+        // Caching creates a reference cycle and thus leads to memory leaks;
+        // TODO: fix and enable.
+
+        // val cur = keysView
+        // return if (cur == null) {
+        //     val new = HashSet(this)
+        //     keysView = new
+        //     new
+        // } else cur
     }
 
     override val values: MutableCollection<V> get() {
-        val cur = valuesView
-        return if (cur == null) {
-            val new = HashMapValues(this)
-            valuesView = new
-            new
-        } else cur
+        return HashMapValues(this)
+
+        // Caching creates a reference cycle and thus leads to memory leaks;
+        // TODO: fix and enable.
+
+        // val cur = valuesView
+        // return if (cur == null) {
+        //     val new = HashMapValues(this)
+        //     valuesView = new
+        //     new
+        // } else cur
     }
 
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
-        val cur = entriesView
-        return if (cur == null) {
-            val new = HashMapEntrySet(this)
-            entriesView = new
-            return new
-        } else cur
+        return HashMapEntrySet(this)
+
+        // Caching creates a reference cycle and thus leads to memory leaks;
+        // TODO: fix and enable.
+
+        // val cur = entriesView
+        // return if (cur == null) {
+        //     val new = HashMapEntrySet(this)
+        //     entriesView = new
+        //     return new
+        // } else cur
     }
 
     override fun equals(other: Any?): Boolean {
