@@ -102,12 +102,20 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
         sourceRoots.log(this.name, logger)
         val args = populateCompilerArguments()
+        args.setupCommonCompilerArgs()
+
         compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 
     internal abstract fun getSourceRoots(): SourceRoots
     internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
+
+    private fun CommonCompilerArguments.setupCommonCompilerArgs() {
+        if (project.logger.isDebugEnabled) {
+            verbose = true
+        }
+    }
 }
 
 open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
