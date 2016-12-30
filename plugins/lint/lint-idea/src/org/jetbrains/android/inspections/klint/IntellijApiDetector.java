@@ -28,7 +28,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.expressions.UInstanceExpression;
 import org.jetbrains.uast.expressions.UTypeReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;

@@ -973,8 +973,8 @@ public class UElementVisitor {
         }
 
         @Override
-        public boolean visitDeclarationsExpression(UVariableDeclarationsExpression node) {
-            List<VisitingDetector> list = mNodePsiTypeDetectors.get(UVariableDeclarationsExpression.class);
+        public boolean visitDeclarationsExpression(UDeclarationsExpression node) {
+            List<VisitingDetector> list = mNodePsiTypeDetectors.get(UDeclarationsExpression.class);
             if (list != null) {
                 for (VisitingDetector v : list) {
                     v.getVisitor().visitDeclarationsExpression(node);

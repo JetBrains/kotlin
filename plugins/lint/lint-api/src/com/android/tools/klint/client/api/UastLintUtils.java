@@ -28,7 +28,7 @@ import com.intellij.psi.*;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.java.JavaAbstractUExpression;
-import org.jetbrains.uast.java.JavaUVariableDeclarationsExpression;
+import org.jetbrains.uast.java.JavaUDeclarationsExpression;
 
 import java.util.Collections;
 import java.util.List;
@@ -301,7 +301,7 @@ public class UastLintUtils {
         if (element instanceof UExpression) {
             node = (UExpression) element;
         } else if (element instanceof UVariable) {
-            node = new JavaUVariableDeclarationsExpression(
+            node = new JavaUDeclarationsExpression(
                     null, Collections.singletonList(((UVariable) element)));
         } else {
             throw new IllegalArgumentException("element must be an expression or an UVariable");

@@ -2628,8 +2628,8 @@ public class ApiDetector extends ResourceXmlDetector
             @Nullable UIfExpression ifStatement,
             @NonNull UBinaryExpression binary) {
         UastBinaryOperator tokenType = binary.getOperator();
-        if (tokenType == UastBinaryOperator.GREATER || tokenType == UastBinaryOperator.GREATER_OR_EQUAL ||
-            tokenType == UastBinaryOperator.LESS_OR_EQUAL || tokenType == UastBinaryOperator.LESS ||
+        if (tokenType == UastBinaryOperator.GREATER || tokenType == UastBinaryOperator.GREATER_OR_EQUALS ||
+            tokenType == UastBinaryOperator.LESS_OR_EQUALS || tokenType == UastBinaryOperator.LESS ||
             tokenType == UastBinaryOperator.EQUALS || tokenType == UastBinaryOperator.IDENTITY_EQUALS) {
             UExpression left = binary.getLeftOperand();
             if (left instanceof UReferenceExpression) {
@@ -2655,7 +2655,7 @@ public class ApiDetector extends ResourceXmlDetector
                         boolean fromThen = ifStatement == null || prev == ifStatement.getThenExpression();
                         boolean fromElse = ifStatement != null && prev == ifStatement.getElseExpression();
                         assert fromThen == !fromElse;
-                        if (tokenType == UastBinaryOperator.GREATER_OR_EQUAL) {
+                        if (tokenType == UastBinaryOperator.GREATER_OR_EQUALS) {
                             // if (SDK_INT >= ICE_CREAM_SANDWICH) { <call> } else { ... }
                             return level >= api && fromThen;
                         }
@@ -2663,7 +2663,7 @@ public class ApiDetector extends ResourceXmlDetector
                             // if (SDK_INT > ICE_CREAM_SANDWICH) { <call> } else { ... }
                             return level >= api - 1 && fromThen;
                         }
-                        else if (tokenType == UastBinaryOperator.LESS_OR_EQUAL) {
+                        else if (tokenType == UastBinaryOperator.LESS_OR_EQUALS) {
                             // if (SDK_INT <= ICE_CREAM_SANDWICH) { ... } else { <call> }
                             return level >= api - 1 && fromElse;
                         }
@@ -2755,7 +2755,7 @@ public class ApiDetector extends ResourceXmlDetector
                     }
                 }
                 if (level != -1) {
-                    if (tokenType == UastBinaryOperator.GREATER_OR_EQUAL) {
+                    if (tokenType == UastBinaryOperator.GREATER_OR_EQUALS) {
                         // if (SDK_INT >= ICE_CREAM_SANDWICH && <call>
                         return level >= api;
                     }
