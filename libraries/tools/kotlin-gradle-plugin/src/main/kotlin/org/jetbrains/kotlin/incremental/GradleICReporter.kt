@@ -21,11 +21,8 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 
-internal class GradleICReporter(private val projectRootFile: File) : ICReporter() {
+internal class GradleICReporter(private val projectRootFile: File) : ICReporter {
     private val log = Logging.getLogger(GradleICReporter::class.java)
-
-    val isDebugEnabled: Boolean
-            get() = log.isDebugEnabled
 
     override fun report(message: ()->String) {
         log.kotlinDebug(message)
@@ -34,7 +31,7 @@ internal class GradleICReporter(private val projectRootFile: File) : ICReporter(
     override fun pathsAsString(files: Iterable<File>): String =
             files.pathsAsStringRelativeTo(projectRootFile)
 
-    override fun reportCompileIteration(sourceFiles: Iterable<File>, exitCode: ExitCode) {
+    override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
         if (sourceFiles.any()) {
             report { "compile iteration: ${pathsAsString(sourceFiles)}" }
         }

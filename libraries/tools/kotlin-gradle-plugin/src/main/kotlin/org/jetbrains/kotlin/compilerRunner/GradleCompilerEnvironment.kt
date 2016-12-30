@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.GradleICReporter
@@ -12,8 +14,9 @@ import java.net.URL
 
 internal open class GradleCompilerEnvironment(
         val compilerJar: File,
-        messageCollector: MessageCollector,
-        outputItemsCollector: OutputItemsCollector
+        messageCollector: GradleMessageCollector,
+        outputItemsCollector: OutputItemsCollector,
+        val compilerArgs: CommonCompilerArguments
 ) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
     val toolsJar: File? by lazy { findToolsJar() }
 
@@ -29,9 +32,10 @@ internal class GradleIncrementalCompilerEnvironment(
         val changedFiles: ChangedFiles,
         val reporter: GradleICReporter,
         val workingDir: File,
-        messageCollector: MessageCollector,
+        messageCollector: GradleMessageCollector,
         outputItemsCollector: OutputItemsCollector,
         val kaptAnnotationsFileUpdater: AnnotationFileUpdater?,
         val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider?,
-        val artifactFile: File?
-) : GradleCompilerEnvironment(compilerJar, messageCollector, outputItemsCollector)
+        val artifactFile: File?,
+        compilerArgs: CommonCompilerArguments
+) : GradleCompilerEnvironment(compilerJar, messageCollector, outputItemsCollector, compilerArgs)

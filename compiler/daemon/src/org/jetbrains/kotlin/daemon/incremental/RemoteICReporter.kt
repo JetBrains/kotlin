@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity.CO
 import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity.LOGGING
 import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
+import java.io.Serializable
 
 internal class RemoteICReporter(
         servicesFacade: CompilerServicesFacadeBase,
@@ -39,7 +40,7 @@ internal class RemoteICReporter(
 
     override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
         if (shouldReport(COMPILED_FILES.value)) {
-            report(COMPILED_FILES.value, message = null, attachment = ArrayList(sourceFiles))
+            report(COMPILED_FILES.value, message = null, attachment = CompileIterationResult(sourceFiles, exitCode.toString()))
         }
     }
 }
@@ -50,4 +51,10 @@ internal class RemoteICReporter(
 enum class IncrementalCompilationSeverity(val value: Int) {
     COMPILED_FILES(0),
     LOGGING(10)
+}
+
+class CompileIterationResult(val sourceFiles: Iterable<File>, val exitCode: String) : Serializable {
+    companion object {
+        const val serialVersionUID: Long = 0
+    }
 }

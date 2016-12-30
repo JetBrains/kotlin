@@ -49,7 +49,7 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
-        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector)
+        val environment = GradleCompilerEnvironment(compilerJar, messageCollector, outputItemCollector, args)
         val exitCode = compilerRunner.runMetadataCompiler(sourceRoots.kotlinSourceFiles, args, environment)
         throwGradleExceptionIfError(exitCode)
     }
