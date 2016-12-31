@@ -84,9 +84,15 @@ class TypeCastExpression(val type: Type, val expression: Expression) : Expressio
         get() = type.isNullable
 }
 
-class LiteralExpression(val literalText: String) : Expression() {
+open class LiteralExpression(val literalText: String) : Expression() {
+
     override fun generateCode(builder: CodeBuilder) {
         builder.append(literalText)
+    }
+
+    object NullLiteral : LiteralExpression("null"){
+        override val isNullable: Boolean
+            get() = true
     }
 }
 

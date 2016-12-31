@@ -4823,6 +4823,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("castNullObject.java")
+        public void testCastNullObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/castNullObject.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("castNullable.java")
         public void testCastNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/castNullable.java");
