@@ -270,6 +270,12 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val value = expression.value
         var text = expression.text!!
         val type = expression.type
+
+        if(expression.isNullLiteral()) {
+            result = LiteralExpression.NullLiteral
+            return
+        }
+
         if (type != null) {
             val typeStr = type.canonicalText
             if (typeStr == "double") {
@@ -313,6 +319,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 text = text.replace("\\$([A-Za-z]+|\\{)".toRegex(), "\\\\$0")
             }
         }
+
 
         result = LiteralExpression(text)
     }
