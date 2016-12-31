@@ -68,6 +68,9 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
             irBuiltins.throwNpe -> IrCallImpl(expression.startOffset, expression.endOffset,
                     builtIns.getKonanInternalFunctions("ThrowNullPointerException").single())
 
+            irBuiltins.noWhenBranchMatchedException -> IrCallImpl(expression.startOffset, expression.endOffset,
+                    builtIns.getKonanInternalFunctions("ThrowNoWhenBranchMatchedException").single())
+
             else -> expression
         }
     }

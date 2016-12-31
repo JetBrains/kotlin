@@ -137,3 +137,12 @@ public class AssertionError : Error {
     constructor(message: String, cause: Throwable) : super(message, cause) {
     }
 }
+
+public class NoWhenBranchMatchedException : RuntimeException {
+
+    constructor() : super() {
+    }
+
+    constructor(s: String) : super(s) {
+    }
+}

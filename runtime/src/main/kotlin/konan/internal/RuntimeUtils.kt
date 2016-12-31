@@ -15,5 +15,9 @@ internal fun ThrowClassCastException(): Nothing {
     throw ClassCastException()
 }
 
+internal fun ThrowNoWhenBranchMatchedException(): Nothing {
+    throw NoWhenBranchMatchedException()
+}
+
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
