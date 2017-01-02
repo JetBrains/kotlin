@@ -83,4 +83,5 @@ private fun assertParamMapsEquals(actuals: Map<KParameter, Any?>?, vararg expect
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 private fun foo(i: Int, b: Byte, c: Char, d: Double = 0.0, s: String = "", t: Boolean = true, vararg v: Long) {}
