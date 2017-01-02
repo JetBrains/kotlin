@@ -90,6 +90,16 @@ public inline fun <T> listOf(): List<T> = emptyList()
 @JvmVersion
 public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
 
+/** Returns an empty new [MutableList]. */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> mutableListOf(): MutableList<T> = ArrayList()
+
+/** Returns an empty new [ArrayList]. */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> arrayListOf(): ArrayList<T> = ArrayList()
+
 /** Returns a new [MutableList] with the given elements. */
 public fun <T> mutableListOf(vararg elements: T): MutableList<T>
         = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))

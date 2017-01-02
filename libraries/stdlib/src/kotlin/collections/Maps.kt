@@ -57,6 +57,16 @@ public inline fun <K, V> mapOf(): Map<K, V> = emptyMap()
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
 
 /**
+ * Returns an empty new [MutableMap].
+ *
+ * The returned map preserves the entry iteration order.
+ * @sample samples.collections.Maps.Instantiation.emptyMutableMap
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> mutableMapOf(): MutableMap<K, V> = LinkedHashMap()
+
+/**
  * Returns a new [MutableMap] with the specified contents, given as a list of pairs
  * where the first component is the key and the second is the value. If multiple pairs have
  * the same key, the resulting map will contain the value from the last of those pairs.
@@ -68,6 +78,13 @@ public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
         = LinkedHashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
 
 /**
+ * Returns an empty new [HashMap].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> hashMapOf(): HashMap<K, V> = HashMap<K, V>()
+
+/**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
  * where the first component is the key and the second is the value.
  *
@@ -76,6 +93,12 @@ public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
 public fun <K, V> hashMapOf(vararg pairs: Pair<K, V>): HashMap<K, V>
         = HashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
 
+/**
+ * Returns an empty new [LinkedHashMap].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> linkedMapOf(): LinkedHashMap<K, V> = LinkedHashMap<K, V>()
 
 /**
  * Returns a new [LinkedHashMap] with the specified contents, given as a list of pairs
