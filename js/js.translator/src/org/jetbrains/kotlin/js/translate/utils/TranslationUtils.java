@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -45,7 +44,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
+import static org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.createDataDescriptor;

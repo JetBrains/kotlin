@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
-import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext

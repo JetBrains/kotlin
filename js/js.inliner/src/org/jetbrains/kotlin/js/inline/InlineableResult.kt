@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.inline
 
-import com.google.dart.compiler.backend.js.ast.JsStatement
-import com.google.dart.compiler.backend.js.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 
 class InlineableResult(
         val inlineableBody: JsStatement,

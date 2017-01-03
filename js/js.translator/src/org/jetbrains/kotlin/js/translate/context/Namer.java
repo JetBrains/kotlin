@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
-import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind;
-import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
+import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

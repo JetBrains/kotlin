@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.facade;
 
-import com.google.dart.compiler.backend.js.ast.JsProgram;
+import org.jetbrains.kotlin.js.backend.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.test
 
-import com.google.dart.compiler.backend.js.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems

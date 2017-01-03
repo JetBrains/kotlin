@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import com.google.common.collect.ImmutableSet
-import com.google.dart.compiler.backend.js.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression

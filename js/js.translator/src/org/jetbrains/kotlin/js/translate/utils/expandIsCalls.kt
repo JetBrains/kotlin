@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.translate.utils
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck
-import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck
+import org.jetbrains.kotlin.js.backend.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*

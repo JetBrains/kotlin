@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.translate.test;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNew;
-import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsNew;
+import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;

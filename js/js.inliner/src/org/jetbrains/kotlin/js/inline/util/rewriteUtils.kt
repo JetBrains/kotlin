@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsNode
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsName
+import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.inline.util.rewriters.NameReplacingVisitor
 import org.jetbrains.kotlin.js.inline.util.rewriters.ThisReplacingVisitor
 

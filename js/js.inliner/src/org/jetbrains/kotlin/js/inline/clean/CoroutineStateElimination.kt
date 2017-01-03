@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.coroutine.finallyPath
 import org.jetbrains.kotlin.js.coroutine.targetBlock
 import org.jetbrains.kotlin.js.coroutine.targetExceptionBlock

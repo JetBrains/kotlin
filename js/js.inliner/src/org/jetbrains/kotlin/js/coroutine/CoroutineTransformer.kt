@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.coroutine
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.coroutineType
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineType
 
 class CoroutineTransformer(private val program: JsProgram) : JsVisitorWithContextImpl() {
     private val additionalStatements = mutableListOf<JsStatement>()

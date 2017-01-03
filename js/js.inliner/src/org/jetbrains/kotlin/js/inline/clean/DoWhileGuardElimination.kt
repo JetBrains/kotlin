@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 
 /**
  * During inlining we can sometimes get the following representation for do..while statement:

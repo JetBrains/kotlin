@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsReturn
+import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsReturn
 
 fun isFunctionCreator(outer: JsFunction): Boolean =
         outer.getInnerFunction() != null

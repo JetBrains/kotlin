@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsNameRef
+import org.jetbrains.kotlin.js.backend.ast.JsInvocation
+import org.jetbrains.kotlin.js.backend.ast.JsName
+import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.translate.context.StaticContext

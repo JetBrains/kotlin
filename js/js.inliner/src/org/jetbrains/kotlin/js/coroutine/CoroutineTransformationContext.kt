@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.coroutine
 
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsScope
-import com.google.dart.compiler.backend.js.ast.metadata.coroutineMetadata
+import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 
 class CoroutineTransformationContext(private val scope: JsScope, function: JsFunction) {
     val entryBlock = CoroutineBlock()

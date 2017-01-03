@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 
 public final class TemporaryConstVariable extends TemporaryVariable{

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.SideEffectKind
-import com.google.dart.compiler.backend.js.ast.metadata.sideEffects
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.any
 
 fun JsExpression.canHaveSideEffect(localVars: Set<JsName>) =

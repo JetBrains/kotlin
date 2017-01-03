@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.coroutine
 
-import com.google.dart.compiler.backend.js.ast.JsBlock
-import com.google.dart.compiler.backend.js.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 class CoroutineBlock {
     val statements = mutableListOf<JsStatement>()

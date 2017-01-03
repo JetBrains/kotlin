@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.sourceMap;
 
-import com.google.dart.compiler.common.SourceInfo;
-import com.google.dart.compiler.util.TextOutput;
+import org.jetbrains.kotlin.js.common.SourceInfo;
+import org.jetbrains.kotlin.js.util.TextOutput;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PairConsumer;
 import gnu.trove.TObjectIntHashMap;

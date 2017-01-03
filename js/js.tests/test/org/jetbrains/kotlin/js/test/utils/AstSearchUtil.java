@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.js.test.utils;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNode;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsFunction;
+import org.jetbrains.kotlin.js.backend.ast.JsName;
+import org.jetbrains.kotlin.js.backend.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;

@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.expression
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
+import org.jetbrains.kotlin.js.backend.ast.JsTry
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.js.translate.context.TranslationContext

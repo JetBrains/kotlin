@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import com.google.dart.compiler.backend.js.ast.JsFunctionScope
+import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated

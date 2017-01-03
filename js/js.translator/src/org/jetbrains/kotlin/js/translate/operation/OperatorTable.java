@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.js.translate.operation;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
+import org.jetbrains.kotlin.js.backend.ast.JsUnaryOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;

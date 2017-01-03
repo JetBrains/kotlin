@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.js.test.optimizer
 
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
-import com.google.dart.compiler.util.TextOutputImpl
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor

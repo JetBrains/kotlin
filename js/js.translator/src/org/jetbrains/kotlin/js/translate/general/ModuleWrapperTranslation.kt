@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.general
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.StaticContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -78,7 +78,7 @@ object ModuleWrapperTranslation {
     }
 
     private fun wrapAmd(
-            moduleId: String,function: JsExpression,
+            moduleId: String, function: JsExpression,
             importedModules: List<StaticContext.ImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope

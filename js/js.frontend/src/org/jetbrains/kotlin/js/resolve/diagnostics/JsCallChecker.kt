@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import com.google.dart.compiler.backend.js.ast.JsFunctionScope
-import com.google.dart.compiler.backend.js.ast.JsProgram
-import com.google.dart.compiler.backend.js.ast.JsRootScope
+import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter

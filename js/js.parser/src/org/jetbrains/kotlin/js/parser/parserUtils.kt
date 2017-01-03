@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.js.parser
 
-import com.google.dart.compiler.common.*
-import com.google.dart.compiler.backend.js.ast.*
 import com.google.gwt.dev.js.*
 import com.google.gwt.dev.js.rhino.*
 
-import com.intellij.util.*
+import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
+import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.common.SourceInfoImpl
 import java.io.*
 import java.util.*
 

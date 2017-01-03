@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.test;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 
 public final class JSRhinoUnitTester extends CommonUnitTester {

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.coroutine
 
-import com.google.dart.compiler.backend.js.ast.JsDebugger
-import com.google.dart.compiler.backend.js.ast.JsExpressionStatement
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperty
+import org.jetbrains.kotlin.js.backend.ast.JsDebugger
+import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperty
 
 var JsDebugger.targetBlock: CoroutineBlock? by MetadataProperty(default = null)
 var JsDebugger.targetExceptionBlock: CoroutineBlock? by MetadataProperty(default = null)

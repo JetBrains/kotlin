@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.JsBlock
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
+import org.jetbrains.kotlin.js.backend.ast.JsInvocation
+import org.jetbrains.kotlin.js.backend.ast.JsNameRef
+import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 
 // TODO: this optimization is a little unfair. It tries to recognize pattern like this a.bind(b)(args) and
 // replace it with b.a(args). However, we can't be completely sure that `a` is a Function.

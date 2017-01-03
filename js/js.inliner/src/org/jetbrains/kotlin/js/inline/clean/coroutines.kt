@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.isFakeSuspend
-import com.google.dart.compiler.backend.js.ast.metadata.isPreSuspend
-import com.google.dart.compiler.backend.js.ast.metadata.isSuspend
-import com.google.dart.compiler.backend.js.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.isFakeSuspend
+import org.jetbrains.kotlin.js.backend.ast.metadata.isPreSuspend
+import org.jetbrains.kotlin.js.backend.ast.metadata.isSuspend
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.translate.context.Namer
 
 fun <T : JsNode> T.removeFakeSuspend(): T {

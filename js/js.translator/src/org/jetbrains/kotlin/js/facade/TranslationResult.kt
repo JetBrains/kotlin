@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.facade
 
-import com.google.dart.compiler.backend.js.ast.JsProgram
-import com.google.dart.compiler.util.TextOutput
-import com.google.dart.compiler.util.TextOutputImpl
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.util.TextOutput
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.backend.common.output.*

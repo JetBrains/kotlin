@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.js.coroutine
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.inline.util.collectBreakContinueTargets
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.utils.DFS
 
-class CoroutineBodyTransformer(private val program: JsProgram,private val context: CoroutineTransformationContext) : RecursiveJsVisitor() {
+class CoroutineBodyTransformer(private val program: JsProgram, private val context: CoroutineTransformationContext) : RecursiveJsVisitor() {
     private val entryBlock = context.entryBlock
     private val globalCatchBlock = context.globalCatchBlock
     private var currentBlock = entryBlock

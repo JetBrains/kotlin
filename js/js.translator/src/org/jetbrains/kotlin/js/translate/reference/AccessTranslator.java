@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 
 /**

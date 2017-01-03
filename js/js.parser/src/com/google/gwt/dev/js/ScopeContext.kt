@@ -16,7 +16,7 @@
 
 package com.google.gwt.dev.js
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 
 import java.util.Stack
 

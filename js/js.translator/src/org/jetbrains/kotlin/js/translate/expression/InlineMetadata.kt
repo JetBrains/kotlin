@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.translate.expression
 
-import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 
 private val METADATA_PROPERTIES_COUNT = 2

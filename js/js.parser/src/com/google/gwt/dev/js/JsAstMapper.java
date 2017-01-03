@@ -15,9 +15,9 @@
  */
 package com.google.gwt.dev.js;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.JsLiteral.JsBooleanLiteral;
-import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.JsLiteral.JsBooleanLiteral;
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
 import com.google.gwt.dev.js.parserExceptions.JsParserException;
 import com.google.gwt.dev.js.rhino.*;
 import com.intellij.util.SmartList;

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.imported
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.imported
 
 fun removeUnusedImports(root: JsNode) {
     val collector = UsedImportsCollector()

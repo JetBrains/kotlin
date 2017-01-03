@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsNumberLiteral
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern

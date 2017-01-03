@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.sourceMap;
 
-import com.google.dart.compiler.backend.js.JsToStringGenerationVisitor;
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.TextOutput;
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.util.TextOutput;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils.jsAstUtils
 
-import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 
 fun JsFunction.addStatement(stmt: JsStatement) {

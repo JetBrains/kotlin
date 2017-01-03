@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.hasDefaultValue
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
 
 import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import org.jetbrains.kotlin.js.inline.util.zipWithDefault
