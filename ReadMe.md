@@ -1,27 +1,27 @@
-<a href="http://kotlinslackin.herokuapp.com"><img src="https://kotlinslackin.herokuapp.com/badge.svg" height="20"></a>
+<a href="https://kotlinslackin.herokuapp.com"><img src="https://kotlinslackin.herokuapp.com/badge.svg" height="20"></a>
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/bt345.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=bt345&branch_Kotlin=%3Cdefault%3E&tab=buildTypeStatusDiv)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 # Kotlin Programming Language
 
-Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
+Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
 
- * [Kotlin Site](http://kotlinlang.org/)
- * [Getting Started Guide](http://kotlinlang.org/docs/tutorials/getting-started.html)
+ * [Kotlin Site](https://kotlinlang.org/)
+ * [Getting Started Guide](https://kotlinlang.org/docs/tutorials/getting-started.html)
  * [Try Kotlin](http://try.kotlinlang.org/)
- * [Kotlin Standard Library](http://kotlinlang.org/api/latest/jvm/stdlib/index.html)
- * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
- * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
- * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
+ * [Kotlin Standard Library](https://kotlinlang.org/api/latest/jvm/stdlib/index.html)
+ * [Issue Tracker](https://youtrack.jetbrains.com/issues/KT)
+ * [Forum](https://discuss.kotlinlang.org/)
+ * [Kotlin Blog](https://blog.jetbrains.com/kotlin/)
  * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
- * [Public Slack channel](http://kotlinslackin.herokuapp.com/)
+ * [Public Slack channel](https://kotlinslackin.herokuapp.com/)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
 
 ## Editing Kotlin
 
  * [Kotlin IntelliJ IDEA Plugin](https://kotlinlang.org/docs/tutorials/getting-started.html)
- * [Kotlin Eclipse Plugin](http://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
+ * [Kotlin Eclipse Plugin](https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
  * [Kotlin TextMate Bundle](https://github.com/vkostyukov/kotlin-sublime-package)
 
 ## Build environment requirements
@@ -53,7 +53,7 @@ Then, you need to run
     ant -f build.xml
 
 which will build the binaries of the compiler and put them into the 'dist' directory. You may need to increase the **heap size** for Ant using
-[ANT_OPTS](http://www.liferay.com/community/wiki/-/wiki/Main/Ant+opts).
+[ANT_OPTS](https://web.liferay.com/community/wiki/-/wiki/Main/Ant+opts).
 
 **OPTIONAL:** Maven distribution is built separately, run
 
@@ -76,7 +76,7 @@ To keep the plugin version in sync with the rest of the team and our [Continuous
 you should install the according to the [instructions below](#plugin-for-contributors).
 
 If you want to have an IntelliJ IDEA installation without the Kotlin plugin which is separate to your default IntelliJ IDEA installation which has the Kotlin
-plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have multiple IntelliJ IDEA installations using different configurations and plugin directories.
+plugin [see this document](https://devnet.jetbrains.com/docs/DOC-181) which describes how to have multiple IntelliJ IDEA installations using different configurations and plugin directories.
 
 From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
 
@@ -115,7 +115,7 @@ Then update the list of plugins in "Browse Repositories", you'll see two version
 
 # Contributing
 
-We love contributions! There's [lots to do on Kotlin](http://youtrack.jetbrains.com/issues/KT) and on the
+We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
 [standard library](https://youtrack.jetbrains.com/issues/KT?q=Subtask+of%3A+KT-2554+%23Unresolved) so why not chat with us
 about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://kotlinslackin.herokuapp.com/)
 and let us know about your plans.
@@ -124,11 +124,11 @@ If you want to find some issues to start off with, try [this query](https://yout
 
 Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
 
-A nice gentle way to contribute would be to review the [standard library docs](http://kotlinlang.org/api/latest/jvm/stdlib/index.html)
+A nice gentle way to contribute would be to review the [standard library docs](https://kotlinlang.org/api/latest/jvm/stdlib/index.html)
 and find classes or functions which are not documented very well and submit a patch.
 
 In particular it'd be great if all functions included a nice example of how to use it such as for the
-[`hashMapOf()`](http://kotlinlang.org/api/latest/jvm/stdlib/kotlin/hash-map-of.html) function.
+[`hashMapOf()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/hash-map-of.html) function.
 This is implemented using the [`@sample`](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/collections/Maps.kt#L64)
 macro to include code from a test function. The benefits of this approach are twofold; First, the API's documentation is improved via beneficial examples that help new users and second, the code coverage is increased.
 
@@ -165,8 +165,8 @@ Some of the code in the standard library is created by generating code from temp
 
 ## Submitting patches
 
-The best way to submit a patch is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
-[pull request](https://help.github.com/articles/creating-a-pull-request/) via [github](http://github.com).
+The best way to submit a patch is to [fork the project on github](https://help.github.com/articles/fork-a-repo/) then send us a
+[pull request](https://help.github.com/articles/creating-a-pull-request/) via [github](https://github.com).
 
 If you create your own fork, it might help to enable rebase by default
 when you pull by executing `git config --global pull.rebase
@@ -175,6 +175,6 @@ which will help keep your pull request simple and easy to apply.
 
 ## Commit comments
 
-If you include in your comment this text (where KT-1234 is the Issue ID in the [Issue Tracker](http://youtrack.jetbrains.com/issues/KT), the issue will get automatically marked as fixed.
+If you include in your comment this text (where KT-1234 is the Issue ID in the [Issue Tracker](https://youtrack.jetbrains.com/issues/KT), the issue will get automatically marked as fixed.
 
     #KT-1234 Fixed
