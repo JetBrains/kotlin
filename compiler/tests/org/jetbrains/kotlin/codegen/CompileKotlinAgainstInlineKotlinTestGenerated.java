@@ -2236,9 +2236,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 doTest(fileName);
             }
 
+            @TestMetadata("noSmapWithProperty.kt")
+            public void testNoSmapWithProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/noSmapWithProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("reified.kt")
             public void testReified() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/reified.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("reifiedProperty.kt")
+            public void testReifiedProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/reifiedProperty.kt");
                 doTest(fileName);
             }
         }

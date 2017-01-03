@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -73,10 +71,15 @@ private operator fun Collection<ValueParameterDescriptor>.get(parameterName: Str
 private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
 fun MemberDescriptor.isInlineOnlyOrReified(): Boolean =
-        this is FunctionDescriptor && (typeParameters.any { it.isReified } || hasInlineOnlyAnnotation())
+        this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
 
-fun MemberDescriptor.hasInlineOnlyAnnotation(): Boolean {
-    if (this !is FunctionDescriptor || !annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) return false
+fun MemberDescriptor.isInlineOnly(): Boolean {
+    if (this !is FunctionDescriptor ||
+        !(hasInlineOnlyAnnotation() || DescriptorUtils.getDirectMember(this).hasInlineOnlyAnnotation())) return false
     assert(isInline) { "Function is not inline: $this" }
     return true
 }
+
+private fun CallableMemberDescriptor.isReifiable() = typeParameters.any { it.isReified }
+
+private fun CallableMemberDescriptor.hasInlineOnlyAnnotation() = annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)

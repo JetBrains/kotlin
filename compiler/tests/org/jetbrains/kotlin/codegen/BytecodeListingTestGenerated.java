@@ -78,6 +78,18 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inlineOnlyProperty.kt")
+    public void testInlineOnlyProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/inlineOnlyProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InlineOnlyPropertyMultifile.kt")
+    public void testInlineOnlyPropertyMultifile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/InlineOnlyPropertyMultifile.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");

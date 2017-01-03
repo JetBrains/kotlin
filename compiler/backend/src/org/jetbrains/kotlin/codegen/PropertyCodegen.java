@@ -438,7 +438,9 @@ public class PropertyCodegen {
             @Nullable KtPropertyAccessor accessor,
             @NotNull PropertyAccessorDescriptor accessorDescriptor
     ) {
-        if (context instanceof MultifileClassFacadeContext && Visibilities.isPrivate(accessorDescriptor.getVisibility())) {
+        if (context instanceof MultifileClassFacadeContext &&
+            (Visibilities.isPrivate(accessorDescriptor.getVisibility()) ||
+             AsmUtil.getVisibilityAccessFlag(accessorDescriptor) == Opcodes.ACC_PRIVATE)) {
             return;
         }
 
