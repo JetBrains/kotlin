@@ -23,17 +23,15 @@ public fun Json.add(other: Json): Json {
     return this
 }
 
-public external interface JsonClass {
-    public fun stringify(o: Any): String
-    public fun stringify(o: Any, replacer: (key: String, value: Any?) -> Any?): String
-    public fun stringify(o: Any, replacer: (key: String, value: Any?) -> Any?, space: Int): String
-    public fun stringify(o: Any, replacer: (key: String, value: Any?) -> Any?, space: String): String
-    public fun stringify(o: Any, replacer: Array<String>): String
-    public fun stringify(o: Any, replacer: Array<String>, space: Int): String
-    public fun stringify(o: Any, replacer: Array<String>, space: String): String
+public external object JSON {
+    public fun stringify(o: Any?): String
+    public fun stringify(o: Any?, replacer: (key: String, value: Any?) -> Any?): String
+    public fun stringify(o: Any?, replacer: (key: String, value: Any?) -> Any?, space: Int): String
+    public fun stringify(o: Any?, replacer: (key: String, value: Any?) -> Any?, space: String): String
+    public fun stringify(o: Any?, replacer: Array<String>): String
+    public fun stringify(o: Any?, replacer: Array<String>, space: Int): String
+    public fun stringify(o: Any?, replacer: Array<String>, space: String): String
 
     public fun <T> parse(text: String): T
     public fun <T> parse(text: String, reviver: ((key: String, value: Any?) -> Any?)): T
 }
-
-public external val JSON: JsonClass = noImpl
