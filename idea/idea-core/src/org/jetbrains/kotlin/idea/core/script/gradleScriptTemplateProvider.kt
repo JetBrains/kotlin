@@ -55,7 +55,6 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
     }
 
     override val id: String = "Gradle"
-    override val version: Int = 1
     override val isValid: Boolean get() = gradleExeSettings?.gradleHome != null
 
     override val templateClassNames: Iterable<String> = listOf("org.gradle.script.lang.kotlin.KotlinBuildScript")

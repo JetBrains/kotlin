@@ -27,7 +27,6 @@ class ScriptTemplatesFromCompilerSettingsProvider(project: Project): ScriptTempl
     private val kotlinSettings = KotlinCompilerSettings.getInstance(project).settings
 
     override val id: String = "KotlinCompilerScriptTemplatesSettings"
-    override val version: Int = 1
     override val isValid: Boolean = kotlinSettings.scriptTemplates.isNotBlank()
 
     override val templateClassNames: Iterable<String> get() = kotlinSettings.scriptTemplates.split(',', ' ')

@@ -141,7 +141,6 @@ class TestScriptTemplateProvider(
         override val environment: Map<String, Any?>
 ) : ScriptTemplatesProvider {
     override val id = "Test"
-    override val version = 0
     override val isValid = true
     override val templateClassNames = listOf("custom.scriptDefinition.Template")
     override val dependenciesClasspath = listOf(compiledTemplateDir.canonicalPath)

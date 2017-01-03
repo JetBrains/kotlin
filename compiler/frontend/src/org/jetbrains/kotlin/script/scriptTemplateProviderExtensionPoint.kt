@@ -27,7 +27,11 @@ interface ScriptTemplatesProvider {
 
     // for resolving ambiguities
     val id: String
-    val version: Int
+
+    @Deprecated("Parameter isn't used for resolving priorities anymore. " +
+                "com.intellij.openapi.extensions.LoadingOrder constants can be used to order providers when registered from Intellij plugin.",
+                ReplaceWith("0"))
+    val version: Int get() = 0
 
     val isValid: Boolean
 
@@ -42,7 +46,8 @@ interface ScriptTemplatesProvider {
     val environment: Map<String, Any?>?
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<ScriptTemplatesProvider>("org.jetbrains.kotlin.scriptTemplatesProvider")
+        val EP_NAME: ExtensionPointName<ScriptTemplatesProvider> =
+                ExtensionPointName.create<ScriptTemplatesProvider>("org.jetbrains.kotlin.scriptTemplatesProvider")
     }
 }
 
@@ -55,16 +60,13 @@ fun makeScriptDefsFromTemplatesProviderExtensions(project: Project,
 fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProvider>,
                                          errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromAnnotatedTemplate> {
-    val idToVersion = hashMapOf<String, Int>()
-    return providers.filter { it.isValid }.sortedByDescending { it.version }.flatMap { provider ->
+    return providers.filter { it.isValid }.flatMap { provider ->
         try {
-            idToVersion.get(provider.id)?.let { ver -> errorsHandler(provider, RuntimeException("Conflicting scriptTemplatesProvider ${provider.id}, using one with version $ver")) }
             Logger.getInstance("makeScriptDefsFromTemplatesProviders")
                     .info("[kts] loading script definitions ${provider.templateClassNames} using cp: ${provider.dependenciesClasspath.joinToString(File.pathSeparator)}")
             val loader = URLClassLoader(provider.dependenciesClasspath.map { File(it).toURI().toURL() }.toTypedArray(), ScriptTemplatesProvider::class.java.classLoader)
             provider.templateClassNames.map {
                 val cl = loader.loadClass(it)
-                idToVersion.put(provider.id, provider.version)
                 KotlinScriptDefinitionFromAnnotatedTemplate(cl.kotlin, provider.resolver, provider.filePattern, provider.environment)
             }
         }
