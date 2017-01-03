@@ -111,7 +111,7 @@
         <include name="compiler/incremental-compilation-impl/src"/>
         <include name="compiler/serialization/src"/>
         <include name="compiler/util/src"/>
-        <include name="js/js.dart-ast/src"/>
+        <include name="js/js.ast/src"/>
         <include name="js/js.translator/src"/>
         <include name="js/js.frontend/src"/>
         <include name="js/js.inliner/src"/>
@@ -149,7 +149,7 @@
         <include name="plugin-api/**"/>
         <include name="annotation-collector/**"/>
         <include name="builtins-serializer/**"/>
-        <include name="js.dart-ast/**"/>
+        <include name="js.ast/**"/>
         <include name="js.translator/**"/>
         <include name="js.frontend/**"/>
         <include name="js.inliner/**"/>
@@ -260,7 +260,7 @@
             <fileset dir="plugins/annotation-collector/src"/>
             <fileset dir="compiler/serialization/src"/>
             <fileset dir="compiler/util/src"/>
-            <fileset dir="js/js.dart-ast/src"/>
+            <fileset dir="js/js.ast/src"/>
             <fileset dir="js/js.translator/src"/>
             <fileset dir="js/js.frontend/src"/>
             <fileset dir="js/js.inliner/src"/>

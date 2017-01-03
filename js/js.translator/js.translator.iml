@@ -10,7 +10,7 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="backend-common" />
-    <orderEntry type="module" module-name="js.dart-ast" exported="" />
+    <orderEntry type="module" module-name="js.ast" exported="" />
     <orderEntry type="module" module-name="js.frontend" exported="" />
     <orderEntry type="module" module-name="js.inliner" exported="" />
     <orderEntry type="module" module-name="js.parser" />

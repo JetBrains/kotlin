@@ -28,7 +28,7 @@
           <element id="module-output" name="deserialization" />
           <element id="module-output" name="backend-common" />
           <element id="library" level="project" name="builtins" />
-          <element id="module-output" name="js.dart-ast" />
+          <element id="module-output" name="js.ast" />
           <element id="directory" name="kotlin">
             <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/native/kotlin" />
             <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/src/kotlin" />

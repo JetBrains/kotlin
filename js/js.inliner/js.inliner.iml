@@ -9,7 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="descriptors" />
-    <orderEntry type="module" module-name="js.dart-ast" />
+    <orderEntry type="module" module-name="js.ast" />
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="module" module-name="js.parser" />
     <orderEntry type="module" module-name="frontend" />
