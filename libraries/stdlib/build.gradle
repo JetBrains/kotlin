@@ -1,6 +1,58 @@
 
-description = ''
+description = 'Kotlin stdlib'
+
 dependencies {
   compile project(':kotlin-runtime')
+  compile project(':kotlin-test-parent:kotlin-test')
+  compile('junit:junit:4.12')
   testCompile project(':kotlin-test-parent:kotlin-test-junit')
+}
+
+sourceSets {
+  main {
+    kotlin {
+      srcDir 'src'
+    }
+    java {
+      srcDir 'src'
+    }
+  }
+  test {
+    kotlin {
+      srcDir 'test'
+    }
+  }
+}
+
+jar {
+  manifest {
+    attributes 'Kotlin-Runtime-Component': 'Core',
+            'Implementation-Title': "${project.description ?: project.name}"
+  }
+}
+
+artifacts {
+  archives sourcesJar
+  archives javadocJar
+}
+
+compileJava {
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
+}
+
+compileTestJava {
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
+}
+
+compileKotlin {
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package",
+                                    "-Xmultifile-parts-inherit",
+                                    "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json".toString(),
+                                    "-module-name", "${project.name}".toString()]
+}
+
+compileTestKotlin {
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }

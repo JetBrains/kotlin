@@ -1,5 +1,42 @@
 
-description = ''
+description = 'Kotlin Test JUnit'
+
 dependencies {
+  compile project(':kotlin-runtime')
   compile project(':kotlin-test-parent:kotlin-test')
+  compile('junit:junit:4.12')
+}
+
+sourceSets {
+  main {
+    kotlin {
+      srcDir 'src/main/kotlin'
+      srcDir 'src/main/kotlin.jvm'
+    }
+  }
+  test {
+    kotlin {
+      srcDir 'src/test/kotlin'
+      srcDir 'src/test/kotlin.jvm'
+    }
+  }
+}
+
+jar {
+  manifest {
+    attributes 'Implementation-Title': "${project.description ?: project.name}"
+  }
+}
+
+artifacts {
+  archives sourcesJar
+  archives javadocJar
+}
+
+compileKotlin {
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
+}
+
+compileTestKotlin {
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }

@@ -33,6 +33,14 @@ artifacts {
     archives javadocJar
 }
 
+compileJava {
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+    options.fork = true
+    // TODO: find how to fix on macos
+//    options.bootClasspath = "${System.getenv('JDK_16')}/jre/lib/rt.jar"
+}
+
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
 }

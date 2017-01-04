@@ -1,2 +1,47 @@
 
-description = ''
+description = 'Kotlin Test'
+
+dependencies {
+    compile project(':kotlin-runtime')
+    compile('junit:junit:4.12')
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir 'src/main/kotlin'
+            srcDir 'src/main/kotlin.jvm'
+        }
+    }
+    test {
+        kotlin {
+            srcDir 'src/test/kotlin'
+            srcDir 'src/test/kotlin.jvm'
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'addDefaultImplementationEntries': true,
+                'Implementation-Title': "${project.description ?: project.name}"
+    }
+    dependsOn classes
+    from sourceSets.main.output
+    exclude('kotlin/internal/OnlyInputTypes*')
+    exclude('kotlin/internal/InlineOnly*')
+    exclude('kotlin/internal')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
+}
+
+compileTestKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}

@@ -1,6 +1,61 @@
 
-description = ''
+description = 'Kotlin stdlib JRE 8'
+
 dependencies {
+  compile project(':kotlin-stdlib')
   compile project(':kotlin-stdlib-jre7')
   testCompile project(':kotlin-test-parent:kotlin-test-junit')
+  testCompile project(':kotlin-stdlib-jre7')
+}
+
+sourceSets {
+  main {
+    kotlin {
+      srcDir 'src'
+    }
+  }
+  test {
+    kotlin {
+      srcDir 'test'
+      srcDir '../test'
+      srcDir '../jre7/test'
+    }
+  }
+}
+
+jar {
+  manifest {
+    attributes 'Kotlin-Runtime-Component': 'Core',
+            'Implementation-Title': "${project.description ?: project.name}"
+  }
+}
+
+artifacts {
+  archives sourcesJar
+  archives javadocJar
+}
+
+compileJava {
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+}
+
+compileTestJava {
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+}
+
+compileKotlin {
+  kotlinOptions.jdkHome = System.getenv('JDK_18')
+  kotlinOptions.jvmTarget = 1.8
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package",
+                                    "-Xmultifile-parts-inherit",
+                                    "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json".toString(),
+                                    "-module-name", "${project.name}".toString()]
+}
+
+compileTestKotlin {
+  kotlinOptions.jdkHome = System.getenv('JDK_18')
+  kotlinOptions.jvmTarget = 1.8
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
