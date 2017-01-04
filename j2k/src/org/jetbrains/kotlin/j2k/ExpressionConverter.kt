@@ -271,7 +271,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         var text = expression.text!!
         val type = expression.type
 
-        if(type != null && type.canonicalText == "null" && value == null && text == "null") {
+        if(expression.isNullLiteral()) {
             result = LiteralExpression.NullLiteral
             return
         }
