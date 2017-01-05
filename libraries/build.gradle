@@ -18,6 +18,7 @@ allprojects  {
 
 subprojects {
     apply plugin: 'kotlin'
+    apply plugin: 'signing'
 
     jar {
         baseName = project.name
@@ -49,4 +50,24 @@ subprojects {
 
     compileKotlin.compilerJarFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
     compileTestKotlin.compilerJarFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
+
+    signing {
+        required { project.ext.has('signing.keyId') }
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "file://${rootDir}/localRepo")
+                uniqueVersion = false
+                pom.version = kotlin_version
+                pom.project {
+                    groupId = project.group
+                    artifactId = project.name
+                    version = project.version
+                }
+            }
+        }
+    }
 }

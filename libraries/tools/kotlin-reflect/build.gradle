@@ -1,5 +1,9 @@
 
-description = ''
-dependencies {
-  compile project(':kotlin-stdlib')
+description = 'Kotlin reflect'
+
+artifacts {
+  archives file: file("${rootDir}/../dist/kotlinc/lib/kotlin-reflect.jar"), name: project.name, type: 'jar'
+  archives file: file("${rootDir}/../dist/kotlin-reflect-sources-for-maven.jar"), name: project.name, classifier: 'sources', type: 'jar'
 }
+
+
