@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
@@ -2869,7 +2868,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             callableMethod.afterReceiverGeneration(v);
         }
 
-        callGenerator.putHiddenParams();
+        callGenerator.processAndPutHiddenParameters(false);
 
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();

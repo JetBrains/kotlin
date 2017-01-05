@@ -45,7 +45,11 @@ abstract class CallGenerator {
 
         }
 
-        override fun putHiddenParams() {
+        override fun processAndPutHiddenParameters(justProcess: Boolean) {
+
+        }
+
+        override fun putHiddenParamsIntoLocals() {
 
         }
 
@@ -121,7 +125,10 @@ abstract class CallGenerator {
             stackValue: StackValue,
             valueType: Type, paramIndex: Int)
 
-    abstract fun putHiddenParams()
+    abstract fun processAndPutHiddenParameters(justProcess: Boolean)
+
+    /*should be called if justProcess = true in processAndPutHiddenParameters*/
+    abstract fun putHiddenParamsIntoLocals()
 
     abstract fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)
 }

@@ -1757,6 +1757,42 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("augAssignmentAndInc.kt")
+        public void testAugAssignmentAndInc() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndInc.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncInClass.kt")
+        public void testAugAssignmentAndIncInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncInClassViaConvention.kt")
+        public void testAugAssignmentAndIncInClassViaConvention() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClassViaConvention.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncOnExtension.kt")
+        public void testAugAssignmentAndIncOnExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncOnExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncOnExtensionInClass.kt")
+        public void testAugAssignmentAndIncOnExtensionInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncOnExtensionInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("augAssignmentAndIncViaConvention.kt")
+        public void testAugAssignmentAndIncViaConvention() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncViaConvention.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/property.kt");

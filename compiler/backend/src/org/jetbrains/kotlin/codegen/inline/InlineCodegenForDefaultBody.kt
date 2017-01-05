@@ -104,7 +104,11 @@ class InlineCodegenForDefaultBody(
         throw UnsupportedOperationException("Shouldn't be called")
     }
 
-    override fun putHiddenParams() {
+    override fun processAndPutHiddenParameters(justProcess: Boolean) {
+        throw UnsupportedOperationException("Shouldn't be called")
+    }
+
+    override fun putHiddenParamsIntoLocals() {
         throw UnsupportedOperationException("Shouldn't be called")
     }
 

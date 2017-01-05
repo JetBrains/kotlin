@@ -98,6 +98,8 @@ public class InlineCodegen extends CallGenerator {
 
     private final SourceMapper sourceMapper;
 
+    private Runnable delayedHiddenWriting;
+
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
             @NotNull GenerationState state,
@@ -414,6 +416,7 @@ public class InlineCodegen extends CallGenerator {
 
     @NotNull
     private InlineResult inlineCall(@NotNull SMAPAndMethodNode nodeAndSmap) {
+        assert delayedHiddenWriting == null : "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'";
         DefaultSourceMapper defaultSourceMapper = codegen.getParentCodegen().getOrCreateSourceMapper();
         defaultSourceMapper.setCallSiteMarker(new CallSiteMarker(codegen.getLastLineNumber()));
         MethodNode node = nodeAndSmap.getNode();
@@ -693,7 +696,7 @@ public class InlineCodegen extends CallGenerator {
                 info = invocationParamBuilder.addNextValueParameter(type, false, remappedValue, parameterIndex);
             }
 
-            recordParameterValueInLocalVal(info);
+            recordParameterValueInLocalVal(false, info);
         }
     }
 
@@ -732,8 +735,8 @@ public class InlineCodegen extends CallGenerator {
         return true;
     }
 
-    private void recordParameterValueInLocalVal(@NotNull ParameterInfo... infos) {
-        int[] index = new int[infos.length];
+    private Runnable recordParameterValueInLocalVal(boolean delayedWritingToLocals, @NotNull final ParameterInfo... infos) {
+        final int[] index = new int[infos.length];
         for (int i = 0; i < infos.length; i++) {
             ParameterInfo info = infos[i];
             if (!info.isSkippedOrRemapped()) {
@@ -744,22 +747,31 @@ public class InlineCodegen extends CallGenerator {
             }
         }
 
-        for (int i = infos.length - 1; i >= 0; i--) {
-            ParameterInfo info = infos[i];
-            if (!info.isSkippedOrRemapped()) {
-                Type type = info.type;
-                StackValue.Local local = StackValue.local(index[i], type);
-                local.store(StackValue.onStack(type), codegen.v);
-                if (info instanceof CapturedParamInfo) {
-                    info.setRemapValue(local);
-                    ((CapturedParamInfo) info).setSynthetic(true);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                for (int i = infos.length - 1; i >= 0; i--) {
+                    ParameterInfo info = infos[i];
+                    if (!info.isSkippedOrRemapped()) {
+                        Type type = info.type;
+                        StackValue.Local local = StackValue.local(index[i], type);
+                        local.store(StackValue.onStack(type), codegen.v);
+                        if (info instanceof CapturedParamInfo) {
+                            info.setRemapValue(local);
+                            ((CapturedParamInfo) info).setSynthetic(true);
+                        }
+                    }
                 }
             }
-        }
+        };
+
+        if (delayedWritingToLocals) return runnable;
+        runnable.run();
+        return null;
     }
 
     @Override
-    public void putHiddenParams() {
+    public void processAndPutHiddenParameters(boolean justProcess) {
         if ((getMethodAsmFlags(functionDescriptor, context.getContextKind(), state) & Opcodes.ACC_STATIC) == 0) {
             invocationParamBuilder.addNextParameter(AsmTypes.OBJECT_TYPE, false);
         }
@@ -773,7 +785,8 @@ public class InlineCodegen extends CallGenerator {
 
         invocationParamBuilder.markValueParametersStart();
         List<ParameterInfo> hiddenParameters = invocationParamBuilder.buildParameters().getParameters();
-        recordParameterValueInLocalVal(hiddenParameters.toArray(new ParameterInfo[hiddenParameters.size()]));
+
+        delayedHiddenWriting = recordParameterValueInLocalVal(justProcess, hiddenParameters.toArray(new ParameterInfo[hiddenParameters.size()]));
     }
 
     private void leaveTemps() {
@@ -1044,5 +1057,12 @@ public class InlineCodegen extends CallGenerator {
     public void reorderArgumentsIfNeeded(
             @NotNull List<ArgumentAndDeclIndex> actualArgsWithDeclIndex, @NotNull List<? extends Type> valueParameterTypes
     ) {
+    }
+
+    @Override
+    public void putHiddenParamsIntoLocals() {
+        assert delayedHiddenWriting != null : "processAndPutHiddenParameters(true) should be called before putHiddenParamsIntoLocals";
+        delayedHiddenWriting.run();
+        delayedHiddenWriting = null;
     }
 }

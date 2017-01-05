@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.LanguageFeature;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -44,7 +42,6 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -884,7 +881,7 @@ public abstract class StackValue {
             StackValue newReceiver = StackValue.receiver(call, receiver, codegen, callable);
             ArgumentGenerator generator = createArgumentGenerator();
             newReceiver.put(newReceiver.type, v);
-            callGenerator.putHiddenParams();
+            callGenerator.processAndPutHiddenParameters(false);
 
             defaultArgs = generator.generate(valueArguments, valueArguments);
         }
@@ -1208,7 +1205,7 @@ public abstract class StackValue {
                 assert getterDescriptor != null : "Getter descriptor should be not null for " + descriptor;
                 if (resolvedCall != null && getterDescriptor.isInline()) {
                     CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, getterDescriptor);
-                    callGenerator.putHiddenParams();
+                    callGenerator.processAndPutHiddenParameters(false);
                     callGenerator.genCall(getter, resolvedCall, false, codegen);
                 }
                 else {
@@ -1274,8 +1271,9 @@ public abstract class StackValue {
                 if (!skipReceiver) {
                     putReceiver(v, false);
                 }
-                callGenerator.putHiddenParams();
+                callGenerator.processAndPutHiddenParameters(true);
                 callGenerator.putValueIfNeeded(rightSide.type, rightSide);
+                callGenerator.putHiddenParamsIntoLocals();
                 callGenerator.genCall(setter, resolvedCall, false, codegen);
             }
             else {
@@ -1774,6 +1772,14 @@ public abstract class StackValue {
         }
 
         @Override
+        public void store(@NotNull StackValue rightSide, @NotNull InstructionAdapter v, boolean skipReceiver) {
+            if (!skipReceiver) {
+                putReceiver(v, false);
+            }
+            originalValue.store(rightSide, v, true);
+        }
+
+        @Override
         public void storeSelector(
                 @NotNull Type topOfStackType, @NotNull InstructionAdapter v
         ) {
@@ -1791,16 +1797,7 @@ public abstract class StackValue {
     }
 
     private static StackValue complexReceiver(StackValue stackValue, boolean... isReadOperations) {
-        if (stackValue instanceof Property) {
-            ResolvedCall resolvedCall = ((Property) stackValue).resolvedCall;
-            if (resolvedCall != null &&
-                resolvedCall.getResultingDescriptor() instanceof PropertyDescriptor &&
-                InlineUtil.hasInlineAccessors((PropertyDescriptor) resolvedCall.getResultingDescriptor())) {
-                //TODO need to support
-                throwUnsupportedComplexOperation(resolvedCall.getResultingDescriptor());
-            }
-        }
-        else if (stackValue instanceof Delegate) {
+        if (stackValue instanceof Delegate) {
             //TODO need to support
             throwUnsupportedComplexOperation(((Delegate) stackValue).variableDescriptor);
         }

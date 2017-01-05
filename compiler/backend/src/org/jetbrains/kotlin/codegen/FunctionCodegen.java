@@ -468,7 +468,7 @@ public class FunctionCodegen {
         //TODO: it's best to move all below logic to 'generateLocalVariableTable' method
         if (context.isInlineMethodContext() && functionFakeIndex != -1) {
             mv.visitLocalVariable(
-                    JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION + functionDescriptor.getName().asString(),
+                    JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION + typeMapper.mapAsmMethod(functionDescriptor).getName(),
                     Type.INT_TYPE.getDescriptor(), null,
                     methodBegin, methodEnd,
                     functionFakeIndex);

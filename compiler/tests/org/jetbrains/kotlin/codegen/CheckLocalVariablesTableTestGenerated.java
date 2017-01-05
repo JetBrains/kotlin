@@ -72,6 +72,12 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         doTest(fileName);
     }
 
+    @TestMetadata("inlineProperty.kt")
+    public void testInlineProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineSimple.kt")
     public void testInlineSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
