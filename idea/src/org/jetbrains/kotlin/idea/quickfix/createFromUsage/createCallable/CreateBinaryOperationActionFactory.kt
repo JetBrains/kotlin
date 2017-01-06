@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
-object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<KtBinaryExpression>() {
+object CreateBinaryOperationActionFactory : CreateCallableMemberFromUsageFactory<KtBinaryExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtBinaryExpression? {
         return diagnostic.psiElement.parent as? KtBinaryExpression
     }
@@ -54,8 +54,9 @@ object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<
             else -> TypeInfo(element, Variance.OUT_VARIANCE)
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
+        val isOperator = token != KtTokens.IDENTIFIER
         return FunctionInfo(operationName, receiverType, returnType, parameterInfos = parameters,
-                            isOperator = token != KtTokens.IDENTIFIER,
-                            isInfix = true)
+                            isOperator = isOperator,
+                            isInfix = !isOperator)
     }
 }

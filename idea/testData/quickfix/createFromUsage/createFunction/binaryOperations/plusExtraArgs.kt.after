@@ -2,7 +2,7 @@
 
 class A<T>(val n: T) {
     operator fun unaryPlus(): A<T> = throw Exception()
-    infix operator fun plus(t: T): A<T> {
+    operator fun plus(t: T): A<T> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
