@@ -326,6 +326,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FunctionReferenceOperator.after.kt")
+        public void testFunctionReferenceOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionReferenceOperator.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FunctionWithInference.after.kt")
         public void testFunctionWithInference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionWithInference.after.kt");
