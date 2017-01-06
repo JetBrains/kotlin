@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7359,6 +7359,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("nullableRuntime.kt")
         public void testNullableRuntime() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/platformTypesInspection/nullableRuntime.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/primitiveCastToConversion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PrimitiveCastToConversion extends AbstractQuickFixTest {
+        public void testAllFilesPresentInPrimitiveCastToConversion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/primitiveCastToConversion"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("boolean.kt")
+        public void testBoolean() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/primitiveCastToConversion/boolean.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("charToShort.kt")
+        public void testCharToShort() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/primitiveCastToConversion/charToShort.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intToByte.kt")
+        public void testIntToByte() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/primitiveCastToConversion/intToByte.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longToFloat.kt")
+        public void testLongToFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/primitiveCastToConversion/longToFloat.kt");
             doTest(fileName);
         }
     }
