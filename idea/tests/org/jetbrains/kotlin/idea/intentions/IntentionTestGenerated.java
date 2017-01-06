@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -470,6 +470,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("superClassConstructor.kt")
         public void testSuperClassConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/superClassConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("trailingLambda.kt")
+        public void testTrailingLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNamesToCallArguments/trailingLambda.kt");
             doTest(fileName);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtLambdaArgument
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
@@ -35,7 +32,7 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
 ) {
     override fun applicabilityRange(element: KtCallElement): TextRange? {
         val arguments = element.valueArguments
-        if (arguments.all { it.isNamed() }) return null
+        if (arguments.all { it.isNamed() || it is LambdaArgument }) return null
 
         val resolvedCall = element.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return null
         if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
