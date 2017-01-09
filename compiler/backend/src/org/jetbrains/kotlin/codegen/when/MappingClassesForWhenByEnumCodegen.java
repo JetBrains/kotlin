@@ -57,7 +57,7 @@ public class MappingClassesForWhenByEnumCodegen {
         generateFields(cb, mappings);
         generateInitialization(cb, mappings);
 
-        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb);
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb, state);
 
         cb.done();
     }

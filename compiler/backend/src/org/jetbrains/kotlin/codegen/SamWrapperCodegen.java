@@ -106,7 +106,7 @@ public class SamWrapperCodegen {
         );
         cv.visitSource(file.getName(), null);
 
-        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv);
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv, state);
 
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);

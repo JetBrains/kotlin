@@ -149,7 +149,7 @@ class InterfaceImplBodyCodegen(
     override fun generateKotlinMetadataAnnotation() {
         (v as InterfaceImplClassBuilder).stopCounting()
 
-        writeSyntheticClassMetadata(v);
+        writeSyntheticClassMetadata(v, state)
     }
 
     override fun done() {

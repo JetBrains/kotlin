@@ -251,7 +251,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, 0, new Function1<AnnotationVisitor, Unit>() {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, 0, new Function1<AnnotationVisitor, Unit>() {
             @Override
             public Unit invoke(AnnotationVisitor av) {
                 writeAnnotationData(av, serializer, classProto);

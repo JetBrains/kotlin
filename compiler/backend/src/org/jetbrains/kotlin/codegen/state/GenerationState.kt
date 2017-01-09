@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -150,6 +151,7 @@ class GenerationState @JvmOverloads constructor(
 
 
     val rootContext: CodegenContext<*> = RootContext(this)
+    val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
 
     init {
         this.interceptedBuilderFactory = builderFactory

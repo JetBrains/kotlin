@@ -326,7 +326,7 @@ class MultifileClassCodegen(
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 
-        writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS, extraFlags) { av ->
+        writeKotlinMetadata(classBuilder, state, KotlinClassHeader.Kind.MULTIFILE_CLASS, extraFlags) { av ->
             val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
             for (internalName in partInternalNamesSorted) {
                 arv.visit(null, internalName)
