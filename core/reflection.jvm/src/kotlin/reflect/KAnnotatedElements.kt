@@ -23,4 +23,4 @@ package kotlin.reflect
 @Deprecated("Use 'findAnnotation' from kotlin.reflect.full package", ReplaceWith("this.findAnnotation<T>()", "kotlin.reflect.full.findAnnotation"), level = DeprecationLevel.WARNING)
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T : Annotation> KAnnotatedElement.findAnnotation(): T? =
-        annotations.first { it is T } as T
+        annotations.firstOrNull { it is T } as T?

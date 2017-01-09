@@ -1,4 +1,9 @@
 @kotlin.Metadata
+public final class Bar {
+    public method <init>(): void
+}
+
+@kotlin.Metadata
 public final class FindAnnotationKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
