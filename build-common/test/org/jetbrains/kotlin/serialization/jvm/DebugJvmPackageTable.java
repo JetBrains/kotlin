@@ -1314,7 +1314,8 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -1323,7 +1324,8 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     int getClassNameCount();
@@ -1331,7 +1333,8 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     java.lang.String getClassName(int index);
@@ -1339,11 +1342,78 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getClassNameBytes(int index);
+
+    /**
+     * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    java.util.List<java.lang.Integer> getMultifileFacadeIdList();
+    /**
+     * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    int getMultifileFacadeIdCount();
+    /**
+     * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    int getMultifileFacadeId(int index);
+
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getMultifileFacadeNameList();
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    int getMultifileFacadeNameCount();
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    java.lang.String getMultifileFacadeName(int index);
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getMultifileFacadeNameBytes(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.PackageParts}
@@ -1412,6 +1482,36 @@ public final class DebugJvmPackageTable {
               className_.add(bs);
               break;
             }
+            case 24: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                multifileFacadeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              multifileFacadeId_.add(input.readInt32());
+              break;
+            }
+            case 26: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+                multifileFacadeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                multifileFacadeId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+            case 34: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                multifileFacadeName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              multifileFacadeName_.add(bs);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -1422,6 +1522,12 @@ public final class DebugJvmPackageTable {
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           className_ = className_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          multifileFacadeId_ = java.util.Collections.unmodifiableList(multifileFacadeId_);
+        }
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          multifileFacadeName_ = multifileFacadeName_.getUnmodifiableView();
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1503,7 +1609,8 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -1514,7 +1621,8 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     public int getClassNameCount() {
@@ -1524,7 +1632,8 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     public java.lang.String getClassName(int index) {
@@ -1534,7 +1643,8 @@ public final class DebugJvmPackageTable {
      * <code>repeated string class_name = 2;</code>
      *
      * <pre>
-     * Short names of files, without extension, present in this package
+     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+     * (multi-file facades are not present in this list, they are defined below)
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
@@ -1542,9 +1652,97 @@ public final class DebugJvmPackageTable {
       return className_.getByteString(index);
     }
 
+    public static final int MULTIFILE_FACADE_ID_FIELD_NUMBER = 3;
+    private java.util.List<java.lang.Integer> multifileFacadeId_;
+    /**
+     * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    public java.util.List<java.lang.Integer>
+        getMultifileFacadeIdList() {
+      return multifileFacadeId_;
+    }
+    /**
+     * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    public int getMultifileFacadeIdCount() {
+      return multifileFacadeId_.size();
+    }
+    /**
+     * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+     *
+     * <pre>
+     * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+     * </pre>
+     */
+    public int getMultifileFacadeId(int index) {
+      return multifileFacadeId_.get(index);
+    }
+    private int multifileFacadeIdMemoizedSerializedSize = -1;
+
+    public static final int MULTIFILE_FACADE_NAME_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.protobuf.LazyStringList multifileFacadeName_;
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getMultifileFacadeNameList() {
+      return multifileFacadeName_;
+    }
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public int getMultifileFacadeNameCount() {
+      return multifileFacadeName_.size();
+    }
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public java.lang.String getMultifileFacadeName(int index) {
+      return multifileFacadeName_.get(index);
+    }
+    /**
+     * <code>repeated string multifile_facade_name = 4;</code>
+     *
+     * <pre>
+     * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getMultifileFacadeNameBytes(int index) {
+      return multifileFacadeName_.getByteString(index);
+    }
+
     private void initFields() {
       packageFqName_ = "";
       className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      multifileFacadeId_ = java.util.Collections.emptyList();
+      multifileFacadeName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1569,6 +1767,16 @@ public final class DebugJvmPackageTable {
       for (int i = 0; i < className_.size(); i++) {
         output.writeBytes(2, className_.getByteString(i));
       }
+      if (getMultifileFacadeIdList().size() > 0) {
+        output.writeRawVarint32(26);
+        output.writeRawVarint32(multifileFacadeIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < multifileFacadeId_.size(); i++) {
+        output.writeInt32NoTag(multifileFacadeId_.get(i));
+      }
+      for (int i = 0; i < multifileFacadeName_.size(); i++) {
+        output.writeBytes(4, multifileFacadeName_.getByteString(i));
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -1590,6 +1798,29 @@ public final class DebugJvmPackageTable {
         }
         size += dataSize;
         size += 1 * getClassNameList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multifileFacadeId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(multifileFacadeId_.get(i));
+        }
+        size += dataSize;
+        if (!getMultifileFacadeIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        multifileFacadeIdMemoizedSerializedSize = dataSize;
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multifileFacadeName_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(multifileFacadeName_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getMultifileFacadeNameList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1712,6 +1943,10 @@ public final class DebugJvmPackageTable {
         bitField0_ = (bitField0_ & ~0x00000001);
         className_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
+        multifileFacadeId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        multifileFacadeName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -1749,6 +1984,16 @@ public final class DebugJvmPackageTable {
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.className_ = className_;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          multifileFacadeId_ = java.util.Collections.unmodifiableList(multifileFacadeId_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.multifileFacadeId_ = multifileFacadeId_;
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          multifileFacadeName_ = multifileFacadeName_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.multifileFacadeName_ = multifileFacadeName_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1777,6 +2022,26 @@ public final class DebugJvmPackageTable {
           } else {
             ensureClassNameIsMutable();
             className_.addAll(other.className_);
+          }
+          onChanged();
+        }
+        if (!other.multifileFacadeId_.isEmpty()) {
+          if (multifileFacadeId_.isEmpty()) {
+            multifileFacadeId_ = other.multifileFacadeId_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureMultifileFacadeIdIsMutable();
+            multifileFacadeId_.addAll(other.multifileFacadeId_);
+          }
+          onChanged();
+        }
+        if (!other.multifileFacadeName_.isEmpty()) {
+          if (multifileFacadeName_.isEmpty()) {
+            multifileFacadeName_ = other.multifileFacadeName_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureMultifileFacadeNameIsMutable();
+            multifileFacadeName_.addAll(other.multifileFacadeName_);
           }
           onChanged();
         }
@@ -1898,7 +2163,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -1909,7 +2175,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public int getClassNameCount() {
@@ -1919,7 +2186,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public java.lang.String getClassName(int index) {
@@ -1929,7 +2197,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
@@ -1940,7 +2209,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public Builder setClassName(
@@ -1957,7 +2227,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public Builder addClassName(
@@ -1974,7 +2245,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public Builder addAllClassName(
@@ -1989,7 +2261,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public Builder clearClassName() {
@@ -2002,7 +2275,8 @@ public final class DebugJvmPackageTable {
        * <code>repeated string class_name = 2;</code>
        *
        * <pre>
-       * Short names of files, without extension, present in this package
+       * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+       * (multi-file facades are not present in this list, they are defined below)
        * </pre>
        */
       public Builder addClassNameBytes(
@@ -2012,6 +2286,243 @@ public final class DebugJvmPackageTable {
   }
   ensureClassNameIsMutable();
         className_.add(value);
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> multifileFacadeId_ = java.util.Collections.emptyList();
+      private void ensureMultifileFacadeIdIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          multifileFacadeId_ = new java.util.ArrayList<java.lang.Integer>(multifileFacadeId_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      /**
+       * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public java.util.List<java.lang.Integer>
+          getMultifileFacadeIdList() {
+        return java.util.Collections.unmodifiableList(multifileFacadeId_);
+      }
+      /**
+       * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public int getMultifileFacadeIdCount() {
+        return multifileFacadeId_.size();
+      }
+      /**
+       * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public int getMultifileFacadeId(int index) {
+        return multifileFacadeId_.get(index);
+      }
+      /**
+       * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder setMultifileFacadeId(
+          int index, int value) {
+        ensureMultifileFacadeIdIsMutable();
+        multifileFacadeId_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder addMultifileFacadeId(int value) {
+        ensureMultifileFacadeIdIsMutable();
+        multifileFacadeId_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder addAllMultifileFacadeId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureMultifileFacadeIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multifileFacadeId_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 multifile_facade_id = 3 [packed = true];</code>
+       *
+       * <pre>
+       * For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+       * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+       * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+       * </pre>
+       */
+      public Builder clearMultifileFacadeId() {
+        multifileFacadeId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.protobuf.LazyStringList multifileFacadeName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureMultifileFacadeNameIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          multifileFacadeName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(multifileFacadeName_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getMultifileFacadeNameList() {
+        return multifileFacadeName_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public int getMultifileFacadeNameCount() {
+        return multifileFacadeName_.size();
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public java.lang.String getMultifileFacadeName(int index) {
+        return multifileFacadeName_.get(index);
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getMultifileFacadeNameBytes(int index) {
+        return multifileFacadeName_.getByteString(index);
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder setMultifileFacadeName(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMultifileFacadeNameIsMutable();
+        multifileFacadeName_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder addMultifileFacadeName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMultifileFacadeNameIsMutable();
+        multifileFacadeName_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder addAllMultifileFacadeName(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureMultifileFacadeNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multifileFacadeName_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder clearMultifileFacadeName() {
+        multifileFacadeName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string multifile_facade_name = 4;</code>
+       *
+       * <pre>
+       * Short names of multi-file facades, used in multifile_facade_id to store the part -&gt; facade mapping.
+       * </pre>
+       */
+      public Builder addMultifileFacadeNameBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMultifileFacadeNameIsMutable();
+        multifileFacadeName_.add(value);
         onChanged();
         return this;
       }
@@ -2052,9 +2563,11 @@ public final class DebugJvmPackageTable {
       "\022K\n\rpackage_parts\030\001 \003(\01324.org.jetbrains." +
       "kotlin.serialization.jvm.PackageParts\022L\n" +
       "\016metadata_parts\030\002 \003(\01324.org.jetbrains.ko" +
-      "tlin.serialization.jvm.PackageParts\";\n\014P" +
+      "tlin.serialization.jvm.PackageParts\"{\n\014P" +
       "ackageParts\022\027\n\017package_fq_name\030\001 \002(\t\022\022\n\n" +
-      "class_name\030\002 \003(\tB\026B\024DebugJvmPackageTable"
+      "class_name\030\002 \003(\t\022\037\n\023multifile_facade_id\030" +
+      "\003 \003(\005B\002\020\001\022\035\n\025multifile_facade_name\030\004 \003(\t",
+      "B\026B\024DebugJvmPackageTable"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2079,7 +2592,7 @@ public final class DebugJvmPackageTable {
     internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_jvm_PackageParts_descriptor,
-        new java.lang.String[] { "PackageFqName", "ClassName", });
+        new java.lang.String[] { "PackageFqName", "ClassName", "MultifileFacadeId", "MultifileFacadeName", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

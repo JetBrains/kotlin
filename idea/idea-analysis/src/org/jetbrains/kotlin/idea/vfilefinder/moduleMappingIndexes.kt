@@ -42,13 +42,18 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
     private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
         override fun read(input: DataInput): PackageParts? =
                 PackageParts(IOUtil.readUTF(input)).apply {
-                    IOUtil.readStringList(input).forEach(this::addPart)
+                    val shortPartNames = IOUtil.readStringList(input)
+                    val shortFacadeNames = IOUtil.readStringList(input)
+                    for ((partName, facadeName) in shortPartNames zip shortFacadeNames) {
+                        addPart(partName, if (facadeName.isNotEmpty()) facadeName else null)
+                    }
                     IOUtil.readStringList(input).forEach(this::addMetadataPart)
                 }
 
-        override fun save(out: DataOutput, value: PackageParts?) {
-            IOUtil.writeUTF(out, value!!.packageFqName)
+        override fun save(out: DataOutput, value: PackageParts) {
+            IOUtil.writeUTF(out, value.packageFqName)
             IOUtil.writeStringList(out, value.parts)
+            IOUtil.writeStringList(out, value.parts.map { value.getMultifileFacadeName(it).orEmpty() })
             IOUtil.writeStringList(out, value.metadataParts)
         }
     }
@@ -65,7 +70,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
         return FileBasedIndex.InputFilter { file -> file.extension == ModuleMapping.MAPPING_FILE_EXT }
     }
 
-    override fun getVersion(): Int = 3
+    override fun getVersion(): Int = 4
 
     override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
         return DataIndexer<String, PackageParts, FileContent> { inputData ->

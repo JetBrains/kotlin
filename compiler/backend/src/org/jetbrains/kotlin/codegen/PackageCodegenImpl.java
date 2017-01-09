@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SmartList;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
@@ -125,7 +126,7 @@ public class PackageCodegenImpl implements PackageCodegen {
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
 
         String name = fileClassType.getInternalName();
-        packagePartRegistry.addPart(name.substring(name.lastIndexOf('/') + 1));
+        packagePartRegistry.addPart(StringsKt.substringAfterLast(name, '/', name), null);
 
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 

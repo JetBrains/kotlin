@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
+import kotlin.comparisons.nullsLast
 
 class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>, private val debugName: String) {
     fun findPackageParts(packageFqName: String): PackageParts? {
@@ -43,14 +44,23 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
             val version = JvmMetadataVersion(*IntArray(stream.readInt()) { stream.readInt() })
 
             if (version.isCompatible()) {
-                val parseFrom = JvmPackageTable.PackageTable.parseFrom(stream)
-                if (parseFrom != null) {
-                    val packageFqNameParts = hashMapOf<String, PackageParts>().apply {
-                        addParts(this, parseFrom.packagePartsList, PackageParts::addPart)
-                        addParts(this, parseFrom.metadataPartsList, PackageParts::addMetadataPart)
+                val table = JvmPackageTable.PackageTable.parseFrom(stream) ?: return EMPTY
+                val result = hashMapOf<String, PackageParts>()
+
+                for (proto in table.packagePartsList) {
+                    val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
+                    for ((index, partShortName) in proto.classNameList.withIndex()) {
+                        val multifileFacadeId = proto.multifileFacadeIdList.getOrNull(index)?.minus(1)
+                        packageParts.addPart(partShortName, multifileFacadeId?.let(proto.multifileFacadeNameList::getOrNull))
                     }
-                    return ModuleMapping(packageFqNameParts, debugName ?: "<unknown>")
                 }
+
+                for (proto in table.metadataPartsList) {
+                    val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
+                    proto.classNameList.forEach(packageParts::addMetadataPart)
+                }
+
+                return ModuleMapping(result, debugName ?: "<unknown>")
             }
             else {
                 // TODO: consider reporting "incompatible ABI version" error for package parts
@@ -58,47 +68,52 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
 
             return EMPTY
         }
-
-        private inline fun addParts(
-                result: MutableMap<String, PackageParts>,
-                partsList: List<JvmPackageTable.PackageParts>,
-                addPartOrMetadataPart: (PackageParts, String) -> Unit
-        ) {
-            for (proto in partsList) {
-                PackageParts(proto.packageFqName).apply {
-                    result.put(proto.packageFqName, this)
-                    proto.classNameList.forEach { addPartOrMetadataPart(this, it) }
-                }
-            }
-        }
     }
 }
 
 class PackageParts(val packageFqName: String) {
-    // See JvmPackageTable.PackageTable.package_parts
-    val parts: Set<String> = linkedSetOf<String>()
-    // See JvmPackageTable.PackageTable.metadata_parts
-    val metadataParts: Set<String> = linkedSetOf<String>()
+    // Short name of package part -> short name of the corresponding multifile facade (or null, if it's not a multifile part)
+    private val packageParts = linkedMapOf<String, String?>()
 
-    fun addPart(shortName: String) {
-        (parts as MutableSet /* see KT-14663 */).add(shortName)
+    // See JvmPackageTable.PackageTable.package_parts
+    val parts: Set<String> get() = packageParts.keys
+    // See JvmPackageTable.PackageTable.metadata_parts
+    val metadataParts: Set<String> = linkedSetOf()
+
+    fun addPart(partShortName: String, facadeShortName: String?) {
+        packageParts[partShortName] = facadeShortName
     }
 
     fun removePart(shortName: String) {
-        (parts as MutableSet).remove(shortName)
+        packageParts.remove(shortName)
     }
 
     fun addMetadataPart(shortName: String) {
-        (metadataParts as MutableSet).add(shortName)
+        (metadataParts as MutableSet /* see KT-14663 */).add(shortName)
     }
 
     fun addTo(builder: JvmPackageTable.PackageTable.Builder) {
         if (parts.isNotEmpty()) {
             builder.addPackageParts(JvmPackageTable.PackageParts.newBuilder().apply {
                 packageFqName = this@PackageParts.packageFqName
-                addAllClassName(parts.sorted())
+
+                val facadeNameToId = mutableMapOf<String, Int>()
+                for ((facadeName, partNames) in parts.groupBy { getMultifileFacadeName(it) }.toSortedMap(nullsLast())) {
+                    for (partName in partNames.sorted()) {
+                        addClassName(partName)
+                        if (facadeName != null) {
+                            addMultifileFacadeId(1 + facadeNameToId.getOrPut(facadeName) { facadeNameToId.size })
+                        }
+                    }
+                }
+
+                for ((facadeId, facadeName) in facadeNameToId.values.zip(facadeNameToId.keys).sortedBy(Pair<Int, String>::first)) {
+                    assert(facadeId == multifileFacadeNameCount) { "Multifile facades are loaded incorrectly: $facadeNameToId" }
+                    addMultifileFacadeName(facadeName)
+                }
             })
         }
+
         if (metadataParts.isNotEmpty()) {
             builder.addMetadataParts(JvmPackageTable.PackageParts.newBuilder().apply {
                 packageFqName = this@PackageParts.packageFqName
@@ -107,16 +122,21 @@ class PackageParts(val packageFqName: String) {
         }
     }
 
+    fun getMultifileFacadeName(partShortName: String): String? = packageParts[partShortName]
+
     operator fun plusAssign(other: PackageParts) {
-        other.parts.forEach(this::addPart)
+        for ((partShortName, facadeShortName) in other.packageParts) {
+            addPart(partShortName, facadeShortName)
+        }
         other.metadataParts.forEach(this::addMetadataPart)
     }
 
     override fun equals(other: Any?) =
-            other is PackageParts && other.packageFqName == packageFqName && other.parts == parts && other.metadataParts == metadataParts
+            other is PackageParts &&
+            other.packageFqName == packageFqName && other.packageParts == packageParts && other.metadataParts == metadataParts
 
     override fun hashCode() =
-            (packageFqName.hashCode() * 31 + parts.hashCode()) * 31 + metadataParts.hashCode()
+            (packageFqName.hashCode() * 31 + packageParts.hashCode()) * 31 + metadataParts.hashCode()
 
     override fun toString() =
             (parts + metadataParts).toString()

@@ -30,6 +30,15 @@ message PackageTable {
 message PackageParts {
     required string package_fq_name = 1;
 
-    // Short names of files, without extension, present in this package
+    // Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
+    // (multi-file facades are not present in this list, they are defined below)
     repeated string class_name = 2;
+
+    // For each class name listed above, index of the name of the corresponding multi-file facade class in multifile_facade_name + 1,
+    // or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
+    // (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
+    repeated int32 multifile_facade_id = 3 [packed=true];
+
+    // Short names of multi-file facades, used in multifile_facade_id to store the part -> facade mapping.
+    repeated string multifile_facade_name = 4;
 }

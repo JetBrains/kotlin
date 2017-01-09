@@ -185,13 +185,13 @@ public class ClassFileFactory implements OutputFileCollection {
         final String packageFqNameAsString = packageFqName.asString();
         return new PackagePartRegistry() {
             @Override
-            public void addPart(@NotNull String partShortName) {
+            public void addPart(@NotNull String partShortName, @Nullable String facadeShortName) {
                 PackageParts packageParts = partsGroupedByPackage.get(packageFqNameAsString);
                 if (packageParts == null) {
                     packageParts = new PackageParts(packageFqNameAsString);
                     partsGroupedByPackage.put(packageFqNameAsString, packageParts);
                 }
-                packageParts.addPart(partShortName);
+                packageParts.addPart(partShortName, facadeShortName);
             }
         };
     }

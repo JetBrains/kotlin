@@ -215,14 +215,13 @@ class MultifileClassCodegenImpl(
 
         if (!state.generateDeclaredClassFilter.shouldGeneratePackagePart(file) || !file.hasDeclarationsForPartClass()) return
 
-        val partInternalName = partType.internalName
-        packagePartRegistry.addPart(partInternalName.substring(partInternalName.lastIndexOf('/') + 1))
+        packagePartRegistry.addPart(partType.internalName.substringAfterLast('/'), facadeClassType.internalName.substringAfterLast('/'))
 
         val builder = state.factory.newVisitor(MultifileClassPart(file, packageFragment), partType, file)
 
         MultifileClassPartCodegen(
                 builder, file, packageFragment,
-                getSuperClassForPart(partInternalName),
+                getSuperClassForPart(partType.internalName),
                 shouldGeneratePartHierarchy,
                 partContext, state
         ).generate()
