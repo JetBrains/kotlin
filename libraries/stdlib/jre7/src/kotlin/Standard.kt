@@ -6,5 +6,5 @@ package kotlin
 @PublishedApi
 @Deprecated("Provided for binary compatibility")
 @JvmName("closeSuppressed")
-internal fun AutoCloseable.closeSuppressedDeprecated(cause: Throwable) = closeSuppressed(cause)
+internal fun AutoCloseable.closeSuppressedDeprecated(cause: Throwable) = closeFinally(cause)
 

@@ -30,27 +30,32 @@ import kotlin.internal.*
  */
 @InlineOnly
 public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
-    var closed = false
+    var exception: Throwable? = null
     try {
         return block(this)
     } catch (e: Throwable) {
-        closed = true
-        this?.closeSuppressed(e)
+        exception = e
         throw e
     } finally {
-        if (this != null && !closed) {
-            close()
-        }
+        this.closeFinally(exception)
     }
 }
 
+/**
+ * Closes this [Closeable], suppressing possible exception or error thrown by [Closeable.close] function when
+ * it's being closed due to some other [cause] exception occurred.
+ *
+ * The suppressed exception is added to the list of suppressed exceptions of [cause] exception, when it's supported.
+ */
 @SinceKotlin("1.1")
 @PublishedApi
-internal fun Closeable.closeSuppressed(cause: Throwable) {
-    try {
-        close()
-    } catch (closeException: Throwable) {
-        // on Java 7 we should call
-        IMPLEMENTATIONS.addSuppressed(cause, closeException)
-    }
+internal fun Closeable?.closeFinally(cause: Throwable?) = when {
+    this == null -> {}
+    cause == null -> close()
+    else ->
+        try {
+            close()
+        } catch (closeException: Throwable) {
+            cause.addSuppressed(closeException)
+        }
 }

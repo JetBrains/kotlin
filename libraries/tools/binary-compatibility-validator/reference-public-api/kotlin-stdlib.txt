@@ -1758,7 +1758,7 @@ public final class kotlin/io/ByteStreamsKt {
 }
 
 public final class kotlin/io/CloseableKt {
-	public static final fun closeSuppressed (Ljava/io/Closeable;Ljava/lang/Throwable;)V
+	public static final fun closeFinally (Ljava/io/Closeable;Ljava/lang/Throwable;)V
 }
 
 public final class kotlin/io/ConsoleKt {

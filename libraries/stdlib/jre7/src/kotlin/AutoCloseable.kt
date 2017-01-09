@@ -31,31 +31,33 @@ package kotlin
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
-    var closed = false
+    var exception: Throwable? = null
     try {
         return block(this)
     } catch (e: Throwable) {
-        closed = true
-        this?.closeSuppressed(e)
+        exception = e
         throw e
     } finally {
-        if (this != null && !closed) {
-            close()
-        }
+        this.closeFinally(exception)
     }
 }
 
 /**
- * Closes this [AutoCloseable] suppressing possible exception or error thrown by [AutoCloseable.close] function.
+ * Closes this [AutoCloseable], suppressing possible exception or error thrown by [AutoCloseable.close] function when
+ * it's being closed due to some other [cause] exception occurred.
+ *
  * The suppressed exception is added to the list of suppressed exceptions of [cause] exception.
  */
 @SinceKotlin("1.1")
 @PublishedApi
-internal fun AutoCloseable.closeSuppressed(cause: Throwable) {
-    try {
-        close()
-    } catch (closeException: Throwable) {
-        cause.addSuppressed(closeException)
-    }
+internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
+    this == null -> {}
+    cause == null -> close()
+    else ->
+        try {
+            close()
+        } catch (closeException: Throwable) {
+            cause.addSuppressed(closeException)
+        }
 }
 
