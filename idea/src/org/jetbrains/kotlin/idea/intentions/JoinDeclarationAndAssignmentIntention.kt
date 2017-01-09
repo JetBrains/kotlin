@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.unblockDocument
@@ -28,6 +29,10 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
 class JoinDeclarationAndAssignmentInspection : IntentionBasedInspection<KtProperty>(
         JoinDeclarationAndAssignmentIntention::class,
@@ -38,6 +43,12 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
         KtProperty::class.java,
         "Join declaration and assignment"
 ) {
+
+    private fun equalNullableTypes(type1: KotlinType?, type2: KotlinType?): Boolean {
+        if (type1 == null) return type2 == null
+        if (type2 == null) return false
+        return TypeUtils.equalTypes(type1, type2)
+    }
 
     override fun isApplicableTo(element: KtProperty): Boolean {
         if (element.hasDelegate()
@@ -50,7 +61,13 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
         }
 
         val assignment = findAssignment(element) ?: return false
-        return assignment.right?.let { hasNoLocalDependencies(it, element.parent) } ?: false
+        return assignment.right?.let {
+            hasNoLocalDependencies(it, element.parent) &&
+            assignment.analyze().let { context ->
+                (element.isVar && !element.isLocal) ||
+                equalNullableTypes(it.getType(context), context[BindingContext.TYPE, element.typeReference])
+            }
+        } ?: false
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
@@ -60,7 +77,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
         val initializer = assignment.right ?: return
         val newInitializer = element.setInitializer(initializer)!!
 
-        val initializerBlock = assignment.parent?.parent as? KtAnonymousInitializer
+        val initializerBlock = assignment.parent.parent as? KtAnonymousInitializer
         assignment.delete()
         if (initializerBlock != null && (initializerBlock.body as? KtBlockExpression)?.isEmpty() == true) {
             initializerBlock.delete()
@@ -108,7 +125,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
         if (assignments.any { it.parent.invalidParent() }) return null
 
         val first = assignments.firstOrNull() ?: return null
-        if (assignments.any { it !== first && it.parent?.parent is KtSecondaryConstructor}) return null
+        if (assignments.any { it !== first && it.parent.parent is KtSecondaryConstructor}) return null
         return first
     }
 
