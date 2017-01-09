@@ -859,6 +859,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("doWhileAssignment.kt")
+            public void testDoWhileAssignment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/doWhileAssignment.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("doWhileNotDefined.kt")
             public void testDoWhileNotDefined() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/doWhileNotDefined.kt");

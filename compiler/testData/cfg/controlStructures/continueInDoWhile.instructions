@@ -29,7 +29,7 @@ L8 ['if' expression result]:
 L5 [body exit point]:
 L6 [condition entry point]:
     r(true) -> <v5>
-    magic[VALUE_CONSUMER](true|<v5>) -> <v6>
+  2 magic[VALUE_CONSUMER](true|<v5>) -> <v6>
     jmp(L2)                                                   NEXT:[mark({ if (b) break; continue; })]
 L3 [loop exit point]:
     read (Unit)                                               PREV:[jmp(L3)]

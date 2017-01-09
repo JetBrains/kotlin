@@ -730,6 +730,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             builder.bindLabel(loopInfo.conditionEntryPoint)
             val condition = expression.condition
             generateInstructions(condition)
+            builder.exitBlockScope(expression)
             if (!CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace.bindingContext, true)) {
                 builder.jumpOnTrue(loopInfo.entryPoint, expression, builder.getBoundValue(expression.condition))
             }
@@ -740,7 +741,6 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
             builder.bindLabel(loopInfo.exitPoint)
             builder.loadUnit(expression)
-            builder.exitBlockScope(expression)
         }
 
         override fun visitForExpression(expression: KtForExpression) {

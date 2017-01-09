@@ -1,0 +1,38 @@
+== test ==
+fun test() {
+    do {
+        val s: String
+        s = ""
+    } while (s == "")
+}
+---------------------
+""                                                <v0>: String     NEW: r("") -> <v0>
+s = ""                                            !<v1>: *
+{ val s: String s = "" }                          !<v1>: *         COPY
+s                                                 <v2>: OR{*, *}   NEW: r(s) -> <v2>
+""                                                <v3>: *          NEW: r("") -> <v3>
+s == ""                                           <v4>: Boolean    NEW: call(s == "", equals|<v2>, <v3>) -> <v4>
+do { val s: String s = "" } while (s == "")       !<v5>: *
+{ do { val s: String s = "" } while (s == "") }   !<v5>: *         COPY
+=====================
+== test2 ==
+fun test2() {
+    while (true) {
+        val s: String
+        s = ""
+        if (s != "") break
+    }
+}
+---------------------
+                                                               <v1>: *          NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+true                                                           <v0>: Boolean    NEW: r(true) -> <v0>
+""                                                             <v2>: String     NEW: r("") -> <v2>
+s                                                              <v3>: OR{*, *}   NEW: r(s) -> <v3>
+""                                                             <v4>: *          NEW: r("") -> <v4>
+s != ""                                                        <v5>: Boolean    NEW: call(s != "", equals|<v3>, <v4>) -> <v5>
+break                                                          !<v6>: *
+if (s != "") break                                             <v7>: *          NEW: merge(if (s != "") break|!<v6>) -> <v7>
+{ val s: String s = "" if (s != "") break }                    <v7>: *          COPY
+while (true) { val s: String s = "" if (s != "") break }       !<v8>: *
+{ while (true) { val s: String s = "" if (s != "") break } }   !<v8>: *         COPY
+=====================

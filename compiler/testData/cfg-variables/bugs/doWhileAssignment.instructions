@@ -1,0 +1,83 @@
+== test ==
+fun test() {
+    do {
+        val s: String
+        s = ""
+    } while (s == "")
+}
+---------------------
+L0:
+  1 <START>                                                  INIT: in: {} out: {}
+  2 mark({ do { val s: String s = "" } while (s == "") })                                    USE: in: {} out: {}
+  3 mark(do { val s: String s = "" } while (s == ""))
+L2 [loop entry point]:
+L4 [body entry point]:
+    mark({ val s: String s = "" })
+    v(val s: String)                                         INIT: in: {} out: {s=D}
+    mark("")                                                 INIT: in: {s=D} out: {s=D}
+    r("") -> <v0>                                                                            USE: in: {s=WRITTEN_AFTER_READ} out: {s=WRITTEN_AFTER_READ}
+    w(s|<v0>)                                                INIT: in: {s=D} out: {s=ID}     USE: in: {s=READ} out: {s=WRITTEN_AFTER_READ}
+L5 [body exit point]:
+L6 [condition entry point]:
+    r(s) -> <v2>                                             INIT: in: {s=ID} out: {s=ID}    USE: in: {} out: {s=READ}
+    mark("")
+    r("") -> <v3>
+    mark(s == "")
+    call(s == "", equals|<v2>, <v3>) -> <v4>
+  2 jt(L2|<v4>)                                              INIT: in: {} out: {}
+L3 [loop exit point]:
+    read (Unit)
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                   USE: in: {} out: {}
+=====================
+== test2 ==
+fun test2() {
+    while (true) {
+        val s: String
+        s = ""
+        if (s != "") break
+    }
+}
+---------------------
+L0:
+  1 <START>                                                               INIT: in: {} out: {}
+  2 mark({ while (true) { val s: String s = "" if (s != "") break } })
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(true) -> <v0>
+    mark(while (true) { val s: String s = "" if (s != "") break })
+    magic[VALUE_CONSUMER](true|<v0>) -> <v1>                                                              USE: in: {} out: {}
+L4 [body entry point]:
+  3 mark({ val s: String s = "" if (s != "") break })
+    v(val s: String)                                                      INIT: in: {} out: {s=D}
+    mark("")                                                              INIT: in: {s=D} out: {s=D}
+    r("") -> <v2>                                                                                         USE: in: {s=WRITTEN_AFTER_READ} out: {s=WRITTEN_AFTER_READ}
+    w(s|<v2>)                                                             INIT: in: {s=D} out: {s=ID}     USE: in: {s=READ} out: {s=WRITTEN_AFTER_READ}
+    mark(if (s != "") break)                                              INIT: in: {s=ID} out: {s=ID}    USE: in: {s=READ} out: {s=READ}
+    r(s) -> <v3>                                                                                          USE: in: {} out: {s=READ}
+    mark("")
+    r("") -> <v4>
+    mark(s != "")
+    call(s != "", equals|<v3>, <v4>) -> <v5>
+    jf(L7|<v5>)
+    jmp(L3)                                                                                               USE: in: {} out: {}
+-   jmp(L8)
+L7 [else branch]:
+    read (Unit)                                                           INIT: in: {s=ID} out: {s=ID}
+L8 ['if' expression result]:
+    merge(if (s != "") break|!<v6>) -> <v7>
+  2 jmp(L2)                                                               INIT: in: {} out: {}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                USE: in: {} out: {}
+=====================
