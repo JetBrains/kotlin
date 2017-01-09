@@ -1058,6 +1058,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     }
 
+    @TestMetadata("idea/testData/quickfix/changeToUseSpreadOperator")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeToUseSpreadOperator extends AbstractQuickFixTest {
+        public void testAllFilesPresentInChangeToUseSpreadOperator() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToUseSpreadOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("differentTypeParameter.kt")
+        public void testDifferentTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToUseSpreadOperator/differentTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleParams.kt")
+        public void testMultipleParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToUseSpreadOperator/multipleParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonArray.kt")
+        public void testNonArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToUseSpreadOperator/nonArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeToUseSpreadOperator/normal.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/checkArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
