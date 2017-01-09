@@ -59,7 +59,7 @@ class LocalFunctionsLowering(val context: JvmBackendContext): ClassLoweringPass 
 
         lateinit var transformedDescriptor: FunctionDescriptor
 
-        val old2new: MutableMap<ValueDescriptor, ValueParameterDescriptor> = HashMap()
+        val old2new: MutableMap<ValueDescriptor, ParameterDescriptor> = HashMap()
 
         var index: Int = -1
 
@@ -69,7 +69,7 @@ class LocalFunctionsLowering(val context: JvmBackendContext): ClassLoweringPass 
 
     private inner class LocalFunctionsTransformer(val memberFunction: IrFunction) {
         val localFunctions: MutableMap<FunctionDescriptor, LocalFunctionContext> = LinkedHashMap()
-        val new2old: MutableMap<ValueParameterDescriptor, ValueDescriptor> = HashMap()
+        val new2old: MutableMap<ParameterDescriptor, ValueDescriptor> = HashMap()
 
         fun lowerLocalFunctions(): List<IrDeclaration>? {
             collectLocalFunctions()
@@ -287,10 +287,14 @@ class LocalFunctionsLowering(val context: JvmBackendContext): ClassLoweringPass 
                     Visibilities.PRIVATE
             )
 
+            oldDescriptor.extensionReceiverParameter?.let {
+                localFunctionContext.recordRemapped(it, newDescriptor.extensionReceiverParameter!!)
+            }
+
             return newDescriptor
         }
 
-        private fun LocalFunctionContext.recordRemapped(oldDescriptor: ValueDescriptor, newDescriptor: ValueParameterDescriptor): ValueParameterDescriptor {
+        private fun LocalFunctionContext.recordRemapped(oldDescriptor: ValueDescriptor, newDescriptor: ParameterDescriptor): ParameterDescriptor {
             old2new[oldDescriptor] = newDescriptor
             new2old[newDescriptor] = oldDescriptor
             return newDescriptor
