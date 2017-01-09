@@ -1,34 +1,54 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-enum class Color { RED }
+enum class Color {
+    RED {
+        fun <T : <!ENUM_ENTRY_AS_TYPE, FINAL_UPPER_BOUND!>RED<!>> simpleName(): <!ENUM_ENTRY_AS_TYPE!>RED<!> = null!!
+    }
+}
 
-class MyColor(val x: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>, y: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>) : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> {
+class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>) : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {
 
-    var z: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = <!TYPE_MISMATCH!>Color.RED<!>
-        set(arg: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>) { z = arg }
+    var z: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = <!TYPE_MISMATCH!>Color.RED<!>
+    set(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>) { z = arg }
 
-    fun foo(arg: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>): <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = arg
+    fun foo(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
 
-    fun bar(): <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> {
-        class Local : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>
-        fun local(arg: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>): <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = arg
-        val temp: <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> = <!TYPE_MISMATCH!>Color.RED<!>
-        temp <!USELESS_CAST!>as? <!ENUM_ENTRY_AS_TYPE!>Color.RED<!><!>
-        if (temp is <!IS_ENUM_ENTRY!>Color.RED<!>) {
-            return temp <!USELESS_CAST!>as <!ENUM_ENTRY_AS_TYPE!>Color.RED<!><!>
-        }
-        val obj = object : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!> {}
-        if (obj is <!IS_ENUM_ENTRY!>Color.RED<!>) {
-            return obj
-        }
+    fun bar(): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {
+        class Local : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
+        fun local(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
+        val temp: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = <!TYPE_MISMATCH!>Color.RED<!>
+        temp <!USELESS_CAST!>as? Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>
+        if (temp is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>) {
+        return temp <!USELESS_CAST!>as Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>
+    }
+        val obj = object : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> {}
+        if (obj is <!IS_ENUM_ENTRY!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>) {
+        return obj
+    }
         return <!TYPE_MISMATCH!>Color.RED<!>
     }
 }
 
-fun create(): Array<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>? = null
+fun create(): Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>? = null
 
-interface Your<T : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>
+interface Your<T : <!FINAL_UPPER_BOUND!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>>
 
-class His : Your<<!ENUM_ENTRY_AS_TYPE!>Color.RED<!>>
+class His : Your<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>
 
-fun <T : <!ENUM_ENTRY_AS_TYPE!>Color.RED<!>> otherCreate(): Array<T>? = null
+fun <T : <!FINAL_UPPER_BOUND!>Color.<!ENUM_ENTRY_AS_TYPE!>RED<!><!>> otherCreate(): Array<T>? = null
+
+typealias RedAlias = Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
+
+typealias ArrayOfEnumEntry = Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>
+
+typealias ArrayOfEnumEntryAlias = Array<RedAlias>
+
+fun <T> bar(a: Any): T = <!UNCHECKED_CAST!>a as T<!>
+
+fun <T> foo() {
+    foo<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>()
+    foo<RedAlias>()
+    bar<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(Color.RED)
+}
+
+fun Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>.foo(entries: Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>): Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>> = null!!

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,9 +68,10 @@ class QualifiedExpressionResolver {
     ): TypeQualifierResolutionResult {
         val ownerDescriptor = if (!isDebuggerContext) scope.ownerDescriptor else null
         if (userType.qualifier == null) {
-            val descriptor = userType.referenceExpression?.let {
-                val classifier = scope.findClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
-                storeResult(trace, it, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
+            val descriptor = userType.referenceExpression?.let { expression ->
+                val classifier = scope.findClassifier(expression.getReferencedNameAsName(), KotlinLookupLocation(expression))
+                checkNotEnumEntry(classifier, trace, expression)
+                storeResult(trace, expression, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
                 classifier
             }
 
@@ -106,11 +107,21 @@ class QualifiedExpressionResolver {
         val lastPart = qualifierPartList.last()
         val classifier = when (qualifier) {
             is PackageViewDescriptor -> qualifier.memberScope.getContributedClassifier(lastPart.name, lastPart.location)
-            is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getContributedClassifier(lastPart.name, lastPart.location)
+            is ClassDescriptor ->  {
+                val descriptor = qualifier.unsubstitutedInnerClassesScope.getContributedClassifier(lastPart.name, lastPart.location)
+                checkNotEnumEntry(descriptor, trace, lastPart.expression)
+                descriptor
+            }
             else -> null
         }
         storeResult(trace, lastPart.expression, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = isQualifier)
         return TypeQualifierResolutionResult(qualifierPartList, classifier)
+    }
+
+    private fun checkNotEnumEntry(descriptor: DeclarationDescriptor?, trace: BindingTrace, expression: KtSimpleNameExpression) {
+        if (descriptor != null && DescriptorUtils.isEnumEntry(descriptor)) {
+            trace.report(Errors.ENUM_ENTRY_AS_TYPE.on(expression))
+        }
     }
 
     fun resolveDescriptorForDoubleColonLHS(

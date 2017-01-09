@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -352,8 +352,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ExpressionTypingContext context
     ) {
         if (actualType == null || noExpectedType(targetType) || targetType.isError()) return;
-
-        DeclarationsCheckerKt.checkNotEnumEntry(expression.getRight(), context.trace);
 
         if (DynamicTypesKt.isDynamic(targetType)) {
             KtTypeReference right = expression.getRight();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,35 +40,6 @@ import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-fun KtDeclaration.checkTypeReferences(trace: BindingTrace) {
-    if (this is KtCallableDeclaration) {
-        typeReference?.checkNotEnumEntry(trace)
-        receiverTypeReference?.checkNotEnumEntry(trace)
-    }
-    if (this is KtDeclarationWithBody) {
-        for (parameter in valueParameters) {
-            parameter.typeReference?.checkNotEnumEntry(trace)
-        }
-    }
-}
-
-fun KtTypeReference.checkNotEnumEntry(trace: BindingTrace): Boolean {
-    var result = false
-    trace.bindingContext.get(TYPE, this)?.let {
-        val targetDescriptor = TypeUtils.getClassDescriptor(it)
-        if (targetDescriptor != null && DescriptorUtils.isEnumEntry(targetDescriptor)) {
-            trace.report(ENUM_ENTRY_AS_TYPE.on(this))
-            result = true
-        }
-    }
-    typeElement?.let {
-        for (typeArgument in it.typeArgumentsAsTypes) {
-            typeArgument?.checkNotEnumEntry(trace)
-        }
-    }
-    return result
-}
-
 internal class DeclarationsCheckerBuilder(
         private val descriptorResolver: DescriptorResolver,
         private val originalModifiersChecker: ModifiersChecker,
@@ -93,8 +64,6 @@ class DeclarationsChecker(
 
     private val exposedChecker = ExposedVisibilityChecker(trace)
 
-    fun KtDeclaration.checkTypeReferences() = checkTypeReferences(trace)
-
     fun process(bodiesResolveContext: BodiesResolveContext) {
         for (file in bodiesResolveContext.files) {
             checkModifiersAndAnnotationsInPackageDirective(file)
@@ -118,7 +87,6 @@ class DeclarationsChecker(
 
             checkPrimaryConstructor(classOrObject, classDescriptor)
 
-            classOrObject.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor)
             identifierChecker.checkDeclaration(classOrObject, trace)
             exposedChecker.checkClassHeader(classOrObject, classDescriptor)
@@ -126,14 +94,12 @@ class DeclarationsChecker(
 
         for ((function, functionDescriptor) in bodiesResolveContext.functions.entries) {
             checkFunction(function, functionDescriptor)
-            function.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor)
             identifierChecker.checkDeclaration(function, trace)
         }
 
         for ((property, propertyDescriptor) in bodiesResolveContext.properties.entries) {
             checkProperty(property, propertyDescriptor)
-            property.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor)
             identifierChecker.checkDeclaration(property, trace)
         }
@@ -259,7 +225,6 @@ class DeclarationsChecker(
     }
 
     private fun checkConstructorDeclaration(constructorDescriptor: ClassConstructorDescriptor, declaration: KtConstructor<*>) {
-        declaration.checkTypeReferences()
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
         identifierChecker.checkDeclaration(declaration, trace)
         checkVarargParameters(trace, constructorDescriptor)
@@ -327,7 +292,6 @@ class DeclarationsChecker(
         for (delegationSpecifier in classOrObject.getSuperTypeListEntries()) {
             val typeReference = delegationSpecifier.typeReference ?: continue
             typeReference.type()?.let { DescriptorResolver.checkBounds(typeReference, it, trace) }
-            typeReference.checkNotEnumEntry(trace)
         }
 
         if (classOrObject !is KtClass) return
@@ -841,7 +805,6 @@ class DeclarationsChecker(
         for (accessorDescriptor in propertyDescriptor.accessors) {
             val accessor = if (accessorDescriptor is PropertyGetterDescriptor) property.getter else property.setter
             if (accessor != null) {
-                accessor.checkTypeReferences()
                 modifiersChecker.checkModifiersForDeclaration(accessor, accessorDescriptor)
                 identifierChecker.checkDeclaration(accessor, trace)
             }
