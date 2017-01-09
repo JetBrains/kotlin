@@ -159,7 +159,10 @@ fun aggregates(): List<GenericFunction> {
                     if (isFloat && isGeneric)
                         since("1.1")
                 }
-                doc { f -> "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element} or `null` if there are no ${f.element.pluralize()}." }
+                doc { f ->
+                    "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element} or `null` if there are no ${f.element.pluralize()}." +
+                    if (isFloat) "\n\n" + "If any of ${f.element.pluralize()} is `NaN` returns `NaN`."  else ""
+                }
                 returns("T?")
 
                 body {

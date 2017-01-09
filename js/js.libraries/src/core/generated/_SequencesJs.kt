@@ -843,6 +843,8 @@ public inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit): Unit
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Sequence<Double>.max(): Double? {
@@ -860,6 +862,8 @@ public fun Sequence<Double>.max(): Double? {
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Sequence<Float>.max(): Float? {
@@ -924,6 +928,8 @@ public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Sequence<Double>.min(): Double? {
@@ -941,6 +947,8 @@ public fun Sequence<Double>.min(): Double? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Sequence<Float>.min(): Float? {

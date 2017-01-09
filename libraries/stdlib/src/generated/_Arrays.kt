@@ -9805,6 +9805,8 @@ public inline fun CharArray.forEachIndexed(action: (Int, Char) -> Unit): Unit {
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Array<out Double>.max(): Double? {
@@ -9821,6 +9823,8 @@ public fun Array<out Double>.max(): Double? {
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Array<out Float>.max(): Float? {
@@ -9902,6 +9906,8 @@ public fun LongArray.max(): Long? {
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public fun FloatArray.max(): Float? {
     if (isEmpty()) return null
@@ -9917,6 +9923,8 @@ public fun FloatArray.max(): Float? {
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public fun DoubleArray.max(): Double? {
     if (isEmpty()) return null
@@ -10224,6 +10232,8 @@ public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Array<out Double>.min(): Double? {
@@ -10240,6 +10250,8 @@ public fun Array<out Double>.min(): Double? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Array<out Float>.min(): Float? {
@@ -10321,6 +10333,8 @@ public fun LongArray.min(): Long? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public fun FloatArray.min(): Float? {
     if (isEmpty()) return null
@@ -10336,6 +10350,8 @@ public fun FloatArray.min(): Float? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public fun DoubleArray.min(): Double? {
     if (isEmpty()) return null

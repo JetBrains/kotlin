@@ -130,6 +130,7 @@ fun comparables(): List<GenericFunction> {
             If values are equal, returns the first one.
             """
         }
+        // TODO: Add a note about NaN propagation for floats.
         doc(Primitives) {
             """Returns the smaller of two values."""
         }
@@ -154,6 +155,7 @@ fun comparables(): List<GenericFunction> {
         returns("T")
         customReceiver("")
         inline(Primitives) { Inline.Only }
+        // TODO: Add a note about NaN propagation for floats.
         doc {
             """
             Returns the smaller of three values.
@@ -215,6 +217,7 @@ fun comparables(): List<GenericFunction> {
             If values are equal, returns the first one.
             """
         }
+        // TODO: Add a note about NaN propagation for floats.
         doc(Primitives) {
             """Returns the greater of two values."""
         }
@@ -238,6 +241,7 @@ fun comparables(): List<GenericFunction> {
         returns("T")
         customReceiver("")
         inline(Primitives) { Inline.Only }
+        // TODO: Add a note about NaN propagation for floats.
         doc {
             """
             Returns the greater of three values.

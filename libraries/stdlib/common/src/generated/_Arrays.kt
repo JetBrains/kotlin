@@ -5753,12 +5753,16 @@ public header inline fun CharArray.forEachIndexed(action: (Int, Char) -> Unit): 
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public header fun Array<out Double>.max(): Double?
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public header fun Array<out Float>.max(): Float?
@@ -5790,11 +5794,15 @@ public header fun LongArray.max(): Long?
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public header fun FloatArray.max(): Float?
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public header fun DoubleArray.max(): Double?
 
@@ -5895,12 +5903,16 @@ public header fun CharArray.maxWith(comparator: Comparator<in Char>): Char?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public header fun Array<out Double>.min(): Double?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public header fun Array<out Float>.min(): Float?
@@ -5932,11 +5944,15 @@ public header fun LongArray.min(): Long?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public header fun FloatArray.min(): Float?
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 public header fun DoubleArray.min(): Double?
 

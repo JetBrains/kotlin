@@ -1464,6 +1464,8 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Iterable<Double>.max(): Double? {
@@ -1481,6 +1483,8 @@ public fun Iterable<Double>.max(): Double? {
 
 /**
  * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Iterable<Float>.max(): Float? {
@@ -1545,6 +1549,8 @@ public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Iterable<Double>.min(): Double? {
@@ -1562,6 +1568,8 @@ public fun Iterable<Double>.min(): Double? {
 
 /**
  * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
  */
 @SinceKotlin("1.1")
 public fun Iterable<Float>.min(): Float? {
