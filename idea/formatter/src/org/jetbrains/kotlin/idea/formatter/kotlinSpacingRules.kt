@@ -251,6 +251,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(TYPE_ARGUMENT_LIST, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
 
             between(WHEN_ENTRY, WHEN_ENTRY).lineBreakInCode()
+
+            around(BY_KEYWORD).spaces(1)
+            betweenInside(IDENTIFIER, PROPERTY_DELEGATE, PROPERTY).spaces(1)
         }
         custom {
 
