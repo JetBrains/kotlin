@@ -20,10 +20,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
-import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -47,40 +45,26 @@ object CoroutineSuspendCallChecker : CallChecker {
         val descriptor = resolvedCall.candidateDescriptor as? SimpleFunctionDescriptor ?: return
         if (!descriptor.isSuspend) return
 
-        val (closestSuspendLambdaScope, closestSuspensionLambdaDescriptor) =
+        val enclosingSuspendFunction =
                 context.scope
                         .parentsWithSelf.firstOrNull {
                                 it is LexicalScope && it.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE &&
-                                    it.ownerDescriptor.safeAs<CallableDescriptor>()?.isSuspendLambda == true
-                        }?.let { it to it.cast<LexicalScope>().ownerDescriptor.cast<CallableDescriptor>() }
-                ?: null to null
-
-        val enclosingSuspendFunction =
-                context.scope.parentsWithSelf.filterIsInstance<LexicalScope>().takeWhile { it != closestSuspendLambdaScope }
-                        .firstOrNull {
-                            (it.ownerDescriptor as? FunctionDescriptor)?.isSuspend == true
-                        }?.ownerDescriptor as? SimpleFunctionDescriptor
+                                    it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
+                        }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
 
         when {
             enclosingSuspendFunction != null -> {
-                // Tail calls checks happen during control flow analysis
-                // Here we only record enclosing function mapping (for backends purposes)
-                context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
-
-                checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
-            }
-            closestSuspensionLambdaDescriptor != null -> {
                 val callElement = resolvedCall.call.callElement as KtExpression
 
-                if (!InlineUtil.checkNonLocalReturnUsage(closestSuspensionLambdaDescriptor, callElement, context.resolutionContext)) {
+                if (!InlineUtil.checkNonLocalReturnUsage(enclosingSuspendFunction, callElement, context.resolutionContext)) {
                     context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
                 }
 
                 context.trace.record(
-                        BindingContext.ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, resolvedCall.call, closestSuspensionLambdaDescriptor
+                        BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction
                 )
 
-                checkRestrictsSuspension(closestSuspensionLambdaDescriptor, resolvedCall, reportOn, context)
+                checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
             }
             else -> {
                 context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn))

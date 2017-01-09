@@ -2229,9 +2229,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     private Type getReturnTypeForNonLocalReturn(DeclarationDescriptor elementDescriptor) {
-        return (elementDescriptor instanceof AnonymousFunctionDescriptor
-            && ((AnonymousFunctionDescriptor) elementDescriptor).isCoroutine())
-            || (elementDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) elementDescriptor).isSuspend())
+        return elementDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) elementDescriptor).isSuspend()
         ? getBoxedReturnTypeForSuspend((FunctionDescriptor) elementDescriptor)
         : typeMapper.mapReturnType((CallableDescriptor) elementDescriptor);
     }

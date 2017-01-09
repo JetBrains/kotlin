@@ -339,7 +339,7 @@ public final class TranslationUtils {
     @NotNull
     public static JsExpression translateContinuationArgument(@NotNull TranslationContext context, @NotNull ResolvedCall<?> resolvedCall) {
         CallableDescriptor continuationDescriptor =
-                context.bindingContext().get(BindingContext.ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, resolvedCall.getCall());
+                context.bindingContext().get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
 
         if (continuationDescriptor == null) {
             continuationDescriptor = getEnclosingContinuationParameter(context);

@@ -891,7 +891,6 @@ public class DefaultErrorMessages {
         MAP.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body");
         MAP.put(ILLEGAL_SUSPEND_FUNCTION_CALL, "Suspend functions are only allowed to be called from a coroutine or another suspend function");
         MAP.put(ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope");
-        MAP.put(SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE, "Only tail calls are allowed to another suspension function, and these calls must be used as return values");
 
         MAP.setImmutable();
 

@@ -827,7 +827,7 @@ class ControlFlowInformationProvider private constructor(
             val isUsedAsExpression = instruction.owner.getUsages(instruction.outputValue).isNotEmpty()
 
             if (!isUsedAsExpression || !instruction.isTailCall(enclosingSuspendFunction) || isInsideTry(element)) {
-                trace.report(Errors.SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE.on(element))
+                trace.record(BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, currentFunction.original)
             }
         }
     }
