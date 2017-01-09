@@ -24,6 +24,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -87,18 +89,43 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     public List<File> getSourceDirs() {
         List<String> sources = getSourceFilePaths();
         List<File> result = new ArrayList<File>(sources.size());
-        File baseDir = project.getBasedir();
 
         for (String source : sources) {
-            File f = new File(source);
-            if (f.isAbsolute()) {
-                result.add(f);
-            } else {
-                result.add(new File(baseDir, source));
+            addSourceRoots(result, source);
+        }
+
+        Map<String, MavenProject> projectReferences = project.getProjectReferences();
+        if (projectReferences != null) {
+            for (Dependency dependency : project.getDependencies()) {
+                MavenProject sibling = projectReferences.get(dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion());
+                if (sibling != null) {
+                    Plugin plugin = sibling.getPlugin("org.jetbrains.kotlin:kotlin-maven-plugin");
+                    if (plugin != null) {
+                        for (PluginExecution pluginExecution : plugin.getExecutions()) {
+                            if (pluginExecution.getGoals() != null && pluginExecution.getGoals().contains("metadata")) {
+                                List<String> sourceRoots = sibling.getCompileSourceRoots();
+                                if (sourceRoots != null) {
+                                    for (String sourceRoot : sourceRoots) {
+                                        addSourceRoots(result, sourceRoot);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
         return result;
+    }
+
+    private void addSourceRoots(List<File> result, String source) {
+        File f = new File(source);
+        if (f.isAbsolute()) {
+            result.add(f);
+        } else {
+            result.add(new File(project.getBasedir(), source));
+        }
     }
 
     /**
