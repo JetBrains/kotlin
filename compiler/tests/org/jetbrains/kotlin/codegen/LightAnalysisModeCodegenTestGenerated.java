@@ -7744,6 +7744,18 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 doTest(fileName);
             }
 
+            @TestMetadata("implicitInvokeInCompanionObjectWithFunctionalArgument.kt")
+            public void testImplicitInvokeInCompanionObjectWithFunctionalArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/invoke/implicitInvokeInCompanionObjectWithFunctionalArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitInvokeWithFunctionLiteralArgument.kt")
+            public void testImplicitInvokeWithFunctionLiteralArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/invoke/implicitInvokeWithFunctionLiteralArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("invoke.kt")
             public void testInvoke() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/invoke/invoke.kt");

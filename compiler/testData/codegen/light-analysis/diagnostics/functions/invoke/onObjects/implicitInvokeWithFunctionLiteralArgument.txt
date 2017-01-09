@@ -1,0 +1,10 @@
+@kotlin.Metadata
+public final class ImplicitInvokeWithFunctionLiteralArgumentKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    public method <init>(): void
+    public final method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
+}

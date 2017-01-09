@@ -1,0 +1,26 @@
+package
+
+public fun test(/*0*/ cb: FutureCallback<kotlin.String>): kotlin.Unit
+public fun </*0*/ T> test(/*0*/ value: T, /*1*/ test: TestClass): T
+
+public final class Future</*0*/ T> {
+    public constructor Future</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FutureCallback</*0*/ E> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun </*0*/ T> invoke(/*0*/ f: (E) -> T): Future<T>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestClass {
+    public constructor TestClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator inline fun </*0*/ T> invoke(/*0*/ task: () -> T): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

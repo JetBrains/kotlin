@@ -9922,6 +9922,30 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("implicitInvokeExtensionWithFunctionalArgument.kt")
+            public void testImplicitInvokeExtensionWithFunctionalArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/implicitInvokeExtensionWithFunctionalArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitInvokeInCompanionObjectWithFunctionalArgument.kt")
+            public void testImplicitInvokeInCompanionObjectWithFunctionalArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/implicitInvokeInCompanionObjectWithFunctionalArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitInvokeInObjectWithFunctionalArgument.kt")
+            public void testImplicitInvokeInObjectWithFunctionalArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/implicitInvokeInObjectWithFunctionalArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitInvokeWithFunctionLiteralArgument.kt")
+            public void testImplicitInvokeWithFunctionLiteralArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/implicitInvokeWithFunctionLiteralArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inferInFunctionLiterals.kt")
             public void testInferInFunctionLiterals() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/inferInFunctionLiterals.kt");
