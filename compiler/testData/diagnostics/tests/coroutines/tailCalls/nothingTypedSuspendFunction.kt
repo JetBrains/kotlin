@@ -2,7 +2,7 @@
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
-suspend fun suspendLogAndThrow(exception: Throwable): Nothing = <!SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE!>suspendCoroutineOrReturn { c ->
+suspend fun suspendLogAndThrow(exception: Throwable): Nothing = suspendCoroutineOrReturn { c ->
     c.resumeWithException(exception)
     SUSPENDED_MARKER
-}<!>
+}

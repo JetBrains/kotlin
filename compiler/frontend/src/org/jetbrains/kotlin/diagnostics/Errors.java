@@ -891,7 +891,6 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> NON_LOCAL_SUSPENSION_POINT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> ILLEGAL_SUSPEND_FUNCTION_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE = DiagnosticFactory0.create(ERROR);
 
 
     // Error sets

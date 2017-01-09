@@ -54,4 +54,4 @@ fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
 fun ClassDescriptor.hasPrimaryConstructor(): Boolean = unsubstitutedPrimaryConstructor != null
 
 val DeclarationDescriptor.isCoroutineLambda: Boolean
-    get() = this is AnonymousFunctionDescriptor && isCoroutine
+    get() = this is AnonymousFunctionDescriptor && isSuspend
