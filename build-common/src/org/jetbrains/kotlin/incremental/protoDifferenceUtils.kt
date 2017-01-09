@@ -260,6 +260,7 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
                 ProtoBufPackageKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
                 ProtoBufPackageKind.TYPE_TABLE,
+                ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE,
                 ProtoBufPackageKind.PACKAGE_MODULE_NAME -> {
                     // TODO
                 }
