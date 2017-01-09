@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
+import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
@@ -34,13 +35,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
-
-interface SharedVariablesManager {
-    fun createSharedVariableDescriptor(variableDescriptor: VariableDescriptor): VariableDescriptor
-    fun defineSharedValue(sharedVariableDescriptor: VariableDescriptor, originalDeclaration: IrVariable): IrStatement
-    fun getSharedValue(sharedVariableDescriptor: VariableDescriptor, originalGet: IrGetValue): IrExpression
-    fun setSharedValue(sharedVariableDescriptor: VariableDescriptor, originalSet: IrSetVariable): IrExpression
-}
 
 class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesManager {
     private val kotlinJvmInternalPackage = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.jvm.internal"))

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.descriptors.SpecialDescriptorsFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -25,9 +26,9 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 class JvmBackendContext(
         val state: GenerationState,
         val psiSourceManager: PsiSourceManager,
-        val irBuiltIns: IrBuiltIns
-) {
-    val builtIns = state.module.builtIns
+        override val irBuiltIns: IrBuiltIns
+) : BackendContext {
+    override val builtIns = state.module.builtIns
     val specialDescriptorsFactory = SpecialDescriptorsFactory(psiSourceManager, builtIns)
-    val sharedVariablesManager = JvmSharedVariablesManager(builtIns)
+    override val sharedVariablesManager = JvmSharedVariablesManager(builtIns)
 }
