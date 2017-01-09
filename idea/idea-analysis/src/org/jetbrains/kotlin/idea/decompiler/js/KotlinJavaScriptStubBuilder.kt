@@ -71,7 +71,7 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
             val classProto = ProtoBuf.Class.parseFrom(content, JsSerializerProtocol.extensionRegistry)
             val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
             val classId = JsMetaFileUtils.getClassId(file)
-            return createTopLevelClassStub(classId, classProto, source = null, context = context)
+            return createTopLevelClassStub(classId, classProto, source = null, context = context, isScript = false)
         }
     }
 

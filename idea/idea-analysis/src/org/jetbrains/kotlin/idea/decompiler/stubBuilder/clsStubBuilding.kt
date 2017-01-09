@@ -46,9 +46,10 @@ fun createTopLevelClassStub(
         classId: ClassId,
         classProto: ProtoBuf.Class,
         source: SourceElement?,
-        context: ClsStubBuilderContext
+        context: ClsStubBuilderContext,
+        isScript: Boolean
 ): KotlinFileStubImpl {
-    val fileStub = createFileStub(classId.packageFqName)
+    val fileStub = createFileStub(classId.packageFqName, isScript)
     createClassStub(fileStub, classProto, context.nameResolver, classId, source, context)
     return fileStub
 }
@@ -58,7 +59,7 @@ fun createPackageFacadeStub(
         packageFqName: FqName,
         c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, isScript = false)
     setupFileStub(fileStub, packageFqName)
     createDeclarationsStubs(
             fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, source = null), packageProto)
@@ -101,10 +102,10 @@ fun createMultifileClassStub(
     return fileStub
 }
 
-fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT)
+fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT, isScript = false)
 
-fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
+fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl {
+    val fileStub = KotlinFileStubForIde.forFile(packageFqName, isScript)
     setupFileStub(fileStub, packageFqName)
     return fileStub
 }

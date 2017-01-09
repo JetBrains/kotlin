@@ -51,7 +51,7 @@ class KotlinBuiltInStubBuilder : ClsStubBuilder() {
                 )
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
 
-                val fileStub = createFileStub(packageFqName)
+                val fileStub = createFileStub(packageFqName, isScript = false)
                 createDeclarationsStubs(
                         fileStub, context,
                         ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, source = null),
