@@ -161,7 +161,8 @@ public class AsmUtil {
         return isPrimitiveClass((ClassDescriptor) descriptor) && !isBoolean((ClassDescriptor) descriptor);
     }
 
-    public static Type correctElementType(Type type) {
+    @NotNull
+    public static Type correctElementType(@NotNull Type type) {
         String internalName = type.getInternalName();
         assert internalName.charAt(0) == '[';
         return Type.getType(internalName.substring(1));

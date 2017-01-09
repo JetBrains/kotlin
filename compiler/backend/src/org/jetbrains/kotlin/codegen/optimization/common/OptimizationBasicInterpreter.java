@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.optimization.common;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.org.objectweb.asm.Handle;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -164,7 +165,7 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
         if (insn.getOpcode() == Opcodes.AALOAD) {
             Type arrayType = value1.getType();
             if (arrayType != null && arrayType.getSort() == Type.ARRAY) {
-                return new StrictBasicValue(arrayType.getElementType());
+                return new StrictBasicValue(AsmUtil.correctElementType(arrayType));
             }
         }
 

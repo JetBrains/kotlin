@@ -619,6 +619,24 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("kt15560.kt")
+            public void testKt15560() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/multiDecl/kt15560.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt15568.kt")
+            public void testKt15568() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/multiDecl/kt15568.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt15575.kt")
+            public void testKt15575() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/multiDecl/kt15575.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("MultiDeclFor.kt")
             public void testMultiDeclFor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/multiDecl/MultiDeclFor.kt");

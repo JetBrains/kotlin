@@ -21,6 +21,7 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Names
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 
@@ -30,7 +31,7 @@ class KaptTreeMaker(context: Context) : TreeMaker(context) {
     fun Type(type: Type): JCTree.JCExpression {
         convertBuiltinType(type)?.let { return it }
         if (type.sort == ARRAY) {
-            return TypeArray(Type(type.elementType))
+            return TypeArray(Type(AsmUtil.correctElementType(type)))
         }
         return FqName(type.className)
     }

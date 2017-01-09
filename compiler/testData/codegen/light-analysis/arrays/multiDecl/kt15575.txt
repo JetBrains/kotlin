@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class Kt15575Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method transform(@org.jetbrains.annotations.NotNull p0: boolean[][]): boolean[][]
+}
