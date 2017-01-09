@@ -98,6 +98,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("By.after.kt")
+        public void testBy() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/By.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Cast.after.kt")
         public void testCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Cast.after.kt");
