@@ -50,7 +50,7 @@ L6 [condition entry point]:
 -   r(1) -> <v2>                                 PREV:[]
 -   mark(0 > 1)                                  PREV:[]
 -   call(0 > 1, compareTo|<v1>, <v2>) -> <v3>    PREV:[]
--   jt(L2|<v3>)                                  NEXT:[read (Unit), mark({return})]                  PREV:[]
+- 2 jt(L2|<v3>)                                  NEXT:[read (Unit), mark({return})]                  PREV:[]
 L3 [loop exit point]:
 -   read (Unit)                                  PREV:[]
 L1:
