@@ -8513,6 +8513,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/joinDeclarationAndAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("assignmentForFlexible.kt")
+        public void testAssignmentForFlexible() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/assignmentForFlexible.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignmentForSmartCast.kt")
+        public void testAssignmentForSmartCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/assignmentForSmartCast.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignmentInIf.kt")
         public void testAssignmentInIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/assignmentInIf.kt");
