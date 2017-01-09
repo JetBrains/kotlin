@@ -17,6 +17,7 @@ kotstd/kotstd.iml
 
 # test suit products.
 *.bc
+*.bc.o
 *.kt.S
 *.kt.exe
 *.log
