@@ -166,10 +166,8 @@ class GenerationState @JvmOverloads constructor(
 
     val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
 
-    val shouldInlineConstVals = run {
-        val settings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS) ?: LanguageVersionSettingsImpl.DEFAULT
-        settings.supportsFeature(LanguageFeature.InlineConstVals)
-    }
+    val languageVersionSettings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
+    val shouldInlineConstVals = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
     init {
         this.interceptedBuilderFactory = builderFactory
