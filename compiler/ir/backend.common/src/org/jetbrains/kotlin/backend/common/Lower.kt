@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -31,6 +32,10 @@ interface FileLoweringPass {
 
 interface ClassLoweringPass {
     fun lower(irClass: IrClass)
+}
+
+interface DeclarationContainerLoweringPass {
+    fun lower(irDeclarationContainer: IrDeclarationContainer)
 }
 
 interface FunctionLoweringPass {
@@ -52,6 +57,17 @@ fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
             lower(declaration)
         }
     })
+}
+
+fun DeclarationContainerLoweringPass.asClassLoweringPass() = object : ClassLoweringPass {
+    override fun lower(irClass: IrClass) {
+        this@asClassLoweringPass.lower(irClass)
+    }
+}
+
+fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
+    this.asClassLoweringPass().runOnFilePostfix(irFile)
+    this.lower(irFile)
 }
 
 fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile) {

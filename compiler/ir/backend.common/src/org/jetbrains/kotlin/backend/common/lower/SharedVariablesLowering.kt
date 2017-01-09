@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
 
-class SharedVariablesLowering(val context: JvmBackendContext) : FunctionLoweringPass {
+class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
         SharedVariablesTransformer(irFunction).lowerSharedVariables()
     }
