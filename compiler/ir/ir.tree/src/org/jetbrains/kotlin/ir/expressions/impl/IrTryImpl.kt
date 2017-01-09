@@ -58,6 +58,7 @@ class IrTryImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
         catches.forEachIndexed { i, irCatch ->
             catches[i] = irCatch.transform(transformer, data)
         }
+        finallyExpression = finallyExpression?.transform(transformer, data)
     }
 }
 
