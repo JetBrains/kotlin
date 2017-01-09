@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,9 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
@@ -45,59 +39,4 @@ class JvmLower(val context: JvmBackendContext) {
         SyntheticAccessorLowering(context.state).lower(irFile)
         BridgeLowering(context.state).runOnFilePostfix(irFile)
     }
-}
-
-interface FileLoweringPass {
-    fun lower(irFile: IrFile)
-}
-
-interface ClassLoweringPass {
-    fun lower(irClass: IrClass)
-}
-
-interface FunctionLoweringPass {
-    fun lower(irFunction: IrFunction)
-}
-
-interface BodyLoweringPass {
-    fun lower(irBody: IrBody)
-}
-
-fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitClass(declaration: IrClass) {
-            declaration.acceptChildrenVoid(this)
-            lower(declaration)
-        }
-    })
-}
-
-fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitBody(body: IrBody) {
-            body.acceptChildrenVoid(this)
-            lower(body)
-        }
-    })
-}
-
-fun FunctionLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitFunction(declaration: IrFunction) {
-            declaration.acceptChildrenVoid(this)
-            lower(declaration)
-        }
-    })
 }
