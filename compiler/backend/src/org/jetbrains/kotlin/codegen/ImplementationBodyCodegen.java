@@ -248,7 +248,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        generateKotlinClassMetadataAnnotation(descriptor);
+        generateKotlinClassMetadataAnnotation(descriptor, false);
     }
 
     private void writeEnclosingMethod() {

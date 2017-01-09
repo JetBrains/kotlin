@@ -71,5 +71,8 @@ class KotlinClassHeader(
     val isPreRelease: Boolean
         get() = (extraInt and JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG) != 0
 
+    val isScript: Boolean
+        get() = (extraInt and JvmAnnotationNames.METADATA_SCRIPT_FLAG) != 0
+
     override fun toString() = "$kind version=$metadataVersion"
 }

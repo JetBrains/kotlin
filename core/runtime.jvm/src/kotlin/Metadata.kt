@@ -61,6 +61,7 @@ internal annotation class Metadata(
          *
          * 0 - this is a multi-file class facade or part, compiled with `-Xmultifile-parts-inherit`.
          * 1 - this class file is compiled by a pre-release version of Kotlin and is not visible to release versions.
+         * 2 - this class file is a compiled Kotlin script source file (.kts).
          */
         val xi: Int = 0
 )

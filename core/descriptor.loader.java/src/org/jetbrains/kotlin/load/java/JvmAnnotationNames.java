@@ -36,6 +36,7 @@ public final class JvmAnnotationNames {
 
     public static final int METADATA_MULTIFILE_PARTS_INHERIT_FLAG = 1 << 0;
     public static final int METADATA_PRE_RELEASE_FLAG = 1 << 1;
+    public static final int METADATA_SCRIPT_FLAG = 1 << 2;
 
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 

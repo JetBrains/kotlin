@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
@@ -86,12 +87,12 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     public final KotlinTypeMapper typeMapper;
     public final BindingContext bindingContext;
 
-    protected final JvmFileClassesProvider fileClassesProvider;
+    private final JvmFileClassesProvider fileClassesProvider;
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
     private final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<ClassDescriptor>();
 
-    protected ExpressionCodegen clInit;
+    private ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
 
     private DefaultSourceMapper sourceMapper;
@@ -439,7 +440,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     @NotNull
-    protected SimpleFunctionDescriptorImpl createClInitFunctionDescriptor(@NotNull DeclarationDescriptor descriptor) {
+    private SimpleFunctionDescriptorImpl createClInitFunctionDescriptor(@NotNull DeclarationDescriptor descriptor) {
         SimpleFunctionDescriptorImpl clInit = SimpleFunctionDescriptorImpl.create(descriptor, Annotations.Companion.getEMPTY(),
                 Name.special("<clinit>"), SYNTHESIZED, KotlinSourceElementKt.toSourceElement(element));
         clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
@@ -698,7 +699,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
             class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
                 private final PropertyAccessorDescriptor callableDescriptor;
-                public PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
+                private PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
                     super(MemberCodegen.this.state);
                     this.callableDescriptor = callableDescriptor;
                 }
@@ -799,13 +800,15 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         return StackValue.onStack(callableMethod.getReturnType());
     }
 
-    protected void generateKotlinClassMetadataAnnotation(ClassDescriptor descriptor) {
+    protected void generateKotlinClassMetadataAnnotation(@NotNull ClassDescriptor descriptor, boolean isScript) {
         final DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
 
         final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, 0, new Function1<AnnotationVisitor, Unit>() {
+        int flags = isScript ? JvmAnnotationNames.METADATA_SCRIPT_FLAG : 0;
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, flags, new Function1<AnnotationVisitor, Unit>() {
             @Override
             public Unit invoke(AnnotationVisitor av) {
                 writeAnnotationData(av, serializer, classProto);
