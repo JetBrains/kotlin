@@ -46,8 +46,8 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
                 val parseFrom = JvmPackageTable.PackageTable.parseFrom(stream)
                 if (parseFrom != null) {
                     val packageFqNameParts = hashMapOf<String, PackageParts>().apply {
-                        addParts(this, parseFrom.packagePartsList, PackageParts::parts)
-                        addParts(this, parseFrom.metadataPartsList, PackageParts::metadataParts)
+                        addParts(this, parseFrom.packagePartsList, PackageParts::addPart)
+                        addParts(this, parseFrom.metadataPartsList, PackageParts::addMetadataPart)
                     }
                     return ModuleMapping(packageFqNameParts, debugName ?: "<unknown>")
                 }
@@ -62,12 +62,12 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
         private inline fun addParts(
                 result: MutableMap<String, PackageParts>,
                 partsList: List<JvmPackageTable.PackageParts>,
-                whichParts: (PackageParts) -> MutableSet<String>
+                addPartOrMetadataPart: (PackageParts, String) -> Unit
         ) {
             for (proto in partsList) {
                 PackageParts(proto.packageFqName).apply {
                     result.put(proto.packageFqName, this)
-                    whichParts(this).addAll(proto.classNameList)
+                    proto.classNameList.forEach { addPartOrMetadataPart(this, it) }
                 }
             }
         }
@@ -76,9 +76,21 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
 
 class PackageParts(val packageFqName: String) {
     // See JvmPackageTable.PackageTable.package_parts
-    val parts = linkedSetOf<String>()
+    val parts: Set<String> = linkedSetOf<String>()
     // See JvmPackageTable.PackageTable.metadata_parts
-    val metadataParts = linkedSetOf<String>()
+    val metadataParts: Set<String> = linkedSetOf<String>()
+
+    fun addPart(shortName: String) {
+        (parts as MutableSet /* see KT-14663 */).add(shortName)
+    }
+
+    fun removePart(shortName: String) {
+        (parts as MutableSet).remove(shortName)
+    }
+
+    fun addMetadataPart(shortName: String) {
+        (metadataParts as MutableSet).add(shortName)
+    }
 
     fun addTo(builder: JvmPackageTable.PackageTable.Builder) {
         if (parts.isNotEmpty()) {
@@ -96,8 +108,8 @@ class PackageParts(val packageFqName: String) {
     }
 
     operator fun plusAssign(other: PackageParts) {
-        parts.addAll(other.parts)
-        metadataParts.addAll(other.metadataParts)
+        other.parts.forEach(this::addPart)
+        other.metadataParts.forEach(this::addMetadataPart)
     }
 
     override fun equals(other: Any?) =

@@ -42,20 +42,18 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
 
     val mapping = ModuleMapping.create(moduleMappingData, "<incremental>")
 
-    incrementalCache.getObsoletePackageParts().forEach {
-        val i = it.lastIndexOf('/')
-        val qualifier = if (i == -1) "" else it.substring(0, i).replace('/', '.')
-        val name = it.substring(i + 1)
-        mapping.findPackageParts(qualifier)?.run { parts.remove(name) }
+    incrementalCache.getObsoletePackageParts().forEach { internalName ->
+        val qualifier = internalName.substringBeforeLast('/', "").replace('/', '.')
+        val name = internalName.substringAfterLast('/')
+        mapping.findPackageParts(qualifier)?.removePart(name)
     }
 
     return (this + mapping.packageFqName2Parts.values)
             .groupBy { it.packageFqName }
-            .map {
-                val (packageFqName, packageParts) = it
-                val newPackageParts = PackageParts(packageFqName)
-                packageParts.forEach { newPackageParts.parts.addAll(it.parts) }
-                newPackageParts
+            .map { (packageFqName, allOldPackageParts) ->
+                PackageParts(packageFqName).apply {
+                    allOldPackageParts.forEach { packageParts -> this += packageParts }
+                }
             }
 }
 

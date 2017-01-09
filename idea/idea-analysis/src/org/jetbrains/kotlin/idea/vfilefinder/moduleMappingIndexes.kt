@@ -42,8 +42,8 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
     private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
         override fun read(input: DataInput): PackageParts? =
                 PackageParts(IOUtil.readUTF(input)).apply {
-                    parts.addAll(IOUtil.readStringList(input))
-                    metadataParts.addAll(IOUtil.readStringList(input))
+                    IOUtil.readStringList(input).forEach(this::addPart)
+                    IOUtil.readStringList(input).forEach(this::addMetadataPart)
                 }
 
         override fun save(out: DataOutput, value: PackageParts?) {

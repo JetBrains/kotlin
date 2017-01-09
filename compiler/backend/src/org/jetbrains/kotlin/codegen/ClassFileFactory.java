@@ -21,8 +21,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.collections.CollectionsKt;
-import kotlin.collections.MapsKt;
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -188,17 +186,17 @@ public class ClassFileFactory implements OutputFileCollection {
         return new PackagePartRegistry() {
             @Override
             public void addPart(@NotNull String partShortName) {
-                MapsKt.getOrPut(partsGroupedByPackage, packageFqNameAsString, new Function0<PackageParts>() {
-                    @Override
-                    public PackageParts invoke() {
-                        return new PackageParts(packageFqNameAsString);
-                    }
-                }).getParts().add(partShortName);
+                PackageParts packageParts = partsGroupedByPackage.get(packageFqNameAsString);
+                if (packageParts == null) {
+                    packageParts = new PackageParts(packageFqNameAsString);
+                    partsGroupedByPackage.put(packageFqNameAsString, packageParts);
+                }
+                packageParts.addPart(partShortName);
             }
         };
     }
 
-    public void registerPackagePartSourceFiles(Collection<KtFile> files) {
+    private void registerPackagePartSourceFiles(Collection<KtFile> files) {
         packagePartSourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(files)));
     }
 

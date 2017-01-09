@@ -115,7 +115,9 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
                 PackageSerializer(emptyList(), members, packageFqName, destFile).run()
 
-                packageTable.getOrPut(packageFqName) { PackageParts(packageFqName.asString()) }.metadataParts.add(destFile.nameWithoutExtension)
+                packageTable.getOrPut(packageFqName) {
+                    PackageParts(packageFqName.asString())
+                }.addMetadataPart(destFile.nameWithoutExtension)
             }
         }
 
