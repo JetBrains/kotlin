@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.ir
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 
 // This is what Context collects about IR.

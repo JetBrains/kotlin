@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
+import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -29,6 +30,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     var currentScope    : Scope?      = null
 
     //-------------------------------------------------------------------------//
+    val deserializer = DeserializerDriver(context)
 
     fun inline(irFile: IrFile) = irFile.accept(this, null)
 
@@ -143,15 +145,13 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     }
 
     //-------------------------------------------------------------------------//
-
     fun inlineFunction(irCall: IrCall): IrExpression {
-
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
-        val functionDeclaration = context.ir.originalModuleIndex
-            .functions[functionDescriptor.original]                                         // Get FunctionDeclaration by FunctionDescriptor.
-
-        if (functionDeclaration == null) return super.visitCall(irCall)                     // Function is declared in another module.
-
+        val originalDescriptor = functionDescriptor.original
+        val functionDeclaration = 
+            context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // Function is declared in the current module.
+            deserializer.deserializeInlineBody(originalDescriptor)                          // Function is declared in another module.
+        if (functionDeclaration == null) return super.visitCall(irCall)   
         val copyFuncDeclaration = functionDeclaration.accept(InlineCopyIr(),              // Create copy of the function.
             null) as IrFunction
 

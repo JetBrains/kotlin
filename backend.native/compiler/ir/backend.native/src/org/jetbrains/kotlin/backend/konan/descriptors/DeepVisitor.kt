@@ -98,3 +98,21 @@ open class DeepVisitor<D>(val worker: DeclarationDescriptorVisitor<Boolean, D>) 
     }
 }
 
+open public class EmptyDescriptorVisitorVoid: DeclarationDescriptorVisitor<Boolean, Unit> {
+    override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: Unit) = true
+    override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, data: Unit) = true
+    override fun visitVariableDescriptor(descriptor: VariableDescriptor, data: Unit) = true
+    override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit) = true
+    override fun visitTypeParameterDescriptor(descriptor: TypeParameterDescriptor, data: Unit) = true
+    override fun visitClassDescriptor(descriptor: ClassDescriptor, data: Unit) = true
+    override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, data: Unit) = true
+    override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Unit) = true
+    override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit) = true
+    override fun visitScriptDescriptor(descriptor: ScriptDescriptor, data: Unit) = true
+    override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit) = true
+    override fun visitValueParameterDescriptor(descriptor: ValueParameterDescriptor, data: Unit) = true
+    override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, data: Unit) = true
+    override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, data: Unit) = true
+    override fun visitReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor, data: Unit) = true
+}
+

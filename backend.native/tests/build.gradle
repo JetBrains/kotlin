@@ -1532,6 +1532,15 @@ task inline23(type: RunKonanTest) {
     source = "codegen/inline/inline23.kt"
 }
 
+task deserialized_inline0(type: RunKonanTest) {
+    source = "serialization/deserialized_inline0.kt"
+    flags = ["--enable", "deserializer"]
+}
+task deserialized_listof0(type: RunKonanTest) {
+    source = "serialization/deserialized_listof0.kt"
+    flags = ["--enable", "deserializer"]
+}
+
 kotlinNativeInterop {
     sysstat {
         pkg 'sysstat'

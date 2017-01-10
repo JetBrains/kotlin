@@ -3,9 +3,11 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.messageCollector
 import org.jetbrains.kotlin.backend.common.validateIrModule
+import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.backend.konan.llvm.emitLLVM
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializationUtil
+import org.jetbrains.kotlin.backend.konan.serialization.markBackingFields
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.kotlinSourceRoots
@@ -69,6 +71,13 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
         context.irModule = module
 
         validateIrModule(context, module)
+    }
+    phaser.phase(KonanPhase.SERIALIZER) {
+        markBackingFields(context)
+        val serializer = KonanSerializationUtil(context)
+        context.serializedLinkData = 
+            serializer.serializeModule(context.moduleDescriptor!!)
+        DeserializerDriver(context).dumpAllInlineBodies()
     }
     phaser.phase(KonanPhase.BACKEND) {
         phaser.phase(KonanPhase.LOWER) {

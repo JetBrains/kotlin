@@ -11,6 +11,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
+fun validateIrFunction(context: BackendContext, irFunction: IrFunction) {
+    val visitor = IrValidator(context)
+    irFunction.acceptVoid(visitor)
+}
+
 fun validateIrFile(context: BackendContext, irFile: IrFile) {
     val visitor = IrValidator(context)
     irFile.acceptVoid(visitor)
@@ -65,7 +70,12 @@ fun validateIrModule(context: BackendContext, irModule: IrModuleFragment) {
 }
 
 private fun BackendContext.reportIrValidationError(message: String, irFile: IrFile, irElement: IrElement) {
-    this.reportWarning("[IR VALIDATION] $message", irFile, irElement)
+    try {
+        this.reportWarning("[IR VALIDATION] $message", irFile, irElement)
+    } catch (e: Throwable) {
+        println("an error trying to print a warning message: $e")
+        e.printStackTrace()
+    }
     // TODO: throw an exception after fixing bugs leading to invalid IR.
 }
 

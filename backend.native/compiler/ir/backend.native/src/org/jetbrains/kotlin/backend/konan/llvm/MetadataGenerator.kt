@@ -2,16 +2,14 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.ir.Ir
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.serialization.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.backend.konan.serialization.deserializeModule
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import java.io.*
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import java.io.Closeable
+import java.io.File
 
 fun loadMetadata(configuration: CompilerConfiguration, file: File): ModuleDescriptorImpl {
 
@@ -86,12 +84,28 @@ class MetadataReader(file: File) : Closeable {
         }
     }
 
+    fun namedMetadataNodes(name: String): Array<LLVMValueRef> {
+        val result = mutableListOf<LLVMValueRef>()
+        memScoped {
+            val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, name)
+            val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
+
+            LLVMGetNamedMetadataOperands(llvmModule, name, nodeArray[0].ptr)
+
+            //return Pair(nodeCount, nodeArray[0].value!!)
+            for (index in 0..nodeCount-1) {
+                result.add(nodeArray[index].value!!)
+            }
+        }
+        return result.toTypedArray<LLVMValueRef>()
+    }
+
     fun namedMetadataNode(name: String): Pair<Int, LLVMValueRef> {
         memScoped {
             val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, name)
             val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
 
-            LLVMGetNamedMetadataOperands(llvmModule, "kmetadata", nodeArray[0].ptr)
+            LLVMGetNamedMetadataOperands(llvmModule, name, nodeArray[0].ptr)
 
             return Pair(nodeCount, nodeArray[0].value!!)
         }
@@ -126,13 +140,6 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         return md
     }
 
-    internal fun property(declaration: IrProperty) {
-        if (declaration.backingField == null) return
-        assert(declaration.backingField!!.descriptor == declaration.descriptor || declaration.isDelegated)
-            
-        context.ir.propertiesWithBackingFields.add(declaration.descriptor)
-    }
-
     private fun emitModuleMetadata(name: String, md: LLVMValueRef?) {
         LLVMAddNamedMetadataOperand(context.llvmModule, name, md)
     }
@@ -141,18 +148,19 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
         return LLVMMDString(str, str.length)!!
     }
 
-    internal fun endModule(module: IrModuleFragment) {
+    private fun addLinkData(module: IrModuleFragment) {
         val abiVersion = context.config.configuration.get(KonanConfigKeys.ABI_VERSION)
         val abiNode = metadataString("$abiVersion")
-
         val moduleName = metadataString(module.descriptor.name.asString())
-
-        val serializer = KonanSerializationUtil(context)
-        val moduleAsString = serializer.serializeModule(module.descriptor)
+        val moduleAsString = context.serializedLinkData
         val dataNode = metadataString(moduleAsString)
 
         val kmetadataArg  = metadataNode(listOf(abiNode, moduleName, dataNode))
         emitModuleMetadata("kmetadata", kmetadataArg)
+    }
+
+    internal fun endModule(module: IrModuleFragment) {
+        addLinkData(module)
     }
 }
 

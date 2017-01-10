@@ -23,6 +23,7 @@ abstract class KonanTest extends JavaExec {
     String testData = null
     int expectedExitStatus = 0
     List<String> arguments = null
+    List<String> flags = null
 
     boolean enabled = true
     boolean run = true
@@ -193,7 +194,7 @@ class TestFailedException extends RuntimeException {
 @ParallelizableTask
 class RunKonanTest extends KonanTest {
     void compileTest(List<String> filesToCompile, String exe) {
-        runCompiler(filesToCompile, exe, [])
+        runCompiler(filesToCompile, exe, flags?:[])
     }
 }
 

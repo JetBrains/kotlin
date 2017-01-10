@@ -108,12 +108,6 @@ internal class MetadatorVisitor(val context: Context) : IrElementVisitorVoid {
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitProperty(declaration: IrProperty) {
-        declaration.acceptChildrenVoid(this)
-        metadator.property(declaration)
-
-    }
-
     override fun visitModuleFragment(module: IrModuleFragment) {
         module.acceptChildrenVoid(this)
         metadator.endModule(module)

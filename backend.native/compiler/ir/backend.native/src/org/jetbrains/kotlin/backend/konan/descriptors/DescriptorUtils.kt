@@ -157,9 +157,11 @@ internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
     }
 
 internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
+    get () = unsubstitutedMemberScope.contributedMethods
+
+internal val MemberScope.contributedMethods: List<FunctionDescriptor>
     get () {
-        val contributedDescriptors = unsubstitutedMemberScope.getContributedDescriptors()
-        // (includes declarations from supers)
+        val contributedDescriptors = this.getContributedDescriptors()
 
         val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
 
@@ -173,6 +175,7 @@ internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
 
         return allMethods
     }
+
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
         || this.kind == ClassKind.ENUM_CLASS
@@ -265,3 +268,15 @@ internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: Functio
 
     return ourDirections
 }
+
+
+internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
+        val containingScope = when (this) {
+            is ClassDescriptor -> this.unsubstitutedMemberScope
+            is PackageViewDescriptor -> this.memberScope
+            else -> error("Unexpected member scope: $containingDeclaration")
+        }
+        return containingScope
+}
+
+

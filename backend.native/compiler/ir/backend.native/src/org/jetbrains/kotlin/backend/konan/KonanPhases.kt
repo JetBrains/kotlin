@@ -8,9 +8,11 @@ enum class KonanPhase(val description: String,
 
     /* */ FRONTEND("Frontend builds AST"),
     /* */ PSI_TO_IR("Psi to IR conversion"),
+    /* */ SERIALIZER("Serialize descriptor tree and inline IR bodies"),
     /* */ BACKEND("All backend"),
     /* ... */ LOWER("IR Lowering"),
     /* ... ... */ LOWER_INLINE("Functions inlining"),
+    /* ... ... ...  */ DESERIALIZER("Deserialize inline bodies"),
     /* ... ... */ LOWER_INTEROP("Interop lowering"),
     /* ... ... */ LOWER_ENUMS("Enum classes lowering"),
     /* ... ... */ LOWER_DELEGATION("Delegation lowering"),
@@ -53,6 +55,11 @@ object KonanPhases {
 
     fun config(config: KonanConfig) {
         with (config.configuration) { with (KonanConfigKeys) { 
+
+            // We disable inline IR deserialization
+            // until we have enough test passes
+            KonanPhase.DESERIALIZER.enabled = false
+
             val disabled = get(DISABLED_PHASES)
             disabled?.forEach { phases[known(it)]!!.enabled = false }
 

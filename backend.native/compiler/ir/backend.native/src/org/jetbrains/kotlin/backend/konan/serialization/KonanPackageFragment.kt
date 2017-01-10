@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
-class KonanPackageFragment( private val proto: KonanLinkData.PackageFragment,
+class KonanPackageFragment( val proto: KonanLinkData.PackageFragment,
     storageManager: StorageManager, module: ModuleDescriptor) : 
     DeserializedPackageFragment(FqName(proto.getFqName()), 
         storageManager, module) {

@@ -6,15 +6,23 @@ import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
+import org.jetbrains.kotlin.descriptors.Modality.FINAL
+import org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+import org.jetbrains.kotlin.descriptors.Visibilities.INTERNAL
+import org.jetbrains.kotlin.descriptors.annotations.Annotations.Companion.EMPTY
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.serialization.KonanLinkData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -73,7 +81,6 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
     builtIns.builtInsModule = moduleDescriptor
     val deserializationConfiguration = CompilerDeserializationConfiguration(configuration)
 
-
     val libraryAsByteArray = base64Decode(base64)
     val libraryProto = KonanLinkData.Library.parseFrom(
         libraryAsByteArray, KonanSerializerProtocol.extensionRegistry)
@@ -92,8 +99,9 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
 
 internal class KonanSerializationUtil(val context: Context) {
 
-    val serializerExtension = KonanSerializerExtension(context)
-    val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
+    val serializerExtension = KonanSerializerExtension(context, this)
+    val serializer = KonanDescriptorSerializer.createTopLevel(serializerExtension)
+    val typeSerializer: (KotlinType)->Int = { it -> serializer.typeId(it) }
 
     fun serializeClass(packageName: FqName,
         builder: KonanLinkData.Classes.Builder,  
@@ -102,7 +110,7 @@ internal class KonanSerializationUtil(val context: Context) {
 
         if (skip(classDescriptor)) return
 
-        val classProto = serializer.classProto(classDescriptor).build() 
+        val classProto = serializer.classProto(classDescriptor).build()     
             ?: error("Class not serialized: $classDescriptor")
 
         builder.addClasses(classProto)
@@ -136,7 +144,7 @@ internal class KonanSerializationUtil(val context: Context) {
         val skip: (DeclarationDescriptor) -> Boolean = 
             { DescriptorUtils.getContainingModule(it) != module }
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(
+        val classifierDescriptors = KonanDescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(
                 DescriptorKindFilter.CLASSIFIERS))
 
         val classesBuilder = KonanLinkData.Classes.newBuilder()
@@ -190,6 +198,7 @@ internal class KonanSerializationUtil(val context: Context) {
     internal fun serializeModule(moduleDescriptor: ModuleDescriptor): String {
         val library = KonanLinkData.Library.newBuilder()
 
+
         getPackagesFqNames(moduleDescriptor).forEach {
             val packageProto = serializePackage(it, moduleDescriptor)
             library.addPackageFragment(packageProto)
@@ -199,5 +208,68 @@ internal class KonanSerializationUtil(val context: Context) {
         val base64 = base64Encode(libraryAsByteArray)
         return base64
     }
+
+    /* The section below is specific for IR serialization */
+
+    // TODO: We utilize DescriptorSerializer's property 
+    // serialization to serialize variables for now.
+    // Need to negotiate the ability to deserialize 
+    // variables with the big kotlin somehow.
+    fun variableAsProperty(variable: VariableDescriptor): PropertyDescriptor {
+
+        val isDelegated = when (variable) {
+            is LocalVariableDescriptor -> variable.isDelegated
+            is IrTemporaryVariableDescriptor -> false
+            else -> error("Unexpected variable descriptor.")
+        }
+
+        val property = PropertyDescriptorImpl.create(
+                variable.containingDeclaration,
+                EMPTY,
+                FINAL,
+                INTERNAL,
+                variable.isVar(),
+                variable.name,
+                DECLARATION,
+                NO_SOURCE,
+                false, false, false, false, false, 
+                isDelegated)
+
+        property.setType(variable.type, listOf(), null, null as KotlinType?)
+
+        // TODO: transform the getter and the setter too.
+        property.initialize(null, null)
+        return property
+    }
+
+    fun serializeLocalDeclaration(descriptor: DeclarationDescriptor): KonanLinkData.Descriptor {
+
+        val proto = KonanLinkData.Descriptor.newBuilder()
+
+        context.log("### serializeLocalDeclaration: $descriptor")
+
+        when (descriptor) {
+            is FunctionDescriptor ->
+                proto.setFunction(serializer.functionProto(descriptor))
+            is PropertyDescriptor ->
+                proto.setProperty(serializer.propertyProto(descriptor))
+
+            is ClassDescriptor ->
+                proto.setClazz(serializer.classProto(descriptor))
+
+            is VariableDescriptor -> {
+                val property = variableAsProperty(descriptor)
+                serializerExtension.originalVariables.put(property, descriptor)
+                proto.setProperty(serializer.propertyProto(property))
+            }
+
+            else -> error("Unexpected descriptor kind: $descriptor")
+         }
+
+         return proto.build()
+     }
+
+
+
 }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -201,6 +202,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun getVtableBuilder(classDescriptor: ClassDescriptor) = vtableBuilders.getOrPut(classDescriptor) {
         ClassVtablesBuilder(classDescriptor, this)
     }
+
+    // We serialize untouched descriptor tree and inline IR bodies
+    // right after the frontend.
+    // But we have to wait until the code generation phase,
+    // to dump this information into generated file.
+    lateinit var serializedLinkData: String
 
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null
