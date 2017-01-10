@@ -286,14 +286,14 @@ class CompileServiceImpl(
 
     override fun compile(
             sessionId: Int,
-            compilerMode: CompileService.CompilerMode,
-            targetPlatform: CompileService.TargetPlatform,
             compilerArguments: CommonCompilerArguments,
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase
     ): CompileService.CallResult<Int> {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val serviceReporter = CompileServiceReporterImpl(servicesFacade, compilationOptions)
+        val compilerMode = compilationOptions.compilerMode
+        val targetPlatform = compilationOptions.targetPlatform
 
         return when (compilerMode) {
             CompileService.CompilerMode.JPS_COMPILER -> {
@@ -301,7 +301,7 @@ class CompileServiceImpl(
 
                 doCompile(sessionId, serviceReporter, tracer = null) { eventManger, profiler ->
                     val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
-                    execCompiler(targetPlatform, services, compilerArguments, messageCollector)
+                    execCompiler(compilationOptions.targetPlatform, services, compilerArguments, messageCollector)
                 }
             }
             CompileService.CompilerMode.NON_INCREMENTAL_COMPILER -> {

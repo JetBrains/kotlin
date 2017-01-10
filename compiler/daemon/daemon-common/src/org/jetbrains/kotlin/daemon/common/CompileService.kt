@@ -134,8 +134,6 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun compile(
             sessionId: Int,
-            compilerMode: CompilerMode,
-            targetPlatform: TargetPlatform,
             compilerArguments: CommonCompilerArguments,
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase

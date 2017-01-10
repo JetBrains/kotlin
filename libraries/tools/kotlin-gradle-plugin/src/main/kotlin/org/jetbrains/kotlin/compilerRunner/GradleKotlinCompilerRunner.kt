@@ -158,15 +158,14 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
             else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
         }
+        val compilationOptions = CompilationOptions(
+                reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose),
+                compilerMode = CompileService.CompilerMode.NON_INCREMENTAL_COMPILER,
+                targetPlatform = targetPlatform)
+        val servicesFacade = GradleCompilerServicesFacadeImpl(project, environment.messageCollector)
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            daemon.compile(
-                    sessionId,
-                    CompileService.CompilerMode.NON_INCREMENTAL_COMPILER,
-                    targetPlatform,
-                    environment.compilerArgs,
-                    CompilationOptions(reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose)),
-                    GradleCompilerServicesFacadeImpl(project, environment.messageCollector))
+            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade)
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
@@ -180,7 +179,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun incrementalCompilationWithDaemon(environment: GradleIncrementalCompilerEnvironment): ExitCode? {
         val knownChangedFiles = environment.changedFiles as? ChangedFiles.Known
 
-        val additionalCompilerArguments = IncrementalCompilationOptions(
+        val compilationOptions = IncrementalCompilationOptions(
                 areFileChangesKnown = knownChangedFiles != null,
                 modifiedFiles = knownChangedFiles?.modified,
                 deletedFiles = knownChangedFiles?.removed,
@@ -188,16 +187,14 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 customCacheVersion = GRADLE_CACHE_VERSION,
                 customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
                 reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose) +
-                        getIncrementalReportingFilters(environment.compilerArgs.verbose)
+                        getIncrementalReportingFilters(environment.compilerArgs.verbose),
+                compilerMode = CompileService.CompilerMode.INCREMENTAL_COMPILER,
+                targetPlatform = CompileService.TargetPlatform.JVM
         )
+        val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
+
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            daemon.compile(
-                    sessionId,
-                    CompileService.CompilerMode.INCREMENTAL_COMPILER,
-                    CompileService.TargetPlatform.JVM,
-                    environment.compilerArgs,
-                    additionalCompilerArguments,
-                    GradleIncrementalCompilerServicesFacadeImpl(project, environment))
+            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade)
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
