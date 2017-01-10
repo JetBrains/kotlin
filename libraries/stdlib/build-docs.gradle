@@ -26,10 +26,11 @@ task stdlib_docs(type: org.jetbrains.dokka.gradle.DokkaTask) {
     }
     sourceDirs = files('../../core/builtins', 'src', '../../core/reflection.jvm')
     dokkaFatJar = fileTree(dir: '../../dokka').matching { include 'dokka-fatjar-*.jar' }.getSingleFile()
+    skipDeprecated = true
 }
 
 task stdlib_docs_zip(type: Zip) {
-    from "$buildDir/stdlib-docs"
+    from "$buildDir/stdlib-docs/stdlib"
     baseName = 'stdlib-docs'
 }
 
