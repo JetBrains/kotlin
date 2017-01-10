@@ -60,7 +60,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
-    fun testPlatform1() {
+    fun testPlatformBasic() {
         val header = module("header")
         header.setPlatformKind(TargetPlatformKind.Common)
 
@@ -72,7 +72,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
-    fun testPlatform2() {
+    fun testPlatformClass() {
         val header = module("header")
         header.setPlatformKind(TargetPlatformKind.Common)
 
@@ -84,7 +84,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
-    fun testPlatform3() {
+    fun testPlatformNotImplementedForBoth() {
         val header = module("header")
         header.setPlatformKind(TargetPlatformKind.Common)
 
@@ -101,7 +101,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
-    fun testPlatform4() {
+    fun testPlatformPartiallyImplemented() {
         val header = module("header")
         header.setPlatformKind(TargetPlatformKind.Common)
 
@@ -113,7 +113,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
-    fun testPlatform5() {
+    fun testPlatformFunctionProperty() {
         val header = module("header")
         header.setPlatformKind(TargetPlatformKind.Common)
 
