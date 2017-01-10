@@ -47,7 +47,7 @@ fun writeKotlinMetadata(
     av.visitEnd()
 }
 
-fun writeSyntheticClassMetadata(cb: ClassBuilder) {
+fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState) {
     writeKotlinMetadata(cb, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { av ->
         // Do nothing
     }
