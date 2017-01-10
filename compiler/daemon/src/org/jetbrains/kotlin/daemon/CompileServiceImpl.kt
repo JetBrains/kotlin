@@ -290,8 +290,7 @@ class CompileServiceImpl(
             targetPlatform: CompileService.TargetPlatform,
             compilerArguments: CommonCompilerArguments,
             additionalCompilerArguments: AdditionalCompilerArguments,
-            servicesFacade: CompilerServicesFacadeBase,
-            operationsTracer: RemoteOperationsTracer?
+            servicesFacade: CompilerServicesFacadeBase
     ): CompileService.CallResult<Int> {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, additionalCompilerArguments)
         val serviceReporter = CompileServiceReporterImpl(servicesFacade, additionalCompilerArguments)
@@ -300,13 +299,13 @@ class CompileServiceImpl(
             CompileService.CompilerMode.JPS_COMPILER -> {
                 val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
 
-                doCompile(sessionId, serviceReporter, operationsTracer) { eventManger, profiler ->
+                doCompile(sessionId, serviceReporter, tracer = null) { eventManger, profiler ->
                     val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
                     execCompiler(targetPlatform, services, compilerArguments, messageCollector)
                 }
             }
             CompileService.CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                doCompile(sessionId, serviceReporter, operationsTracer) { eventManger, profiler ->
+                doCompile(sessionId, serviceReporter, tracer = null) { eventManger, profiler ->
                     execCompiler(targetPlatform, Services.EMPTY, compilerArguments, messageCollector)
                 }
             }
@@ -320,7 +319,7 @@ class CompileServiceImpl(
                 val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacade
 
                 withIC {
-                    doCompile(sessionId, serviceReporter, operationsTracer) { eventManger, profiler ->
+                    doCompile(sessionId, serviceReporter, tracer = null) { eventManger, profiler ->
                         execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, messageCollector)
                     }
                 }
@@ -572,11 +571,11 @@ class CompileServiceImpl(
 
     private fun doCompile(sessionId: Int,
                           compileServiceReporter: CompileServiceReporter,
-                          operationsTracer: RemoteOperationsTracer?,
+                          tracer: RemoteOperationsTracer?,
                           body: (EventManger, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
                 withValidClientOrSessionProxy(sessionId) { session ->
-                    operationsTracer?.before("compile")
+                    tracer?.before("compile")
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                     val eventManger = EventMangerImpl()
                     try {
@@ -587,7 +586,7 @@ class CompileServiceImpl(
                     }
                     finally {
                         eventManger.fireCompilationFinished()
-                        operationsTracer?.after("compile")
+                        tracer?.after("compile")
                     }
                 }
             }

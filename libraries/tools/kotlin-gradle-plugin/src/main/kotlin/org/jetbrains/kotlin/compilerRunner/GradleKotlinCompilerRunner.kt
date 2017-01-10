@@ -166,8 +166,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                     targetPlatform,
                     environment.compilerArgs,
                     AdditionalCompilerArguments(reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose)),
-                    GradleCompilerServicesFacadeImpl(project, environment.messageCollector),
-                    operationsTracer = null)
+                    GradleCompilerServicesFacadeImpl(project, environment.messageCollector))
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
@@ -198,8 +197,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                     CompileService.TargetPlatform.JVM,
                     environment.compilerArgs,
                     additionalCompilerArguments,
-                    GradleIncrementalCompilerServicesFacadeImpl(project, environment),
-                    operationsTracer = null)
+                    GradleIncrementalCompilerServicesFacadeImpl(project, environment))
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }

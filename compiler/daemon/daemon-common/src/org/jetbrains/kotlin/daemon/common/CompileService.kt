@@ -138,8 +138,7 @@ interface CompileService : Remote {
             targetPlatform: TargetPlatform,
             compilerArguments: CommonCompilerArguments,
             additionalCompilerArguments: AdditionalCompilerArguments,
-            servicesFacade: CompilerServicesFacadeBase,
-            operationsTracer: RemoteOperationsTracer?
+            servicesFacade: CompilerServicesFacadeBase
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
