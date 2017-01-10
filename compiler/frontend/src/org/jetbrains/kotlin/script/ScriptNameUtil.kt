@@ -18,18 +18,14 @@ package org.jetbrains.kotlin.script
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 
 object ScriptNameUtil {
-    fun fileNameWithExtensionStripped(script: KtScript, vararg extensions: String): Name =
-            Name.identifier(generateNameByFileName(script.containingKtFile.name, *extensions))
+    fun fileNameWithExtensionStripped(script: KtScript): Name =
+            Name.identifier(generateNameByFileName(script.containingKtFile.name))
 
-    fun generateNameByFileName(filePath: String, vararg extensions: String): String {
+    fun generateNameByFileName(filePath: String): String {
         val fileName = filePath.substringAfterLast('/')
-        val nameWithoutExtension = extensions.asSequence()
-                .map { if (it.startsWith('.')) it else ".$it" }
-                .firstOrNull { fileName.endsWith(it) }?.let { fileName.removeSuffix(it) }
-                ?: fileName
+        val nameWithoutExtension = fileName.substringBeforeLast('.')
         return nameWithoutExtension
                 .replace('.', '_')
                 .capitalize()

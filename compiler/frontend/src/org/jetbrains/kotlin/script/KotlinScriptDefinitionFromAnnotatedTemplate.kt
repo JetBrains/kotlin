@@ -85,7 +85,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
             scriptFilePattern.let { Regex(it).matches(getFileName(file)) }
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
-    override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
+    override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script)
 
     override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
 

@@ -41,7 +41,7 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
             getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
     open fun getScriptName(script: KtScript): Name =
-        ScriptNameUtil.fileNameWithExtensionStripped(script, KotlinParserDefinition.STD_SCRIPT_EXT)
+        ScriptNameUtil.fileNameWithExtensionStripped(script)
 
     open fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
 }

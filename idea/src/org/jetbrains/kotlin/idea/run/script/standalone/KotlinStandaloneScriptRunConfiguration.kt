@@ -188,7 +188,7 @@ private class ScriptCommandLineState(
 
     override fun createJavaParameters(): JavaParameters? {
         val params = commonParameters()
-                
+
         val filePath = configuration.filePath ?: throw CantRunException("Script file was not specified")
         val scriptVFile = LocalFileSystem.getInstance().findFileByIoFile(File(filePath)) ?:
                           throw CantRunException("Script file was not found in project")
