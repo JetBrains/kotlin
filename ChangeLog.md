@@ -469,6 +469,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 ### IDE
 
 - Project View: Fix presentation of Kotlin files and their members when @JvmName having the same name as the file itself
+- [`KT-15611`](https://youtrack.jetbrains.com/issue/KT-15611) Extract Interface/Superclass: Disable const-properties
 
 #### Intention actions, inspections and quickfixes
 

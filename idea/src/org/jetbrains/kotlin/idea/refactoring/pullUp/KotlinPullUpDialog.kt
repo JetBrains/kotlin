@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.refactoring.isCompanionMemberOf
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class KotlinPullUpDialog(
@@ -90,6 +91,8 @@ class KotlinPullUpDialog(
         override fun isMemberEnabled(memberInfo: KotlinMemberInfo): Boolean {
             val superClass = superClass ?: return false
             val member = memberInfo.member
+
+            if (member.hasModifier(KtTokens.CONST_KEYWORD)) return false
 
             if (superClass is PsiClass) {
                 if (!member.canMoveMemberToJavaClass(superClass)) return false

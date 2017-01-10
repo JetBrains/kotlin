@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuper
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinUsesAndInterfacesDependencyMemberInfoModel
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
@@ -65,6 +66,11 @@ abstract class KotlinExtractSuperDialogBase(
             val memberInfos: List<KotlinMemberInfo>,
             interfaceContainmentVerifier: (KtNamedDeclaration) -> Boolean
     ) : KotlinUsesAndInterfacesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(originalClass, null, false, interfaceContainmentVerifier) {
+        override fun isMemberEnabled(member: KotlinMemberInfo): Boolean {
+            val declaration = member.member ?: return false
+            return !declaration.hasModifier(KtTokens.CONST_KEYWORD)
+        }
+
         override fun isFixedAbstract(memberInfo: KotlinMemberInfo?) = true
     }
 
