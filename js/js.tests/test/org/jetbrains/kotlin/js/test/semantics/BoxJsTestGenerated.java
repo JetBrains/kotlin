@@ -4658,6 +4658,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyReassignment.kt")
+        public void testPropertyReassignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineSizeReduction/propertyReassignment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyReferenceDoesNotProduceSideEffect.kt")
         public void testPropertyReferenceDoesNotProduceSideEffect() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineSizeReduction/propertyReferenceDoesNotProduceSideEffect.kt");

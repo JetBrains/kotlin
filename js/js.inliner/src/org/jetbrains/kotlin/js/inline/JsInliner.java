@@ -21,8 +21,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -71,6 +69,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         JsProgram program = context.program();
         Map<JsName, JsFunction> functions = CollectUtilsKt.collectNamedFunctions(program);
         Map<String, JsFunction> accessors = CollectUtilsKt.collectAccessors(program);
+        new DummyAccessorInvocationTransformer().accept(program);
         JsInliner inliner = new JsInliner(functions, accessors, new FunctionReader(context), context.bindingTrace());
         inliner.accept(program);
         RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(program, functions);
@@ -87,75 +86,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
         this.accessors = accessors;
         this.functionReader = functionReader;
         this.trace = trace;
-    }
-
-    @Override
-    public boolean visit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
-        JsInvocation dummy = tryCreatePropertyGetterInvocation(x);
-        if (dummy != null) {
-            return visit(dummy, ctx);
-        }
-        return super.visit(x, ctx);
-    }
-
-    @Override
-    public void endVisit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
-        JsInvocation dummy = tryCreatePropertyGetterInvocation(x);
-        if (dummy != null) {
-            endVisit(dummy, ctx);
-        }
-        super.visit(x, ctx);
-    }
-
-    @Override
-    public boolean visit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
-        JsInvocation dummy = tryCreatePropertySetterInvocation(x);
-        if (dummy != null) {
-            return visit(dummy, ctx);
-        }
-        return super.visit(x, ctx);
-    }
-
-    @Override
-    public void endVisit(@NotNull JsBinaryOperation x, @NotNull JsContext ctx) {
-        JsInvocation dummy = tryCreatePropertySetterInvocation(x);
-        if (dummy != null) {
-            // Prevent FunctionInlineMutator from creating a variable for the result (there is none, because assignment is a statement)
-            // TODO is there a better way to achieve this?
-            getInliningContext().getStatementContext().replaceMe(new JsExpressionStatement(dummy));
-            endVisit(dummy, ctx);
-        }
-        super.visit(x, ctx);
-    }
-
-    @Nullable
-    private static JsInvocation tryCreatePropertyGetterInvocation(@NotNull JsNameRef x) {
-        if (MetadataProperties.getInlineStrategy(x) != null && MetadataProperties.getDescriptor(x) instanceof PropertyGetterDescriptor) {
-            JsInvocation dummyInvocation = new JsInvocation(x);
-            copyInlineMetadata(x, dummyInvocation);
-            return dummyInvocation;
-        }
-        return null;
-    }
-
-    @Nullable
-    private static JsInvocation tryCreatePropertySetterInvocation(@NotNull JsBinaryOperation x) {
-        if (!x.getOperator().isAssignment() || !(x.getArg1() instanceof JsNameRef)) return null;
-        JsNameRef name = (JsNameRef) x.getArg1();
-        if (MetadataProperties.getInlineStrategy(name) != null &&
-            MetadataProperties.getDescriptor(name) instanceof PropertySetterDescriptor) {
-
-            JsInvocation dummyInvocation = new JsInvocation(name, x.getArg2());
-            copyInlineMetadata(name, dummyInvocation);
-            return dummyInvocation;
-        }
-        return null;
-    }
-
-    private static void copyInlineMetadata(@NotNull JsNameRef from, @NotNull JsInvocation to) {
-        MetadataProperties.setInlineStrategy(to, MetadataProperties.getInlineStrategy(from));
-        MetadataProperties.setDescriptor(to, MetadataProperties.getDescriptor(from));
-        MetadataProperties.setPsiElement(to, MetadataProperties.getPsiElement(from));
     }
 
     @Override
@@ -261,7 +191,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         assert inlineableBody == inlineableBodyWithLambdasInlined;
         statementContext.addPrevious(flattenStatement(inlineableBody));
 
-        /**
+        /*
          * Assumes, that resultExpression == null, when result is not needed.
          * @see FunctionInlineMutator.isResultNeeded()
          */

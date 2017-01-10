@@ -45,25 +45,13 @@ public class PropertyAccessorsInlineTestsGenerated extends AbstractPropertyAcces
     @TestMetadata("augAssignmentAndIncInClass.kt")
     public void testAugAssignmentAndIncInClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClass.kt");
-        try {
-            doTest(fileName);
-        }
-        catch (Throwable ignore) {
-            return;
-        }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        doTest(fileName);
     }
 
     @TestMetadata("augAssignmentAndIncInClassViaConvention.kt")
     public void testAugAssignmentAndIncInClassViaConvention() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/property/augAssignmentAndIncInClassViaConvention.kt");
-        try {
-            doTest(fileName);
-        }
-        catch (Throwable ignore) {
-            return;
-        }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        doTest(fileName);
     }
 
     @TestMetadata("augAssignmentAndIncOnExtension.kt")

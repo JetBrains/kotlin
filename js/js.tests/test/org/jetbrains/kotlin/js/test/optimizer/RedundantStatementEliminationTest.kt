@@ -28,4 +28,6 @@ class RedundantStatementEliminationTest() : BasicOptimizerTest("redundant-statem
     @Test fun literal() = box()
 
     @Test fun parameters() = box()
+
+    @Test fun comma() = box()
 }

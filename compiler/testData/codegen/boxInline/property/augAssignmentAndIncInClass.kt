@@ -1,5 +1,4 @@
 // FILE: 1.kt
-// IGNORE_BACKEND: JS
 package test
 
 class A {

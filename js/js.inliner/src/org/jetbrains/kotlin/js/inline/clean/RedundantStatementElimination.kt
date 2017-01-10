@@ -45,6 +45,20 @@ class RedundantStatementElimination(private val root: JsFunction) {
                 }
                 return super.visit(x, ctx)
             }
+
+            override fun visit(x: JsBinaryOperation, ctx: JsContext<JsNode>): Boolean {
+                if (x.operator == JsBinaryOperator.COMMA) {
+                    val expressions = replace(x.arg1)
+                    val replacement = if (expressions.isEmpty()) {
+                        x.arg2
+                    }
+                    else {
+                        JsAstUtils.newSequence(expressions + x.arg2)
+                    }
+                    ctx.replaceMe(replacement)
+                }
+                return super.visit(x, ctx)
+            }
         }.accept(root.body)
     }
 
