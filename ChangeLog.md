@@ -472,6 +472,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - [`KT-15611`](https://youtrack.jetbrains.com/issue/KT-15611) Extract Interface/Superclass: Disable const-properties
 - Pull Up: Fix pull-up from object to superclass
 - [`KT-15602`](https://youtrack.jetbrains.com/issue/KT-15602) Extract Interface/Superclass: Disable "Make abstract" for inline/external/lateinit members
+- Extract Interface: Disable inline/external/lateinit members
 
 #### Intention actions, inspections and quickfixes
 
