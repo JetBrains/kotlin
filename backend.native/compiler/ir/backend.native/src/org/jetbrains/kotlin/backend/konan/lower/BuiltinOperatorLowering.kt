@@ -33,19 +33,6 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
     private val builtIns = context.builtIns
     private val irBuiltins = context.irModule!!.irBuiltins
 
-    override fun visitTry(aTry: IrTry): IrExpression {
-        // Workaround for the bug in IrTryImpl.transformChildren: transform `finallyExpression` too.
-        // TODO: fix the bug and remove it.
-        val transformer = this
-        return (aTry as IrTryImpl).apply {
-            tryResult = tryResult.transform(transformer, null)
-            catches.forEachIndexed { i, irCatch ->
-                catches[i] = irCatch.transform(transformer, null)
-            }
-            finallyExpression = finallyExpression?.transform(transformer, null)
-        }
-    }
-
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
 

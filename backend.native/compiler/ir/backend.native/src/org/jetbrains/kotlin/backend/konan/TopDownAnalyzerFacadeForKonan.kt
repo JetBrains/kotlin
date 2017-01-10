@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 object TopDownAnalyzerFacadeForKonan {
     fun analyzeFiles(files: Collection<KtFile>, config: KonanConfig): AnalysisResult {
-        val context = ContextForNewModule(ProjectContext(config.project), Name.special("<${config.moduleId}>"), KonanPlatform.builtIns)
+        val context = ContextForNewModule(ProjectContext(config.project), Name.special("<${config.moduleId}>"),
+                KonanPlatform.builtIns, null)
 
         val builtinsForCompilerModule = KonanBuiltIns(context.storageManager, true)
         val compilerBuiltInsModule = builtinsForCompilerModule.builtInsModule
