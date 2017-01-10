@@ -289,11 +289,11 @@ class CompileServiceImpl(
             compilerMode: CompileService.CompilerMode,
             targetPlatform: CompileService.TargetPlatform,
             compilerArguments: CommonCompilerArguments,
-            additionalCompilerArguments: AdditionalCompilerArguments,
+            compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase
     ): CompileService.CallResult<Int> {
-        val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, additionalCompilerArguments)
-        val serviceReporter = CompileServiceReporterImpl(servicesFacade, additionalCompilerArguments)
+        val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
+        val serviceReporter = CompileServiceReporterImpl(servicesFacade, compilationOptions)
 
         return when (compilerMode) {
             CompileService.CompilerMode.JPS_COMPILER -> {
@@ -315,7 +315,7 @@ class CompileServiceImpl(
                 }
 
                 val k2jvmArgs = compilerArguments as K2JVMCompilerArguments
-                val gradleIncrementalArgs = additionalCompilerArguments as IncrementalCompilerArguments
+                val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
                 val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacade
 
                 withIC {
@@ -346,7 +346,7 @@ class CompileServiceImpl(
 
     private fun execIncrementalCompiler(
             k2jvmArgs: K2JVMCompilerArguments,
-            incrementalCompilerArgs: IncrementalCompilerArguments,
+            incrementalCompilerArgs: IncrementalCompilationOptions,
             servicesFacade: IncrementalCompilerServicesFacade,
             messageCollector: CompileServicesFacadeMessageCollector
     ): ExitCode {

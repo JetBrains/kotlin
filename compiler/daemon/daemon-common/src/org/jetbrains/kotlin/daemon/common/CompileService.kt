@@ -137,7 +137,7 @@ interface CompileService : Remote {
             compilerMode: CompilerMode,
             targetPlatform: TargetPlatform,
             compilerArguments: CommonCompilerArguments,
-            additionalCompilerArguments: AdditionalCompilerArguments,
+            compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase
     ): CallResult<Int>
 

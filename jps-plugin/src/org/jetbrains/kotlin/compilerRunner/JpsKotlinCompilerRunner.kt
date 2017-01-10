@@ -104,7 +104,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
                     CompileService.CompilerMode.JPS_COMPILER,
                     targetPlatform,
                     compilerArgs,
-                    AdditionalCompilerArguments(reportingFilters = getReportingFilters(compilerArgs.verbose)),
+                    CompilationOptions(reportingFilters = getReportingFilters(compilerArgs.verbose)),
                     JpsCompilerServicesFacadeImpl(environment))
         }
 
