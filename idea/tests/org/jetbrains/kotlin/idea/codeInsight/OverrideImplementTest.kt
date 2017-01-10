@@ -256,6 +256,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doOverrideDirectoryTest("foo")
     }
 
+    fun testJavaxNonnullJavaType() {
+        doOverrideDirectoryTest("foo")
+    }
+
     fun testNullableKotlinType() {
         doOverrideDirectoryTest("foo")
     }

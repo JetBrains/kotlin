@@ -473,6 +473,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - Pull Up: Fix pull-up from object to superclass
 - [`KT-15602`](https://youtrack.jetbrains.com/issue/KT-15602) Extract Interface/Superclass: Disable "Make abstract" for inline/external/lateinit members
 - Extract Interface: Disable inline/external/lateinit members
+- [`KT-12704`](https://youtrack.jetbrains.com/issue/KT-12704), [`KT-15583`](https://youtrack.jetbrains.com/issue/KT-15583) Override/Implement Members: Support all nullability annotations respected by the Kotlin compiler
 
 #### Intention actions, inspections and quickfixes
 

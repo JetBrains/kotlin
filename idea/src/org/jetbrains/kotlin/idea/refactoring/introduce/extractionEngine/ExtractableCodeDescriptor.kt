@@ -47,8 +47,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.*
 
 interface Parameter {
@@ -331,7 +333,7 @@ val ControlFlow.possibleReturnTypes: List<KotlinType>
         return when {
             !returnType.isNullabilityFlexible() ->
                 listOf(returnType)
-            returnType.isAnnotatedNotNull() || returnType.isAnnotatedNullable() ->
+            returnType.nullability() != TypeNullability.FLEXIBLE ->
                 listOf(returnType.approximateFlexibleTypes())
             else ->
                 (returnType.unwrap() as FlexibleType).let { listOf(it.upperBound, it.lowerBound) }
