@@ -271,4 +271,8 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testTypeAliasNotExpanded() {
         doOverrideFileTest("test")
     }
+
+    fun testDataClassEquals() {
+        doOverrideFileTest("equals")
+    }
 }
