@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.INVOKESPECIAL
 import org.jetbrains.org.objectweb.asm.Opcodes.INVOKESTATIC
 import org.jetbrains.org.objectweb.asm.Type
@@ -35,7 +36,8 @@ class CallableMethod(
         private val invokeOpcode: Int,
         override val dispatchReceiverType: Type?,
         override val extensionReceiverType: Type?,
-        override val generateCalleeType: Type?
+        override val generateCalleeType: Type?,
+        private val isInterfaceMethod: Boolean = Opcodes.INVOKEINTERFACE == invokeOpcode
 ) : Callable {
     fun getValueParameters(): List<JvmMethodParameterSignature> =
             signature.valueParameters
@@ -51,7 +53,13 @@ class CallableMethod(
 
 
     override fun genInvokeInstruction(v: InstructionAdapter) {
-        v.visitMethodInsn(invokeOpcode, owner.internalName, getAsmMethod().name, getAsmMethod().descriptor)
+        v.visitMethodInsn(
+                invokeOpcode,
+                owner.internalName,
+                getAsmMethod().name,
+                getAsmMethod().descriptor,
+                isInterfaceMethod
+        )
     }
 
     fun genInvokeDefaultInstruction(v: InstructionAdapter) {
@@ -61,7 +69,7 @@ class CallableMethod(
 
         val method = getAsmMethod()
 
-        if ("<init>".equals(method.name)) {
+        if ("<init>" == method.name) {
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.internalName, "<init>", defaultMethodDesc, false)
         }
         else {
