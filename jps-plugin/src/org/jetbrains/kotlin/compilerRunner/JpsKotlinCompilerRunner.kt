@@ -105,8 +105,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
                     targetPlatform,
                     compilerArgs,
                     AdditionalCompilerArguments(reportingFilters = getReportingFilters(compilerArgs.verbose)),
-                    JpsCompilerServicesFacadeImpl(environment),
-                    operationsTracer = null)
+                    JpsCompilerServicesFacadeImpl(environment))
         }
 
         return res?.get()?.let { exitCodeFromProcessExitCode(it) }
