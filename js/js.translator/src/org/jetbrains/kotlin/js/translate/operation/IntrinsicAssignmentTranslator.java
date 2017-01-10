@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
 import org.jetbrains.kotlin.lexer.KtSingleValueToken;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
@@ -40,18 +41,18 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
     private final JsBlock rightBlock = new JsBlock();
 
     @NotNull
-    public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
-                                           @NotNull TranslationContext context) {
+    public static JsExpression doTranslate(@NotNull KtBinaryExpression expression, @NotNull TranslationContext context) {
         return (new IntrinsicAssignmentTranslator(expression, context)).translate();
     }
 
-    private IntrinsicAssignmentTranslator(@NotNull KtBinaryExpression expression,
-                                          @NotNull TranslationContext context) {
+    private IntrinsicAssignmentTranslator(@NotNull KtBinaryExpression expression, @NotNull TranslationContext context) {
         super(expression, context);
 
         right = translateRightExpression(context, expression, rightBlock);
         rightExpressionTrivial = rightBlock.isEmpty();
-        accessTranslator = createAccessTranslator(expression.getLeft(), !rightExpressionTrivial);
+        KtExpression left = expression.getLeft();
+        assert left != null;
+        accessTranslator = createAccessTranslator(left, !rightExpressionTrivial);
     }
 
     @NotNull

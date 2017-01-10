@@ -12450,6 +12450,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("augmentedAssignmentInInitializer.kt")
+        public void testAugmentedAssignmentInInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/augmentedAssignmentInInitializer.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("augmentedAssignmentWithArrayLHS.kt")
         public void testAugmentedAssignmentWithArrayLHS() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/augmentedAssignmentWithArrayLHS.kt");

@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import org.jetbrains.kotlin.js.backend.ast.JsBlock;
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.JsBlock;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.reference.AccessTranslationUtils;
 import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -34,16 +35,14 @@ import java.util.Map;
 
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     @NotNull
-    public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
-            @NotNull TranslationContext context) {
+    public static JsExpression doTranslate(@NotNull KtBinaryExpression expression, @NotNull TranslationContext context) {
         return (new OverloadedAssignmentTranslator(expression, context)).translate();
     }
 
     @NotNull
     private final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
 
-    private OverloadedAssignmentTranslator(@NotNull KtBinaryExpression expression,
-            @NotNull TranslationContext context) {
+    private OverloadedAssignmentTranslator(@NotNull KtBinaryExpression expression, @NotNull TranslationContext context) {
         super(expression, context);
         resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
@@ -53,12 +52,16 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
         if (isVariableReassignment) {
             return reassignment();
         }
-        return overloadedMethodInvocation(createAccessTranslator(expression.getLeft(), false));
+        KtExpression left = expression.getLeft();
+        assert left != null;
+        return overloadedMethodInvocation(AccessTranslationUtils.getAccessTranslator(left, context()));
     }
 
     @NotNull
     private JsExpression reassignment() {
-        AccessTranslator accessTranslator = createAccessTranslator(expression.getLeft(), false).getCached();
+        KtExpression left = expression.getLeft();
+        assert left != null;
+        AccessTranslator accessTranslator = AccessTranslationUtils.getAccessTranslator(left, context()).getCached();
         JsExpression newValue = overloadedMethodInvocation(accessTranslator);
         return accessTranslator.translateAsSet(newValue);
     }
