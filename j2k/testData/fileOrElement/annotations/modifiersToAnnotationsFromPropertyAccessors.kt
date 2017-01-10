@@ -1,9 +1,6 @@
 class WithModifiersOnAccessors {
-    @Synchronized private fun methSync() {
-    }
-
-    @Strictfp protected fun methStrict() {
-    }
+    @Synchronized private fun methSync() {}
+    @Strictfp protected fun methStrict() {}
 
     @get:Synchronized @set:Synchronized var sync = 0
 
