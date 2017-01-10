@@ -138,7 +138,7 @@ public abstract class KotlinBuiltIns {
     }
 
     protected void createBuiltInsModule() {
-        builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this);
+        builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this, null);
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 getClassDescriptorFactories(),

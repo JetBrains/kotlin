@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.getValidityConstraintForConstituentType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -74,7 +76,12 @@ object Renderers {
     @JvmField val NAME = Renderer<Named> { it.name.asString() }
 
     @JvmField val PLATFORM = Renderer<ModuleDescriptor> {
-        if (it.platformKind == PlatformKind.DEFAULT) "" else " for " + it.platformKind.name
+        val platform = it.getMultiTargetPlatform()
+        when (platform) {
+            MultiTargetPlatform.Common -> ""
+            is MultiTargetPlatform.Specific -> " for " + platform.platform
+            null -> ""
+        }
     }
 
     @JvmField val VISIBILITY = Renderer<Visibility> {

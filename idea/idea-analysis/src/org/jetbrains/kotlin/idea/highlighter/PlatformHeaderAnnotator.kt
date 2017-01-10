@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PlatformKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
@@ -40,8 +40,7 @@ class PlatformHeaderAnnotator : Annotator {
         val declaration = element as? KtDeclaration ?: return
         if (!declaration.hasModifier(KtTokens.HEADER_KEYWORD)) return
 
-        val platform = TargetPlatformDetector.getPlatform(declaration.containingKtFile)
-        if (platform.kind != PlatformKind.DEFAULT) return
+        if (TargetPlatformDetector.getPlatform(declaration.containingKtFile) !is TargetPlatform.Default) return
 
         val defaultModuleDescriptor = declaration.findModuleDescriptor()
         val dependentDescriptors = defaultModuleDescriptor.allImplementingModules

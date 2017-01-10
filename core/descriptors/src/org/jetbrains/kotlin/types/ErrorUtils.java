@@ -52,12 +52,6 @@ public class ErrorUtils {
         ERROR_MODULE = new ModuleDescriptor() {
             @NotNull
             @Override
-            public PlatformKind getPlatformKind() {
-                return PlatformKind.DEFAULT;
-            }
-
-            @NotNull
-            @Override
             public SourceKind getSourceKind() {
                 return SourceKind.NONE;
             }

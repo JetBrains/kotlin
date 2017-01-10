@@ -41,10 +41,12 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
         declaration: D,
-        private val implPlatformKind: PlatformKind,
+        private val implPlatform: MultiTargetPlatform.Specific,
         private val generateIt: KtPsiFactory.(Project, D) -> D?
 ) : KotlinQuickFixAction<D>(declaration) {
 
@@ -52,7 +54,7 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
 
     protected abstract val elementType: String
 
-    override fun getText() = "Create header $elementType implementation for platform ${implPlatformKind.name}"
+    override fun getText() = "Create header $elementType implementation for platform ${implPlatform.platform}"
 
     override fun startInWriteAction() = false
 
@@ -86,7 +88,7 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
 
     private fun Project.implementationModuleOf(headerModule: Module) =
             allModules().firstOrNull {
-                TargetPlatformDetector.getPlatform(it).kind == implPlatformKind &&
+                TargetPlatformDetector.getPlatform(it).multiTargetPlatform == implPlatform &&
                 headerModule in ModuleRootManager.getInstance(it).dependencies
             }
 
@@ -136,11 +138,11 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
             val declaration = d.psiElement as? KtNamedDeclaration ?: return null
             val compatibility = d.c
             if (compatibility.isNotEmpty()) return null
-            val implPlatformKind = d.b.platformKind
+            val implPlatform = d.b.getMultiTargetPlatform() as? MultiTargetPlatform.Specific ?: return null
             return when (declaration) {
-                is KtClassOrObject -> CreateHeaderClassImplementationFix(declaration, implPlatformKind)
-                is KtFunction -> CreateHeaderFunctionImplementationFix(declaration, implPlatformKind)
-                is KtProperty -> CreateHeaderPropertyImplementationFix(declaration, implPlatformKind)
+                is KtClassOrObject -> CreateHeaderClassImplementationFix(declaration, implPlatform)
+                is KtFunction -> CreateHeaderFunctionImplementationFix(declaration, implPlatform)
+                is KtProperty -> CreateHeaderPropertyImplementationFix(declaration, implPlatform)
                 else -> null
             }
         }
@@ -149,8 +151,8 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
 
 class CreateHeaderClassImplementationFix(
         klass: KtClassOrObject,
-        implPlatformKind: PlatformKind
-) : CreateHeaderImplementationFix<KtClassOrObject>(klass, implPlatformKind, { project, element ->
+        implPlatform: MultiTargetPlatform.Specific
+) : CreateHeaderImplementationFix<KtClassOrObject>(klass, implPlatform, { project, element ->
     generateClassOrObject(project, element, implNeeded = true)
 }) {
 
@@ -159,8 +161,8 @@ class CreateHeaderClassImplementationFix(
 
 class CreateHeaderPropertyImplementationFix(
         property: KtProperty,
-        implPlatformKind: PlatformKind
-) : CreateHeaderImplementationFix<KtProperty>(property, implPlatformKind, { project, element ->
+        implPlatform: MultiTargetPlatform.Specific
+) : CreateHeaderImplementationFix<KtProperty>(property, implPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
     descriptor?.let { generateProperty(project, element, descriptor, implNeeded = true) }
 }) {
@@ -170,8 +172,8 @@ class CreateHeaderPropertyImplementationFix(
 
 class CreateHeaderFunctionImplementationFix(
         function: KtFunction,
-        implPlatformKind: PlatformKind
-) : CreateHeaderImplementationFix<KtFunction>(function, implPlatformKind, { project, element ->
+        implPlatform: MultiTargetPlatform.Specific
+) : CreateHeaderImplementationFix<KtFunction>(function, implPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
     descriptor?.let { generateFunction(project, element, descriptor, implNeeded = true) }
 }) {

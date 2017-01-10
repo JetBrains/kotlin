@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
@@ -29,15 +31,18 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         moduleName: Name,
         private val storageManager: StorageManager,
         override val builtIns: KotlinBuiltIns,
-        override val platformKind: PlatformKind = PlatformKind.DEFAULT,
+        // May be null in compiler context, should be not-null in IDE context
+        multiTargetPlatform: MultiTargetPlatform? = null,
         override val sourceKind: SourceKind = SourceKind.NONE,
-        private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
     }
+
+    private val capabilities = capabilities + (multiTargetPlatform?.let { mapOf(MultiTargetPlatform.CAPABILITY to it) } ?: emptyMap())
 
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
@@ -81,9 +86,9 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     fun setDependencies(dependencies: ModuleDependencies) {
         assert(this.dependencies == null) { "Dependencies of $id were already set" }
         this.dependencies = dependencies
-        if (platformKind == PlatformKind.DEFAULT) return
+        if (getMultiTargetPlatform() == MultiTargetPlatform.Common) return
         for (dependencyModule in allDependencyModules) {
-            if (dependencyModule.platformKind != PlatformKind.DEFAULT) continue
+            if (dependencyModule.getMultiTargetPlatform() != MultiTargetPlatform.Common) continue
             if (dependencyModule.sourceKind != sourceKind) continue
             (dependencyModule as? ModuleDescriptorImpl)?.allImplementingModules?.add(this)
         }

@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -150,7 +151,7 @@ object TopDownAnalyzerFacadeForJVM {
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(
                     moduleContext, Name.special("<dependencies of ${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
-                    module.builtIns
+                    module.builtIns, null
             )
 
             // Scope for the dependency module contains everything except files present in the scope for the source module
@@ -261,7 +262,7 @@ object TopDownAnalyzerFacadeForJVM {
         val projectContext = ProjectContext(project)
         val builtIns = JvmBuiltIns(projectContext.storageManager, !createBuiltInsFromModule)
         return ContextForNewModule(
-                projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns
+                projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns, null
         ).apply {
             if (createBuiltInsFromModule) {
                 builtIns.builtInsModule = module

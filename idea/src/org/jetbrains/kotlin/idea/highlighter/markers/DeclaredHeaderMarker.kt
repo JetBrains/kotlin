@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 fun ModuleDescriptor.commonModuleOrNull() = allDependencyModules.filter {
-    it.platformKind == PlatformKind.DEFAULT && it.sourceKind == sourceKind
+    it.getMultiTargetPlatform() == MultiTargetPlatform.Common && it.sourceKind == sourceKind
 }.firstOrNull()
 
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null

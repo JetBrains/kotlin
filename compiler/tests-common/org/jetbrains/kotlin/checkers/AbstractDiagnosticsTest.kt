@@ -474,13 +474,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val platform =
                 if (nameSuffix.isEmpty()) null
                 else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix.toUpperCase())
-        val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> =
-                if (platform == null) emptyMap()
-                else mapOf(MultiTargetPlatform.CAPABILITY to platform)
         return ModuleDescriptorImpl(
                 Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager),
-                if (platform == MultiTargetPlatform.Common) PlatformKind.DEFAULT else PlatformKind.JVM,
-                SourceKind.TEST, capabilities
+                platform, SourceKind.TEST
         )
     }
 

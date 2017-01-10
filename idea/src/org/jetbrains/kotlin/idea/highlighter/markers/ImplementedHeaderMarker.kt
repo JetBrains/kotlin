@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import java.awt.event.MouseEvent
 
 fun ModuleDescriptor.hasImplementationsOf(descriptor: MemberDescriptor) =
@@ -49,7 +51,7 @@ fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {
     if (platformModulesWithImplementation.isEmpty()) return null
 
     return platformModulesWithImplementation.joinToString(prefix = "Has implementations in ") {
-        it.platformKind.name
+        (it.getMultiTargetPlatform() as MultiTargetPlatform.Specific).platform
     }
 }
 

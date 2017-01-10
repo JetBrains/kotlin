@@ -16,12 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
-import org.jetbrains.kotlin.descriptors.PlatformKind
 import org.jetbrains.kotlin.platform.JvmBuiltIns
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.PlatformConfigurator
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -49,6 +45,5 @@ object JvmPlatform : TargetPlatform("JVM") {
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
 
-    override val kind: PlatformKind
-        get() = PlatformKind.JVM
+    override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
 }

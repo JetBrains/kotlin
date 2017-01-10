@@ -78,7 +78,8 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 ProjectContext(project), listOf(moduleInfo),
                 { ModuleContent(files, GlobalSearchScope.allScope(project)) },
                 object : PlatformAnalysisParameters {},
-                packagePartProviderFactory = packagePartProviderFactory
+                packagePartProviderFactory = packagePartProviderFactory,
+                modulePlatforms = { MultiTargetPlatform.Common }
         )
 
         val moduleDescriptor = resolver.descriptorForModule(moduleInfo)

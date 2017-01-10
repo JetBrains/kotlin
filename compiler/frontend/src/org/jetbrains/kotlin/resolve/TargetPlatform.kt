@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.PlatformKind
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -36,7 +35,7 @@ abstract class TargetPlatform(val platformName: String) {
     abstract val platformConfigurator: PlatformConfigurator
     abstract val defaultImports: List<ImportPath>
 
-    abstract val kind: PlatformKind
+    abstract val multiTargetPlatform: MultiTargetPlatform
 
     object Default : TargetPlatform("Default") {
         override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
@@ -61,8 +60,8 @@ abstract class TargetPlatform(val platformName: String) {
                     }
                 }
 
-        override val kind: PlatformKind
-            get() = PlatformKind.DEFAULT
+        override val multiTargetPlatform: MultiTargetPlatform
+            get() = MultiTargetPlatform.Common
     }
 }
 

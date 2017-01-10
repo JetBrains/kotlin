@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -159,7 +160,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
             packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
             firstDependency: M? = null,
-            modulePlatforms: (M) -> PlatformKind = { PlatformKind.DEFAULT },
+            modulePlatforms: (M) -> MultiTargetPlatform?,
             moduleSources: (M) -> SourceKind = { SourceKind.NONE }
     ): ResolverForProject<M> {
         val storageManager = projectContext.storageManager
