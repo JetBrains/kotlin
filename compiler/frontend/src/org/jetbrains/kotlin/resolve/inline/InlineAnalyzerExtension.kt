@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.inline
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReified
+import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -140,7 +140,7 @@ object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
         }
 
         if (InlineUtil.containsReifiedTypeParameters(functionDescriptor) ||
-            functionDescriptor.isInlineOnlyOrReified() ||
+            functionDescriptor.isInlineOnlyOrReifiable() ||
             functionDescriptor.isHeader) return
 
         val reportOn = function.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: function

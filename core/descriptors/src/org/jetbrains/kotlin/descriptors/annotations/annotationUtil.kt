@@ -70,7 +70,7 @@ private operator fun Collection<ValueParameterDescriptor>.get(parameterName: Str
 
 private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
-fun MemberDescriptor.isInlineOnlyOrReified(): Boolean =
+fun MemberDescriptor.isInlineOnlyOrReifiable(): Boolean =
         this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
 
 fun MemberDescriptor.isInlineOnly(): Boolean {

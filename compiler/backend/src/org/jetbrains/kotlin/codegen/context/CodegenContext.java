@@ -38,7 +38,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isInlineOnlyOrReified;
+import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isInlineOnlyOrReifiable;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -643,7 +643,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             boolean withinInline,
             boolean isSuperCall
     ) {
-        if (isInlineOnlyOrReified(unwrappedDescriptor)) return false;
+        if (isInlineOnlyOrReifiable(unwrappedDescriptor)) return false;
 
         return isSuperCall && withinInline ||
                (accessFlag & ACC_PRIVATE) != 0 ||

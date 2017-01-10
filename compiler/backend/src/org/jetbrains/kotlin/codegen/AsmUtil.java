@@ -66,7 +66,7 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isInlineOnlyOrReified;
+import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isInlineOnlyOrReifiable;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
@@ -346,7 +346,7 @@ public class AsmUtil {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
 
-        if (isInlineOnlyOrReified(memberDescriptor)) return ACC_PRIVATE;
+        if (isInlineOnlyOrReifiable(memberDescriptor)) return ACC_PRIVATE;
 
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
