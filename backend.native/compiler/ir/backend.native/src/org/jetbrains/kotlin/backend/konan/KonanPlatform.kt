@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.backend.konan.KonanPlatformConfigurator
-import org.jetbrains.kotlin.descriptors.PlatformKind
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
@@ -35,7 +35,7 @@ class KonanBuiltIns: KotlinBuiltIns {
 }
 
 object KonanPlatform : TargetPlatform("Konan") {
-    override val kind = PlatformKind.DEFAULT /* TODO: native */
+    override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
     override val defaultImports: List<ImportPath> = Default.defaultImports + listOf(
             ImportPath("kotlin.*"),
             ImportPath("kotlin.collections.*"),

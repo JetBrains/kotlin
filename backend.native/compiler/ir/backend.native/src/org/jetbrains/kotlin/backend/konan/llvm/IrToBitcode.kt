@@ -1337,11 +1337,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateGetField(value: IrGetField): LLVMValueRef {
         context.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
-            val thisPtr = instanceFieldAccessReceiver(value)
+            val thisPtr = evaluateExpression(value.receiver!!)
             return codegen.loadSlot(
                     fieldPtrOfClass(thisPtr, value.descriptor), value.descriptor.isVar())
         }
         else {
+            assert (value.receiver == null)
             val ptr = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)!!
             return codegen.loadSlot(ptr, value.descriptor.isVar())
         }
@@ -1362,26 +1363,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun instanceFieldAccessReceiver(expression: IrFieldAccessExpression): LLVMValueRef {
-        val receiverExpression = expression.receiver
-        if (receiverExpression != null) {
-            return evaluateExpression(receiverExpression)
-        } else {
-            val classDescriptor = expression.descriptor.containingDeclaration as ClassDescriptor
-            return currentCodeContext.genGetValue(classDescriptor.thisAsReceiverParameter)
-        }
-    }
-
-    //-------------------------------------------------------------------------//
-
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
         context.log("evaluateSetField           : ${ir2string(value)}")
         val valueToAssign = evaluateExpression(value.value)
         if (value.descriptor.dispatchReceiverParameter != null) {
-            val thisPtr = instanceFieldAccessReceiver(value)
+            val thisPtr = evaluateExpression(value.receiver!!)
             codegen.storeAnyGlobal(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
         }
         else {
+            assert (value.receiver == null)
             val globalValue = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)
             codegen.storeAnyGlobal(valueToAssign, globalValue!!)
         }

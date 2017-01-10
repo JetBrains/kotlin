@@ -5,16 +5,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.types.KotlinType
 
-class IrLoweringContext(backendContext: BackendContext) : GeneratorContext {
-    override val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
-}
+class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
 
-class FunctionIrGenerator(backendContext: BackendContext, functionDescriptor: FunctionDescriptor) : GeneratorWithScope {
+class FunctionIrGenerator(backendContext: BackendContext, functionDescriptor: FunctionDescriptor) : IrGeneratorWithScope {
     override val context = IrLoweringContext(backendContext)
     override val scope = Scope(functionDescriptor)
 }
