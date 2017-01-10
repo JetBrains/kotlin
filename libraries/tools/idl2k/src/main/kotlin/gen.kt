@@ -40,7 +40,8 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
                                 override = false,
                                 kind = AttributeKind.ARGUMENT,
                                 vararg = it.vararg,
-                                static = it.static
+                                static = it.static,
+                                required = it.required
                         )
                     },
                     nativeGetterOrSetter = nativeGetterOrSetter,
@@ -100,7 +101,8 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
                 kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
                 override = false,
                 vararg = attribute.vararg,
-                static = attribute.static
+                static = attribute.static,
+                required = attribute.required
         )
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
@@ -118,7 +120,7 @@ private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefini
 private fun InterfaceDefinition.mapAttributes(repository: Repository)
         = attributes.map { generateAttribute(putNoImpl = dictionary, repository = repository, attribute = it, nullableAttributes = dictionary) }
 private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
-private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), null, false, AttributeKind.VAL, false, false, true)
+private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), null, false, AttributeKind.VAL, false, false, true, false)
 private val EMPTY_CONSTRUCTOR = ExtendedAttribute(null, "Constructor", emptyList())
 
 fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {

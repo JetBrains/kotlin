@@ -86,6 +86,7 @@ private val keywords = setOf("interface", "is", "as")
 
 private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substring(2), 16) else BigInteger(this)
 private fun String.replaceWrongConstants(type: Type) = when {
+    this == "null" && type.nullable -> "null"
     this == "noImpl" || type is SimpleType && type.type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "noImpl"
     type is SimpleType && type.type == "Double" && this.matches("[0-9]+".toRegex()) -> "${this}.0"
     else -> this
@@ -242,7 +243,11 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
 }
 
 fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperTypes: List<GenerateTraitOrClass>, allTypes: Set<String>) {
-    val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes }).distinctBy { it.signature }.map { it.copy(kind = AttributeKind.ARGUMENT) }.dynamicIfUnknownType(allTypes)
+    val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes })
+            .distinctBy { it.signature }
+            .map { it.copy(kind = AttributeKind.ARGUMENT) }
+            .dynamicIfUnknownType(allTypes)
+            .map { if (it.initializer == null && (it.type.nullable || it.type == DynamicType) && !it.required) it.copy(initializer = "null") else it }
 
     appendln("@Suppress(\"NOTHING_TO_INLINE\")")
     append("public inline fun ${dictionary.name}")
@@ -308,7 +313,8 @@ private fun merge(a: GenerateAttribute, b: GenerateAttribute): GenerateAttribute
             merge(a.kind, b.kind),
             a.override,
             a.vararg,
-            a.static
+            a.static,
+            a.required || b.required
     )
 }
 

@@ -29,7 +29,7 @@ import java.util.ArrayList
 
 data class ExtendedAttribute(val name: String?, val call: String, val arguments: List<Attribute>)
 data class Operation(val name: String, val returnType: Type, val parameters: List<Attribute>, val attributes: List<ExtendedAttribute>, val static: Boolean)
-data class Attribute(val name: String, val type: Type, val readOnly: Boolean = true, val defaultValue: String? = null, val vararg: Boolean, val static: Boolean)
+data class Attribute(val name: String, val type: Type, val readOnly: Boolean = true, val defaultValue: String? = null, val vararg: Boolean, val static: Boolean, val required: Boolean)
 data class Constant(val name: String, val type: Type, val value: String?)
 
 enum class DefinitionKind {
@@ -102,7 +102,7 @@ class ExtendedAttributeParser(private val namespace: String) : WebIDLBaseVisitor
         object : WebIDLBaseVisitor<Unit>() {
             override fun visitTerminal(node: TerminalNode) {
                 if (node.symbol.type == WebIDLLexer.IDENTIFIER_WEBIDL) {
-                    arguments.add(Attribute(node.text, AnyType(), true, vararg = false, static = false))
+                    arguments.add(Attribute(node.text, AnyType(), true, vararg = false, static = false, required = false))
                 }
             }
         }.visitChildren(ctx)
@@ -202,8 +202,9 @@ class AttributeVisitor(private val readOnly: Boolean = false, private val static
     private var name: String = ""
     private var defaultValue: String? = null
     private var vararg: Boolean = false
+    private var required: Boolean = false
 
-    override fun defaultResult(): Attribute = Attribute(name, type, readOnly, defaultValue, vararg, static)
+    override fun defaultResult(): Attribute = Attribute(name, type, readOnly, defaultValue, vararg, static, required)
 
     override fun visitType(ctx: WebIDLParser.TypeContext): Attribute {
         type = TypeVisitor(namespace).visit(ctx)
@@ -213,6 +214,9 @@ class AttributeVisitor(private val readOnly: Boolean = false, private val static
     override fun visitOptionalOrRequiredArgument(ctx: WebIDLParser.OptionalOrRequiredArgumentContext): Attribute {
         if (ctx.children?.any { it is TerminalNode && it.text == "optional" } ?: false) {
             defaultValue = "noImpl"
+        }
+        if (ctx.children?.any { it is TerminalNode && it.text == "required" } ?: false) {
+            required = true
         }
         return visitChildren(ctx)
     }
@@ -367,6 +371,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
                 ?.text
 
         val type = TypeVisitor(namespace).visit(ctx.children.first { it is TypeContext })
+        var required = false
         val defaultValue = object : WebIDLBaseVisitor<String?>() {
             private var value: String? = null
 
@@ -376,9 +381,16 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
                 value = ctx2.text
                 return value
             }
+
+            override fun visitRequired(ctx: RequiredContext?): String? {
+                if (ctx?.children?.any { it is TerminalNode && it.text == "required" } ?: false) {
+                    required = true
+                }
+                return super.visitRequired(ctx)
+            }
         }.visit(ctx)
 
-        attributes.add(Attribute(name ?: "", type, false, defaultValue, false, static))
+        attributes.add(Attribute(name ?: "", type, false, defaultValue, false, static, required))
 
         return defaultResult()
     }

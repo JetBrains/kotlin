@@ -28,7 +28,7 @@ data class Repository(
 enum class AttributeKind {
     VAL, VAR, ARGUMENT
 }
-data class GenerateAttribute(val name: String, val type: Type, val initializer: String?, val getterSetterNoImpl: Boolean, val kind: AttributeKind, val override: Boolean, var vararg: Boolean, val static: Boolean)
+data class GenerateAttribute(val name: String, val type: Type, val initializer: String?, val getterSetterNoImpl: Boolean, val kind: AttributeKind, val override: Boolean, var vararg: Boolean, val static: Boolean, val required: Boolean)
 
 val GenerateAttribute.getterNoImpl: Boolean
     get() = getterSetterNoImpl
