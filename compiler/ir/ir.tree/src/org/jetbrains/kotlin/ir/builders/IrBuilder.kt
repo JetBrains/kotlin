@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.builders
+package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 

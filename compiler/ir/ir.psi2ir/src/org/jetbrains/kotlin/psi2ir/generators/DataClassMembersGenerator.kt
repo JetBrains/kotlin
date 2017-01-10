@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.builders.*
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.BindingContext

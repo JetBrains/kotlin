@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.builders
+package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.psi2ir.generators.Scope
 
 interface IrGenerator {
     val context: IrGeneratorContext

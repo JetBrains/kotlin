@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir.generators
+package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.psi2ir.builders.IrGeneratorContext
 
 fun primitiveOp1(startOffset: Int, endOffset: Int, primitiveOpDescriptor: CallableDescriptor, origin: IrStatementOrigin,
                  argument: IrExpression): IrExpression =

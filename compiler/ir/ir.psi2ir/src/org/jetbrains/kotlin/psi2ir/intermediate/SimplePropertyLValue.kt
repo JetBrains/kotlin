@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 
 class SimplePropertyLValue(
