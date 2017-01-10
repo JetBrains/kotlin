@@ -150,8 +150,9 @@ internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef = memScoped {
 }
 
 internal fun ContextUtils.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {
-    val returnType = if (function is ConstructorDescriptor) voidType else getLLVMReturnType(function.returnType!!)
-    val paramTypes = ArrayList(function.allValueParameters.map { getLLVMType(it.type) })
+    val original = function.original
+    val returnType = if (original is ConstructorDescriptor) voidType else getLLVMReturnType(original.returnType!!)
+    val paramTypes = ArrayList(original.allValueParameters.map { getLLVMType(it.type) })
     if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 
     memScoped {
