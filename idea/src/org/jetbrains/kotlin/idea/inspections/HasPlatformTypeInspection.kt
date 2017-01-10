@@ -47,7 +47,8 @@ class HasPlatformTypeInspection(
 
     override val problemHighlightType = ProblemHighlightType.WEAK_WARNING
 
-    override val problemText = "Declaration has platform type. Make the type explicit to prevent subtle bugs."
+    override val problemText = "Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. " +
+                               "Specify type explicitly as nullable or non-nullable."
 
     override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
         val type = SpecifyTypeExplicitlyIntention.dangerousFlexibleTypeOrNull(element, publicAPIOnly, reportPlatformArguments) ?: return null
