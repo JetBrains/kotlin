@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.builders.irBlockBody
 import org.jetbrains.kotlin.psi2ir.builders.irGet
 import org.jetbrains.kotlin.psi2ir.builders.irReturn
 import org.jetbrains.kotlin.psi2ir.intermediate.*

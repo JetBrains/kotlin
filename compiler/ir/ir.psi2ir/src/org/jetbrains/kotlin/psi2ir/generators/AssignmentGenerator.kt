@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.builders.defineTemporary
-import org.jetbrains.kotlin.psi2ir.builders.irBlock
 import org.jetbrains.kotlin.psi2ir.builders.irGet
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext

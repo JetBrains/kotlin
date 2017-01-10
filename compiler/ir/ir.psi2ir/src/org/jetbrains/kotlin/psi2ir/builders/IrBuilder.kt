@@ -16,42 +16,35 @@
 
 package org.jetbrains.kotlin.psi2ir.builders
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.generators.Generator
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 import org.jetbrains.kotlin.psi2ir.generators.Scope
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 abstract class IrBuilder(
-        override val context: GeneratorContext,
+        override val context: IrGeneratorContext,
         var startOffset: Int,
         var endOffset: Int
-) : Generator
+) : IrGenerator
 
 abstract class IrBuilderWithScope(
-        context: GeneratorContext,
+        context: IrGeneratorContext,
         override val scope: Scope,
         startOffset: Int,
         endOffset: Int
-) : IrBuilder(context, startOffset, endOffset), GeneratorWithScope
+) : IrBuilder(context, startOffset, endOffset), IrGeneratorWithScope
 
 abstract class IrStatementsBuilder<out T : IrElement>(
-        context: GeneratorContext,
+        context: IrGeneratorContext,
         scope: Scope,
         startOffset: Int,
         endOffset: Int
-) : IrBuilderWithScope(context, scope, startOffset, endOffset), GeneratorWithScope {
+) : IrBuilderWithScope(context, scope, startOffset, endOffset), IrGeneratorWithScope {
     operator fun IrStatement.unaryPlus() {
         addStatement(this)
     }
@@ -61,7 +54,7 @@ abstract class IrStatementsBuilder<out T : IrElement>(
 }
 
 open class IrBlockBodyBuilder(
-        context: GeneratorContext,
+        context: IrGeneratorContext,
         scope: Scope,
         startOffset: Int,
         endOffset: Int
@@ -83,7 +76,7 @@ open class IrBlockBodyBuilder(
 }
 
 class IrBlockBuilder(
-        context: GeneratorContext, scope: Scope,
+        context: IrGeneratorContext, scope: Scope,
         startOffset: Int, endOffset: Int,
         val origin: IrStatementOrigin? = null,
         var resultType: KotlinType? = null
@@ -115,23 +108,20 @@ fun <T : IrBuilder> T.at(startOffset: Int, endOffset: Int): T {
     return this
 }
 
-fun <T : IrBuilder> T.at(psiElement: PsiElement): T {
-    this.startOffset = psiElement.startOffset
-    this.endOffset = psiElement.endOffset
-    return this
-}
-
-inline fun GeneratorWithScope.irBlock(ktElement: KtElement? = null, origin: IrStatementOrigin? = null, resultType: KotlinType? = null,
-                                      body: IrBlockBuilder.() -> Unit
+inline fun IrGeneratorWithScope.irBlock(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
+                                        origin: IrStatementOrigin? = null, resultType: KotlinType? = null,
+                                        body: IrBlockBuilder.() -> Unit
 ): IrExpression =
         IrBlockBuilder(context, scope,
-                       ktElement?.startOffset ?: UNDEFINED_OFFSET,
-                       ktElement?.endOffset ?: UNDEFINED_OFFSET,
+                       startOffset,
+                       endOffset,
                        origin, resultType
         ).block(body)
 
-inline fun GeneratorWithScope.irBlockBody(ktElement: KtElement? = null, body: IrBlockBodyBuilder.() -> Unit) : IrBlockBody =
+inline fun IrGeneratorWithScope.irBlockBody(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
+                                            body: IrBlockBodyBuilder.() -> Unit
+) : IrBlockBody =
         IrBlockBodyBuilder(context, scope,
-                           ktElement?.startOffset ?: UNDEFINED_OFFSET,
-                           ktElement?.endOffset ?: UNDEFINED_OFFSET
+                           startOffset,
+                           endOffset
         ).blockBody(body)
