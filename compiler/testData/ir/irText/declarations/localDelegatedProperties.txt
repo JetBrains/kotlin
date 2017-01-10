@@ -25,7 +25,7 @@ FILE /localDelegatedProperties.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY var x: kotlin.Int
         VAR DELEGATE val `x$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
-          CALL 'hashMapOf(vararg Pair<String, Int>): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+          CALL 'hashMapOf(): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
             <K>: String
             <V>: Int
         FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-x>(): kotlin.Int

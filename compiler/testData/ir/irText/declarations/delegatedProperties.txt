@@ -79,7 +79,7 @@ FILE /delegatedProperties.kt
   PROPERTY public var test4: kotlin.Any
     FIELD DELEGATE val `test4$delegate`: java.util.HashMap<kotlin.String, kotlin.Any>
       EXPRESSION_BODY
-        CALL 'hashMapOf(vararg Pair<String, Any>): HashMap<String, Any>' type=java.util.HashMap<kotlin.String, kotlin.Any> origin=null
+        CALL 'hashMapOf(): HashMap<String, Any>' type=java.util.HashMap<kotlin.String, kotlin.Any> origin=null
           <K>: String
           <V>: Any
     FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.Any
