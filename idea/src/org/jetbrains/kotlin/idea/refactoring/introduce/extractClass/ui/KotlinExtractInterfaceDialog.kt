@@ -55,6 +55,7 @@ class KotlinExtractInterfaceDialog(
                 getInterfaceContainmentVerifier { selectedMembers }
         ) {
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
+                if (!super.isAbstractEnabled(memberInfo)) return false
                 val member = memberInfo.member
                 return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
             }

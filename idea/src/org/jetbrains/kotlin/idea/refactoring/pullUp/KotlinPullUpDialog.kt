@@ -74,6 +74,9 @@ class KotlinPullUpDialog(
             if (superClass !is KtClass) return false
 
             val member = memberInfo.member
+            if (member.hasModifier(KtTokens.INLINE_KEYWORD) ||
+                member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
+                member.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
             if (member.isCompanionMemberOf(sourceClass)) return false
 
             if (!superClass.isInterface()) return true
