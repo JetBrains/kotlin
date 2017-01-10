@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PlatformKind
@@ -67,6 +68,10 @@ class PlatformHeaderAnnotator : Annotator {
             checker.checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticSink, checkImpl = false)
         }
 
-        return if (diagnosticList.isNotEmpty()) SimpleDiagnostics(diagnosticList) else Diagnostics.EMPTY
+        val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()
+        val filteredList = diagnosticList.filter {
+            !suppressionCache.isSuppressed(declaration, it.factory.name, it.severity)
+        }
+        return if (filteredList.isNotEmpty()) SimpleDiagnostics(filteredList) else Diagnostics.EMPTY
     }
 }
