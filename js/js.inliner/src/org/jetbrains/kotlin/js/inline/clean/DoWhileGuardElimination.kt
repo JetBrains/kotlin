@@ -62,7 +62,7 @@ internal class DoWhileGuardElimination(private val root: JsStatement) {
                 val body = x.body
                 val guard = when (body) {
                     is JsBlock -> {
-                        val firstStatement = body.statements.first()
+                        val firstStatement = body.statements.firstOrNull()
                         if (firstStatement is JsLabel && body.statements.size == 1) {
                             firstStatement
                         }
