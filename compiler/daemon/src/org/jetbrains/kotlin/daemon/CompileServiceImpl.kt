@@ -297,6 +297,14 @@ class CompileServiceImpl(
         val serviceReporter = CompileServiceReporterImpl(servicesFacade, additionalCompilerArguments)
 
         return when (compilerMode) {
+            CompileService.CompilerMode.JPS_COMPILER -> {
+                val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
+
+                doCompile(sessionId, serviceReporter, operationsTracer) { eventManger, profiler ->
+                    val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
+                    execCompiler(targetPlatform, services, compilerArguments, messageCollector)
+                }
+            }
             CompileService.CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, serviceReporter, operationsTracer) { eventManger, profiler ->
                     execCompiler(targetPlatform, Services.EMPTY, compilerArguments, messageCollector)

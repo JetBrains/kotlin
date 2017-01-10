@@ -50,3 +50,5 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
     @Throws(RemoteException::class)
     fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>?
 }
+
+interface JpsCompilerServicesFacade : CompilerServicesFacadeBase, CompilerCallbackServicesFacade

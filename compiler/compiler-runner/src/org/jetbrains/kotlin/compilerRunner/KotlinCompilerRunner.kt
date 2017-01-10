@@ -23,13 +23,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
-import org.jetbrains.kotlin.daemon.client.CompilationServices
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -109,15 +106,10 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
 
     protected fun runCompiler(
             compilerClassName: String,
-            arguments: CommonCompilerArguments,
-            additionalArguments: String,
+            compilerArgs: CommonCompilerArguments,
             environment: Env): ExitCode {
         return try {
-            val argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments)
-            argumentsList.addAll(additionalArguments.split(" "))
-
-            val argsArray = argumentsList.toTypedArray()
-            doRunCompiler(compilerClassName, argsArray, environment)
+            compileWithDaemonOrFallback(compilerClassName, compilerArgs, environment)
         }
         catch (e: Throwable) {
             MessageCollectorUtil.reportException(environment.messageCollector, e)
@@ -125,42 +117,20 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
         }
     }
 
-    protected abstract fun doRunCompiler(
+    protected abstract fun compileWithDaemonOrFallback(
             compilerClassName: String,
-            argsArray: Array<String>,
+            compilerArgs: CommonCompilerArguments,
             environment: Env
     ): ExitCode
 
     /**
      * Returns null if could not connect to daemon
      */
-    protected open fun compileWithDaemon(
+    protected abstract fun compileWithDaemon(
             compilerClassName: String,
-            argsArray: Array<String>,
+            compilerArgs: CommonCompilerArguments,
             environment: Env
-    ): ExitCode? {
-        val compilerOut = ByteArrayOutputStream()
-        val daemonOut = ByteArrayOutputStream()
-        val services = CompilationServices(
-                incrementalCompilationComponents = environment.services.get(IncrementalCompilationComponents::class.java),
-                compilationCanceledStatus = environment.services.get(CompilationCanceledStatus::class.java))
-        val targetPlatform = when (compilerClassName) {
-            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
-            K2JS_COMPILER -> CompileService.TargetPlatform.JS
-            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
-        }
-
-        val res: Int = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            KotlinCompilerClient.incrementalCompile(daemon, sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
-        } ?: return null
-
-        val exitCode = exitCodeFromProcessExitCode(res)
-        processCompilerOutput(environment, compilerOut, exitCode)
-        BufferedReader(StringReader(daemonOut.toString())).forEachLine {
-            environment.messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
-        }
-        return exitCode
-    }
+    ): ExitCode?
 
     protected fun <T> withDaemon(environment: Env, retryOnConnectionError: Boolean, fn: (CompileService, sessionId: Int)->T): T? {
         fun retryOrFalse(e: Exception): T? {

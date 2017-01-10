@@ -36,7 +36,8 @@ interface CompileService : Remote {
 
     enum class CompilerMode : Serializable {
         NON_INCREMENTAL_COMPILER,
-        INCREMENTAL_COMPILER
+        INCREMENTAL_COMPILER,
+        JPS_COMPILER
     }
 
     companion object {

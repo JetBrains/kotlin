@@ -20,6 +20,7 @@ import net.rubygrapefruit.platform.Native
 import net.rubygrapefruit.platform.ProcessLauncher
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -81,10 +82,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 friendDirs = args.friendPaths?.map(::File) ?: emptyList())
         args.module = moduleFile.absolutePath
 
-        val additionalArguments = ""
-
         try {
-            return runCompiler(K2JVM_COMPILER, args, additionalArguments, environment)
+            return runCompiler(K2JVM_COMPILER, args, environment)
         }
         finally {
             moduleFile.delete()
@@ -96,11 +95,16 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args: K2JSCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        val additionalArguments = kotlinSources.joinToString(separator = " ") { it.absolutePath }
-        return runCompiler(K2JS_COMPILER, args, additionalArguments, environment)
+        args.freeArgs.addAll(kotlinSources.map { it.absolutePath })
+        return runCompiler(K2JS_COMPILER, args, environment)
     }
 
-    override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment): ExitCode {
+    override fun compileWithDaemonOrFallback(
+            compilerClassName: String,
+            compilerArgs: CommonCompilerArguments,
+            environment: GradleCompilerEnvironment
+    ): ExitCode {
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
         with (project.logger) {
             kotlinDebug { "Kotlin compiler class: $compilerClassName" }
             kotlinDebug { "Kotlin compiler classpath: ${environment.compilerClasspath.map { it.canonicalPath }.joinToString()}" }
@@ -109,7 +113,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val executionStrategy = System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
         if (executionStrategy == DAEMON_EXECUTION_STRATEGY) {
-            val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment)
+            val daemonExitCode = compileWithDaemon(compilerClassName, compilerArgs, environment)
 
             if (daemonExitCode != null) {
                 return daemonExitCode
@@ -128,7 +132,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         }
     }
 
-    override fun compileWithDaemon(compilerClassName: String, argsArray: Array<String>, environment: GradleCompilerEnvironment): ExitCode? {
+    override fun compileWithDaemon(compilerClassName: String, compilerArgs: CommonCompilerArguments, environment: GradleCompilerEnvironment): ExitCode? {
         val exitCode = if (environment is GradleIncrementalCompilerEnvironment) {
             incrementalCompilationWithDaemon(environment)
         }

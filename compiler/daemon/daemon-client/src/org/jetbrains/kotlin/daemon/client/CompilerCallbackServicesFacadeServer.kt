@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.rmi.server.UnicastRemoteObject
 
 
-class CompilerCallbackServicesFacadeServer(
+open class CompilerCallbackServicesFacadeServer(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val compilationCanceledStatus: CompilationCanceledStatus? = null,
         port: Int = SOCKET_ANY_FREE_PORT

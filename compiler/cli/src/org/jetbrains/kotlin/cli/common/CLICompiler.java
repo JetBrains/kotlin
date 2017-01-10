@@ -30,6 +30,7 @@ import kotlin.jvm.functions.Function1;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentUtilsKt;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -102,22 +103,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @SuppressWarnings("WeakerAccess") // Used in maven (see KotlinCompileMojoBase.java)
     public void parseArguments(@NotNull String[] args, @NotNull A arguments) {
-        Pair<List<String>, List<String>> unparsedArgs =
-                CollectionsKt.partition(Args.parse(arguments, args, false), new Function1<String, Boolean>() {
-                    @Override
-                    public Boolean invoke(String s) {
-                        return s.startsWith("-X");
-                    }
-                });
-
-        arguments.unknownExtraFlags = unparsedArgs.getFirst();
-        arguments.freeArgs = unparsedArgs.getSecond();
-
-        for (String argument : arguments.freeArgs) {
-            if (argument.startsWith("-")) {
-                throw new IllegalArgumentException("Invalid argument: " + argument);
-            }
-        }
+        ArgumentUtilsKt.parseArguments(args, arguments);
     }
 
     @NotNull
