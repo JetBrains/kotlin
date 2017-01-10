@@ -103,7 +103,7 @@ internal fun KonanBuiltIns.getKonanInternalClassOrNull(name: String): ClassDescr
  * @return built-in class `konan.internal.$name`
  */
 internal fun KonanBuiltIns.getKonanInternalClass(name: String): ClassDescriptor =
-        getKonanInternalClassOrNull(name)!!
+        getKonanInternalClassOrNull(name) ?: TODO(name)
 
 internal fun KonanBuiltIns.getKonanInternalFunctions(name: String): List<FunctionDescriptor> {
     return konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
