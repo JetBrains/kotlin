@@ -716,6 +716,16 @@ fun PsiNamedElement.isInterfaceClass(): Boolean = when (this) {
     else -> false
 }
 
+fun KtNamedDeclaration.isAbstract(): Boolean {
+    if (hasModifier(KtTokens.ABSTRACT_KEYWORD)) return true
+    if (!(containingClassOrObject?.isInterfaceClass() ?: false)) return false
+    return when (this) {
+        is KtProperty -> initializer == null && delegate == null && accessors.isEmpty()
+        is KtNamedFunction -> !hasBody()
+        else -> false
+    }
+}
+
 fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
         originalList: ListType,
         newList: ListType,

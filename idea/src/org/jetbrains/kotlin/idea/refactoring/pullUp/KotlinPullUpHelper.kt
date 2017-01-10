@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.idea.refactoring.isCompanionMemberOf
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.toKtDeclarationWrapperAware
@@ -360,7 +361,7 @@ class KotlinPullUpHelper(
     }
 
     private fun removeOriginalMemberOrAddOverride(member: KtCallableDeclaration) {
-        if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+        if (member.isAbstract()) {
             member.delete()
         }
         else {

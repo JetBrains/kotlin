@@ -34,6 +34,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2K extends AbstractPullUpTest {
+        @TestMetadata("abstractFromInterfaceToInterface.kt")
+        public void testAbstractFromInterfaceToInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/abstractFromInterfaceToInterface.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("accidentalOverrides.kt")
         public void testAccidentalOverrides() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/accidentalOverrides.kt");

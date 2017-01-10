@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtrac
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
 import org.jetbrains.kotlin.idea.refactoring.pullUp.getInterfaceContainmentVerifier
+import org.jetbrains.kotlin.idea.refactoring.pullUp.isAbstractInInterface
 import org.jetbrains.kotlin.idea.refactoring.pullUp.mustBeAbstractInInterface
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -66,10 +67,12 @@ class KotlinExtractInterfaceDialog(
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
                 if (!super.isAbstractEnabled(memberInfo)) return false
                 val member = memberInfo.member
+                if (member.isAbstractInInterface(originalClass)) return false
                 return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
             }
 
-            override fun isAbstractWhenDisabled(member: KotlinMemberInfo) = member.member is KtProperty
+            override fun isAbstractWhenDisabled(member: KotlinMemberInfo) =
+                    member.member is KtProperty || member.member.isAbstractInInterface(originalClass)
         }
     }
 
