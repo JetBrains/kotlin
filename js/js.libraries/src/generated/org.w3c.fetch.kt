@@ -100,7 +100,7 @@ public external interface RequestInit {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun RequestInit(method: String?, headers: dynamic, body: dynamic, referrer: String?, referrerPolicy: dynamic, mode: String?, credentials: String?, cache: String?, redirect: String?, integrity: String?, keepalive: Boolean?, window: Any?): RequestInit {
+public inline fun RequestInit(method: String? = null, headers: dynamic = null, body: dynamic = null, referrer: String? = null, referrerPolicy: dynamic = null, mode: String? = null, credentials: String? = null, cache: String? = null, redirect: String? = null, integrity: String? = null, keepalive: Boolean? = null, window: Any? = null): RequestInit {
     val o = js("({})")
 
     o["method"] = method
@@ -156,7 +156,7 @@ public external interface ResponseInit {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: dynamic): ResponseInit {
+public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: dynamic = null): ResponseInit {
     val o = js("({})")
 
     o["status"] = status

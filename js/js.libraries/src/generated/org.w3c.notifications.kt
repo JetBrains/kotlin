@@ -105,7 +105,7 @@ public external interface NotificationOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun NotificationOptions(dir: String? = "auto", lang: String? = "", body: String? = "", tag: String? = "", image: String?, icon: String?, badge: String?, sound: String?, vibrate: dynamic, timestamp: Number?, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
+public inline fun NotificationOptions(dir: String? = "auto", lang: String? = "", body: String? = "", tag: String? = "", image: String? = null, icon: String? = null, badge: String? = null, sound: String? = null, vibrate: dynamic = null, timestamp: Number? = null, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
     val o = js("({})")
 
     o["dir"] = dir
@@ -142,7 +142,7 @@ public external interface NotificationAction {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun NotificationAction(action: String?, title: String?, icon: String?): NotificationAction {
+public inline fun NotificationAction(action: String?, title: String?, icon: String? = null): NotificationAction {
     val o = js("({})")
 
     o["action"] = action

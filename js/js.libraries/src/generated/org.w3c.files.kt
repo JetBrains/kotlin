@@ -55,7 +55,7 @@ public external interface FilePropertyBag : BlobPropertyBag {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun FilePropertyBag(lastModified: Int?, type: String? = ""): FilePropertyBag {
+public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
     o["lastModified"] = lastModified

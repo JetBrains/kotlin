@@ -1529,7 +1529,7 @@ public external interface ElementDefinitionOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ElementDefinitionOptions(extends: String?): ElementDefinitionOptions {
+public inline fun ElementDefinitionOptions(extends: String? = null): ElementDefinitionOptions {
     val o = js("({})")
 
     o["extends"] = extends
@@ -1807,7 +1807,7 @@ public external interface PromiseRejectionEventInit : EventInit {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun PromiseRejectionEventInit(promise: dynamic, reason: Any?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
+public inline fun PromiseRejectionEventInit(promise: dynamic, reason: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
     val o = js("({})")
 
     o["promise"] = promise
@@ -2033,7 +2033,7 @@ public external interface ImageBitmapOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ImageBitmapOptions(imageOrientation: String? = "none", premultiplyAlpha: String? = "default", colorSpaceConversion: String? = "default", resizeWidth: Int?, resizeHeight: Int?, resizeQuality: String? = "low"): ImageBitmapOptions {
+public inline fun ImageBitmapOptions(imageOrientation: String? = "none", premultiplyAlpha: String? = "default", colorSpaceConversion: String? = "default", resizeWidth: Int? = null, resizeHeight: Int? = null, resizeQuality: String? = "low"): ImageBitmapOptions {
     val o = js("({})")
 
     o["imageOrientation"] = imageOrientation
@@ -2570,7 +2570,7 @@ public external interface MutationObserverInit {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean?, characterData: Boolean?, subtree: Boolean? = false, attributeOldValue: Boolean?, characterDataOldValue: Boolean?, attributeFilter: Array<String>?): MutationObserverInit {
+public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean? = null, characterData: Boolean? = null, subtree: Boolean? = false, attributeOldValue: Boolean? = null, characterDataOldValue: Boolean? = null, attributeFilter: Array<String>? = null): MutationObserverInit {
     val o = js("({})")
 
     o["childList"] = childList
@@ -2683,7 +2683,7 @@ public external interface ElementCreationOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ElementCreationOptions(is_: String?): ElementCreationOptions {
+public inline fun ElementCreationOptions(is_: String? = null): ElementCreationOptions {
     val o = js("({})")
 
     o["is"] = is_
@@ -3194,7 +3194,7 @@ public external interface ScrollToOptions : ScrollOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ScrollToOptions(left: Double?, top: Double?, behavior: String? = "auto"): ScrollToOptions {
+public inline fun ScrollToOptions(left: Double? = null, top: Double? = null, behavior: String? = "auto"): ScrollToOptions {
     val o = js("({})")
 
     o["left"] = left
@@ -3286,7 +3286,7 @@ public external interface BoxQuadOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun BoxQuadOptions(box: String? = "border", relativeTo: dynamic): BoxQuadOptions {
+public inline fun BoxQuadOptions(box: String? = "border", relativeTo: dynamic = null): BoxQuadOptions {
     val o = js("({})")
 
     o["box"] = box

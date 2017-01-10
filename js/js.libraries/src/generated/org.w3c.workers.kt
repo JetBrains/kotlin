@@ -76,7 +76,7 @@ public external interface RegistrationOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun RegistrationOptions(scope: String?, type: String? = "classic"): RegistrationOptions {
+public inline fun RegistrationOptions(scope: String? = null, type: String? = "classic"): RegistrationOptions {
     val o = js("({})")
 
     o["scope"] = scope
@@ -112,7 +112,7 @@ public external interface ServiceWorkerMessageEventInit : EventInit {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ServiceWorkerMessageEventInit(data: Any?, origin: String?, lastEventId: String?, source: UnionMessagePortOrServiceWorker?, ports: Array<MessagePort>?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
+public inline fun ServiceWorkerMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
     val o = js("({})")
 
     o["data"] = data
@@ -282,7 +282,7 @@ public external interface ForeignFetchResponse {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ForeignFetchResponse(response: Response?, origin: String?, headers: Array<String>?): ForeignFetchResponse {
+public inline fun ForeignFetchResponse(response: Response?, origin: String? = null, headers: Array<String>? = null): ForeignFetchResponse {
     val o = js("({})")
 
     o["response"] = response
@@ -319,7 +319,7 @@ public external interface ExtendableMessageEventInit : ExtendableEventInit {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ExtendableMessageEventInit(data: Any?, origin: String?, lastEventId: String?, source: UnionClientOrMessagePortOrServiceWorker?, ports: Array<MessagePort>?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
+public inline fun ExtendableMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionClientOrMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
     val o = js("({})")
 
     o["data"] = data
@@ -360,7 +360,7 @@ public external interface CacheQueryOptions {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String?): CacheQueryOptions {
+public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = null): CacheQueryOptions {
     val o = js("({})")
 
     o["ignoreSearch"] = ignoreSearch
@@ -387,7 +387,7 @@ public external interface CacheBatchOperation {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun CacheBatchOperation(type: String?, request: Request?, response: Response?, options: CacheQueryOptions?): CacheBatchOperation {
+public inline fun CacheBatchOperation(type: String? = null, request: Request? = null, response: Response? = null, options: CacheQueryOptions? = null): CacheBatchOperation {
     val o = js("({})")
 
     o["type"] = type
