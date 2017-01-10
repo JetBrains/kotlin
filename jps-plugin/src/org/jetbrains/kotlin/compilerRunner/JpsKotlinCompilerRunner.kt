@@ -99,13 +99,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            daemon.compile(
-                    sessionId,
-                    CompileService.CompilerMode.JPS_COMPILER,
-                    targetPlatform,
-                    compilerArgs,
-                    CompilationOptions(reportingFilters = getReportingFilters(compilerArgs.verbose)),
-                    JpsCompilerServicesFacadeImpl(environment))
+            val options = CompilationOptions(CompileService.CompilerMode.JPS_COMPILER,
+                                             targetPlatform,
+                                             reportingFilters = getReportingFilters(compilerArgs.verbose))
+            daemon.compile(sessionId, compilerArgs, options, JpsCompilerServicesFacadeImpl(environment))
         }
 
         return res?.get()?.let { exitCodeFromProcessExitCode(it) }

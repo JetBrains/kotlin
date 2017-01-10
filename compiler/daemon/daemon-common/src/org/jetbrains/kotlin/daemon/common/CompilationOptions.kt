@@ -19,7 +19,11 @@ package org.jetbrains.kotlin.daemon.common
 import java.io.File
 import java.io.Serializable
 
-open class CompilationOptions(val reportingFilters: List<ReportingFilter>) : Serializable {
+open class CompilationOptions(
+        val compilerMode: CompileService.CompilerMode,
+        val targetPlatform: CompileService.TargetPlatform,
+        val reportingFilters: List<ReportingFilter>
+) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
     }
@@ -32,8 +36,10 @@ class IncrementalCompilationOptions(
         val workingDir: File,
         val customCacheVersionFileName: String,
         val customCacheVersion: Int,
+        compilerMode: CompileService.CompilerMode,
+        targetPlatform: CompileService.TargetPlatform,
         reportingFilters: List<ReportingFilter>
-) : CompilationOptions(reportingFilters) {
+) : CompilationOptions(compilerMode, targetPlatform, reportingFilters) {
     companion object {
         const val serialVersionUID: Long = 0
     }
