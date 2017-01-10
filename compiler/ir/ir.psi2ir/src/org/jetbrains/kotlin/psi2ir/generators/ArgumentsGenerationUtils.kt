@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
@@ -84,6 +85,17 @@ private fun generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor
                              throw AssertionError("'this' or 'super' receiver should be an expression receiver")
     val ktReceiver = expressionReceiver.expression
     return IrGetValueImpl(ktReceiver.startOffset, ktReceiver.endOffset, classDescriptor.thisAsReceiverParameter)
+}
+
+fun StatementGenerator.generateBackingFieldReceiver(
+        ktDefaultElement: KtElement,
+        resolvedCall: ResolvedCall<*>?,
+        fieldDescriptor: SyntheticFieldDescriptor
+): IntermediateValue? {
+
+    val receiver = resolvedCall?.dispatchReceiver ?: fieldDescriptor.getDispatchReceiverForBackend() ?: return null
+
+    return this.generateReceiver(ktDefaultElement, receiver)
 }
 
 fun StatementGenerator.generateCallReceiver(

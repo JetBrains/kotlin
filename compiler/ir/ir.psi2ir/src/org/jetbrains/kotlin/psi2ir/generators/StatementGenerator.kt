@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -276,6 +277,10 @@ class StatementGenerator(
                 }
                 is PropertyDescriptor -> {
                     CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall!!))
+                }
+                is SyntheticFieldDescriptor -> {
+                    val receiver = generateBackingFieldReceiver(expression, resolvedCall, descriptor)
+                    IrGetFieldImpl(expression.startOffset, expression.endOffset, descriptor.propertyDescriptor, receiver?.load())
                 }
                 is VariableDescriptor ->
                     CallGenerator(this).generateGetVariable(expression.startOffset, expression.endOffset, descriptor,

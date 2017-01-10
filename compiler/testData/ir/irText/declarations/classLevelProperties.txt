@@ -44,6 +44,7 @@ FILE /classLevelProperties.kt
       FUN public final fun <set-test4>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'test4: Int' type=kotlin.Unit origin=EQ
+            receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     PROPERTY public final var test5: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var test5: kotlin.Int

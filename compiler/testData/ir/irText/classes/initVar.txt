@@ -76,6 +76,7 @@ FILE /initVar.kt
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
+            receiver: GET_VAR '<receiver: TestInitVarWithCustomSetter>' type=TestInitVarWithCustomSetter origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
     PROPERTY public final var x: kotlin.Int
@@ -88,6 +89,7 @@ FILE /initVar.kt
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
+            receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterWithExplicitCtor>' type=TestInitVarWithCustomSetterWithExplicitCtor origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     ANONYMOUS_INITIALIZER TestInitVarWithCustomSetterWithExplicitCtor
       BLOCK_BODY
@@ -109,6 +111,7 @@ FILE /initVar.kt
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
+            receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterInCtor>' type=TestInitVarWithCustomSetterInCtor origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     CONSTRUCTOR public constructor TestInitVarWithCustomSetterInCtor()
       BLOCK_BODY
