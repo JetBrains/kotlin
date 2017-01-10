@@ -17,9 +17,23 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.XmlSerializerUtil
+import com.sampullara.cli.Args
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
+
+fun <A : CommonCompilerArguments> parseArguments(args: Array<String>, arguments: A) {
+    val unparsedArgs = Args.parse(arguments, args, false).partition { it.startsWith("-X") }
+
+    arguments.unknownExtraFlags = unparsedArgs.first
+    arguments.freeArgs = unparsedArgs.second
+
+    for (argument in arguments.freeArgs) {
+        if (argument.startsWith("-")) {
+            throw IllegalArgumentException("Invalid argument: " + argument)
+        }
+    }
+}
 
 fun <T : Any> copyBean(bean: T) = copyFields(bean, bean.javaClass.newInstance(), true)
 
