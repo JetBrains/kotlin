@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.daemon.common.AdditionalCompilerArguments
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.daemon.common.ReportCategory
 import org.jetbrains.kotlin.daemon.report.FilteringReporterBase
@@ -40,8 +40,8 @@ internal class CompileServiceReporterStreamAdapter(private val out: PrintStream)
 
 internal class CompileServiceReporterImpl(
         servicesFacade: CompilerServicesFacadeBase,
-        additionalCompilerArguments: AdditionalCompilerArguments
-) : FilteringReporterBase(servicesFacade, additionalCompilerArguments, ReportCategory.DAEMON_MESSAGE), CompileServiceReporter {
+        compilationOptions: CompilationOptions
+) : FilteringReporterBase(servicesFacade, compilationOptions, ReportCategory.DAEMON_MESSAGE), CompileServiceReporter {
 
     override fun report(severity: CompilerMessageSeverity, message: String) {
         report(severity.value, message)

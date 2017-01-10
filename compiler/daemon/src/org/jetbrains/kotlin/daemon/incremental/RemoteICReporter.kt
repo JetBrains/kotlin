@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.daemon.incremental
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.report.FilteringReporterBase
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
-import org.jetbrains.kotlin.daemon.common.AdditionalCompilerArguments
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationServicesFacade
 import org.jetbrains.kotlin.daemon.common.ReportCategory
 import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity.COMPILED_FILES
@@ -30,7 +30,7 @@ import java.io.Serializable
 
 internal class RemoteICReporter(
         servicesFacade: CompilerServicesFacadeBase,
-        additionalCompilerArgs: AdditionalCompilerArguments
+        additionalCompilerArgs: CompilationOptions
 ) : FilteringReporterBase(servicesFacade, additionalCompilerArgs, ReportCategory.INCREMENTAL_COMPILATION), ICReporter {
     override fun report(message: () -> String) {
         if (shouldReport(LOGGING.value)) {

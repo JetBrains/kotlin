@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.daemon.common
 import java.io.File
 import java.io.Serializable
 
-open class AdditionalCompilerArguments(val reportingFilters: List<ReportingFilter>) : Serializable {
+open class CompilationOptions(val reportingFilters: List<ReportingFilter>) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
     }
 }
 
-class IncrementalCompilerArguments(
+class IncrementalCompilationOptions(
         val areFileChangesKnown: Boolean,
         val modifiedFiles: List<File>?,
         val deletedFiles: List<File>?,
@@ -33,7 +33,7 @@ class IncrementalCompilerArguments(
         val customCacheVersionFileName: String,
         val customCacheVersion: Int,
         reportingFilters: List<ReportingFilter>
-) : AdditionalCompilerArguments(reportingFilters) {
+) : CompilationOptions(reportingFilters) {
     companion object {
         const val serialVersionUID: Long = 0
     }

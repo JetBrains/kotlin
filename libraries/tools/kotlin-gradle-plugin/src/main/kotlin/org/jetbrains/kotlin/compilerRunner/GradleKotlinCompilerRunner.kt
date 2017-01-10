@@ -169,7 +169,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                     CompileService.CompilerMode.NON_INCREMENTAL_COMPILER,
                     targetPlatform,
                     environment.compilerArgs,
-                    AdditionalCompilerArguments(reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose)),
+                    CompilationOptions(reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose)),
                     GradleCompilerServicesFacadeImpl(project, environment.messageCollector))
         }
 
@@ -184,7 +184,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun incrementalCompilationWithDaemon(environment: GradleIncrementalCompilerEnvironment): ExitCode? {
         val knownChangedFiles = environment.changedFiles as? ChangedFiles.Known
 
-        val additionalCompilerArguments = IncrementalCompilerArguments(
+        val additionalCompilerArguments = IncrementalCompilationOptions(
                 areFileChangesKnown = knownChangedFiles != null,
                 modifiedFiles = knownChangedFiles?.modified,
                 deletedFiles = knownChangedFiles?.removed,

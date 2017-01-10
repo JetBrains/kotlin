@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.daemon.report
 
-import org.jetbrains.kotlin.daemon.common.AdditionalCompilerArguments
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.daemon.common.ReportCategory
 import java.io.Serializable
 
 internal open class FilteringReporterBase(
         private val servicesFacade: CompilerServicesFacadeBase,
-        additionalCompilerArgs: AdditionalCompilerArguments,
+        additionalCompilerArgs: CompilationOptions,
         private val reportCategory: ReportCategory
 ) {
     private val reportingFilter = additionalCompilerArgs.reportingFilters.firstOrNull { it.category == reportCategory }

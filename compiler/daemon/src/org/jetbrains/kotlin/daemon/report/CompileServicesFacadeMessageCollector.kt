@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.daemon.report
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.common.AdditionalCompilerArguments
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.daemon.common.ReportCategory
 
 internal class CompileServicesFacadeMessageCollector(
         private val servicesFacade: CompilerServicesFacadeBase,
-        additionalCompilerArguments: AdditionalCompilerArguments
+        compilationOptions: CompilationOptions
 ) : MessageCollector {
     private var hasErrors = false
-    private val reportingFilter = additionalCompilerArguments.reportingFilters.firstOrNull { it.category == ReportCategory.DAEMON_MESSAGE }
+    private val reportingFilter = compilationOptions.reportingFilters.firstOrNull { it.category == ReportCategory.DAEMON_MESSAGE }
 
     override fun clear() {
         hasErrors = false
