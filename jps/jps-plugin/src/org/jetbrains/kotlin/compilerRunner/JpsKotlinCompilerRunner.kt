@@ -19,23 +19,19 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.mergeBeans
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.daemon.common.CompilerId
-import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.util.*
 
 class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
-    override val log: KotlinLogger = JpsKotlinLogger(KotlinBuilder.LOG)
+        override val log: KotlinLogger = JpsKotlinLogger(KotlinBuilder.LOG)
 
     companion object {
         private @Volatile var jpsDaemonConnection: DaemonConnection? = null
@@ -50,8 +46,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     ) {
         val arguments = mergeBeans(commonArguments, k2jvmArguments)
         setupK2JvmArguments(moduleFile, arguments)
+        val additionalArguments = compilerSettings.additionalArguments.split(" ").toTypedArray()
+        parseArguments(additionalArguments, arguments)
 
-        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.additionalArguments, environment)
+        runCompiler(K2JVM_COMPILER, arguments, environment)
     }
 
     fun runK2JsCompiler(
@@ -65,20 +63,78 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     ) {
         val arguments = mergeBeans(commonArguments, k2jsArguments)
         setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments)
+        val additionalArguments = compilerSettings.additionalArguments.split(" ").toTypedArray()
+        parseArguments(additionalArguments, arguments)
 
-        runCompiler(K2JS_COMPILER, arguments, compilerSettings.additionalArguments, environment)
+        runCompiler(K2JS_COMPILER, arguments, environment)
     }
 
-    override fun doRunCompiler(compilerClassName: String, argsArray: Array<String>, environment: JpsCompilerEnvironment): ExitCode {
+    override fun compileWithDaemonOrFallback(
+            compilerClassName: String,
+            compilerArgs: CommonCompilerArguments,
+            environment: JpsCompilerEnvironment
+    ): ExitCode {
         environment.messageCollector.report(CompilerMessageSeverity.INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
 
         return if (isDaemonEnabled()) {
-            val daemonExitCode = compileWithDaemon(compilerClassName, argsArray, environment)
+            val daemonExitCode = compileWithDaemon(compilerClassName, compilerArgs, environment)
             daemonExitCode ?: fallbackCompileStrategy(argsArray, compilerClassName, environment)
         }
         else {
             fallbackCompileStrategy(argsArray, compilerClassName, environment)
         }
+    }
+
+    override fun compileWithDaemon(
+            compilerClassName: String,
+            compilerArgs: CommonCompilerArguments,
+            environment: JpsCompilerEnvironment
+    ): ExitCode? {
+        val targetPlatform = when (compilerClassName) {
+            K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
+            K2JS_COMPILER -> CompileService.TargetPlatform.JS
+            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
+            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+        }
+
+        val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
+            daemon.compile(
+                    sessionId,
+                    CompileService.CompilerMode.JPS_COMPILER,
+                    targetPlatform,
+                    compilerArgs,
+                    AdditionalCompilerArguments(reportingFilters = getReportingFilters(compilerArgs.verbose)),
+                    JpsCompilerServicesFacadeImpl(environment),
+                    operationsTracer = null)
+        }
+
+        return res?.get()?.let { exitCodeFromProcessExitCode(it) }
+    }
+
+    private fun getReportingFilters(verbose: Boolean): List<ReportingFilter> {
+        val result = ArrayList<ReportingFilter>()
+
+        val compilerMessagesSeverities = ArrayList<Int>().apply {
+            add(CompilerMessageSeverity.ERROR.value)
+            add(CompilerMessageSeverity.EXCEPTION.value)
+            add(CompilerMessageSeverity.WARNING.value)
+            add(CompilerMessageSeverity.INFO.value)
+            add(CompilerMessageSeverity.OUTPUT.value)
+
+            if (verbose) {
+                add(CompilerMessageSeverity.LOGGING.value)
+            }
+        }
+
+        if (verbose) {
+            result.add(ReportingFilter(ReportCategory.DAEMON_MESSAGE, emptyList()))
+        }
+
+        val compilerMessagesFilter = ReportingFilter(ReportCategory.COMPILER_MESSAGE, compilerMessagesSeverities)
+        result.add(compilerMessagesFilter)
+
+        return result
     }
 
     private fun fallbackCompileStrategy(
