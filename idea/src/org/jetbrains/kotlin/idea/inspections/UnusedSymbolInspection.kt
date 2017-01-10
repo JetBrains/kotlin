@@ -47,16 +47,15 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
+import org.jetbrains.kotlin.idea.highlighter.markers.hasImplementationsOf
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
@@ -162,7 +161,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is KtEnumEntry) return
                 if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is KtProperty && declaration.isLocal) return
-                if (declaration is KtParameter && (declaration.getParent()?.parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
+                if (declaration is KtParameter && (declaration.getParent().parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
 
                 // More expensive, resolve-based checks
                 val descriptor = declaration.resolveToDescriptorIfAny() ?: return
@@ -174,7 +173,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return
 
                 // Main checks: finding reference usages && text usages
-                if (hasNonTrivialUsages(declaration)) return
+                if (hasNonTrivialUsages(declaration, descriptor)) return
                 if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
                 val psiElement = declaration.nameIdentifier ?: (declaration as? KtConstructor<*>)?.getConstructorKeyword() ?: return
@@ -210,7 +209,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return hasTextUsages
     }
 
-    private fun hasNonTrivialUsages(declaration: KtNamedDeclaration): Boolean {
+    private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor? = null): Boolean {
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
 
         val useScope = declaration.useScope
@@ -240,7 +239,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 declaration.getBody()?.declarations?.isNotEmpty() == true) ||
                hasReferences(declaration, useScope) ||
                hasOverrides(declaration, useScope) ||
-               hasFakeOverrides(declaration, useScope)
+               hasFakeOverrides(declaration, useScope) ||
+               isPlatformImplementation(declaration) ||
+               hasPlatformImplementations(declaration, descriptor)
     }
 
     private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
@@ -320,6 +321,19 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                     false
             }
         }
+    }
+
+    private fun isPlatformImplementation(declaration: KtNamedDeclaration) =
+            declaration.hasModifier(KtTokens.IMPL_KEYWORD)
+
+    private fun hasPlatformImplementations(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
+        if (!declaration.hasModifier(KtTokens.HEADER_KEYWORD)) return false
+
+        descriptor as? MemberDescriptor ?: return false
+        val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
+
+        return commonModuleDescriptor.allImplementingModules.any { it.hasImplementationsOf(descriptor) } ||
+               commonModuleDescriptor.hasImplementationsOf(descriptor)
     }
 
     override fun createOptionsPanel(): JComponent? {
