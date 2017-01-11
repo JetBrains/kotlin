@@ -1,0 +1,9 @@
+interface I {
+    // INFO: {checked: "true"}
+    val one: Int
+}
+
+class A : I {
+    // INFO: {checked: "true"}
+    final override val one = 1
+}

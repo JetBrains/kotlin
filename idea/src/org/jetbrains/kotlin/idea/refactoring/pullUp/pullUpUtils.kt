@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -59,6 +58,10 @@ fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean 
 }
 
 fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrObject): KtNamedDeclaration {
+    if (targetClass is KtClass && targetClass.isInterface()) {
+        targetMember.removeModifier(KtTokens.FINAL_KEYWORD)
+    }
+
     if (targetMember is KtParameter) {
         val parameterList = (targetClass as KtClass).createPrimaryConstructorIfAbsent().valueParameterList!!
         val anchor = parameterList.parameters.firstOrNull { it.isVarArg || it.hasDefaultValue() }

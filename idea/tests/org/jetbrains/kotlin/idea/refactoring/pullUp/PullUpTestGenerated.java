@@ -110,6 +110,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("dropFinal.kt")
+        public void testDropFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/dropFinal.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("dropModifierWhenMovingSideOverride.kt")
         public void testDropModifierWhenMovingSideOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/dropModifierWhenMovingSideOverride.kt");

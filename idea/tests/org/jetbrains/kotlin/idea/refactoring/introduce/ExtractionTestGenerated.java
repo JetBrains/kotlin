@@ -4358,6 +4358,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doExtractInterfaceTest(fileName);
         }
 
+        @TestMetadata("dropFinal.kt")
+        public void testDropFinal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/dropFinal.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
         @TestMetadata("specialName.kt")
         public void testSpecialName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/specialName.kt");
