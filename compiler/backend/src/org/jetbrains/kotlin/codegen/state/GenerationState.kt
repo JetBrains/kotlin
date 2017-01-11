@@ -125,6 +125,7 @@ class GenerationState @JvmOverloads constructor(
     }
 
     val isJvm8Target: Boolean = configuration.get(JVMConfigurationKeys.JVM_TARGET) == JvmTarget.JVM_1_8
+    val isJvm8TargetWithDefaults: Boolean =  isJvm8Target && configuration.getBoolean(JVMConfigurationKeys.JVM8_TARGET_WITH_DEFAULTS)
     val generateDefaultImplsForJvm8: Boolean = configuration.getBoolean(JVMConfigurationKeys.INTERFACE_COMPATIBILITY)
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
@@ -134,7 +135,7 @@ class GenerationState @JvmOverloads constructor(
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
             this.bindingContext, classBuilderMode, fileClassesProvider, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
-            this.moduleName, isJvm8Target
+            this.moduleName, isJvm8Target, isJvm8TargetWithDefaults
     )
     val intrinsics: IntrinsicMethods = IntrinsicMethods()
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)

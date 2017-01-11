@@ -1,4 +1,5 @@
 // JVM_TARGET: 1.8
+// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
 // FULL_JDK
 
 // There should be no DefaultImpls method for MutableMap.remove(K;V)

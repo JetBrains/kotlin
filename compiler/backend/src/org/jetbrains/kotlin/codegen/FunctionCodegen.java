@@ -99,7 +99,7 @@ public class FunctionCodegen {
     private final Function1<DeclarationDescriptor, Boolean> IS_PURE_INTERFACE_CHECKER = new Function1<DeclarationDescriptor, Boolean>() {
         @Override
         public Boolean invoke(DeclarationDescriptor descriptor) {
-            return JvmCodegenUtil.isAnnotationOrJvm6Interface(descriptor, state);
+            return JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state);
         }
     };
 
@@ -201,7 +201,7 @@ public class FunctionCodegen {
 
         generateBridges(functionDescriptor);
 
-        if (isJvm8InterfaceMember(functionDescriptor, state) && contextKind != OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()) {
+        if (isJvm8InterfaceWithDefaultsMember(functionDescriptor, state) && contextKind != OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()) {
             generateDelegateForDefaultImpl(functionDescriptor, origin.getElement());
         }
 
@@ -419,7 +419,7 @@ public class FunctionCodegen {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
             methodEnd = new Label();
         }
-        else if (OwnerKind.DEFAULT_IMPLS == context.getContextKind() && isJvm8InterfaceMember(functionDescriptor, parentCodegen.state)) {
+        else if (OwnerKind.DEFAULT_IMPLS == context.getContextKind() && isJvm8InterfaceWithDefaultsMember(functionDescriptor, parentCodegen.state)) {
             int flags = AsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.DEFAULT_IMPLS, context.getState());
             assert (flags & Opcodes.ACC_ABSTRACT) == 0 : "Interface method with body should be non-abstract" + functionDescriptor;
             Type type = typeMapper.mapOwner(functionDescriptor);
@@ -724,7 +724,7 @@ public class FunctionCodegen {
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (isAnnotationOrJvm6Interface(descriptor.getContainingDeclaration(), state)) return;
+        if (isAnnotationOrJvmInterfaceWithoutDefaults(descriptor.getContainingDeclaration(), state)) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
@@ -1089,7 +1089,7 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor(), false);
         }
         else {
-            if (isJvm8InterfaceMember(descriptor, state)) {
+            if (isJvm8InterfaceWithDefaultsMember(descriptor, state)) {
                 iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
             }
             else {
@@ -1257,6 +1257,6 @@ public class FunctionCodegen {
             @NotNull GenerationState state
     ) {
         assert isInterface(contextClass) : "'processInterface' method should be called only for interfaces, but: " + contextClass;
-        return isJvm8Interface(contextClass, state) ? kind != OwnerKind.DEFAULT_IMPLS : kind == OwnerKind.DEFAULT_IMPLS;
+        return JvmCodegenUtil.isJvm8InterfaceWithDefaults(contextClass, state) ? kind != OwnerKind.DEFAULT_IMPLS : kind == OwnerKind.DEFAULT_IMPLS;
     }
 }

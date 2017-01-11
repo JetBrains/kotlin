@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.LanguageFeature;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
@@ -64,11 +62,11 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isAnnotationOrJvm6Interface(descriptor, state.isJvm8Target());
+    public static boolean isAnnotationOrJvmInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
     }
 
-    public static boolean isAnnotationOrJvm6Interface(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target) {
+    private static boolean isAnnotationOrJvmInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
         if (!isJvmInterface(descriptor)) {
             return false;
         }
@@ -80,23 +78,24 @@ public class JvmCodegenUtil {
                 KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
                 assert binaryClass instanceof FileBasedKotlinClass :
                         "KotlinJvmBinaryClass should be subclass of FileBasedKotlinClass, but " + binaryClass;
-                return ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
+                /*TODO need add some flags to compiled code*/
+                return true || ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
             }
         }
-        return !isJvm8Target;
+        return !isJvm8TargetWithDefaults;
     }
 
-    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isJvm8Interface(descriptor, state.isJvm8Target());
+    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
+        return isJvm8InterfaceWithDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
     }
 
-    public static boolean isJvm8Interface(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target) {
-        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvm6Interface(descriptor, isJvm8Target);
+    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
+        return DescriptorUtils.isInterface(descriptor) && !isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
     }
 
-    public static boolean isJvm8InterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+    public static boolean isJvm8InterfaceWithDefaultsMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
         DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
-        return isJvm8Interface(declaration, state);
+        return isJvm8InterfaceWithDefaults(declaration, state);
     }
 
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
