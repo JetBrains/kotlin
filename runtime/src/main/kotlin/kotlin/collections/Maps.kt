@@ -59,9 +59,8 @@ public inline fun <K, V> mapOf(): Map<K, V> = emptyMap()
  * @sample samples.collections.Maps.Instantiation.mutableMapFromPairs
  * @sample samples.collections.Maps.Instantiation.emptyMutableMap
  */
-@Fixme
-public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V> = hashMapOf(*pairs)
-//    = HashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
+public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
+        = HashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
 
 /**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
@@ -69,13 +68,8 @@ public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V> = has
  *
  * @sample samples.collections.Maps.Instantiation.hashMapFromPairs
  */
-public fun <K, V> hashMapOf(vararg pairs: Pair<K, V>): HashMap<K, V> {
-//        = HashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
-    val result = HashMap<K, V>(mapCapacity(pairs.size))
-    for (pair in pairs)
-        result.put(pair.first, pair.second)
-    return result
-}
+public fun <K, V> hashMapOf(vararg pairs: Pair<K, V>): HashMap<K, V>
+        = HashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
 
 /**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
@@ -649,11 +643,9 @@ public inline fun <K, V, R : Any> Map<out K, V>.mapNotNull(transform: (Map.Entry
  * Applies the given [transform] function to each entry in the original map
  * and appends only the non-null results to the given [destination].
  */
-@FixmeLambda
 public inline fun <K, V, R : Any, C : MutableCollection<in R>> Map<out K, V>.mapNotNullTo(destination: C, transform: (Map.Entry<K, V>) -> R?): C {
-    TODO()
-    //forEach { element -> transform(element)?.let { destination.add(it) } }
-    //return destination
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
 }
 
 /**
