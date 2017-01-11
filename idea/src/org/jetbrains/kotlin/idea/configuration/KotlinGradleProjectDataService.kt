@@ -25,6 +25,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CoroutineSupport
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -56,7 +57,7 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSe
         val externalProjectNode = ExternalSystemApiUtil.find(projectNode as DataNode<*>, ExternalProjectDataService.KEY)
         return externalProjectNode?.let {
             when (it.data.plugins.values.map { it.id }.firstOrNull { it.startsWith("kotlin-platform-") }) {
-                "kotlin-platform-jvm" -> TargetPlatformKind.Jvm.JVM_1_6
+                "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
                 "kotlin-platform-js" -> TargetPlatformKind.JavaScript
                 "kotlin-platform-common" -> TargetPlatformKind.Common
                 else -> null

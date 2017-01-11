@@ -18,16 +18,15 @@ package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
-import org.jetbrains.kotlin.config.CoroutineSupport
-import org.jetbrains.kotlin.config.KotlinFacetSettings
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
@@ -70,7 +69,13 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
     if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.Common).isNotEmpty()) {
         return TargetPlatformKind.Common
     }
-    return TargetPlatformKind.Jvm.JVM_1_6
+
+    val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
+    val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
+    return when {
+        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_8]
+        else -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+    }
 }
 
 private fun getDefaultLanguageLevel(
@@ -93,7 +98,7 @@ internal fun getLibraryLanguageLevel(
         rootModel: ModuleRootModel?,
         targetPlatform: TargetPlatformKind<*>?
 ): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.Jvm.JVM_1_6)
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
             .minWith(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion)
 }

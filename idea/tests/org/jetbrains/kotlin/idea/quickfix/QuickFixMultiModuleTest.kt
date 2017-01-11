@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.junit.Test
 
@@ -23,7 +24,7 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
 
     private fun doMultiPlatformTest(headerName: String = "header",
                                     implName: String = "jvm",
-                                    implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm.JVM_1_6) {
+                                    implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]) {
         val header = module(headerName)
         header.setPlatformKind(TargetPlatformKind.Common)
 
