@@ -1091,8 +1091,7 @@ public final class Float : Number(), Comparable<Float> {
 
     @SymbolName("Kotlin_Float_toByte")
     external public override fun toByte(): Byte
-    @SymbolName("Kotlin_Float_toChar")
-    external public override fun toChar(): Char
+    public override fun toChar(): Char = this.toInt().toChar()
     @SymbolName("Kotlin_Float_toShort")
     external public override fun toShort(): Short
     @SymbolName("Kotlin_Float_toInt")
@@ -1302,8 +1301,7 @@ public final class Double : Number(), Comparable<Double> {
 
     @SymbolName("Kotlin_Double_toByte")
     external public override fun toByte(): Byte
-    @SymbolName("Kotlin_Double_toChar")
-    external public override fun toChar(): Char
+    public override fun toChar(): Char = this.toInt().toChar()
     @SymbolName("Kotlin_Double_toShort")
     external public override fun toShort(): Short
     @SymbolName("Kotlin_Double_toInt")
