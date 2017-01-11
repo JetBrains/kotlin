@@ -33,7 +33,7 @@ internal class MacOSPlatform(distrib: Distribution,
 
     override val linkerOptimizationFlags = 
         properties.propertyList("linkerOptimizationFlags.osx")
-    override val linkerKonanFlags = listOf(distrib.libCppAbi)
+    override val linkerKonanFlags = properties.propertyList("linkerKonanFlags.osx")
     override val linker = "${distrib.sysRoot}/usr/bin/ld" 
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
