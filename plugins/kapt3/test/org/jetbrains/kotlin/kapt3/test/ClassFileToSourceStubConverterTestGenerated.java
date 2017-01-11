@@ -186,6 +186,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("nonExistentClassTypesConversion.kt")
+    public void testNonExistentClassTypesConversion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/nonExistentClassTypesConversion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("primitiveTypes.kt")
     public void testPrimitiveTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/primitiveTypes.kt");

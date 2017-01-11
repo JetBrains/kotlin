@@ -198,7 +198,7 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return Pair(KaptContext(logger, compiledClasses, origins, options), generationState)
+        return Pair(KaptContext(logger, bindingContext, compiledClasses, origins, options), generationState)
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext, generationState: GenerationState) {

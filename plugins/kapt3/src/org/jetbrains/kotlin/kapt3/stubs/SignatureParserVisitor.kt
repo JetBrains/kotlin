@@ -131,10 +131,15 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
             signature: String?,
             rawParameters: JavacList<JCVariableDecl>,
             rawExceptionTypes: JavacList<JCExpression>,
-            rawReturnType: JCExpression?
+            rawReturnType: JCExpression?,
+            nonErrorParameterTypeProvider: (Int, () -> JCExpression) -> JCExpression
     ): MethodGenericSignature {
         if (signature == null) {
-            return MethodGenericSignature(JavacList.nil(), rawParameters, rawExceptionTypes, rawReturnType)
+            val parameters = mapJListIndexed(rawParameters) { index, it ->
+                val nonErrorType = nonErrorParameterTypeProvider(index) { it.vartype }
+                treeMaker.VarDef(it.modifiers, it.getName(), nonErrorType, it.initializer)
+            }
+            return MethodGenericSignature(JavacList.nil(), parameters, rawExceptionTypes, rawReturnType)
         }
 
         val root = parse(signature)
@@ -149,7 +154,9 @@ class SignatureParser(val treeMaker: KaptTreeMaker) {
         val offset = rawParameters.size - parameterTypes.size
         val jcParameters = mapJListIndexed(parameterTypes) { index, it ->
             val rawParameter = rawParameters[index + offset]
-            treeMaker.VarDef(rawParameter.modifiers, rawParameter.getName(), parseType(it.children.single()), rawParameter.initializer)
+            val nonErrorType = nonErrorParameterTypeProvider(index) { parseType(it.children.single()) }
+
+            treeMaker.VarDef(rawParameter.modifiers, rawParameter.getName(), nonErrorType, rawParameter.initializer)
         }
         val jcExceptionTypes = mapJList(exceptionTypes) { parseType(it) }
         val jcReturnType = if (rawReturnType == null) null else parseType(returnTypes.single().children.single())

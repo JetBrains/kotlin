@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.kapt3.javac.KaptJavaCompiler
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import javax.tools.JavaFileManager
 
 class KaptContext(
         val logger: KaptLogger,
+        val bindingContext: BindingContext,
         val compiledClasses: List<ClassNode>,
         val origins: Map<Any, JvmDeclarationOrigin>,
         processorOptions: Map<String, String>

@@ -1,32 +1,32 @@
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class NonExistentType {
-    private static final error.NonExistentClass a = null;
-    private static final java.util.List<error.NonExistentClass> b = null;
-    private static final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> c = null;
-    private static final error.NonExistentClass d = null;
+    private static final ABCDEF a = null;
+    private static final List<ABCDEF> b = null;
+    private static final Function1<ABCDEF, kotlin.Unit> c = null;
+    private static final ABCDEF<java.lang.String, Function1<List<ABCDEF>, kotlin.Unit>> d = null;
     public static final NonExistentType INSTANCE = null;
 
-    public final error.NonExistentClass getA() {
+    public final ABCDEF getA() {
         return null;
     }
 
-    public final java.util.List<error.NonExistentClass> getB() {
+    public final List<ABCDEF> getB() {
         return null;
     }
 
-    public final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> getC() {
+    public final Function1<ABCDEF, kotlin.Unit> getC() {
         return null;
     }
 
-    public final error.NonExistentClass getD() {
+    public final ABCDEF<java.lang.String, Function1<List<ABCDEF>, kotlin.Unit>> getD() {
         return null;
     }
 
-    public final error.NonExistentClass a(error.NonExistentClass a, java.lang.String s) {
+    public final ABCDEF a(ABCDEF a, java.lang.String s) {
         return null;
     }
 
-    public final error.NonExistentClass b(java.lang.String s) {
+    public final ABCDEF b(java.lang.String s) {
         return null;
     }
 
@@ -40,8 +40,4 @@ public final class NonExistentType {
 package error;
 
 public final class NonExistentClass {
-
-    public NonExistentClass() {
-        super();
-    }
 }

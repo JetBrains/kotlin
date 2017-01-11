@@ -1,0 +1,126 @@
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class Test {
+    public ABC a;
+    private final ABC b = null;
+    private final List<ABC> c = null;
+    private final List<Map<BCD, ABC<List<BCD>>>> d = null;
+    public List<? extends Map<? extends ABC, ? extends BCD>> e;
+    public ABC<?> f;
+    public java.util.List<?> g;
+    public ABC<java.lang.Integer, java.lang.String> h;
+    public Function2<ABC, List<BCD>, CDE> i;
+    public Function0<CDE> j;
+    public Function2<ABC, List<BCD>, CDE> k;
+    public ABC.BCD.EFG l;
+    private final error.NonExistentClass m = null;
+    private final java.lang.String n = "";
+
+    public final ABC getA() {
+        return null;
+    }
+
+    public final void setA(ABC p0) {
+    }
+
+    public final ABC getB() {
+        return null;
+    }
+
+    public final List<ABC> getC() {
+        return null;
+    }
+
+    public final List<Map<BCD, ABC<List<BCD>>>> getD() {
+        return null;
+    }
+
+    public final List<? extends Map<? extends ABC, ? extends BCD>> getE() {
+        return null;
+    }
+
+    public final void setE(List<? extends Map<? extends ABC, ? extends BCD>> p0) {
+    }
+
+    public final ABC<?> getF() {
+        return null;
+    }
+
+    public final void setF(ABC<?> p0) {
+    }
+
+    public final java.util.List<?> getG() {
+        return null;
+    }
+
+    public final void setG(java.util.List<?> p0) {
+    }
+
+    public final ABC<java.lang.Integer, java.lang.String> getH() {
+        return null;
+    }
+
+    public final void setH(ABC<java.lang.Integer, java.lang.String> p0) {
+    }
+
+    public final Function2<ABC, List<BCD>, CDE> getI() {
+        return null;
+    }
+
+    public final void setI(Function2<ABC, List<BCD>, CDE> p0) {
+    }
+
+    public final Function0<CDE> getJ() {
+        return null;
+    }
+
+    public final void setJ(Function0<CDE> p0) {
+    }
+
+    public final Function2<ABC, List<BCD>, CDE> getK() {
+        return null;
+    }
+
+    public final void setK(Function2<ABC, List<BCD>, CDE> p0) {
+    }
+
+    public final ABC.BCD.EFG getL() {
+        return null;
+    }
+
+    public final void setL(ABC.BCD.EFG p0) {
+    }
+
+    public final error.NonExistentClass getM() {
+        return null;
+    }
+
+    public final java.lang.String getN() {
+        return null;
+    }
+
+    public final BCD f1(ABC a) {
+        return null;
+    }
+
+    public final <T extends java.lang.Object>void f2(ABC<java.lang.String, java.lang.Integer, Function0<BCD>> a) {
+    }
+
+    public final <T extends java.lang.Object>long f3(ABC a, int b) {
+        return 0L;
+    }
+
+    public final error.NonExistentClass f4() {
+        return null;
+    }
+
+    public Test() {
+        super();
+    }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
+}
