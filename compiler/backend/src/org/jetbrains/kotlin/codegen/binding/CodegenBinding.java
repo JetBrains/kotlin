@@ -66,7 +66,7 @@ public class CodegenBinding {
     public static final WritableSlice<VariableDescriptor, VariableDescriptor> LOCAL_VARIABLE_PROPERTY_METADATA =
             Slices.createSimpleSlice();
 
-    public static final WritableSlice<SimpleFunctionDescriptor, SimpleFunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
+    public static final WritableSlice<FunctionDescriptor, FunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
             Slices.createSimpleSlice();
 
     public static final WritableSlice<ValueParameterDescriptor, ValueParameterDescriptor> PARAMETER_SYNONYM =

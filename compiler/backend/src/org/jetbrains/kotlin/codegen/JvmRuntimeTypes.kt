@@ -70,7 +70,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
     fun getSupertypesForClosure(descriptor: FunctionDescriptor): Collection<KotlinType> {
 
         val actualFunctionDescriptor =
-                if (descriptor.isSuspendLambda)
+                if (descriptor.isSuspend)
                     createJvmSuspendFunctionView(descriptor)
                 else
                     descriptor
@@ -84,15 +84,17 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
                 actualFunctionDescriptor.returnType!!
         )
 
-        if (descriptor.isSuspendLambda) {
+        if (descriptor.isSuspend) {
             return mutableListOf<KotlinType>().apply {
                 add(coroutineImplClass.defaultType)
-                add(functionType)
 
-                val parametersNumber =
-                        descriptor.valueParameters.size + (if (functionType.isExtensionFunctionType) 1 else 0)
+                if (descriptor.isSuspendLambda) {
+                    val parametersNumber =
+                            descriptor.valueParameters.size + (if (functionType.isExtensionFunctionType) 1 else 0)
 
-                addIfNotNull(suspendFunctions.getOrNull(parametersNumber)?.defaultType)
+                    addIfNotNull(suspendFunctions.getOrNull(parametersNumber)?.defaultType)
+                    add(functionType)
+                }
             }
         }
 

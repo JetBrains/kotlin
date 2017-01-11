@@ -114,7 +114,7 @@ public class JvmCodegenUtil {
         return closure.getCaptureThis() == null &&
                     closure.getCaptureReceiverType() == null &&
                     closure.getCaptureVariables().isEmpty() &&
-                    !closure.isCoroutine();
+                    !closure.isSuspend();
     }
 
     private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {

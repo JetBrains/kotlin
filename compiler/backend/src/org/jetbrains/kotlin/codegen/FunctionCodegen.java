@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
+import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -119,17 +121,29 @@ public class FunctionCodegen {
 
     public void gen(@NotNull KtNamedFunction function) {
         SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
+        if (bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor) != null) {
+            functionDescriptor =
+                    (SimpleFunctionDescriptor) bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor);
+        }
+
         if (functionDescriptor == null) {
             throw ExceptionLogger.logDescriptorNotFound("No descriptor for function " + function.getName(), function);
         }
 
-        if (bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor) != null) {
-            functionDescriptor = bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor);
-        }
-
         if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
-            generateMethod(JvmDeclarationOriginKt.OtherOrigin(function, functionDescriptor), functionDescriptor,
-                           new FunctionGenerationStrategy.FunctionDefault(state, function));
+            FunctionGenerationStrategy strategy;
+            if (functionDescriptor.isSuspend()) {
+                strategy = new SuspendFunctionGenerationStrategy(
+                        state,
+                        CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
+                        function
+                );
+            }
+            else {
+                strategy = new FunctionGenerationStrategy.FunctionDefault(state, function);
+            }
+
+            generateMethod(JvmDeclarationOriginKt.OtherOrigin(function, functionDescriptor), functionDescriptor, strategy);
         }
 
         generateDefaultIfNeeded(owner.intoFunction(functionDescriptor, true), functionDescriptor, owner.getContextKind(),

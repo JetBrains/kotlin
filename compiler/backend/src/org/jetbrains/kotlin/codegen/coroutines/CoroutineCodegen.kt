@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.CONTINUATION_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
+import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
@@ -29,9 +31,9 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -49,16 +52,20 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 
 class CoroutineCodegen(
-        state: GenerationState,
+        outerExpressionCodegen: ExpressionCodegen,
         element: KtElement,
         private val closureContext: ClosureContext,
-        strategy: FunctionGenerationStrategy,
-        parentCodegen: MemberCodegen<*>,
         classBuilder: ClassBuilder,
-        private val coroutineLambdaDescriptor: FunctionDescriptor
-) : ClosureCodegen(state, element, null, closureContext, null, strategy, parentCodegen, classBuilder) {
+        private val originalSuspendLambdaDescriptor: FunctionDescriptor?
+) : ClosureCodegen(
+        outerExpressionCodegen.state,
+        element, null, closureContext, null,
+        FailingFunctionGenerationStrategy,
+        outerExpressionCodegen.parentCodegen, classBuilder
+) {
 
     private val classDescriptor = closureContext.contextDescriptor
+    private val builtIns = funDescriptor.builtIns
 
     private lateinit var constructorToUseFromInvoke: Method
 
@@ -75,33 +82,33 @@ class CoroutineCodegen(
                         listOf(
                               ValueParameterDescriptorImpl(
                                       this@doResume, null, 0, Annotations.EMPTY, Name.identifier("data"),
-                                      module.builtIns.nullableAnyType,
+                                      builtIns.nullableAnyType,
                                       /* isDefault = */ false, /* isCrossinline = */ false,
                                       /* isNoinline = */ false,
                                       /* varargElementType = */ null, SourceElement.NO_SOURCE
                               ),
                               ValueParameterDescriptorImpl(
                                       this@doResume, null, 1, Annotations.EMPTY, Name.identifier("throwable"),
-                                      module.builtIns.throwable.defaultType.makeNullable(),
+                                      builtIns.throwable.defaultType.makeNullable(),
                                       /* isDefault = */ false, /* isCrossinline = */ false,
                                       /* isNoinline = */ false,
                                       /* varargElementType = */ null, SourceElement.NO_SOURCE
                               )
                         ),
-                        funDescriptor.builtIns.nullableAnyType,
+                        builtIns.nullableAnyType,
                         Modality.FINAL,
-                        Visibilities.PROTECTED
+                        Visibilities.PUBLIC
                 )
             }
 
     private val createCoroutineDescriptor =
         funDescriptor.createCustomCopy {
-            setName(Name.identifier("create"))
+            setName(Name.identifier(SUSPEND_FUNCTION_CREATE_METHOD_NAME))
             setReturnType(
                     KotlinTypeFactory.simpleNotNullType(
                             Annotations.EMPTY,
-                            funDescriptor.builtIns.continuationClassDescriptor,
-                            listOf(funDescriptor.builtIns.unitType.asTypeProjection())
+                            builtIns.continuationClassDescriptor,
+                            listOf(builtIns.unitType.asTypeProjection())
                     )
             )
             setVisibility(Visibilities.PUBLIC)
@@ -121,9 +128,17 @@ class CoroutineCodegen(
         generateDoResume()
     }
 
+    override fun generateBridges() {
+        if (originalSuspendLambdaDescriptor == null) return
+        super.generateBridges()
+    }
+
     override fun generateBody() {
         super.generateBody()
 
+        if (originalSuspendLambdaDescriptor == null) return
+
+        // create() = ...
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, createCoroutineDescriptor,
                                        object : FunctionGenerationStrategy.CodegenBased(state) {
                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
@@ -182,7 +197,6 @@ class CoroutineCodegen(
         areturn(AsmTypes.OBJECT_TYPE)
     }
 
-
     override fun generateConstructor(): Method {
         val args = calculateConstructorParameters(typeMapper, closure, asmType)
         val argTypes = args.map { it.fieldType }.plus(AsmTypes.CONTINUATION).toTypedArray()
@@ -217,6 +231,7 @@ class CoroutineCodegen(
     }
 
     private fun generateCreateCoroutineMethod(codegen: ExpressionCodegen) {
+        assert(originalSuspendLambdaDescriptor != null) { "create method should only be generated for suspend lambdas" }
         val classDescriptor = closureContext.contextDescriptor
         val owner = typeMapper.mapClass(classDescriptor)
 
@@ -265,7 +280,7 @@ class CoroutineCodegen(
     }
 
     private fun allLambdaParameters() =
-            coroutineLambdaDescriptor.extensionReceiverParameter.singletonOrEmptyList() + coroutineLambdaDescriptor.valueParameters
+            originalSuspendLambdaDescriptor?.extensionReceiverParameter.singletonOrEmptyList() + originalSuspendLambdaDescriptor?.valueParameters.orEmpty()
 
     private fun ExpressionCodegen.generateLoadField(fieldInfo: FieldInfo) {
         StackValue.field(fieldInfo, generateThisOrOuter(context.thisDescriptor, false)).put(fieldInfo.fieldType, v)
@@ -298,7 +313,7 @@ class CoroutineCodegen(
     companion object {
 
         @JvmStatic
-        fun create(
+        fun createByLambda(
                 expressionCodegen: ExpressionCodegen,
                 originalCoroutineLambdaDescriptor: FunctionDescriptor,
                 declaration: KtElement,
@@ -307,21 +322,52 @@ class CoroutineCodegen(
             if (declaration !is KtFunctionLiteral) return null
             if (!originalCoroutineLambdaDescriptor.isSuspendLambda) return null
 
-            val descriptorWithContinuationReturnType = createJvmSuspendFunctionView(originalCoroutineLambdaDescriptor)
-
-            val state = expressionCodegen.state
             return CoroutineCodegen(
-                    state,
+                    expressionCodegen,
                     declaration,
                     expressionCodegen.context.intoCoroutineClosure(
-                            descriptorWithContinuationReturnType, originalCoroutineLambdaDescriptor, expressionCodegen, state.typeMapper
+                            createJvmSuspendFunctionView(originalCoroutineLambdaDescriptor),
+                            originalCoroutineLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
-                    FunctionGenerationStrategy.FunctionDefault(state, declaration),
-                    expressionCodegen.parentCodegen, classBuilder,
+                    classBuilder,
                     originalCoroutineLambdaDescriptor
+            )
+        }
+
+        fun create(
+                expressionCodegen: ExpressionCodegen,
+                originalSuspendDescriptor: FunctionDescriptor,
+                declaration: KtFunction,
+                state: GenerationState
+        ): CoroutineCodegen {
+            val cv = state.factory.newVisitor(
+                    OtherOrigin(declaration, originalSuspendDescriptor),
+                    CodegenBinding.asmTypeForAnonymousClass(state.bindingContext, originalSuspendDescriptor),
+                    declaration.containingFile
+            )
+
+            return CoroutineCodegen(
+                    expressionCodegen, declaration,
+                    expressionCodegen.context.intoClosure(
+                            originalSuspendDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
+                    ),
+                    cv,
+                    originalSuspendLambdaDescriptor = null
             )
         }
     }
 }
 
 private const val COROUTINE_LAMBDA_PARAMETER_PREFIX = "p$"
+
+private object FailingFunctionGenerationStrategy : FunctionGenerationStrategy() {
+    override fun generateBody(
+            mv: MethodVisitor,
+            frameMap: FrameMap,
+            signature: JvmMethodSignature,
+            context: MethodContext,
+            parentCodegen: MemberCodegen<*>
+    ) {
+        error("This functions must not be called")
+    }
+}
