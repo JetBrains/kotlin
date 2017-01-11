@@ -314,6 +314,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("reformatModifierList.kt")
+        public void testReformatModifierList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/reformatModifierList.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("removeVisibilityOnOverride.kt")
         public void testRemoveVisibilityOnOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/removeVisibilityOnOverride.kt");

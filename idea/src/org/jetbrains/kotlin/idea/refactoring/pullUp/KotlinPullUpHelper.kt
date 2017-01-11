@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.GlobalSearchScope
@@ -532,6 +533,8 @@ class KotlinPullUpHelper(
                 is KtClassOrObject -> moveClassOrObject(member, memberCopy as KtClassOrObject)
                 else -> return
             }
+
+            movedMember.modifierList?.let { CodeStyleManager.getInstance(member.manager).reformat(it) }
 
             applyMarking(movedMember, data.sourceToTargetClassSubstitutor, data.targetClassDescriptor)
             addMovedMember(movedMember)

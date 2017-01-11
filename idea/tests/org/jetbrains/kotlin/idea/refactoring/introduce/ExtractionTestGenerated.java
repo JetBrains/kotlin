@@ -4307,6 +4307,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doExtractSuperclassTest(fileName);
         }
 
+        @TestMetadata("reformatModifierList.kt")
+        public void testReformatModifierList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/reformatModifierList.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
         @TestMetadata("replaceSuperclass.kt")
         public void testReplaceSuperclass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/replaceSuperclass.kt");
