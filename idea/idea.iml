@@ -51,6 +51,8 @@
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="lint-idea" scope="PROVIDED" />
+    <orderEntry type="module" module-name="uast-kotlin" scope="PROVIDED" />
+    <orderEntry type="module" module-name="uast-kotlin-idea" scope="PROVIDED" />
     <orderEntry type="library" name="java-decompiler-plugin" level="project" />
     <orderEntry type="module" module-name="formatter" />
     <orderEntry type="module" module-name="idea-maven" />
