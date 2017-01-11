@@ -201,7 +201,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
                     index = index + 1,
                     annotations = Annotations.EMPTY,
                     name = param.name,
-                    outType = param.type,
+                    outType = builtIns.nullableAnyType, // Use erased type.
                     declaresDefaultValue = false,
                     isCrossinline = false, isNoinline = false,
                     varargElementType = (param as? ValueParameterDescriptor)?.varargElementType,
@@ -223,8 +223,10 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
 
         val newValueParameters = listOf(functionParameter) + newUnboundParams
 
+        val newReturnType = builtIns.nullableAnyType // Use erased type.
+
         newDescriptor.initialize(null, null, descriptor.typeParameters, newValueParameters,
-                descriptor.returnType, Modality.FINAL, Visibilities.PRIVATE)
+                newReturnType, Modality.FINAL, Visibilities.PRIVATE)
 
         return newDescriptor
     }
