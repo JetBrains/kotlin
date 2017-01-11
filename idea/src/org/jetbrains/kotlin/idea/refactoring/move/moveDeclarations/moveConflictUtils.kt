@@ -51,7 +51,8 @@ class MoveConflictChecker(
         private val project: Project,
         private val elementsToMove: Collection<KtElement>,
         private val moveTarget: KotlinMoveTarget,
-        contextElement: KtElement
+        contextElement: KtElement,
+        private val doNotGoIn: Collection<KtElement> = emptyList()
 ) {
     private val resolutionFacade = contextElement.getResolutionFacade()
 
@@ -148,7 +149,7 @@ class MoveConflictChecker(
         val sourceRoot = moveTarget.targetFile ?: return
         val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
         val resolveScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule)
-        for (declaration in elementsToMove) {
+        for (declaration in elementsToMove - doNotGoIn) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
                 val targetDescriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
 
@@ -206,7 +207,7 @@ class MoveConflictChecker(
 
     fun checkVisibilityInDeclarations(conflicts: MultiMap<PsiElement, String>) {
         val targetContainer = moveTarget.getContainerDescriptor() ?: return
-        for (declaration in elementsToMove) {
+        for (declaration in elementsToMove - doNotGoIn) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
                 refExpr.references
                         .forEach { ref ->

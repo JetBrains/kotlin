@@ -4295,6 +4295,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doExtractSuperclassTest(fileName);
         }
 
+        @TestMetadata("noWarningOnVisibilityInsideAbstractedMember.kt")
+        public void testNoWarningOnVisibilityInsideAbstractedMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/noWarningOnVisibilityInsideAbstractedMember.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
         @TestMetadata("privateClass.kt")
         public void testPrivateClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/privateClass.kt");
@@ -4373,6 +4379,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("dropFinal.kt")
         public void testDropFinal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/dropFinal.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
+        @TestMetadata("noWarningOnVisibilityInsideAbstractedMember.kt")
+        public void testNoWarningOnVisibilityInsideAbstractedMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/noWarningOnVisibilityInsideAbstractedMember.kt");
             doExtractInterfaceTest(fileName);
         }
 

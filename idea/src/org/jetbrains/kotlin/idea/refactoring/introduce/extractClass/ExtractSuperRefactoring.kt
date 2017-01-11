@@ -145,7 +145,13 @@ class ExtractSuperRefactoring(
             else {
                 KotlinMoveTargetForExistingElement(targetParent as KtElement)
             }
-            val conflictChecker = MoveConflictChecker(project, elementsToMove, moveTarget, originalClass)
+            val conflictChecker = MoveConflictChecker(
+                    project,
+                    elementsToMove,
+                    moveTarget,
+                    originalClass,
+                    memberInfos.filter { it.isToAbstract }.mapNotNull { it.member }
+            )
 
             project.runSynchronouslyWithProgress(RefactoringBundle.message("detecting.possible.conflicts"), true) {
                 runReadAction {
