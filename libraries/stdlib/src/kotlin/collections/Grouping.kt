@@ -247,6 +247,7 @@ public fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachCountTo(destinat
         foldTo(destination, 0) { acc, _ -> acc + 1 }
 
 /**
+/**
  * Groups elements from the [Grouping] source by key and sums values provided by the [valueSelector] function for elements in each group.
  *
  * @return a [Map] associating the key of each group with the sum of elements in the group.
@@ -273,7 +274,7 @@ public inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Ma
 @SinceKotlin("1.1")
 public inline fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachSumOfTo(destination: M, valueSelector: (T) -> Int): M =
         foldTo(destination, 0) { acc, e -> acc + valueSelector(e)}
-
+*/
 
 @JvmVersion
 @PublishedApi
