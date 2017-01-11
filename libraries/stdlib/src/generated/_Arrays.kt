@@ -12241,10 +12241,7 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            if (transform != null)
-                buffer.append(transform(element))
-            else
-                buffer.append(if (element == null) "null" else element.toString())
+            buffer.appendElement(element, transform)
         } else break
     }
     if (limit >= 0 && count > limit) buffer.append(truncated)
@@ -12428,7 +12425,7 @@ public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence 
             if (transform != null)
                 buffer.append(transform(element))
             else
-                buffer.append(element.toString())
+                buffer.append(element)
         } else break
     }
     if (limit >= 0 && count > limit) buffer.append(truncated)

@@ -42,9 +42,9 @@ class CollectionTest {
         val text = data.joinToString("-", "<", ">")
         assertEquals("<foo-bar>", text)
 
-        val big = listOf("a", "b", "c", "d", "e", "f")
-        val text2 = big.joinToString(limit = 3, truncated = "*")
-        assertEquals("a, b, c, *", text2)
+        val mixed = listOf('a', "b", StringBuilder("c"), null, "d", 'e', 'f')
+        val text2 = mixed.joinToString(limit = 4, truncated = "*")
+        assertEquals("a, b, c, null, *", text2)
     }
 
     @Test fun filterNotNull() {
