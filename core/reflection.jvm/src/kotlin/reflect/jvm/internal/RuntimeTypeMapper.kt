@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.reflect.*
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -126,7 +127,7 @@ internal sealed class JvmPropertySignature {
                         if (classProto.hasExtension(JvmProtoBuf.classModuleName))
                             nameResolver.getString(classProto.getExtension(JvmProtoBuf.classModuleName))
                         else JvmAbi.DEFAULT_MODULE_NAME
-                return "$" + JvmAbi.sanitizeAsJavaIdentifier(moduleName)
+                return "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
             }
             if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
                 val packagePartSource = (descriptor as DeserializedPropertyDescriptor).containerSource

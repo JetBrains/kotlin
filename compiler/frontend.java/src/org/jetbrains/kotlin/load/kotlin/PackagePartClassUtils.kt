@@ -21,9 +21,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
@@ -32,20 +32,6 @@ object PackagePartClassUtils {
             file.path.toLowerCase().hashCode()
 
     private val PART_CLASS_NAME_SUFFIX = "Kt"
-
-    @JvmStatic fun getPartClassName(str: String): String =
-            if (str.isEmpty())
-                "_$PART_CLASS_NAME_SUFFIX"
-            else
-                capitalizeAsJavaClassName(JvmAbi.sanitizeAsJavaIdentifier(str)) + PART_CLASS_NAME_SUFFIX
-
-    private @JvmStatic fun capitalizeAsJavaClassName(str: String): String =
-            // NB use Locale.ENGLISH so that build is locale-independent.
-            // See Javadoc on java.lang.String.toUpperCase() for more details.
-            if (Character.isJavaIdentifierStart(str[0]))
-                str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1)
-            else
-                "_$str"
 
     private @JvmStatic fun decapitalizeAsJavaClassName(str: String): String =
             // NB use Locale.ENGLISH so that build is locale-independent.
@@ -77,7 +63,7 @@ object PackagePartClassUtils {
             }
 
     @JvmStatic fun getFilePartShortName(fileName: String): String =
-            getPartClassName(FileUtil.getNameWithoutExtension(fileName))
+            NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(fileName)) + PART_CLASS_NAME_SUFFIX
 
     @JvmStatic fun getFileNameByFacadeName(facadeClassName: String): String? {
         if (!facadeClassName.endsWith(PART_CLASS_NAME_SUFFIX)) return null

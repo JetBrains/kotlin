@@ -134,7 +134,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
 
     private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
             packageFqName.asString().replace('.', '/') + "/" +
-            PackagePartClassUtils.getPartClassName(fileName.substringBeforeLast(".kt")) + DOT_METADATA_FILE_EXTENSION
+            PackagePartClassUtils.getFilePartShortName(fileName) + DOT_METADATA_FILE_EXTENSION
 
     private fun getClassFilePath(classId: ClassId): String =
             classId.asSingleFqName().asString().replace('.', '/') + DOT_METADATA_FILE_EXTENSION
