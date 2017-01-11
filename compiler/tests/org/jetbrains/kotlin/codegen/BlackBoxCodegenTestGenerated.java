@@ -4897,6 +4897,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("returnFromFinally.kt")
+            public void testReturnFromFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("switchLikeWhen.kt")
             public void testSwitchLikeWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/controlFlow/switchLikeWhen.kt");

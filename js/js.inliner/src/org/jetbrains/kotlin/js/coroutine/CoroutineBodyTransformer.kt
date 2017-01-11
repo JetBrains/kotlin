@@ -305,12 +305,19 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
         if (isInFinally) {
             val returnBlock = CoroutineBlock()
             jumpWithFinally(0, returnBlock)
-            val returnFieldRef = JsNameRef(context.returnValueFieldName, JsLiteral.THIS)
-            currentStatements += JsAstUtils.assignment(returnFieldRef, x.expression).makeStmt()
+            val returnExpression = x.expression
+            val returnFieldRef = if (returnExpression != null) {
+                val ref = JsNameRef(context.returnValueFieldName, JsLiteral.THIS)
+                currentStatements += JsAstUtils.assignment(ref, x.expression).makeStmt()
+                ref
+            }
+            else {
+                null
+            }
             currentStatements += jump()
 
             currentBlock = returnBlock
-            currentStatements += JsReturn(returnFieldRef.deepCopy())
+            currentStatements += JsReturn(returnFieldRef?.deepCopy())
         }
         else {
             currentStatements += x

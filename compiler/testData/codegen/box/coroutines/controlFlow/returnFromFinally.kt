@@ -2,11 +2,6 @@
 // WITH_COROUTINES
 import kotlin.coroutines.*
 
-
-// Does not work in JVM backend, probably due to bug. It's not clear which behaviour is right.
-// TODO: fix the bug and enable for JVM backend
-// TARGET_BACKEND: JS
-
 class Controller {
     var result = ""
 
@@ -25,10 +20,18 @@ fun builder(c: suspend Controller.() -> String): String {
     return controller.result
 }
 
+fun builderUnit(c: suspend Controller.() -> Unit): String {
+    val controller = Controller()
+    c.startCoroutine(controller, handleResultContinuation {
+        controller.result += "return;"
+    })
+    return controller.result
+}
+
 fun <T> id(value: T) = value
 
 fun box(): String {
-    val value = builder {
+    var value = builder {
         try {
             if (id(23) == 23) {
                 return@builder suspendAndLog("OK")
@@ -40,7 +43,22 @@ fun box(): String {
         result += "afterFinally;"
         "shouldNotReach"
     }
-    if (value != "suspend(OK);finally;return(OK);") return "fail: $value"
+    if (value != "suspend(OK);finally;return(OK);") return "fail1: $value"
+
+    value = builderUnit {
+        try {
+            if (id(23) == 23) {
+                suspendAndLog("OK")
+                return@builderUnit
+            }
+        }
+        finally {
+            result += "finally;"
+        }
+        result += "afterFinally;"
+        "shouldNotReach"
+    }
+    if (value != "suspend(OK);finally;return;") return "fail2: $value"
 
     return "OK"
 }
