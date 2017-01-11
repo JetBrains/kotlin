@@ -468,8 +468,11 @@ public class kotlin/jvm/internal/CollectionToArray {
 	public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
-public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/RestrictedCoroutineImpl, kotlin/jvm/internal/DispatchedContinuation {
+public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation, kotlin/jvm/internal/DispatchedContinuation {
+	protected field completion Lkotlin/coroutines/Continuation;
+	protected field label I
 	public fun <init> (ILkotlin/coroutines/Continuation;)V
+	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
 	public fun getDispatcher ()Lkotlin/coroutines/ContinuationDispatcher;
 	public final fun getFacade ()Lkotlin/coroutines/Continuation;
 	public fun resume (Ljava/lang/Object;)V
@@ -865,15 +868,6 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun property1 (Lkotlin/jvm/internal/PropertyReference1;)Lkotlin/reflect/KProperty1;
 	public fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
 	public fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
-}
-
-public abstract class kotlin/jvm/internal/RestrictedCoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
-	protected field completion Lkotlin/coroutines/Continuation;
-	protected field label I
-	public fun <init> (ILkotlin/coroutines/Continuation;)V
-	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
-	public fun resume (Ljava/lang/Object;)V
-	public fun resumeWithException (Ljava/lang/Throwable;)V
 }
 
 public final class kotlin/jvm/internal/ShortCompanionObject {

@@ -15,7 +15,7 @@ fun builder1(c: suspend () -> Unit) {
 
 fun builder2(c: suspend () -> Unit) {
     val continuation = c.createCoroutine(EmptyContinuation)
-    val declaredField = continuation.javaClass.superclass.superclass.getDeclaredField("label")
+    val declaredField = continuation.javaClass.superclass.getDeclaredField("label")
     declaredField.setAccessible(true)
     declaredField.set(continuation, -3)
     continuation.resume(Unit)
