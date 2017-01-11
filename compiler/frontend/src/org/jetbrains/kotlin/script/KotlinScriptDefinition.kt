@@ -20,6 +20,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import java.io.File
@@ -41,7 +42,7 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
             getFileName(file).endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
     open fun getScriptName(script: KtScript): Name =
-        ScriptNameUtil.fileNameWithExtensionStripped(script)
+            NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
     open fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? = null
 }

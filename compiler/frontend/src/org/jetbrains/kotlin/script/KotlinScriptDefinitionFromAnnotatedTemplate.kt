@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
@@ -85,7 +85,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
             scriptFilePattern.let { Regex(it).matches(getFileName(file)) }
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
-    override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script)
+    override fun getScriptName(script: KtScript): Name = NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
     override fun <TF: Any> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
 

@@ -45,4 +45,9 @@ object NameUtils {
                 str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1)
             else
                 "_$str"
+
+    // "pkg/someScript.kts" -> "SomeScript"
+    @JvmStatic
+    fun getScriptNameForFile(filePath: String): Name =
+            Name.identifier(NameUtils.getPackagePartClassNamePrefix(filePath.substringAfterLast('/').substringBeforeLast('.')))
 }

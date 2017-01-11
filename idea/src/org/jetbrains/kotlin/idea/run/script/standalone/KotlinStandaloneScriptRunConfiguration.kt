@@ -35,9 +35,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.ScriptNameUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*

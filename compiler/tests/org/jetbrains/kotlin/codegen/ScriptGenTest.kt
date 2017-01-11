@@ -90,6 +90,13 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(239, invoke as Int / 2)
     }
 
+    fun testNameSanitation() {
+        setUpEnvironment("scriptCustom/1#@2.kts")
+
+        val aClass = generateClass("_1__2")
+        assertEquals("OK", aClass.getDeclaredMethod("getResult")(aClass.newInstance()))
+    }
+
     private fun setUpEnvironment(sourcePath: String) {
         setUpEnvironment(listOf(sourcePath))
     }
