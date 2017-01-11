@@ -152,9 +152,6 @@ header inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
 header fun <T : Comparable<T>> MutableList<T>.sort(): Unit
 header fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit
 
-// from Maps.kt
-header operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit
-
 
 // from Grouping.kt
 public header fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int>
