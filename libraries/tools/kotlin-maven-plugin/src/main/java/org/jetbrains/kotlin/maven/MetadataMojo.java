@@ -5,12 +5,14 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments;
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
@@ -20,6 +22,14 @@ import static org.jetbrains.kotlin.maven.Util.filterClassPath;
 public class MetadataMojo extends KotlinCompileMojoBase<K2MetadataCompilerArguments> {
     @Parameter(defaultValue = "${project.compileClasspathElements}", required = true, readonly = true)
     public List<String> classpath;
+
+    @Parameter(defaultValue = "${project.testClasspathElements}", required = true, readonly = true)
+    public List<String> testClasspath;
+
+    @Override
+    protected List<String> getRelatedSourceRoots(MavenProject project) {
+        return Collections.emptyList();
+    }
 
     @NotNull
     @Override
@@ -42,6 +52,7 @@ public class MetadataMojo extends KotlinCompileMojoBase<K2MetadataCompilerArgume
         }
 
         List<String> classpathList = filterClassPath(project.getBasedir(), classpath);
+        classpathList.remove(project.getBuild().getOutputDirectory());
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);

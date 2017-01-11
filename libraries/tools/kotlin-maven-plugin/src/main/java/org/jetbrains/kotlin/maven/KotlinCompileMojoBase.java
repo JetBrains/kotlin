@@ -34,6 +34,7 @@ import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
@@ -86,7 +87,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         return project.getCompileSourceRoots();
     }
 
-    public List<File> getSourceDirs() {
+    private List<File> getSourceDirs() {
         List<String> sources = getSourceFilePaths();
         List<File> result = new ArrayList<File>(sources.size());
 
@@ -96,6 +97,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         Map<String, MavenProject> projectReferences = project.getProjectReferences();
         if (projectReferences != null) {
+            iterateDependencies:
             for (Dependency dependency : project.getDependencies()) {
                 MavenProject sibling = projectReferences.get(dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion());
                 if (sibling != null) {
@@ -103,11 +105,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                     if (plugin != null) {
                         for (PluginExecution pluginExecution : plugin.getExecutions()) {
                             if (pluginExecution.getGoals() != null && pluginExecution.getGoals().contains("metadata")) {
-                                List<String> sourceRoots = sibling.getCompileSourceRoots();
-                                if (sourceRoots != null) {
-                                    for (String sourceRoot : sourceRoots) {
-                                        addSourceRoots(result, sourceRoot);
-                                    }
+                                for (String sourceRoot : orEmpty(getRelatedSourceRoots(sibling))) {
+                                    addSourceRoots(result, sourceRoot);
+                                    continue iterateDependencies;
                                 }
                             }
                         }
@@ -118,6 +118,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         return result;
     }
+
+    protected abstract List<String> getRelatedSourceRoots(MavenProject project);
 
     private void addSourceRoots(List<File> result, String source) {
         File f = new File(source);
@@ -448,5 +450,14 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         PluginOptionIllegalFormatException(String option) {
             super("Plugin option has an illegal format: " + option);
         }
+    }
+
+    @NotNull
+    private static <T> List<T> orEmpty(@Nullable List<T> in) {
+        if (in == null) {
+            return Collections.emptyList();
+        }
+
+        return in;
     }
 }

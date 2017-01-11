@@ -28,6 +28,8 @@
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -39,6 +41,17 @@
                         <phase>compile</phase>
                         <goals>
                             <goal>js</goal>
+                        </goals>
+
+                        <configuration>
+                            <multiPlatform>true</multiPlatform>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-test</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-js</goal>
                         </goals>
 
                         <configuration>

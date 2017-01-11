@@ -21,6 +21,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -64,6 +65,11 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(property = "kotlin.compiler.scriptTemplates", required = false, readonly = false)
     protected List<String> scriptTemplates;
+
+    @Override
+    protected List<String> getRelatedSourceRoots(MavenProject project) {
+        return project.getCompileSourceRoots();
+    }
 
     @NotNull
     @Override

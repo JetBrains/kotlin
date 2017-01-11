@@ -24,10 +24,18 @@
             <artifactId>test-multimodule-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -39,6 +47,16 @@
                         <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <multiPlatform>true</multiPlatform>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-test</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
                         </goals>
                         <configuration>
                             <multiPlatform>true</multiPlatform>

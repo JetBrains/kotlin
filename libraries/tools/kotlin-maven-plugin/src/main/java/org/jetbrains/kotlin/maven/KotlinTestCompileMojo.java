@@ -22,6 +22,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 
@@ -88,5 +89,10 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
         arguments.friendPaths = new String[] { output };
         output = testOutput;
         super.configureSpecificCompilerArguments(arguments);
+    }
+
+    @Override
+    protected List<String> getRelatedSourceRoots(MavenProject project) {
+        return project.getTestCompileSourceRoots();
     }
 }
