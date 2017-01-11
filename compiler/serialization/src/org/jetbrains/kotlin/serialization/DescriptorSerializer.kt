@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.serialization
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.name.Name
@@ -28,8 +30,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.Interner
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -214,6 +217,10 @@ class DescriptorSerializer private constructor(
             }
         }
 
+        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+            builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
+        }
+
         extension.serializeProperty(descriptor, builder)
 
         return builder
@@ -266,6 +273,10 @@ class DescriptorSerializer private constructor(
             }
         }
 
+        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+            builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
+        }
+
         extension.serializeFunction(descriptor, builder)
 
         return builder
@@ -285,9 +296,23 @@ class DescriptorSerializer private constructor(
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
 
+        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+            builder.sinceKotlinInfo = writeSinceKotlinInfo(LanguageFeature.Coroutines)
+        }
+
         extension.serializeConstructor(descriptor, builder)
 
         return builder
+    }
+
+    private fun CallableMemberDescriptor.isSuspendOrHasSuspendTypesInSignature(): Boolean {
+        if (this is FunctionDescriptor && isSuspend) return true
+
+        return listOfNotNull(
+                extensionReceiverParameter?.type,
+                returnType,
+                *valueParameters.map(ValueParameterDescriptor::getType).toTypedArray()
+        ).any { type -> type.contains(UnwrappedType::isSuspendFunctionType) }
     }
 
     fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {
@@ -547,6 +572,17 @@ class DescriptorSerializer private constructor(
         extension.serializePackage(builder)
 
         return builder
+    }
+
+    private fun writeSinceKotlinInfo(languageFeature: LanguageFeature): Int {
+        val languageVersion = languageFeature.sinceVersion!!
+        val sinceKotlinInfo = ProtoBuf.SinceKotlinInfo.newBuilder().apply {
+            SinceKotlinInfo.Version(languageVersion.major, languageVersion.minor).encode(
+                    writeVersion = { version = it },
+                    writeVersionFull = { versionFull = it }
+            )
+        }
+        return sinceKotlinInfoTable[sinceKotlinInfo]
     }
 
     private fun getClassifierId(descriptor: ClassifierDescriptorWithTypeParameters): Int =

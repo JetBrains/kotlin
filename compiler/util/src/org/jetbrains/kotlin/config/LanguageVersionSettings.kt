@@ -58,9 +58,12 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     }
 }
 
-enum class LanguageVersion(val versionString: String) : DescriptionAware {
-    KOTLIN_1_0("1.0"),
-    KOTLIN_1_1("1.1");
+enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
+    KOTLIN_1_0(1, 0),
+    KOTLIN_1_1(1, 1);
+
+    val versionString: String
+        get() = "$major.$minor"
 
     override val description: String
         get() = versionString
