@@ -97,7 +97,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         fun handleSourceSet(sourceSetName: String) {
             val kaptConfiguration = project.findKaptConfiguration(sourceSetName)
-            if (kaptConfiguration != null && kaptConfiguration.dependencies.size > 1) {
+            val filteredDependencies = kaptConfiguration?.dependencies?.filter {
+                it.group != getGroupName() || it.name != getArtifactName()
+            } ?: emptyList()
+
+            if (kaptConfiguration != null && filteredDependencies.isNotEmpty()) {
                 javaCompile.dependsOn(kaptConfiguration.buildDependencies)
                 kaptClasspath.addAll(kaptConfiguration.resolve())
             }
