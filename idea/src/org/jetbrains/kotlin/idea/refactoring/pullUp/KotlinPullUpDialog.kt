@@ -27,6 +27,7 @@ import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
 import com.intellij.refactoring.util.DocCommentPolicy
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.idea.refactoring.isCompanionMemberOf
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.*
@@ -57,6 +58,10 @@ class KotlinPullUpDialog(
     ) {
         private var lastSuperClass: PsiNamedElement? = null
 
+        private fun KtNamedDeclaration.isConstructorParameterWithInterfaceTarget(targetClass: PsiNamedElement): Boolean {
+            return targetClass is KtClass && targetClass.isInterface() && isConstructorDeclaredProperty()
+        }
+
         // Abstract members remain abstract
         override fun isFixedAbstract(memberInfo: KotlinMemberInfo?) = true
 
@@ -78,6 +83,7 @@ class KotlinPullUpDialog(
                 member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
                 member.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
             if (member.isAbstractInInterface(sourceClass)) return false
+            if (member.isConstructorParameterWithInterfaceTarget(superClass)) return false
             if (member.isCompanionMemberOf(sourceClass)) return false
 
             if (!superClass.isInterface()) return true
@@ -86,9 +92,11 @@ class KotlinPullUpDialog(
         }
 
         override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
+            val superClass = superClass
             val member = memberInfo.member
             if (member.isCompanionMemberOf(sourceClass)) return false
             if (member.isAbstractInInterface(sourceClass)) return true
+            if (superClass != null && member.isConstructorParameterWithInterfaceTarget(superClass)) return true
             return ((member is KtProperty || member is KtParameter) && superClass !is PsiClass)
                    || (member is KtNamedFunction && superClass is PsiClass)
         }

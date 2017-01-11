@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

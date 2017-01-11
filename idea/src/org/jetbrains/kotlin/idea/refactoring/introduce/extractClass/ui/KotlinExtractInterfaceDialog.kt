@@ -22,6 +22,7 @@ import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractInterfaceHandler
+import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
 import org.jetbrains.kotlin.idea.refactoring.pullUp.getInterfaceContainmentVerifier
@@ -68,11 +69,14 @@ class KotlinExtractInterfaceDialog(
                 if (!super.isAbstractEnabled(memberInfo)) return false
                 val member = memberInfo.member
                 if (member.isAbstractInInterface(originalClass)) return false
+                if (member.isConstructorDeclaredProperty()) return false
                 return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface()) || member is KtParameter
             }
 
-            override fun isAbstractWhenDisabled(member: KotlinMemberInfo) =
-                    member.member is KtProperty || member.member.isAbstractInInterface(originalClass)
+            override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
+                val member = memberInfo.member
+                return member is KtProperty || member.isAbstractInInterface(originalClass) || member.isConstructorDeclaredProperty()
+            }
         }
     }
 

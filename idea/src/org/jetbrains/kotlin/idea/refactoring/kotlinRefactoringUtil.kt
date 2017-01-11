@@ -726,6 +726,8 @@ fun KtNamedDeclaration.isAbstract(): Boolean {
     }
 }
 
+fun KtNamedDeclaration.isConstructorDeclaredProperty() = this is KtParameter && ownerFunction is KtPrimaryConstructor && hasValOrVar()
+
 fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
         originalList: ListType,
         newList: ListType,
