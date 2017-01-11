@@ -1,0 +1,3 @@
+package test.inner
+
+impl class My

@@ -30,13 +30,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.TemplateKind
-import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
-import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -66,6 +64,20 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
         val generated = factory.generateIt(project, element) ?: return
 
         runWriteAction {
+            if (implFile.packageDirective?.fqName != file.packageDirective?.fqName &&
+                implFile.declarations.isEmpty()) {
+                val packageDirective = file.packageDirective
+                packageDirective?.let {
+                    val oldPackageDirective = implFile.packageDirective
+                    val newPackageDirective = factory.createPackageDirective(it.fqName)
+                    if (oldPackageDirective != null) {
+                        oldPackageDirective.replace(newPackageDirective)
+                    }
+                    else {
+                        implFile.add(newPackageDirective)
+                    }
+                }
+            }
             val implDeclaration = implFile.add(generated) as KtElement
             val reformatted = CodeStyleManager.getInstance(project).reformat(implDeclaration)
             ShortenReferences.DEFAULT.process(reformatted as KtElement)
@@ -93,7 +105,28 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
                 implModule, headerPackage?.qualifiedName ?: "", null, false
         ) ?: return null
         return runWriteAction {
-            getOrCreateKotlinFile("$name.kt", implDirectory)
+            val fileName = "$name.kt"
+            val existingFile = implDirectory.findFile(fileName)
+            val packageDirective = declaration.containingKtFile.packageDirective
+            val packageName =
+                    if (packageDirective?.packageNameExpression == null) implDirectory.getPackage()?.qualifiedName
+                    else packageDirective.fqName.asString()
+            if (existingFile is KtFile) {
+                val existingPackageDirective = existingFile.packageDirective
+                if (existingFile.declarations.isNotEmpty() &&
+                    existingPackageDirective?.fqName != packageDirective?.fqName) {
+                    val newName = KotlinNameSuggester.suggestNameByName(name) {
+                        implDirectory.findFile("$it.kt") == null
+                    } + ".kt"
+                    createKotlinFile(newName, implDirectory, packageName)
+                }
+                else {
+                    existingFile
+                }
+            }
+            else {
+                createKotlinFile(fileName, implDirectory, packageName)
+            }
         }
     }
 

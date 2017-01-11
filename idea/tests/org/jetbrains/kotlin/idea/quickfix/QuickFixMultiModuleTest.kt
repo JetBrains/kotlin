@@ -66,6 +66,21 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
     }
 
     @Test
+    fun testPackage() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testPackageIncorrect() {
+        doMultiPlatformTest()
+    }
+
+    @Test
+    fun testPackageIncorrectEmpty() {
+        doMultiPlatformTest()
+    }
+
+    @Test
     fun testNested() {
         doMultiPlatformTest()
     }

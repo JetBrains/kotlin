@@ -26,10 +26,12 @@ import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
+import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.regex.Pattern
@@ -40,7 +42,8 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
 
     override fun getTestDataPath() = testPath
 
-    protected fun shouldBeAvailableAfterExecution() = false
+    protected fun shouldBeAvailableAfterExecution(file: KtFile) =
+            InTextDirectivesUtils.isDirectiveDefined(file.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
 
     private fun getActionsTexts(availableActions: List<IntentionAction>) = availableActions.map { it.text }
 
@@ -68,7 +71,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
                 }
 
-                doAction(text, actionShouldBeAvailable, actionFileName)
+                doAction(text, actionShouldBeAvailable, actionFileName, actionFile)
 
                 if (actionShouldBeAvailable) {
                     val testDirectory = File(testPath)
@@ -79,7 +82,9 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
                             try {
                                 val editedFile = allFilesInProject.find {
                                     it.name.toLowerCase() == file.name.removeSuffix(".after").toLowerCase()
-                                }!!
+                                } ?: allFilesInProject.mapNotNull {
+                                    it.containingDirectory?.findFile(file.name.removeSuffix(".after"))
+                                }.single()
                                 setActiveEditor(editedFile.findExistingEditor() ?: createEditor(editedFile.virtualFile))
                                 checkResultByFile(file.relativeTo(testDirectory).path)
                             }
@@ -105,7 +110,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
 
     // TODO: merge with AbstractQuickFixMultiFileTest
 
-    fun doAction(text: String, actionShouldBeAvailable: Boolean, testFilePath: String) {
+    fun doAction(text: String, actionShouldBeAvailable: Boolean, testFilePath: String, actionFile: KtFile) {
         val pattern = if (text.startsWith("/"))
             Pattern.compile(text.substring(1, text.length - 1))
         else
@@ -140,7 +145,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
             UIUtil.dispatchAllInvocationEvents()
 
 
-            if (!shouldBeAvailableAfterExecution()) {
+            if (!shouldBeAvailableAfterExecution(actionFile)) {
                 val afterAction = findActionByPattern(pattern, getAvailableActions())
 
                 if (afterAction != null) {
