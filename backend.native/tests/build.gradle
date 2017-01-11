@@ -41,11 +41,11 @@ abstract class KonanTest extends DefaultTask {
         project.javaexec {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
-            jvmArgs "-ea", 
+            jvmArgs "-ea",
                 "-Dkonan.home=${dist.canonicalPath}",
                 "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
             args("-output", output,
-                 source, 
+                 source,
                  *moreArgs,
                  *project.globalArgs)
         }
@@ -88,7 +88,7 @@ abstract class KonanTest extends DefaultTask {
 
 class RunKonanTest extends KonanTest {
     void compileTest(String source, String exe) {
-        runCompiler(source, exe, []) 
+        runCompiler(source, exe, [])
     }
 }
 
@@ -98,7 +98,7 @@ class LinkKonanTest extends KonanTest {
     void compileTest(String source, String exe) {
         def libDir = project.file(lib).absolutePath
         def libBc = "${libDir}.bc"
-        
+
         runCompiler(lib, libBc, ['-nolink', '-nostdlib'])
         runCompiler(source, exe, ['-library', libBc])
     }
@@ -246,8 +246,8 @@ task tostring3(type: RunKonanTest) {
             "1.17549E-38\n3.40282E+38\n-INF\nINF\n" +
             // Linux version prints -NAN.
             // "NAN\n" +
-            "4.94066E-324\n1.79769E+308\n-INF\nINF\n" 
-            // "NAN\n" 
+            "4.94066E-324\n1.79769E+308\n-INF\nINF\n"
+            // "NAN\n"
     source = "runtime/basic/tostring3.kt"
 }
 
@@ -359,7 +359,7 @@ task intrinsic(type: RunKonanTest) {
 }
 
 /*
-    Disabled until we extract the classes that should be 
+    Disabled until we extract the classes that should be
     always present from stdlib.kt.bc into a separate binary.
 
 task link(type: LinkKonanTest) {
@@ -803,6 +803,11 @@ task memory_var4(type: RunKonanTest) {
 task memory_throw_cleanup(type: RunKonanTest) {
     goldValue = "Ok\n"
     source = "runtime/memory/throw_cleanup.kt"
+}
+
+task memory_collect_cycles(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "runtime/memory/cycles0.kt"
 }
 
 task unit1(type: RunKonanTest) {

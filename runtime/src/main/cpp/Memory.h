@@ -26,10 +26,14 @@ typedef enum {
   CONTAINER_TAG_SHARED = 2,
   // Container is no longer valid.
   CONTAINER_TAG_INVALID = 3,
+  // Container was seen during GC.
+  CONTAINER_TAG_SEEN = 4,
+  // Shift to get actual counter..
+  CONTAINER_TAG_SHIFT = 3,
   // Actual value to increment/decrement conatiner by. Tag is in lower bits.
-  CONTAINER_TAG_INCREMENT = 1 << 2,
-  // Mask for container type.
-  CONTAINER_TAG_MASK = (CONTAINER_TAG_INCREMENT - 1)
+  CONTAINER_TAG_INCREMENT = 1 << CONTAINER_TAG_SHIFT,
+  // Mask for container type, disregard seen bit.
+  CONTAINER_TAG_MASK = ((CONTAINER_TAG_INCREMENT >> 1) - 1)
 } ContainerTag;
 
 // Could be made 64-bit for large memory configs.
@@ -127,8 +131,8 @@ inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
 
 void FreeContainer(ContainerHeader* header);
 
-// Those two operations are implemented by translator when storing references
-// to objects.
+// TODO: those two operations can be implemented by translator when storing
+// reference to an object.
 inline void AddRef(ContainerHeader* header) {
   // Looking at container type we may want to skip AddRef() totally
   // (non-escaping stack objects, constant objects).
@@ -144,18 +148,25 @@ inline void AddRef(ContainerHeader* header) {
     case CONTAINER_TAG_INVALID:
       RuntimeAssert(false, "trying to addref invalid container");
       break;
+    default:
+      RuntimeAssert(false, "unknown container type");
+      break;
   }
 }
 
-inline void Release(ContainerHeader* header) {
+// Release returns 'true' iff container cannot be part of cycle (either NOCOUNT
+// object or container was fully released and will be collected).
+inline bool Release(ContainerHeader* header) {
   switch (header->ref_count_ & CONTAINER_TAG_MASK) {
     case CONTAINER_TAG_NORMAL:
       if ((header->ref_count_ -= CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_NORMAL) {
         FreeContainer(header);
+        return true;
       }
       break;
     case CONTAINER_TAG_NOCOUNT:
-      break;
+      // NOCOUNT containers aren't loop candidate.
+      return true;
     // Note that shared containers have potentially subtle race, if object holds a
     // reference to another object, stored in shorter living container. In this
     // case there's unlikely, but possible case, where one mutator takes reference,
@@ -173,12 +184,18 @@ inline void Release(ContainerHeader* header) {
       if (__sync_sub_and_fetch(
               &header->ref_count_, CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_SHARED) {
         FreeContainer(header);
+        return true;
       }
       break;
     case CONTAINER_TAG_INVALID:
       RuntimeAssert(false, "trying to release invalid container");
       break;
+    default:
+      RuntimeAssert(false, "unknown container type");
+      break;
   }
+  // Object with non-zero counter after release are loop candidates.
+  return false;
 }
 
 // Class representing arbitrary placement container.
@@ -346,6 +363,8 @@ void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTH
 // Optimization: release all references in range.
 void ReleaseLocalRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
 void ReleaseGlobalRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
+// Collect garbage, which cannot be found by reference counting (cycles).
+void GarbageCollect() RUNTIME_NOTHROW;
 
 #ifdef __cplusplus
 }
