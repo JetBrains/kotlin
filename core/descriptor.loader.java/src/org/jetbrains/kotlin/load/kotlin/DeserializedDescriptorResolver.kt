@@ -74,7 +74,9 @@ class DeserializedDescriptorResolver {
         }
 
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
-        get() = !IS_PRE_RELEASE && (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)
+        get() = !JvmMetadataVersion.skipCheck &&
+                !IS_PRE_RELEASE &&
+                (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)
 
     internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader
