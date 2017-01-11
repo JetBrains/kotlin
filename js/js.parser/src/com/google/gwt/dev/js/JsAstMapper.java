@@ -570,7 +570,7 @@ public class JsAstMapper {
         //
         String fnNameIdent = fromFnNameNode.getString();
         if (fnNameIdent != null && fnNameIdent.length() > 0) {
-            scopeContext.globalNameFor(fnNameIdent);
+            toFn.setName(scopeContext.globalNameFor(fnNameIdent));
         }
 
         while (fromParamNode != null) {
