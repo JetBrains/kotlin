@@ -587,6 +587,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         blockStackElements.push(new LoopBlockStackElement(breakLabel, continueLabel, targetLabel(expression)));
 
         PseudoInsnsKt.fakeAlwaysFalseIfeq(v, continueLabel);
+        PseudoInsnsKt.fakeAlwaysFalseIfeq(v, breakLabel);
 
         KtExpression body = expression.getBody();
         KtExpression condition = expression.getCondition();

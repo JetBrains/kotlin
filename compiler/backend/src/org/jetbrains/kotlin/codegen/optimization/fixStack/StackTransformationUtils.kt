@@ -115,11 +115,10 @@ fun replaceAlwaysTrueIfeqWithGoto(methodNode: MethodNode, node: AbstractInsnNode
     }
 }
 
-fun replaceMarkerWithPops(methodNode: MethodNode, node: AbstractInsnNode, expectedStackSize: Int, frame: Frame<BasicValue>) {
+fun replaceMarkerWithPops(methodNode: MethodNode, node: AbstractInsnNode, expectedStackSize: Int, stackContent: List<BasicValue>) {
     with (methodNode.instructions) {
-        while (frame.stackSize > expectedStackSize) {
-            val top = frame.pop()
-            insertBefore(node, getPopInstruction(top))
+        for (stackValue in stackContent.subList(expectedStackSize, stackContent.size)) {
+            insert(node, getPopInstruction(stackValue))
         }
         remove(node)
     }
