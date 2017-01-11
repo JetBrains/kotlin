@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
@@ -70,7 +71,7 @@ class JavaKaptContextTest {
                     }
                 }
 
-                return true;
+                return true
             }
 
             override fun getSupportedAnnotationTypes() = setOf("test.MyAnnotation")
@@ -79,6 +80,7 @@ class JavaKaptContextTest {
 
     private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
         KaptContext(KaptLogger(isVerbose = true, messageCollector = messageCollector),
+                    bindingContext = BindingContext.EMPTY,
                     compiledClasses = emptyList(),
                     origins = emptyMap(),
                     processorOptions = emptyMap()

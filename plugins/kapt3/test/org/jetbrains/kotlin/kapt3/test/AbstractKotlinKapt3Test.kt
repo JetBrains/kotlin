@@ -59,7 +59,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val typeMapper = factory.generationState.typeMapper
 
         val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
-        val kaptContext = KaptContext(logger, classBuilderFactory.compiledClasses,
+        val kaptContext = KaptContext(logger, factory.generationState.bindingContext, classBuilderFactory.compiledClasses,
                                       classBuilderFactory.origins, processorOptions = emptyMap())
         try {
             check(kaptContext, typeMapper, txtFile, wholeFile)
@@ -82,9 +82,14 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 
 abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test() {
     override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File, wholeFile: File) {
-        val generateNonExistentClass = wholeFile.useLines { lines -> lines.any { it.trim() == "// NON_EXISTENT_CLASS" } }
+        fun isOptionSet(name: String) = wholeFile.useLines { lines -> lines.any { it.trim() == "// $name" } }
+
+        val generateNonExistentClass = isOptionSet("NON_EXISTENT_CLASS")
+        val validate = !isOptionSet("NO_VALIDATION")
+
         val javaFiles = convert(kaptRunner, typeMapper, generateNonExistentClass)
-        kaptRunner.compiler.enterTrees(javaFiles)
+
+        if (validate) kaptRunner.compiler.enterTrees(javaFiles)
 
         val actualRaw = javaFiles.sortedBy { it.sourceFile.name }.joinToString (FILE_SEPARATOR)
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
