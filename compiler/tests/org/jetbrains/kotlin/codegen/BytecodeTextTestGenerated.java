@@ -300,6 +300,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nopsInDoWhile.kt")
+    public void testNopsInDoWhile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nopsInDoWhile.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("partMembersCall.kt")
     public void testPartMembersCall() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/partMembersCall.kt");

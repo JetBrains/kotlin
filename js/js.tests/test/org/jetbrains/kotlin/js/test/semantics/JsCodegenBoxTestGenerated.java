@@ -8441,7 +8441,13 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt15112.kt")
             public void testKt15112() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/fullJdk/regressions/kt15112.kt");
-                doTest(fileName);
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
             @TestMetadata("kt1770.kt")

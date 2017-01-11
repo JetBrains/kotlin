@@ -55,19 +55,15 @@ internal class FixStackAnalyzer(
     }
 
     private fun preprocess() {
-        var current: AbstractInsnNode? = method.instructions.first
-        while (current != null) {
-            val next = current.next
-            if (PseudoInsn.FAKE_ALWAYS_FALSE_IFEQ.isa(current) && next is JumpInsnNode) {
+        for (marker in context.fakeAlwaysFalseIfeqMarkers) {
+            val next = marker.next
+            if (next is JumpInsnNode) {
                 val nop = InsnNode(Opcodes.NOP)
                 expectedStackNode[next.label] = nop
                 method.instructions.insert(next, nop)
-                method.instructions.remove(current)
+                method.instructions.remove(marker)
                 method.instructions.remove(next)
-                current = nop.next
-            }
-            else {
-                current = current.next
+                context.nodesToRemoveOnCleanup.add(nop)
             }
         }
 

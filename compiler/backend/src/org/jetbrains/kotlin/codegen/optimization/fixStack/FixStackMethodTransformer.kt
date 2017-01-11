@@ -60,6 +60,10 @@ class FixStackMethodTransformer : MethodTransformer() {
         context.fakeAlwaysFalseIfeqMarkers.forEach { marker ->
             removeAlwaysFalseIfeq(methodNode, marker)
         }
+
+        context.nodesToRemoveOnCleanup.forEach {
+            methodNode.instructions.remove(it)
+        }
     }
 
     private fun transformBreakContinueGotos(

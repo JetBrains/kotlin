@@ -37,7 +37,8 @@ public class OptimizationMethodVisitor extends TransformationMethodVisitor {
             new RedundantBoxingMethodTransformer(),
             new RedundantCoercionToUnitTransformer(),
             new DeadCodeEliminationMethodTransformer(),
-            new RedundantGotoMethodTransformer()
+            new RedundantGotoMethodTransformer(),
+            new RedundantNopsCleanupMethodTransformer()
     };
 
     private final boolean disableOptimization;

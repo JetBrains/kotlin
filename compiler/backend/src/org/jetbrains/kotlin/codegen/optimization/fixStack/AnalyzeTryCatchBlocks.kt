@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.hasOpcode
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode

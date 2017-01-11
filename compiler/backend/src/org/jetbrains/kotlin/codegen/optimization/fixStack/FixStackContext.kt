@@ -39,6 +39,8 @@ internal class FixStackContext(val methodNode: MethodNode) {
     val openingInlineMethodMarker = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
     var consistentInlineMarkers: Boolean = true; private set
 
+    val nodesToRemoveOnCleanup = arrayListOf<AbstractInsnNode>()
+
     init {
         saveStackMarkerForRestoreMarker = insertTryCatchBlocksMarkers(methodNode)
         isThereAnyTryCatch = saveStackMarkerForRestoreMarker.isNotEmpty()
