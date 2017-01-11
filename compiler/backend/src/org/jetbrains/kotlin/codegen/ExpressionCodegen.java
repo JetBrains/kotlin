@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
@@ -182,7 +181,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (originalCoroutineDescriptor != null) return originalCoroutineDescriptor;
 
         if (context.getFunctionDescriptor().isSuspend()) {
-            return (FunctionDescriptor) CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(context.getFunctionDescriptor());
+            return CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(context.getFunctionDescriptor());
         }
 
         return null;
@@ -192,7 +191,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private static FunctionDescriptor getOriginalCoroutineDescriptor(MethodContext context) {
         if ((context.getParentContext() instanceof ClosureContext) &&
             (context.getParentContext().closure != null) &&
-            context.getParentContext().closure.isCoroutine()) {
+            context.getParentContext().closure.isSuspend()) {
             return ((ClosureContext) context.getParentContext()).getCoroutineDescriptor();
         }
 
@@ -1650,7 +1649,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 declaration.getContainingFile()
         );
 
-        ClosureCodegen coroutineCodegen = CoroutineCodegen.create(this, descriptor, declaration, cv);
+        ClosureCodegen coroutineCodegen = CoroutineCodegen.createByLambda(this, descriptor, declaration, cv);
         ClosureCodegen closureCodegen = coroutineCodegen != null ? coroutineCodegen : new ClosureCodegen(
                 state, declaration, samType, context.intoClosure(descriptor, this, typeMapper),
                 functionReferenceTarget, strategy, parentCodegen, cv
@@ -1658,6 +1657,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         closureCodegen.generate();
 
+        return putClosureInstanceOnStack(closureCodegen, functionReferenceReceiver);
+    }
+
+    @NotNull
+    public StackValue putClosureInstanceOnStack(
+            @NotNull ClosureCodegen closureCodegen,
+            @Nullable StackValue functionReferenceReceiver
+    ) {
         if (closureCodegen.getReifiedTypeParametersUsages().wereUsedReifiedParameters()) {
             ReifiedTypeInliner.putNeedClassReificationMarker(v);
             propagateChildReifiedTypeParametersUsages(closureCodegen.getReifiedTypeParametersUsages());
@@ -1770,9 +1777,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             );
         }
 
-        if (closure.isCoroutine()) {
+        if (closure.isSuspend()) {
             // resultContinuation
-            v.aconst(null);
+            if (closure.isSuspendLambda()) {
+                v.aconst(null);
+            }
+            else {
+                assert context.getFunctionDescriptor().isSuspend() : "Coroutines closure must be created only inside suspend functions";
+                ValueParameterDescriptor continuationParameter = CollectionsKt.last(context.getFunctionDescriptor().getValueParameters());
+                StackValue continuationValue = findLocalOrCapturedValue(continuationParameter);
+
+                assert continuationValue != null : "Couldn't find a value for continuation parameter of " + context.getFunctionDescriptor();
+
+                callGenerator.putCapturedValueOnStack(continuationValue, continuationValue.type, paramIndex++);
+            }
         }
     }
 
@@ -1870,17 +1888,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     private StackValue getCoroutineInstanceValueForSuspensionPoint(@NotNull ResolvedCall<?> resolvedCall) {
-        CallableDescriptor enclosingSuspendLambdaForSuspensionPoint =
-                bindingContext.get(ENCLOSING_SUSPEND_LAMBDA_FOR_SUSPENSION_POINT, resolvedCall.getCall());
+        FunctionDescriptor enclosingSuspendLambdaForSuspensionPoint =
+                bindingContext.get(ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
 
         if (enclosingSuspendLambdaForSuspensionPoint == null) return null;
-        return genCoroutineInstanceByLambda(enclosingSuspendLambdaForSuspensionPoint);
+        return genCoroutineInstanceBySuspendFunction(enclosingSuspendLambdaForSuspensionPoint);
     }
 
-    @NotNull
-    private StackValue genCoroutineInstanceByLambda(@NotNull CallableDescriptor suspendLambda) {
-        ClassDescriptor suspendLambdaClassDescriptor =
-                bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, suspendLambda);
+    @Nullable
+    private StackValue genCoroutineInstanceBySuspendFunction(@NotNull FunctionDescriptor suspendFunction) {
+        if (!CoroutineCodegenUtilKt.isStateMachineNeeded(suspendFunction, bindingContext)) return null;
+        ClassDescriptor suspendLambdaClassDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, suspendFunction);
         assert suspendLambdaClassDescriptor != null : "Coroutine class descriptor should not be null";
 
         return StackValue.thisOrOuter(this, suspendLambdaClassDescriptor, false, false);
@@ -2772,8 +2790,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         StackValue result = callable.invokeMethodWithArguments(resolvedCall, receiver, this);
 
-        if (bindingContext.get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall()) != null) {
-            // Suspend function's calls inside another suspend function should behave like they leave values of correct type,
+        if (resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor &&
+            ((FunctionDescriptor) resolvedCall.getResultingDescriptor()).isSuspend() &&
+            !CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext)) {
+            // Suspend function's tail calls inside another suspend function should behave like they leave values of correct type,
             // while real methods return java/lang/Object.
             // NB: They are always in return position at the moment.
             // If we didn't do this, StackValue.coerce would add proper CHECKCAST that would've failed in case of callee function
@@ -2785,13 +2805,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private StackValue getContinuationParameterFromEnclosingSuspendFunction(@NotNull ResolvedCall<?> resolvedCall) {
-        SimpleFunctionDescriptor enclosingSuspendFunction =
+        FunctionDescriptor enclosingSuspendFunction =
                 bindingContext.get(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.getCall());
 
         assert enclosingSuspendFunction != null
                 : "Suspend functions may be called either as suspension points or from another suspend function";
 
-        SimpleFunctionDescriptor enclosingSuspendFunctionJvmView =
+        FunctionDescriptor enclosingSuspendFunctionJvmView =
                 bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, enclosingSuspendFunction);
 
         assert enclosingSuspendFunctionJvmView != null : "No JVM view function found for " + enclosingSuspendFunction;
@@ -2855,7 +2875,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
-        boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, bindingContext);
+        boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext);
         if (isSuspensionPoint) {
             // Inline markers are used to spill the stack before coroutine suspension
             addInlineMarker(v, true);

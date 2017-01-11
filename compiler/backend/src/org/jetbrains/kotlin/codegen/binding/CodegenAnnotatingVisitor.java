@@ -101,9 +101,20 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             @NotNull Collection<KotlinType> supertypes,
             @NotNull String name
     ) {
+        return recordClassForCallable(element, callableDescriptor, supertypes, name, null);
+    }
+
+    @NotNull
+    private ClassDescriptor recordClassForCallable(
+            @NotNull KtElement element,
+            @NotNull CallableDescriptor callableDescriptor,
+            @NotNull Collection<KotlinType> supertypes,
+            @NotNull String name,
+            @Nullable DeclarationDescriptor customContainer
+    ) {
         String simpleName = name.substring(name.lastIndexOf('/') + 1);
         ClassDescriptor classDescriptor = new SyntheticClassDescriptorForLambda(
-                correctContainerForLambda(callableDescriptor, element),
+                customContainer != null ? customContainer : correctContainerForLambda(callableDescriptor, element),
                 Name.special("<closure-" + simpleName + ">"),
                 supertypes,
                 element
@@ -289,7 +300,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         nameStack.push(name);
 
         if (CoroutineUtilKt.isSuspendLambda(functionDescriptor)) {
-            closure.setCoroutine(true);
+            closure.setSuspend(true);
+            closure.setSuspendLambda();
         }
 
         super.visitLambdaExpression(lambdaExpression);
@@ -415,6 +427,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
+        String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
+
         if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
             SimpleFunctionDescriptor jvmSuspendFunctionView =
                     CoroutineCodegenUtilKt.createJvmSuspendFunctionView(
@@ -437,29 +451,51 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
             bindingTrace.record(
                     CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                    (SimpleFunctionDescriptor) functionDescriptor,
+                    functionDescriptor,
                     jvmSuspendFunctionView
             );
+
+            if (CoroutineCodegenUtilKt.containsNonTailSuspensionCalls(functionDescriptor, bindingContext)) {
+                if (nameForClassOrPackageMember != null) {
+                    nameStack.push(nameForClassOrPackageMember);
+                }
+
+                processNamedFunctionWithClosure(function, functionDescriptor, functionDescriptor).setSuspend(true);
+
+                if (nameForClassOrPackageMember != null) {
+                    nameStack.pop();
+                }
+                return;
+            }
         }
 
-        String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
         if (nameForClassOrPackageMember != null) {
             nameStack.push(nameForClassOrPackageMember);
             super.visitNamedFunction(function);
             nameStack.pop();
         }
         else {
-            String name = inventAnonymousClassName();
-            Collection<KotlinType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
-            ClassDescriptor classDescriptor = recordClassForCallable(function, functionDescriptor, supertypes, name);
-            recordClosure(classDescriptor, name);
-
-            classStack.push(classDescriptor);
-            nameStack.push(name);
-            super.visitNamedFunction(function);
-            nameStack.pop();
-            classStack.pop();
+            processNamedFunctionWithClosure(function, functionDescriptor, null);
         }
+    }
+
+    private MutableClosure processNamedFunctionWithClosure(
+            @NotNull KtNamedFunction function,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @Nullable DeclarationDescriptor customContainer
+    ) {
+        String name = inventAnonymousClassName();
+        Collection<KotlinType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
+        ClassDescriptor classDescriptor = recordClassForCallable(function, functionDescriptor, supertypes, name, customContainer);
+        MutableClosure closure = recordClosure(classDescriptor, name);
+
+        classStack.push(classDescriptor);
+        nameStack.push(name);
+        super.visitNamedFunction(function);
+        nameStack.pop();
+        classStack.pop();
+
+        return closure;
     }
 
     @Nullable

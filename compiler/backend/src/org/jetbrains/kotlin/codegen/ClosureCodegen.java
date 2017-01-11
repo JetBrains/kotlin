@@ -198,7 +198,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         );
     }
 
-    private void generateBridges() {
+    protected void generateBridges() {
         FunctionDescriptor erasedInterfaceFunction;
         if (samType == null) {
             erasedInterfaceFunction = getErasedInvokeFunction(funDescriptor);
@@ -233,7 +233,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected void generateKotlinMetadataAnnotation() {
         FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(funDescriptor);
         Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, funDescriptor);
-        assert method != null : "No method for " + funDescriptor;
+
+        // Can be null for named suspend function
+        if (method == null) return;
+
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         final DescriptorSerializer serializer =

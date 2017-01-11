@@ -5,6 +5,21 @@ class Controller {
     suspend fun suspendHere() = suspendCoroutineOrReturn<String> { x ->
         x.resume("OK")
     }
+
+    suspend fun tailCall(): String {
+        return suspendHere()
+    }
+
+    suspend fun nonTailCall(): String {
+        suspendHere()
+
+        return "OK"
+    }
+
+    suspend fun multipleSuspensions(): String {
+        suspendHere()
+        return suspendHere()
+    }
 }
 
 fun builder(c: suspend Controller.() -> Unit) {

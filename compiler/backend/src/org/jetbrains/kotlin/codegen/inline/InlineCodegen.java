@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
+import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
@@ -600,6 +601,14 @@ public class InlineCodegen extends CallGenerator {
         }
         else if (expression instanceof KtFunctionLiteral) {
             strategy = new ClosureGenerationStrategy(state, (KtDeclarationWithBody) expression);
+        }
+        else if (descriptor.isSuspend() && expression instanceof KtFunction) {
+            strategy =
+                    new SuspendFunctionGenerationStrategy(
+                            state,
+                            CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(descriptor),
+                            (KtFunction) expression
+                    );
         }
         else {
             strategy = new FunctionGenerationStrategy.FunctionDefault(state, (KtDeclarationWithBody) expression);
