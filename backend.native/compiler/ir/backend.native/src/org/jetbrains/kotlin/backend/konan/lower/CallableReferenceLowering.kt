@@ -204,7 +204,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
                     outType = builtIns.nullableAnyType, // Use erased type.
                     declaresDefaultValue = false,
                     isCrossinline = false, isNoinline = false,
-                    varargElementType = (param as? ValueParameterDescriptor)?.varargElementType,
+                    varargElementType = null,
                     source = SourceElement.NO_SOURCE)
         }
 
