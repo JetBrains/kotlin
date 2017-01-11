@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -55,14 +56,20 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
 
     override fun getText() = "Create header $elementType implementation for platform ${implPlatformKind.name}"
 
+    override fun startInWriteAction() = false
+
     override final fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val factory = KtPsiFactory(project)
-        val implFile = getOrCreateImplementationFile(project) ?: return
 
-        val implDeclaration = implFile.add(factory.generateIt(project, element) ?: return) as KtElement
-        val reformatted = CodeStyleManager.getInstance(project).reformat(implDeclaration)
-        ShortenReferences.DEFAULT.process(reformatted as KtElement)
+        val implFile = getOrCreateImplementationFile(project) ?: return
+        val generated = factory.generateIt(project, element) ?: return
+
+        runWriteAction {
+            val implDeclaration = implFile.add(generated) as KtElement
+            val reformatted = CodeStyleManager.getInstance(project).reformat(implDeclaration)
+            ShortenReferences.DEFAULT.process(reformatted as KtElement)
+        }
     }
 
     private fun Project.implementationModuleOf(headerModule: Module) =
@@ -85,7 +92,9 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
         val implDirectory = PackageUtil.findOrCreateDirectoryForPackage(
                 implModule, headerPackage?.qualifiedName ?: "", null, false
         ) ?: return null
-        return getOrCreateKotlinFile("$name.kt", implDirectory)
+        return runWriteAction {
+            getOrCreateKotlinFile("$name.kt", implDirectory)
+        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
