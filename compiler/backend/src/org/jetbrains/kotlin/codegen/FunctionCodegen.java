@@ -1086,14 +1086,14 @@ public class FunctionCodegen {
             ClassDescriptor parentClass = getSuperClassDescriptor((ClassDescriptor) descriptor.getContainingDeclaration());
             assert parentClass != null;
             String parentInternalName = typeMapper.mapClass(parentClass).getInternalName();
-            iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor());
+            iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor(), false);
         }
         else {
             if (isJvm8InterfaceMember(descriptor, state)) {
                 iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
             }
             else {
-                iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+                iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor(), false);
             }
         }
 
@@ -1222,7 +1222,7 @@ public class FunctionCodegen {
                             iv.invokeinterface(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor());
                         }
                         else {
-                            iv.invokevirtual(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor());
+                            iv.invokevirtual(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor(), false);
                         }
 
                         StackValue stackValue = AsmUtil.genNotNullAssertions(
