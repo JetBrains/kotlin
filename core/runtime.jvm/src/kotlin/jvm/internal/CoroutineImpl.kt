@@ -19,40 +19,24 @@ package kotlin.jvm.internal
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
 
-private const val INTERCEPT_BIT_SET = 1 shl 31
-private const val INTERCEPT_BIT_CLEAR = INTERCEPT_BIT_SET.inv()
-
 abstract class CoroutineImpl : RestrictedCoroutineImpl, DispatchedContinuation<Any?> {
     private val _dispatcher: ContinuationDispatcher?
 
     override val dispatcher: ContinuationDispatcher?
         get() = _dispatcher
 
+    private var facade_: Continuation<Any?>? = null
+    val facade: Continuation<Any?> get() {
+        if (facade_ == null) {
+            facade_ = wrapContinuationIfNeeded(this, dispatcher)
+        }
+
+        return facade_!!
+    }
+
     // this constructor is used to create a continuation instance for coroutine
     constructor(arity: Int, completion: Continuation<Any?>?) : super(arity, completion) {
         _dispatcher = (completion as? DispatchedContinuation<*>)?.dispatcher
-    }
-
-    override fun resume(value: Any?) {
-        if (_dispatcher != null) {
-            if (label and INTERCEPT_BIT_SET == 0) {
-                label = label or INTERCEPT_BIT_SET
-                if (_dispatcher.dispatchResume(value, this)) return
-            }
-            label = label and INTERCEPT_BIT_CLEAR
-        }
-        super.resume(value)
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        if (_dispatcher != null) {
-            if (label and INTERCEPT_BIT_SET == 0) {
-                label = label or INTERCEPT_BIT_SET
-                if (_dispatcher.dispatchResumeWithException(exception, this)) return
-            }
-            label = label and INTERCEPT_BIT_CLEAR
-        }
-        super.resumeWithException(exception)
     }
 }
 
