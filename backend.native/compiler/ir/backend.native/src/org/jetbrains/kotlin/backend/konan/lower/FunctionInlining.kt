@@ -37,10 +37,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(), null) as IrFunction // Create copy of the function.
 
         val body        = copyFuncDeclaration.body!! as IrBlockBody
-        val statements  = removeReturn(body.statements)                                     // Replace "return" with its value.
         val startOffset = copyFuncDeclaration.startOffset
         val endOffset   = copyFuncDeclaration.endOffset
         val returnType  = copyFuncDeclaration.descriptor.returnType!!
+        val statements  = body.statements
         val irBlock     = IrBlockImpl(startOffset, endOffset, returnType, null, statements) // Create IrBlock containing function statements.
 
         val parameterToExpression = expression.getArguments()                               // Build map parameter -> expression.
@@ -60,6 +60,14 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 internal class ParametersTransformer(val parameterToExpression: List <Pair<ParameterDescriptor, IrExpression>>): IrElementTransformerVoid() {
 
     override fun visitElement(element: IrElement) = element.accept(this, null)
+
+    //-------------------------------------------------------------------------//
+
+    override fun visitReturn(expression: IrReturn): IrExpression {
+
+        val transformedExpression = super.visitReturn(expression) as IrReturn
+        return transformedExpression.value
+    }
 
     //-------------------------------------------------------------------------//
 
