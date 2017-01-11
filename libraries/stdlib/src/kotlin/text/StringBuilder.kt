@@ -53,3 +53,13 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
 @kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
 public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
+
+
+internal fun <T> Appendable.appendElement(element: T, transform: ((T) -> CharSequence)?) {
+    when {
+        transform != null -> append(transform(element))
+        element is CharSequence? -> append(element)
+        element is Char -> append(element)
+        else -> append(element.toString())
+    }
+}

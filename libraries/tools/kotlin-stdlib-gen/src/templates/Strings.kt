@@ -23,10 +23,7 @@ fun strings(): List<GenericFunction> {
             for (element in this) {
                 if (++count > 1) buffer.append(separator)
                 if (limit < 0 || count <= limit) {
-                    if (transform != null)
-                        buffer.append(transform(element))
-                    else
-                        buffer.append(if (element == null) "null" else element.toString())
+                    buffer.appendElement(element, transform)
                 } else break
             }
             if (limit >= 0 && count > limit) buffer.append(truncated)
@@ -35,7 +32,7 @@ fun strings(): List<GenericFunction> {
             """
         }
         exclude(Strings)
-        body(ArraysOfPrimitives) {
+        bodyForTypes(ArraysOfPrimitives, *defaultPrimitives.toTypedArray()) { primitive ->
             """
             buffer.append(prefix)
             var count = 0
@@ -45,7 +42,7 @@ fun strings(): List<GenericFunction> {
                     if (transform != null)
                         buffer.append(transform(element))
                     else
-                        buffer.append(element.toString())
+                        buffer.append(${if (primitive == PrimitiveType.Char) "element" else "element.toString()"})
                 } else break
             }
             if (limit >= 0 && count > limit) buffer.append(truncated)
