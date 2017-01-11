@@ -98,6 +98,7 @@ public class KotlinTypeMapper {
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
     private final boolean isJvm8Target;
+    private final boolean isJvm8TargetWithDefaults;
 
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         private final Function2<String, String, String> defaultClassNameFactory
@@ -153,7 +154,8 @@ public class KotlinTypeMapper {
             @NotNull JvmFileClassesProvider fileClassesProvider,
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
-            boolean isJvm8Target
+            boolean isJvm8Target,
+            boolean isJvm8TargetWithDefaults
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
@@ -161,6 +163,7 @@ public class KotlinTypeMapper {
         this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
         this.isJvm8Target = isJvm8Target;
+        this.isJvm8TargetWithDefaults = isJvm8TargetWithDefaults;
     }
 
     @NotNull
@@ -682,7 +685,7 @@ public class KotlinTypeMapper {
                 descriptor = classCallable;
                 continue;
             }
-            else if (isSuperCall && !isJvm8Target && !isInterface(descriptor.getContainingDeclaration())) {
+            else if (isSuperCall && !isJvm8TargetWithDefaults && !isInterface(descriptor.getContainingDeclaration())) {
                 //Don't unwrap fake overrides from class to interface cause substituted override would be implicitly generated for target 1.6
                 return descriptor;
             }
@@ -738,12 +741,12 @@ public class KotlinTypeMapper {
             baseMethodDescriptor = findBaseDeclaration(functionDescriptor).getOriginal();
             ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
             ownerForDefaultImpl =
-                    isJvmInterface(ownerForDefault) && !isJvm8Interface(ownerForDefault) ?
+                    isJvmInterface(ownerForDefault) && !isJvm8InterfaceWithDefaults(ownerForDefault) ?
                     mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(currentOwner);
-                if (declarationOwner instanceof JavaClassDescriptor || isJvm8Interface(declarationOwner)) {
+                if (declarationOwner instanceof JavaClassDescriptor || isJvm8InterfaceWithDefaults(declarationOwner)) {
                     invokeOpcode = INVOKESPECIAL;
                     signature = mapSignatureSkipGeneric(functionDescriptor);
                     owner = thisClass;
@@ -782,7 +785,6 @@ public class KotlinTypeMapper {
 
                 signature = mapSignatureSkipGeneric(functionToCall);
 
-                /*TODO: isInterfaceMember?*/
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
                                            : currentOwner;
@@ -828,8 +830,9 @@ public class KotlinTypeMapper {
                 isJvm8Target ? isInterfaceMember : invokeOpcode == INVOKEINTERFACE );
     }
 
-    private boolean isJvm8Interface(@NotNull ClassDescriptor ownerForDefault) {
-        return isJvmInterface(ownerForDefault) && JvmCodegenUtil.isJvm8Interface(ownerForDefault, isJvm8Target);
+    private boolean isJvm8InterfaceWithDefaults(@NotNull ClassDescriptor ownerForDefault) {
+        return isJvmInterface(ownerForDefault) &&
+               JvmCodegenUtil.isJvm8InterfaceWithDefaults(ownerForDefault, isJvm8Target, isJvm8TargetWithDefaults);
     }
 
     public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {

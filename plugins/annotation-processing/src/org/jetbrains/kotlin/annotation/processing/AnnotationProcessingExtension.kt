@@ -196,7 +196,7 @@ abstract class AbstractAnnotationProcessingExtension(
     
     private fun KotlinProcessingEnvironment.createTypeMapper(): KotlinTypeMapper {
         return KotlinTypeMapper(bindingContext(), ClassBuilderMode.full(false), NoResolveFileClassesProvider,
-                                IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false)
+                                IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false, false)
     }
 
     private fun KotlinProcessingEnvironment.doAnnotationProcessing(files: Collection<KtFile>): ProcessingResult {

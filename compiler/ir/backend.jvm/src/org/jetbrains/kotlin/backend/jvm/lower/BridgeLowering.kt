@@ -61,12 +61,12 @@ class BridgeLowering(val state: GenerationState) : ClassLoweringPass {
     val typeMapper = state.typeMapper
 
     private val IS_PURE_INTERFACE_CHECKER = fun(descriptor: DeclarationDescriptor): Boolean {
-        return JvmCodegenUtil.isAnnotationOrJvm6Interface(descriptor, state)
+        return JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults(descriptor, state)
     }
 
     override fun lower(irClass: IrClass) {
         val classDescriptor = irClass.descriptor
-        if (JvmCodegenUtil.isAnnotationOrJvm6Interface(classDescriptor, state) || classDescriptor is FileClassDescriptor) return
+        if (JvmCodegenUtil.isAnnotationOrJvmInterfaceWithoutDefaults(classDescriptor, state) || classDescriptor is FileClassDescriptor) return
 
         if (classDescriptor is DefaultImplsClassDescriptor) {
             return /*TODO?*/
