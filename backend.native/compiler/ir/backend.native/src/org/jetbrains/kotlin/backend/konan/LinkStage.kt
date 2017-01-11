@@ -25,7 +25,7 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
 }
 
 
-internal open class MacOSPlatform(distribution: Distribution) 
+internal open class MacOSPlatform(distribution: Distribution)
     : PlatformFlags(distribution) {
 
     override val llvmLtoFlags = properties.propertyList("llvmLtoFlags.osx")
@@ -34,7 +34,7 @@ internal open class MacOSPlatform(distribution: Distribution)
     override val linkerOptimizationFlags = 
         properties.propertyList("linkerOptimizationFlags.osx")
     override val linkerKonanFlags = properties.propertyList("linkerKonanFlags.osx")
-    override val linker = "${distribution.sysRoot}/usr/bin/ld" 
+    override val linker = "${distribution.sysRoot}/usr/bin/ld"
 
     open val arch = properties.propertyString("arch.osx")!!
     open val osVersionMin = properties.propertyList("osVersionMin.osx")
@@ -48,8 +48,8 @@ internal open class MacOSPlatform(distribution: Distribution)
         return mutableListOf<String>(linker, "-demangle") +
             if (optimize) listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO) else {listOf<String>()} +
             listOf( "-dynamic", "-arch", arch) +
-            osVersionMin + 
-            listOf("-syslibroot", "$targetSysRoot", 
+            osVersionMin +
+            listOf("-syslibroot", "$targetSysRoot",
             "-o", executable) +
             objectFiles + 
             if (optimize) linkerOptimizationFlags else {listOf<String>()} +
@@ -58,7 +58,7 @@ internal open class MacOSPlatform(distribution: Distribution)
     }
 }
 
-internal class IPhoneOSfromMacOSPlatform(distribution: Distribution) 
+internal class IPhoneOSfromMacOSPlatform(distribution: Distribution)
     : MacOSPlatform(distribution) {
 
     override val arch = properties.propertyString("arch.osx-ios")!!
@@ -67,7 +67,7 @@ internal class IPhoneOSfromMacOSPlatform(distribution: Distribution)
     override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios")!!}"
 }
 
-internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution) 
+internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution)
     : MacOSPlatform(distribution) {
 
     override val arch = properties.propertyString("arch.osx-ios-sim")!!
@@ -75,7 +75,7 @@ internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution)
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx-ios-sim")
     override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios-sim")!!}"
 }
-internal class LinuxPlatform(distribution: Distribution) 
+internal class LinuxPlatform(distribution: Distribution)
     : PlatformFlags(distribution) {
 
     override val llvmLtoFlags = properties.propertyList("llvmLtoFlags.linux")
@@ -84,7 +84,7 @@ internal class LinuxPlatform(distribution: Distribution)
     override val linkerOptimizationFlags = 
         properties.propertyList("linkerOptimizationFlags.linux")
     override val linkerKonanFlags = properties.propertyList("linkerKonanFlags.linux")
-    override val linker = "${distribution.sysRoot}/../bin/ld.gold" 
+    override val linker = "${distribution.sysRoot}/../bin/ld.gold"
 
     val pluginOptimizationFlags = 
         properties.propertyList("pluginOptimizationFlags.linux")
@@ -122,7 +122,7 @@ internal class LinkStage(val context: Context) {
     val config = context.config.configuration
 
     val targetManager = TargetManager(config)
-    private val distribution = 
+    private val distribution =
         Distribution(context.config.configuration)
     private val properties = distribution.properties
 
@@ -131,7 +131,7 @@ internal class LinkStage(val context: Context) {
         KonanTarget.MACBOOK -> when (targetManager.current) {
             KonanTarget.IPHONE_SIM
                 -> IPhoneSimulatorFromMacOSPlatform(distribution)
-            KonanTarget.IPHONE 
+            KonanTarget.IPHONE
                 -> IPhoneOSfromMacOSPlatform(distribution)
             KonanTarget.MACBOOK
                 -> MacOSPlatform(distribution)
@@ -209,7 +209,7 @@ internal class LinkStage(val context: Context) {
     fun linkStage() {
         context.log("# Compiler root: ${distribution.konanHome}")
 
-        val bitcodeFiles = listOf<BitcodeFile>(emitted, distribution.start, distribution.runtime, 
+        val bitcodeFiles = listOf<BitcodeFile>(emitted, distribution.start, distribution.runtime,
             distribution.launcher) + libraries
 
         val objectFiles = if (optimize) {
