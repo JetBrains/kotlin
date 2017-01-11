@@ -110,7 +110,7 @@ class CoroutineTransformerMethodVisitor(
                                  VarInsnNode(Opcodes.ALOAD, 0),
                                  FieldInsnNode(
                                          Opcodes.GETFIELD,
-                                         AsmTypes.RESTRICTED_COROUTINE_IMPL.internalName,
+                                         AsmTypes.COROUTINE_IMPL.internalName,
                                          COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
                                  ),
                                  TableSwitchInsnNode(0,
@@ -295,7 +295,7 @@ class CoroutineTransformerMethodVisitor(
                                  VarInsnNode(Opcodes.ALOAD, 0),
                                  *withInstructionAdapter { iconst(id) }.toArray(),
                                  FieldInsnNode(
-                                         Opcodes.PUTFIELD, AsmTypes.RESTRICTED_COROUTINE_IMPL.internalName, COROUTINE_LABEL_FIELD_NAME,
+                                         Opcodes.PUTFIELD, AsmTypes.COROUTINE_IMPL.internalName, COROUTINE_LABEL_FIELD_NAME,
                                          Type.INT_TYPE.descriptor
                                  )
                          )

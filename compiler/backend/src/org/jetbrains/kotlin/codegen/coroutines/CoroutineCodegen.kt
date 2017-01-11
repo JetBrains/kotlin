@@ -187,7 +187,7 @@ class CoroutineCodegen(
         // .resume(Unit)
         StackValue.putUnitInstance(this)
         invokevirtual(
-                AsmTypes.RESTRICTED_COROUTINE_IMPL.internalName,
+                AsmTypes.COROUTINE_IMPL.internalName,
                 CONTINUATION_RESUME_METHOD_NAME.identifier,
                 Type.getMethodDescriptor(Type.VOID_TYPE, AsmTypes.OBJECT_TYPE),
                 false
