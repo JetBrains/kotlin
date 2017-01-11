@@ -60,6 +60,12 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("AnnotationWithValue.kt")
+    public void testAnnotationWithValue() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/stubs/AnnotationWithValue.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AnnotationsOnPrimaryCtr.kt")
     public void testAnnotationsOnPrimaryCtr() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/stubs/AnnotationsOnPrimaryCtr.kt");

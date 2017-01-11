@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -36,22 +37,30 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     private final boolean withRuntime;
     private final boolean isJsLibrary;
     private final boolean allowKotlinPackage;
+    private final String[] classpath;
 
     public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
         this(sourcesPath, withSources, false, false, false);
     }
 
-    public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
+    public JdkAndMockLibraryProjectDescriptor(
+            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
+        this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, ArrayUtil.EMPTY_STRING_ARRAY);
+    }
+
+    public JdkAndMockLibraryProjectDescriptor(
+            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage, String[] classpath) {
         this.sourcesPath = sourcesPath;
         this.withSources = withSources;
         this.withRuntime = withRuntime;
         this.isJsLibrary = isJsLibrary;
         this.allowKotlinPackage = allowKotlinPackage;
+        this.classpath = classpath;
     }
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, isJsLibrary, allowKotlinPackage);
+        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, isJsLibrary, allowKotlinPackage, classpath);
         String jarUrl = getJarUrl(libraryJar);
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();

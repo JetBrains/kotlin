@@ -29,10 +29,14 @@ import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.java.JavaLanguageInjectionSupport
 import org.intellij.plugins.intelliLang.util.AnnotationUtilEx
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 class KotlinLanguageInjector : LanguageInjector {
@@ -126,7 +130,7 @@ class KotlinLanguageInjector : LanguageInjector {
                 }
             }
             else if (resolvedTo is KtFunction) {
-                val injectionForJavaMethod = injectionForKotlinCall(argument, resolvedTo)
+                val injectionForJavaMethod = injectionForKotlinCall(argument, resolvedTo, reference)
                 if (injectionForJavaMethod != null) {
                     return injectionForJavaMethod
                 }
@@ -150,14 +154,14 @@ class KotlinLanguageInjector : LanguageInjector {
                 Configuration.getProjectInstance(psiParameter.project).advancedConfiguration.languageAnnotationPair,
                 true)
 
-        if (annotations.size > 0) {
+        if (annotations.isNotEmpty()) {
             return processAnnotationInjectionInner(annotations)
         }
 
         return null
     }
 
-    private fun injectionForKotlinCall(argument: KtValueArgument, ktFunction: KtFunction): InjectionInfo? {
+    private fun injectionForKotlinCall(argument: KtValueArgument, ktFunction: KtFunction, reference: PsiReference): InjectionInfo? {
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
         val ktParameter = ktFunction.valueParameters.getOrNull(argumentIndex) ?: return null
 
@@ -166,8 +170,16 @@ class KotlinLanguageInjector : LanguageInjector {
             return patternInjection
         }
 
-        val injectAnnotation = ktParameter.findAnnotation(FqName(AnnotationUtil.LANGUAGE)) ?: return null
-        val languageId = extractLanguageFromInjectAnnotation(injectAnnotation) ?: return null
+        // Found psi element after resolve can be obtained from compiled declaration but annotations parameters are lost there.
+        // Search for original descriptor from reference.
+        val ktReference = reference as? KtReference ?: return null
+        val bindingContext = ktReference.element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+        val functionDescriptor = ktReference.resolveToDescriptors(bindingContext).singleOrNull() as? FunctionDescriptor ?: return null
+
+        val parameterDescriptor = functionDescriptor.valueParameters.getOrNull(argumentIndex) ?: return null
+        val injectAnnotation = parameterDescriptor.annotations.findAnnotation(FqName(AnnotationUtil.LANGUAGE)) ?: return null
+
+        val languageId = injectAnnotation.argumentValue("value") as? String ?: return null
         return InjectionInfo(languageId, null, null)
     }
 
