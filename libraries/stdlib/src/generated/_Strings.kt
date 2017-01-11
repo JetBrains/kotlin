@@ -711,6 +711,18 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.grou
 }
 
 /**
+ * Creates a [Grouping] source from a char sequence to be used later with one of group-and-fold operations
+ * using the specified [keySelector] function to extract a key from each character.
+ */
+@SinceKotlin("1.1")
+public inline fun <K> CharSequence.groupingBy(crossinline keySelector: (Char) -> K): Grouping<Char, K> {
+    return object : Grouping<Char, K> {
+        override fun sourceIterator(): Iterator<Char> = this@groupingBy.iterator()
+        override fun keyOf(element: Char): K = keySelector(element)
+    }
+}
+
+/**
  * Returns a list containing the results of applying the given [transform] function
  * to each character in the original char sequence.
  */

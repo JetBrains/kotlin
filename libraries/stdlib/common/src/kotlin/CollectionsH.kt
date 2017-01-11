@@ -154,3 +154,8 @@ header fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit
 
 // from Maps.kt
 header operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit
+
+
+// from Grouping.kt
+public header fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int>
+public header inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Map<K, Int>
