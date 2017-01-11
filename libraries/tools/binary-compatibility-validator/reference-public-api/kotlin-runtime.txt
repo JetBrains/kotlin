@@ -471,8 +471,14 @@ public class kotlin/jvm/internal/CollectionToArray {
 public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/RestrictedCoroutineImpl, kotlin/jvm/internal/DispatchedContinuation {
 	public fun <init> (ILkotlin/coroutines/Continuation;)V
 	public fun getDispatcher ()Lkotlin/coroutines/ContinuationDispatcher;
+	public final fun getFacade ()Lkotlin/coroutines/Continuation;
 	public fun resume (Ljava/lang/Object;)V
 	public fun resumeWithException (Ljava/lang/Throwable;)V
+}
+
+public final class kotlin/jvm/internal/CoroutineIntrinsics {
+	public static final fun normalizeContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun wrapContinuationIfNeeded (Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)Lkotlin/coroutines/Continuation;
 }
 
 public abstract interface class kotlin/jvm/internal/DispatchedContinuation : kotlin/coroutines/Continuation {

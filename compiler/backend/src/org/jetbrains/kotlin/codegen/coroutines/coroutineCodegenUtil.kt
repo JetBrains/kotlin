@@ -60,6 +60,9 @@ const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
 const val DO_RESUME_METHOD_NAME = "doResume"
 
+private val INTERNAL_COROUTINE_INTRINSICS_OWNER = "kotlin/jvm/internal/CoroutineIntrinsics"
+private val NORMALIZE_CONTINUATION_METHOD_NAME = "normalizeContinuation"
+
 data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeContinuationExpression: KtExpression)
 
 @JvmField
@@ -207,6 +210,15 @@ fun createMethodNodeForSuspendCoroutineOrReturn(
 
     node.visitVarInsn(Opcodes.ALOAD, 0)
     node.visitVarInsn(Opcodes.ALOAD, 1)
+
+    node.visitMethodInsn(
+            Opcodes.INVOKESTATIC,
+            INTERNAL_COROUTINE_INTRINSICS_OWNER,
+            NORMALIZE_CONTINUATION_METHOD_NAME,
+            Type.getMethodDescriptor(AsmTypes.CONTINUATION, AsmTypes.CONTINUATION),
+            false
+    )
+
     node.visitMethodInsn(
             Opcodes.INVOKEINTERFACE,
             typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,

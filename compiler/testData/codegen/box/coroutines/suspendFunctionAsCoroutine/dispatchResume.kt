@@ -71,12 +71,12 @@ fun box(): String {
     var result = test {
         test1()
     }
-    if (result != "before 0;suspend();before 1;suspend(O);before 2;before 3;suspend(K);before 4;OK;before 5;after 5;after 4;after 3;after 2;after 1;after 0;") return "fail1: $result"
+    if (result != "suspend();before 0;suspend(O);before 1;suspend(K);before 2;OK;after 2;after 1;after 0;") return "fail1: $result"
 
     result = test {
         test2()
     }
-    if (result != "before 0;suspend();before 1;suspend(O);before 2;before 3;error(OK);before 4;OK;before 5;after 5;after 4;after 3;after 2;after 1;after 0;") return "fail2: $result"
+    if (result != "suspend();before 0;suspend(O);before 1;error(OK);before 2;OK;after 2;after 1;after 0;") return "fail2: $result"
 
     return "OK"
 }
