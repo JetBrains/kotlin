@@ -1,14 +1,20 @@
 package
 
+public var inlineVar: kotlin.Int
+internal var internalVarTopLevel: kotlin.Int
+private var privateVarTopLevel: kotlin.Int
+public var publicVarTopLevel: kotlin.Int
+@kotlin.PublishedApi internal var publishedVarTopLevel: kotlin.Int
 public inline fun call(/*0*/ a: A): kotlin.Unit
 internal fun internalFun(): kotlin.Unit
 private fun privateFun(): kotlin.Unit
 public fun publicFun(): kotlin.Unit
-@kotlin.PublishedApi internal fun testTopLevel(): kotlin.Unit
-@kotlin.PublishedApi internal inline fun testTopLevelInline(): kotlin.Unit
+@kotlin.PublishedApi internal fun publishedTopLevel(): kotlin.Unit
+@kotlin.PublishedApi internal inline fun publishedTopLevelInline(): kotlin.Unit
 
 @kotlin.PublishedApi internal final class A {
     public constructor A()
+    @kotlin.PublishedApi internal final var publishedVar: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @kotlin.PublishedApi internal final fun test(): kotlin.Unit

@@ -238,12 +238,17 @@ private fun Visibility.forVisibility(descriptor: DeclarationDescriptor, checkPub
             Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INVISIBLE_FAKE -> Private
             Visibilities.PROTECTED -> Protected(descriptor.containingDeclaration as? ClassDescriptor)
             Visibilities.INTERNAL -> if (!checkPublishedApi ||
-                                         !descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)) Internal else Public
+                                         !descriptor.isPublishedApi()) Internal else Public
             Visibilities.PUBLIC -> Public
             Visibilities.LOCAL -> Local
         // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
             else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
         }
+
+private fun DeclarationDescriptor.isPublishedApi(): Boolean {
+    val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
+    return descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
+}
 
 fun effectiveVisibility(visibility: Visibility, descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false) =
         visibility.forVisibility(descriptor, checkPublishedApi)
