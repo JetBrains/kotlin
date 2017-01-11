@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 
 class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
@@ -24,7 +25,7 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
         header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
+        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -36,7 +37,7 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
         header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
+        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -48,7 +49,7 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
         header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
+        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
