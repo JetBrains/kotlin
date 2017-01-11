@@ -107,6 +107,9 @@ class KotlinPullUpDialog(
 
             if (member.hasModifier(KtTokens.CONST_KEYWORD)) return false
 
+            if (superClass is KtClass && superClass.isInterface() &&
+                (member.hasModifier(KtTokens.INTERNAL_KEYWORD) || member.hasModifier(KtTokens.PROTECTED_KEYWORD))) return false
+
             if (superClass is PsiClass) {
                 if (!member.canMoveMemberToJavaClass(superClass)) return false
                 if (member.isCompanionMemberOf(sourceClass)) return false
