@@ -18,6 +18,8 @@ package kotlin.text
 
 header interface Appendable {
     fun append(c: Char): Appendable
+    fun append(csq: CharSequence?): Appendable
+    fun append(csq: CharSequence?, start: Int, end: Int): Appendable
 }
 
 header class StringBuilder : Appendable, CharSequence {
@@ -30,7 +32,10 @@ header class StringBuilder : Appendable, CharSequence {
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
 
     fun reverse(): StringBuilder
-    override fun append(c: Char): Appendable
+    override fun append(c: Char): StringBuilder
+    override fun append(csq: CharSequence?): StringBuilder
+    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder
+    fun append(obj: Any?): StringBuilder
 }
 
 header class Regex {
