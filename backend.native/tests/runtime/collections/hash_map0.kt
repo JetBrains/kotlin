@@ -181,7 +181,6 @@ fun testPutEntry() {
     assertTrue(expected == m)
 }
 
-/* Fails due to variance.
 fun testRemoveAllEntries() {
     val expected = mapOf("a" to "1", "b" to "2", "c" to "3")
     val m = HashMap(expected)
@@ -199,7 +198,7 @@ fun testRetainAllEntries() {
     assertEquals(expected, m)
     assertTrue(m.entries.retainAll(mapOf("b" to "22", "c" to "3", "d" to "4").entries))
     assertEquals(mapOf("c" to "3"), m)
-} */
+}
 
 fun testContainsAllValues() {
     val m = HashMap(mapOf("a" to "1", "b" to "2", "c" to "3"))
@@ -256,8 +255,8 @@ fun main(args : Array<String>) {
     testHashCode()
     testToString()
     testPutEntry()
-    //testRemoveAllEntries()
-    //testRetainAllEntries()
+    testRemoveAllEntries()
+    testRetainAllEntries()
     testContainsAllValues()
     testRemoveValue()
     testRemoveAllValues()

@@ -195,7 +195,6 @@ task null_check(type: RunKonanTest) {
 }
 
 task array_to_any(type: RunKonanTest) {
-    disabled = true
     source = "codegen/basics/array_to_any.kt"
 }
 
@@ -386,7 +385,6 @@ task statements0(type: RunKonanTest) {
 }
 
 task boxing0(type: RunKonanTest) {
-    disabled = true
     goldValue = "17\n"
     source = "codegen/boxing/boxing0.kt"
 }

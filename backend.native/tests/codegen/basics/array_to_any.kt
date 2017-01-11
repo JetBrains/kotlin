@@ -1,5 +1,5 @@
 fun main(args: Array<String>) {
-    println(foo().toString())
+    foo().hashCode()
 }
 
 fun foo(): Any {
