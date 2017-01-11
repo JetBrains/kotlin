@@ -5116,6 +5116,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("localVal.kt")
+            public void testLocalVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/localVal.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("manyParameters.kt")
             public void testManyParameters() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/manyParameters.kt");
