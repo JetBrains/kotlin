@@ -1,0 +1,11 @@
+open class A {
+    // INFO: {checked: "true"}
+    protected fun privateFun() = 0
+}
+
+// NAME: A
+// SIBLING:
+class Foo : A() {
+
+    fun refer() = privateFun()
+}

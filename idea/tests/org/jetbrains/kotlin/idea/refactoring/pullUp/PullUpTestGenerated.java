@@ -290,6 +290,18 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("privateMemberWithUsagesToClass.kt")
+        public void testPrivateMemberWithUsagesToClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/privateMemberWithUsagesToClass.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("privateMemberWithUsagesToInterface.kt")
+        public void testPrivateMemberWithUsagesToInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/privateMemberWithUsagesToInterface.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("propertyDependenceSatisfied.kt")
         public void testPropertyDependenceSatisfied() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/propertyDependenceSatisfied.kt");

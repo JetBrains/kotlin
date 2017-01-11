@@ -21,8 +21,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.memberPullUp.PullUpData
 import com.intellij.refactoring.memberPullUp.PullUpHelper
@@ -51,7 +49,10 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.asAssignment
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -271,15 +272,9 @@ class KotlinPullUpHelper(
         }
     }
 
-    private fun willBeUsedInSourceClass(member: PsiElement): Boolean {
-        return !ReferencesSearch
-                .search(member, LocalSearchScope(data.sourceClass), false)
-                .all { it.element.parentsWithSelf.any { it in data.membersToMove } }
-    }
-
     private fun liftToProtected(declaration: KtNamedDeclaration, ignoreUsages: Boolean = false) {
         if (!declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return
-        if (ignoreUsages || willBeUsedInSourceClass(declaration)) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
+        if (ignoreUsages || willBeUsedInSourceClass(declaration, data.sourceClass, data.membersToMove)) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
     }
 
     override fun setCorrectVisibility(info: MemberInfoBase<PsiMember>) {

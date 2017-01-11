@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.actions.NewKotlinFileAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
@@ -41,10 +42,12 @@ import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.resolveToDescriptorWrapperAware
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.toJavaMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForDeferredFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForExistingElement
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveConflictChecker
+import org.jetbrains.kotlin.idea.refactoring.pullUp.checkPrivateMembersWithUsages
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -158,6 +161,16 @@ class ExtractSuperRefactoring(
                     conflictChecker.checkAllConflicts(usages, conflicts)
                     if (targetParent is PsiDirectory) {
                         ExtractSuperClassUtil.checkSuperAccessible(targetParent, conflicts, originalClass.toLightClass())
+                    }
+
+                    if (isExtractInterface) {
+                        val resolutionFacade = originalClass.getResolutionFacade()
+
+                        val membersToMove = elementsToMove.filterIsInstance<KtNamedDeclaration>()
+                        for (member in membersToMove) {
+                            val memberDescriptor = member.resolveToDescriptorWrapperAware(resolutionFacade)
+                            checkPrivateMembersWithUsages(member, memberDescriptor, originalClass, membersToMove, conflicts)
+                        }
                     }
                 }
             }

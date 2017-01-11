@@ -4307,6 +4307,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doExtractSuperclassTest(fileName);
         }
 
+        @TestMetadata("privateMemberWithUsages.kt")
+        public void testPrivateMemberWithUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/privateMemberWithUsages.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
         @TestMetadata("reformatModifierList.kt")
         public void testReformatModifierList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/reformatModifierList.kt");
@@ -4367,6 +4373,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("dropFinal.kt")
         public void testDropFinal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/dropFinal.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
+        @TestMetadata("privateMemberWithUsages.kt")
+        public void testPrivateMemberWithUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/privateMemberWithUsages.kt");
             doExtractInterfaceTest(fileName);
         }
 

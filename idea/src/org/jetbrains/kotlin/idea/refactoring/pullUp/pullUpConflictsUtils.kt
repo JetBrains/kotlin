@@ -20,6 +20,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -64,10 +67,23 @@ fun checkConflicts(project: Project,
             checkAccidentalOverrides(member, memberDescriptor, conflicts)
             checkInnerClassToInterface(member, memberDescriptor, conflicts)
             checkVisibility(memberInfo, memberDescriptor, conflicts)
+            if (isInterfaceTarget) {
+                checkPrivateMembersWithUsages(member, memberDescriptor, sourceClass, pullUpData.membersToMove, conflicts)
+            }
         }
     }
 
     project.checkConflictsInteractively(conflicts, onShowConflicts, onAccept)
+}
+
+internal fun willBeUsedInSourceClass(
+        member: PsiElement,
+        sourceClass: KtClassOrObject,
+        membersToMove: Collection<KtNamedDeclaration>
+): Boolean {
+    return !ReferencesSearch
+            .search(member, LocalSearchScope(sourceClass), false)
+            .all { it.element.parentsWithSelf.any { it in membersToMove } }
 }
 
 private val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
@@ -207,5 +223,19 @@ private fun KotlinPullUpData.checkVisibility(
                     }
                 }
         )
+    }
+}
+
+internal fun checkPrivateMembersWithUsages(
+        member: KtNamedDeclaration,
+        memberDescriptor: DeclarationDescriptor,
+        sourceClass: KtClassOrObject,
+        membersToMove: Collection<KtNamedDeclaration>,
+        conflicts: MultiMap<PsiElement, String>
+) {
+    if (member.hasModifier(KtTokens.PRIVATE_KEYWORD) &&
+        willBeUsedInSourceClass(member, sourceClass, membersToMove)) {
+        val message = "${memberDescriptor.renderForConflicts()} can't be moved to the interface because it's private and has usages in the original class"
+        conflicts.putValue(member, message.capitalize())
     }
 }
