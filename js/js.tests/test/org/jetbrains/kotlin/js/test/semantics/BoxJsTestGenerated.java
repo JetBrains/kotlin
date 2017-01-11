@@ -3656,6 +3656,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("callFunction.kt")
+        public void testCallFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/callFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("callInlineFunctionOnTopLevel.kt")
         public void testCallInlineFunctionOnTopLevel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/callInlineFunctionOnTopLevel.kt");
@@ -4514,6 +4520,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("anotherModuleValInClosure.kt")
         public void testAnotherModuleValInClosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/anotherModuleValInClosure.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callFunction.kt")
+        public void testCallFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inlineMultiModule/callFunction.kt");
             doTest(fileName);
         }
 

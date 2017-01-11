@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.context
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -171,7 +172,7 @@ class UsageTracker(
             }
         }
 
-        return scope.declareTemporaryName(suggestedName)
+        return scope.declareTemporaryName(suggestedName).apply { descriptor = this@getJsNameForCapturedDescriptor }
     }
 }
 

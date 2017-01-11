@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
@@ -29,6 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
@@ -304,7 +304,9 @@ public final class StaticContext {
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isAny((ClassDescriptor) descriptor)) {
-            return rootScope.declareName("Object");
+            JsName result = rootScope.declareName("Object");
+            MetadataProperties.setDescriptor(result, descriptor);
+            return result;
         }
         SuggestedName suggested = nameSuggestion.suggest(descriptor);
         if (suggested == null) {
@@ -360,7 +362,9 @@ public final class StaticContext {
         List<JsName> names = new ArrayList<JsName>();
         if (suggested.getStable()) {
             for (String namePart : suggested.getNames()) {
-                names.add(scope.declareName(namePart));
+                JsName name = scope.declareName(namePart);
+                MetadataProperties.setDescriptor(name, suggested.getDescriptor());
+                names.add(name);
             }
         }
         else {
@@ -382,6 +386,7 @@ public final class StaticContext {
                 }
             }
             nameCache.put(suggested.getDescriptor(), name);
+            MetadataProperties.setDescriptor(name, suggested.getDescriptor());
             names.add(name);
         }
 
@@ -448,9 +453,11 @@ public final class StaticContext {
     @NotNull
     private JsName localOrImportedName(@NotNull DeclarationDescriptor descriptor, @NotNull String suggestedName) {
         ModuleDescriptor module = DescriptorUtilsKt.getModule(descriptor);
-        return module != currentModule ?
+        JsName name = module != currentModule ?
                 importDeclaration(suggestedName, getQualifiedReference(descriptor)) :
                 rootFunction.getScope().declareTemporaryName(suggestedName);
+        MetadataProperties.setDescriptor(name, descriptor);
+        return name;
     }
 
     private final class InnerNameGenerator extends Generator<JsName> {

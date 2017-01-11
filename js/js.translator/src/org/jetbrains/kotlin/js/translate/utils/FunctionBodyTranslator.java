@@ -58,6 +58,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
         for (FunctionDescriptor localFunction : functionCollector.getFunctions()) {
             String localIdent = localFunction.getName().isSpecial() ? "lambda" : localFunction.getName().asString();
             JsName localName = functionBodyContext.scope().getParent().declareTemporaryName(NameSuggestion.sanitizeName(localIdent));
+            MetadataProperties.setDescriptor(localName, localFunction);
             JsExpression alias = JsAstUtils.pureFqn(localName, null);
             aliases.put(localFunction, alias);
         }

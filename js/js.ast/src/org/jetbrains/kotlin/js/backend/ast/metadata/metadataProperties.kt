@@ -20,12 +20,15 @@ package org.jetbrains.kotlin.js.backend.ast.metadata
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.types.KotlinType
 
 var JsName.staticRef: JsNode? by MetadataProperty(default = null)
+
+var JsName.descriptor: DeclarationDescriptor? by MetadataProperty(default = null)
 
 // TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
 var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
