@@ -4312,6 +4312,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/replaceSuperclass.kt");
             doExtractSuperclassTest(fileName);
         }
+
+        @TestMetadata("specialName.kt")
+        public void testSpecialName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/specialName.kt");
+            doExtractSuperclassTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/refactoring/extractInterface")
@@ -4349,6 +4355,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("annotation.kt")
         public void testAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/annotation.kt");
+            doExtractInterfaceTest(fileName);
+        }
+
+        @TestMetadata("specialName.kt")
+        public void testSpecialName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractInterface/specialName.kt");
             doExtractInterfaceTest(fileName);
         }
     }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -113,7 +114,7 @@ fun applyMarking(
         substitutor: TypeSubstitutor, targetClassDescriptor: ClassDescriptor
 ) {
     val psiFactory = KtPsiFactory(declaration)
-    val targetThis = psiFactory.createExpression("this@${targetClassDescriptor.name.asString()}")
+    val targetThis = psiFactory.createExpression("this@${targetClassDescriptor.name.asString().quoteIfNeeded()}")
     val shorteningOptionsForThis = ShortenReferences.Options(removeThisLabels = true, removeThis = true)
 
     declaration.accept(

@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
@@ -206,7 +203,7 @@ class ExtractSuperRefactoring(
 
     private fun createClass(superClassEntry: KtSuperTypeListEntry?): KtClass {
         val targetParent = extractInfo.targetParent
-        val newClassName = extractInfo.newClassName
+        val newClassName = extractInfo.newClassName.quoteIfNeeded()
         val originalClass = extractInfo.originalClass
 
         val kind = if (extractInfo.isInterface) "interface" else "class"
