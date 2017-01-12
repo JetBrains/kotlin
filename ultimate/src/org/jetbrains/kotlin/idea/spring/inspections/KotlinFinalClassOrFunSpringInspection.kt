@@ -30,6 +30,9 @@ import com.intellij.spring.model.jam.stereotype.SpringConfiguration
 import com.intellij.spring.model.jam.transaction.SpringTransactionalComponent
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.spring.isAnnotatedWith
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinFinalClassOrFunSpringInspection : AbstractKotlinInspection() {
     class QuickFix<T: KtModifierListOwner>(private val element: T) : LocalQuickFix {
@@ -78,13 +82,19 @@ class KotlinFinalClassOrFunSpringInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object: KtVisitorVoid() {
-            override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
-                when (declaration) {
-                    is KtClass -> if (declaration.isInheritable()) return
-                    is KtObjectDeclaration -> {}
-                    is KtNamedFunction -> if (declaration.isOverridable()) return
-                    else -> return
+            private fun KtNamedDeclaration.isOpen(): Boolean {
+                when (this) {
+                    is KtClass -> if (isInheritable()) return true
+                    is KtObjectDeclaration -> return false
+                    is KtNamedFunction -> if (isOverridable()) return true
                 }
+
+                val descriptor = resolveToDescriptor(BodyResolveMode.PARTIAL) as? MemberDescriptor
+                return descriptor?.modality != Modality.FINAL
+            }
+
+            override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+                if (declaration.isOpen()) return
 
                 val message = getMessage(declaration) ?: return
 
