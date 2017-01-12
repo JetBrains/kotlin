@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.inject.Inject
@@ -574,7 +575,20 @@ class DoubleColonExpressionResolver(
         val resolutionResults =
                 resolveCallableReferenceRHS(expression, lhsResult, context, resolveArgumentsMode)
 
+        reportUnsupportedReferenceToSuspendFunction(resolutionResults, expression, context)
+
         return lhsResult to resolutionResults
+    }
+
+    private fun reportUnsupportedReferenceToSuspendFunction(
+            resolutionResults: OverloadResolutionResults<CallableDescriptor>?,
+            expression: KtCallableReferenceExpression,
+            context: ExpressionTypingContext
+    ) {
+        if (resolutionResults?.isSingleResult == true &&
+                resolutionResults.resultingDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true) {
+            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable references to suspend functions"))
+        }
     }
 
     private fun tryResolveRHSWithReceiver(

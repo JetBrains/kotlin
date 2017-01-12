@@ -4282,6 +4282,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("callableReferences.kt")
+            public void testCallableReferences() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/callableReferences.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("coroutinesDisabled.kt")
             public void testCoroutinesDisabled() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/coroutinesDisabled.kt");
