@@ -405,8 +405,7 @@ public class IntellijApiDetector extends ApiDetector {
 
     @Override
     public boolean visitTryExpression(@NotNull UTryExpression statement) {
-      List<PsiResourceListElement> resourceList = statement.getResources();
-      if (resourceList != null) {
+      if (statement.isResources()) {
         int api = 19; // minSdk for try with resources
         int minSdk = getMinSdk(myContext);
 

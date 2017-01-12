@@ -103,7 +103,6 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiParameterList;
 import com.intellij.psi.PsiPrimitiveType;
 import com.intellij.psi.PsiReferenceExpression;
-import com.intellij.psi.PsiResourceListElement;
 import com.intellij.psi.PsiType;
 
 import org.jetbrains.uast.*;
@@ -2021,9 +2020,7 @@ public class ApiDetector extends ResourceXmlDetector
 
         @Override
         public boolean visitTryExpression(UTryExpression statement) {
-            List<PsiResourceListElement> resourceList = statement.getResources();
-            //noinspection VariableNotUsedInsideIf
-            if (resourceList != null && !resourceList.isEmpty()) {
+            if (statement.isResources()) {
                 int api = 19; // minSdk for try with resources
                 int minSdk = getMinSdk(mContext);
 
