@@ -127,7 +127,7 @@ object KotlinJavascriptSerializationUtil {
         val packageView = module.getPackage(fqName)
 
         // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
-        val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module }
+        val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isHeader) }
 
         val fileRegistry = KotlinFileRegistry()
         val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
