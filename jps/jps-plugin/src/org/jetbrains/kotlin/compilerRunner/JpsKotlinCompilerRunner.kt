@@ -33,7 +33,20 @@ import java.rmi.server.UnicastRemoteObject
 import java.util.*
 
 class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
-        override val log: KotlinLogger = JpsKotlinLogger(KotlinBuilder.LOG)
+    override val log: KotlinLogger = JpsKotlinLogger(KotlinBuilder.LOG)
+
+    private var compilerSettings: CompilerSettings? = null
+
+    private inline fun withCompilerSettings(settings: CompilerSettings, fn: ()->Unit) {
+        val old = compilerSettings
+        try {
+            compilerSettings = settings
+            fn()
+        }
+        finally {
+            compilerSettings = old
+        }
+    }
 
     companion object {
         private @Volatile var jpsDaemonConnection: DaemonConnection? = null
@@ -48,10 +61,9 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     ) {
         val arguments = mergeBeans(commonArguments, k2jvmArguments)
         setupK2JvmArguments(moduleFile, arguments)
-        val additionalArguments = compilerSettings.additionalArguments.split(" ").toTypedArray()
-        parseArguments(additionalArguments, arguments)
-
-        runCompiler(K2JVM_COMPILER, arguments, environment)
+        withCompilerSettings(compilerSettings) {
+            runCompiler(K2JVM_COMPILER, arguments, environment)
+        }
     }
 
     fun runK2JsCompiler(
@@ -65,10 +77,9 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     ) {
         val arguments = mergeBeans(commonArguments, k2jsArguments)
         setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments)
-        val additionalArguments = compilerSettings.additionalArguments.split(" ").toTypedArray()
-        parseArguments(additionalArguments, arguments)
-
-        runCompiler(K2JS_COMPILER, arguments, environment)
+        withCompilerSettings(compilerSettings) {
+            runCompiler(K2JS_COMPILER, arguments, environment)
+        }
     }
 
     override fun compileWithDaemonOrFallback(
@@ -104,7 +115,9 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             val compilerMode = CompilerMode.JPS_COMPILER
             val verbose = compilerArgs.verbose
             val options = CompilationOptions(compilerMode, targetPlatform, reportCategories(verbose), reportSeverity(verbose), requestedCompilationResults = emptyArray())
-            daemon.compile(sessionId, compilerArgs, options, JpsCompilerServicesFacadeImpl(environment), null)
+            val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
+                          (compilerSettings?.additionalArguments?.split(" ") ?: emptyList())
+            daemon.compile(sessionId, allArgs.toTypedArray(), options, JpsCompilerServicesFacadeImpl(environment), null)
         }
 
         return res?.get()?.let { exitCodeFromProcessExitCode(it) }
