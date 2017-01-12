@@ -510,6 +510,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("noneApplicableFromInstanceButExtension.before.Main.kt")
+        public void testNoneApplicableFromInstanceButExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noneApplicableFromInstanceButExtension.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("notExcludedClass.before.Main.kt")
         public void testNotExcludedClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notExcludedClass.before.Main.kt");

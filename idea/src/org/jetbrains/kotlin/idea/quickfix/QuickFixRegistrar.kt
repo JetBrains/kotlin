@@ -147,6 +147,7 @@ class QuickFixRegistrar : QuickFixContributor {
         TYPE_MISMATCH.registerFactory(ImportForMismatchingArgumentsFix)
         CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(ImportForMismatchingArgumentsFix)
         NAMED_PARAMETER_NOT_FOUND.registerFactory(ImportForMismatchingArgumentsFix)
+        NONE_APPLICABLE.registerFactory(ImportForMismatchingArgumentsFix)
 
         UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)
 
