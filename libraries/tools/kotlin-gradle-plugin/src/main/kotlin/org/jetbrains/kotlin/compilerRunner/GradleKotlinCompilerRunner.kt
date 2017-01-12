@@ -24,16 +24,15 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity
+import org.jetbrains.kotlin.daemon.common.CompilationResult
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.*
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
@@ -162,14 +161,18 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
             else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
         }
+
+        val verbose = environment.compilerArgs.verbose
         val compilationOptions = CompilationOptions(
-                reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose),
                 compilerMode = CompileService.CompilerMode.NON_INCREMENTAL_COMPILER,
-                targetPlatform = targetPlatform)
+                targetPlatform = targetPlatform,
+                reportCategories = reportCategories(verbose),
+                reportSeverity = reportSeverity(verbose),
+                requestedCompilationResults = emptyArray())
         val servicesFacade = GradleCompilerServicesFacadeImpl(project, environment.messageCollector)
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade)
+            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade, compilationResultsStorage = null)
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
@@ -183,6 +186,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun incrementalCompilationWithDaemon(environment: GradleIncrementalCompilerEnvironment): ExitCode? {
         val knownChangedFiles = environment.changedFiles as? ChangedFiles.Known
 
+        val verbose = environment.compilerArgs.verbose
         val compilationOptions = IncrementalCompilationOptions(
                 areFileChangesKnown = knownChangedFiles != null,
                 modifiedFiles = knownChangedFiles?.modified,
@@ -190,15 +194,16 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 workingDir = environment.workingDir,
                 customCacheVersion = GRADLE_CACHE_VERSION,
                 customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
-                reportingFilters = getNonIncrementalReportingFilters(environment.compilerArgs.verbose) +
-                        getIncrementalReportingFilters(environment.compilerArgs.verbose),
+                reportedCategories = reportCategories(verbose),
+                reportedSeverity = reportSeverity(verbose),
+                requestedCompilationResults = arrayOf(CompilationResult.IC_COMPILE_ITERATION.code),
                 compilerMode = CompileService.CompilerMode.INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM
         )
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade)
+            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade, GradleCompilationResultsStorage(project))
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
@@ -209,36 +214,21 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         return exitCode
     }
 
-    private fun getNonIncrementalReportingFilters(verbose: Boolean): List<ReportingFilter> {
-        val result = ArrayList<ReportingFilter>()
-
-        val compilerMessagesSeverities = ArrayList<Int>().apply {
-            add(CompilerMessageSeverity.ERROR.value)
-            add(CompilerMessageSeverity.EXCEPTION.value)
-            add(CompilerMessageSeverity.WARNING.value)
-            add(CompilerMessageSeverity.INFO.value)
-
-            if (verbose) {
-                add(CompilerMessageSeverity.OUTPUT.value)
-                add(CompilerMessageSeverity.LOGGING.value)
+    private fun reportCategories(verbose: Boolean): Array<Int> =
+            if (!verbose) {
+                arrayOf(ReportCategory.COMPILER_MESSAGE.code)
             }
-        }
-
-        if (verbose) {
-            result.add(ReportingFilter(ReportCategory.DAEMON_MESSAGE, emptyList()))
-        }
-
-        val compilerMessagesFilter = ReportingFilter(ReportCategory.COMPILER_MESSAGE, compilerMessagesSeverities)
-        result.add(compilerMessagesFilter)
-
-        return result
-    }
-
-    private fun getIncrementalReportingFilters(verbose: Boolean) =
-            if (verbose) {
-                listOf(ReportingFilter(ReportCategory.INCREMENTAL_COMPILATION, listOf(IncrementalCompilationSeverity.COMPILED_FILES.value, IncrementalCompilationSeverity.LOGGING.value)))
+            else {
+                ReportCategory.values().map { it.code }.toTypedArray()
             }
-            else emptyList()
+
+    private fun reportSeverity(verbose: Boolean): Int =
+            if (!verbose) {
+                ReportSeverity.INFO.code
+            }
+            else {
+                ReportSeverity.DEBUG.code
+            }
 
     private fun compileOutOfProcess(
             argsArray: Array<String>,

@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import java.io.File
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
@@ -26,29 +27,43 @@ interface CompilerServicesFacadeBase : Remote {
      * Reports different kind of diagnostic messages from compile daemon to compile daemon clients (jps, gradle, ...)
      */
     @Throws(RemoteException::class)
-    fun report(category: ReportCategory, severity: Int, message: String?, attachment: Serializable?)
+    fun report(category: Int, severity: Int, message: String?, attachment: Serializable?)
 }
 
-interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
-    // AnnotationFileUpdater
-    @Throws(RemoteException::class)
-    fun hasAnnotationsFileUpdater(): Boolean
+enum class ReportCategory(val code: Int) {
+    COMPILER_MESSAGE(0),
+    DAEMON_MESSAGE(1),
+    IC_MESSAGE(2),
+    OUTPUT_MESSAGE(3);
 
-    @Throws(RemoteException::class)
-    fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>)
+    companion object {
+        fun fromCode(code: Int): ReportCategory? =
+                ReportCategory.values().firstOrNull { it.code == code }
 
-    @Throws(RemoteException::class)
-    fun revert()
-
-    // ChangesRegistry
-    @Throws(RemoteException::class)
-    fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData)
-
-    @Throws(RemoteException::class)
-    fun unknownChanges(timestamp: Long)
-
-    @Throws(RemoteException::class)
-    fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>?
+    }
 }
 
-interface JpsCompilerServicesFacade : CompilerServicesFacadeBase, CompilerCallbackServicesFacade
+enum class ReportSeverity(val code: Int) {
+    ERROR(0),
+    WARNING(1),
+    INFO(2),
+    DEBUG(3);
+
+    companion object {
+        fun fromCode(code: Int): ReportSeverity? =
+                ReportSeverity.values().firstOrNull { it.code == code }
+    }
+}
+
+fun CompilerServicesFacadeBase.report(category: ReportCategory, severity: ReportSeverity, message: String? = null, attachment: Serializable? = null) {
+    report(category.code, severity.code, message, attachment)
+}
+
+data class CompilerMessageAttachment(
+        val severity: CompilerMessageSeverity,
+        val location: CompilerMessageLocation
+) : Serializable {
+    companion object {
+        const val serialVersionUID = 0L
+    }
+}

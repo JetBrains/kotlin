@@ -20,5 +20,6 @@
     <orderEntry type="module" module-name="daemon-client" />
     <orderEntry type="module" module-name="daemon-common" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="module" module-name="daemon" />
   </component>
 </module>

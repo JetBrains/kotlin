@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.daemon.common
 
 import java.io.Serializable
+import java.rmi.Remote
+import java.rmi.RemoteException
 
-/**
- * Allows daemon clients to specify report category and severities for that category that should be reported from daemon
- */
-data class ReportingFilter(val category: ReportCategory, val severities: List<Int>) : Serializable {
-    companion object {
-        const val serialVersionUID: Long = 0
-    }
+interface CompilationResultsStorage : Remote {
+    @Throws(RemoteException::class)
+    fun store(compilationResult: Int, value: Serializable)
+}
+
+enum class CompilationResult(val code: Int) {
+    IC_COMPILE_ITERATION(0)
 }

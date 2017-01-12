@@ -22,7 +22,9 @@ import java.io.Serializable
 open class CompilationOptions(
         val compilerMode: CompileService.CompilerMode,
         val targetPlatform: CompileService.TargetPlatform,
-        val reportingFilters: List<ReportingFilter>
+        val reportCategories: Array<Int>,
+        val reportSeverity: Int,
+        val requestedCompilationResults: Array<Int>
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -38,8 +40,10 @@ class IncrementalCompilationOptions(
         val customCacheVersion: Int,
         compilerMode: CompileService.CompilerMode,
         targetPlatform: CompileService.TargetPlatform,
-        reportingFilters: List<ReportingFilter>
-) : CompilationOptions(compilerMode, targetPlatform, reportingFilters) {
+        reportedCategories: Array<Int>,
+        reportedSeverity: Int,
+        requestedCompilationResults: Array<Int>
+) : CompilationOptions(compilerMode, targetPlatform, reportedCategories, reportedSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
     }
