@@ -1,0 +1,42 @@
+// WITH_RUNTIME
+// WITH_COROUTINES
+import kotlin.coroutines.*
+
+class Controller {
+    var result = false
+    suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+        x.resume("OK")
+        CoroutineIntrinsics.SUSPENDED
+    }
+
+    fun foo() {
+        result = true
+    }
+}
+
+fun builder(c: suspend Controller.() -> Unit) {
+    val controller = Controller()
+    c.startCoroutine(controller, EmptyContinuation)
+    if (!controller.result) throw RuntimeException("fail")
+}
+
+fun noinlineRun(block: () -> Unit) {
+    block()
+}
+
+fun box(): String {
+    builder {
+        if (suspendHere() != "OK") {
+            throw RuntimeException("fail 1")
+        }
+        noinlineRun {
+            foo()
+        }
+
+        if (suspendHere() != "OK") {
+            throw RuntimeException("fail 2")
+        }
+    }
+
+    return "OK"
+}

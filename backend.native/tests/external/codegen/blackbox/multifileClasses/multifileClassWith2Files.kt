@@ -1,0 +1,26 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
+// WITH_RUNTIME
+// FILE: Baz.java
+
+public class Baz {
+    public static String baz() {
+        return Util.foo() + Util.bar();
+    }
+}
+
+// FILE: bar.kt
+
+@file:JvmName("Util")
+@file:JvmMultifileClass
+public fun bar(): String = "K"
+
+// FILE: foo.kt
+
+@file:[JvmName("Util") JvmMultifileClass]
+public fun foo(): String = "O"
+
+// FILE: test.kt
+
+fun box(): String = Baz.baz()

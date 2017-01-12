@@ -1,0 +1,31 @@
+// TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+
+// WITH_REFLECT
+// FILE: J.java
+
+public class J {
+    public J() {
+    }
+
+    public void member(String s) {
+    }
+
+    public static void staticMethod(int x) {
+    }
+}
+
+// FILE: K.kt
+
+import kotlin.reflect.*
+import kotlin.test.assertEquals
+
+fun box(): String {
+    assertEquals(listOf("equals", "hashCode", "member", "staticMethod", "toString"), J::class.members.map { it.name }.sorted())
+    assertEquals(listOf("equals", "hashCode", "member", "staticMethod", "toString"), J::class.functions.map { it.name }.sorted())
+    assertEquals(listOf("member", "staticMethod"), J::class.declaredFunctions.map { it.name }.sorted())
+
+    assertEquals(1, J::class.constructors.size)
+
+    return "OK"
+}
