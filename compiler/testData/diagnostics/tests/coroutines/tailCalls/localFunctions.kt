@@ -2,16 +2,16 @@ suspend fun baz() = 1
 suspend fun unit() {}
 
 suspend fun foo() {
-    suspend fun bar() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun bar() {
         baz()
         return unit()
     }
 
-    suspend fun foobar1(): Int {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun foobar1(): Int {
         return baz()
     }
 
-    suspend fun foobar2() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun foobar2() {
         return unit()
     }
 }
