@@ -34,15 +34,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.incremental.*
-import org.jetbrains.kotlin.daemon.report.CompileServiceReporter
-import org.jetbrains.kotlin.daemon.report.CompileServiceReporterImpl
-import org.jetbrains.kotlin.daemon.report.CompileServiceReporterStreamAdapter
-import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
+import org.jetbrains.kotlin.daemon.report.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.rmi.NoSuchObjectException
@@ -288,10 +286,11 @@ class CompileServiceImpl(
             sessionId: Int,
             compilerArguments: CommonCompilerArguments,
             compilationOptions: CompilationOptions,
-            servicesFacade: CompilerServicesFacadeBase
+            servicesFacade: CompilerServicesFacadeBase,
+            compilationResultsStorage: CompilationResultsStorage?
     ): CompileService.CallResult<Int> {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
-        val serviceReporter = CompileServiceReporterImpl(servicesFacade, compilationOptions)
+        val daemonReporter = DaemonMessageReporter(servicesFacade, compilationOptions)
         val compilerMode = compilationOptions.compilerMode
         val targetPlatform = compilationOptions.targetPlatform
 
@@ -299,13 +298,13 @@ class CompileServiceImpl(
             CompileService.CompilerMode.JPS_COMPILER -> {
                 val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
 
-                doCompile(sessionId, serviceReporter, tracer = null) { eventManger, profiler ->
+                doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                     val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
                     execCompiler(compilationOptions.targetPlatform, services, compilerArguments, messageCollector)
                 }
             }
             CompileService.CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                doCompile(sessionId, serviceReporter, tracer = null) { eventManger, profiler ->
+                doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                     execCompiler(targetPlatform, Services.EMPTY, compilerArguments, messageCollector)
                 }
             }
@@ -319,8 +318,9 @@ class CompileServiceImpl(
                 val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacade
 
                 withIC {
-                    doCompile(sessionId, serviceReporter, tracer = null) { eventManger, profiler ->
-                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, messageCollector)
+                    doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
+                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResultsStorage!!,
+                                                messageCollector, daemonReporter)
                     }
                 }
 
@@ -346,23 +346,34 @@ class CompileServiceImpl(
 
     private fun execIncrementalCompiler(
             k2jvmArgs: K2JVMCompilerArguments,
-            incrementalCompilerArgs: IncrementalCompilationOptions,
+            incrementalCompilationOptions: IncrementalCompilationOptions,
             servicesFacade: IncrementalCompilerServicesFacade,
-            messageCollector: CompileServicesFacadeMessageCollector
+            compilationResultsStorage: CompilationResultsStorage,
+            compilerMessageCollector: MessageCollector,
+            daemonMessageReporter: DaemonMessageReporter
     ): ExitCode {
-        val reporter = RemoteICReporter(servicesFacade, incrementalCompilerArgs)
+        val reporter = RemoteICReporter(servicesFacade, compilationResultsStorage, incrementalCompilationOptions)
         val annotationFileUpdater = if (servicesFacade.hasAnnotationsFileUpdater()) RemoteAnnotationsFileUpdater(servicesFacade) else null
 
         val moduleFile = k2jvmArgs.module?.let(::File)
         assert(moduleFile?.exists() ?: false) { "Module does not exist ${k2jvmArgs.module}" }
 
-        val temporaryMessageCollectorForModuleParsing = FilteringMessageCollector(messageCollector) { it != CompilerMessageSeverity.ERROR }
-        val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.module, temporaryMessageCollectorForModuleParsing)
+        // todo: pass javaSourceRoots and allKotlinFiles using IncrementalCompilationOptions
+        val parsedModule = run {
+            val bytesOut = ByteArrayOutputStream()
+            val printStream = PrintStream(bytesOut)
+            val mc = PrintingMessageCollector(printStream, MessageRenderer.PLAIN_FULL_PATHS, false)
+            val parsedModule = ModuleXmlParser.parseModuleScript(k2jvmArgs.module, mc)
+            if (mc.hasErrors()) {
+                daemonMessageReporter.report(ReportSeverity.ERROR, bytesOut.toString("UTF8"))
+            }
+            parsedModule
+        }
         val javaSourceRoots = parsedModule.modules.flatMapTo(HashSet()) { it.getJavaSourceRoots().map { File(it.path) } }
         val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(::File) }
 
-        val changedFiles = if (incrementalCompilerArgs.areFileChangesKnown) {
-            ChangedFiles.Known(incrementalCompilerArgs.modifiedFiles!!, incrementalCompilerArgs.deletedFiles!!)
+        val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
+            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
         }
         else {
             ChangedFiles.Unknown()
@@ -371,13 +382,13 @@ class CompileServiceImpl(
         val artifactChanges = RemoteArtifactChangesProvider(servicesFacade)
         val changesRegistry = RemoteChangesRegostry(servicesFacade)
 
-        val workingDir = incrementalCompilerArgs.workingDir
+        val workingDir = incrementalCompilationOptions.workingDir
         val versions = commonCacheVersions(workingDir) +
-                       customCacheVersion(incrementalCompilerArgs.customCacheVersion, incrementalCompilerArgs.customCacheVersionFileName, workingDir, forceEnable = true)
+                       customCacheVersion(incrementalCompilationOptions.customCacheVersion, incrementalCompilationOptions.customCacheVersionFileName, workingDir, forceEnable = true)
 
         return IncrementalJvmCompilerRunner(workingDir, javaSourceRoots, versions, reporter, annotationFileUpdater,
                                             artifactChanges, changesRegistry)
-                .compile(allKotlinFiles, k2jvmArgs, messageCollector, { changedFiles })
+                .compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, { changedFiles })
     }
 
     // internal implementation stuff
@@ -551,7 +562,7 @@ class CompileServiceImpl(
                     val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
                     val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
                     try {
-                        val compileServiceReporter = CompileServiceReporterStreamAdapter(serviceOutputStream)
+                        val compileServiceReporter = DaemonMessageReporterPrintStreamAdapter(serviceOutputStream)
                         if (args.none())
                             throw IllegalArgumentException("Error: empty arguments list.")
                         log.info("Starting compilation with args: " + args.joinToString(" "))
@@ -570,7 +581,7 @@ class CompileServiceImpl(
             }
 
     private fun doCompile(sessionId: Int,
-                          compileServiceReporter: CompileServiceReporter,
+                          daemonMessageReporter: DaemonMessageReporter,
                           tracer: RemoteOperationsTracer?,
                           body: (EventManger, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
@@ -579,7 +590,7 @@ class CompileServiceImpl(
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                     val eventManger = EventMangerImpl()
                     try {
-                        val exitCode = checkedCompile(compileServiceReporter, rpcProfiler) {
+                        val exitCode = checkedCompile(daemonMessageReporter, rpcProfiler) {
                             body(eventManger, rpcProfiler).code
                         }
                         CompileService.CallResult.Good(exitCode)
@@ -603,7 +614,7 @@ class CompileServiceImpl(
     }
 
 
-    private fun<R> checkedCompile(compileServiceReporter: CompileServiceReporter, rpcProfiler: Profiler, body: () -> R): R {
+    private fun<R> checkedCompile(daemonMessageReporter: DaemonMessageReporter, rpcProfiler: Profiler, body: () -> R): R {
         try {
             val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
@@ -620,14 +631,14 @@ class CompileServiceImpl(
                 val rpc = rpcProfiler.getTotalCounters()
 
                 "PERF: Compile on daemon: ${pc.time.ms()} ms; thread: user ${pc.threadUserTime.ms()} ms, sys ${(pc.threadTime - pc.threadUserTime).ms()} ms; rpc: ${rpc.count} calls, ${rpc.time.ms()} ms, thread ${rpc.threadTime.ms()} ms; memory: ${endMem.kb()} kb (${"%+d".format(pc.memory.kb())} kb)".let {
-                    compileServiceReporter.info(it)
+                    daemonMessageReporter.report(ReportSeverity.INFO, it)
                     log.info(it)
                 }
 
                 // this will only be reported if if appropriate (e.g. ByClass) profiler is used
                 for ((obj, counters) in rpcProfiler.getCounters()) {
                     "PERF: rpc by $obj: ${counters.count} calls, ${counters.time.ms()} ms, thread ${counters.threadTime.ms()} ms".let {
-                        compileServiceReporter.info(it)
+                        daemonMessageReporter.report(ReportSeverity.INFO, it)
                         log.info(it)
                     }
                 }

@@ -6,15 +6,12 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.incremental.CompileIterationResult
-import org.jetbrains.kotlin.daemon.incremental.IncrementalCompilationSeverity
 import org.jetbrains.kotlin.daemon.incremental.toDirtyData
 import org.jetbrains.kotlin.daemon.incremental.toSimpleDirtyData
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinWarn
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifference
-import org.jetbrains.kotlin.incremental.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.io.Serializable
@@ -28,20 +25,26 @@ internal open class GradleCompilerServicesFacadeImpl(
 ) : UnicastRemoteObject(port), CompilerServicesFacadeBase, Remote {
     protected val log: Logger = project.logger
 
-    override fun report(category: ReportCategory, severity: Int, message: String?, attachment: Serializable?) {
-        when (category) {
-            ReportCategory.COMPILER_MESSAGE -> {
-                val compilerSeverity = CompilerMessageSeverity.values().firstOrNull { it.value == severity }
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+        val reportCategory = ReportCategory.fromCode(category)
 
-                if (compilerSeverity != null && message != null && attachment is CompilerMessageLocation) {
-                    compilerMessageCollector.report(compilerSeverity, message, attachment)
+        when (reportCategory) {
+            ReportCategory.COMPILER_MESSAGE -> {
+                if (message != null && attachment is CompilerMessageAttachment) {
+                    compilerMessageCollector.report(attachment.severity, message, attachment.location)
                 }
                 else {
                     reportUnexpectedMessage(category, severity, message, attachment)
                 }
             }
+            ReportCategory.IC_MESSAGE -> {
+                log.kotlinDebug { "[IC] $message" }
+            }
             ReportCategory.DAEMON_MESSAGE -> {
                 log.kotlinDebug { "[DAEMON] $message" }
+            }
+            ReportCategory.OUTPUT_MESSAGE -> {
+                compilerMessageCollector.report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
             }
             else -> {
                 reportUnexpectedMessage(category, severity, message, attachment)
@@ -49,7 +52,7 @@ internal open class GradleCompilerServicesFacadeImpl(
         }
     }
 
-    protected fun reportUnexpectedMessage(category: ReportCategory, severity: Int, message: String?, attachment: Serializable?) {
+    protected fun reportUnexpectedMessage(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         // todo add assert to tests
         log.kotlinWarn("Received unexpected message from compiler daemon: category=$category, severity=$severity, message='$message', attachment=$attachment")
     }
@@ -61,42 +64,6 @@ internal class GradleIncrementalCompilerServicesFacadeImpl(
         port: Int = SOCKET_ANY_FREE_PORT
 ) : GradleCompilerServicesFacadeImpl(project, environment.messageCollector, port),
     IncrementalCompilerServicesFacade {
-
-    private val projectRootFile = project.rootProject.projectDir
-
-    override fun report(category: ReportCategory, severity: Int, message: String?, attachment: Serializable?) {
-        when (category) {
-            ReportCategory.INCREMENTAL_COMPILATION -> {
-                val icSeverity = IncrementalCompilationSeverity.values().firstOrNull { it.value == severity }
-                when (icSeverity) {
-                    IncrementalCompilationSeverity.COMPILED_FILES -> {
-                        @Suppress("UNCHECKED_CAST")
-                        val compileIterationResult = attachment as? CompileIterationResult
-                        if (compileIterationResult == null) {
-                            reportUnexpectedMessage(category, severity, message, attachment)
-                        }
-                        else {
-                            val sourceFiles = compileIterationResult.sourceFiles
-                            if (sourceFiles.any()) {
-                                log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
-                            }
-                            val exitCode = compileIterationResult.exitCode
-                            log.kotlinDebug { "compiler exit code: $exitCode" }
-                        }
-                    }
-                    IncrementalCompilationSeverity.LOGGING -> {
-                        log.kotlinDebug { "[IC] $message" }
-                    }
-                    else -> {
-                        reportUnexpectedMessage(category, severity, message, attachment)
-                    }
-                }
-            }
-            else -> {
-                super.report(category, severity, message, attachment)
-            }
-        }
-    }
 
     override fun hasAnnotationsFileUpdater(): Boolean =
             environment.kaptAnnotationsFileUpdater != null

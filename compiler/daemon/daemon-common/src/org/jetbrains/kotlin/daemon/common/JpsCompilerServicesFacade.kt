@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.messages;
+package org.jetbrains.kotlin.daemon.common
 
-import java.util.EnumSet;
-
-public enum CompilerMessageSeverity {
-    ERROR,
-    EXCEPTION,
-    WARNING,
-    INFO,
-    OUTPUT,
-    LOGGING;
-
-    public static final EnumSet<CompilerMessageSeverity> ERRORS = EnumSet.of(ERROR, EXCEPTION);
-    public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(OUTPUT, LOGGING);
-
-    public boolean isError() {
-        return ERRORS.contains(this);
-    }
-}
+interface JpsCompilerServicesFacade : CompilerServicesFacadeBase, CompilerCallbackServicesFacade

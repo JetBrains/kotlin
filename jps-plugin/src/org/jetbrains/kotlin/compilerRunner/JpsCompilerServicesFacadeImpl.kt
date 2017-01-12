@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
-import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
-import org.jetbrains.kotlin.daemon.common.ReportCategory
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.Serializable
@@ -34,20 +32,26 @@ internal class JpsCompilerServicesFacadeImpl(
                                          port),
         JpsCompilerServicesFacade {
 
-    override fun report(category: ReportCategory, severity: Int, message: String?, attachment: Serializable?) {
-        when (category) {
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+        val reportCategory = ReportCategory.fromCode(category)
+
+        when (reportCategory) {
+            ReportCategory.OUTPUT_MESSAGE -> {
+                env.messageCollector.report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
+            }
             ReportCategory.COMPILER_MESSAGE -> {
-                val compilerMessageSeverity = CompilerMessageSeverity.values().firstOrNull { it.value == severity }
-                if (compilerMessageSeverity != null) {
-                    val location = attachment as? CompilerMessageLocation ?: CompilerMessageLocation.NO_LOCATION
-                    env.messageCollector.report(compilerMessageSeverity, message!!, location)
+                val compilerMessageAttachment = attachment as? CompilerMessageAttachment
+                if (message != null && compilerMessageAttachment != null) {
+                    val originalSeverity = compilerMessageAttachment.severity
+                    val originalLocation = compilerMessageAttachment.location
+                    env.messageCollector.report(originalSeverity, message, originalLocation)
                 }
                 else {
                     reportUnexpected(category, severity, message, attachment)
                 }
             }
             ReportCategory.DAEMON_MESSAGE,
-            ReportCategory.INCREMENTAL_COMPILATION -> {
+            ReportCategory.IC_MESSAGE -> {
                 if (message != null) {
                     env.messageCollector.report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION)
                 }
@@ -61,8 +65,15 @@ internal class JpsCompilerServicesFacadeImpl(
         }
     }
 
-    private fun reportUnexpected(category: ReportCategory, severity: Int, message: String?, attachment: Serializable?) {
-        env.messageCollector.report(CompilerMessageSeverity.LOGGING,
+    private fun reportUnexpected(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+        val compilerMessageSeverity = when (ReportSeverity.fromCode(severity)) {
+            ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
+            ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
+            ReportSeverity.INFO -> CompilerMessageSeverity.INFO
+            else -> CompilerMessageSeverity.LOGGING
+        }
+
+        env.messageCollector.report(compilerMessageSeverity,
                                     "Unexpected message: category=$category; severity=$severity; message='$message'; attachment=$attachment",
                                     CompilerMessageLocation.NO_LOCATION)
     }

@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.io.Serializable
+import java.rmi.server.UnicastRemoteObject
 import java.util.*
 
 class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
@@ -99,39 +101,30 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            val options = CompilationOptions(CompileService.CompilerMode.JPS_COMPILER,
-                                             targetPlatform,
-                                             reportingFilters = getReportingFilters(compilerArgs.verbose))
-            daemon.compile(sessionId, compilerArgs, options, JpsCompilerServicesFacadeImpl(environment))
+            val compilerMode = CompileService.CompilerMode.JPS_COMPILER
+            val verbose = compilerArgs.verbose
+            val options = CompilationOptions(compilerMode, targetPlatform, reportCategories(verbose), reportSeverity(verbose), requestedCompilationResults = emptyArray())
+            daemon.compile(sessionId, compilerArgs, options, JpsCompilerServicesFacadeImpl(environment), null)
         }
 
         return res?.get()?.let { exitCodeFromProcessExitCode(it) }
     }
 
-    private fun getReportingFilters(verbose: Boolean): List<ReportingFilter> {
-        val result = ArrayList<ReportingFilter>()
-
-        val compilerMessagesSeverities = ArrayList<Int>().apply {
-            add(CompilerMessageSeverity.ERROR.value)
-            add(CompilerMessageSeverity.EXCEPTION.value)
-            add(CompilerMessageSeverity.WARNING.value)
-            add(CompilerMessageSeverity.INFO.value)
-            add(CompilerMessageSeverity.OUTPUT.value)
-
-            if (verbose) {
-                add(CompilerMessageSeverity.LOGGING.value)
+    private fun reportCategories(verbose: Boolean): Array<Int> =
+            if (!verbose) {
+                arrayOf(ReportCategory.COMPILER_MESSAGE.code)
             }
-        }
+            else {
+                ReportCategory.values().map { it.code }.toTypedArray()
+            }
 
-        if (verbose) {
-            result.add(ReportingFilter(ReportCategory.DAEMON_MESSAGE, emptyList()))
-        }
-
-        val compilerMessagesFilter = ReportingFilter(ReportCategory.COMPILER_MESSAGE, compilerMessagesSeverities)
-        result.add(compilerMessagesFilter)
-
-        return result
-    }
+    private fun reportSeverity(verbose: Boolean): Int =
+            if (!verbose) {
+                ReportSeverity.INFO.code
+            }
+            else {
+                ReportSeverity.DEBUG.code
+            }
 
     private fun fallbackCompileStrategy(
             argsArray: Array<String>,

@@ -19,26 +19,39 @@ package org.jetbrains.kotlin.daemon.report
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
-import org.jetbrains.kotlin.daemon.common.ReportCategory
+import org.jetbrains.kotlin.daemon.common.*
 
 internal class CompileServicesFacadeMessageCollector(
         private val servicesFacade: CompilerServicesFacadeBase,
         compilationOptions: CompilationOptions
 ) : MessageCollector {
+    private val mySeverity = compilationOptions.reportSeverity
     private var hasErrors = false
-    private val reportingFilter = compilationOptions.reportingFilters.firstOrNull { it.category == ReportCategory.DAEMON_MESSAGE }
 
     override fun clear() {
         hasErrors = false
     }
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-        if (reportingFilter != null && severity.value !in reportingFilter.severities) return
+        val reportCategory = when (severity) {
+            CompilerMessageSeverity.OUTPUT -> ReportCategory.OUTPUT_MESSAGE
+            else -> ReportCategory.COMPILER_MESSAGE
+        }
+
+        val reportSeverity = when (severity) {
+            CompilerMessageSeverity.ERROR,
+            CompilerMessageSeverity.EXCEPTION -> ReportSeverity.ERROR
+            CompilerMessageSeverity.WARNING -> ReportSeverity.WARNING
+            CompilerMessageSeverity.INFO -> ReportSeverity.INFO
+            CompilerMessageSeverity.LOGGING -> ReportSeverity.DEBUG
+            CompilerMessageSeverity.OUTPUT -> ReportSeverity.ERROR
+        }
+
+        if (reportSeverity.code <= mySeverity) {
+            servicesFacade.report(reportCategory, reportSeverity, message, CompilerMessageAttachment(severity, location))
+        }
 
         hasErrors = hasErrors || severity == CompilerMessageSeverity.ERROR
-        servicesFacade.report(ReportCategory.DAEMON_MESSAGE, severity.value, message, location)
     }
 
     override fun hasErrors(): Boolean = hasErrors
