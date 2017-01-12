@@ -4793,6 +4793,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("enum.kt")
+        public void testEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/enum.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumWIthFunction.kt")
+        public void testEnumWIthFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/enumWIthFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumWithParams.kt")
+        public void testEnumWithParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/enumWithParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumWithoutEntries.kt")
+        public void testEnumWithoutEntries() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/enumWithoutEntries.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumWithoutSemicolon.kt")
+        public void testEnumWithoutSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/enumWithoutSemicolon.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("independentProperty.kt")
         public void testIndependentProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/independentProperty.kt");
