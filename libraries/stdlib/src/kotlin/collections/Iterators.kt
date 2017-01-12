@@ -4,6 +4,11 @@
 package kotlin.collections
 
 /**
+ * Builds an [Iterator] lazily yielding values one by one.
+ */
+public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> = buildIteratorImpl(builderAction)
+
+/**
  * Creates an [Iterator] for an [Enumeration], allowing to use it in `for` loops.
  */
 @kotlin.jvm.JvmVersion
