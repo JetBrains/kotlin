@@ -179,6 +179,72 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/jvm8"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("bridgeInClass.kt")
+        public void testBridgeInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/bridgeInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("bridgeInInterface.kt")
+        public void testBridgeInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/bridgeInInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultArgs.kt")
+        public void testDefaultArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaultArgs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt11969.kt")
+        public void testKt11969() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/kt11969.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14243.kt")
+        public void testKt14243() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/kt14243.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14243_2.kt")
+        public void testKt14243_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/kt14243_2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14243_prop.kt")
+        public void testKt14243_prop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/kt14243_prop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("oneImplementation.kt")
+        public void testOneImplementation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/oneImplementation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("oneImplementation2.kt")
+        public void testOneImplementation2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/oneImplementation2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleCall.kt")
+        public void testSimpleCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/simpleCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleProperty.kt")
+        public void testSimpleProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/simpleProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/java8/box/jvm8/defaults")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
