@@ -129,12 +129,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (arguments.jvmTarget != null) {
             val jvmTarget = JvmTarget.fromString(arguments.jvmTarget)
             if (jvmTarget != null) {
-                if (jvmTarget == JvmTarget.JVM_1_8) {
-                    val warning = "The -jvm-target option has no effect yet"
-                    messageCollector.report(CompilerMessageSeverity.WARNING, warning, CompilerMessageLocation.NO_LOCATION)
-                }
-                //use default target for now
-                //configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
             }
             else {
                 val errorMessage = "Unknown JVM target version: ${arguments.jvmTarget}\n" +
