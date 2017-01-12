@@ -23,9 +23,7 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -39,10 +37,8 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import java.io.BufferedOutputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
+import org.jetbrains.kotlin.utils.stackTraceStr
+import java.io.*
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -284,7 +280,7 @@ class CompileServiceImpl(
 
     override fun compile(
             sessionId: Int,
-            compilerArguments: CommonCompilerArguments,
+            compilerArguments: Array<String>,
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase,
             compilationResultsSink: CompilationResultsSink?
@@ -293,6 +289,16 @@ class CompileServiceImpl(
         val daemonReporter = DaemonMessageReporter(servicesFacade, compilationOptions)
         val compilerMode = compilationOptions.compilerMode
         val targetPlatform = compilationOptions.targetPlatform
+        val k2PlatformArgs = try {
+            when (targetPlatform) {
+                CompileService.TargetPlatform.JVM -> K2JVMCompilerArguments().apply { K2JVMCompiler().parseArguments(compilerArguments, this) }
+                CompileService.TargetPlatform.JS -> K2JSCompilerArguments().apply { K2JSCompiler().parseArguments(compilerArguments, this) }
+            }
+        }
+        catch (e: IllegalArgumentException) {
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, e.stackTraceStr, CompilerMessageLocation.NO_LOCATION)
+            return CompileService.CallResult.Error("Could not deserialize compiler arguments")
+        }
 
         return when (compilerMode) {
             CompilerMode.JPS_COMPILER -> {
@@ -300,12 +306,12 @@ class CompileServiceImpl(
 
                 doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                     val services = createCompileServices(jpsServicesFacade, eventManger, profiler)
-                    execCompiler(compilationOptions.targetPlatform, services, compilerArguments, messageCollector)
+                    execCompiler(compilationOptions.targetPlatform, services, k2PlatformArgs, messageCollector)
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
-                    execCompiler(targetPlatform, Services.EMPTY, compilerArguments, messageCollector)
+                    execCompiler(targetPlatform, Services.EMPTY, k2PlatformArgs, messageCollector)
                 }
             }
             CompilerMode.INCREMENTAL_COMPILER -> {
@@ -313,7 +319,7 @@ class CompileServiceImpl(
                     throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
                 }
 
-                val k2jvmArgs = compilerArguments as K2JVMCompilerArguments
+                val k2jvmArgs = k2PlatformArgs as K2JVMCompilerArguments
                 val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
                 val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacade
 
