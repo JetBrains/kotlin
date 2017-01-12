@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.core.dropDefaultValue
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.inspections.CONSTRUCTOR_VAL_VAR_MODIFIERS
 import org.jetbrains.kotlin.idea.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
@@ -485,6 +486,7 @@ class KotlinPullUpHelper(
                 movedMember = doAddCallableMember(memberCopy, clashingSuper, classToAddTo)
                 if (member is KtParameter && movedMember is KtParameter) {
                     member.valOrVarKeyword?.delete()
+                    CONSTRUCTOR_VAL_VAR_MODIFIERS.forEach { member.removeModifier(it) }
 
                     val superEntry = data.superEntryForTargetClass
                     val superResolvedCall = data.targetClassSuperResolvedCall

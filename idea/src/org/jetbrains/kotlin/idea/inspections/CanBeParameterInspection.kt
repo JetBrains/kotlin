@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-private val CONSTRUCTOR_VAL_VAR_MODIFIERS = listOf(
-        OPEN_KEYWORD, FINAL_KEYWORD,
+internal val CONSTRUCTOR_VAL_VAR_MODIFIERS = listOf(
+        OPEN_KEYWORD, FINAL_KEYWORD, OVERRIDE_KEYWORD,
         PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD,
         LATEINIT_KEYWORD
 )

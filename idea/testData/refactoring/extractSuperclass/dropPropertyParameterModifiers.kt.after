@@ -1,0 +1,17 @@
+// NAME: Middle
+
+open class Parent(open val bad: String) {
+    open val good: String = "a"
+}
+
+open class Middle(override val bad: String) : Parent(bad) {
+    // INFO: {checked: "true"}
+    override val good: String = "b"
+}
+
+// SIBLING:
+class Child(
+    // INFO: {checked: "true"}
+    bad: String
+) : Middle(bad) {
+}

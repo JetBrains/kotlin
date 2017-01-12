@@ -4283,6 +4283,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doExtractSuperclassTest(fileName);
         }
 
+        @TestMetadata("dropPropertyParameterModifiers.kt")
+        public void testDropPropertyParameterModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/dropPropertyParameterModifiers.kt");
+            doExtractSuperclassTest(fileName);
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractSuperclass/enum.kt");
