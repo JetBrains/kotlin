@@ -4318,6 +4318,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("mixingSuspendability.kt")
+            public void testMixingSuspendability() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/mixingSuspendability.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noDefaultCoroutineImports.kt")
             public void testNoDefaultCoroutineImports() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/noDefaultCoroutineImports.kt");
@@ -4336,6 +4342,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("suspendConflictsWithNoSuspend.kt")
+            public void testSuspendConflictsWithNoSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendConflictsWithNoSuspend.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("suspendCoroutineOrReturn.kt")
             public void testSuspendCoroutineOrReturn() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendCoroutineOrReturn.kt");
@@ -4351,6 +4363,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("suspendFunctions.kt")
             public void testSuspendFunctions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctions.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendOverridability.kt")
+            public void testSuspendOverridability() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendOverridability.kt");
                 doTest(fileName);
             }
 

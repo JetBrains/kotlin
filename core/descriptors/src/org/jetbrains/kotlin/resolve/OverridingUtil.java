@@ -260,6 +260,11 @@ public class OverridingUtil {
             }
         }
 
+        if (superDescriptor instanceof FunctionDescriptor && subDescriptor instanceof FunctionDescriptor &&
+            ((FunctionDescriptor) superDescriptor).isSuspend() != ((FunctionDescriptor) subDescriptor).isSuspend()) {
+            return OverrideCompatibilityInfo.conflict("Incompatible suspendability");
+        }
+
         if (checkReturnType) {
             KotlinType superReturnType = superDescriptor.getReturnType();
             KotlinType subReturnType = subDescriptor.getReturnType();
