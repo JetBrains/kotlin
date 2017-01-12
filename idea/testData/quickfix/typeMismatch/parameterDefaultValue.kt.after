@@ -1,0 +1,4 @@
+// "Change parameter 's' type of function 'foo' to 'Int'" "true"
+val ONE = 1
+
+fun foo(s: Int = <caret>ONE + 1) {}

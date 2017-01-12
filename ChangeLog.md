@@ -721,6 +721,7 @@ These artifacts include extensions for the types available in the latter JDKs, s
 - Implement quickfix which enables/disables coroutine support in module or project
 - [`KT-15056`](https://youtrack.jetbrains.com/issue/KT-15056) Implement intention which converts object literal to class
 - [`KT-8855`](https://youtrack.jetbrains.com/issue/KT-8855) Implement "Create label" quick fix
+- [`KT-15627`](https://youtrack.jetbrains.com/issue/KT-15627) Support "Change parameter type" for parameters with type-mismatched default value
 
 ## 1.0.6
 

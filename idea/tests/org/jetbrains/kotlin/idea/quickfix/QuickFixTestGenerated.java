@@ -9555,6 +9555,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("parameterDefaultValue.kt")
+        public void testParameterDefaultValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/parameterDefaultValue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyTypeMismatch.kt")
         public void testPropertyTypeMismatch() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/propertyTypeMismatch.kt");
