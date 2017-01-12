@@ -49,11 +49,17 @@ public inline fun <T, R> with(receiver: T, block: T.() -> R): R = receiver.block
 public inline fun <T> T.apply(block: T.() -> Unit): T { block(); return this }
 
 /**
+ * Calls the specified function [block] with `this` value as its argument and returns `this` value.
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("1.1")
+public inline fun <T> T.also(block: (T) -> Unit): T { block(this); return this }
+
+/**
  * Calls the specified function [block] with `this` value as its argument and returns its result.
  */
 @kotlin.internal.InlineOnly
 public inline fun <T, R> T.let(block: (T) -> R): R = block(this)
-
 
 /**
  * Executes the given function [action] specified number of [times].
