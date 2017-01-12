@@ -170,9 +170,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private Type getBoxedReturnTypeForSuspend(FunctionDescriptor descriptorForSuspend) {
-        assert descriptorForSuspend.getReturnType() != null : "Uninitialized suspend return type";
-        return AsmUtil.boxType(typeMapper.mapType(descriptorForSuspend.getReturnType()));
+    private static Type getBoxedReturnTypeForSuspend(FunctionDescriptor descriptorForSuspend) {
+        return AsmTypes.OBJECT_TYPE;
     }
 
     @Nullable
@@ -455,6 +454,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
+    private Type expressionTypeForBranchingOperation(@Nullable KtExpression expression) {
+        if (context.getFunctionDescriptor().isSuspend() &&
+            !CoroutineCodegenUtilKt.isStateMachineNeeded(context.getFunctionDescriptor(), bindingContext) &&
+            Boolean.TRUE.equals(bindingContext.get(IS_TAIL_EXPRESSION_IN_SUSPEND_FUNCTION, expression))) {
+            return AsmTypes.OBJECT_TYPE;
+        }
+        return expressionType(expression);
+    }
+
+    @NotNull
     public Type expressionType(@Nullable KtExpression expression) {
         return CodegenUtilKt.asmType(expression, typeMapper, bindingContext);
     }
@@ -494,7 +503,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     /* package */ StackValue generateIfExpression(@NotNull final KtIfExpression expression, final boolean isStatement) {
-        final Type asmType = isStatement ? Type.VOID_TYPE : expressionType(expression);
+        final Type asmType = isStatement ? Type.VOID_TYPE : expressionTypeForBranchingOperation(expression);
         final StackValue condition = gen(expression.getCondition());
 
         final KtExpression thenExpression = expression.getThen();
@@ -4284,9 +4293,7 @@ The "returned" value of try expression with no finally is either the last expres
 (or blocks).
          */
 
-        KotlinType jetType = bindingContext.getType(expression);
-        assert jetType != null;
-        final Type expectedAsmType = isStatement ? Type.VOID_TYPE : asmType(jetType);
+        final Type expectedAsmType = isStatement ? Type.VOID_TYPE : expressionTypeForBranchingOperation(expression);
 
         return StackValue.operation(expectedAsmType, new Function1<InstructionAdapter, Unit>() {
             @Override
@@ -4559,7 +4566,7 @@ The "returned" value of try expression with no finally is either the last expres
         final KtExpression expr = expression.getSubjectExpression();
         final Type subjectType = expressionType(expr);
 
-        final Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
+        final Type resultType = isStatement ? Type.VOID_TYPE : expressionTypeForBranchingOperation(expression);
 
         return StackValue.operation(resultType, new Function1<InstructionAdapter, Unit>() {
             @Override

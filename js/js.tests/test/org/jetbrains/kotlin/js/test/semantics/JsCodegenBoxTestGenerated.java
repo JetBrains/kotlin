@@ -5862,6 +5862,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TailOperations extends AbstractJsCodegenBoxTest {
+            public void testAllFilesPresentInTailOperations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailOperations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("suspendWithIf.kt")
+            public void testSuspendWithIf() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithIf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendWithTryCatch.kt")
+            public void testSuspendWithTryCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithTryCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("suspendWithWhen.kt")
+            public void testSuspendWithWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithWhen.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

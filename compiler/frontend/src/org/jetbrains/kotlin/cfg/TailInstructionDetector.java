@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cfg;
 
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult;
@@ -27,21 +26,16 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInst
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult;
 import org.jetbrains.kotlin.psi.KtElement;
 
-public class TailCallDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, TraverseInstructionResult> {
+/**
+ * Returns true when visited instruction may lie on a path from a tail-call-like operation to the sink of the subroutine
+ */
+public class TailInstructionDetector extends InstructionVisitorWithResult<Boolean>  {
     private final KtElement subroutine;
-    private final Instruction start;
 
-    public TailCallDetector(@NotNull KtElement subroutine, @NotNull Instruction start) {
+    public TailInstructionDetector(@NotNull KtElement subroutine) {
         this.subroutine = subroutine;
-        this.start = start;
-    }
-
-    @Override
-    public TraverseInstructionResult invoke(@NotNull Instruction instruction) {
-        return instruction == start || instruction.accept(this) ? TraverseInstructionResult.CONTINUE : TraverseInstructionResult.HALT;
     }
 
     @Override
