@@ -237,6 +237,7 @@ public interface Errors {
     DiagnosticFactory2<KtDeclaration, CallableMemberDescriptor, List<CallableMemberDescriptor>> DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_NOT_A_CLASS_OR_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory0.create(ERROR);
 

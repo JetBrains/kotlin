@@ -16,3 +16,11 @@ typealias Test9 = suspend (() -> Unit) -> Unit
 typealias Test10 = suspend (suspend () -> Unit) -> Unit
 typealias Test11 = suspend () -> (suspend () -> Unit)
 typealias Test12 = suspend (suspend (() -> Unit)) -> Unit
+
+interface Supertype1 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend () -> Unit<!> {
+
+}
+
+interface Supertype2 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend String.() -> Unit<!> {
+
+}

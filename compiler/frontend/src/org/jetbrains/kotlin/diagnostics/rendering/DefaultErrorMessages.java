@@ -544,6 +544,7 @@ public class DefaultErrorMessages {
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
         MAP.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as supertypes");
+        MAP.put(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE, "Suspend function type is not allowed as supertypes");
         MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
