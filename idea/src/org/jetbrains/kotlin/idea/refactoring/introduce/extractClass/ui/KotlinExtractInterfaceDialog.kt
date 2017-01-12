@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.classMembers.MemberInfoModel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractInterfaceHandler
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.extractClassMembers
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.lightElementForMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.pullUp.getInterfaceContainmentVerifier
 import org.jetbrains.kotlin.idea.refactoring.pullUp.isAbstractInInterface
 import org.jetbrains.kotlin.idea.refactoring.pullUp.mustBeAbstractInInterface
@@ -78,6 +82,24 @@ class KotlinExtractInterfaceDialog(
             override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
                 val member = memberInfo.member
                 return member is KtProperty || member.isAbstractInInterface(originalClass) || member.isConstructorDeclaredProperty()
+            }
+
+            override fun checkForProblems(memberInfo: KotlinMemberInfo): Int {
+                val result = super.checkForProblems(memberInfo)
+                if (result != MemberInfoModel.OK) return result
+
+                if (!memberInfo.isSuperClass || memberInfo.overrides != false || memberInfo.isChecked) return result
+
+                val psiSuperInterface = lightElementForMemberInfo(memberInfo.member) as? PsiClass ?: return result
+
+                for (info in memberInfos) {
+                    if (!info.isChecked || info.isToAbstract) continue
+                    val member = info.member ?: continue
+                    val psiMethodToCheck = lightElementForMemberInfo(member) as? PsiMethod ?: continue
+                    if (psiSuperInterface.findMethodBySignature(psiMethodToCheck, true) != null) return MemberInfoModel.ERROR
+                }
+
+                return result
             }
         }
     }
