@@ -23,10 +23,10 @@ import java.lang.reflect.Modifier
 import java.util.*
 
 fun <A : CommonCompilerArguments> parseArguments(args: Array<String>, arguments: A) {
-    val unparsedArgs = Args.parse(arguments, args, false).partition { it.startsWith("-X") }
-
-    arguments.unknownExtraFlags = unparsedArgs.first
-    arguments.freeArgs = unparsedArgs.second
+    val unparsedArgs = Args.parse(arguments, args, false)
+    val (unknownExtraArgs, unknownArgs) = unparsedArgs.partition { it.startsWith("-X") }
+    arguments.unknownExtraFlags = unknownExtraArgs
+    arguments.freeArgs = unknownArgs
 
     for (argument in arguments.freeArgs) {
         if (argument.startsWith("-")) {

@@ -132,7 +132,7 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun compile(
             sessionId: Int,
-            compilerArguments: CommonCompilerArguments,
+            compilerArguments: Array<String>,
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase,
             compilationResultsSink: CompilationResultsSink?
