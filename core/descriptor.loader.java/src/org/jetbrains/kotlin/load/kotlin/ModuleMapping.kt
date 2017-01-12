@@ -45,7 +45,7 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
 
             if (version.isCompatible()) {
                 val table = JvmPackageTable.PackageTable.parseFrom(stream) ?: return EMPTY
-                val result = hashMapOf<String, PackageParts>()
+                val result = linkedMapOf<String, PackageParts>()
 
                 for (proto in table.packagePartsList) {
                     val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
