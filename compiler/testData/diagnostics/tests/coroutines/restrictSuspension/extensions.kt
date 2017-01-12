@@ -76,7 +76,7 @@ fun A.test() {
         }
     }
 
-    suspend fun SuperInterface.fun1() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SuperInterface.fun1() {
         extAny()
         memExtAny()
         extSuper()
@@ -88,7 +88,7 @@ fun A.test() {
             memExtSuper()
         }
     }
-    suspend fun RestrictedController.fun2() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun RestrictedController.fun2() {
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extAny<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>memExtAny<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extSuper<!>()
@@ -105,7 +105,7 @@ fun A.test() {
             memExt()
         }
     }
-    suspend fun SubClass.fun3() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SubClass.fun3() {
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extAny<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>memExtAny<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>extSuper<!>()

@@ -58,7 +58,7 @@ fun String.test() {
         }
     }
 
-    suspend fun SuperInterface.fun1() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SuperInterface.fun1() {
         superFun()
         superExtFun()
         with("") {
@@ -66,7 +66,7 @@ fun String.test() {
             superExtFun()
         }
     }
-    suspend fun RestrictedController.fun2() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun RestrictedController.fun2() {
         superFun()
         superExtFun()
         memberFun()
@@ -78,7 +78,7 @@ fun String.test() {
             memberExtFun()
         }
     }
-    suspend fun SubClass.fun3() {
+    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SubClass.fun3() {
         superFun()
         superExtFun()
         memberFun()
