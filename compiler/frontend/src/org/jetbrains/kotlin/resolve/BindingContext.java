@@ -137,6 +137,7 @@ public interface BindingContext {
 
     WritableSlice<Call, FunctionDescriptor> ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL = Slices.createSimpleSlice();
     WritableSlice<FunctionDescriptor, Boolean> CONTAINS_NON_TAIL_SUSPEND_CALLS = Slices.createSimpleSetSlice();
+    WritableSlice<KtExpression, Boolean> IS_TAIL_EXPRESSION_IN_SUSPEND_FUNCTION = Slices.createSimpleSetSlice();
 
     WritableSlice<VariableAccessorDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<VariableAccessorDescriptor, Call> DELEGATED_PROPERTY_CALL = Slices.createSimpleSlice();

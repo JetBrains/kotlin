@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.sideEffectFree
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.referencedProperty
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -58,6 +55,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class ControlFlowInformationProvider private constructor(
@@ -809,8 +807,8 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun checkSuspendCalls(currentFunction: FunctionDescriptor) {
-
         if (!currentFunction.isSuspend) return
+        var containsNonTailCalls = false
 
         traverseCalls { instruction, resolvedCall ->
             val calleeDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return@traverseCalls
@@ -827,7 +825,28 @@ class ControlFlowInformationProvider private constructor(
             val isUsedAsExpression = instruction.owner.getUsages(instruction.outputValue).isNotEmpty()
 
             if (!isUsedAsExpression || !instruction.isTailCall(enclosingSuspendFunction) || isInsideTry(element)) {
-                trace.record(BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, currentFunction.original)
+                containsNonTailCalls = true
+            }
+        }
+
+        if (containsNonTailCalls) {
+            trace.record(BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, currentFunction.original)
+        }
+        else {
+            val tailInstructionDetector = TailInstructionDetector(subroutine)
+            traverseFollowingInstructions(
+                    pseudocode.sinkInstruction,
+                    order = TraversalOrder.BACKWARD
+            ) { instruction ->
+
+                instruction.safeAs<KtElementInstruction>()?.element?.safeAs<KtExpression>()?.let { expression ->
+                    trace.record(BindingContext.IS_TAIL_EXPRESSION_IN_SUSPEND_FUNCTION, expression)
+                }
+
+                if (instruction.accept(tailInstructionDetector))
+                    TraverseInstructionResult.CONTINUE
+                else
+                    TraverseInstructionResult.SKIP
             }
         }
     }
@@ -895,13 +914,19 @@ class ControlFlowInformationProvider private constructor(
                     KtTryExpression::class.java, KtFunction::class.java, KtAnonymousInitializer::class.java
             ) is KtTryExpression
 
-    private fun CallInstruction.isTailCall(subroutine: KtElement = this@ControlFlowInformationProvider.subroutine) =
-        traverseFollowingInstructions(
-            this,
-            HashSet<Instruction>(),
-            TraversalOrder.FORWARD,
-            TailCallDetector(subroutine, this)
-        )
+    private fun CallInstruction.isTailCall(subroutine: KtElement = this@ControlFlowInformationProvider.subroutine): Boolean {
+        val tailInstructionDetector = TailInstructionDetector(subroutine)
+        return traverseFollowingInstructions(
+                this,
+                HashSet<Instruction>(),
+                TraversalOrder.FORWARD
+        ) {
+            if (it == this@isTailCall || it.accept(tailInstructionDetector))
+                TraverseInstructionResult.CONTINUE
+            else
+                TraverseInstructionResult.HALT
+        }
+    }
 
     private inline fun traverseCalls(crossinline onCall: (instruction: CallInstruction, resolvedCall: ResolvedCall<*>) -> Unit) {
         pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
