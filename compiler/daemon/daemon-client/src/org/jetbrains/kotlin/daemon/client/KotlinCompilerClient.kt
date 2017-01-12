@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import net.rubygrapefruit.platform.Native
-import net.rubygrapefruit.platform.ProcessLauncher
+import org.jetbrains.kotlin.net.rubygrapefruit.platform.Native
+import org.jetbrains.kotlin.net.rubygrapefruit.platform.ProcessLauncher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
