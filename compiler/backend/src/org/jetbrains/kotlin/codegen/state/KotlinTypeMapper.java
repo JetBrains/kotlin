@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
@@ -375,6 +376,12 @@ public class KotlinTypeMapper {
 
         if (descriptor instanceof ConstructorDescriptor) {
             return Type.VOID_TYPE;
+        }
+
+        if (descriptor instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) descriptor).isSuspend() &&
+            ((SimpleFunctionDescriptor) descriptor).getUserData(
+                    CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) == null) {
+            return mapReturnType(CoroutineCodegenUtilKt.createJvmSuspendFunctionView((SimpleFunctionDescriptor) descriptor), sw);
         }
 
         if (TypeSignatureMappingKt.hasVoidReturnType(descriptor)) {

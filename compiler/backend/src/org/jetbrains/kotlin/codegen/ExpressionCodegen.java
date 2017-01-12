@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
+import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -156,22 +157,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.v = new InstructionAdapter(mv);
         this.myFrameMap = frameMap;
         this.context = context;
-
-        FunctionDescriptor originalSuspendDescriptor = getOriginalSuspendDescriptor(context);
-        if (originalSuspendDescriptor != null && originalSuspendDescriptor.getReturnType() != null) {
-            this.returnType = getBoxedReturnTypeForSuspend(originalSuspendDescriptor);
-        }
-        else {
-            this.returnType = returnType;
-        }
+        this.returnType = returnType;
 
         this.parentCodegen = parentCodegen;
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
-    }
-
-    @NotNull
-    private static Type getBoxedReturnTypeForSuspend(FunctionDescriptor descriptorForSuspend) {
-        return AsmTypes.OBJECT_TYPE;
     }
 
     @Nullable
@@ -2236,7 +2225,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     FunctionDescriptor containingFunction =
                             BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
-                    return new NonLocalReturnInfo(getReturnTypeForNonLocalReturn(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL);
+                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL);
                 } else {
                     //local
                     return null;
@@ -2248,17 +2237,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 DeclarationDescriptor elementDescriptor = typeMapper.getBindingContext().get(DECLARATION_TO_DESCRIPTOR, element);
                 assert element != null : "Expression should be not null " + expression.getText();
                 assert elementDescriptor != null : "Descriptor should be not null: " + element.getText();
-                return new NonLocalReturnInfo(getReturnTypeForNonLocalReturn(elementDescriptor), expression.getLabelName());
+                return new NonLocalReturnInfo(typeMapper.mapReturnType((CallableDescriptor) elementDescriptor), expression.getLabelName());
             }
         }
         return null;
-    }
-
-    @NotNull
-    private Type getReturnTypeForNonLocalReturn(DeclarationDescriptor elementDescriptor) {
-        return elementDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) elementDescriptor).isSuspend()
-        ? getBoxedReturnTypeForSuspend((FunctionDescriptor) elementDescriptor)
-        : typeMapper.mapReturnType((CallableDescriptor) elementDescriptor);
     }
 
     public void returnExpression(KtExpression expr) {
@@ -2266,7 +2248,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         FunctionDescriptor originalCoroutineDescriptor = getOriginalCoroutineDescriptor(context);
         boolean isVoidCoroutineLambda =
-                originalCoroutineDescriptor != null && typeMapper.mapReturnType(originalCoroutineDescriptor).getSort() == Type.VOID;
+                originalCoroutineDescriptor != null && TypeSignatureMappingKt.hasVoidReturnType(originalCoroutineDescriptor);
 
         // If generating body for named block-bodied function or Unit-typed coroutine lambda, generate it as sequence of statements
         Type typeForExpression =
@@ -2796,21 +2778,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Callable callable = resolveToCallable(fd, superCallTarget != null, resolvedCall);
 
-
-        StackValue result = callable.invokeMethodWithArguments(resolvedCall, receiver, this);
-
-        if (resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor &&
-            ((FunctionDescriptor) resolvedCall.getResultingDescriptor()).isSuspend() &&
-            !CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext)) {
-            // Suspend function's tail calls inside another suspend function should behave like they leave values of correct type,
-            // while real methods return java/lang/Object.
-            // NB: They are always in return position at the moment.
-            // If we didn't do this, StackValue.coerce would add proper CHECKCAST that would've failed in case of callee function
-            // returning SUSPENDED marker, which is instance of java/lang/Object.
-            return new OperationStackValue(returnType, ((OperationStackValue) result).getLambda());
-        }
-
-        return result;
+        return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
     }
 
     private StackValue getContinuationParameterFromEnclosingSuspendFunction(@NotNull ResolvedCall<?> resolvedCall) {
