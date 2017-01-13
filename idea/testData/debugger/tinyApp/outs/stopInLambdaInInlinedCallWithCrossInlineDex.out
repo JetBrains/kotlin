@@ -1,0 +1,8 @@
+LineBreakpoint created at stopInLambdaInInlinedCallWithCrossInlineDex.kt:8
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stopInLambdaInInlinedCallWithCrossInlineDex.StopInLambdaInInlinedCallWithCrossInlineDexKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+stopInLambdaInInlinedCallWithCrossInlineDex.kt:8
+stopInLambdaInInlinedCallWithCrossInlineDex.kt:19
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
