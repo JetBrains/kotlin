@@ -704,6 +704,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInAnonymousFunctionInInlinedCallWithCrossInline.kt")
+        public void testStopInAnonymousFunctionInInlinedCallWithCrossInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInAnonymousFunctionInInlinedCallWithCrossInline.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInAnonymousFunctionInInlinedCallWithCrossInlineDex.kt")
+        public void testStopInAnonymousFunctionInInlinedCallWithCrossInlineDex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInAnonymousFunctionInInlinedCallWithCrossInlineDex.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInInlineCallLocalFunLambda.kt")
         public void testStopInInlineCallLocalFunLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlineCallLocalFunLambda.kt");
@@ -743,6 +755,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("stopInLabdaOfCrossinlineCalledInAnonymous.kt")
         public void testStopInLabdaOfCrossinlineCalledInAnonymous() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLabdaOfCrossinlineCalledInAnonymous.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInLambdaInInlinedCallWithCrossInline.kt")
+        public void testStopInLambdaInInlinedCallWithCrossInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLambdaInInlinedCallWithCrossInline.kt");
+            doStepOverTest(fileName);
+        }
+
+        @TestMetadata("stopInLambdaInInlinedCallWithCrossInlineDex.kt")
+        public void testStopInLambdaInInlinedCallWithCrossInlineDex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInLambdaInInlinedCallWithCrossInlineDex.kt");
             doStepOverTest(fileName);
         }
 

@@ -186,7 +186,7 @@ private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunc
 private fun getInlineArgumentsIfAny(inlineFunctionCalls: List<KtCallExpression>): List<KtFunction> {
     return inlineFunctionCalls.flatMap {
         it.valueArguments
-                .map { getArgumentExpression(it) }
+                .map(::getArgumentExpression)
                 .filterIsInstance<KtFunction>()
     }
 }

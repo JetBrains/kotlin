@@ -30,6 +30,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
@@ -42,11 +43,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.tail
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
@@ -254,15 +257,42 @@ internal fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosi
 
     val lineStartOffset = file.getLineStartOffset(line) ?: return listOf()
     val element = file.findElementAt(lineStartOffset) ?: return listOf()
+    val ktElement = element.parents.firstIsInstanceOrNull<KtElement>() ?: return listOf()
 
     val isInInline = runReadAction { element.parents.any { it is KtFunction && it.hasModifier(KtTokens.INLINE_KEYWORD) } }
-    if (!isInInline) return listOf()
+
+    if (!isInInline) {
+        // Lambdas passed to crossinline arguments are inlined when they are used in non-inlined lambdas
+        val isInCrossinlineArgument = isInCrossinlineArgument(ktElement)
+        if (!isInCrossinlineArgument) {
+            return listOf()
+        }
+    }
 
     val lines = inlinedLinesNumbers(line + 1, position.file.name, FqName(type.name()), type.sourceName(), project, sourceSearchScope)
     val inlineLocations = lines.flatMap { type.locationsOfLine(it) }
 
     return inlineLocations
 }
+
+fun isInCrossinlineArgument(ktElement: KtElement): Boolean {
+    val argumentFunctions = runReadAction {
+        ktElement.parents.filter {
+            when (it) {
+                is KtFunctionLiteral -> it.parent is KtLambdaExpression && (it.parent.parent is KtValueArgument || it.parent.parent is KtLambdaArgument)
+                is KtFunction -> it.parent is KtValueArgument
+                else -> false
+            }
+        }.filterIsInstance<KtFunction>()
+    }
+
+    val bindingContext = ktElement.analyze(BodyResolveMode.PARTIAL)
+    return argumentFunctions.any {
+        val argumentDescriptor = InlineUtil.getInlineArgumentDescriptor(it, bindingContext)
+        argumentDescriptor?.isCrossinline ?: false
+    }
+}
+
 
 private fun inlinedLinesNumbers(
         inlineLineNumber: Int, inlineFileName: String,
@@ -281,7 +311,7 @@ private fun inlinedLinesNumbers(
 
     val smap = smapData.kotlinStrata ?: return listOf()
 
-    val mappingsToInlinedFile = smap.fileMappings.filter() { it.name == inlineFileName }
+    val mappingsToInlinedFile = smap.fileMappings.filter { it.name == inlineFileName }
     val mappingIntervals = mappingsToInlinedFile.flatMap { it.lineMappings }
 
     val mappedLines = mappingIntervals.asSequence().
