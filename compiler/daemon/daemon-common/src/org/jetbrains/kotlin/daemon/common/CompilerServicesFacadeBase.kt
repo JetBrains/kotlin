@@ -40,7 +40,6 @@ enum class ReportCategory(val code: Int) {
     companion object {
         fun fromCode(code: Int): ReportCategory? =
                 ReportCategory.values().firstOrNull { it.code == code }
-
     }
 }
 
