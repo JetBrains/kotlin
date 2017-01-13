@@ -22,6 +22,11 @@ package kotlin.coroutines
 @SinceKotlin("1.1")
 public interface Continuation<in T> {
     /**
+     * Context of the coroutine that corresponds to this continuation.
+     */
+    public val context: CoroutineContext
+
+    /**
      * Resumes the execution of the corresponding coroutine passing [value] as the return value of the last suspension point.
      */
     public fun resume(value: T)
@@ -31,24 +36,6 @@ public interface Continuation<in T> {
      * last suspension point.
      */
     public fun resumeWithException(exception: Throwable)
-}
-
-/**
- * An interface to customise dispatch of continuations.
- */
-@SinceKotlin("1.1")
-public interface ContinuationDispatcher {
-    /**
-     * Dispatches [Continuation.resume] invocation.
-     * This function must either return `false` or return `true` and invoke `continuation.resume(value)` asynchronously.
-     */
-    public fun <T> dispatchResume(value: T, continuation: Continuation<T>): Boolean = false
-
-    /**
-     * Dispatches [Continuation.resumeWithException] invocation.
-     * This function must either return `false` or return `true` and invoke `continuation.resumeWithException(exception)` asynchronously.
-     */
-    public fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean = false
 }
 
 /**

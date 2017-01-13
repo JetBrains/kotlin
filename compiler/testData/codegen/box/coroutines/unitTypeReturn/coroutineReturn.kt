@@ -11,6 +11,8 @@ suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
 fun builder(c: suspend () -> Unit) {
     var wasResumeCalled = false
     c.startCoroutine(object : Continuation<Unit> {
+        override val context = EmptyContext
+
         override fun resume(value: Unit) {
             wasResumeCalled = true
         }

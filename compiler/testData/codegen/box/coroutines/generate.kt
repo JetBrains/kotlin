@@ -39,6 +39,8 @@ class GeneratedSequence<out T>(private val block: suspend Generator<T>.() -> Uni
 
 class GeneratedIterator<T>(block: suspend Generator<T>.() -> Unit) : AbstractIterator<T>(), Generator<T> {
     private var nextStep: Continuation<Unit> = block.createCoroutine(this, object : Continuation<Unit> {
+        override val context = EmptyContext
+
         override fun resume(data: Unit) {
             done()
         }

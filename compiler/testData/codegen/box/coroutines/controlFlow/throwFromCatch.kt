@@ -24,6 +24,8 @@ class Controller {
 fun builder(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
     c.startCoroutine(controller, object : Continuation<Unit> {
+        override val context = EmptyContext
+
         override fun resume(data: Unit) {
 
         }

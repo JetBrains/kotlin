@@ -23,7 +23,7 @@ class Controller {
 
 fun test(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
-    c.startCoroutine(controller, EmptyContinuation, object: ContinuationDispatcher {
+    c.startCoroutine(controller, EmptyContinuation(object: ContinuationDispatcher() {
         private fun dispatchResume(block: () -> Unit) {
             val id = controller.resumeIndex++
             controller.log += "before $id;"
@@ -44,7 +44,7 @@ fun test(c: suspend Controller.() -> Unit): String {
             }
             return true
         }
-    })
+    }))
     return controller.log
 }
 

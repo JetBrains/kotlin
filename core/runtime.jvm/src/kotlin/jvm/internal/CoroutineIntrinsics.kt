@@ -17,34 +17,6 @@
 package kotlin.jvm.internal
 
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.ContinuationDispatcher
 
-fun <T> normalizeContinuation(c: Continuation<T>): Continuation<T> {
-    if (c is CoroutineImpl) {
-        return c.facade
-    }
-
-    return c
-}
-
-internal fun <T> wrapContinuationIfNeeded(c: Continuation<T>, dispatcher: ContinuationDispatcher?): Continuation<T> {
-    if (dispatcher == null) return c
-    return DispatchedContinuationImpl(c, dispatcher)
-}
-
-private class DispatchedContinuationImpl<in T>(
-        private val c: Continuation<T>,
-        private val dispatcher: ContinuationDispatcher
-) : Continuation<T> {
-    override fun resume(value: T) {
-        if (!dispatcher.dispatchResume(value, c)) {
-            c.resume(value)
-        }
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        if (!dispatcher.dispatchResumeWithException(exception, c)) {
-            c.resumeWithException(exception)
-        }
-    }
-}
+fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
+        (continuation as? CoroutineImpl)?.facade ?: continuation
