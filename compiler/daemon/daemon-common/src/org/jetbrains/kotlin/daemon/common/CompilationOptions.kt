@@ -40,10 +40,10 @@ class IncrementalCompilationOptions(
         val customCacheVersion: Int,
         compilerMode: CompileService.CompilerMode,
         targetPlatform: CompileService.TargetPlatform,
-        reportedCategories: Array<Int>,
-        reportedSeverity: Int,
+        reportCategories: Array<Int>,
+        reportSeverity: Int,
         requestedCompilationResults: Array<Int>
-) : CompilationOptions(compilerMode, targetPlatform, reportedCategories, reportedSeverity, requestedCompilationResults) {
+) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
     }
