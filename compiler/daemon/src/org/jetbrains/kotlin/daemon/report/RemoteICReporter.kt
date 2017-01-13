@@ -29,7 +29,7 @@ internal class RemoteICReporter(
 ) : ICReporter {
     private val shouldReportMessages = ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories
     private val isVerbose = compilationOptions.reportSeverity == ReportSeverity.DEBUG.code
-    private val shouldReportCompileIteration = CompilationResult.IC_COMPILE_ITERATION.code in compilationOptions.requestedCompilationResults
+    private val shouldReportCompileIteration = CompilationResultCategory.IC_COMPILE_ITERATION.code in compilationOptions.requestedCompilationResults
 
     override fun report(message: () -> String) {
         if (shouldReportMessages && isVerbose) {
@@ -39,7 +39,7 @@ internal class RemoteICReporter(
 
     override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
         if (shouldReportCompileIteration) {
-            compilationResultsStorage.store(CompilationResult.IC_COMPILE_ITERATION.code, CompileIterationResult(sourceFiles, exitCode.toString()))
+            compilationResultsStorage.store(CompilationResultCategory.IC_COMPILE_ITERATION.code, CompileIterationResult(sourceFiles, exitCode.toString()))
         }
     }
 }

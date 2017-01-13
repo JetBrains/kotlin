@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.daemon.common.CompilationResult
+import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResultsStorage
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.report.CompileIterationResult
@@ -16,8 +16,8 @@ internal class GradleCompilationResultsStorage(project: Project): CompilationRes
     private val projectRootFile = project.rootProject.projectDir
 
     @Throws(RemoteException::class)
-    override fun store(compilationResult: Int, value: Serializable) {
-        if (compilationResult == CompilationResult.IC_COMPILE_ITERATION.code) {
+    override fun store(compilationResultCategory: Int, value: Serializable) {
+        if (compilationResultCategory == CompilationResultCategory.IC_COMPILE_ITERATION.code) {
             @Suppress("UNCHECKED_CAST")
             val compileIterationResult = value as? CompileIterationResult
             if (compileIterationResult != null) {

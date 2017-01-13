@@ -22,9 +22,9 @@ import java.rmi.RemoteException
 
 interface CompilationResultsStorage : Remote {
     @Throws(RemoteException::class)
-    fun store(compilationResult: Int, value: Serializable)
+    fun store(compilationResultCategory: Int, value: Serializable)
 }
 
-enum class CompilationResult(val code: Int) {
+enum class CompilationResultCategory(val code: Int) {
     IC_COMPILE_ITERATION(0)
 }

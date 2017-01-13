@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import net.rubygrapefruit.platform.Native
-import net.rubygrapefruit.platform.ProcessLauncher
+import org.jetbrains.kotlin.net.rubygrapefruit.platform.Native
+import org.jetbrains.kotlin.net.rubygrapefruit.platform.ProcessLauncher
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -190,7 +190,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
                 reportCategories = reportCategories(verbose),
                 reportSeverity = reportSeverity(verbose),
-                requestedCompilationResults = arrayOf(CompilationResult.IC_COMPILE_ITERATION.code),
+                requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),
                 compilerMode = CompilerMode.INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM
         )
