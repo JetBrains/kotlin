@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -30,13 +32,16 @@ import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
-class DelegationChecker : SimpleDeclarationChecker {
+class DelegationChecker : DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
+            languageVersionSettings: LanguageVersionSettings
     ) {
+        if (languageVersionSettings.languageVersion == LanguageVersion.KOTLIN_1_0) return
+
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return
 

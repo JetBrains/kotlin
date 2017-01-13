@@ -7080,6 +7080,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
         }
 
+        @TestMetadata("hiddenSuperOverrideIn1.0.kt")
+        public void testHiddenSuperOverrideIn1_0() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegation/hiddenSuperOverrideIn1.0.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt8154.kt")
         public void testKt8154() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegation/kt8154.kt");
