@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
-import com.intellij.util.containers.ConcurrentWeakValueHashMap
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -38,7 +38,8 @@ interface SuppressStringProvider {
     operator fun get(annotationDescriptor: AnnotationDescriptor): List<String>
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<SuppressStringProvider>("org.jetbrains.kotlin.suppressStringProvider")
+        val EP_NAME: ExtensionPointName<SuppressStringProvider> =
+                ExtensionPointName.create<SuppressStringProvider>("org.jetbrains.kotlin.suppressStringProvider")
     }
 }
 
@@ -46,7 +47,8 @@ interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
+        val EP_NAME: ExtensionPointName<DiagnosticSuppressor> =
+                ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
     }
 }
 
@@ -57,7 +59,7 @@ abstract class KotlinSuppressCache {
     private val DIAGNOSTIC_SUPPRESSORS = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
 
     // The cache is weak: we're OK with losing it
-    private val suppressors = ConcurrentWeakValueHashMap<KtAnnotated, Suppressor>()
+    private val suppressors =  ContainerUtil.createConcurrentWeakValueMap<KtAnnotated, Suppressor>()
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic -> !isSuppressed(diagnostic) }
 
@@ -180,7 +182,7 @@ abstract class KotlinSuppressCache {
             if ((arrayValue is ArrayValue)) {
                 for (value in arrayValue.value) {
                     if (value is StringValue) {
-                        builder.add(value.value.toString().toLowerCase())
+                        builder.add(value.value.toLowerCase())
                     }
                 }
             }
