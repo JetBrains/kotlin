@@ -35,7 +35,7 @@ class SequenceBuilderTest {
         assertFalse(iterator.hasNext())
         assertFalse(iterator.hasNext())
 
-        assertTrue(assertFails { iterator.next() } is NoSuchElementException)
+        assertFailsWith<NoSuchElementException> { iterator.next() }
     }
 
     @Test
@@ -61,7 +61,7 @@ class SequenceBuilderTest {
         assertFalse(iterator.hasNext())
         assertFalse(iterator.hasNext())
 
-        assertTrue(assertFails { iterator.next() } is NoSuchElementException)
+        assertFailsWith<NoSuchElementException> { iterator.next() }
 
         assertEquals(1, result.iterator().next())
     }
@@ -74,7 +74,7 @@ class SequenceBuilderTest {
         assertFalse(iterator.hasNext())
         assertFalse(iterator.hasNext())
 
-        assertTrue(assertFails { iterator.next() } is NoSuchElementException)
+        assertFailsWith<NoSuchElementException> { iterator.next() }
     }
 
     @Test
@@ -106,7 +106,7 @@ class SequenceBuilderTest {
 
         sharedVar = -1
         assertFalse(iterator.hasNext())
-        assertTrue(assertFails { iterator.next() } is NoSuchElementException)
+        assertFailsWith<NoSuchElementException> { iterator.next() }
     }
 
     @Test
@@ -116,7 +116,7 @@ class SequenceBuilderTest {
             while (true) {
                 when (sharedVar) {
                     -1 -> return@buildSequence
-                    -2 -> error("Invalid state: -2")
+                    -2 -> throw UnsupportedOperationException("-2 is unsupported")
                     else -> yield(sharedVar)
                 }
             }
@@ -128,7 +128,9 @@ class SequenceBuilderTest {
         assertEquals(1, iterator.next())
 
         sharedVar = -2
-        assertTrue(assertFails { iterator.hasNext() } is IllegalStateException)
+        assertFailsWith<UnsupportedOperationException> { iterator.hasNext() }
+        assertFailsWith<IllegalStateException> { iterator.hasNext() }
+        assertFailsWith<IllegalStateException> { iterator.next() }
     }
 
     @Test
