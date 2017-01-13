@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.cli.common.messages;
 import java.util.EnumSet;
 
 public enum CompilerMessageSeverity {
-    ERROR,
-    EXCEPTION,
-    WARNING,
     INFO,
-    OUTPUT,
-    LOGGING;
+    ERROR,
+    WARNING,
+    EXCEPTION,
+    LOGGING,
+    OUTPUT;
 
     public static final EnumSet<CompilerMessageSeverity> ERRORS = EnumSet.of(ERROR, EXCEPTION);
     public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(OUTPUT, LOGGING);
