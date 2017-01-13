@@ -5,15 +5,16 @@
 // CHECK_NOT_CALLED: suspendInline_6r51u9$
 // CHECK_NOT_CALLED: suspendInline
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     fun withValue(v: String, x: Continuation<String>) {
         x.resume(v)
     }
 
-    suspend inline fun suspendInline(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend inline fun suspendInline(v: String): String = suspendCoroutineOrReturn { x ->
         withValue(v, x)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
     suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())

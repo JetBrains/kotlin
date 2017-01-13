@@ -16,6 +16,7 @@
 
 package kotlin.coroutines
 
+import kotlin.coroutines.intrinsics.*
 
 /**
  * Creates coroutine with receiver type [R] and result type [T].
@@ -82,7 +83,7 @@ public fun <T> (suspend  () -> T).startCoroutine(
  * from a different thread of execution. Repeated invocation of any resume function produces [IllegalStateException].
  */
 @SinceKotlin("1.1")
-public suspend fun <T> suspendCoroutine(block: (Continuation<T>) -> Unit): T = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+public suspend fun <T> suspendCoroutine(block: (Continuation<T>) -> Unit): T = suspendCoroutineOrReturn { c ->
     val safe = SafeContinuation(c)
     block(safe)
     safe.getResult()
@@ -128,7 +129,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
         this.result = data
         try {
             val result = doResume()
-            if (result != CoroutineIntrinsics.SUSPENDED) {
+            if (result != SUSPENDED_MARKER) {
                 resultContinuation.resume(result)
             }
         }
@@ -142,7 +143,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
         this.exception = exception
         try {
             val result = doResume()
-            if (result != CoroutineIntrinsics.SUSPENDED) {
+            if (result != SUSPENDED_MARKER) {
                 resultContinuation.resume(result)
             }
         }
@@ -180,7 +181,7 @@ internal class SafeContinuation<in T> internal constructor(private val delegate:
             UNDECIDED -> {
                 result = value
             }
-            CoroutineIntrinsics.SUSPENDED -> {
+            SUSPENDED_MARKER -> {
                 result = RESUMED
                 delegate.resume(value)
             }
@@ -195,7 +196,7 @@ internal class SafeContinuation<in T> internal constructor(private val delegate:
             UNDECIDED -> {
                 result = Fail(exception)
             }
-            CoroutineIntrinsics.SUSPENDED -> {
+            SUSPENDED_MARKER -> {
                 result = RESUMED
                 delegate.resumeWithException(exception)
             }
@@ -207,12 +208,12 @@ internal class SafeContinuation<in T> internal constructor(private val delegate:
 
     internal fun getResult(): Any? {
         if (result == UNDECIDED) {
-            result = CoroutineIntrinsics.SUSPENDED
+            result = SUSPENDED_MARKER
         }
         val result = this.result
         return when (result) {
             RESUMED -> {
-                CoroutineIntrinsics.SUSPENDED // already called continuation, indicate SUSPENDED upstream
+                SUSPENDED_MARKER // already called continuation, indicate SUSPENDED upstream
             }
             is Fail -> {
                 throw result.exception

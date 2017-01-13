@@ -2,9 +2,9 @@
 @file:kotlin.jvm.JvmVersion
 package kotlin.coroutines
 
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import java.lang.IllegalStateException
-import kotlin.coroutines.CoroutineIntrinsics.SUSPENDED
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+import kotlin.coroutines.intrinsics.*
 
 /**
  * Creates coroutine with receiver type [R] and result type [T].
@@ -76,7 +76,7 @@ public fun <T> (suspend  () -> T).startCoroutine(
  */
 @SinceKotlin("1.1")
 public inline suspend fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
-        CoroutineIntrinsics.suspendCoroutineOrReturn { c: Continuation<T> ->
+        suspendCoroutineOrReturn { c: Continuation<T> ->
             val safe = SafeContinuation(c)
             block(safe)
             safe.getResult()
@@ -116,7 +116,7 @@ internal class SafeContinuation<in T> @PublishedApi internal constructor(private
             val result = this.result // atomic read
             when (result) {
                 UNDECIDED -> if (cas(UNDECIDED, value)) return
-                SUSPENDED -> if (cas(SUSPENDED, RESUMED)) {
+                SUSPENDED_MARKER -> if (cas(SUSPENDED_MARKER, RESUMED)) {
                     delegate.resume(value)
                     return
                 }
@@ -130,7 +130,7 @@ internal class SafeContinuation<in T> @PublishedApi internal constructor(private
             val result = this.result // atomic read
             when (result) {
                 UNDECIDED -> if (cas(UNDECIDED, Fail(exception))) return
-                SUSPENDED -> if (cas(SUSPENDED, RESUMED)) {
+                SUSPENDED_MARKER -> if (cas(SUSPENDED_MARKER, RESUMED)) {
                     delegate.resumeWithException(exception)
                     return
                 }
@@ -143,13 +143,13 @@ internal class SafeContinuation<in T> @PublishedApi internal constructor(private
     internal fun getResult(): Any? {
         var result = this.result // atomic read
         if (result == UNDECIDED) {
-            if (cas(UNDECIDED, SUSPENDED)) return SUSPENDED
+            if (cas(UNDECIDED, SUSPENDED_MARKER)) return SUSPENDED_MARKER
             result = this.result // reread volatile var
         }
         when (result) {
-            RESUMED -> return SUSPENDED // already called continuation, indicate SUSPENDED upstream
+            RESUMED -> return SUSPENDED_MARKER // already called continuation, indicate SUSPENDED_MARKER upstream
             is Fail -> throw result.exception
-            else -> return result // either SUSPENDED or data
+            else -> return result // either SUSPENDED_MARKER or data
         }
     }
 }

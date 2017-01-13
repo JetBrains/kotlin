@@ -9,6 +9,7 @@ inline fun foo(x: String = "OK"): String {
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var result = ""
 

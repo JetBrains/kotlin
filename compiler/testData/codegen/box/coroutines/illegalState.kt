@@ -2,10 +2,11 @@
 // WITH_COROUTINES
 // TARGET_BACKEND: JVM
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-suspend fun suspendHere(): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
     x.resume(Unit)
-    CoroutineIntrinsics.SUSPENDED
+    SUSPENDED_MARKER
 }
 
 fun builder1(c: suspend () -> Unit) {

@@ -1,21 +1,22 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     var log = ""
     var resumeIndex = 0
 
-    suspend fun <T> suspendWithValue(value: T): T = CoroutineIntrinsics.suspendCoroutineOrReturn { continuation ->
+    suspend fun <T> suspendWithValue(value: T): T = suspendCoroutineOrReturn { continuation ->
         log += "suspend($value);"
         continuation.resume(value)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
-    suspend fun suspendWithException(value: String): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn { continuation ->
+    suspend fun suspendWithException(value: String): Unit = suspendCoroutineOrReturn { continuation ->
         log += "error($value);"
         continuation.resumeWithException(RuntimeException(value))
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 

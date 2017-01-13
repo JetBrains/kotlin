@@ -5,11 +5,12 @@
 package lib
 
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
         x.resume("OK")
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 
@@ -17,6 +18,7 @@ class Controller {
 // FILE: main.kt
 import lib.*
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), EmptyContinuation)

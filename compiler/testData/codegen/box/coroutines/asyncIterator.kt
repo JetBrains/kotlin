@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 interface AsyncGenerator<in T> {
     suspend fun yield(value: T)
@@ -33,18 +34,18 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
     var computesNext = false
     var computeContinuation: Continuation<*>? = null
 
-    suspend fun computeHasNext(): Boolean = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+    suspend fun computeHasNext(): Boolean = suspendCoroutineOrReturn { c ->
         computesNext = false
         computeContinuation = c
         nextStep!!.resume(Unit)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
-    suspend fun computeNext(): T = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+    suspend fun computeNext(): T = suspendCoroutineOrReturn { c ->
         computesNext = true
         computeContinuation = c
         nextStep!!.resume(Unit)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -90,12 +91,12 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
     }
 
     // Generator implementation
-    override suspend fun yield(value: T): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+    override suspend fun yield(value: T): Unit = suspendCoroutineOrReturn { c ->
         computedNext = true
         nextValue = value
         nextStep = c
         resumeIterator(null)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 

@@ -2,10 +2,11 @@
 // WITH_COROUTINES
 // WITH_CONTINUATION
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-suspend fun <V> suspendHere(v: V): V = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+suspend fun <V> suspendHere(v: V): V = suspendCoroutineOrReturn { x ->
     x.resume(v)
-    CoroutineIntrinsics.SUSPENDED
+    SUSPENDED_MARKER
 }
 
 fun builder(c: suspend () -> String): String {

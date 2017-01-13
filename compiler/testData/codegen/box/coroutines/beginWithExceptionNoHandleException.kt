@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
-suspend fun suspendHere(): Any = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->}
+import kotlin.coroutines.intrinsics.*
+suspend fun suspendHere(): Any = suspendCoroutineOrReturn { x ->}
 
 fun builder(c: suspend () -> Unit) {
     try {

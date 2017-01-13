@@ -1,13 +1,14 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     var lastSuspension: Continuation<String>? = null
     var result = "fail"
-    suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
         lastSuspension = x
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
     fun hasNext() = lastSuspension != null

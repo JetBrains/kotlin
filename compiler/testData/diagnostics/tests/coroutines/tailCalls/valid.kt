@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun baz() = 1
 
@@ -14,17 +15,17 @@ suspend fun bar1() {
     return if (1.hashCode() > 0) {
         foo()
     }
-    else CoroutineIntrinsics.suspendCoroutineOrReturn { x: Continuation<Unit> -> }
+    else suspendCoroutineOrReturn { x: Continuation<Unit> -> }
 }
 
 suspend fun bar2() =
         if (1.hashCode() > 0) {
             foo()
         }
-        else CoroutineIntrinsics.suspendCoroutineOrReturn { x: Continuation<Unit> -> }
+        else suspendCoroutineOrReturn { x: Continuation<Unit> -> }
 
 suspend fun bar3() =
         when {
             true -> { foo() }
-            else -> CoroutineIntrinsics.suspendCoroutineOrReturn { x: Continuation<Unit> -> }
+            else -> suspendCoroutineOrReturn { x: Continuation<Unit> -> }
         }

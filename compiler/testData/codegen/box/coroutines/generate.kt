@@ -2,6 +2,7 @@
 // WITH_COROUTINES
 // FULL_JDK
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun box(): String {
     val x = gen().joinToString()
@@ -50,10 +51,10 @@ class GeneratedIterator<T>(block: suspend Generator<T>.() -> Unit) : AbstractIte
     override fun computeNext() {
         nextStep.resume(Unit)
     }
-    suspend override fun yield(value: T) = CoroutineIntrinsics.suspendCoroutineOrReturn<Unit> { c ->
+    suspend override fun yield(value: T) = suspendCoroutineOrReturn<Unit> { c ->
         setNext(value)
         nextStep = c
 
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }

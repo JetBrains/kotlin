@@ -1,11 +1,12 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var globalResult = ""
-suspend fun suspendWithValue(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+suspend fun suspendWithValue(v: String): String = suspendCoroutineOrReturn { x ->
     x.resume(v)
-    CoroutineIntrinsics.SUSPENDED
+    SUSPENDED_MARKER
 }
 
 fun builder(c: suspend () -> String) {
