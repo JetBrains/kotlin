@@ -188,8 +188,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 workingDir = environment.workingDir,
                 customCacheVersion = GRADLE_CACHE_VERSION,
                 customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
-                reportedCategories = reportCategories(verbose),
-                reportedSeverity = reportSeverity(verbose),
+                reportCategories = reportCategories(verbose),
+                reportSeverity = reportSeverity(verbose),
                 requestedCompilationResults = arrayOf(CompilationResult.IC_COMPILE_ITERATION.code),
                 compilerMode = CompileService.CompilerMode.INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM
