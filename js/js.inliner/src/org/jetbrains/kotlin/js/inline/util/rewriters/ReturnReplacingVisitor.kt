@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.inline.util.rewriters
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class ReturnReplacingVisitor(
@@ -55,25 +56,19 @@ class ReturnReplacingVisitor(
     private fun getReturnReplacement(returnExpression: JsExpression?): JsExpression? {
         return if (returnExpression != null) {
             val assignment = resultRef?.let { lhs ->
-                val rhs = makeFakeSuspendCall(returnExpression)!!
+                val rhs = processCoroutineResult(returnExpression)!!
                 JsAstUtils.assignment(lhs, rhs).apply { synthetic = true }
             }
-            assignment ?: makeFakeSuspendCall(returnExpression)
+            assignment ?: processCoroutineResult(returnExpression)
         }
         else {
-            makeFakeSuspendCall(null)
+            processCoroutineResult(null)
         }
     }
 
-    fun makeFakeSuspendCall(expression: JsExpression?): JsExpression? {
+    fun processCoroutineResult(expression: JsExpression?): JsExpression? {
         if (!isSuspend) return expression
-
-        val fakeSuspendCall = JsInvocation(JsAstUtils.pureFqn("fakeSuspend", JsAstUtils.pureFqn("Kotlin", null)))
-        fakeSuspendCall.isSuspend = true
-        fakeSuspendCall.isFakeSuspend = true
-        if (expression != null) {
-            fakeSuspendCall.arguments += expression
-        }
-        return fakeSuspendCall
+        val lhs = JsNameRef("\$\$coroutineResult\$\$", JsAstUtils.stateMachineReceiver()).apply { coroutineResult = true }
+        return JsAstUtils.assignment(lhs, expression ?: Namer.getUndefinedExpression())
     }
 }

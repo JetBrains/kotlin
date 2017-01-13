@@ -563,7 +563,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 val name = x.name
                 if (name != null && x.qualifier == null && name in namesToSubstitute) {
                     val replacement = accept(definedValues[name]!!)
-                    ctx.replaceMe(replacement.apply { synthetic = true })
+                    ctx.replaceMe(replacement.deepCopy().apply { synthetic = true })
                     return false
                 }
                 return super.visit(x, ctx)

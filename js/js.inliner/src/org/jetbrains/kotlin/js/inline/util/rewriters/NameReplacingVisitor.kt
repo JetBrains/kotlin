@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.js.backend.ast.*
 class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : JsVisitorWithContextImpl() {
 
     override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
-        val replacement = replaceMap[x.name]
-        if (replacement == null) return
-
-        ctx.replaceMe(replacement)
+        val replacement = replaceMap[x.name] ?: return
+        ctx.replaceMe(replacement.deepCopy())
     }
 
     override fun endVisit(x: JsVars.JsVar, ctx: JsContext<JsNode>) {

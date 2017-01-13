@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.js.inline
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.isSuspend
+import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.clean.removeDefaultInitializers
-import org.jetbrains.kotlin.js.inline.clean.removeFakeSuspend
 import org.jetbrains.kotlin.js.inline.context.InliningContext
-import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class FunctionInlineMutator
 private constructor(
@@ -32,7 +31,7 @@ private constructor(
         private val inliningContext: InliningContext
 ) {
     private val invokedFunction: JsFunction
-    private val namingContext: NamingContext
+    private val namingContext = inliningContext.newNamingContext()
     private val body: JsBlock
     private var resultExpr: JsExpression? = null
     private var resultName: JsName? = null
@@ -40,23 +39,12 @@ private constructor(
     private val currentStatement = inliningContext.statementContext.currentNode
 
     init {
-        namingContext = inliningContext.newNamingContext()
         val functionContext = inliningContext.functionContext
         invokedFunction = uncoverClosure(functionContext.getFunctionDefinition(call).deepCopy())
-
-        // Removing fakeSuspend is not just an optimization.
-        // Reentrant suspends are not supported by coroutine transformers.
-        body = if (call.isSuspend) invokedFunction.body.removeFakeSuspend() else invokedFunction.body
+        body = invokedFunction.body
     }
 
     private fun process() {
-        if (call.isSuspend) {
-            val fakeSuspendCall = JsInvocation(JsAstUtils.pureFqn("fakeSuspend", JsAstUtils.pureFqn("Kotlin", null)))
-            fakeSuspendCall.isPreSuspend = true
-            fakeSuspendCall.isFakeSuspend = true
-            body.statements.add(0, JsAstUtils.asSyntheticStatement(fakeSuspendCall))
-        }
-
         val arguments = getArguments()
         val parameters = getParameters()
 
@@ -125,10 +113,6 @@ private constructor(
 
         val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef(), invokedFunction, call.isSuspend)
         visitor.accept(body)
-
-        visitor.makeFakeSuspendCall(null)?.let { fakeSuspend ->
-            body.statements += JsAstUtils.asSyntheticStatement(fakeSuspend)
-        }
     }
 
     private fun getResultReference(): JsNameRef? {

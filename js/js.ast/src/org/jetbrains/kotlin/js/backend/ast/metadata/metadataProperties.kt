@@ -74,18 +74,6 @@ var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEf
 var JsInvocation.isSuspend: Boolean by MetadataProperty(default = false)
 
 /**
- * Denotes a pre-suspend call-site that is to be processed by coroutine transformer.
- * For normal suspend call-sites both [isSuspend] and [isPreSuspend] present.
- * For inlined suspend calls fake calls are generated before and after inlined function body.
- */
-var JsInvocation.isPreSuspend: Boolean by MetadataProperty(default = false)
-
-/**
- * Denotes a fake suspend call for inlining purposes.
- */
-var JsInvocation.isFakeSuspend: Boolean by MetadataProperty(default = false)
-
-/**
  * Denotes a reference to coroutine's `result` field that contains result of
  * last suspended invocation.
  */
