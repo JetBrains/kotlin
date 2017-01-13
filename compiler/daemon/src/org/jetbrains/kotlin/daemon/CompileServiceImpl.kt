@@ -324,7 +324,7 @@ class CompileServiceImpl(
             compilerArguments: CommonCompilerArguments,
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase,
-            compilationResultsStorage: CompilationResultsStorage?
+            compilationResultsSink: CompilationResultsSink?
     ): CompileService.CallResult<Int> {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = DaemonMessageReporter(servicesFacade, compilationOptions)
@@ -356,7 +356,7 @@ class CompileServiceImpl(
 
                 withIC {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
-                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResultsStorage!!,
+                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResultsSink!!,
                                                 messageCollector, daemonReporter)
                     }
                 }
@@ -388,11 +388,11 @@ class CompileServiceImpl(
             k2jvmArgs: K2JVMCompilerArguments,
             incrementalCompilationOptions: IncrementalCompilationOptions,
             servicesFacade: IncrementalCompilerServicesFacade,
-            compilationResultsStorage: CompilationResultsStorage,
+            compilationResultsSink: CompilationResultsSink,
             compilerMessageCollector: MessageCollector,
             daemonMessageReporter: DaemonMessageReporter
     ): ExitCode {
-        val reporter = RemoteICReporter(servicesFacade, compilationResultsStorage, incrementalCompilationOptions)
+        val reporter = RemoteICReporter(servicesFacade, compilationResultsSink, incrementalCompilationOptions)
         val annotationFileUpdater = if (servicesFacade.hasAnnotationsFileUpdater()) RemoteAnnotationsFileUpdater(servicesFacade) else null
 
         val moduleFile = k2jvmArgs.module?.let(::File)
