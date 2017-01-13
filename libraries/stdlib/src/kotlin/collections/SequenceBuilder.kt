@@ -76,7 +76,7 @@ private class YieldingIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuat
                     if (nextIterator!!.hasNext()) return true else nextIterator = null
                 State_Done -> return false
                 State_Ready -> return true
-                else -> throw unexpectedState()
+                else -> throw exceptionalState()
             }
 
             state = State_Failed
@@ -86,25 +86,29 @@ private class YieldingIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuat
         }
     }
 
-    override tailrec fun next(): T {
+    override fun next(): T {
         when (state) {
-            State_NotReady -> if (!hasNext()) throw NoSuchElementException() else return next()
-            State_ManyReady -> {
-                val iterator = nextIterator!!
-                return iterator.next()
-            }
+            State_NotReady -> return nextNotReady()
+            State_ManyReady -> return nextIterator!!.next()
             State_Ready -> {
                 state = State_NotReady
                 val result = nextValue as T
                 nextValue = null
                 return result
             }
-            State_Done -> throw NoSuchElementException()
-            else -> throw unexpectedState()
+            else -> throw exceptionalState()
         }
     }
 
-    private fun unexpectedState(): Throwable = IllegalStateException("Unexpected state of the iterator: $state")
+    private fun nextNotReady(): T {
+        if (!hasNext()) throw NoSuchElementException() else return next()
+    }
+
+    private fun exceptionalState(): Throwable = when (state) {
+        State_Done -> NoSuchElementException()
+        State_Failed -> IllegalStateException("Iterator has failed.")
+        else -> IllegalStateException("Unexpected state of the iterator: $state")
+    }
 
 
     suspend override fun yield(value: T) {
