@@ -283,7 +283,7 @@ class CompileServiceImpl(
             compilerArguments: Array<String>,
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase,
-            compilationResultsSink: CompilationResultsSink?
+            compilationResults: CompilationResults?
     ): CompileService.CallResult<Int> {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = DaemonMessageReporter(servicesFacade, compilationOptions)
@@ -325,7 +325,7 @@ class CompileServiceImpl(
 
                 withIC {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
-                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResultsSink!!,
+                        execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults!!,
                                                 messageCollector, daemonReporter)
                     }
                 }
@@ -354,11 +354,11 @@ class CompileServiceImpl(
             k2jvmArgs: K2JVMCompilerArguments,
             incrementalCompilationOptions: IncrementalCompilationOptions,
             servicesFacade: IncrementalCompilerServicesFacade,
-            compilationResultsSink: CompilationResultsSink,
+            compilationResults: CompilationResults,
             compilerMessageCollector: MessageCollector,
             daemonMessageReporter: DaemonMessageReporter
     ): ExitCode {
-        val reporter = RemoteICReporter(servicesFacade, compilationResultsSink, incrementalCompilationOptions)
+        val reporter = RemoteICReporter(servicesFacade, compilationResults, incrementalCompilationOptions)
         val annotationFileUpdater = if (servicesFacade.hasAnnotationsFileUpdater()) RemoteAnnotationsFileUpdater(servicesFacade) else null
 
         val moduleFile = k2jvmArgs.module?.let(::File)

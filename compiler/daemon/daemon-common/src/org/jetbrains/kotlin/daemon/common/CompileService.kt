@@ -133,7 +133,7 @@ interface CompileService : Remote {
             compilerArguments: Array<String>,
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase,
-            compilationResultsSink: CompilationResultsSink?
+            compilationResults: CompilationResults?
     ): CallResult<Int>
 
     @Throws(RemoteException::class)

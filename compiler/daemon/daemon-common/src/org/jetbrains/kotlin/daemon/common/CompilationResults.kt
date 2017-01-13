@@ -20,9 +20,9 @@ import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
-interface CompilationResultsSink : Remote {
+interface CompilationResults : Remote {
     @Throws(RemoteException::class)
-    fun push(compilationResultCategory: Int, value: Serializable)
+    fun add(compilationResultCategory: Int, value: Serializable)
 }
 
 enum class CompilationResultCategory(val code: Int) {

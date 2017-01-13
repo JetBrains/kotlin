@@ -167,7 +167,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
             val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
-            daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, compilationResultsSink = null)
+            daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, compilationResults = null)
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
@@ -199,7 +199,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
             val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
-            daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, GradleCompilationResultsSink(project))
+            daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, GradleCompilationResults(project))
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
