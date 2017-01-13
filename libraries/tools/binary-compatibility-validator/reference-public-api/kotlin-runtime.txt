@@ -180,18 +180,31 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 }
 
 public abstract interface class kotlin/coroutines/Continuation {
+	public abstract fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public abstract fun resume (Ljava/lang/Object;)V
 	public abstract fun resumeWithException (Ljava/lang/Throwable;)V
 }
 
-public abstract interface class kotlin/coroutines/ContinuationDispatcher {
-	public abstract fun dispatchResume (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Z
-	public abstract fun dispatchResumeWithException (Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Z
+public abstract interface class kotlin/coroutines/ContinuationInterceptor : kotlin/coroutines/CoroutineContextElement {
+	public static final field Companion Lkotlin/coroutines/ContinuationInterceptor$Companion;
+	public abstract fun interceptContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 }
 
-public final class kotlin/coroutines/ContinuationDispatcher$DefaultImpls {
-	public static fun dispatchResume (Lkotlin/coroutines/ContinuationDispatcher;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Z
-	public static fun dispatchResumeWithException (Lkotlin/coroutines/ContinuationDispatcher;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Z
+public final class kotlin/coroutines/ContinuationInterceptor$Companion : kotlin/coroutines/CoroutineContextKey {
+}
+
+public abstract interface class kotlin/coroutines/CoroutineContext {
+	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public abstract fun get (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContextElement;
+	public abstract fun minusKey (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContext;
+	public abstract fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+}
+
+public abstract interface class kotlin/coroutines/CoroutineContextElement : kotlin/coroutines/CoroutineContext {
+	public abstract fun getContextKey ()Lkotlin/coroutines/CoroutineContextKey;
+}
+
+public abstract interface class kotlin/coroutines/CoroutineContextKey {
 }
 
 public abstract interface annotation class kotlin/coroutines/RestrictsSuspension : java/lang/annotation/Annotation {
@@ -468,12 +481,12 @@ public class kotlin/jvm/internal/CollectionToArray {
 	public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
-public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation, kotlin/jvm/internal/DispatchedContinuation {
+public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
 	protected field completion Lkotlin/coroutines/Continuation;
 	protected field label I
 	public fun <init> (ILkotlin/coroutines/Continuation;)V
 	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
-	public fun getDispatcher ()Lkotlin/coroutines/ContinuationDispatcher;
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun getFacade ()Lkotlin/coroutines/Continuation;
 	public fun resume (Ljava/lang/Object;)V
 	public fun resumeWithException (Ljava/lang/Throwable;)V
@@ -481,11 +494,6 @@ public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/La
 
 public final class kotlin/jvm/internal/CoroutineIntrinsics {
 	public static final fun normalizeContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
-	public static final fun wrapContinuationIfNeeded (Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)Lkotlin/coroutines/Continuation;
-}
-
-public abstract interface class kotlin/jvm/internal/DispatchedContinuation : kotlin/coroutines/Continuation {
-	public abstract fun getDispatcher ()Lkotlin/coroutines/ContinuationDispatcher;
 }
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {

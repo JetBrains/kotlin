@@ -18,6 +18,7 @@ package test.coroutines
 
 import kotlin.test.*
 import org.junit.Test
+import kotlin.coroutines.*
 
 class CoroutineContextTest {
     data class CtxA(val i: Int) : AbstractCoroutineContextElement() {
@@ -36,13 +37,13 @@ class CoroutineContextTest {
     }
 
     object Disp1 : AbstractCoroutineContextElement(), ContinuationInterceptor {
-        override fun <T> interceptContinuation(continuation: CoroutineContinuation<T>): CoroutineContinuation<T> = continuation
+        override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> = continuation
         override val contextKey: CoroutineContextKey<*> = ContinuationInterceptor
         override fun toString(): String = "Disp1"
     }
 
     object Disp2 : AbstractCoroutineContextElement(), ContinuationInterceptor {
-        override fun <T> interceptContinuation(continuation: CoroutineContinuation<T>): CoroutineContinuation<T> = continuation
+        override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> = continuation
         override val contextKey: CoroutineContextKey<*> = ContinuationInterceptor
         override fun toString(): String = "Disp2"
     }
