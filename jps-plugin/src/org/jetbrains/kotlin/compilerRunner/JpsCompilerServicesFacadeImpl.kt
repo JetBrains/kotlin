@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -37,7 +38,10 @@ internal class JpsCompilerServicesFacadeImpl(
 
         when (reportCategory) {
             ReportCategory.OUTPUT_MESSAGE -> {
-                env.messageCollector.report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
+                val output = OutputMessageUtil.parseOutputMessage(message!!)
+                if (output != null) {
+                    env.outputItemsCollector.add(output.sourceFiles, output.outputFile)
+                }
             }
             ReportCategory.EXCEPTION -> {
                 env.messageCollector.report(CompilerMessageSeverity.EXCEPTION, message!!, CompilerMessageLocation.NO_LOCATION)
