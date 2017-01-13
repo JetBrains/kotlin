@@ -27,7 +27,7 @@ ContainerHeader ObjHeader::theStaticObjectsContainer = {
 namespace {
 
 #if USE_GC
-// Collection threshold (collect after having so many elements in the
+// Collection threshold default (collect after having so many elements in the
 // release candidates set).
 constexpr size_t kGcThreshold = 10000;
 #endif
@@ -41,17 +41,23 @@ typedef std::vector<KRef*> KRefPtrList;
 struct MemoryState {
   // Current number of allocated containers.
   int allocCount = 0;
+
 #if TRACE_MEMORY
   // List of all global objects addresses.
   KRefPtrList* globalObjects;
   // Set of all containers.
   ContainerHeaderSet* containers;
 #endif
+
 #if USE_GC
   // Set of references to release.
   ContainerHeaderSet* toFree;
-  bool gcInProgress;
+  // How many GC suspend requests happened.
+  int gcSuspendCount;
+  // How many candidate elements in toFree shall trigger collection.
   size_t gcThreshold;
+  // If collection is in progress.
+  bool gcInProgress;
 #endif
 };
 
@@ -189,7 +195,8 @@ void FreeContainer(ContainerHeader* header) {
 #endif
   header->ref_count_ = CONTAINER_TAG_INVALID;
 #if USE_GC
-  memoryState->toFree->erase(header);
+  if (memoryState->toFree)
+    memoryState->toFree->erase(header);
 #endif
   // Now let's clean all object's fields in this container.
   // TODO: this is gross hack, relying on the fact that we now only alloc
@@ -227,7 +234,8 @@ void FreeContainerNoRef(ContainerHeader* header) {
 #endif
   header->ref_count_ = CONTAINER_TAG_INVALID;
 #if USE_GC
-  memoryState->toFree->erase(header);
+  if (memoryState->toFree)
+    memoryState->toFree->erase(header);
 #endif
   memoryState->allocCount--;
   free(header);
@@ -322,9 +330,11 @@ inline void ReleaseRef(const ObjHeader* object) {
 #if TRACE_MEMORY
   fprintf(stderr, "%p is release candidate\n", object->container());
 #endif
-  memoryState->toFree->insert(object->container());
-  if (memoryState->toFree->size() > memoryState->gcThreshold) {
-    GarbageCollect();
+  if (memoryState->toFree != nullptr) {
+    memoryState->toFree->insert(object->container());
+    if (memoryState->gcSuspendCount == 0 &&
+        memoryState->toFree->size() > memoryState->gcThreshold)
+      GarbageCollect();
   }
 #else // !USE_GC
   Release(object->container());
@@ -357,6 +367,7 @@ void InitMemory() {
   memoryState->toFree = new ContainerHeaderSet();
   memoryState->gcInProgress = false;
   memoryState->gcThreshold = kGcThreshold;
+  memoryState->gcSuspendCount = 0;
 #endif
 }
 
@@ -560,6 +571,7 @@ void ReleaseGlobalRefs(ObjHeader** start, int count) {
 
 #if USE_GC
 void GarbageCollect() {
+  RuntimeAssert(memoryState->toFree != nullptr, "GC must not be stopped");
   RuntimeAssert(!memoryState->gcInProgress, "Recursive GC is disallowed");
   memoryState->gcInProgress = true;
   // Traverse inner pointers in the closure of release candidates, and
@@ -623,6 +635,58 @@ void GarbageCollect() {
 void Kotlin_konan_internal_GC_collect(KRef) {
 #if USE_GC
   GarbageCollect();
+#endif
+}
+
+void Kotlin_konan_internal_GC_suspend(KRef) {
+#if USE_GC
+  memoryState->gcSuspendCount++;
+#endif
+}
+
+void Kotlin_konan_internal_GC_resume(KRef) {
+#if USE_GC
+  if (memoryState->gcSuspendCount > 0) {
+    memoryState->gcSuspendCount--;
+    if (memoryState->toFree != nullptr &&
+        memoryState->toFree->size() >= memoryState->gcThreshold) {
+      GarbageCollect();
+    }
+  }
+#endif
+}
+
+void Kotlin_konan_internal_GC_stop(KRef) {
+#if USE_GC
+  if (memoryState->toFree != nullptr) {
+    GarbageCollect();
+    delete memoryState->toFree;
+    memoryState->toFree = nullptr;
+  }
+#endif
+}
+
+void Kotlin_konan_internal_GC_start(KRef) {
+#if USE_GC
+  if (memoryState->toFree == nullptr) {
+    memoryState->toFree = new ContainerHeaderSet();
+  }
+#endif
+}
+
+void Kotlin_konan_internal_GC_setThreshold(KRef, KInt value) {
+#if USE_GC
+  if (value > 0) {
+    memoryState->gcThreshold = value;
+  }
+#endif
+}
+
+KInt Kotlin_konan_internal_GC_getThreshold(KRef) {
+#if USE_GC
+  return memoryState->gcThreshold;
+#else
+  return -1;
 #endif
 }
 
