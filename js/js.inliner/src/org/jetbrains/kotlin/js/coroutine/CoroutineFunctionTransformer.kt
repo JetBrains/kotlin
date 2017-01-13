@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class CoroutineFunctionTransformer(private val program: JsProgram, private val function: JsFunction) {
+class CoroutineFunctionTransformer(private val program: JsProgram, private val function: JsFunction, name: String?) {
     private val innerFunction = function.getInnerFunction()
     private val functionWithBody = innerFunction ?: function
     private val body = functionWithBody.body
     private val localVariables = (function.collectLocalVariables() + functionWithBody.collectLocalVariables()).toMutableSet()
-    private val className = function.scope.parent.declareFreshName("Coroutine\$${function.name}")
+    private val className = function.scope.parent.declareFreshName("Coroutine\$${name ?: "anonymous"}")
 
     fun transform(): List<JsStatement> {
         val context = CoroutineTransformationContext(function.scope, function)
@@ -58,10 +58,15 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
     ) {
         val constructor = JsFunction(function.scope.parent, JsBlock(), "Continuation")
         constructor.name = className
+        if (context.metadata.hasReceiver) {
+            constructor.parameters += JsParameter(context.receiverFieldName)
+        }
         constructor.parameters += function.parameters.map { JsParameter(it.name) }
         if (innerFunction != null) {
             constructor.parameters += innerFunction.parameters.map { JsParameter(it.name) }
         }
+
+        val lastParameter = function.parameters.lastOrNull()?.name
 
         val controllerName = if (context.metadata.hasController) {
             function.scope.declareFreshName("controller").apply { constructor.parameters += JsParameter(this) }
@@ -70,18 +75,27 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
             null
         }
 
-        val interceptorName = function.scope.declareFreshName("interceptor")
-        constructor.parameters += JsParameter(interceptorName)
+        val interceptorRef = if (context.metadata.isLambda) {
+            val interceptorName = function.scope.declareFreshName("interceptor")
+            constructor.parameters += JsParameter(interceptorName)
+            interceptorName.makeRef()
+        }
+        else {
+            lastParameter!!.makeRef()
+        }
 
         val parameterNames = (function.parameters.map { it.name } + innerFunction?.parameters?.map { it.name }.orEmpty()).toSet()
 
         constructor.body.statements.run {
             val baseClass = context.metadata.baseClassRef.deepCopy()
-            this += JsInvocation(Namer.getFunctionCallRef(baseClass), JsLiteral.THIS, interceptorName.makeRef()).makeStmt()
+            this += JsInvocation(Namer.getFunctionCallRef(baseClass), JsLiteral.THIS, interceptorRef).makeStmt()
             if (controllerName != null) {
                 assignToField(context.controllerFieldName, controllerName.makeRef())
             }
             assignToField(context.metadata.exceptionStateName, program.getNumberLiteral(globalCatchBlockIndex))
+            if (context.metadata.hasReceiver) {
+                assignToField(context.receiverFieldName, context.receiverFieldName.makeRef())
+            }
             for (localVariable in localVariables) {
                 val value = if (localVariable !in parameterNames) Namer.getUndefinedExpression() else localVariable.makeRef()
                 assignToField(function.scope.getFieldName(localVariable), value)
@@ -139,6 +153,9 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
 
     private fun generateCoroutineInstantiation(context: CoroutineTransformationContext) {
         val instantiation = JsNew(className.makeRef())
+        if (context.metadata.hasReceiver) {
+            instantiation.arguments += JsLiteral.THIS
+        }
         instantiation.arguments += function.parameters.map { it.name.makeRef() }
         if (innerFunction != null) {
             instantiation.arguments += innerFunction.parameters.map { it.name.makeRef() }
@@ -148,13 +165,14 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
             instantiation.arguments += JsLiteral.THIS
         }
 
-        val interceptorParamName = functionWithBody.scope.declareFreshName("interceptor")
-        functionWithBody.parameters += JsParameter(interceptorParamName)
+        if (context.metadata.isLambda) {
+            val interceptorParamName = functionWithBody.scope.declareFreshName("interceptor")
+            functionWithBody.parameters += JsParameter(interceptorParamName)
+            instantiation.arguments += interceptorParamName.makeRef()
+        }
 
         val suspendedName = functionWithBody.scope.declareFreshName("suspended")
         functionWithBody.parameters += JsParameter(suspendedName)
-
-        instantiation.arguments += interceptorParamName.makeRef()
 
         val instanceName = functionWithBody.scope.declareFreshName("instance")
         functionWithBody.body.statements += JsAstUtils.newVar(instanceName, JsNameRef(context.metadata.facadeName, instantiation))

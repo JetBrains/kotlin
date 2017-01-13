@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
 import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
@@ -30,15 +29,12 @@ import org.jetbrains.kotlin.js.translate.context.getNameForCapturedDescriptor
 import org.jetbrains.kotlin.js.translate.context.hasCapturedExceptContaining
 import org.jetbrains.kotlin.js.translate.context.isCaptured
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
-import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.js.translate.utils.fillCoroutineMetadata
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -46,10 +42,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.KotlinType
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
-    companion object {
-        private val COROUTINE_INTRINSICS_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.intrinsics")
-    }
-
     fun translate(
             declaration: KtDeclarationWithBody,
             continuationType: KotlinType? = null
@@ -61,7 +53,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val aliases = mutableMapOf<DeclarationDescriptor, JsExpression>()
         if (descriptor.isCoroutineLambda) {
-            aliases.put(descriptor, JsLiteral.THIS)
+            aliases.put(descriptor, JsAstUtils.stateMachineReceiver())
         }
 
         val functionContext = invokingContext
@@ -98,7 +90,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
                 lambda.name = null
             }
             lambdaCreator.name.staticRef = lambdaCreator
-            lambdaCreator.fillCoroutineMetadata(invokingContext, continuationType)
+            lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor, continuationType)
             return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
                                                         invokingContext)
         }
@@ -106,36 +98,15 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         lambda.isLocal = true
 
         invokingContext.addDeclarationStatement(lambda.makeStmt())
-        lambda.fillCoroutineMetadata(invokingContext, continuationType)
+        lambda.fillCoroutineMetadata(invokingContext, descriptor, continuationType)
         lambda.name.staticRef = lambda
         return getReferenceToLambda(invokingContext, descriptor, lambda.name)
     }
 
-    fun JsFunction.fillCoroutineMetadata(context: TranslationContext, continuationType: KotlinType?) {
+    fun JsFunction.fillCoroutineMetadata(context: TranslationContext, descriptor: FunctionDescriptor, continuationType: KotlinType?) {
         if (continuationType == null) return
 
-        val suspendPropertyDescriptor = context().currentModule.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQ_NAME)
-                .memberScope.getContributedVariables(SUSPENDED_MARKER_NAME, NoLookupLocation.FROM_BACKEND).first()
-
-        val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
-
-        fun getCoroutinePropertyName(id: String) =
-                context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
-
-        coroutineMetadata = CoroutineMetadata(
-                doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
-                resumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineResumeFunction(context)),
-                suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendPropertyDescriptor, context()),
-                baseClassRef = coroutineBaseClassRef,
-                stateName = getCoroutinePropertyName("state"),
-                exceptionStateName = getCoroutinePropertyName("exceptionState"),
-                finallyPathName = getCoroutinePropertyName("finallyPath"),
-                resultName = getCoroutinePropertyName("result"),
-                exceptionName = getCoroutinePropertyName("exception"),
-                facadeName = getCoroutinePropertyName("facade"),
-                hasController = continuationType.isBuiltinExtensionFunctionalType
-        )
-        coroutineType = continuationType
+        fillCoroutineMetadata(context, descriptor, hasController = continuationType.isBuiltinExtensionFunctionalType, isLambda = true)
     }
 
     fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {
@@ -149,7 +120,12 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 }
 
 private fun CallableMemberDescriptor.wrapContextForCoroutineIfNecessary(context: TranslationContext): TranslationContext {
-    return if (isCoroutineLambda) context.innerContextWithDescriptorsAliased(mapOf(this to JsLiteral.THIS)) else context
+    return if (isCoroutineLambda) {
+        context.innerContextWithDescriptorsAliased(mapOf(this to JsAstUtils.stateMachineReceiver()))
+    }
+    else {
+        context
+    }
 }
 
 fun JsFunction.withCapturedParameters(

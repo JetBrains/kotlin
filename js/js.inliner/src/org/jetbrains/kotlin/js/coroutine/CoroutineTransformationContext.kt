@@ -26,4 +26,5 @@ class CoroutineTransformationContext(private val scope: JsScope, function: JsFun
     val metadata = function.coroutineMetadata!!
     val controllerFieldName by lazy { scope.declareFreshName("\$controller") }
     val returnValueFieldName by lazy { scope.declareFreshName("\$returnValue") }
+    val receiverFieldName by lazy { scope.declareFreshName("\$this") }
 }

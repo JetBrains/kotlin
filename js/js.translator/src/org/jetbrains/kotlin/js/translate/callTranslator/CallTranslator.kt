@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.js.translate.utils.setInlineCallMetadata
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
@@ -143,7 +140,7 @@ private fun translateFunctionCall(
                               inlineResolvedCall.resultingDescriptor, context)
     }
 
-    if (resolvedCall.resultingDescriptor.isSuspend && !context.isInSuspendFunction) {
+    if (resolvedCall.resultingDescriptor.isSuspend && context.isInStateMachine) {
         context.currentBlock.statements += JsAstUtils.asSyntheticStatement((callExpression as JsInvocation).apply {
             isSuspend = true
             isPreSuspend = true
@@ -156,6 +153,9 @@ private fun translateFunctionCall(
     }
     return callExpression
 }
+
+private val TranslationContext.isInStateMachine
+    get() = (declarationDescriptor as? FunctionDescriptor)?.requiresStateMachineTransformation(this) == true
 
 private fun translateCallWithContinuation(context: TranslationContext, resolvedCall: ResolvedCall<out FunctionDescriptor>): JsExpression {
     val arguments = CallArgumentTranslator.translate(resolvedCall, null, context)
