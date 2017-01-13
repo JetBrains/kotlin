@@ -295,7 +295,7 @@ class CompileServiceImpl(
         val targetPlatform = compilationOptions.targetPlatform
 
         return when (compilerMode) {
-            CompileService.CompilerMode.JPS_COMPILER -> {
+            CompilerMode.JPS_COMPILER -> {
                 val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
 
                 doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
@@ -303,12 +303,12 @@ class CompileServiceImpl(
                     execCompiler(compilationOptions.targetPlatform, services, compilerArguments, messageCollector)
                 }
             }
-            CompileService.CompilerMode.NON_INCREMENTAL_COMPILER -> {
+            CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                     execCompiler(targetPlatform, Services.EMPTY, compilerArguments, messageCollector)
                 }
             }
-            CompileService.CompilerMode.INCREMENTAL_COMPILER -> {
+            CompilerMode.INCREMENTAL_COMPILER -> {
                 if (targetPlatform != CompileService.TargetPlatform.JVM) {
                     throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
                 }

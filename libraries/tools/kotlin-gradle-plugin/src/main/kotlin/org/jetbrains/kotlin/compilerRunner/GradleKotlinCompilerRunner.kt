@@ -158,7 +158,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val verbose = environment.compilerArgs.verbose
         val compilationOptions = CompilationOptions(
-                compilerMode = CompileService.CompilerMode.NON_INCREMENTAL_COMPILER,
+                compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
                 targetPlatform = targetPlatform,
                 reportCategories = reportCategories(verbose),
                 reportSeverity = reportSeverity(verbose),
@@ -191,7 +191,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 reportCategories = reportCategories(verbose),
                 reportSeverity = reportSeverity(verbose),
                 requestedCompilationResults = arrayOf(CompilationResult.IC_COMPILE_ITERATION.code),
-                compilerMode = CompileService.CompilerMode.INCREMENTAL_COMPILER,
+                compilerMode = CompilerMode.INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM
         )
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
