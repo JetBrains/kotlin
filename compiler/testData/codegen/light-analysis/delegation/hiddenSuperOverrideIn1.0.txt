@@ -1,0 +1,34 @@
+@kotlin.Metadata
+public interface Base {
+    inner class Base/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Base/DefaultImpls {
+    inner class Base/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method test(p0: Base): java.lang.String
+}
+
+@kotlin.Metadata
+public interface Base2 {
+    inner class Base2/DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Base2/DefaultImpls {
+    inner class Base2/DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method test(p0: Base2): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Delegate {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class HiddenSuperOverrideIn1_0Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
