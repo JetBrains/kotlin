@@ -625,7 +625,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateExpression(value: IrExpression): LLVMValueRef {
         when (value) {
-            is IrSetterCallImpl      -> return evaluateSetterCall         (value)
             is IrTypeOperatorCall    -> return evaluateTypeOperator       (value)
             is IrCall                -> return evaluateCall               (value)
             is IrDelegatingConstructorCall ->
@@ -1735,18 +1734,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             return callVirtual(descriptor, args, resultLifetime)
         else
             return callDirect(descriptor, args, resultLifetime)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun evaluateSetterCall(value: IrSetterCallImpl): LLVMValueRef {
-        val descriptor = value.descriptor as FunctionDescriptor
-        val args       = mutableListOf<LLVMValueRef>()
-        if (descriptor.dispatchReceiverParameter != null)
-            args.add(evaluateExpression(value.dispatchReceiver!!))         //add this ptr
-        args.add(evaluateExpression(value.getValueArgument(0)!!))
-        return evaluateSimpleFunctionCall(
-                descriptor, args, Lifetime.IRRELEVANT, value.superQualifier)
     }
 
     //-------------------------------------------------------------------------//
