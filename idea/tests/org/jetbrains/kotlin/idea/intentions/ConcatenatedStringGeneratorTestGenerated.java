@@ -42,6 +42,12 @@ public class ConcatenatedStringGeneratorTestGenerated extends AbstractConcatenat
         doTest(fileName);
     }
 
+    @TestMetadata("constants2.kt")
+    public void testConstants2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/constants2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/simple.kt");
@@ -51,6 +57,12 @@ public class ConcatenatedStringGeneratorTestGenerated extends AbstractConcatenat
     @TestMetadata("stringtemplate.kt")
     public void testStringtemplate() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/stringtemplate.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("stringtemplateWithConstant.kt")
+    public void testStringtemplateWithConstant() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/concatenatedStringGenerator/stringtemplateWithConstant.kt");
         doTest(fileName);
     }
 
