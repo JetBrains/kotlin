@@ -9,6 +9,8 @@ fun builder(c: suspend () -> Unit) {
     var exception: Throwable? = null
 
     c.createCoroutine(object : Continuation<Unit> {
+        override val context = EmptyContext
+
         override fun resume(data: Unit) {
         }
 

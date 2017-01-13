@@ -11,30 +11,26 @@ import kotlin.coroutines.intrinsics.*
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
  * The [completion] continuation is invoked when coroutine completes with result of exception.
- * An optional [dispatcher] may be specified to customise dispatch of continuations between suspension points inside the coroutine.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
-        completion: Continuation<T>,
-        dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction1<R, T>).create(receiver, withDispatcher(completion, dispatcher))
+        completion: Continuation<T>
+): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction1<R, T>).create(receiver, completion)
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
  * This function creates and start a new, fresh instance of suspendable computation every time it is invoked.
  * The [completion] continuation is invoked when coroutine completes with result of exception.
- * An optional [dispatcher] may be specified to customise dispatch of continuations between suspension points inside the coroutine.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 public fun <R, T> (suspend R.() -> T).startCoroutine(
         receiver: R,
-        completion: Continuation<T>,
-        dispatcher: ContinuationDispatcher? = null
+        completion: Continuation<T>
 ) {
-    (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, withDispatcher(completion, dispatcher))
+    (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
 }
 
 /**
@@ -42,28 +38,24 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
  * The [completion] continuation is invoked when coroutine completes with result of exception.
- * An optional [dispatcher] may be specified to customise dispatch of continuations between suspension points inside the coroutine.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
-        completion: Continuation<T>,
-        dispatcher: ContinuationDispatcher? = null
-): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction0<T>).create(withDispatcher(completion, dispatcher))
+        completion: Continuation<T>
+): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction0<T>).create(completion)
 
 /**
  * Starts coroutine without receiver and with result type [T].
  * This function creates and start a new, fresh instance of suspendable computation every time it is invoked.
  * The [completion] continuation is invoked when coroutine completes with result of exception.
- * An optional [dispatcher] may be specified to customise dispatch of continuations between suspension points inside the coroutine.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend  () -> T).startCoroutine(
-        completion: Continuation<T>,
-        dispatcher: ContinuationDispatcher? = null
+        completion: Continuation<T>
 ) {
-    (this as Function1<Continuation<T>, Any?>).invoke(withDispatcher(completion, dispatcher))
+    (this as Function1<Continuation<T>, Any?>).invoke(completion)
 }
 
 /**
@@ -84,20 +76,15 @@ public inline suspend fun <T> suspendCoroutine(crossinline block: (Continuation<
 
 // INTERNAL DECLARATIONS
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-private fun <T> withDispatcher(completion: Continuation<T>, dispatcher: ContinuationDispatcher?): Continuation<T> {
-    return if (dispatcher == null) completion else
-        object : kotlin.jvm.internal.DispatchedContinuation<T>, Continuation<T> by completion {
-            override val dispatcher: ContinuationDispatcher? = dispatcher
-        }
-}
-
 private val UNDECIDED: Any? = Any()
 private val RESUMED: Any? = Any()
 private class Fail(val exception: Throwable)
 
 @PublishedApi
 internal class SafeContinuation<in T> @PublishedApi internal constructor(private val delegate: Continuation<T>) : Continuation<T> {
+    public override val context: CoroutineContext
+        get() = delegate.context
+
     @Volatile
     private var result: Any? = UNDECIDED
 

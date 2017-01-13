@@ -649,6 +649,7 @@ public class KotlinTestUtils {
                                              "CoroutineUtil.kt",
                                              "import kotlin.coroutines.*\n" +
                                              "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
+                                             "    override val context = EmptyContext\n" +
                                              "    override fun resumeWithException(exception: Throwable) {\n" +
                                              "        throw exception\n" +
                                              "    }\n" +
@@ -657,6 +658,7 @@ public class KotlinTestUtils {
                                              "}\n" +
                                              "\n" +
                                              "fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {\n" +
+                                             "    override val context = EmptyContext\n" +
                                              "    override fun resumeWithException(exception: Throwable) {\n" +
                                              "        x(exception)\n" +
                                              "    }\n" +
@@ -664,11 +666,44 @@ public class KotlinTestUtils {
                                              "    override fun resume(data: Any?) { }\n" +
                                              "}\n" +
                                              "\n" +
-                                             "object EmptyContinuation : Continuation<Any?> {\n" +
+                                             "object EmptyContext : CoroutineContext {\n" +
+                                             "    override fun <E : CoroutineContextElement> get(key: CoroutineContextKey<E>): E? = null\n" +
+                                             "    override fun <R> fold(initial: R, operation: (R, CoroutineContextElement) -> R): R = initial\n" +
+                                             "    override fun plus(context: CoroutineContext): CoroutineContext = context\n" +
+                                             "    override fun minusKey(key: CoroutineContextKey<*>): CoroutineContext = this\n" +
+                                             "}\n" +
+                                             "\n" +
+                                             "open class EmptyContinuation(override val context: CoroutineContext = EmptyContext) : Continuation<Any?> {\n" +
+                                             "    companion object : EmptyContinuation()\n" +
                                              "    override fun resume(data: Any?) {}\n" +
+                                             "    override fun resumeWithException(exception: Throwable) { throw exception }\n" +
+                                             "}\n" +
+                                             "\n" +
+                                             "abstract class ContinuationDispatcher : ContinuationInterceptor {\n" +
+                                             "    override val contextKey: CoroutineContextKey<*> = ContinuationInterceptor\n" +
+                                             "    abstract fun <T> dispatchResume(value: T, continuation: Continuation<T>): Boolean\n" +
+                                             "    abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean\n" +
+                                             "    override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> = DispatchedContinuation(this, continuation)\n" +
+                                             "    override operator fun <E : CoroutineContextElement> get(key: CoroutineContextKey<E>): E? = if (this.contextKey == key) this as E else null\n" +
+                                             "    override fun <R> fold(initial: R, operation: (R, CoroutineContextElement) -> R): R = operation(initial, this)\n" +
+                                             "    override operator fun plus(context: CoroutineContext): CoroutineContext = this\n" +
+                                             "    override fun minusKey(key: CoroutineContextKey<*>): CoroutineContext = if (this.contextKey == key) EmptyContext else this\n" +
+                                             "}\n" +
+                                             "\n" +
+                                             "private class DispatchedContinuation<T>(\n" +
+                                             "        val dispatcher: ContinuationDispatcher,\n" +
+                                             "        val continuation: Continuation<T>\n" +
+                                             "): Continuation<T> {\n" +
+                                             "    override val context: CoroutineContext = continuation.context\n" +
+                                             "\n" +
+                                             "    override fun resume(value: T) {\n" +
+                                             "        if (!dispatcher.dispatchResume(value, continuation))\n" +
+                                             "            continuation.resume(value)\n" +
+                                             "    }\n" +
                                              "\n" +
                                              "    override fun resumeWithException(exception: Throwable) {\n" +
-                                             "        throw exception\n" +
+                                             "        if (!dispatcher.dispatchResumeWithException(exception, continuation))\n" +
+                                             "            continuation.resumeWithException(exception)\n" +
                                              "    }\n" +
                                              "}",
                                              directives

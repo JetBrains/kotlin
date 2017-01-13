@@ -12,6 +12,8 @@ fun builder(c: suspend () -> Int): Int {
     var res = 0
 
     c.createCoroutine(object : Continuation<Int> {
+        override val context = EmptyContext
+
         override fun resume(data: Int) {
             res = data
         }

@@ -23,25 +23,23 @@ abstract class CoroutineImpl(
         arity: Int,
         @JvmField
         protected var completion: Continuation<Any?>?
-) : DispatchedContinuation<Any?>, Lambda(arity), Continuation<Any?>  {
+) : Lambda(arity), Continuation<Any?>  {
 
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
     // label == 0 in initial part of the coroutine
     @JvmField
     protected var label: Int = if (completion != null) 0 else -1
 
-    private val _dispatcher: ContinuationDispatcher? = (completion as? DispatchedContinuation<*>)?.dispatcher
+    private val _context: CoroutineContext? = completion?.context
 
-    override val dispatcher: ContinuationDispatcher?
-        get() = _dispatcher
+    override val context: CoroutineContext
+        get() = _context!!
 
-    private var facade_: Continuation<Any?>? = null
+    private var _facade: Continuation<Any?>? = null
+
     val facade: Continuation<Any?> get() {
-        if (facade_ == null) {
-            facade_ = wrapContinuationIfNeeded(this, dispatcher)
-        }
-
-        return facade_!!
+        if (_facade == null) _facade = _context!![ContinuationInterceptor]?.interceptContinuation(this) ?: this
+        return _facade!!
     }
 
     override fun resume(value: Any?) {
@@ -65,8 +63,4 @@ abstract class CoroutineImpl(
     }
 
     protected abstract fun doResume(data: Any?, exception: Throwable?): Any?
-}
-
-internal interface DispatchedContinuation<in T> : Continuation<T> {
-    val dispatcher: ContinuationDispatcher?
 }
