@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 
 
-class RemoteLookupTrackerClient(val facade: CompilerCallbackServicesFacade, eventManger: EventManger, val profiler: Profiler = DummyProfiler()) : LookupTracker {
+class RemoteLookupTrackerClient(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val profiler: Profiler = DummyProfiler()) : LookupTracker {
     private val isDoNothing = profiler.withMeasure(this) { facade.lookupTracker_isDoNothing() }
 
     private val lookups = hashSetOf<LookupInfo>()
@@ -45,7 +45,7 @@ class RemoteLookupTrackerClient(val facade: CompilerCallbackServicesFacade, even
     }
 
     init {
-        eventManger.onCompilationFinished { flush() }
+        eventManager.onCompilationFinished { flush() }
     }
 
     private fun flush() {

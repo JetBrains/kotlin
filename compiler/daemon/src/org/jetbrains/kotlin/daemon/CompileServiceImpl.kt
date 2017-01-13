@@ -64,11 +64,11 @@ interface CompilerSelector {
     operator fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*>
 }
 
-interface EventManger {
+interface EventManager {
     fun onCompilationFinished(f : () -> Unit)
 }
 
-private class EventMangerImpl : EventManger {
+private class EventManagerImpl : EventManager {
     private val onCompilationFinished = arrayListOf<() -> Unit>()
 
     override fun onCompilationFinished(f: () -> Unit) {
@@ -553,12 +553,12 @@ class CompileServiceImpl(
                           compilerMessagesStreamProxy: RemoteOutputStream,
                           serviceOutputStreamProxy: RemoteOutputStream,
                           operationsTracer: RemoteOperationsTracer?,
-                          body: (PrintStream, EventManger, Profiler) -> ExitCode): CompileService.CallResult<Int> =
+                          body: (PrintStream, EventManager, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
                 withValidClientOrSessionProxy(sessionId) { session ->
                     operationsTracer?.before("compile")
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                    val eventManger = EventMangerImpl()
+                    val eventManger = EventManagerImpl()
                     val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
                     val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
                     try {
@@ -583,12 +583,12 @@ class CompileServiceImpl(
     private fun doCompile(sessionId: Int,
                           daemonMessageReporter: DaemonMessageReporter,
                           tracer: RemoteOperationsTracer?,
-                          body: (EventManger, Profiler) -> ExitCode): CompileService.CallResult<Int> =
+                          body: (EventManager, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
                 withValidClientOrSessionProxy(sessionId) { session ->
                     tracer?.before("compile")
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                    val eventManger = EventMangerImpl()
+                    val eventManger = EventManagerImpl()
                     try {
                         val exitCode = checkedCompile(daemonMessageReporter, rpcProfiler) {
                             body(eventManger, rpcProfiler).code
@@ -602,10 +602,10 @@ class CompileServiceImpl(
                 }
             }
 
-    private fun createCompileServices(facade: CompilerCallbackServicesFacade, eventManger: EventManger, rpcProfiler: Profiler): Services {
+    private fun createCompileServices(facade: CompilerCallbackServicesFacade, eventManager: EventManager, rpcProfiler: Profiler): Services {
         val builder = Services.Builder()
         if (facade.hasIncrementalCaches() || facade.hasLookupTracker()) {
-            builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(facade, eventManger, rpcProfiler))
+            builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(facade, eventManager, rpcProfiler))
         }
         if (facade.hasCompilationCanceledStatus()) {
             builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(facade, rpcProfiler))
