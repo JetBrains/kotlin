@@ -47,7 +47,10 @@ internal class DescriptorRendererImpl(
     }
 
     private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
-        this.withOptions { excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) } as DescriptorRendererImpl
+        this.withOptions {
+            excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.ALWAYS_PARENTHESIZED
+        } as DescriptorRendererImpl
     }
     private val functionTypeParameterTypesRenderer: DescriptorRenderer by lazy {
         this.withOptions { excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.parameterName) }
@@ -413,7 +416,7 @@ internal class DescriptorRendererImpl(
 
             if (includeAnnotationArguments) {
                 val arguments = renderAndSortAnnotationArguments(annotation)
-                if (arguments.isNotEmpty()) {
+                if (includeEmptyAnnotationArguments || arguments.isNotEmpty()) {
                     arguments.joinTo(this, ", ", "(", ")")
                 }
             }

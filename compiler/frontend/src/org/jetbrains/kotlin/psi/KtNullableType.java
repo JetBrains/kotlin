@@ -57,4 +57,16 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
     public KtTypeElement getInnerType() {
         return KtStubbedPsiUtil.getStubOrPsiChild(this, KtStubElementTypes.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY);
     }
+
+    @Nullable
+    public KtModifierList getModifierList() {
+        return getStubOrPsiChild(KtStubElementTypes.MODIFIER_LIST);
+    }
+
+    @NotNull
+    public List<KtAnnotationEntry> getAnnotationEntries() {
+        KtModifierList modifierList = getModifierList();
+        return modifierList != null ? modifierList.getAnnotationEntries()
+                                    : Collections.<KtAnnotationEntry>emptyList();
+    }
 }

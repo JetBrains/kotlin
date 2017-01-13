@@ -20,6 +20,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
@@ -39,7 +40,7 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setWithDefinedIn(false);
                     options.setVerbose(true);
-                    options.setIncludeAnnotationArguments(true);
+                    options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;
                 }

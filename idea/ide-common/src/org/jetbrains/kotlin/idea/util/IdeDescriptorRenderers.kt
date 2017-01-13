@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -52,7 +49,7 @@ object IdeDescriptorRenderers {
         unitReturnType = false
         modifiers = DescriptorRendererModifier.ALL
         renderUnabbreviatedType = false
-        includeAnnotationArguments = true
+        annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
     }
 
     @JvmField val SOURCE_CODE: DescriptorRenderer = BASE.withOptions {

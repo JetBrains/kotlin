@@ -4596,6 +4596,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nullableSuspendFunction.kt")
+                public void testNullableSuspendFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/nullableSuspendFunction.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("suspendFunctionNIsUnresolved.kt")
                 public void testSuspendFunctionNIsUnresolved() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionType/suspendFunctionNIsUnresolved.kt");
@@ -14726,6 +14732,33 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/typeParameters/simpleVisitorTwoAccepts.kt");
                     doTest(fileName);
                 }
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/parenthesizedTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ParenthesizedTypes extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInParenthesizedTypes() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/parenthesizedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
+            public void testAnnotationsOnNullableParenthesizedTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/parenthesizedTypes/annotationsOnNullableParenthesizedTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("annotationsOnParenthesizedTypes.kt")
+            public void testAnnotationsOnParenthesizedTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/parenthesizedTypes/annotationsOnParenthesizedTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitModifierList.kt")
+            public void testSplitModifierList() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/parenthesizedTypes/splitModifierList.kt");
+                doTest(fileName);
             }
         }
 

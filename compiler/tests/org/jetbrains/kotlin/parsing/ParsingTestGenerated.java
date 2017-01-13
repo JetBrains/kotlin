@@ -806,6 +806,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("TypeModifiersParenthesized.kt")
+        public void testTypeModifiersParenthesized() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeModifiersParenthesized.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("TypeModifiers_ERR.kt")
         public void testTypeModifiers_ERR() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeModifiers_ERR.kt");
@@ -859,6 +865,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("annotationsOnNullableTypes.kt")
             public void testAnnotationsOnNullableTypes() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/annotationsOnNullableTypes.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("annotationsOnParenthesizedTypes.kt")
+            public void testAnnotationsOnParenthesizedTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/annotationsOnParenthesizedTypes.kt");
                 doParsingTest(fileName);
             }
 

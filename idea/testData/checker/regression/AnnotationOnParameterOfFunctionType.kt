@@ -1,4 +1,4 @@
-fun <K, V> intercept(<warning>block</warning>: (@A K, (K) -> V) -> V) {
+fun <K, V> intercept(<warning>block</warning>: (<error>@A</error> K, (K) -> V) -> V) {
 
 }
 

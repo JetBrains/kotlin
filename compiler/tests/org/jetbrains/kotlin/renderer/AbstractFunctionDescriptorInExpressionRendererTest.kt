@@ -57,7 +57,7 @@ abstract class AbstractFunctionDescriptorInExpressionRendererTest : KotlinTestWi
             classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
             modifiers = DescriptorRendererModifier.ALL
             verbose = true
-            includeAnnotationArguments = true
+            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
         }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 

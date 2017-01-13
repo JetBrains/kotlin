@@ -4,7 +4,7 @@ annotation class special
 @Target(AnnotationTarget.TYPE)
 annotation class base
 
-fun transform(i: Int, tr: (@<!DEBUG_INFO_MISSING_UNRESOLVED!>special<!> Int) -> Int): Int = @special tr(@special i)
+fun transform(i: Int, tr: (<!WRONG_ANNOTATION_TARGET!>@special<!> Int) -> Int): Int = @special tr(@special i)
 
 fun foo(i: Int): Int {
     val j = @special i + 1

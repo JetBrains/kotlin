@@ -15,19 +15,19 @@ JetFile: FunctionTypes.kt
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           VALUE_PARAMETER
-            MODIFIER_LIST
-              ANNOTATION
-                PsiElement(AT)('@')
-                PsiElement(LBRACKET)('[')
-                ANNOTATION_ENTRY
-                  CONSTRUCTOR_CALLEE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
-                PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
             TYPE_REFERENCE
+              MODIFIER_LIST
+                ANNOTATION
+                  PsiElement(AT)('@')
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')

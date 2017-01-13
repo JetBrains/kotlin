@@ -1,0 +1,6 @@
+package
+
+public val test1: (suspend () -> kotlin.Unit)? = null
+public val test2: (suspend () -> kotlin.Unit)? = null
+public val test3: (suspend () -> kotlin.Unit)? = null
+public fun foo(): kotlin.Unit

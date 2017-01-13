@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
+import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider;
@@ -73,7 +70,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                                         options.setWithDefinedIn(false);
                                         options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                                         options.setVerbose(true);
-                                        options.setIncludeAnnotationArguments(true);
+                                        options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
                                         options.setModifiers(DescriptorRendererModifier.ALL);
                                         return Unit.INSTANCE;
                                     }

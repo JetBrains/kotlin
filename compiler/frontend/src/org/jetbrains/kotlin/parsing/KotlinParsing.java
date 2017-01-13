@@ -461,8 +461,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, annotationParsingMode, noModifiersBefore);
     }
 
-    private boolean parseValueParameterModifierList() {
-        return doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, DEFAULT, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+    private boolean parseFunctionTypeValueParameterModifierList() {
+        return doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
     }
 
     private boolean parseTypeModifierList() {
@@ -2196,7 +2196,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (isFunctionTypeContents) {
                     if (!tryParseValueParameter(typeRequired)) {
                         PsiBuilder.Marker valueParameter = mark();
-                        parseValueParameterModifierList(); // lazy, out, ref
+                        parseFunctionTypeValueParameterModifierList();
                         parseTypeRef();
                         closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
                     }

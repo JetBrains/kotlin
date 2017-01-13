@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.renderer.ClassifierNamePolicy;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
+import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
@@ -62,7 +59,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setVerbose(true);
-                    options.setIncludeAnnotationArguments(true);
+                    options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
                     options.setClassifierNamePolicy(ClassifierNamePolicy.SHORT.INSTANCE);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;

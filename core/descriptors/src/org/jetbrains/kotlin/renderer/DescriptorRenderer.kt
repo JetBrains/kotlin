@@ -166,6 +166,15 @@ abstract class DescriptorRenderer {
     }
 }
 
+enum class AnnotationArgumentsRenderingPolicy(
+        val includeAnnotationArguments: Boolean = false,
+        val includeEmptyAnnotationArguments: Boolean = false
+) {
+    NO_ARGUMENTS(),
+    UNLESS_EMPTY(true),
+    ALWAYS_PARENTHESIZED(true, true)
+}
+
 interface DescriptorRendererOptions {
     var classifierNamePolicy: ClassifierNamePolicy
     var withDefinedIn: Boolean
@@ -185,7 +194,11 @@ interface DescriptorRendererOptions {
     var textFormat: RenderingFormat
     var excludedAnnotationClasses: Set<FqName>
     var excludedTypeAnnotationClasses: Set<FqName>
-    var includeAnnotationArguments: Boolean
+
+    var annotationArgumentsRenderingPolicy: AnnotationArgumentsRenderingPolicy
+    val includeAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeAnnotationArguments
+    val includeEmptyAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeEmptyAnnotationArguments
+
     var includePropertyConstant: Boolean
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     var withoutTypeParameters: Boolean

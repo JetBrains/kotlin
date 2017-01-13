@@ -38,7 +38,7 @@ class AnnotationsImpl : Annotations {
         this.annotations = targetedAnnotations.filter { it.target == null }.map { it.annotation }
     }
 
-    override fun isEmpty() = annotations.isEmpty()
+    override fun isEmpty() = targetedAnnotations.isEmpty()
 
     override fun findAnnotation(fqName: FqName) = annotations.firstOrNull {
         val descriptor = it.type.constructor.declarationDescriptor

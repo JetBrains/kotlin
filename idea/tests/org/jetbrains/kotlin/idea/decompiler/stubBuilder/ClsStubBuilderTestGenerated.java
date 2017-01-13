@@ -60,6 +60,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("AnnotationsOnParenthesizedTypes")
+    public void testAnnotationsOnParenthesizedTypes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotationsOnParenthesizedTypes/");
+        doTest(fileName);
+    }
+
     @TestMetadata("AnonymousReturnWithGenericType")
     public void testAnonymousReturnWithGenericType() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnonymousReturnWithGenericType/");

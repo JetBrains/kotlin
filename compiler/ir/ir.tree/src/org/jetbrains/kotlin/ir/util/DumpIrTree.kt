@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.utils.Printer
 
@@ -45,7 +46,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     companion object {
         val ANNOTATIONS_RENDERER = DescriptorRenderer.withOptions {
             verbose = true
-            includeAnnotationArguments = true
+            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
         }
     }
 

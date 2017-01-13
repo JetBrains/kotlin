@@ -12,7 +12,7 @@ fun inParamNested(fn1: (fn2: (<!UNSUPPORTED!>@Ann<!> n: Int)->Unit)->Unit) {}
 
 fun inReturn(): (<!UNSUPPORTED!>@Ann<!> x: Int)->Unit = {}
 
-class A : (@<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!> Int)->Unit {
+class A : (@Ann Int)->Unit {
     override fun invoke(p1: Int) {
         var lambda: (<!UNSUPPORTED!>@Ann<!> x: Int)->Unit = {}
     }
@@ -24,6 +24,6 @@ class A : (@<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!> Int)->Unit {
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnn
 
-val onType: (@TypeAnn A).(<!UNSUPPORTED!>@Ann<!> a: @TypeAnn A, @<!DEBUG_INFO_MISSING_UNRESOLVED!>TypeAnn<!> A)->@TypeAnn A? = <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!> null }
+val onType: (@TypeAnn A).(<!UNSUPPORTED!>@Ann<!> a: @TypeAnn A, @TypeAnn A)->@TypeAnn A? = <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!> null }
 
 fun (@TypeAnn A).extFun(@Ann a: @TypeAnn A): @TypeAnn A? = null

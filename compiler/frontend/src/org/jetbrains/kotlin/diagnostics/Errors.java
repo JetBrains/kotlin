@@ -163,6 +163,8 @@ public interface Errors {
     DiagnosticFactory1<KtElement, KotlinType> EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtTypeElement, KotlinType> EXPANDED_TYPE_CANNOT_BE_INHERITED = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<KtModifierList> MODIFIER_LIST_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Errors in declarations

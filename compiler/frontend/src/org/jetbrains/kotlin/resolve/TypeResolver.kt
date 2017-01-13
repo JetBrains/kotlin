@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.context.TypeLazinessToken
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.PossiblyBareType.bare
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
@@ -131,9 +133,9 @@ class TypeResolver(
     }
 
     private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
-        val annotations = annotationResolver.resolveAnnotationsWithoutArguments(c.scope, typeReference.getAnnotationEntries(), c.trace)
-
         val typeElement = typeReference.typeElement
+
+        val annotations = resolveTypeAnnotations(c, typeReference)
 
         val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeElement)
         c.trace.recordScope(c.scope, typeReference)
@@ -145,6 +147,29 @@ class TypeResolver(
         }
 
         return type
+    }
+
+    internal fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
+            getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
+
+    private fun resolveTypeAnnotations(c: TypeResolutionContext, modifierListsOwner: KtElementImplStub<*>): Annotations {
+        val modifierLists = modifierListsOwner.getAllModifierLists()
+
+        var result = Annotations.EMPTY
+        var isSplitModifierList = false
+
+        for (modifierList in modifierLists) {
+            if (isSplitModifierList) {
+                c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(modifierList))
+            }
+
+            val annotations = annotationResolver.resolveAnnotationsWithoutArguments(c.scope, modifierList.annotationEntries, c.trace)
+            result = composeAnnotations(result, annotations)
+
+            isSplitModifierList = true
+        }
+
+        return result
     }
 
     /**
@@ -176,12 +201,12 @@ class TypeResolver(
         }
     }
 
-    private fun resolveTypeElement(c: TypeResolutionContext, annotations: Annotations, modifiers: KtModifierList?, typeElement: KtTypeElement?): PossiblyBareType {
+    private fun resolveTypeElement(c: TypeResolutionContext, annotations: Annotations, outerModifierList: KtModifierList?, typeElement: KtTypeElement?): PossiblyBareType {
         var result: PossiblyBareType? = null
 
-        val hasSuspendModifier = modifiers?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
-        val suspendModifier = modifiers?.getModifier(KtTokens.SUSPEND_KEYWORD)
-        if (hasSuspendModifier && typeElement !is KtFunctionType) {
+        val hasSuspendModifier = outerModifierList?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
+        val suspendModifier = outerModifierList?.getModifier(KtTokens.SUSPEND_KEYWORD)
+        if (hasSuspendModifier && !typeElement.canHaveFunctionTypeModifiers()) {
             c.trace.report(Errors.WRONG_MODIFIER_TARGET.on(suspendModifier!!, KtTokens.SUSPEND_KEYWORD, "non-functional type"))
         }
         else if (hasSuspendModifier) {
@@ -208,8 +233,15 @@ class TypeResolver(
             }
 
             override fun visitNullableType(nullableType: KtNullableType) {
-                val innerType = nullableType.getInnerType()
-                val baseType = resolveTypeElement(c, annotations, modifiers, innerType)
+                val innerModifierList = nullableType.modifierList
+                if (innerModifierList != null && outerModifierList != null) {
+                    c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(innerModifierList))
+                }
+
+                val innerAnnotations = composeAnnotations(annotations, resolveTypeAnnotations(c, nullableType))
+
+                val innerType = nullableType.innerType
+                val baseType = resolveTypeElement(c, innerAnnotations, outerModifierList ?: innerModifierList, innerType)
                 if (baseType.isNullable || innerType is KtNullableType || innerType is KtDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
@@ -318,6 +350,9 @@ class TypeResolver(
 
         return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
     }
+
+    private fun KtTypeElement?.canHaveFunctionTypeModifiers(): Boolean =
+            this is KtFunctionType
 
     private fun resolveTypeForTypeParameter(
             c: TypeResolutionContext, annotations: Annotations,
