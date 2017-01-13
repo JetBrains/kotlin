@@ -256,7 +256,7 @@ abstract class BasicBoxTest(
 
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, module.inliningDisabled)
 
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB + dependencies)
+        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB + LibrarySourcesConfig.JS_KOTLIN_TEST + dependencies)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)

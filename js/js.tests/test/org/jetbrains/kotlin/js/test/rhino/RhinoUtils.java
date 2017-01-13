@@ -153,6 +153,8 @@ public final class RhinoUtils {
                 //    System.out.print(problems);
                 //}
             }
+
+            finishScope(scope);
             checker.runChecks(context, scope);
         }
         finally {
@@ -162,7 +164,16 @@ public final class RhinoUtils {
 
     @NotNull
     private static Scriptable getScope(@NotNull EcmaVersion version, @NotNull Context context, @NotNull List<String> jsLibraries) {
-        return context.newObject(getParentScope(version, context, jsLibraries));
+        Scriptable parentScope = getParentScope(version, context, jsLibraries);
+        Scriptable scope = context.newObject(parentScope);
+
+        scope.put("kotlin-test", scope, parentScope.get("kotlin-test", parentScope));
+
+        return scope;
+    }
+
+    private static void finishScope(@NotNull Scriptable scope) {
+        scope.delete("kotlin-test");
     }
 
     @NotNull
@@ -180,6 +191,8 @@ public final class RhinoUtils {
         ScriptableObject scope = context.initStandardObjects();
         try {
             runFileWithRhino(DIST_DIR_JS_PATH + "kotlin.js", context, scope);
+            runFileWithRhino(DIST_DIR_JS_PATH + "../classes/kotlin-test-js/kotlin-test.js", context, scope);
+
             //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);

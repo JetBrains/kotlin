@@ -1,7 +1,24 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("AssertionsKt")
 package kotlin.test
 
+import kotlin.internal.*
 import kotlin.reflect.*
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
@@ -13,9 +30,13 @@ private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, messag
             @Suppress("UNCHECKED_CAST")
             return e as T
         }
-        asserter.fail((message?.let { "$it. " } ?: "") + "Expected an exception of type $exceptionClass to be thrown, but was $e")
+
+        @Suppress("INVISIBLE_MEMBER")
+        asserter.fail(messagePrefix(message) + "Expected an exception of type $exceptionClass to be thrown, but was $e")
     }
-    val msg = message?.let { "$it. " } ?: ""
+
+    @Suppress("INVISIBLE_MEMBER")
+    val msg = messagePrefix(message)
     asserter.fail(msg + "Expected an exception of type $exceptionClass to be thrown, but was completed successfully.")
 }
 
@@ -28,7 +49,7 @@ fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?,
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
-@kotlin.internal.InlineOnly
+@InlineOnly
 inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T = assertFailsWith(T::class, message, block)
 
 
@@ -36,7 +57,7 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
  * Comments out a [block] of test code until it is implemented while keeping a link to the code
  * to implement in your unit test output
  */
-@kotlin.internal.InlineOnly
+@InlineOnly
 inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
     System.out.println("TODO at " + currentStackTrace()[0])
 }
@@ -47,13 +68,6 @@ inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
  * stack, which is the place where [currentStackTrace] function was called from.
  */
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-@kotlin.internal.InlineOnly
+@InlineOnly
 inline fun currentStackTrace() = (java.lang.Exception() as java.lang.Throwable).stackTrace
-
-/**
- * The active implementation of [Asserter]. An implementation of [Asserter] can be provided
- * using the [Java service loader](http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html) mechanism.
- */
-val asserter: Asserter
-    get() = lookup()
 

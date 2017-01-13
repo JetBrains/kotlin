@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-@file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("AssertionsKt")
-
 /**
  * A number of helper methods for writing unit tests.
  */
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("AssertionsKt")
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+
 package kotlin.test
 
 import kotlin.internal.*
+
+val asserter: Asserter
+    get() = lookupAsserter()
 
 /** Asserts that the given [block] returns `true`. */
 fun assertTrue(message: String? = null, block: () -> Boolean): Unit = assertTrue(block(), message)
@@ -95,8 +99,7 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
     } catch (e: Throwable) {
         return e
     }
-    val msg = message?.let { "$it. " } ?: ""
-    asserter.fail(msg + "Expected an exception to be thrown, but was completed successfully.")
+    asserter.fail(messagePrefix(message) + "Expected an exception to be thrown, but was completed successfully.")
 }
 
 /**
@@ -137,7 +140,7 @@ interface Asserter {
      * @param message the message to report if the assertion fails.
      */
     fun assertEquals(message: String?, expected: Any?, actual: Any?): Unit {
-        assertTrue({ (message?.let { "$it. " } ?: "") + "Expected <$expected>, actual <$actual>." }, actual == expected)
+        assertTrue({ messagePrefix(message) + "Expected <$expected>, actual <$actual>." }, actual == expected)
     }
 
     /**
@@ -146,7 +149,7 @@ interface Asserter {
      * @param message the message to report if the assertion fails.
      */
     fun assertNotEquals(message: String?, illegal: Any?, actual: Any?): Unit {
-        assertTrue({ (message?.let { "$it. " } ?: "") + "Illegal value: <$actual>." }, actual != illegal)
+        assertTrue({ messagePrefix(message) + "Illegal value: <$actual>." }, actual != illegal)
     }
 
     /**
@@ -155,7 +158,7 @@ interface Asserter {
      * @param message the message to report if the assertion fails.
      */
     fun assertNull(message: String?, actual: Any?): Unit {
-        assertTrue({ (message?.let { "$it. " } ?: "") + "Expected value to be null, but was: <$actual>." }, actual == null)
+        assertTrue({ messagePrefix(message) + "Expected value to be null, but was: <$actual>." }, actual == null)
     }
 
     /**
@@ -164,7 +167,7 @@ interface Asserter {
      * @param message the message to report if the assertion fails.
      */
     fun assertNotNull(message: String?, actual: Any?): Unit {
-        assertTrue({ (message?.let { "$it. " } ?: "") + "Expected value to be not null." }, actual != null)
+        assertTrue({ messagePrefix(message) + "Expected value to be not null." }, actual != null)
     }
 
 }

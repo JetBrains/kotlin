@@ -488,7 +488,7 @@
         </jar>
     </target>
 
-    <target name="kotlin-js-stdlib" depends="js-stdlib,pack-js-stdlib-sources"/>
+    <target name="kotlin-js-stdlib" depends="js-stdlib,js-kotlin-test,pack-js-stdlib-sources"/>
 
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
@@ -1061,22 +1061,67 @@
     </target>
 
     <target name="kotlin-test">
-        <new-kotlinc output="${output}/classes/kotlin-test" moduleName="kotlin-test">
-            <src>
-                <include name="libraries/kotlin.test/shared/src/main/kotlin" />
-                <include name="libraries/kotlin.test/shared/src/main/kotlin.jvm" />
-                <include name="libraries/kotlin.test/junit/src/main/kotlin" />
-            </src>
-            <class-path>
-                <pathelement path="${output}/classes/builtins"/>
-                <pathelement path="libraries/lib/junit-4.11.jar"/>
-                <pathelement path="${output}/builtins"/>
-            </class-path>
-        </new-kotlinc>
+        <path id="kotlin-test-compile-classpath">
+            <pathelement location="${output}/classes/builtins"/>
+            <pathelement location="${output}/builtins"/>
+        </path>
+
+        <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
+            <classpath>
+                <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
+            </classpath>
+            <assertions>
+                <enable/>
+            </assertions>
+            <arg value="-cp"/>
+            <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            <arg value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
+            <arg value="-d"/>
+            <arg value="${output}/classes/kotlin-test"/>
+            <arg value="-version"/>
+            <arg value="-no-stdlib"/>
+            <arg value="-classpath"/>
+            <arg value="${toString:kotlin-test-compile-classpath}"/>
+            <arg value="-module-name"/>
+            <arg value="kotlin-test"/>
+            <arg value="-Xallow-kotlin-package"/>
+            <arg value="-Xmulti-platform"/>
+            <arg value="libraries/kotlin.test/shared/src/main/kotlin"/>
+            <arg value="libraries/kotlin.test/jvm/src/main/kotlin"/>
+        </java>
 
         <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}" runtime-component="Test">
             <jar-content>
                 <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal/InlineOnly*,kotlin/internal"/>
+            </jar-content>
+        </pack-runtime-jar>
+    </target>
+    
+    <target name="js-kotlin-test">
+        <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
+            <classpath>
+                <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
+            </classpath>
+            <assertions>
+                <enable/>
+            </assertions>
+            <arg value="-cp"/>
+            <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            <arg value="org.jetbrains.kotlin.cli.js.K2JSCompiler"/>
+            <arg value="-output"/>
+            <arg value="${output}/classes/kotlin-test-js/kotlin-test.js"/>
+            <arg value="-version"/>
+            <arg value="-meta-info"/>
+            <arg value="-kjsm"/>
+            <arg line="-main noCall"/>
+            <arg line="-module-kind umd"/>
+            <arg value="-Xmulti-platform"/>
+            <arg value="libraries/kotlin.test/shared/src/main/kotlin"/>
+            <arg value="libraries/kotlin.test/js/src/main/kotlin"/>
+        </java>
+        <pack-runtime-jar jar-name="kotlin-test-js.jar" implementation-title="${manifest.impl.title.kotlin.test}" runtime-component="TestJs">
+            <jar-content>
+                <fileset dir="${output}/classes/kotlin-test-js" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal/InlineOnly*,kotlin/internal"/>
             </jar-content>
         </pack-runtime-jar>
     </target>

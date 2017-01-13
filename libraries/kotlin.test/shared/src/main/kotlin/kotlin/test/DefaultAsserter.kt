@@ -12,3 +12,6 @@ class DefaultAsserter() : Asserter {
             throw AssertionError(message)
     }
 }
+
+header fun AssertionError(message: String): Throwable
+header fun AssertionError(): Throwable

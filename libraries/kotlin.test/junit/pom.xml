@@ -18,15 +18,9 @@
 		</dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
+            <!--suppress KotlinTestJUnit -->
             <artifactId>kotlin-test</artifactId>
             <version>${project.version}</version>
-
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                    <artifactId>kotlin-js-library</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
@@ -86,12 +80,6 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <dir>${project.basedir}/src/main/kotlin</dir>
-                                <dir>${project.basedir}/src/main/kotlin.jvm</dir>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
 
                     <execution>
@@ -100,12 +88,6 @@
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <dir>${project.basedir}/src/test/kotlin</dir>
-                                <dir>${project.basedir}/src/test/kotlin.jvm</dir>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

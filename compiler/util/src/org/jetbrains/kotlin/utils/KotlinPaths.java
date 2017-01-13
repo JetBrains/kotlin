@@ -49,6 +49,9 @@ public interface KotlinPaths {
     File getJsStdLibSrcJarPath();
 
     @NotNull
+    File getJsKotlinTestJarPath();
+
+    @NotNull
     File getAllOpenPluginJarPath();
 
     @NotNull

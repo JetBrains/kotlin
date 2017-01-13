@@ -1,4 +1,4 @@
 package kotlin.test
 
-internal fun <T, R> T.let(block: (T) -> R): R = block(this)
-
+internal fun messagePrefix(message: String?) = if (message == null) "" else "$message. "
+internal header fun lookupAsserter(): Asserter

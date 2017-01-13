@@ -65,6 +65,7 @@ import java.util.Map;
 import static org.jetbrains.kotlin.js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.kotlin.js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
+import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public abstract class BasicTest extends KotlinTestWithEnvironment {
     // predictable order of ecma version in tests
@@ -319,6 +320,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         if (libraries != null) {
             librariesWithStdlib.addAll(libraries);
         }
+        librariesWithStdlib.add(getKotlinPathsForDistDirectory().getJsKotlinTestJarPath().getAbsolutePath());
+
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, librariesWithStdlib);
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName);

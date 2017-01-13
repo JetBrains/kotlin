@@ -14,7 +14,8 @@
     <modules>
         <module>shared</module>
         <module>junit</module>
-        <!--<module>js</module>--> <!-- TODO enable back when js build fixed -->
+        <module>jvm</module>
+        <module>js</module>
     </modules>
 
     <properties>

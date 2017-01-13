@@ -21,6 +21,11 @@
             <artifactId>kotlin-js-library</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-js</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -105,6 +110,13 @@
                                 <artifactItem>
                                     <groupId>org.jetbrains.kotlin</groupId>
                                     <artifactId>kotlin-js-library</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/js/lib</outputDirectory>
+                                    <includes>*.js</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jetbrains.kotlin</groupId>
+                                    <artifactId>kotlin-test-js</artifactId>
                                     <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}/js/lib</outputDirectory>
                                     <includes>*.js</includes>
