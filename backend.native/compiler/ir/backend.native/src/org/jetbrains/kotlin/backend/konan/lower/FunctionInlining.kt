@@ -21,13 +21,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    fun removeReturn(statements: MutableList<IrStatement>) =
-        statements.map { statement ->
-            (statement as? IrReturn)?.value ?: statement
-        } as MutableList<IrStatement>
-
-    //-------------------------------------------------------------------------//
-
     override fun visitCall(expression: IrCall): IrExpression {
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (!functionDescriptor.isInline) return super.visitCall(expression)                // Function is not to be inlined - do nothing.
