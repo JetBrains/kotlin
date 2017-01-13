@@ -359,7 +359,7 @@ class CompileServiceImpl(
             }
 
             val artifactChanges = RemoteArtifactChangesProvider(servicesFacade)
-            val changesRegistry = RemoteChangesRegostry(servicesFacade)
+            val changesRegistry = RemoteChangesRegistry(servicesFacade)
 
             val workingDir = servicesFacade.workingDir()
             val versions = commonCacheVersions(workingDir) +
