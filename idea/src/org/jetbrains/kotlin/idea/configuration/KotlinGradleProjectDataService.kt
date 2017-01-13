@@ -86,7 +86,7 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSe
 
             val coroutinesProperty = findKotlinCoroutinesProperty(project)
 
-            val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider)
+            val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
             kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
             GradleProjectImportHandler.getInstances(project).forEach { it(kotlinFacet, sourceSetNode) }
         }

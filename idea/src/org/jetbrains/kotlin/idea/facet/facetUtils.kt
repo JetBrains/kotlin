@@ -150,14 +150,14 @@ val TargetPlatformKind<*>.mavenLibraryId: String
         is TargetPlatformKind.Common -> MAVEN_COMMON_STDLIB_ID
     }
 
-fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider): KotlinFacet {
+fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider, useProjectSettings: Boolean): KotlinFacet {
     val facetModel = modelsProvider.getModifiableFacetModel(this)
 
     facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)?.let { return it }
 
     val facet = with(KotlinFacetType.INSTANCE) { createFacet(this@getOrCreateFacet, defaultFacetName, createDefaultConfiguration(), null) }
     facetModel.addFacet(facet)
-    facet.configuration.settings.useProjectSettings = true
+    facet.configuration.settings.useProjectSettings = useProjectSettings
     return facet
 }
 

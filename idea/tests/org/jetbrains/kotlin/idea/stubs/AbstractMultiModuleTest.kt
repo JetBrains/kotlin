@@ -78,7 +78,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         val accessToken = WriteAction.start()
         try {
             val modelsProvider = IdeModifiableModelsProviderImpl(project)
-            getOrCreateFacet(modelsProvider)
+            getOrCreateFacet(modelsProvider, true)
             modelsProvider.commit()
         }
         finally {
