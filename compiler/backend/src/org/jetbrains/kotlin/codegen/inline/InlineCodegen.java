@@ -248,9 +248,9 @@ public class InlineCodegen extends CallGenerator {
                     );
             return new SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1));
         }
-        else if (CoroutineCodegenUtilKt.isBuiltInSuspendWithCurrentContinuation(functionDescriptor)) {
+        else if (CoroutineCodegenUtilKt.isBuiltInSuspendCoroutineOrReturnInJvm(functionDescriptor)) {
             return new SMAPAndMethodNode(
-                    CoroutineCodegenUtilKt.createMethodNodeForSuspendWithCurrentContinuation(
+                    CoroutineCodegenUtilKt.createMethodNodeForSuspendCoroutineOrReturn(
                             functionDescriptor, codegen.getState().getTypeMapper()
                     ),
                     SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)

@@ -2,6 +2,7 @@
 // WITH_COROUTINES
 // TREAT_AS_ONE_FILE
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 suspend fun suspendHere() = ""
 
 fun builder(c: suspend () -> Unit) {
@@ -21,5 +22,4 @@ fun box(): String {
 
 // 2 GETSTATIC kotlin/Unit.INSTANCE : Lkotlin/Unit;
 // 1 GETSTATIC EmptyContinuation.INSTANCE
-// 2 GETSTATIC kotlin/coroutines/CoroutineIntrinsics.INSTANCE
-// 5 GETSTATIC
+// 3 GETSTATIC

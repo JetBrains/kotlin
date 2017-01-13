@@ -17,22 +17,20 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.SUSPEND_WITH_CURRENT_CONTINUATION_NAME
-import org.jetbrains.kotlin.backend.common.getBuiltInSuspendWithCurrentContinuation
+import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
+import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
@@ -175,22 +173,15 @@ private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction() =
                 arguments = listOf(returnType!!.asTypeProjection())
         )
 
-fun FunctionDescriptor.isBuiltInSuspendWithCurrentContinuation(): Boolean {
-    if (name != SUSPEND_WITH_CURRENT_CONTINUATION_NAME) return false
+fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() =
+        getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn() == true
 
-    val originalDeclaration = getBuiltInSuspendWithCurrentContinuation() ?: return false
-
-    return DescriptorEquivalenceForOverrides.areEquivalent(
-            originalDeclaration, this.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
-    )
-}
-
-fun createMethodNodeForSuspendWithCurrentContinuation(
+fun createMethodNodeForSuspendCoroutineOrReturn(
         functionDescriptor: FunctionDescriptor,
         typeMapper: KotlinTypeMapper
 ): MethodNode {
-    assert(functionDescriptor.isBuiltInSuspendWithCurrentContinuation()) {
-        "functionDescriptor must be kotlin.coroutines.suspendWithCurrentContinuation"
+    assert(functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm()) {
+        "functionDescriptor must be kotlin.coroutines.intrinsics.suspendOrReturn"
     }
 
     val node =
@@ -220,12 +211,9 @@ fun CallableDescriptor?.unwrapInitialDescriptorForSuspendFunction() =
         (this as? SimpleFunctionDescriptor)?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) ?: this
 
 fun InstructionAdapter.loadSuspendMarker() {
-    getstatic(
-            AsmTypes.COROUTINES_INTRINSICS.internalName, JvmAbi.INSTANCE_FIELD, AsmTypes.COROUTINES_INTRINSICS.descriptor
-    )
-    invokevirtual(
-            AsmTypes.COROUTINES_INTRINSICS.internalName,
-            "getSUSPENDED",
+    invokestatic(
+            AsmTypes.COROUTINES_INTRINSICS_FILE_FACADE.internalName,
+            "get$SUSPENDED_MARKER_NAME",
             Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
             false
     )

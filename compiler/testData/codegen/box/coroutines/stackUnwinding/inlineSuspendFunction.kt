@@ -5,6 +5,7 @@
 // CHECK_NOT_CALLED: suspendInline_6r51u9$
 // CHECK_NOT_CALLED: suspendInline
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     suspend inline fun suspendInline(v: String): String = v

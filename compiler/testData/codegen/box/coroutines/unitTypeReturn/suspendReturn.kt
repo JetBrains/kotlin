@@ -1,15 +1,16 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var result = "0"
 
 suspend fun suspendHere(x: Int): Unit {
     if (x == 0) return
     result = "OK"
-    return CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    return suspendCoroutineOrReturn { x ->
         x.resume(Unit)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 

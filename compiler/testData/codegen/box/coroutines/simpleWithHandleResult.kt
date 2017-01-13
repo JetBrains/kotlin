@@ -1,10 +1,11 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
     x.resume("OK")
-    CoroutineIntrinsics.SUSPENDED
+    SUSPENDED_MARKER
 }
 
 fun builder(c: suspend () -> Int): Int {

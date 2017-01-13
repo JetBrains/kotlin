@@ -1,25 +1,26 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     var exception: Throwable? = null
     val postponedActions = ArrayList<() -> Unit>()
 
-    suspend fun suspendWithValue(v: String): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun suspendWithValue(v: String): String = suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resume(v)
         }
 
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
-    suspend fun suspendWithException(e: Exception): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun suspendWithException(e: Exception): String = suspendCoroutineOrReturn { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }
 
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
     fun run(c: suspend Controller.() -> Unit) {

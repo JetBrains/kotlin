@@ -2,6 +2,7 @@
 // WITH_COROUTINES
 // FILE: promise.kt
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Promise<T>(private val executor: ((T) -> Unit) -> Unit) {
     private var value: Any? = null
@@ -49,6 +50,7 @@ fun processQueue() {
 
 // FILE: await.kt
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 private var log = ""
 
@@ -65,7 +67,6 @@ suspend fun <S> await(value: Promise<S>): S = suspendCoroutine { continuation ->
         }
     }
     inAwait = false
-    CoroutineIntrinsics.SUSPENDED
 }
 
 suspend fun <S> awaitAndLog(value: Promise<S>): S {
@@ -95,6 +96,7 @@ fun getLog() = log
 
 // FILE: main.kt
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 private fun test() = async<String> {
     val o = await(asyncOperation { "O" })

@@ -2,7 +2,8 @@
 // WITH_COROUTINES
 // TREAT_AS_ONE_FILE
 import kotlin.coroutines.*
-suspend fun suspendHere(): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+import kotlin.coroutines.intrinsics.*
+suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
     x.resume("OK")
 }
 

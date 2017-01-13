@@ -3,6 +3,7 @@
 
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun foo(): CompletableFuture<String> = CompletableFuture.supplyAsync { "foo" }
 fun bar(v: String): CompletableFuture<String> = CompletableFuture.supplyAsync { "bar with $v" }
@@ -58,12 +59,12 @@ fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     return future
 }
 
-suspend fun <V> await(f: CompletableFuture<V>) = CoroutineIntrinsics.suspendCoroutineOrReturn<V> { machine ->
+suspend fun <V> await(f: CompletableFuture<V>) = suspendCoroutineOrReturn<V> { machine ->
     f.whenComplete { value, throwable ->
         if (throwable == null)
             machine.resume(value)
         else
             machine.resumeWithException(throwable)
     }
-    CoroutineIntrinsics.SUSPENDED
+    SUSPENDED_MARKER
 }

@@ -1,14 +1,15 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     var log = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { x ->
         log += "suspend($value);"
         x.resume(value)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 

@@ -1,23 +1,24 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
-    suspend fun noParams(): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn {
+    suspend fun noParams(): Unit = suspendCoroutineOrReturn {
         if (hashCode() % 2 == 0) {
             it.resume(Unit)
-            CoroutineIntrinsics.SUSPENDED
+            SUSPENDED_MARKER
         }
         else {
             Unit
         }
     }
-    suspend fun yieldString(value: String) = CoroutineIntrinsics.suspendCoroutineOrReturn<Int> {
+    suspend fun yieldString(value: String) = suspendCoroutineOrReturn<Int> {
         it.resume(1)
         it checkType { _<Continuation<Int>>() }
         it.resume(<!TYPE_MISMATCH!>""<!>)
 
-        // We can return anything here, 'CoroutineIntrinsics.suspendCoroutineOrReturn' is not very type-safe
+        // We can return anything here, 'suspendCoroutineOrReturn' is not very type-safe
         // Also we can call resume and then return the value too, but it's still just our problem
         "Not-int"
     }

@@ -3,11 +3,12 @@
 // TREAT_AS_ONE_FILE
 // TARGET_BACKEND: JVM
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere(): Unit = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
         x.resume(Unit)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 

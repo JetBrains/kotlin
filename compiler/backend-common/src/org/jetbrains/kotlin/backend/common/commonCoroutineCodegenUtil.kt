@@ -19,12 +19,24 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
-val SUSPEND_WITH_CURRENT_CONTINUATION_NAME = Name.identifier("suspendWithCurrentContinuation")
+val SUSPEND_COROUTINE_OR_RETURN_NAME = Name.identifier("suspendCoroutineOrReturn")
 val CONTINUATION_RESUME_METHOD_NAME = Name.identifier("resume")
+val SUSPENDED_MARKER_NAME = Name.identifier("SUSPENDED_MARKER")
 
-fun FunctionDescriptor.getBuiltInSuspendWithCurrentContinuation() =
-        builtIns.builtInsCoroutinePackageFragment.getMemberScope()
-                .getContributedFunctions(SUSPEND_WITH_CURRENT_CONTINUATION_NAME, NoLookupLocation.FROM_BACKEND)
+fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturn(): Boolean {
+    if (name != SUSPEND_COROUTINE_OR_RETURN_NAME) return false
+
+    val originalDeclaration = getBuiltInSuspendCoroutineOrReturn() ?: return false
+
+    return DescriptorEquivalenceForOverrides.areEquivalent(
+            originalDeclaration, this
+    )
+}
+
+fun FunctionDescriptor.getBuiltInSuspendCoroutineOrReturn() =
+        builtIns.builtInsCoroutineIntrinsicsPackageFragment.getMemberScope()
+                .getContributedFunctions(SUSPEND_COROUTINE_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
                 .singleOrNull()

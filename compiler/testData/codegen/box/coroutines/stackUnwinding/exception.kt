@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     suspend fun suspendHere(): String = throw RuntimeException("OK")

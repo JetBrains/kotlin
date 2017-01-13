@@ -194,17 +194,12 @@ public final class kotlin/coroutines/ContinuationDispatcher$DefaultImpls {
 	public static fun dispatchResumeWithException (Lkotlin/coroutines/ContinuationDispatcher;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Z
 }
 
-public final class kotlin/coroutines/CoroutineIntrinsics {
-	public static final field INSTANCE Lkotlin/coroutines/CoroutineIntrinsics;
-	public final fun getSUSPENDED ()Ljava/lang/Object;
-	public final fun suspendCoroutineOrReturn (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlin/coroutines/CoroutinesKt {
-	public static final fun suspendWithCurrentContinuation (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public abstract interface annotation class kotlin/coroutines/RestrictsSuspension : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
+	public static final fun getSUSPENDED_MARKER ()Ljava/lang/Object;
+	public static final fun suspendCoroutineOrReturn (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class kotlin/jvm/JvmClassMappingKt {

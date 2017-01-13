@@ -1,8 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-suspend fun suspendHere(): Any = CoroutineIntrinsics.suspendCoroutineOrReturn { x -> }
+suspend fun suspendHere(): Any = suspendCoroutineOrReturn { x -> }
 
 fun builder(c: suspend () -> Unit) {
     var exception: Throwable? = null

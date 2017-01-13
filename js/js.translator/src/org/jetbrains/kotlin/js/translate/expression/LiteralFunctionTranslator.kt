@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.expression
 
+import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
 import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -46,8 +47,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
     companion object {
-        private val SUSPEND_NAME = Name.identifier("SUSPENDED")
-        private val COROUTINE_INTRINSICS_FQ_NAME = FqName("kotlin.coroutines.CoroutineIntrinsics")
+        private val COROUTINE_INTRINSICS_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.intrinsics")
     }
 
     fun translate(
@@ -114,10 +114,8 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     fun JsFunction.fillCoroutineMetadata(context: TranslationContext, continuationType: KotlinType?) {
         if (continuationType == null) return
 
-        val suspendPropertyDescriptor = context().currentModule.getPackage(COROUTINE_INTRINSICS_FQ_NAME.parent())
-                .memberScope.getContributedClassifier(COROUTINE_INTRINSICS_FQ_NAME.shortName(), NoLookupLocation.FROM_BACKEND)
-                .let { (it as ClassDescriptor) }.unsubstitutedMemberScope
-                .getContributedVariables(SUSPEND_NAME, NoLookupLocation.FROM_BACKEND).first()
+        val suspendPropertyDescriptor = context().currentModule.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQ_NAME)
+                .memberScope.getContributedVariables(SUSPENDED_MARKER_NAME, NoLookupLocation.FROM_BACKEND).first()
 
         val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
 

@@ -17,6 +17,7 @@
 package kotlin.jvm.internal
 
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
 
 private const val INTERCEPT_BIT_SET = 1 shl 31
 private const val INTERCEPT_BIT_CLEAR = INTERCEPT_BIT_SET.inv()
@@ -73,7 +74,7 @@ abstract class RestrictedCoroutineImpl : Lambda, Continuation<Any?> {
     override fun resume(value: Any?) {
         try {
             val result = doResume(value, null)
-            if (result != CoroutineIntrinsics.SUSPENDED)
+            if (result != SUSPENDED_MARKER)
                 completion!!.resume(result)
         } catch (e: Throwable) {
             completion!!.resumeWithException(e)
@@ -83,7 +84,7 @@ abstract class RestrictedCoroutineImpl : Lambda, Continuation<Any?> {
     override fun resumeWithException(exception: Throwable) {
         try {
             val result = doResume(null, exception)
-            if (result != CoroutineIntrinsics.SUSPENDED)
+            if (result != SUSPENDED_MARKER)
                 completion!!.resume(result)
         } catch (e: Throwable) {
             completion!!.resumeWithException(e)

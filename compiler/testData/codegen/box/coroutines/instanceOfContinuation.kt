@@ -2,18 +2,19 @@
 // WITH_COROUTINES
 // WITH_REFLECT
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
-    suspend fun runInstanceOf(): Boolean = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun runInstanceOf(): Boolean = suspendCoroutineOrReturn { x ->
         val y: Any = x
         x.resume(x is Continuation<*>)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 
-    suspend fun runCast(): Boolean = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun runCast(): Boolean = suspendCoroutineOrReturn { x ->
         val y: Any = x
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 

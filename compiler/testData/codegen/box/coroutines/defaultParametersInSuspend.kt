@@ -1,11 +1,12 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere(a: String = "abc", i: Int = 2): String = CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(a: String = "abc", i: Int = 2): String = suspendCoroutineOrReturn { x ->
         x.resume(a + "#" + (i + 1))
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 

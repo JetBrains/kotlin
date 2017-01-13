@@ -42,7 +42,7 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
     public static final Type COROUTINE_IMPL = Type.getObjectType("kotlin/jvm/internal/CoroutineImpl");
     public static final Type RESTRICTED_COROUTINE_IMPL = Type.getObjectType("kotlin/jvm/internal/RestrictedCoroutineImpl");
-    public static final Type COROUTINES_INTRINSICS = Type.getObjectType("kotlin/coroutines/CoroutineIntrinsics");
+    public static final Type COROUTINES_INTRINSICS_FILE_FACADE = Type.getObjectType("kotlin/coroutines/intrinsics/IntrinsicsKt");
     public static final Type CONTINUATION = Type.getObjectType("kotlin/coroutines/Continuation");
 
 

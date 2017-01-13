@@ -2,6 +2,7 @@
 // WITH_COROUTINES
 // IGNORE_BACKEND: JS
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var result = "0"
 
@@ -13,9 +14,9 @@ suspend fun suspendHere(x: Int): Unit {
     }
 
     result = "OK"
-    return CoroutineIntrinsics.suspendCoroutineOrReturn { x ->
+    return suspendCoroutineOrReturn { x ->
         x.resume(Unit)
-        CoroutineIntrinsics.SUSPENDED
+        SUSPENDED_MARKER
     }
 }
 
