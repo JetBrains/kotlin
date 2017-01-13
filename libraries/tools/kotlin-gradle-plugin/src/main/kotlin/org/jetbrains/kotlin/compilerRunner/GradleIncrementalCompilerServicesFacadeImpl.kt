@@ -29,9 +29,22 @@ internal open class GradleCompilerServicesFacadeImpl(
         val reportCategory = ReportCategory.fromCode(category)
 
         when (reportCategory) {
+            ReportCategory.OUTPUT_MESSAGE -> {
+                compilerMessageCollector.report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
+            }
+            ReportCategory.EXCEPTION -> {
+                compilerMessageCollector.report(CompilerMessageSeverity.EXCEPTION, message!!, CompilerMessageLocation.NO_LOCATION)
+            }
             ReportCategory.COMPILER_MESSAGE -> {
-                if (message != null && attachment is CompilerMessageAttachment) {
-                    compilerMessageCollector.report(attachment.severity, message, attachment.location)
+                val compilerSeverity = when (ReportSeverity.fromCode(severity)) {
+                    ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
+                    ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
+                    ReportSeverity.INFO -> CompilerMessageSeverity.INFO
+                    ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
+                    else -> throw IllegalStateException("Unexpected compiler message report severity $severity")
+                }
+                if (message != null && attachment is CompilerMessageLocation) {
+                    compilerMessageCollector.report(compilerSeverity, message, attachment)
                 }
                 else {
                     reportUnexpectedMessage(category, severity, message, attachment)
@@ -42,9 +55,6 @@ internal open class GradleCompilerServicesFacadeImpl(
             }
             ReportCategory.DAEMON_MESSAGE -> {
                 log.kotlinDebug { "[DAEMON] $message" }
-            }
-            ReportCategory.OUTPUT_MESSAGE -> {
-                compilerMessageCollector.report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
             }
             else -> {
                 reportUnexpectedMessage(category, severity, message, attachment)

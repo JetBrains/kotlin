@@ -33,25 +33,28 @@ internal class CompileServicesFacadeMessageCollector(
     }
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-        val reportCategory = when (severity) {
-            CompilerMessageSeverity.OUTPUT -> ReportCategory.OUTPUT_MESSAGE
-            else -> ReportCategory.COMPILER_MESSAGE
+        when (severity) {
+            CompilerMessageSeverity.OUTPUT -> {
+                servicesFacade.report(ReportCategory.OUTPUT_MESSAGE, ReportSeverity.ERROR, message)
+            }
+            CompilerMessageSeverity.EXCEPTION -> {
+                servicesFacade.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message)
+            }
+            else -> {
+                val reportSeverity = when (severity) {
+                    CompilerMessageSeverity.ERROR -> ReportSeverity.ERROR
+                    CompilerMessageSeverity.WARNING -> ReportSeverity.WARNING
+                    CompilerMessageSeverity.INFO -> ReportSeverity.INFO
+                    else -> ReportSeverity.DEBUG
+                }
+
+                if (reportSeverity.code <= mySeverity) {
+                    servicesFacade.report(ReportCategory.COMPILER_MESSAGE, reportSeverity, message, location)
+                }
+            }
         }
 
-        val reportSeverity = when (severity) {
-            CompilerMessageSeverity.ERROR,
-            CompilerMessageSeverity.EXCEPTION -> ReportSeverity.ERROR
-            CompilerMessageSeverity.WARNING -> ReportSeverity.WARNING
-            CompilerMessageSeverity.INFO -> ReportSeverity.INFO
-            CompilerMessageSeverity.LOGGING -> ReportSeverity.DEBUG
-            CompilerMessageSeverity.OUTPUT -> ReportSeverity.ERROR
-        }
-
-        if (reportSeverity.code <= mySeverity) {
-            servicesFacade.report(reportCategory, reportSeverity, message, CompilerMessageAttachment(severity, location))
-        }
-
-        hasErrors = hasErrors || severity == CompilerMessageSeverity.ERROR
+        hasErrors = hasErrors || severity == CompilerMessageSeverity.ERROR || severity == CompilerMessageSeverity.EXCEPTION
     }
 
     override fun hasErrors(): Boolean = hasErrors
