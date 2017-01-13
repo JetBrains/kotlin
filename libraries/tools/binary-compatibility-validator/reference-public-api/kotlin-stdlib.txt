@@ -1753,21 +1753,36 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
+public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin/coroutines/CoroutineContextElement {
+	public fun <init> ()V
+	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun get (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContextElement;
+	public fun minusKey (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContext;
+	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+}
+
 public final class kotlin/coroutines/CoroutinesLibraryKt {
-	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)Lkotlin/coroutines/Continuation;
-	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)Lkotlin/coroutines/Continuation;
-	public static synthetic fun createCoroutine$default (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)Lkotlin/coroutines/Continuation;
-	public static synthetic fun createCoroutine$default (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)Lkotlin/coroutines/Continuation;
-	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)V
-	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;)V
-	public static synthetic fun startCoroutine$default (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)V
-	public static synthetic fun startCoroutine$default (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;Lkotlin/coroutines/ContinuationDispatcher;ILjava/lang/Object;)V
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)V
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)V
 	public static final fun suspendCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class kotlin/coroutines/EmptyCoroutineContext : kotlin/coroutines/CoroutineContext {
+	public static final field INSTANCE Lkotlin/coroutines/EmptyCoroutineContext;
+	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun get (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContextElement;
+	public fun hashCode ()I
+	public fun minusKey (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContext;
+	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation {
 	public static final field Companion Lkotlin/coroutines/SafeContinuation$Companion;
 	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun getResult ()Ljava/lang/Object;
 	public fun resume (Ljava/lang/Object;)V
 	public fun resumeWithException (Ljava/lang/Throwable;)V
