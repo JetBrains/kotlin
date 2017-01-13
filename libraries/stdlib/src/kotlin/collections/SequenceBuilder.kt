@@ -3,10 +3,12 @@
 package kotlin.sequences
 
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 /**
  *  Builds a [Sequence] lazily yielding values one by one.
  */
+@SinceKotlin("1.1")
 public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIteratorImpl(builderAction) }
 
 
@@ -14,6 +16,7 @@ public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Uni
  * Builder for a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
  */
 @RestrictsSuspension
+@SinceKotlin("1.1")
 public abstract class SequenceBuilder<in T> internal constructor() {
     /**
      * Yields a value to the [Iterator] being built.
@@ -46,7 +49,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
 
 
 internal fun <T> buildIteratorImpl(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
-    val iterator = YieldingIterator<T>()
+    val iterator = SequenceBuilderIterator<T>()
     iterator.nextStep = builderAction.createCoroutine(receiver = iterator, completion = iterator)
     return iterator
 }
@@ -62,7 +65,7 @@ private const val State_Done: State = 3
 private const val State_Failed: State = 4
 
 
-private class YieldingIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuation<Unit> {
+private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuation<Unit> {
     private var state = State_NotReady
     private var nextValue: T? = null
     private var nextIterator: Iterator<T>? = null
@@ -114,9 +117,9 @@ private class YieldingIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuat
     suspend override fun yield(value: T) {
         nextValue = value
         state = State_Ready
-        return CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+        return suspendCoroutineOrReturn { c ->
             nextStep = c
-            CoroutineIntrinsics.SUSPENDED
+            SUSPENDED_MARKER
         }
     }
 
@@ -124,9 +127,9 @@ private class YieldingIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuat
         if (!iterator.hasNext()) return
         nextIterator = iterator
         state = State_ManyReady
-        return CoroutineIntrinsics.suspendCoroutineOrReturn { c ->
+        return suspendCoroutineOrReturn { c ->
             nextStep = c
-            CoroutineIntrinsics.SUSPENDED
+            SUSPENDED_MARKER
         }
     }
 
@@ -138,4 +141,7 @@ private class YieldingIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuat
     override fun resumeWithException(exception: Throwable) {
         throw exception // just rethrow
     }
+
+    override val context: CoroutineContext
+        get() = EmptyCoroutineContext
 }
