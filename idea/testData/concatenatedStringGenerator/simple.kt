@@ -1,1 +1,1 @@
-"foo" + "bar"
+val test = "foo" + "bar"
