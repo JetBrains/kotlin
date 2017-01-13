@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
-import org.jetbrains.kotlin.types.KotlinType
 
 var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
@@ -68,8 +67,6 @@ var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
 var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEffectKind.AFFECTS_STATE)
 
-var JsFunction.coroutineType: KotlinType? by MetadataProperty(default = null)
-
 /**
  * Denotes a suspension call-site that is to be processed by coroutine transformer.
  * More clearly, denotes invocation that should immediately return from coroutine state machine
@@ -99,6 +96,12 @@ var JsNameRef.coroutineResult by MetadataProperty(default = false)
  */
 var JsNameRef.coroutineController by MetadataProperty(default = false)
 
+/**
+ * Denotes a reference to coroutine's receiver. It's later rewritten to `this`. Required to distinguish between `this` for
+ * function's dispatch receiver and coroutine's state receiver.
+ */
+var JsNameRef.coroutineReceiver by MetadataProperty(default = false)
+
 var JsName.imported by MetadataProperty(default = false)
 
 var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default = null)
@@ -114,7 +117,9 @@ class CoroutineMetadata(
         val facadeName: JsName,
         val baseClassRef: JsExpression,
         val suspendObjectRef: JsExpression,
-        val hasController: Boolean
+        val isLambda: Boolean,
+        val hasController: Boolean,
+        val hasReceiver: Boolean
 )
 
 enum class TypeCheck {

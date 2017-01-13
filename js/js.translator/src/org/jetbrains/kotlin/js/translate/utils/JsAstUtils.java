@@ -539,4 +539,11 @@ public final class JsAstUtils {
     public static JsExpression prototypeOf(@NotNull JsExpression expression) {
         return pureFqn("prototype", expression);
     }
+
+    @NotNull
+    public static JsExpression stateMachineReceiver() {
+        JsNameRef result = new JsNameRef("$this$");
+        MetadataProperties.setCoroutineReceiver(result, true);
+        return result;
+    }
 }

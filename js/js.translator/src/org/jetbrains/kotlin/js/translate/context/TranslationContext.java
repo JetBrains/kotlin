@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -106,7 +107,7 @@ public class TranslationContext {
         }
         if (declarationDescriptor instanceof FunctionDescriptor) {
             FunctionDescriptor function = (FunctionDescriptor) declarationDescriptor;
-            if (function.isSuspend()) {
+            if (function.isSuspend() && !(function instanceof AnonymousFunctionDescriptor)) {
                 ClassDescriptor continuationDescriptor = getCurrentModule().getBuiltIns().getBuiltInClassByFqName(
                         DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME);
                 return new LocalVariableDescriptor(
@@ -403,7 +404,7 @@ public class TranslationContext {
             return alias;
         }
         if (isCoroutineLambda(descriptor.getContainingDeclaration())) {
-            JsNameRef result = new JsNameRef("$$controller$$", JsLiteral.THIS);
+            JsNameRef result = new JsNameRef("$$controller$$", JsAstUtils.stateMachineReceiver());
             MetadataProperties.setCoroutineController(result, true);
             return result;
         }
@@ -678,10 +679,6 @@ public class TranslationContext {
             descriptor = descriptor.getContainingDeclaration();
         }
         return false;
-    }
-
-    public boolean isInSuspendFunction() {
-        return declarationDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) declarationDescriptor).isSuspend();
     }
 
     @Nullable

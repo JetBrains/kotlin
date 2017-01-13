@@ -112,7 +112,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
         override fun endVisit(x: JsDebugger, ctx: JsContext<in JsStatement>) {
             val target = x.targetBlock
             if (target != null) {
-                val lhs = JsNameRef(context.metadata.stateName, JsLiteral.THIS)
+                val lhs = JsNameRef(context.metadata.stateName, JsAstUtils.stateMachineReceiver())
                 val rhs = program.getNumberLiteral(blockIndexes[target]!!)
                 ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
                     targetBlock = true
@@ -121,7 +121,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
 
             val exceptionTarget = x.targetExceptionBlock
             if (exceptionTarget != null) {
-                val lhs = JsNameRef(context.metadata.exceptionStateName, JsLiteral.THIS)
+                val lhs = JsNameRef(context.metadata.exceptionStateName, JsAstUtils.stateMachineReceiver())
                 val rhs = program.getNumberLiteral(blockIndexes[exceptionTarget]!!)
                 ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
                     targetExceptionBlock = true
@@ -131,7 +131,7 @@ fun List<CoroutineBlock>.replaceCoroutineFlowStatements(context: CoroutineTransf
             val finallyPath = x.finallyPath
             if (finallyPath != null) {
                 if (finallyPath.isNotEmpty()) {
-                    val lhs = JsNameRef(context.metadata.finallyPathName, JsLiteral.THIS)
+                    val lhs = JsNameRef(context.metadata.finallyPathName, JsAstUtils.stateMachineReceiver())
                     val rhs = JsArrayLiteral(finallyPath.map { program.getNumberLiteral(blockIndexes[it]!!) })
                     ctx.replaceMe(JsExpressionStatement(JsAstUtils.assignment(lhs, rhs)).apply {
                         this.finallyPath = true
@@ -200,8 +200,16 @@ private fun CoroutineBlock.collectFinallyPaths(): List<List<CoroutineBlock>> {
 
 fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
     val visitor = object : JsVisitorWithContextImpl() {
+        override fun endVisit(x: JsLiteral.JsThisRef, ctx: JsContext<in JsNode>) {
+            ctx.replaceMe(JsNameRef(context.receiverFieldName, JsLiteral.THIS))
+        }
+
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             when {
+                x.coroutineReceiver -> {
+                    ctx.replaceMe(JsLiteral.THIS)
+                }
+
                 x.coroutineController -> {
                     ctx.replaceMe(JsNameRef(context.controllerFieldName, x.qualifier).apply {
                         sideEffects = SideEffectKind.PURE
