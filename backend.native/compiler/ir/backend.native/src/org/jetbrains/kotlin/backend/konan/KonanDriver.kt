@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -35,10 +36,17 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
 
     val config = konanConfig.configuration
 
+    val targets = TargetManager(config)
+    if (config.get(KonanConfigKeys.LIST_TARGETS) ?: false) {
+        targets.list()
+    }
+
     KonanPhases.config(konanConfig)
     if (config.get(KonanConfigKeys.LIST_PHASES) ?: false) {
         KonanPhases.list()
     }
+
+    if (config.kotlinSourceRoots.isEmpty()) return
 
     val collector = config.getNotNull(
         CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)

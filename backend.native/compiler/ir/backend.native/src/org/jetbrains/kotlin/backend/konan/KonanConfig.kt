@@ -16,13 +16,15 @@ import java.io.File
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
+    internal val distribution = Distribution(configuration)
+
     internal val libraries: List<String> 
         get() {
             val fromCommandLine = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
             if (configuration.get(KonanConfigKeys.NOSTDLIB) ?: false) {
                 return fromCommandLine
             }
-            return fromCommandLine + Distribution.stdlib
+            return fromCommandLine + distribution.stdlib
         }
 
     private val loadedDescriptors = loadLibMetadata(libraries)

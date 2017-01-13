@@ -1,21 +1,26 @@
-import org.jetbrains.kotlin.CompileCppToBitcode
+import org.jetbrains.kotlin.CompilePerTarget
 
 // TODO: consider using some Gradle plugins to build and test
 
 
-task build(type: CompileCppToBitcode) {
+task build(type: CompilePerTarget) {
     name 'runtime'
     srcRoot file('src/main')
-
-    dependsOn ':common:compileHash'
-    dependsOn 'launcher'
+    dependsOn ":common:compileHash"
+    dependsOn "launcher"
+    targetList targetList
+    targetArgs targetArgs
     compilerArgs '-I' + project.file('../common/src/hash/headers') // TODO: copy-pasted from 'common'
-    linkerArgs project.file('../common/build/hash.bc').path
+    targetLinkerArgs targetList.collectEntries {
+        [it,[project.file("../common/build/$it/hash.bc")]]
+    }
 }
 
-task launcher(type: CompileCppToBitcode) {
+task launcher(type: CompilePerTarget) {
     name 'launcher'
     srcRoot file('src/launcher')
+    targetList targetList
+    targetArgs targetArgs
     compilerArgs '-I' + project.file('../common/src/hash/headers') // TODO: copy-pasted from 'common'
     compilerArgs '-I' + project.file('src/main/cpp')
 }

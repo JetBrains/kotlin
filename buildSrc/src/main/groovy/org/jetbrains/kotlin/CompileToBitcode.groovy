@@ -1,16 +1,65 @@
 package org.jetbrains.kotlin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
+class CompilePerTarget extends CompileCppToBitcode {
+    private List<String> targetList = []
+    private Map<String, List<String>> targetArgs = null
+    private Map<String, List<String>> targetLinkerArgs = null
+
+    void targetList(List<String> list) {
+        targetList.addAll(list)
+    }
+
+    void targetArgs(Map<String, List<String>> map) {
+        targetArgs = map
+    }
+
+    private Map<String, List<String>> getTargetArgs() {
+        return targetArgs
+    }
+
+    void targetLinkerArgs(Map<String, List<String>> map) {
+        targetLinkerArgs = map
+    }
+
+    private Map<String, List<String>> getTargetLinkerArgs() {
+        return targetLinkerArgs
+    }
+
+    @TaskAction
+    void compile() {
+        def targetList = this.targetList
+        def targetArgs = getTargetArgs()
+        def targetLinkerArgs = getTargetLinkerArgs()
+        def commonCompilerArgs = getCompilerArgs().clone()
+        def commonLinkerArgs = getLinkerArgs().clone()
+        targetList.each {
+            this.compilerArgs = [] 
+            this.linkerArgs = []
+            target(it)
+            compilerArgs(commonCompilerArgs)
+            if (targetArgs != null)
+                compilerArgs(targetArgs[it])
+            linkerArgs(commonLinkerArgs)
+            if (targetLinkerArgs != null)
+                linkerArgs(targetLinkerArgs[it])
+            super.compile()
+        }
+    }
+}
+
 class CompileCppToBitcode extends DefaultTask {
     private String name = "main"
+    private String target = "host"
     private File srcRoot;
 
-    private List<String> compilerArgs = []
-    private List<String> linkerArgs = []
+    protected List<String> compilerArgs = []
+    protected List<String> linkerArgs = []
 
     @InputDirectory
     File getSrcRoot() {
@@ -19,7 +68,7 @@ class CompileCppToBitcode extends DefaultTask {
 
     @OutputFile
     File getOutFile() {
-        return new File(project.buildDir, "${name}.bc")
+        return new File(getTargetDir(), "${name}.bc")
     }
 
     private File getSrcDir() {
@@ -30,23 +79,31 @@ class CompileCppToBitcode extends DefaultTask {
         return new File(this.getSrcRoot(), "headers")
     }
 
+    private File getTargetDir() {
+        return new File(project.buildDir, target)
+    }
+
     private File getObjDir() {
-        return new File(project.buildDir, name)
+        return new File(getTargetDir(), name)
     }
 
     void name(String value) {
         name = value
     }
 
+    void target(String value) {
+        target = value
+    }
+
     void srcRoot(File value) {
         srcRoot = value
     }
 
-    private List<String> getCompilerArgs() {
+    protected List<String> getCompilerArgs() {
         return compilerArgs
     }
 
-    private List<String> getLinkerArgs() {
+    protected List<String> getLinkerArgs() {
         return linkerArgs
     }
 
@@ -54,7 +111,15 @@ class CompileCppToBitcode extends DefaultTask {
         compilerArgs.addAll(args)
     }
 
+    void compilerArgs(List<String> args) {
+        compilerArgs.addAll(args)
+    }
+
     void linkerArgs(String... args) {
+        linkerArgs.addAll(args)
+    }
+
+    void linkerArgs(List<String> args) {
         linkerArgs.addAll(args)
     }
 

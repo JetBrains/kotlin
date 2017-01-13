@@ -1,15 +1,14 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 import java.util.Properties
 
-public class KonanProperties(config: CompilerConfiguration) {
+public class KonanProperties(val propertyFile: String) {
 
     val properties = Properties()
 
     init {
-        val file = File(config.get(KonanConfigKeys.PROPERTY_FILE))
+        val file = File(propertyFile)
         file.bufferedReader()?.use { reader ->
             properties.load(reader)
         }

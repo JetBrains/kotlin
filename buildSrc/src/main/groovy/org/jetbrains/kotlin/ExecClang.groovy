@@ -34,7 +34,7 @@ class ExecClang {
                     if (executable in ['clang', 'clang++']) {
                         executable = "${project.llvmDir}/bin/$executable"
                     } else {
-                        throw new GradleException("unsupport clang executable: $executable")
+                        throw new GradleException("unsupported clang executable: $executable")
                     }
 
                     environment["PATH"] = project.files(project.clangPath).asPath +

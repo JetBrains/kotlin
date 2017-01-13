@@ -250,7 +250,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val staticData = StaticData(context)
 
-    val runtimeFile = context.config.configuration.get(KonanConfigKeys.RUNTIME_FILE)!!
+    val runtimeFile = context.config.distribution.runtime
     val runtime = Runtime(runtimeFile) // TODO: dispose
 
     init {

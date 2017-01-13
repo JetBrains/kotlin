@@ -1,10 +1,11 @@
-import org.jetbrains.kotlin.CompileCppToBitcode
+import org.jetbrains.kotlin.CompilePerTarget
 
 // TODO: consider using some Gradle plugins to build and test
 
-
-task compileHash(type: CompileCppToBitcode) {
+task compileHash(type: CompilePerTarget) {
     name 'hash'
+    targetList targetList
+    targetArgs targetArgs
 }
 
 task build {

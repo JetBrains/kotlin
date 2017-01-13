@@ -33,6 +33,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 internal fun emitLLVM(context: Context) {
 
         val irModule = context.irModule!!
+        // Note that we don't set module target explicitly.
+        // It is determined by the target of runtime.bc 
+        // (see Llvm class in ContextUtils)
+        // Which in turn is determined by the clang flags 
+        // used to compile runtime.bc.
         val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
         context.llvmModule = llvmModule
 

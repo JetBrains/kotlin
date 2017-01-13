@@ -182,8 +182,8 @@ class NamedNativeInteropConfig implements Named {
                 environment['PATH'] = project.files(project.clangPath).asPath +
                         File.pathSeparator + environment['PATH']
 
-                compilerOpts += project.clangArgs
-                linkerOpts   += project.clangArgs
+                compilerOpts += project.hostClangArgs
+                linkerOpts   += project.hostClangArgs
 
                 args compilerOpts.collect { "-copt:$it" }
                 args linkerOpts.collect { "-lopt:$it" }
