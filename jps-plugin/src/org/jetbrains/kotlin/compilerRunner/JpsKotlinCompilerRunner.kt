@@ -110,13 +110,18 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         return res?.get()?.let { exitCodeFromProcessExitCode(it) }
     }
 
-    private fun reportCategories(verbose: Boolean): Array<Int> =
+    private fun reportCategories(verbose: Boolean): Array<Int> {
+        val categories =
             if (!verbose) {
-                arrayOf(ReportCategory.COMPILER_MESSAGE.code)
+                arrayOf(ReportCategory.COMPILER_MESSAGE, ReportCategory.EXCEPTION)
             }
             else {
-                ReportCategory.values().map { it.code }.toTypedArray()
+                ReportCategory.values()
             }
+
+        return categories.map { it.code }.toTypedArray()
+    }
+
 
     private fun reportSeverity(verbose: Boolean): Int =
             if (!verbose) {

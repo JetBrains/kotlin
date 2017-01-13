@@ -39,12 +39,19 @@ internal class JpsCompilerServicesFacadeImpl(
             ReportCategory.OUTPUT_MESSAGE -> {
                 env.messageCollector.report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
             }
+            ReportCategory.EXCEPTION -> {
+                env.messageCollector.report(CompilerMessageSeverity.EXCEPTION, message!!, CompilerMessageLocation.NO_LOCATION)
+            }
             ReportCategory.COMPILER_MESSAGE -> {
-                val compilerMessageAttachment = attachment as? CompilerMessageAttachment
-                if (message != null && compilerMessageAttachment != null) {
-                    val originalSeverity = compilerMessageAttachment.severity
-                    val originalLocation = compilerMessageAttachment.location
-                    env.messageCollector.report(originalSeverity, message, originalLocation)
+                val compilerSeverity = when (ReportSeverity.fromCode(severity)) {
+                    ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
+                    ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
+                    ReportSeverity.INFO -> CompilerMessageSeverity.INFO
+                    ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
+                    else -> throw IllegalStateException("Unexpected compiler message report severity $severity")
+                }
+                if (message != null && attachment is CompilerMessageLocation) {
+                    env.messageCollector.report(compilerSeverity, message, attachment)
                 }
                 else {
                     reportUnexpected(category, severity, message, attachment)

@@ -32,9 +32,10 @@ interface CompilerServicesFacadeBase : Remote {
 
 enum class ReportCategory(val code: Int) {
     COMPILER_MESSAGE(0),
-    DAEMON_MESSAGE(1),
-    IC_MESSAGE(2),
-    OUTPUT_MESSAGE(3);
+    EXCEPTION(1),
+    DAEMON_MESSAGE(2),
+    IC_MESSAGE(3),
+    OUTPUT_MESSAGE(4);
 
     companion object {
         fun fromCode(code: Int): ReportCategory? =
@@ -57,13 +58,4 @@ enum class ReportSeverity(val code: Int) {
 
 fun CompilerServicesFacadeBase.report(category: ReportCategory, severity: ReportSeverity, message: String? = null, attachment: Serializable? = null) {
     report(category.code, severity.code, message, attachment)
-}
-
-data class CompilerMessageAttachment(
-        val severity: CompilerMessageSeverity,
-        val location: CompilerMessageLocation
-) : Serializable {
-    companion object {
-        const val serialVersionUID = 0L
-    }
 }
