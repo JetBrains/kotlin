@@ -6,12 +6,12 @@ interface T {
 
 fun T.bar() {}
 
-fun T.buzz() {}
+fun T.<!EXTENSION_SHADOWED_BY_MEMBER!>buzz<!>() {}
 fun T.buzz1() {}
 
 class C : T {
     fun test() {
-        fun T.buzz() {}
+        fun T.<!EXTENSION_SHADOWED_BY_MEMBER!>buzz<!>() {}
         fun T.buzz1() {}
         super.foo() // OK
         <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.bar() // Error

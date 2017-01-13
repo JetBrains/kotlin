@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
 
 class Example {
     operator infix fun plus(other: Example) = 0

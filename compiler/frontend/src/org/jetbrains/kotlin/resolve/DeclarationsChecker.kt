@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -45,10 +46,11 @@ internal class DeclarationsCheckerBuilder(
         private val originalModifiersChecker: ModifiersChecker,
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val typeSpecificityComparator: TypeSpecificityComparator
 ) {
     fun withTrace(trace: BindingTrace) =
-            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings)
+            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings, typeSpecificityComparator)
 }
 
 class DeclarationsChecker(
@@ -57,12 +59,15 @@ class DeclarationsChecker(
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
         private val trace: BindingTrace,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        typeSpecificityComparator: TypeSpecificityComparator
 ) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
 
     private val exposedChecker = ExposedVisibilityChecker(trace)
+
+    private val shadowedExtensionChecker = ShadowedExtensionChecker(typeSpecificityComparator, trace)
 
     fun process(bodiesResolveContext: BodiesResolveContext) {
         for (file in bodiesResolveContext.files) {
@@ -524,6 +529,7 @@ class DeclarationsChecker(
         checkAccessors(property, propertyDescriptor)
         checkTypeParameterConstraints(property)
         exposedChecker.checkProperty(property, propertyDescriptor)
+        shadowedExtensionChecker.checkDeclaration(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
         checkImplicitCallableType(property, propertyDescriptor)
     }
@@ -766,6 +772,8 @@ class DeclarationsChecker(
         if (functionDescriptor.isHeader) {
             checkHeaderFunction(function)
         }
+
+        shadowedExtensionChecker.checkDeclaration(function, functionDescriptor)
     }
 
     private fun checkHeaderFunction(function: KtNamedFunction) {

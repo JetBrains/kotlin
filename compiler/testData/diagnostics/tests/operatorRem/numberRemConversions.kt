@@ -12,4 +12,4 @@ fun test() {
     fooShort(1 % 1)
 }
 
-public operator fun Int.rem(other: Int): Int = 0
+public operator fun Int.<!EXTENSION_SHADOWED_BY_MEMBER!>rem<!>(other: Int): Int = 0

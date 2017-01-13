@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.OverloadChecker
 abstract class AbstractLocalRedeclarationChecker(val overloadChecker: OverloadChecker) : LocalRedeclarationChecker {
     override fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor) {
         val name = newDescriptor.name
-        val location = NoLookupLocation.WHEN_CHECK_REDECLARATIONS
+        val location = NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS
         when (newDescriptor) {
             is ClassifierDescriptor, is VariableDescriptor -> {
                 val otherDescriptor = scope.getContributedClassifier(name, location)

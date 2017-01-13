@@ -42,5 +42,5 @@ fun <T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
     return result
 }
 
-val Collection<*>.size : Int
+val Collection<*>.<!EXTENSION_SHADOWED_BY_MEMBER!>size<!> : Int
     get() = size

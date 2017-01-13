@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -EXTENSION_SHADOWED_BY_MEMBER
+
 import kotlin.reflect.KProperty
 
 interface Example {

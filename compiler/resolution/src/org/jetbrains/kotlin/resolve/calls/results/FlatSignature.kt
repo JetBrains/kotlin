@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -74,6 +75,17 @@ class FlatSignature<out T> private constructor(
                 descriptor: D
         ): FlatSignature<D> =
                 create(descriptor, descriptor, numDefaults = 0, parameterTypes = descriptor.valueParameters.map { it.argumentValueType })
+
+        fun <D : CallableDescriptor> createForPossiblyShadowedExtension(descriptor: D): FlatSignature<D> =
+                FlatSignature(descriptor,
+                              descriptor.typeParameters,
+                              valueParameterTypes = descriptor.valueParameters.map { it.argumentValueType },
+                              hasExtensionReceiver = false,
+                              hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                              numDefaults = descriptor.valueParameters.count { it.hasDefaultValue() },
+                              isHeader = descriptor is MemberDescriptor && descriptor.isHeader,
+                              isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+                )
 
         val ValueParameterDescriptor.argumentValueType get() = varargElementType ?: type
     }

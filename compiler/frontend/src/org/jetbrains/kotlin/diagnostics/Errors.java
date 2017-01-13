@@ -80,6 +80,13 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, String> PACKAGE_OR_CLASSIFIER_REDECLARATION =
             DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
 
+    DiagnosticFactory1<KtDeclaration, CallableMemberDescriptor> EXTENSION_SHADOWED_BY_MEMBER =
+            DiagnosticFactory1.create(WARNING, FOR_REDECLARATION);
+    DiagnosticFactory1<KtDeclaration, ConstructorDescriptor> EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR =
+            DiagnosticFactory1.create(WARNING, FOR_REDECLARATION);
+    DiagnosticFactory2<KtDeclaration, PropertyDescriptor, FunctionDescriptor> EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE =
+            DiagnosticFactory2.create(WARNING, FOR_REDECLARATION);
+
     DiagnosticFactory1<KtReferenceExpression, KtReferenceExpression> UNRESOLVED_REFERENCE =
             DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
 

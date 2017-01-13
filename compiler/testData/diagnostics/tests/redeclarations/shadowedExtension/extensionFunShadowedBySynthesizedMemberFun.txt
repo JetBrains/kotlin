@@ -1,0 +1,13 @@
+package
+
+public fun DataClass.component1(): kotlin.Int
+
+public final data class DataClass {
+    public constructor DataClass(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): DataClass
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

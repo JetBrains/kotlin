@@ -1,0 +1,65 @@
+package
+
+public val Test.internalVal: kotlin.Int
+public val Test.privateVal: kotlin.Int
+public val Test.protectedVal: kotlin.Int
+public val Test.publicVal: kotlin.Int
+public fun Test.internalFoo(): kotlin.Unit
+public fun Test.privateFoo(): kotlin.Unit
+public fun Test.protectedFoo(): kotlin.Unit
+private fun Test.publicFoo(): kotlin.Unit
+public fun Test.wihtInternalInvoke(): kotlin.Unit
+public fun Test.withPrivateInvoke(): kotlin.Unit
+public fun Test.withProtectedInvoke(): kotlin.Unit
+public fun Test.withPublicInvoke(): kotlin.Unit
+
+public final class Test {
+    public constructor Test()
+    internal final val internalVal: kotlin.Int = 42
+    private final val privateVal: kotlin.Int = 42
+    protected final val protectedVal: kotlin.Int = 42
+    public final val publicVal: kotlin.Int = 42
+    public final val withInternalInvoke: WithInternalInvoke
+    public final val withPrivateInvoke: WithPrivateInvoke
+    public final val withProtectedInvoke: WithProtectedInvoke
+    public final val withPublicInvoke: WithPublicInvoke
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun internalFoo(): kotlin.Unit
+    private final fun privateFoo(): kotlin.Unit
+    protected final fun protectedFoo(): kotlin.Unit
+    public final fun publicFoo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class WithInternalInvoke {
+    public constructor WithInternalInvoke()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final operator fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class WithPrivateInvoke {
+    public constructor WithPrivateInvoke()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    private final operator fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class WithProtectedInvoke {
+    public constructor WithProtectedInvoke()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    protected final operator fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class WithPublicInvoke {
+    public constructor WithPublicInvoke()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

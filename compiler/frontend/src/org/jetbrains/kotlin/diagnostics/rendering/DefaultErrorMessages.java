@@ -114,6 +114,12 @@ public class DefaultErrorMessages {
         MAP.put(EXPOSED_SUPER_INTERFACE, "''{0}'' sub-interface exposes its ''{2}'' supertype{1}", TO_STRING, TO_STRING, TO_STRING);
         MAP.put(EXPOSED_TYPEALIAS_EXPANDED_TYPE, "''{0}'' typealias exposes ''{2}'' in expanded type{1}", TO_STRING, TO_STRING, TO_STRING);
 
+        MAP.put(EXTENSION_SHADOWED_BY_MEMBER, "Extension is shadowed by a member: {0}", COMPACT_WITH_MODIFIERS);
+        MAP.put(EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR,
+                "Extension function is shadowed by an inner class constructor: {0}", COMPACT_WITH_MODIFIERS);
+        MAP.put(EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE,
+                "Extension function is shadowed by a member property ''{0}'' with {1}", NAME, COMPACT_WITH_MODIFIERS);
+
         MAP.put(INACCESSIBLE_TYPE, "Type {0} is inaccessible in this context due to: {1}", RENDER_TYPE, commaSeparated(FQ_NAMES_IN_TYPES));
 
         MAP.put(REDECLARATION, "Conflicting declarations: {0}", commaSeparated(COMPACT_WITH_MODIFIERS));

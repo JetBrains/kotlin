@@ -80,7 +80,7 @@ class DeclarationResolver(
 
             // TODO: report error on header class and impl val, or vice versa
             val (header, impl) =
-                    getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+                    getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
                     .partition { it is MemberDescriptor && it.isHeader }
 
             for (descriptors in listOf(header, impl)) {

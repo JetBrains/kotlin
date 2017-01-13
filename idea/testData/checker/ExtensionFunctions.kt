@@ -46,7 +46,7 @@ fun Int.foo() = this
           val foo : Int = 0
         }
 
-        <error>operator</error> fun Any.equals(<warning>other</warning> : Any?) : Boolean = true
+        <error>operator</error> fun Any.<warning>equals</warning>(<warning>other</warning> : Any?) : Boolean = true
         fun Any?.equals1(<warning>other</warning> : Any?) : Boolean = true
         fun Any.equals2(<warning>other</warning> : Any?) : Boolean = true
 

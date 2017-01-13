@@ -7,7 +7,7 @@ class A {
 
 
 fun test(a: A) {
-    fun A.foo() = 4
+    fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() = 4
 
     a.foo() checkType { _<A>() }
 

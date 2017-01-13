@@ -1,0 +1,51 @@
+package
+
+public fun Test1.test1(): kotlin.Unit
+public fun Test2.test2(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun </*0*/ T> Test3.test3(/*0*/ x: T): kotlin.Unit
+public fun Test3.test3(/*0*/ x: kotlin.String): kotlin.Unit
+public fun Test4.test4(/*0*/ x: kotlin.String): kotlin.Unit
+public fun </*0*/ T : kotlin.Number> Test5.test5(/*0*/ x: T): kotlin.Unit
+public fun </*0*/ T : kotlin.collections.Set<kotlin.Any>> Test6.test6(/*0*/ x: T): kotlin.Unit
+
+public interface Test1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun test1(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Test2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun test2(/*0*/ x: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Test3 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun test3(/*0*/ x: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Test4 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun </*0*/ T> test4(/*0*/ x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Test5 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun </*0*/ T> test5(/*0*/ x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Test6 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun </*0*/ T : kotlin.collections.List<kotlin.Any>> test6(/*0*/ x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

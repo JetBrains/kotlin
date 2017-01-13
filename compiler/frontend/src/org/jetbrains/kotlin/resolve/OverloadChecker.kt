@@ -16,25 +16,22 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.SpecificityComparisonCallbacks
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
-import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
-import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import java.util.*
+
+object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
+    override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean =
+            false
+}
 
 class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     /**
@@ -48,11 +45,6 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
         if (a !is CallableDescriptor || b !is CallableDescriptor) return false
 
         return checkOverloadability(a, b)
-    }
-
-    private object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
-        override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean =
-                false
     }
 
     private fun checkOverloadability(a: CallableDescriptor, b: CallableDescriptor): Boolean {
@@ -69,7 +61,7 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
         val aSignature = FlatSignature.createFromCallableDescriptor(a)
         val bSignature = FlatSignature.createFromCallableDescriptor(b)
 
-        val aIsNotLessSpecificThanB = ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific (aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
+        val aIsNotLessSpecificThanB = ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
         val bIsNotLessSpecificThanA = ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
 
         return !(aIsNotLessSpecificThanB && bIsNotLessSpecificThanA)

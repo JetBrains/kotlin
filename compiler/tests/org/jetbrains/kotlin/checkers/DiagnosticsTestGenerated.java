@@ -15885,6 +15885,93 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/typeParameterWithTwoBounds.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ShadowedExtension extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInShadowedExtension() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("extensionFunShadowedByInnerClassConstructor.kt")
+                public void testExtensionFunShadowedByInnerClassConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionFunShadowedByInnerClassConstructor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFunShadowedByMemberFun.kt")
+                public void testExtensionFunShadowedByMemberFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionFunShadowedByMemberFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFunShadowedByMemberPropertyWithInvoke.kt")
+                public void testExtensionFunShadowedByMemberPropertyWithInvoke() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionFunShadowedByMemberPropertyWithInvoke.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFunShadowedBySynthesizedMemberFun.kt")
+                public void testExtensionFunShadowedBySynthesizedMemberFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionFunShadowedBySynthesizedMemberFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionFunVsMemberExtensionFun.kt")
+                public void testExtensionFunVsMemberExtensionFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionFunVsMemberExtensionFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionOnErrorType.kt")
+                public void testExtensionOnErrorType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionOnErrorType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionOnNullableReceiver.kt")
+                public void testExtensionOnNullableReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionOnNullableReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionPropertyShadowedByMemberProperty.kt")
+                public void testExtensionPropertyShadowedByMemberProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionPropertyShadowedByMemberProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionShadowedByDelegatedMember.kt")
+                public void testExtensionShadowedByDelegatedMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionShadowedByDelegatedMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionVsNonPublicMember.kt")
+                public void testExtensionVsNonPublicMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionVsNonPublicMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localExtensionShadowedByMember.kt")
+                public void testLocalExtensionShadowedByMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/localExtensionShadowedByMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberExtensionShadowedByMember.kt")
+                public void testMemberExtensionShadowedByMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/memberExtensionShadowedByMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("operatorExtensionVsNonOperatorMember.kt")
+                public void testOperatorExtensionVsNonOperatorMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/operatorExtensionVsNonOperatorMember.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/reflection")
