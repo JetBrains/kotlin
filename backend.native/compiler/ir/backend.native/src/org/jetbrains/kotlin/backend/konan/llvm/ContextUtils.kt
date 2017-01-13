@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.vtableSize
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -102,6 +103,9 @@ internal interface ContextUtils {
     val FunctionDescriptor.llvmFunction: LLVMValueRef
         get() {
             assert (this.kind.isReal)
+            if (this is TypeAliasConstructorDescriptor) {
+                return this.underlyingConstructorDescriptor.llvmFunction
+            }
             val globalName = this.symbolName
             val module = context.llvmModule
 

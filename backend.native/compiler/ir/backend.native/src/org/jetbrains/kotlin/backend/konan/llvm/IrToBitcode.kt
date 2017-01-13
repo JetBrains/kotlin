@@ -587,6 +587,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
+    override fun visitTypeAlias(declaration: IrTypeAlias) {
+        // Nothing to do.
+    }
+
+    //-------------------------------------------------------------------------//
+
     override fun visitProperty(declaration: IrProperty) {
         declaration.acceptChildrenVoid(this)
     }
@@ -1663,7 +1669,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         when (descriptor) {
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (callee, args)
-            is ClassConstructorDescriptor      -> return evaluateConstructorCall   (callee, args)
+            is ConstructorDescriptor           -> return evaluateConstructorCall   (callee, args)
             else                               -> return evaluateSimpleFunctionCall(descriptor, args)
         }
     }
@@ -1728,10 +1734,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateConstructorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log("evaluateConstructorCall    : ${ir2string(callee)}")
         memScoped {
-            val containingClass = (callee.descriptor as ClassConstructorDescriptor).containingDeclaration
-            val typeInfo = codegen.typeInfoValue(containingClass)
+            val constructedClass = (callee.descriptor as ConstructorDescriptor).constructedClass
+            val typeInfo = codegen.typeInfoValue(constructedClass)
             val allocHint = Int32(1).llvm
-            val thisValue = if (containingClass.isArray) {
+            val thisValue = if (constructedClass.isArray) {
                 assert(args.size >= 1 && args[0].type == int32Type)
                 val allocArrayInstanceArgs = listOf(typeInfo, allocHint, args[0])
                 call(context.llvm.allocArrayFunction, allocArrayInstanceArgs)

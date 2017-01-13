@@ -143,6 +143,11 @@ task safe_cast(type: RunKonanTest) {
     source = "codegen/basics/safe_cast.kt"
 }
 
+task typealias1(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/basics/typealias1.kt"
+}
+
 task aritmetic(type: RunKonanTest) {
     source = "codegen/function/arithmetic.kt"
 }
