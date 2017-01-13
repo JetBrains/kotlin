@@ -101,7 +101,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            val compilerMode = CompileService.CompilerMode.JPS_COMPILER
+            val compilerMode = CompilerMode.JPS_COMPILER
             val verbose = compilerArgs.verbose
             val options = CompilationOptions(compilerMode, targetPlatform, reportCategories(verbose), reportSeverity(verbose), requestedCompilationResults = emptyArray())
             daemon.compile(sessionId, compilerArgs, options, JpsCompilerServicesFacadeImpl(environment), null)
