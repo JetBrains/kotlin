@@ -24,7 +24,7 @@ import java.io.Serializable
 
 internal class RemoteICReporter(
         private val servicesFacade: CompilerServicesFacadeBase,
-        private val compilationResultsStorage: CompilationResultsStorage,
+        private val compilationResultsSink: CompilationResultsSink,
         compilationOptions: CompilationOptions
 ) : ICReporter {
     private val shouldReportMessages = ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories
@@ -39,7 +39,7 @@ internal class RemoteICReporter(
 
     override fun reportCompileIteration(sourceFiles: Collection<File>, exitCode: ExitCode) {
         if (shouldReportCompileIteration) {
-            compilationResultsStorage.store(CompilationResultCategory.IC_COMPILE_ITERATION.code, CompileIterationResult(sourceFiles, exitCode.toString()))
+            compilationResultsSink.push(CompilationResultCategory.IC_COMPILE_ITERATION.code, CompileIterationResult(sourceFiles, exitCode.toString()))
         }
     }
 }

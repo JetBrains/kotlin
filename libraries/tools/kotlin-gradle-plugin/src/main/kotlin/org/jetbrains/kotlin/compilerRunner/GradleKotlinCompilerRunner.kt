@@ -166,7 +166,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val servicesFacade = GradleCompilerServicesFacadeImpl(project, environment.messageCollector)
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade, compilationResultsStorage = null)
+            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade, compilationResultsSink = null)
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
@@ -197,7 +197,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
 
         val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade, GradleCompilationResultsStorage(project))
+            daemon.compile(sessionId, environment.compilerArgs, compilationOptions, servicesFacade, GradleCompilationResultsSink(project))
         }
 
         val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
