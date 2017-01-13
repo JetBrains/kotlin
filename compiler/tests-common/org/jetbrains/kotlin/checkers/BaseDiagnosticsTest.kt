@@ -98,22 +98,13 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         override fun toString(): String = name
     }
 
-    class DiagnosticTestLanguageVersionSettings(
+    data class DiagnosticTestLanguageVersionSettings(
             private val languageFeatures: Map<LanguageFeature, Boolean>,
-            override val apiVersion: ApiVersion
+            override val apiVersion: ApiVersion,
+            override val languageVersion: LanguageVersion
     ) : LanguageVersionSettings {
         override fun supportsFeature(feature: LanguageFeature): Boolean =
                 languageFeatures[feature] ?: LanguageVersionSettingsImpl.DEFAULT.supportsFeature(feature)
-
-        // TODO provide base language version
-        override val languageVersion: LanguageVersion
-            get() = throw UnsupportedOperationException("This instance of LanguageVersionSettings should be used for tests only")
-
-        override fun equals(other: Any?): Boolean =
-                other is DiagnosticTestLanguageVersionSettings && other.languageFeatures == languageFeatures && other.apiVersion == apiVersion
-
-        override fun hashCode(): Int =
-                31 * languageFeatures.hashCode() + apiVersion.hashCode()
     }
 
     inner class TestFile(
@@ -318,7 +309,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
             val languageFeatures = directives?.let(this::collectLanguageFeatureMap).orEmpty()
 
-            return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion)
+            return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion, LanguageVersion.LATEST)
         }
 
         private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, Boolean> {
