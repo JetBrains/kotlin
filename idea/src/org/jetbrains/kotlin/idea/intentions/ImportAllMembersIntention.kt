@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.isInImportDirective
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
@@ -44,7 +45,9 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpressio
         val target = target(element) ?: return false
         val targetFqName = target.importableFqName ?: return false
 
-        val file = element.getContainingKtFile()
+        if (element.isInImportDirective()) return false
+
+        val file = element.containingKtFile
         val project = file.project
         val dummyFileText = (file.packageDirective?.text ?: "") + "\n" + (file.importList?.text ?: "")
         val dummyFile = KtPsiFactory(project).createAnalyzableFile("Dummy.kt", dummyFileText, file)
@@ -59,9 +62,9 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpressio
         val target = target(element)!!
         val classFqName = target.importableFqName!!.parent()
 
-        ImportInsertHelper.getInstance(element.project).importDescriptor(element.getContainingKtFile(), target, forceAllUnderImport = true)
+        ImportInsertHelper.getInstance(element.project).importDescriptor(element.containingKtFile, target, forceAllUnderImport = true)
 
-        val qualifiedExpressions = element.getContainingKtFile().collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
+        val qualifiedExpressions = element.containingKtFile.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
             val qualifierName = qualifiedExpression.receiverExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
             qualifierName?.getReferencedNameAsName() == classFqName.shortName() && target(qualifiedExpression)?.importableFqName?.parent() == classFqName
         }

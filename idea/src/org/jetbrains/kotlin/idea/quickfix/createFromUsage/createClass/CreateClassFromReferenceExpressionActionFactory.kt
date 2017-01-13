@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.isDotReceiver
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import java.util.Arrays
@@ -49,8 +46,6 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
     }
 
     private fun isQualifierExpected(element: KtSimpleNameExpression) = element.isDotReceiver() || ((element.parent as? KtDotQualifiedExpression)?.isDotReceiver() ?: false)
-
-    private fun isInsideOfImport(element: KtSimpleNameExpression) = element.getNonStrictParentOfType<KtImportDirective>() != null
 
     override fun getPossibleClassKinds(element: KtSimpleNameExpression, diagnostic: Diagnostic): List<ClassKind> {
         fun isEnum(element: PsiElement): Boolean {
@@ -120,7 +115,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
 
         val fullCallExpr = getFullCallExpression(element) ?: return null
 
-        if (isInsideOfImport(element) || isQualifierExpected(element)) {
+        if (element.isInImportDirective() || isQualifierExpected(element)) {
             val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 

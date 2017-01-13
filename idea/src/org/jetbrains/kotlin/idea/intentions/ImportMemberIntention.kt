@@ -18,21 +18,18 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtUserType
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -43,6 +40,8 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
     override fun isApplicableTo(element: KtNameReferenceExpression): Boolean {
         val qualifiedElement = element.getQualifiedElement()
         if (qualifiedElement == element) return false
+
+        if (element.isInImportDirective()) return false
 
         val fqName = targetFqName(qualifiedElement) ?: return false
 
@@ -55,7 +54,7 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
         val targets = element.mainReference.resolveToDescriptors(bindingContext)
         val fqName = targets.map { it.importableFqName!! }.single()
 
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
         val helper = ImportInsertHelper.getInstance(element.project)
         if (helper.importDescriptor(file, targets.first()) == ImportDescriptorResult.FAIL) return
 

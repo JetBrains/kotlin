@@ -7739,6 +7739,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ImportAllMembersInImport.kt")
+        public void testImportAllMembersInImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/ImportAllMembersInImport.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NotFromCompanionObject.kt")
         public void testNotFromCompanionObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/NotFromCompanionObject.kt");
@@ -7799,6 +7805,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("FromCompanionObject.kt")
         public void testFromCompanionObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/FromCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImportMemberInImport.kt")
+        public void testImportMemberInImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/ImportMemberInImport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImportMemberInMiddleOfImport.kt")
+        public void testImportMemberInMiddleOfImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/ImportMemberInMiddleOfImport.kt");
             doTest(fileName);
         }
 
