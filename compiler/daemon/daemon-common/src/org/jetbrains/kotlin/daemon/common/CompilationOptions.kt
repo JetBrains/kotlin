@@ -22,8 +22,11 @@ import java.io.Serializable
 open class CompilationOptions(
         val compilerMode: CompilerMode,
         val targetPlatform: CompileService.TargetPlatform,
+        /** @See [ReportCategory] */
         val reportCategories: Array<Int>,
+        /** @See [ReportSeverity] */
         val reportSeverity: Int,
+        /** @See [CompilationResultCategory]] */
         val requestedCompilationResults: Array<Int>
 ) : Serializable {
     companion object {
@@ -40,8 +43,11 @@ class IncrementalCompilationOptions(
         val customCacheVersion: Int,
         compilerMode: CompilerMode,
         targetPlatform: CompileService.TargetPlatform,
+        /** @See [ReportCategory] */
         reportCategories: Array<Int>,
+        /** @See [ReportSeverity] */
         reportSeverity: Int,
+        /** @See [CompilationResultCategory]] */
         requestedCompilationResults: Array<Int>
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
