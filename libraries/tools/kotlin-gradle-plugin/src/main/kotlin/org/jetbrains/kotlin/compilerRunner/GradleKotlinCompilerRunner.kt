@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.CompilationResult
+import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.*
@@ -196,7 +196,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
                 reportCategories = reportCategories(verbose),
                 reportSeverity = reportSeverity(verbose),
-                requestedCompilationResults = arrayOf(CompilationResult.IC_COMPILE_ITERATION.code),
+                requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),
                 compilerMode = CompilerMode.INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM
         )
