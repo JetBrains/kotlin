@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.js.coroutine
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.isSuspend
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectBreakContinueTargets
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.utils.DFS
@@ -35,7 +38,6 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
     private lateinit var nodesToSplit: Set<JsNode>
     private var currentCatchBlock = globalCatchBlock
     private val tryStack = mutableListOf(TryBlock(globalCatchBlock, null))
-    private var suspendTarget: CoroutineBlock? = null
 
     var hasFinallyBlocks = false
         get
@@ -331,45 +333,39 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
 
     private fun handleExpression(expression: JsExpression): JsExpression? {
         return if (expression is JsInvocation) {
-            var result: JsExpression? = expression
-            if (expression.isPreSuspend) {
-                result = handlePreSuspend(expression)
-            }
-            if (expression.isSuspend) {
-                handleSuspend(expression)
-                result = null
-            }
-            result
+            if (handleInvocation(expression)) null else expression
         }
         else {
+            val assignment = JsAstUtils.decomposeAssignment(expression)
+            if (assignment != null) {
+                (assignment.second as? JsInvocation)?.let { return if (handleInvocation(it)) null else expression }
+            }
             expression
         }
     }
 
-    private fun handlePreSuspend(invocation: JsInvocation): JsExpression? {
-        val nextBlock = CoroutineBlock()
-        currentStatements += state(nextBlock)
-        suspendTarget = nextBlock
-
-        return if (invocation.isFakeSuspend) null else invocation
+    private fun handleInvocation(expression: JsInvocation): Boolean {
+        return if (expression.isSuspend) {
+            handleSuspend(expression)
+            true
+        }
+        else {
+            false
+        }
     }
 
     private fun handleSuspend(invocation: JsInvocation) {
-        val invokeExpression = if (invocation.isFakeSuspend) invocation.arguments.getOrNull(0) else invocation
-        val statements = if (invokeExpression == null) {
-            listOf(JsReturn(context.metadata.suspendObjectRef.deepCopy()))
+        val nextBlock = CoroutineBlock()
+        currentStatements += state(nextBlock)
+
+        val resultRef = JsNameRef(context.metadata.resultName, JsAstUtils.stateMachineReceiver()).apply {
+            sideEffects = SideEffectKind.DEPENDS_ON_STATE
         }
-        else {
-            val resultRef = JsNameRef(context.metadata.resultName, JsAstUtils.stateMachineReceiver()).apply {
-                sideEffects = SideEffectKind.DEPENDS_ON_STATE
-            }
-            val invocationStatement = JsAstUtils.assignment(resultRef, invokeExpression).makeStmt()
-            val suspendCondition = JsAstUtils.equality(resultRef.deepCopy(), context.metadata.suspendObjectRef.deepCopy())
-            val suspendIfNeeded = JsIf(suspendCondition, JsReturn(context.metadata.suspendObjectRef.deepCopy()))
-            listOf(invocationStatement, suspendIfNeeded, JsBreak())
-        }
-        currentStatements += statements
-        currentBlock = suspendTarget!!
+        val invocationStatement = JsAstUtils.assignment(resultRef, invocation).makeStmt()
+        val suspendCondition = JsAstUtils.equality(resultRef.deepCopy(), context.metadata.suspendObjectRef.deepCopy())
+        val suspendIfNeeded = JsIf(suspendCondition, JsReturn(context.metadata.suspendObjectRef.deepCopy()))
+        currentStatements += listOf(invocationStatement, suspendIfNeeded, JsBreak())
+        currentBlock = nextBlock
     }
 
     private fun state(target: CoroutineBlock): List<JsStatement> {

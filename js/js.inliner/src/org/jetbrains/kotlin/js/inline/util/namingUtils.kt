@@ -34,7 +34,7 @@ fun aliasArgumentsIfNeeded(
 
         val replacement = context.getFreshName(paramName).apply {
             staticRef = arg
-            context.newVar(this, arg)
+            context.newVar(this, arg.deepCopy())
         }.makeRef()
 
         context.replaceName(paramName, replacement)

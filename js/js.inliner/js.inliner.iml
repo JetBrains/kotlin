@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="js.parser" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="backend-common" />
   </component>
 </module>
