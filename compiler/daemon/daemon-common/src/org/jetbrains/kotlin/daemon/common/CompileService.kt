@@ -36,11 +36,7 @@ interface CompileService : Remote {
         METADATA
     }
 
-    enum class CompilerMode : Serializable {
-        NON_INCREMENTAL_COMPILER,
-        INCREMENTAL_COMPILER,
-        JPS_COMPILER
-    }
+
 
     companion object {
         val NO_SESSION: Int = 0

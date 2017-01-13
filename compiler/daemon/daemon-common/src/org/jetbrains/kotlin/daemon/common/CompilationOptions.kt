@@ -20,7 +20,7 @@ import java.io.File
 import java.io.Serializable
 
 open class CompilationOptions(
-        val compilerMode: CompileService.CompilerMode,
+        val compilerMode: CompilerMode,
         val targetPlatform: CompileService.TargetPlatform,
         val reportCategories: Array<Int>,
         val reportSeverity: Int,
@@ -38,7 +38,7 @@ class IncrementalCompilationOptions(
         val workingDir: File,
         val customCacheVersionFileName: String,
         val customCacheVersion: Int,
-        compilerMode: CompileService.CompilerMode,
+        compilerMode: CompilerMode,
         targetPlatform: CompileService.TargetPlatform,
         reportCategories: Array<Int>,
         reportSeverity: Int,
@@ -47,4 +47,10 @@ class IncrementalCompilationOptions(
     companion object {
         const val serialVersionUID: Long = 0
     }
+}
+
+enum class CompilerMode : Serializable {
+    NON_INCREMENTAL_COMPILER,
+    INCREMENTAL_COMPILER,
+    JPS_COMPILER
 }
