@@ -119,7 +119,7 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         header.setPlatformKind(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm.JVM_1_6)
+        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
