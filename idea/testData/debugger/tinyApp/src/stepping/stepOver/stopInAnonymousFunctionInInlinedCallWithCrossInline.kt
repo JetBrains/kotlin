@@ -3,9 +3,9 @@ package stopInAnonymousFunctionInInlinedCallWithCrossInline
 // KT-15282
 
 fun main(args: Array<String>) {
-    foo(fun () {
+    foo(fun (): Int {
         //Breakpoint!
-        12
+        return 12
     })
 }
 
