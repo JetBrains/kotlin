@@ -72,16 +72,22 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         fun getCommonCompilerArguments(module: JpsModule): CommonCompilerArguments {
             val defaultArguments = getSettings(module.project).commonCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
-            if (facetSettings.useProjectSettings) return defaultArguments
             val (languageLevel, apiLevel) = facetSettings.versionInfo
             val facetArguments = facetSettings.compilerInfo.commonCompilerArguments ?: return defaultArguments
             return copyBean(facetArguments).apply {
-                languageVersion = languageLevel?.description
-                apiVersion = apiLevel?.description
-                multiPlatform = module
-                        .dependenciesList
-                        .dependencies
-                        .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Common }
+                if (facetSettings.useProjectSettings) {
+                    languageVersion = defaultArguments.languageVersion
+                    apiVersion = defaultArguments.apiVersion
+                    multiPlatform = defaultArguments.multiPlatform
+                }
+                else {
+                    languageVersion = languageLevel?.description
+                    apiVersion = apiLevel?.description
+                    multiPlatform = module
+                            .dependenciesList
+                            .dependencies
+                            .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Common }
+                }
             }
         }
 
