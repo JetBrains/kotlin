@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
-import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
@@ -88,6 +87,7 @@ sealed class CreateHeaderImplementationFix<out D : KtNamedDeclaration>(
 
     private fun Project.implementationModuleOf(headerModule: Module) =
             allModules().firstOrNull {
+                PackageUtil.checkSourceRootsConfigured(it, false) &&
                 TargetPlatformDetector.getPlatform(it).multiTargetPlatform == implPlatform &&
                 headerModule in ModuleRootManager.getInstance(it).dependencies
             }
