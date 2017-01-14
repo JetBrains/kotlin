@@ -485,6 +485,8 @@ public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/La
 	protected field completion Lkotlin/coroutines/Continuation;
 	protected field label I
 	public fun <init> (ILkotlin/coroutines/Continuation;)V
+	public fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
 	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun getFacade ()Lkotlin/coroutines/Continuation;
@@ -901,14 +903,6 @@ public class kotlin/jvm/internal/SpreadBuilder {
 
 public final class kotlin/jvm/internal/StringCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/StringCompanionObject;
-}
-
-public abstract interface class kotlin/jvm/internal/SuspendFunction0 {
-	public abstract fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
-}
-
-public abstract interface class kotlin/jvm/internal/SuspendFunction1 {
-	public abstract fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 }
 
 public class kotlin/jvm/internal/TypeIntrinsics {

@@ -16,7 +16,10 @@
 
 package kotlin.jvm.internal
 
-import kotlin.coroutines.*
+import java.lang.IllegalStateException
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.ContinuationInterceptor
+import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
 
 abstract class CoroutineImpl(
@@ -63,4 +66,12 @@ abstract class CoroutineImpl(
     }
 
     protected abstract fun doResume(data: Any?, exception: Throwable?): Any?
+
+    open fun create(completion: Continuation<*>): Continuation<Unit> {
+        throw IllegalStateException("create(Continuation) has not been overridden")
+    }
+
+    open fun create(value: Any?, completion: Continuation<*>): Continuation<Unit> {
+        throw IllegalStateException("create(Any?;Continuation) has not been overridden")
+    }
 }

@@ -17,7 +17,7 @@ import kotlin.coroutines.intrinsics.*
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction1<R, T>).create(receiver, completion)
+): Continuation<Unit> = (this as kotlin.jvm.internal.CoroutineImpl).create(receiver, completion)
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -43,7 +43,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> = (this as kotlin.jvm.internal.SuspendFunction0<T>).create(completion)
+): Continuation<Unit> = (this as kotlin.jvm.internal.CoroutineImpl).create(completion)
 
 /**
  * Starts coroutine without receiver and with result type [T].
