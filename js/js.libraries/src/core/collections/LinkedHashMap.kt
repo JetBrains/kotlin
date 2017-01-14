@@ -64,8 +64,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 
                 val current = next!!
                 last = current
-                next = current.next
-                if (next === head) next = null // satisfying { it != head }
+                next = current.next.takeIf { it !== head }
                 return current
             }
 

@@ -44,5 +44,5 @@ public fun thread(start: Boolean = true, isDaemon: Boolean = false, contextClass
  */
 @kotlin.internal.InlineOnly
 public inline fun <T: Any> ThreadLocal<T>.getOrSet(default: () -> T): T {
-    return get() ?: default().apply { set(this) }
+    return get() ?: default().also(this::set)
 }
