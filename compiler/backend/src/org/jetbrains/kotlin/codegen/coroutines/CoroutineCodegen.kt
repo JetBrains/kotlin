@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.backend.common.CONTINUATION_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
@@ -184,16 +183,8 @@ class CoroutineCodegen(
         )
         checkcast(Type.getObjectType(v.thisName))
 
-        // .resume(Unit)
-        StackValue.putUnitInstance(this)
-        invokevirtual(
-                AsmTypes.COROUTINE_IMPL.internalName,
-                CONTINUATION_RESUME_METHOD_NAME.identifier,
-                Type.getMethodDescriptor(Type.VOID_TYPE, AsmTypes.OBJECT_TYPE),
-                false
-        )
-
-        loadSuspendMarker()
+        // .doResume(Unit)
+        invokeDoResumeWithUnit(v.thisName)
         areturn(AsmTypes.OBJECT_TYPE)
     }
 

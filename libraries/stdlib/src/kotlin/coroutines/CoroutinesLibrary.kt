@@ -17,7 +17,7 @@ import kotlin.coroutines.intrinsics.*
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> = (this as kotlin.jvm.internal.CoroutineImpl).create(receiver, completion)
+): Continuation<Unit> = ((this as kotlin.jvm.internal.CoroutineImpl).create(receiver, completion) as kotlin.jvm.internal.CoroutineImpl).facade
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -30,7 +30,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
         receiver: R,
         completion: Continuation<T>
 ) {
-    (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+    createCoroutine(receiver, completion).resume(Unit)
 }
 
 /**
@@ -43,7 +43,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> = (this as kotlin.jvm.internal.CoroutineImpl).create(completion)
+): Continuation<Unit> = ((this as kotlin.jvm.internal.CoroutineImpl).create(completion) as kotlin.jvm.internal.CoroutineImpl).facade
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -55,7 +55,7 @@ public fun <T> (suspend () -> T).createCoroutine(
 public fun <T> (suspend  () -> T).startCoroutine(
         completion: Continuation<T>
 ) {
-    (this as Function1<Continuation<T>, Any?>).invoke(completion)
+    createCoroutine(completion).resume(Unit)
 }
 
 /**

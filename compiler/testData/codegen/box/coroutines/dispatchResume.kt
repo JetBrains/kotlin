@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND: JS
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -82,7 +81,7 @@ fun box(): String {
         val k = suspendWithValue("K")
         log += "$o$k;"
     }
-    if (result != "suspend(O);before 0;suspend(K);before 1;OK;after 1;after 0;") return "fail1: $result"
+    if (result != "before 0;suspend(O);before 1;suspend(K);before 2;OK;after 2;after 1;after 0;") return "fail1: $result"
 
     result = test {
         try {
@@ -93,7 +92,7 @@ fun box(): String {
             log += "${e.message};"
         }
     }
-    if (result != "error(OK);before 0;OK;after 0;") return "fail2: $result"
+    if (result != "before 0;error(OK);before 1;OK;after 1;after 0;") return "fail2: $result"
 
     return "OK"
 }
