@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.codegen.coroutines.createJvmSuspendFunctionView
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
@@ -89,10 +87,6 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
                 add(coroutineImplClass.defaultType)
 
                 if (descriptor.isSuspendLambda) {
-                    val parametersNumber =
-                            descriptor.valueParameters.size + (if (functionType.isExtensionFunctionType) 1 else 0)
-
-                    addIfNotNull(suspendFunctions.getOrNull(parametersNumber)?.defaultType)
                     add(functionType)
                 }
             }
