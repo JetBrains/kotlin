@@ -1,4 +1,18 @@
 @kotlin.Metadata
+public abstract class ContinuationDispatcher {
+    private final @org.jetbrains.annotations.NotNull field contextKey: kotlin.coroutines.CoroutineContextKey
+    public method <init>(): void
+    public abstract method dispatchResume(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): boolean
+    public abstract method dispatchResumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): boolean
+    public method fold(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method get(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.CoroutineContextKey): kotlin.coroutines.CoroutineContextElement
+    public @org.jetbrains.annotations.NotNull method getContextKey(): kotlin.coroutines.CoroutineContextKey
+    public @org.jetbrains.annotations.NotNull method interceptContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public @org.jetbrains.annotations.NotNull method minusKey(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.CoroutineContextKey): kotlin.coroutines.CoroutineContext
+    public @org.jetbrains.annotations.NotNull method plus(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.CoroutineContext): kotlin.coroutines.CoroutineContext
+}
+
+@kotlin.Metadata
 public final class Controller {
     private @org.jetbrains.annotations.NotNull field log: java.lang.String
     private field resumeIndex: int
@@ -24,9 +38,33 @@ public final class DispatchResumeKt {
 }
 
 @kotlin.Metadata
-public final class EmptyContinuation {
-    public final static field INSTANCE: EmptyContinuation
-    private method <init>(): void
+final class DispatchedContinuation {
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.CoroutineContext
+    private final @org.jetbrains.annotations.NotNull field continuation: kotlin.coroutines.Continuation
+    private final @org.jetbrains.annotations.NotNull field dispatcher: ContinuationDispatcher
+    public method <init>(@org.jetbrains.annotations.NotNull p0: ContinuationDispatcher, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
+    public final @org.jetbrains.annotations.NotNull method getContinuation(): kotlin.coroutines.Continuation
+    public final @org.jetbrains.annotations.NotNull method getDispatcher(): ContinuationDispatcher
+    public method resume(p0: java.lang.Object): void
+    public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+}
+
+@kotlin.Metadata
+public class EmptyContinuation {
+    public final static field Companion: EmptyContinuation.Companion
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.CoroutineContext
+    inner class EmptyContinuation/Companion
+    public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.CoroutineContext): void
+    public synthetic method <init>(p0: kotlin.coroutines.CoroutineContext, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
     public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+}
+
+@kotlin.Metadata
+public final static class EmptyContinuation/Companion {
+    inner class EmptyContinuation/Companion
+    private method <init>(): void
 }
