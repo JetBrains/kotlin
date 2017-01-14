@@ -153,8 +153,8 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
     }
 
     private fun getChainOrNull(hashCode: Int): Array<MutableEntry<K, V>>? {
-        val chain = backingMap[hashCode]
-        return if (chain !== undefined) chain else null  // satisfying { it != undefined }
+        val chain = backingMap[hashCode].unsafeCast<Array<MutableEntry<K, V>>?>()
+        return chain.takeIf { it !== undefined }
     }
 
 }
