@@ -45,6 +45,8 @@ fun box(): String {
 fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     val future = CompletableFuture<T>()
     c.startCoroutine(object : Continuation<T> {
+        override val context = EmptyCoroutineContext
+        
         override fun resume(data: T) {
             future.complete(data)
         }

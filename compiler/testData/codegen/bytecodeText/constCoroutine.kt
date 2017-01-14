@@ -20,6 +20,7 @@ fun box(): String {
     return "OK"
 }
 
-// 2 GETSTATIC kotlin/Unit.INSTANCE : Lkotlin/Unit;
-// 1 GETSTATIC EmptyContinuation.INSTANCE
-// 3 GETSTATIC
+// 2 GETSTATIC kotlin/Unit.INSTANCE
+// 1 GETSTATIC EmptyContinuation.Companion
+// 3 GETSTATIC kotlin\/coroutines\/EmptyCoroutineContext.INSTANCE
+// 6 GETSTATIC
