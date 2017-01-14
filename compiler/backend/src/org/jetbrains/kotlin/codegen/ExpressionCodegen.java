@@ -2853,16 +2853,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull ArgumentGenerator argumentGenerator
     ) {
         boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext);
-        if (isSuspensionPoint) {
-            // Inline markers are used to spill the stack before coroutine suspension
-            addInlineMarker(v, true);
-        }
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
-        if (!isConstructor) { // otherwise already
-            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
-            receiver.put(receiver.type, v);
-            callableMethod.afterReceiverGeneration(v);
-        }
+        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspensionPoint, isConstructor);
 
         callGenerator.processAndPutHiddenParameters(false);
 
@@ -2910,6 +2902,25 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
             v.aconst(null);
             v.athrow();
+        }
+    }
+
+    private void putReceiverAndInlineMarkerIfNeeded(
+            @NotNull Callable callableMethod,
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull StackValue receiver,
+            boolean isSuspensionPoint,
+            boolean isConstructor
+    ) {
+        if (isSuspensionPoint) {
+            // Inline markers are used to spill the stack before coroutine suspension
+            addInlineMarker(v, true);
+        }
+
+        if (!isConstructor) { // otherwise already
+            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
+            receiver.put(receiver.type, v);
+            callableMethod.afterReceiverGeneration(v);
         }
     }
 
