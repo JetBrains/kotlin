@@ -8,6 +8,7 @@ public final class AsyncGeneratorIterator {
     private @org.jetbrains.annotations.Nullable field computeContinuation: kotlin.coroutines.Continuation
     private field computedNext: boolean
     private field computesNext: boolean
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
     private @org.jetbrains.annotations.Nullable field nextStep: kotlin.coroutines.Continuation
     private @org.jetbrains.annotations.Nullable field nextValue: java.lang.Object
     public method <init>(): void
@@ -17,6 +18,8 @@ public final class AsyncGeneratorIterator {
     public final @org.jetbrains.annotations.Nullable method getComputeContinuation(): kotlin.coroutines.Continuation
     public final method getComputedNext(): boolean
     public final method getComputesNext(): boolean
+    public synthetic method getContext(): kotlin.coroutines.CoroutineContext
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.EmptyCoroutineContext
     public final @org.jetbrains.annotations.Nullable method getNextStep(): kotlin.coroutines.Continuation
     public final @org.jetbrains.annotations.Nullable method getNextValue(): java.lang.Object
     public @org.jetbrains.annotations.Nullable method hasNext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
@@ -58,9 +61,20 @@ public final class CoroutineUtilKt {
 }
 
 @kotlin.Metadata
-public final class EmptyContinuation {
-    public final static field INSTANCE: EmptyContinuation
-    private method <init>(): void
+public class EmptyContinuation {
+    public final static field Companion: EmptyContinuation.Companion
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.CoroutineContext
+    inner class EmptyContinuation/Companion
+    public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.CoroutineContext): void
+    public synthetic method <init>(p0: kotlin.coroutines.CoroutineContext, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
     public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+}
+
+@kotlin.Metadata
+public final static class EmptyContinuation/Companion {
+    inner class EmptyContinuation/Companion
+    private method <init>(): void
 }
