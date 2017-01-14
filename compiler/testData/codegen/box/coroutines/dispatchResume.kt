@@ -21,6 +21,34 @@ class Controller {
     }
 }
 
+abstract class ContinuationDispatcher : ContinuationInterceptor {
+    override val contextKey: CoroutineContextKey<*> = ContinuationInterceptor
+    abstract fun <T> dispatchResume(value: T, continuation: Continuation<T>): Boolean
+    abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean
+    override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> = DispatchedContinuation(this, continuation)
+    override operator fun <E : CoroutineContextElement> get(key: CoroutineContextKey<E>): E? = if (this.contextKey == key) this as E else null
+    override fun <R> fold(initial: R, operation: (R, CoroutineContextElement) -> R): R = operation(initial, this)
+    override operator fun plus(context: CoroutineContext): CoroutineContext = this
+    override fun minusKey(key: CoroutineContextKey<*>): CoroutineContext = if (this.contextKey == key) EmptyCoroutineContext else this
+}
+
+private class DispatchedContinuation<T>(
+        val dispatcher: ContinuationDispatcher,
+        val continuation: Continuation<T>
+): Continuation<T> {
+    override val context: CoroutineContext = continuation.context
+
+    override fun resume(value: T) {
+        if (!dispatcher.dispatchResume(value, continuation))
+            continuation.resume(value)
+    }
+
+    override fun resumeWithException(exception: Throwable) {
+        if (!dispatcher.dispatchResumeWithException(exception, continuation))
+            continuation.resumeWithException(exception)
+    }
+}
+
 fun test(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
     c.startCoroutine(controller, EmptyContinuation(object: ContinuationDispatcher() {
