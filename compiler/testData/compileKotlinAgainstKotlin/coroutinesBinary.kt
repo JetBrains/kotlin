@@ -1,4 +1,5 @@
 // FILE: A.kt
+// WITH_RUNTIME
 package a
 
 import kotlin.coroutines.*
@@ -13,6 +14,7 @@ class Controller {
 
 fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), object : Continuation<Unit> {
+        override val context: CoroutineContext = EmptyCoroutineContext
         override fun resume(value: Unit) {}
 
         override fun resumeWithException(exception: Throwable) {}

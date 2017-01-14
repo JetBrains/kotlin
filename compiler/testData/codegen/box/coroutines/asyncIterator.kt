@@ -34,7 +34,7 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
     var computesNext = false
     var computeContinuation: Continuation<*>? = null
 
-    override val context = EmptyContext
+    override val context = EmptyCoroutineContext
 
     suspend fun computeHasNext(): Boolean = suspendCoroutineOrReturn { c ->
         computesNext = false

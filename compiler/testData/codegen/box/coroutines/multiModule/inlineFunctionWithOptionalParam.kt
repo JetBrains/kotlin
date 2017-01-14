@@ -15,7 +15,7 @@ var result = ""
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object : Continuation<Unit> {
-        override val context = EmptyContext
+        override val context = EmptyCoroutineContext
         override fun resume(value: Unit) {
         }
         override fun resumeWithException(exception: Throwable) {
