@@ -1,4 +1,4 @@
-@file:kotlin.jvm.JvmName("CoroutinesLibraryKt")
+@file:kotlin.jvm.JvmName("CoroutinesKt")
 @file:kotlin.jvm.JvmVersion
 package kotlin.coroutines
 
