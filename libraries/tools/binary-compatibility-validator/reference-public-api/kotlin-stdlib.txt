@@ -1762,7 +1762,7 @@ public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin
 	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 }
 
-public final class kotlin/coroutines/CoroutinesLibraryKt {
+public final class kotlin/coroutines/CoroutinesKt {
 	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)V
