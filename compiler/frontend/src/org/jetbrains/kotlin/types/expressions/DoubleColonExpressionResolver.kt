@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.UnsupportedOperationException
 import java.util.*
@@ -110,24 +111,21 @@ class DoubleColonExpressionResolver(
         }
 
         val type = (result as DoubleColonLHS.Type).type
-        val reportError: Boolean
+        val descriptor = type.constructor.declarationDescriptor
         if (result.possiblyBareType.isBare) {
-            val descriptor = type.constructor.declarationDescriptor
             if (descriptor is ClassDescriptor && KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
                 c.trace.report(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT.on(expression))
             }
-            reportError = false
-        }
-        else {
-            reportError = !isAllowedInClassLiteral(type)
         }
 
-
-        val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
-        if (type is SimpleType && !type.isMarkedNullable && typeParameterDescriptor != null && !typeParameterDescriptor.isReified) {
-            c.trace.report(TYPE_PARAMETER_AS_REIFIED.on(expression, typeParameterDescriptor))
+        if (type is SimpleType && !type.isMarkedNullable && descriptor is TypeParameterDescriptor && !descriptor.isReified) {
+            c.trace.report(TYPE_PARAMETER_AS_REIFIED.on(expression, descriptor))
         }
-        else if (type.isMarkedNullable || reportError) {
+        // Note that "T::class" is allowed for type parameter T without a non-null upper bound
+        else if ((TypeUtils.isNullableType(type) && descriptor !is TypeParameterDescriptor) || expression.hasQuestionMarks) {
+            c.trace.report(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS.on(expression))
+        }
+        else if (!result.possiblyBareType.isBare && !isAllowedInClassLiteral(type)) {
             c.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression))
         }
     }
@@ -438,7 +436,8 @@ class DoubleColonExpressionResolver(
             )
         }
         else {
-            TypeUtils.makeNullableAsSpecified(possiblyBareType.actualType, doubleColonExpression.hasQuestionMarks)
+            val actualType = possiblyBareType.actualType
+            if (doubleColonExpression.hasQuestionMarks) actualType.makeNullable() else actualType
         }
 
         return DoubleColonLHS.Type(type, possiblyBareType)

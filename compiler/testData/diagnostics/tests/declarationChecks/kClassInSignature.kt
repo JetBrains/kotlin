@@ -10,7 +10,7 @@ fun <T> <!KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE!>test5<!>() = listOf(
 
 fun <T> test6(): kotlin.reflect.KClass<<!UPPER_BOUND_VIOLATED!>T<!>> = T::class
 fun <T> test7(): kotlin.reflect.KClass<*> = T::class
-fun <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>test8<!>() = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>String?::class<!>
+fun <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>test8<!>() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
 
 fun <T> listOf(e: T): List<T> = null!!
 

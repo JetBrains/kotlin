@@ -3064,6 +3064,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("typealiases.kt")
+            public void testTypealiases() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/typealiases.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unresolvedClass.kt")
             public void testUnresolvedClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/unresolvedClass.kt");
