@@ -29,14 +29,17 @@ class TypeAliasExpander(
         private val reportStrategy: TypeAliasExpansionReportStrategy
 ) {
     fun expand(typeAliasExpansion: TypeAliasExpansion, annotations: Annotations) =
-            expandRecursively(typeAliasExpansion, annotations, 0, true)
+            expandRecursively(typeAliasExpansion, annotations,
+                              isNullable = false, recursionDepth = 0, withAbbreviatedType = true)
 
     fun expandWithoutAbbreviation(typeAliasExpansion: TypeAliasExpansion, annotations: Annotations) =
-            expandRecursively(typeAliasExpansion, annotations, 0, false)
+            expandRecursively(typeAliasExpansion, annotations,
+                              isNullable = false, recursionDepth = 0, withAbbreviatedType = false)
 
     private fun expandRecursively(
             typeAliasExpansion: TypeAliasExpansion,
             annotations: Annotations,
+            isNullable: Boolean,
             recursionDepth: Int,
             withAbbreviatedType: Boolean
     ): SimpleType {
@@ -50,34 +53,20 @@ class TypeAliasExpander(
             "Type alias expansion: result for ${typeAliasExpansion.descriptor} is ${expandedProjection.projectionKind}, should be invariant"
         }
 
-        val expandedTypeWithExtraAnnotations = expandedType.combineAnnotations(annotations)
+        val expandedTypeWithExtraAnnotations = expandedType.combineAnnotations(annotations).let { TypeUtils.makeNullableIfNeeded(it, isNullable) }
 
         return if (withAbbreviatedType)
-            expandedTypeWithExtraAnnotations.withAbbreviation(typeAliasExpansion.createAbbreviation(underlyingProjection, annotations))
+            expandedTypeWithExtraAnnotations.withAbbreviation(typeAliasExpansion.createAbbreviation(annotations, isNullable))
         else
             expandedTypeWithExtraAnnotations
     }
 
-    private fun SimpleType.combineAnnotations(annotations: Annotations): SimpleType {
-        if (isError) return this
-
-        val existingAnnotationTypes = this.annotations.getAllAnnotations().mapTo(hashSetOf<KotlinType>()) { it.annotation.type }
-
-        for (annotation in annotations) {
-            if (annotation.type in existingAnnotationTypes) {
-                reportStrategy.repeatedAnnotation(annotation)
-            }
-        }
-
-        return replace(newAnnotations = CompositeAnnotations(listOf(annotations, this.annotations)))
-    }
-
-    private fun TypeAliasExpansion.createAbbreviation(originalProjection: TypeProjection, annotations: Annotations) =
+    private fun TypeAliasExpansion.createAbbreviation(annotations: Annotations, isNullable: Boolean) =
             KotlinTypeFactory.simpleType(
                     annotations,
                     descriptor.typeConstructor,
                     arguments,
-                    originalProjection.type.isMarkedNullable,
+                    isNullable,
                     MemberScope.Empty
             )
 
@@ -94,6 +83,7 @@ class TypeAliasExpander(
 
         val underlyingType = underlyingProjection.type
         val argument = typeAliasExpansion.getReplacement(underlyingType.constructor)
+
         if (argument == null) {
             return expandNonArgumentTypeProjection(underlyingProjection, typeAliasExpansion, recursionDepth)
         }
@@ -103,8 +93,7 @@ class TypeAliasExpander(
         val argumentVariance = argument.projectionKind
         val underlyingVariance = underlyingProjection.projectionKind
 
-        val argumentType = argument.type.unwrap() as? SimpleType ?:
-                           throw AssertionError("Non-simple type in type alias argument: $argument")
+        val argumentType = argument.type.unwrap().asSimpleType()
 
         val substitutionVariance =
                 when {
@@ -129,11 +118,30 @@ class TypeAliasExpander(
                     }
                 }
 
-        val substitutedType = TypeUtils.makeNullableIfNeeded(argumentType, underlyingType.isMarkedNullable)
-                .combineAnnotations(underlyingType.annotations)
+        val substitutedType = argumentType.combineNullabilityAndAnnotations(underlyingType)
 
         return TypeProjectionImpl(resultingVariance, substitutedType)
     }
+
+    private fun SimpleType.combineAnnotations(annotations: Annotations): SimpleType {
+        if (isError) return this
+
+        val existingAnnotationTypes = this.annotations.getAllAnnotations().mapTo(hashSetOf<KotlinType>()) { it.annotation.type }
+
+        for (annotation in annotations) {
+            if (annotation.type in existingAnnotationTypes) {
+                reportStrategy.repeatedAnnotation(annotation)
+            }
+        }
+
+        return replace(newAnnotations = CompositeAnnotations(listOf(annotations, this.annotations)))
+    }
+
+    private fun SimpleType.combineNullability(fromType: KotlinType) =
+            TypeUtils.makeNullableIfNeeded(this, fromType.isMarkedNullable)
+
+    private fun SimpleType.combineNullabilityAndAnnotations(fromType: KotlinType) =
+            combineNullability(fromType).combineAnnotations(fromType.annotations)
 
     private fun expandNonArgumentTypeProjection(
             originalProjection: TypeProjection,
@@ -150,10 +158,10 @@ class TypeAliasExpander(
         val typeDescriptor = typeConstructor.declarationDescriptor
 
         assert(typeConstructor.parameters.size == type.arguments.size) { "Unexpected malformed type: $type" }
-        
-        when (typeDescriptor) {
+
+        return when (typeDescriptor) {
             is TypeParameterDescriptor -> {
-                return originalProjection
+                originalProjection
             }
             is TypeAliasDescriptor -> {
                 if (typeAliasExpansion.isRecursion(typeDescriptor)) {
@@ -167,12 +175,15 @@ class TypeAliasExpander(
 
                 val nestedExpansion = TypeAliasExpansion.create(typeAliasExpansion, typeDescriptor, expandedArguments)
 
-                val expandedType = expandRecursively(nestedExpansion, type.annotations, recursionDepth + 1, false)
+                val nestedExpandedType = expandRecursively(nestedExpansion, type.annotations,
+                                                           isNullable = type.isMarkedNullable,
+                                                           recursionDepth = recursionDepth + 1,
+                                                           withAbbreviatedType = false)
 
                 // 'dynamic' type can't be abbreviated - will be reported separately
-                val typeWithAbbreviation = if (expandedType.isDynamic()) expandedType else expandedType.withAbbreviation(type)
+                val typeWithAbbreviation = if (nestedExpandedType.isDynamic()) nestedExpandedType else nestedExpandedType.withAbbreviation(type)
 
-                return TypeProjectionImpl(originalProjection.projectionKind, typeWithAbbreviation)
+                TypeProjectionImpl(originalProjection.projectionKind, typeWithAbbreviation)
             }
             else -> {
                 val substitutedArguments = type.arguments.mapIndexed { i, originalArgument ->
@@ -187,7 +198,7 @@ class TypeAliasExpander(
 
                 checkTypeArgumentsSubstitution(type, substitutedType)
 
-                return TypeProjectionImpl(originalProjection.projectionKind, substitutedType)
+                TypeProjectionImpl(originalProjection.projectionKind, substitutedType)
             }
         }
     }
