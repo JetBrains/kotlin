@@ -1,0 +1,12 @@
+package
+
+public val </*0*/ T> test3: kotlin.reflect.KClass<T>
+public val </*0*/ T> test4: kotlin.reflect.KClass<T>
+public fun </*0*/ T> listOf(/*0*/ e: T): kotlin.collections.List<T>
+public fun </*0*/ L> locals(): kotlin.Unit
+public fun </*0*/ T> test1(): kotlin.reflect.KClass<T>
+public fun </*0*/ T : kotlin.Any> test2(): kotlin.reflect.KClass<T>
+public fun </*0*/ T> test5(): kotlin.collections.List<kotlin.reflect.KClass<T>>
+public fun </*0*/ T> test6(): kotlin.reflect.KClass<T>
+public fun </*0*/ T> test7(): kotlin.reflect.KClass<*>
+public fun test8(): kotlin.reflect.KClass<kotlin.String?>

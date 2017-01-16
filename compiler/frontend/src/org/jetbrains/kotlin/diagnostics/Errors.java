@@ -414,6 +414,11 @@ public interface Errors {
     DiagnosticFactory1<KtDeclaration, Collection<KotlinType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
+    DiagnosticFactory0<KtNamedDeclaration>
+            KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE = DiagnosticFactory0.create(ERROR, PositioningStrategies.DECLARATION_NAME);
+    DiagnosticFactory1<KtNamedDeclaration, TypeParameterDescriptor>
+            KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE = DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_NAME);
+
     // Property-specific
 
     DiagnosticFactory2<KtNamedDeclaration, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
