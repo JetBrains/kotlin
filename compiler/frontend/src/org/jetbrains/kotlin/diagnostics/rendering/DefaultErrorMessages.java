@@ -865,9 +865,8 @@ public class DefaultErrorMessages {
         MAP.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Data class primary constructor must have only property (val / var) parameters");
 
         MAP.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", TO_STRING);
-        MAP.put(KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE, "Please specify type explicitly");
         MAP.put(KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE,
-                "Please add upper bound Any for type parameter ''{0}'' or specify return type explicitly", NAME);
+                "Declaration has an inconsistent return type. Please add upper bound Any for type parameter ''{0}'' or specify return type explicitly", NAME);
 
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", NAME);

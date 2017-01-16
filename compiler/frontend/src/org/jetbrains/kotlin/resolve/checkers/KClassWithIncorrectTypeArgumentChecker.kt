@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 object KClassWithIncorrectTypeArgumentChecker : SimpleDeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
@@ -40,31 +40,27 @@ object KClassWithIncorrectTypeArgumentChecker : SimpleDeclarationChecker {
         val returnType = descriptor.returnType ?: return
 
         var typeParameterWithoutNotNullableUpperBound: TypeParameterDescriptor? = null
-        val thereIsBadKClassType = returnType.contains {
-            val kClassWithBadArgument = it.isKClassWithBadArgument()
+        returnType.contains { type ->
+            val kClassWithBadArgument = type.isKClassWithBadArgument()
             if (kClassWithBadArgument) {
-                it.arguments.singleOrNull()?.type?.constructor?.declarationDescriptor?.let {
+                type.arguments.singleOrNull()?.type?.constructor?.declarationDescriptor?.let {
                     if (it is TypeParameterDescriptor && it.containingDeclaration == descriptor) {
                         typeParameterWithoutNotNullableUpperBound = it
                     }
                 }
             }
-
             kClassWithBadArgument
         }
 
         if (typeParameterWithoutNotNullableUpperBound != null) {
             diagnosticHolder.report(Errors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE.on(declaration, typeParameterWithoutNotNullableUpperBound!!))
         }
-        else if (thereIsBadKClassType) {
-            diagnosticHolder.report(Errors.KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE.on(declaration))
-        }
     }
 
     private fun UnwrappedType.isKClassWithBadArgument(): Boolean {
         val argumentType = arguments.singleOrNull()?.let { if (it.isStarProjection) null else it.type.unwrap() } ?: return false
-        val klass = (constructor.declarationDescriptor as? ClassDescriptor) ?: return false
+        val klass = constructor.declarationDescriptor as? ClassDescriptor ?: return false
 
-        return KotlinBuiltIns.isKClass(klass) && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, argumentType.builtIns.anyType)
+        return KotlinBuiltIns.isKClass(klass) && !argumentType.isSubtypeOf(argumentType.builtIns.anyType)
     }
 }

@@ -2,7 +2,7 @@ typealias TString = String
 fun f1() = TString::class
 
 typealias TNullableString = String?
-fun <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>f2<!>() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>TNullableString::class<!>
+fun f2() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>TNullableString::class<!>
 
 typealias TNullableTString = TString?
 typealias TTNullableTString = TNullableTString

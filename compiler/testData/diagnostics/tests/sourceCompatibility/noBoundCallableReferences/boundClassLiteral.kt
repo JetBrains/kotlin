@@ -9,6 +9,6 @@ val ok3 = O::class
 
 
 val fail1 = <!UNSUPPORTED_FEATURE!>""<!>::class
-val <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>fail2<!> = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
+val fail2 = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
 val fail3 = <!UNSUPPORTED_FEATURE!>(C)<!>::class
 val fail4 = <!UNSUPPORTED_FEATURE!>(C.Companion)<!>::class
