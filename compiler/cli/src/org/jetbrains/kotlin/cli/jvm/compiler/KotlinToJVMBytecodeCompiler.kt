@@ -80,11 +80,13 @@ object KotlinToJVMBytecodeCompiler {
             jarRuntime: Boolean,
             mainClass: FqName?
     ) {
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (jarPath != null) {
             CompileEnvironmentUtil.writeToJar(jarPath, jarRuntime, mainClass, outputFiles)
+            messageCollector.report(CompilerMessageSeverity.OUTPUT,
+                                    OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath), CompilerMessageLocation.NO_LOCATION)
         }
         else {
-            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
             outputFiles.writeAll(outputDir ?: File("."), messageCollector)
         }
     }
@@ -127,7 +129,7 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
-        
+
         val result = repeatAnalysisIfNeeded(analyze(environment, targetDescription), environment, targetDescription)
         if (result == null || !result.shouldGenerateCode) return false
 
@@ -264,15 +266,15 @@ object KotlinToJVMBytecodeCompiler {
 
         return ExitCode.OK
     }
-    
+
     private fun repeatAnalysisIfNeeded(
-            result: AnalysisResult?, 
-            environment: KotlinCoreEnvironment, 
+            result: AnalysisResult?,
+            environment: KotlinCoreEnvironment,
             targetDescription: String?
     ): AnalysisResult? {
         if (result is AnalysisResult.RetryWithAdditionalJavaRoots) {
             val configuration = environment.configuration
-            
+
             val oldReadOnlyValue = configuration.isReadOnly
             configuration.isReadOnly = false
             configuration.addJavaSourceRoots(result.additionalJavaRoots)
@@ -293,7 +295,7 @@ object KotlinToJVMBytecodeCompiler {
             // Repeat analysis with additional Java roots (kapt generated sources)
             return analyze(environment, targetDescription)
         }
-        
+
         return result
     }
 
@@ -389,7 +391,7 @@ object KotlinToJVMBytecodeCompiler {
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
         val analysisResult = analyzerWithCompilerReport.analysisResult
-        
+
         return if (!analyzerWithCompilerReport.hasErrors() || analysisResult is AnalysisResult.RetryWithAdditionalJavaRoots)
             analysisResult
         else
@@ -424,7 +426,7 @@ object KotlinToJVMBytecodeCompiler {
                 obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).fqNameForClassNameWithoutDollars)
             }
         }
-        
+
         val isKapt2Enabled = environment.project.getUserData(IS_KAPT2_ENABLED_KEY) ?: false
         val generationState = GenerationState(
                 environment.project,

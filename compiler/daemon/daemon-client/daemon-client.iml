@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" name="native-platform-uberjar" level="project" />
+    <orderEntry type="module" module-name="cli-common" />
   </component>
 </module>
