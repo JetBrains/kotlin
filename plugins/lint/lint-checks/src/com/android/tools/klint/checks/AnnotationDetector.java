@@ -248,7 +248,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                         invalid = from > to;
                     }
                     if (invalid) {
-                        mContext.report(ANNOTATION_USAGE, annotation.getPsi(), mContext.getLocation(annotation.getPsi()),
+                        mContext.reportUast(ANNOTATION_USAGE, annotation, mContext.getUastLocation(annotation),
                                         "Invalid range: the `from` attribute must be less than "
                                         + "the `to` attribute");
                     }
