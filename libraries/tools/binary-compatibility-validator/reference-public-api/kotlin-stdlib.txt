@@ -192,6 +192,7 @@ public abstract class kotlin/collections/AbstractMutableMap : java/util/Abstract
 
 public abstract class kotlin/collections/AbstractMutableSet : java/util/AbstractSet, java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
 	protected fun <init> ()V
+	public abstract fun add (Ljava/lang/Object;)Z
 	public abstract fun getSize ()I
 	public final fun size ()I
 }
