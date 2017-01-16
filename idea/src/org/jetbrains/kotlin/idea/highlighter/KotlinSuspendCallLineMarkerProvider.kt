@@ -38,7 +38,7 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
             callElement,
             callElement.textRange,
             KotlinIcons.SUSPEND_CALL,
-            Pass.UPDATE_OVERRIDDEN_MARKERS,
+            Pass.UPDATE_OVERRIDEN_MARKERS,
             { "Suspend function call" },
             null,
             GutterIconRenderer.Alignment.RIGHT
