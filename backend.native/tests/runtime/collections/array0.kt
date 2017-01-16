@@ -24,6 +24,6 @@ fun main(args : Array<String>) {
     val booleanArray = BooleanArray(12)
     println(booleanArray.size.toString())
 
-    val stringArray = Array<String>(13)
+    val stringArray = Array<String>(13, { i -> ""})
     println(stringArray.size.toString())
 }

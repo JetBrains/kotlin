@@ -21,7 +21,7 @@ private val exportForCppRuntimeAnnotation = FqName("konan.internal.ExportForCppR
 fun typeToHashString(type: KotlinType): String {
     if (TypeUtils.isTypeParameter(type)) return "GENERIC"
 
-    var hashString = type.constructor.toString()
+    var hashString = TypeUtils.getClassDescriptor(type)!!.fqNameSafe.asString()
     if (!type.arguments.isEmpty()) {
         hashString += "<${type.arguments.map {
             typeToHashString(it.type)

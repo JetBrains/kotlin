@@ -3,9 +3,15 @@ package kotlin
 // TODO: remove that, as RTTI shall be per instantiation.
 @ExportTypeInfo("theArrayTypeInfo")
 public final class Array<T> : Cloneable {
-    // TODO: actual constructor has initializer parameter, implement it once lambdas are implemented.
     // Constructors are handled with compiler magic.
-    public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
+    public constructor(size: Int, init: (Int) -> T) {
+        var index = 0
+        while (index < size) {
+            this[index] = init(index)
+            index++
+        }
+    }
+    internal constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
     public val size: Int
         get() = getArrayLength()
