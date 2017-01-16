@@ -38,6 +38,7 @@
         <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidSimpleNameReferenceExtension"/>
         <kotlinIndicesHelperExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidIndicesHelperExtension"/>
 
+        <quickFixContributor implementation="org.jetbrains.kotlin.android.quickfix.AndroidQuickFixRegistrar"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator"/>
     </extensions>
 
