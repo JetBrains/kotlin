@@ -918,6 +918,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("suspendWithStateMachine")
+        public void testSuspendWithStateMachine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/suspendWithStateMachine/");
+            doTest(fileName);
+        }
+
         @TestMetadata("topLevelFunctionSameSignature")
         public void testTopLevelFunctionSameSignature() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelFunctionSameSignature/");

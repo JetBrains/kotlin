@@ -233,10 +233,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected void generateKotlinMetadataAnnotation() {
         FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(funDescriptor);
         Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, funDescriptor);
-
-        // Can be null for named suspend function
-        if (method == null) return;
-
+        assert method != null : "No method for " + funDescriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         final DescriptorSerializer serializer =

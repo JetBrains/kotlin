@@ -1,3 +1,4 @@
+@kotlin.Metadata
 final class Controller$multipleSuspensions$1 {
     synthetic final field this$0: Controller
     inner class Controller$multipleSuspensions$1
@@ -5,6 +6,7 @@ final class Controller$multipleSuspensions$1 {
     public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
 }
 
+@kotlin.Metadata
 final class Controller$nonTailCall$1 {
     synthetic final field this$0: Controller
     inner class Controller$nonTailCall$1
