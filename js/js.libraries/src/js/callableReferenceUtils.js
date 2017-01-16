@@ -53,44 +53,22 @@ Kotlin.getCallableRefForConstructor = function (klass) {
     };
 };
 
-Kotlin.getCallableRefForTopLevelProperty = function(getter, setter, name) {
-    var getFun = Function("getter", "return function " + name + "() { return getter(); }")(getter, setter);
-    return getPropertyRefClass(getFun, "get", setter, "set_za3rmp$", propertyRefClassMetadataCache.zeroArg);
+Kotlin.getCallableRefZeroArg = function(name, getter, setter) {
+    getter.get = getter;
+    getter.set = setter;
+    getter.callableName = name;
+    return getPropertyRefClass(getter, setter, propertyRefClassMetadataCache.zeroArg);
 };
 
-Kotlin.getCallableRefForMemberProperty = function(name, isVar) {
-    var getFun = Function("return function " + name + "(receiver) { return receiver['" + name + "']; }")();
-    var setFun = isVar ? function(receiver, value) { receiver[name] = value; } : null;
-    return getPropertyRefClass(getFun, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
+Kotlin.getCallableRefOneArg = function(name, getter, setter) {
+    getter.get = getter;
+    getter.set = setter;
+    getter.callableName = name;
+    return getPropertyRefClass(getter, setter, propertyRefClassMetadataCache.oneArg);
 };
 
-Kotlin.getBoundCallableRefForMemberProperty = function(receiver, name, isVar) {
-    var getFun = Function("receiver", "return function " + name + "() { return receiver['" + name + "']; }")(receiver);
-    var setFun = isVar ? function(value) { receiver[name] = value; } : null;
-    return getPropertyRefClass(getFun, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.oneArg);
-};
-
-Kotlin.getCallableRefForExtensionProperty = function(name, getFun, setFun) {
-    var getFunWrapper = Function("getFun", "return function " + name + "(receiver, extensionReceiver) { return getFun(receiver, extensionReceiver) }")(getFun);
-    return getPropertyRefClass(getFunWrapper, "get_za3rmp$", setFun, "set_wn2jw4$", propertyRefClassMetadataCache.oneArg);
-};
-
-Kotlin.getBoundCallableRefForExtensionProperty = function(receiver, name, getFun, setFun) {
-    var getFunWrapper = Function("receiver", "getFun", "return function " + name + "(extensionReceiver) { return getFun(receiver, extensionReceiver) }")(receiver, getFun);
-    if (setFun) {
-        setFun = setFun.bind(null, receiver);
-    }
-    return getPropertyRefClass(getFunWrapper, "get", setFun, "set_za3rmp$", propertyRefClassMetadataCache.oneArg);
-};
-
-function getPropertyRefClass(getFun, getName, setFun, setName, cache) {
-    var obj = getFun;
-    var isMutable = typeof setFun === "function";
-    obj.$metadata$ = getPropertyRefMetadata(isMutable ? cache.mutable : cache.immutable);
-    obj[getName] = getFun;
-    if (isMutable) {
-        obj[setName] = setFun;
-    }
+function getPropertyRefClass(obj, setter, cache) {
+    obj.$metadata$ = getPropertyRefMetadata(typeof setter === "function" ? cache.mutable : cache.immutable);
     obj.constructor = obj;
     return obj;
 }

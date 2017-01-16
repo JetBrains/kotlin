@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.naming
 
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -171,10 +172,9 @@ class NameSuggestion {
 
         do {
             parts += getSuggestedName(current)
-            var last = current
+            val last = current
             current = current.containingDeclaration!!
             if (last is ConstructorDescriptor && !last.isPrimary) {
-                last = current
                 parts[parts.lastIndex] = getSuggestedName(current) + "_init"
                 current = current.containingDeclaration!!
             }
@@ -231,6 +231,19 @@ class NameSuggestion {
                     "kotlin.CharSequence.subSequence" -> return NameAndStability("substring", true)
                     "kotlin.CharSequence.get" -> return NameAndStability("charAt", true)
                     "kotlin.Any.equals" -> return NameAndStability("equals", true)
+                }
+                val container = overriddenDescriptor.containingDeclaration
+                if (container is ClassDescriptor && ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(container.defaultType)) {
+                    val name = overriddenDescriptor.name.asString()
+                    when (name) {
+                        "get",
+                        "set" -> return NameAndStability(name, true)
+                    }
+                }
+            }
+            else if (overriddenDescriptor is PropertyDescriptor) {
+                when (overriddenDescriptor.fqNameUnsafe.asString()) {
+                    "kotlin.reflect.KCallable.name" -> return NameAndStability("callableName", true)
                 }
             }
 

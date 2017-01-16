@@ -227,6 +227,11 @@ public class TranslationContext {
         }
     }
 
+    @Nullable
+    public ClassDescriptor getClassDescriptor() {
+        return classDescriptor;
+    }
+
     @NotNull
     public BindingContext bindingContext() {
         return staticContext.getBindingContext();

@@ -91,7 +91,9 @@ abstract class FunctionContext(
         val qualifier = callQualifier.transitiveStaticRef
         return when (qualifier) {
             is JsInvocation -> {
-                lookUpStaticFunction(getSimpleName(qualifier)!!)?.let { if (isFunctionCreator(it)) it else null }
+                getSimpleName(qualifier)?.let { simpleName ->
+                    lookUpStaticFunction(simpleName)?.let { if (isFunctionCreator(it)) it else null }
+                }
             }
             is JsNameRef -> lookUpStaticFunction(qualifier.name)
             is JsFunction -> qualifier
