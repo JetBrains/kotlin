@@ -2912,7 +2912,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             boolean isSuspensionPoint,
             boolean isConstructor
     ) {
-        if (isSuspensionPoint) {
+        boolean isSafeCall = receiver instanceof StackValue.SafeCall;
+
+        if (isSuspensionPoint && !isSafeCall) {
             // Inline markers are used to spill the stack before coroutine suspension
             addInlineMarker(v, true);
         }
@@ -2920,6 +2922,35 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (!isConstructor) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
             receiver.put(receiver.type, v);
+
+            // In regular cases we add an inline marker just before receiver is loaded (to spill the stack before a suspension)
+            // But in case of safe call things we get the following bytecode:
+
+            // ---- inlineMarkerBefore()
+            // LOAD $receiver
+            // IFNULL L1
+            // ---- load the rest of the arguments
+            // INVOKEVIRTUAL suspendCall()
+            // ---- inlineMarkerBefore()
+            // GOTO L2
+            // L1
+            // ACONST_NULL
+            // L2
+            // ...
+            //
+            // The problem is that the stack before the call is not restored in case of null receiver.
+            // The solution is to spill stack just after receiver is loaded (after IFNULL) in case of safe call.
+            // But the problem is that we should leave the receiver itself on the stack, so we store it in a temporary variable.
+            if (isSuspensionPoint && isSafeCall) {
+                int tmpVar = myFrameMap.enterTemp(receiver.type);
+
+                v.store(tmpVar, receiver.type);
+                addInlineMarker(v, true);
+                v.load(tmpVar, receiver.type);
+
+                myFrameMap.leaveTemp(receiver.type);
+            }
+
             callableMethod.afterReceiverGeneration(v);
         }
     }
