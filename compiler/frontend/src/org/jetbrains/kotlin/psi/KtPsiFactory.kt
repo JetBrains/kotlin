@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,7 +177,7 @@ class KtPsiFactory(private val project: Project) {
     }
 
     fun createCompanionObject(): KtObjectDeclaration {
-        return createClass("class A {\n companion object{\n}\n}").getCompanionObjects().first()
+        return createClass("class A {\n companion object{\n}\n}").companionObjects.first()
     }
 
     fun createFileAnnotation(annotationText: String): KtAnnotationEntry {
@@ -289,7 +289,7 @@ class KtPsiFactory(private val project: Project) {
     fun createCallableReferenceExpression(text: String) = createExpression(text) as? KtCallableReferenceExpression
 
     fun createSecondaryConstructor(decl: String): KtSecondaryConstructor {
-        return createClass("class Foo {\n $decl \n}").getSecondaryConstructors().first()
+        return createClass("class Foo {\n $decl \n}").secondaryConstructors.first()
     }
 
     fun createModifierList(modifier: KtModifierKeywordToken): KtModifierList {
@@ -322,7 +322,7 @@ class KtPsiFactory(private val project: Project) {
     }
 
     fun createParameter(text : String): KtParameter {
-        return createClass("class A($text)").getPrimaryConstructorParameters().first()
+        return createClass("class A($text)").primaryConstructorParameters.first()
     }
 
     fun createParameterList(text: String): KtParameterList {
@@ -397,15 +397,15 @@ class KtPsiFactory(private val project: Project) {
     }
 
     fun createPrimaryConstructor(): KtPrimaryConstructor {
-        return createClass("class A()").getPrimaryConstructor()!!
+        return createClass("class A()").primaryConstructor!!
     }
 
     fun createPrimaryConstructor(modifiers: String?): KtPrimaryConstructor {
-        return modifiers?.let { createClass("class A $modifiers constructor()").getPrimaryConstructor() } ?: createPrimaryConstructor()
+        return modifiers?.let { createClass("class A $modifiers constructor()").primaryConstructor } ?: createPrimaryConstructor()
     }
 
     fun createConstructorKeyword(): PsiElement =
-            createClass("class A constructor()").getPrimaryConstructor()!!.getConstructorKeyword()!!
+            createClass("class A constructor()").primaryConstructor!!.getConstructorKeyword()!!
 
     fun createLabeledExpression(labelName: String): KtLabeledExpression
         = createExpression("$labelName@ 1") as KtLabeledExpression
@@ -452,16 +452,16 @@ class KtPsiFactory(private val project: Project) {
     fun createArgument(text: String) = createCallArguments("($text)").arguments.first()!!
 
     fun createSuperTypeCallEntry(text: String): KtSuperTypeCallEntry {
-        return createClass("class A: $text").getSuperTypeListEntries().first() as KtSuperTypeCallEntry
+        return createClass("class A: $text").superTypeListEntries.first() as KtSuperTypeCallEntry
     }
 
     fun createSuperTypeEntry(text: String): KtSuperTypeEntry {
-        return createClass("class A: $text").getSuperTypeListEntries().first() as KtSuperTypeEntry
+        return createClass("class A: $text").superTypeListEntries.first() as KtSuperTypeEntry
     }
 
     fun creareDelegatedSuperTypeEntry(text: String): KtConstructorDelegationCall {
         val colonOrEmpty = if (text.isEmpty()) "" else ": "
-        return createClass("class A { constructor()$colonOrEmpty$text {}").getSecondaryConstructors().first().getDelegationCall()
+        return createClass("class A { constructor()$colonOrEmpty$text {}").secondaryConstructors.first().getDelegationCall()
     }
 
     class ClassHeaderBuilder {
