@@ -190,6 +190,8 @@ class RedundantStatementElimination(private val root: JsFunction) {
 
             is JsObjectLiteral -> expression.propertyInitializers.flatMap { replace(it.labelExpr) + replace(it.valueExpr) }
 
+            is JsFunction -> if (expression.name == null) listOf() else listOf(expression)
+
             else -> listOf(expression)
         }
     }

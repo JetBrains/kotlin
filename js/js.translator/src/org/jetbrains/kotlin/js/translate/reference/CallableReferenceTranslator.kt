@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -226,7 +229,10 @@ object CallableReferenceTranslator {
         val nameLiteral = context.program().getStringLiteral(name)
         val invokeName = Namer.FUNCTION_CALLABLE_REF
         val invokeFun = JsNameRef(invokeName, Namer.kotlinObject())
+        invokeFun.sideEffects = SideEffectKind.PURE
         val invocation = JsInvocation(invokeFun, nameLiteral, function)
+        invocation.isCallableReference = true
+        invocation.sideEffects = SideEffectKind.PURE
         return invocation
     }
 }

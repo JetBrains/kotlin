@@ -14,7 +14,7 @@ import utils.*
 
 // CHECK_CONTAINS_NO_CALLS: test except=imul
 
-internal fun multiplyBy2(x: Int): Int = x * 2
+internal inline fun multiplyBy2(x: Int): Int = x * 2
 
 internal fun test(x: Int): Int = apply(x, ::multiplyBy2)
 

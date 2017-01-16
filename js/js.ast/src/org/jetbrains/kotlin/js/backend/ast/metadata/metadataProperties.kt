@@ -32,6 +32,8 @@ var JsName.descriptor: DeclarationDescriptor? by MetadataProperty(default = null
 // TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
 var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
 
+var JsInvocation.isCallableReference by MetadataProperty(default = false)
+
 var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)
 
 var JsInvocation.psiElement: PsiElement? by MetadataProperty(default = null)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.context
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.inline.FunctionReader
 import org.jetbrains.kotlin.js.inline.util.*
@@ -91,7 +92,7 @@ abstract class FunctionContext(
         val qualifier = callQualifier.transitiveStaticRef
         return when (qualifier) {
             is JsInvocation -> {
-                getSimpleName(qualifier)?.let { simpleName ->
+                tryExtractCallableReference(qualifier) ?: getSimpleName(qualifier)?.let { simpleName ->
                     lookUpStaticFunction(simpleName)?.let { if (isFunctionCreator(it)) it else null }
                 }
             }
@@ -99,5 +100,13 @@ abstract class FunctionContext(
             is JsFunction -> qualifier
             else -> null
         }
+    }
+
+    private fun tryExtractCallableReference(invocation: JsInvocation): JsFunction? {
+        if (invocation.isCallableReference) {
+            val arg = invocation.arguments[1]
+            if (arg is JsFunction) return arg
+        }
+        return null
     }
 }
