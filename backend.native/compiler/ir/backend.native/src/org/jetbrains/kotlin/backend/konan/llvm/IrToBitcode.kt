@@ -1846,15 +1846,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
         val typeInfoPtrPtr  = LLVMBuildStructGEP(codegen.builder, args[0], 0 /* type_info */, "")!!
         val typeInfoPtr     = codegen.load(typeInfoPtrPtr)
+        assert (typeInfoPtr.type == codegen.kTypeInfoPtr)
 
         val owner = descriptor.containingDeclaration as ClassDescriptor
         val llvmMethod = if (!owner.isInterface) {
             // If this is a virtual method of the class - we can call via vtable.
             val index = owner.vtableIndex(descriptor)
-            val vtablePtr = LLVMBuildStructGEP(codegen.builder, typeInfoPtr, 7 /* vtable */, "")!!
-            val vtable = codegen.load(vtablePtr)
-            // TODO: those two loads are bad, we shall rework vtable to follow TypeInfo in memory, so
-            //       this code shall just take end address of TypeInfo and use numbered slot from there.
+
+            val vtablePlace = codegen.gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
+            val vtable = codegen.bitcast(kInt8PtrPtr, vtablePlace)
+
             val slot = codegen.gep(vtable, Int32(index).llvm)
             codegen.load(slot)
         } else {

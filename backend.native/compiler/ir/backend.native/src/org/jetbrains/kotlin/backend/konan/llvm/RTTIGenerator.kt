@@ -4,11 +4,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.methodTableEntries
-import org.jetbrains.kotlin.backend.konan.descriptors.vtableEntries
-import org.jetbrains.kotlin.backend.konan.descriptors.implementation
-import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
-import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
@@ -31,7 +27,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                                  val objOffsetsCount: Int,
                                  val interfaces: ConstValue,
                                  val interfacesCount: Int,
-                                 val vtable: ConstValue,
                                  val methods: ConstValue,
                                  val methodsCount: Int,
                                  val fields: ConstValue,
@@ -49,8 +44,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
                     interfaces,
                     Int32(interfacesCount),
-
-                    vtable,
 
                     methods,
                     Int32(methodsCount),
@@ -141,12 +134,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val fieldsPtr = staticData.placeGlobalConstArray("kfields:$className",
                 runtime.fieldTableRecordType, fields)
 
-        val vtable: List<ConstValue>
+        val vtableEntries: List<ConstValue>
         val methods: List<ConstValue>
 
-        if (classDesc.modality != Modality.ABSTRACT) {
+        if (!classDesc.isAbstract()) {
             // TODO: compile-time resolution limits binary compatibility
-            vtable = classDesc.vtableEntries.map { it.implementation.entryPointAddress }
+            vtableEntries = classDesc.vtableEntries.map { it.implementation.entryPointAddress }
 
             methods = classDesc.methodTableEntries.map {
                 val nameSignature = it.functionName.localHash
@@ -155,12 +148,13 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 MethodTableRecord(nameSignature, methodEntryPoint)
             }.sortedBy { it.nameSignature.value }
         } else {
-            vtable = emptyList()
+            vtableEntries = emptyList()
             methods = emptyList()
         }
 
+        assert (vtableEntries.size == classDesc.vtableSize)
 
-        val vtablePtr = staticData.placeGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
+        val vtable = ConstArray(int8TypePtr, vtableEntries)
 
         val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
                 runtime.methodTableRecordType, methods)
@@ -169,15 +163,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 superType,
                 objOffsetsPtr, objOffsets.size,
                 interfacesPtr, interfaces.size,
-                vtablePtr,
                 methodsPtr, methods.size,
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size)
 
-        val typeInfoGlobal = classDesc.llvmTypeInfoPtr // TODO: it is a hack
-        LLVMSetInitializer(typeInfoGlobal, typeInfo.llvm)
+        val typeInfoGlobal = classDesc.typeInfoWithVtable.llvm // TODO: it is a hack
+        LLVMSetInitializer(typeInfoGlobal, Struct(typeInfo, vtable).llvm)
         LLVMSetGlobalConstant(typeInfoGlobal, 1)
 
-        exportTypeInfoIfRequired(classDesc, typeInfoGlobal)
+        exportTypeInfoIfRequired(classDesc, classDesc.llvmTypeInfoPtr)
     }
 
 }
