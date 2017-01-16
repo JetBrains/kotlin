@@ -18,17 +18,24 @@ package kotlin.coroutines
 
 /**
  * Marks coroutine context element that intercepts coroutine continuations.
+ * The coroutines framework uses [ContinuationInterceptor.Key] to retrieve the interceptor and
+ * intercepts all coroutine continuations with [interceptContinuation] invocations.
  */
 @SinceKotlin("1.1")
-public interface ContinuationInterceptor : CoroutineContextElement {
+public interface ContinuationInterceptor : CoroutineContext.Element {
     /**
      * The key that defines *the* context interceptor.
      */
-    companion object : CoroutineContextKey<ContinuationInterceptor>
+    companion object Key : CoroutineContext.Key<ContinuationInterceptor>
 
     /**
-     * Intercepts the given [continuation] by wrapping it. Application code should not call this method directly as
-     * it is invoked by coroutines framework appropriately and the resulting continuations are efficiently cached.
+     * Returns continuation that wraps the original [continuation], thus intercepting all resumptions.
+     * This function is invoked by coroutines framework when needed and the resulting continuations are
+     * cached internally per each instance of the original [continuation].
+     *
+     * By convention, implementations that install themselves as *the* interceptor in the context with
+     * the [Key] shall also scan the context for other element that implement [ContinuationInterceptor] interface
+     * and use their [interceptContinuation] functions, too.
      */
     public fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T>
 }

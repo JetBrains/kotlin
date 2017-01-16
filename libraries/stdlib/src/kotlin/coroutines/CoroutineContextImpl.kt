@@ -16,23 +16,25 @@
 
 package kotlin.coroutines
 
+import kotlin.coroutines.CoroutineContext.*
+
 /**
- * Base class for [CoroutineContextElement] implementations.
+ * Base class for [CoroutineContext.Element] implementations.
  */
 @SinceKotlin("1.1")
-public abstract class AbstractCoroutineContextElement : CoroutineContextElement {
+public abstract class AbstractCoroutineContextElement(public override val key: Key<*>) : Element {
     @Suppress("UNCHECKED_CAST")
-    public override operator fun <E : CoroutineContextElement> get(key: CoroutineContextKey<E>): E? =
-            if (this.contextKey == key) this as E else null
+    public override operator fun <E : Element> get(key: Key<E>): E? =
+            if (this.key == key) this as E else null
 
-    public override fun <R> fold(initial: R, operation: (R, CoroutineContextElement) -> R): R =
+    public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
             operation(initial, this)
 
     public override operator fun plus(context: CoroutineContext): CoroutineContext =
             plusImpl(context)
 
-    public override fun minusKey(key: CoroutineContextKey<*>): CoroutineContext =
-            if (this.contextKey == key) EmptyCoroutineContext else this
+    public override fun minusKey(key: Key<*>): CoroutineContext =
+            if (this.key == key) EmptyCoroutineContext else this
 }
 
 /**
@@ -40,10 +42,10 @@ public abstract class AbstractCoroutineContextElement : CoroutineContextElement 
  */
 @SinceKotlin("1.1")
 public object EmptyCoroutineContext : CoroutineContext {
-    public override fun <E : CoroutineContextElement> get(key: CoroutineContextKey<E>): E? = null
-    public override fun <R> fold(initial: R, operation: (R, CoroutineContextElement) -> R): R = initial
+    public override fun <E : Element> get(key: Key<E>): E? = null
+    public override fun <R> fold(initial: R, operation: (R, Element) -> R): R = initial
     public override fun plus(context: CoroutineContext): CoroutineContext = context
-    public override fun minusKey(key: CoroutineContextKey<*>): CoroutineContext = this
+    public override fun minusKey(key: Key<*>): CoroutineContext = this
     public override fun hashCode(): Int = 0
     public override fun toString(): String = "EmptyCoroutineContext"
 }
@@ -52,8 +54,8 @@ public object EmptyCoroutineContext : CoroutineContext {
 
 // this class is not exposed, but is hidden inside implementations
 // this is a left-biased list, so that `plus` works naturally
-private class CombinedContext(val left: CoroutineContext, val element: CoroutineContextElement) : CoroutineContext {
-    override fun <E : CoroutineContextElement> get(key: CoroutineContextKey<E>): E? {
+private class CombinedContext(val left: CoroutineContext, val element: Element) : CoroutineContext {
+    override fun <E : Element> get(key: Key<E>): E? {
         var cur = this
         while (true) {
             cur.element[key]?.let { return it }
@@ -66,13 +68,13 @@ private class CombinedContext(val left: CoroutineContext, val element: Coroutine
         }
     }
 
-    public override fun <R> fold(initial: R, operation: (R, CoroutineContextElement) -> R): R =
+    public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
             operation(left.fold(initial, operation), element)
 
     public override operator fun plus(context: CoroutineContext): CoroutineContext =
             plusImpl(context)
 
-    public override fun minusKey(key: CoroutineContextKey<*>): CoroutineContext {
+    public override fun minusKey(key: Key<*>): CoroutineContext {
         element[key]?.let { return left }
         val newLeft = left.minusKey(key)
         return when (newLeft) {
@@ -85,8 +87,8 @@ private class CombinedContext(val left: CoroutineContext, val element: Coroutine
     private fun size(): Int =
             if (left is CombinedContext) left.size() + 1 else 2
 
-    private fun contains(element: CoroutineContextElement): Boolean =
-            get(element.contextKey) == element
+    private fun contains(element: Element): Boolean =
+            get(element.key) == element
 
     private fun containsAll(context: CombinedContext): Boolean {
         var cur = context
@@ -96,7 +98,7 @@ private class CombinedContext(val left: CoroutineContext, val element: Coroutine
             if (next is CombinedContext) {
                 cur = next
             } else {
-                return contains(next as CoroutineContextElement)
+                return contains(next as Element)
             }
         }
     }
@@ -115,7 +117,7 @@ private class CombinedContext(val left: CoroutineContext, val element: Coroutine
 private fun CoroutineContext.plusImpl(context: CoroutineContext): CoroutineContext =
         if (context == EmptyCoroutineContext) this else // fast path -- avoid lambda creation
             context.fold(this) { acc, element ->
-                val removed = acc.minusKey(element.contextKey)
+                val removed = acc.minusKey(element.key)
                 if (removed == EmptyCoroutineContext) element else {
                     // make sure interceptor is always last in the context (and thus is fast to get when present)
                     val interceptor = removed[ContinuationInterceptor]
