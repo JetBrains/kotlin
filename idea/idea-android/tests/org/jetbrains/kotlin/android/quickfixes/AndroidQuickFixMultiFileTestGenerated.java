@@ -50,4 +50,25 @@ public class AndroidQuickFixMultiFileTestGenerated extends AbstractAndroidQuickF
             doTestWithExtraFile(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/android/quickfix/viewConstructor")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ViewConstructor extends AbstractAndroidQuickFixMultiFileTest {
+        public void testAllFilesPresentInViewConstructor() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/quickfix/viewConstructor"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("indirect.before.Main.kt")
+        public void testIndirect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/quickfix/viewConstructor/indirect.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("simple.before.Main.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/quickfix/viewConstructor/simple.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
 }
