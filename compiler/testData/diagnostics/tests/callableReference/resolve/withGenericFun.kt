@@ -7,4 +7,4 @@ fun foo(s: String) {}
 
 val x1 = apply(1, ::foo)
 val x2 = apply("hello", ::foo)
-val x3 = apply(true, ::<!NONE_APPLICABLE!>foo<!>)
+val x3 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>apply<!>(true, ::<!NONE_APPLICABLE!>foo<!>)

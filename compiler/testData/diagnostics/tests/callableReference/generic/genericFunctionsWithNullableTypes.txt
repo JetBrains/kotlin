@@ -1,0 +1,18 @@
+package
+
+public fun </*0*/ T, /*1*/ R> bar(/*0*/ x: T, /*1*/ y: R, /*2*/ f: (T) -> R): Pair<T, R?>
+public inline fun </*0*/ reified T, /*1*/ reified R> baz(/*0*/ x: T, /*1*/ y: R, /*2*/ f: (T) -> R): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> foo(/*0*/ x: T): R
+public fun </*0*/ T> test(/*0*/ x: T): kotlin.Unit
+
+public final data class Pair</*0*/ A, /*1*/ B> {
+    public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ a: A, /*1*/ b: B)
+    public final val a: A
+    public final val b: B
+    public final operator /*synthesized*/ fun component1(): A
+    public final operator /*synthesized*/ fun component2(): B
+    public final /*synthesized*/ fun copy(/*0*/ a: A = ..., /*1*/ b: B = ...): Pair<A, B>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

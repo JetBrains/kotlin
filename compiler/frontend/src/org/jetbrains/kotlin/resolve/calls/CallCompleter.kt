@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -157,14 +158,13 @@ class CallCompleter(
         val expectedReturnType =
                 if (call.isCallableReference()) {
                     // TODO: compute generic type argument for R in the kotlin.Function<R> supertype (KT-12963)
-                    // TODO: also add constraints for parameter types (KT-12964)
                     if (!TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionType) expectedType.getReturnTypeFromFunctionType()
                     else TypeUtils.NO_EXPECTED_TYPE
                 }
                 else expectedType
 
-        fun ConstraintSystem.Builder.returnTypeInSystem(): KotlinType? =
-                returnType?.let {
+        fun ConstraintSystem.Builder.typeInSystem(type: KotlinType?): KotlinType? =
+                type?.let {
                     val substitutor = typeVariableSubstitutors[call.toHandle()] ?: error("No substitutor for call: $call")
                     substitutor.substitute(it, Variance.INVARIANT)
                 }
@@ -178,7 +178,7 @@ class CallCompleter(
 
         if (returnType != null && !TypeUtils.noExpectedType(expectedReturnType)) {
             updateSystemIfNeeded { builder ->
-                val returnTypeInSystem = builder.returnTypeInSystem()
+                val returnTypeInSystem = builder.typeInSystem(returnType)
                 if (returnTypeInSystem != null) {
                     builder.addSubtypeConstraint(returnTypeInSystem, expectedReturnType, EXPECTED_TYPE_POSITION.position())
                     builder.build()
@@ -202,7 +202,7 @@ class CallCompleter(
 
         if (returnType != null && expectedReturnType === TypeUtils.UNIT_EXPECTED_TYPE) {
             updateSystemIfNeeded { builder ->
-                val returnTypeInSystem = builder.returnTypeInSystem()
+                val returnTypeInSystem = builder.typeInSystem(returnType)
                 if (returnTypeInSystem != null) {
                     builder.addSubtypeConstraint(returnTypeInSystem, builtIns.unitType, EXPECTED_TYPE_POSITION.position())
                     val system = builder.build()
@@ -212,6 +212,16 @@ class CallCompleter(
             }
         }
 
+        if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionType) {
+            updateSystemIfNeeded { builder ->
+                candidateDescriptor.valueParameters.zip(expectedType.getValueParameterTypesFromFunctionType()).forEach { (parameter, argument) ->
+                    val valueParameterInSystem = builder.typeInSystem(parameter.type)
+                    builder.addSubtypeConstraint(valueParameterInSystem, argument.type, VALUE_PARAMETER_POSITION.position(parameter.index))
+                }
+
+                builder.build()
+            }
+        }
 
         val builder = constraintSystem!!.toBuilder()
         builder.fixVariables()

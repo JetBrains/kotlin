@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,6 +77,14 @@ public class ControlStructureTypingUtils {
         public String getName() {
             return name;
         }
+
+        public Name getSpecialFunctionName() {
+            return Name.identifier("<SPECIAL-FUNCTION-FOR-" + name.toUpperCase() + "-RESOLVE>");
+        }
+
+        public Name getSpecialTypeParameterName() {
+            return Name.identifier("<TYPE-PARAMETER-FOR-" + name.toUpperCase() + "-RESOLVE>");
+        }
     }
 
     private final CallResolver callResolver;
@@ -139,16 +147,14 @@ public class ControlStructureTypingUtils {
     ) {
         assert argumentNames.size() == isArgumentNullable.size();
 
-        String constructionName = construct.getName().toUpperCase();
-        Name specialFunctionName = Name.identifier("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
-
         SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
-                moduleDescriptor, Annotations.Companion.getEMPTY(), specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE
+                moduleDescriptor, Annotations.Companion.getEMPTY(), construct.getSpecialFunctionName(),
+                CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE
         );
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
                 function, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
-                Name.identifier("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
+                construct.getSpecialTypeParameterName(), 0);
 
         KotlinType type = typeParameter.getDefaultType();
         KotlinType nullableType = TypeUtils.makeNullable(type);

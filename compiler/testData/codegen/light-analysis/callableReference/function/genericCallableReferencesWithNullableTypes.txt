@@ -1,0 +1,22 @@
+@kotlin.Metadata
+public final class GenericCallableReferencesWithNullableTypesKt {
+    private final static method bar(p0: java.lang.Object, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1, p3: java.lang.String, p4: java.lang.String): Pair
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method foo(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Pair {
+    private final field a: java.lang.Object
+    private final field b: java.lang.Object
+    public method <init>(p0: java.lang.Object, p1: java.lang.Object): void
+    public final method component1(): java.lang.Object
+    public final method component2(): java.lang.Object
+    public synthetic static method copy$default(p0: Pair, p1: java.lang.Object, p2: java.lang.Object, p3: int, p4: java.lang.Object): Pair
+    public final @org.jetbrains.annotations.NotNull method copy(p0: java.lang.Object, p1: java.lang.Object): Pair
+    public method equals(p0: java.lang.Object): boolean
+    public final method getA(): java.lang.Object
+    public final method getB(): java.lang.Object
+    public method hashCode(): int
+    public method toString(): java.lang.String
+}

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
@@ -51,7 +52,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+
+private val SPECIAL_FUNCTION_NAMES = ResolveConstruct.values().map { it.specialFunctionName }.toSet()
 
 class GenericCandidateResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
@@ -186,6 +190,9 @@ class GenericCandidateResolver(
         if (addConstraintForNestedCall(argumentExpression, constraintPosition, builder, newContext, effectiveExpectedType)) return
 
         val type = updateResultTypeForSmartCasts(typeInfoForCall.type, argumentExpression, context.replaceDataFlowInfo(dataFlowInfoForArgument))
+
+        if (argumentExpression is KtCallableReferenceExpression && type == null) return
+
         builder.addSubtypeConstraint(
                 type,
                 builder.compositeSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT),
@@ -273,8 +280,28 @@ class GenericCandidateResolver(
                         addConstraintForFunctionLiteralArgument(functionLiteral, valueArgument, valueParameterDescriptor, constraintSystem, newContext,
                                                                 resolvedCall.candidateDescriptor.returnType)
                     }
+
+                    // as inference for callable references depends on expected type,
+                    // we should postpone reporting errors on them until all types will be inferred
+
+                    // We do not replace trace for special calls (e.g. if-expressions) because of their specific analysis
+                    // For example, type info for arguments is needed before call will be completed (See ControlStructureTypingVisitor.visitIfExpression)
+                    val temporaryContextForCall = if (resolvedCall.candidateDescriptor.name in SPECIAL_FUNCTION_NAMES) {
+                        newContext
+                    }
+                    else {
+                        val temporaryBindingTrace = TemporaryBindingTrace.create(
+                                newContext.trace, "Trace to complete argument for call that might be not resulting call")
+                        newContext.replaceBindingTrace(temporaryBindingTrace)
+                    }
+
                     ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, newContext)?.let { callableReference ->
-                        addConstraintForCallableReference(callableReference, valueArgument, valueParameterDescriptor, constraintSystem, newContext)
+                        addConstraintForCallableReference(
+                                callableReference,
+                                valueArgument,
+                                valueParameterDescriptor,
+                                constraintSystem,
+                                temporaryContextForCall)
                     }
                 }
             }
@@ -376,7 +403,7 @@ class GenericCandidateResolver(
         val expectedType = getExpectedTypeForCallableReference(callableReference, constraintSystem, context, effectiveExpectedType)
                            ?: return
         if (!ReflectionTypes.isCallableType(expectedType)) return
-        val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument)
+        val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument) ?: return
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
         constraintSystem.addSubtypeConstraint(
                 resolvedType,

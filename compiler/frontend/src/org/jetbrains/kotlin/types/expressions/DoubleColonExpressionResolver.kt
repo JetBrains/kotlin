@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -606,11 +606,16 @@ class DoubleColonExpressionResolver(
             outerContext: ResolutionContext<*>,
             resolutionMode: ResolveArgumentsMode
     ): OverloadResolutionResults<CallableDescriptor>? {
-        val call = CallMaker.makeCall(reference, receiver, null, reference, emptyList())
+        // we should preserve information about `call` because callable references are analyzed two times,
+        // otherwise there will be not completed calls in trace
+        val call = outerContext.trace[BindingContext.CALL, reference] ?: CallMaker.makeCall(reference, receiver, null, reference, emptyList())
         val temporaryTrace = TemporaryTraceAndCache.create(outerContext, traceTitle, reference)
         val newContext =
                 if (resolutionMode == ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS)
-                    outerContext.replaceTraceAndCache(temporaryTrace).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+                    outerContext
+                            .replaceTraceAndCache(temporaryTrace)
+                            .replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+                            .replaceContextDependency(ContextDependency.DEPENDENT)
                 else
                     outerContext.replaceTraceAndCache(temporaryTrace)
 

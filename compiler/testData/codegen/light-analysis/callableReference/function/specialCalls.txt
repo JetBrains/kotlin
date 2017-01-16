@@ -1,0 +1,7 @@
+@kotlin.Metadata
+public final class SpecialCallsKt {
+    public final static method bar(p0: java.lang.Object): java.lang.Object
+    public final static method baz(p0: int): int
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method nullableFun(): kotlin.jvm.functions.Function1
+}

@@ -2159,9 +2159,51 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericCallableReferenceArguments.kt")
+            public void testGenericCallableReferenceArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArguments.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
+            public void testGenericCallableReferencesWithNullableTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
+            @TestMetadata("genericCallableReferencesWithOverload.kt")
+            public void testGenericCallableReferencesWithOverload() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithOverload.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
             @TestMetadata("genericMember.kt")
             public void testGenericMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("genericWithDependentType.kt")
+            public void testGenericWithDependentType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericWithDependentType.kt");
                 doTest(fileName);
             }
 
@@ -2270,6 +2312,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("sortListOfStrings.kt")
             public void testSortListOfStrings() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/sortListOfStrings.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("specialCalls.kt")
+            public void testSpecialCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/specialCalls.kt");
                 doTest(fileName);
             }
 

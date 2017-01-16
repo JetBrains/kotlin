@@ -1,0 +1,4 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun </*0*/ T> shuffle(/*0*/ x: kotlin.collections.List<T>): kotlin.collections.List<T>

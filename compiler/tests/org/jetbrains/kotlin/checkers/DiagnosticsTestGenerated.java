@@ -1732,6 +1732,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt15439_completeCall.kt")
+            public void testKt15439_completeCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/kt15439_completeCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt7430_wrongClassOnLHS.kt")
             public void testKt7430_wrongClassOnLHS() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/kt7430_wrongClassOnLHS.kt");
@@ -2208,6 +2214,48 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/generic"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("argumentAndReturnExpectedType.kt")
+                public void testArgumentAndReturnExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/argumentAndReturnExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("argumentExpectedType.kt")
+                public void testArgumentExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/argumentExpectedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dependOnArgumentType.kt")
+                public void testDependOnArgumentType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/dependOnArgumentType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("expectedFunctionType.kt")
+                public void testExpectedFunctionType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/expectedFunctionType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("explicitTypeArguments.kt")
+                public void testExplicitTypeArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/explicitTypeArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericExtensionFunction.kt")
+                public void testGenericExtensionFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/genericExtensionFunction.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericFunctionsWithNullableTypes.kt")
+                public void testGenericFunctionsWithNullableTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/genericFunctionsWithNullableTypes.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt10968.kt")
                 public void testKt10968() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/kt10968.kt");
@@ -2223,6 +2271,36 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("kt12286.kt")
                 public void testKt12286() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/kt12286.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7470.kt")
+                public void testKt7470() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/kt7470.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedCallWithOverload.kt")
+                public void testNestedCallWithOverload() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/nestedCallWithOverload.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("resolutionGenericCallableWithNullableTypes.kt")
+                public void testResolutionGenericCallableWithNullableTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/resolutionGenericCallableWithNullableTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("resolutionWithGenericCallable.kt")
+                public void testResolutionWithGenericCallable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/resolutionWithGenericCallable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("specialCalls.kt")
+                public void testSpecialCalls() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/specialCalls.kt");
                     doTest(fileName);
                 }
             }

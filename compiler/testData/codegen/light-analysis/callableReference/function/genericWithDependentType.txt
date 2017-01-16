@@ -1,0 +1,11 @@
+@kotlin.Metadata
+public final class GenericWithDependentTypeKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Wrapper {
+    private final field value: java.lang.Object
+    public method <init>(p0: java.lang.Object): void
+    public final method getValue(): java.lang.Object
+}

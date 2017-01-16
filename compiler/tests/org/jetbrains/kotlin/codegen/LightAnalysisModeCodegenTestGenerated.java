@@ -1768,9 +1768,33 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 doTest(fileName);
             }
 
+            @TestMetadata("genericCallableReferenceArguments.kt")
+            public void testGenericCallableReferenceArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
+            public void testGenericCallableReferencesWithNullableTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("genericCallableReferencesWithOverload.kt")
+            public void testGenericCallableReferencesWithOverload() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithOverload.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericMember.kt")
             public void testGenericMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("genericWithDependentType.kt")
+            public void testGenericWithDependentType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/genericWithDependentType.kt");
                 doTest(fileName);
             }
 
@@ -1855,6 +1879,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             @TestMetadata("sortListOfStrings.kt")
             public void testSortListOfStrings() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/sortListOfStrings.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("specialCalls.kt")
+            public void testSpecialCalls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/specialCalls.kt");
                 doTest(fileName);
             }
 

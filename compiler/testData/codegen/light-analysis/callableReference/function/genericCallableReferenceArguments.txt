@@ -1,0 +1,8 @@
+@kotlin.Metadata
+public final class GenericCallableReferenceArgumentsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method check(p0: java.lang.Object, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1, p3: java.lang.String, p4: java.lang.String): void
+    private final static method check(p0: kotlin.jvm.functions.Function1, p1: kotlin.jvm.functions.Function1, p2: java.lang.String, p3: java.lang.String): void
+    public final static method foo(p0: java.lang.Object): java.lang.Object
+    public final static method fooReturnInt(p0: java.lang.Object): int
+}

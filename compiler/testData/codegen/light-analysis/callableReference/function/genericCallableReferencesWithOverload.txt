@@ -1,0 +1,8 @@
+@kotlin.Metadata
+public final class GenericCallableReferencesWithOverloadKt {
+    private final static method bar(p0: kotlin.jvm.functions.Function1, p1: java.lang.String): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method foo(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
+    public final static method foo(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    public final static method foo(p0: boolean): void
+}
