@@ -170,6 +170,8 @@ internal val ClassDescriptor.сontributedMethods: List<FunctionDescriptor>
         return allMethods
     }
 
+fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
+
 // TODO: optimize
 val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
     get() {
@@ -190,6 +192,9 @@ val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
         return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
     }
 
+val ClassDescriptor.vtableSize: Int
+    get() = if (this.isAbstract()) 0 else this.vtableEntries.size
+
 fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
     this.vtableEntries.forEachIndexed { index, functionDescriptor ->
         if (functionDescriptor == function.original) return index
@@ -199,7 +204,7 @@ fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
 
 val ClassDescriptor.methodTableEntries: List<FunctionDescriptor>
     get() {
-        assert (this.modality != Modality.ABSTRACT)
+        assert (!this.isAbstract())
 
         return this.сontributedMethods.filter { it.isOverridableOrOverrides }
         // TODO: probably method table should contain all accessible methods to improve binary compatibility

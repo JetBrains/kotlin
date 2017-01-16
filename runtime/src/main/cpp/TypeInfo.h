@@ -34,14 +34,14 @@ struct TypeInfo {
     const TypeInfo* const* implementedInterfaces_;
     int32_t implementedInterfacesCount_;
     // Null for abstract classes and interfaces.
-    // TODO: place vtable at the end of TypeInfo to eliminate the indirection.
-    void* const* vtable_;
-    // Null for abstract classes and interfaces.
     const MethodTableRecord* openMethods_;
     uint32_t openMethodsCount_;
     const FieldTableRecord* fields_;
     // Is negative to mark an interface.
     int32_t fieldsCount_;
+
+    // vtable starts just after declared contents of the TypeInfo:
+    // void* const vtable_[];
 };
 
 #ifdef __cplusplus
