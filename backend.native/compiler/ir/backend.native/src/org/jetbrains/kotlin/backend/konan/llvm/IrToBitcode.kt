@@ -1671,7 +1671,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val typeInfo = codegen.typeInfoValue(containingClass)
             val allocHint = Int32(1).llvm
             val thisValue = if (containingClass.isArray) {
-                assert(args.size == 1 && args[0].type == int32Type)
+                assert(args.size >= 1 && args[0].type == int32Type)
                 val allocArrayInstanceArgs = listOf(typeInfo, allocHint, args[0])
                 call(context.llvm.allocArrayFunction, allocArrayInstanceArgs)
             } else {

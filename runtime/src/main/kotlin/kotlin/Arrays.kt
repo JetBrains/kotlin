@@ -507,3 +507,89 @@ public val <T> Array<out T>.indices: IntRange
  */
 public val <T> Array<out T>.lastIndex: Int
     get() = size - 1
+
+/**
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
+ */
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
+    for (item in this)
+        destination.add(transform(item))
+    return destination
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun Array<out Byte>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun Array<out Short>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun Array<out Int>.sum(): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun Array<out Long>.sum(): Long {
+    var sum: Long = 0L
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun Array<out Float>.sum(): Float {
+    var sum: Float = 0.0f
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the array.
+ */
+public fun Array<out Double>.sum(): Double {
+    var sum: Double = 0.0
+    for (element in this) {
+        sum += element
+    }
+    return sum
+}
+
+

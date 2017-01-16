@@ -301,6 +301,11 @@ task array1(type: RunKonanTest) {
     source = "runtime/collections/array1.kt"
 }
 
+task array2(type: RunKonanTest) {
+    goldValue = "0\n2\n4\n6\n8\n40\n"
+    source = "runtime/collections/array2.kt"
+}
+
 task if_else(type: RunKonanTest) {
     source = "codegen/branching/if_else.kt"
 }
@@ -536,6 +541,10 @@ task moderately_large_array(type: RunKonanTest) {
     source = "runtime/collections/moderately_large_array.kt"
 }
 
+task moderately_large_array1(type: RunKonanTest) {
+    goldValue = "-45392\n"
+    source = "runtime/collections/moderately_large_array1.kt"
+}
 
 task string_builder0(type: RunKonanTest) {
     goldValue = "OK\n"

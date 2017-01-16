@@ -3,5 +3,5 @@ fun main(args: Array<String>) {
 }
 
 fun foo(): Any {
-    return Array<Any?>(0)
+    return Array<Any?>(0, { i -> null })
 }
