@@ -3,7 +3,7 @@
 
 // If one shall use binary search when looking up methods and fields.
 // TODO: maybe select strategy basing on number of elements.
-#define USE_BINARY_SEARCH 0
+#define USE_BINARY_SEARCH 1
 
 extern "C" {
 #if USE_BINARY_SEARCH

@@ -4,16 +4,16 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.methodTableEntries
+import org.jetbrains.kotlin.backend.konan.descriptors.vtableEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.implementation
 import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
 
@@ -69,46 +69,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
         }
         return classType
-    }
-
-    // TODO: optimize
-    private fun getVtableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
-        assert (!classDesc.isInterface)
-
-        val superVtableEntries = if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDesc)) {
-            emptyList()
-        } else {
-            getVtableEntries(classDesc.getSuperClassOrAny())
-        }
-
-        val methods = classDesc.getContributedMethods() // TODO: ensure order is well-defined
-
-        val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            methods.single { OverridingUtil.overrides(it, superMethod) }
-        }
-
-        return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
-    }
-
-    private fun getMethodTableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
-        assert (classDesc.modality != Modality.ABSTRACT)
-
-        return classDesc.getContributedMethods().filter { it.isOverridableOrOverrides }
-        // TODO: probably method table should contain all accessible methods to improve binary compatibility
-    }
-
-    private fun ClassDescriptor.getContributedMethods(): List<FunctionDescriptor> {
-        val contributedDescriptors = unsubstitutedMemberScope.getContributedDescriptors()
-        // (includes declarations from supers)
-
-        val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
-
-        val properties = contributedDescriptors.filterIsInstance<PropertyDescriptor>()
-        val getters = properties.mapNotNull { it.getter }
-        val setters = properties.mapNotNull { it.setter }
-
-        val allMethods = functions + getters + setters
-        return allMethods
     }
 
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
@@ -186,9 +146,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         if (classDesc.modality != Modality.ABSTRACT) {
             // TODO: compile-time resolution limits binary compatibility
-            vtable = getVtableEntries(classDesc).map { it.implementation.entryPointAddress }
+            vtable = classDesc.vtableEntries.map { it.implementation.entryPointAddress }
 
-            methods = getMethodTableEntries(classDesc).map {
+            methods = classDesc.methodTableEntries.map {
                 val nameSignature = it.functionName.localHash
                 // TODO: compile-time resolution limits binary compatibility
                 val methodEntryPoint = it.implementation.entryPointAddress

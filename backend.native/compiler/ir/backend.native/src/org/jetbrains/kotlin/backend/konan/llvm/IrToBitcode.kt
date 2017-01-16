@@ -1784,14 +1784,29 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
-        val thisI8PtrPtr    = codegen.bitcast(kInt8PtrPtr, args[0])          // Cast "this (i8*)" to i8**.
-        val typeInfoI8Ptr   = codegen.load(thisI8PtrPtr)                     // Load TypeInfo address.
-        val typeInfoPtr     = codegen.bitcast(codegen.kTypeInfoPtr, typeInfoI8Ptr)   // Cast TypeInfo (i8*) to TypeInfo*.
-        val methodHash      = codegen.functionHash(descriptor)                       // Calculate hash of the method to be invoked
-        val lookupArgs      = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
-        val llvmMethod      = call(context.llvm.lookupOpenMethodFunction,
-                lookupArgs)                                                          // Get method ptr to be invoked
+        val typeInfoPtrPtr  = LLVMBuildStructGEP(codegen.builder, args[0], 0 /* type_info */, "")!!
+        val typeInfoPtr     = codegen.load(typeInfoPtrPtr)
 
+        val owner = descriptor.containingDeclaration as ClassDescriptor
+        val llvmMethod = if (!owner.isInterface) {
+            // If this is a virtual method of the class - we can call via vtable.
+            val index = owner.vtableIndex(descriptor)
+            val vtablePtr = LLVMBuildStructGEP(codegen.builder, typeInfoPtr, 7 /* vtable */, "")!!
+            val vtable = codegen.load(vtablePtr)
+            // TODO: those two loads are bad, we shall rework vtable to follow TypeInfo in memory, so
+            //       this code shall just take end address of TypeInfo and use numbered slot from there.
+            val slot = codegen.gep(vtable, Int32(index).llvm)
+            codegen.load(slot)
+        } else {
+            // Otherwise, call via hashtable.
+            // TODO: optimize by storing interface number in lower bits of 'this' pointer
+            //       when passing object as an interface. This way we can use those bits as index
+            //       for an additional per-interface vtable.
+            val methodHash = codegen.functionHash(descriptor)                       // Calculate hash of the method to be invoked
+            val lookupArgs = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
+            call(context.llvm.lookupOpenMethodFunction,
+                    lookupArgs)
+        }
         val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))   // Construct type of the method to be invoked
         val function        = codegen.bitcast(functionPtrType, llvmMethod)           // Cast method address to the type
         return call(descriptor, function, args)                                      // Invoke the method

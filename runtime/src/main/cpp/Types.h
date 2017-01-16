@@ -1,6 +1,7 @@
 #ifndef RUNTIME_TYPES_H
 #define RUNTIME_TYPES_H
 
+#include "Common.h"
 #include "Memory.h"
 #include "TypeInfo.h"
 
@@ -36,9 +37,9 @@ extern const TypeInfo* theBooleanArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 
-KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info);
+KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
-KBoolean IsArray(KConstRef obj);
+KBoolean IsArray(KConstRef obj) RUNTIME_PURE;
 
 typedef void (*Initializer)();
 struct InitNode {
