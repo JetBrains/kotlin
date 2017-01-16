@@ -74,7 +74,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         SinceKotlinAnnotationValueChecker,
         ReifiedTypeParameterAnnotationChecker(),
         DynamicReceiverChecker,
-        DelegationChecker()
+        DelegationChecker(),
+        KClassWithIncorrectTypeArgumentChecker
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

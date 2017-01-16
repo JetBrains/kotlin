@@ -2,11 +2,11 @@
 
 class A
 
-val a1 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A?::class<!>
-val a2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A??::class<!>
+val <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>a1<!> = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A?::class<!>
+val <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>a2<!> = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A??::class<!>
 
-val l1 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>List<String>?::class<!>
-val l2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>List?::class<!>
+val <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>l1<!> = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>List<String>?::class<!>
+val <!KCLASS_WITH_NULLABLE_ARGUMENT_IN_SIGNATURE!>l2<!> = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>List?::class<!>
 
 fun <T : Any> foo() {
     val t1 = <!TYPE_PARAMETER_AS_REIFIED!>T::class<!>
