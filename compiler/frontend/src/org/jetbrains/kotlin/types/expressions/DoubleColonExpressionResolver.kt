@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.UnsupportedOperationException
@@ -105,12 +107,19 @@ class DoubleColonExpressionResolver(
     }
 
     private fun checkClassLiteral(c: ExpressionTypingContext, expression: KtClassLiteralExpression, result: DoubleColonLHS) {
+        val type = result.type
+
         if (result is DoubleColonLHS.Expression) {
-            if (!result.isObject) reportUnsupportedIfNeeded(expression, c)
+            if (!result.isObject) {
+                if (!type.isSubtypeOf(type.builtIns.anyType)) {
+                    c.trace.report(EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS.on(expression.receiverExpression!!, type))
+                }
+                reportUnsupportedIfNeeded(expression, c)
+            }
             return
         }
 
-        val type = (result as DoubleColonLHS.Type).type
+        result as DoubleColonLHS.Type
         val descriptor = type.constructor.declarationDescriptor
         if (result.possiblyBareType.isBare) {
             if (descriptor is ClassDescriptor && KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {

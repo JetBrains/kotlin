@@ -66,12 +66,10 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     private val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
         val resolveMethod = ScriptDependenciesResolver::resolve
         val resolverMethodAnnotations =
-                resolver::class.memberFunctions.find {
-                    it.name == resolveMethod.name &&
-                    sameSignature(it, resolveMethod)
-                }
-                ?.annotations
-                ?.filterIsInstance<AcceptedAnnotations>()
+                resolver?.let { it::class }?.memberFunctions?.find { function ->
+                    function.name == resolveMethod.name &&
+                    sameSignature(function, resolveMethod)
+                }?.annotations?.filterIsInstance<AcceptedAnnotations>()
         resolverMethodAnnotations?.flatMap {
             val v = it.supportedAnnotationClasses
             v.toList() // TODO: inline after KT-9453 is resolved (now it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass")

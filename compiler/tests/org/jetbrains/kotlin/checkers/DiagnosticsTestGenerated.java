@@ -1818,6 +1818,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("expressionWithNullableType.kt")
+                public void testExpressionWithNullableType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/expressionWithNullableType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("functionCallWithoutArguments.kt")
                 public void testFunctionCallWithoutArguments() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/bound/functionCallWithoutArguments.kt");
@@ -3019,6 +3025,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("classLiteralType.kt")
             public void testClassLiteralType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/classLiteralType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expressionWithNullableType.kt")
+            public void testExpressionWithNullableType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/expressionWithNullableType.kt");
                 doTest(fileName);
             }
 
