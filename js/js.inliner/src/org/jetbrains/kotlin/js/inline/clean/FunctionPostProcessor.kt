@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 
-class FunctionPostProcessor(root: JsFunction) {
+class FunctionPostProcessor(val root: JsFunction) {
     val optimizations = listOf(
         //{ TemporaryAssignmentElimination(root.body).apply() },
         { RedundantLabelRemoval(root.body).apply() },
         { WhileConditionFolding(root.body).apply() },
         { DoWhileGuardElimination(root.body).apply() },
         { TemporaryVariableElimination(root).apply() },
-        { RedundantBindElimination(root.body).apply() },
+        { RedundantCallElimination(root.body).apply() },
         { IfStatementReduction(root.body).apply() },
         { DeadCodeElimination(root.body).apply() },
         { RedundantVariableDeclarationElimination(root.body).apply() },

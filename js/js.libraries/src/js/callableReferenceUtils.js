@@ -45,20 +45,6 @@ Kotlin.getBoundCallableRefForExtensionFunction = function (receiver, extFun) {
     };
 };
 
-Kotlin.getCallableRefForLocalExtensionFunction = function (extFun) {
-    return function () {
-        var args = [].slice.call(arguments);
-        var instance = args.shift();
-        return extFun.apply(instance, args);
-    };
-};
-
-Kotlin.getBoundCallableRefForLocalExtensionFunction = function (receiver, extFun) {
-    return function () {
-        return extFun.apply(receiver, arguments);
-    };
-};
-
 Kotlin.getCallableRefForConstructor = function (klass) {
     return function () {
         var obj = Object.create(klass.prototype);

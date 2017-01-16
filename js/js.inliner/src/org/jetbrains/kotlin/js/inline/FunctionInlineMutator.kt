@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.inline.clean.removeDefaultInitializers
 import org.jetbrains.kotlin.js.inline.context.InliningContext
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
+import org.jetbrains.kotlin.js.translate.context.Namer
 
 class FunctionInlineMutator
 private constructor(
@@ -77,7 +78,7 @@ private constructor(
         return when (qualifier) {
             is JsInvocation -> qualifier
             is JsNameRef -> {
-                val callee = if (qualifier.ident == "call") qualifier.qualifier else (qualifier.name?.staticRef as? JsExpression)
+                val callee = if (qualifier.ident == Namer.CALL_FUNCTION) qualifier.qualifier else (qualifier.name?.staticRef as? JsExpression)
                 callee?.let { getInnerCall(it) }
             }
             else -> null

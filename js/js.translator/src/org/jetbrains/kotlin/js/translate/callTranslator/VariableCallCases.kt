@@ -130,7 +130,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
     }
 
     override fun VariableAccessInfo.bothReceivers(): JsExpression {
-        val funRef = JsNameRef(context.getNameForDescriptor(getAccessDescriptorIfNeeded()), dispatchReceiver!!)
+        val funRef = JsAstUtils.pureFqn(context.getNameForDescriptor(getAccessDescriptorIfNeeded()), dispatchReceiver!!)
         return JsInvocation(funRef, extensionReceiver!!, *additionalArguments.toTypedArray())
     }
 }

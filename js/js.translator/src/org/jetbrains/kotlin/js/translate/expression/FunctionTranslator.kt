@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.translate.expression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsParameter
@@ -77,7 +76,7 @@ private fun FunctionDescriptor.getCorrectTypeParameters() =
 
 
 private val FunctionDescriptor.requiresExtensionReceiverParameter
-    get() = DescriptorUtils.isExtension(this) && visibility != Visibilities.LOCAL
+    get() = DescriptorUtils.isExtension(this)
 
 fun TranslationContext.translateFunction(declaration: KtDeclarationWithBody, function: JsFunction) {
     val descriptor = BindingUtils.getFunctionDescriptor(bindingContext(), declaration)

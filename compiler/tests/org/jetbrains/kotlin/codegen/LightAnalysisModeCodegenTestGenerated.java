@@ -7142,6 +7142,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             doTest(fileName);
         }
 
+        @TestMetadata("kt13312.kt")
+        public void testKt13312() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt13312.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1776.kt")
         public void testKt1776() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt1776.kt");

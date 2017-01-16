@@ -211,10 +211,6 @@ public final class Namer {
     @NotNull
     private final JsName boundCallableRefForExtensionFunctionName;
     @NotNull
-    private final JsName callableRefForLocalExtensionFunctionName;
-    @NotNull
-    private final JsName boundCallableRefForLocalExtensionFunctionName;
-    @NotNull
     private final JsName callableRefForConstructorName;
     @NotNull
     private final JsName callableRefForTopLevelProperty;
@@ -244,8 +240,6 @@ public final class Namer {
         boundCallableRefForMemberFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
         callableRefForExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
         boundCallableRefForExtensionFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
-        callableRefForLocalExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME);
-        boundCallableRefForLocalExtensionFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME);
         callableRefForConstructorName = kotlinScope.declareName(CALLABLE_REF_FOR_CONSTRUCTOR_NAME);
         callableRefForTopLevelProperty = kotlinScope.declareName(CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY);
         callableRefForMemberProperty = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_PROPERTY);
@@ -285,16 +279,6 @@ public final class Namer {
     @NotNull
     public JsExpression boundCallableRefForExtensionFunctionReference() {
         return kotlin(boundCallableRefForExtensionFunctionName);
-    }
-
-    @NotNull
-    public JsExpression callableRefForLocalExtensionFunctionReference() {
-        return kotlin(callableRefForLocalExtensionFunctionName);
-    }
-
-    @NotNull
-    public JsExpression boundCallableRefForLocalExtensionFunctionReference() {
-        return kotlin(boundCallableRefForLocalExtensionFunctionName);
     }
 
     @NotNull

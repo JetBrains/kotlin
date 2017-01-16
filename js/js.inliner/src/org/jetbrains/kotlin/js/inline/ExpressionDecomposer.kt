@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.inline.util.rewriters.ContinueReplacingVisitor
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
@@ -288,8 +288,8 @@ internal class ExpressionDecomposer private constructor(
 
     private fun Callable.process() {
         qualifier = accept(qualifier)
-        val matchedIndices = arguments.indicesOfExtractable
-        if (!matchedIndices.hasNext()) return
+        var matchedIndices = arguments.indicesOfExtractable
+        if (matchedIndices.isEmpty()) return
 
         if (qualifier in containsNodeWithSideEffect) {
             val callee = qualifier as? JsNameRef
@@ -307,20 +307,27 @@ internal class ExpressionDecomposer private constructor(
             else {
                 if (receiver != null && applyBindIfNecessary) {
                     val receiverTmp = receiver.extractToTemporary()
-                    qualifier = JsAstUtils.invokeBind(receiverTmp, pureFqn(callee.ident, receiverTmp))
+                    val fqn = JsNameRef(callee.ident, receiverTmp).apply {
+                        synthetic = true
+                        callee.name?.let { sideEffects = it.sideEffects }
+                    }
+                    qualifier = fqn.extractToTemporary()
+                    qualifier = Namer.getFunctionCallRef(qualifier)
+                    arguments.add(0, receiverTmp)
+                    matchedIndices = matchedIndices.map { it + 1 }
                 }
-                qualifier = qualifier.extractToTemporary()
+                else {
+                    qualifier = qualifier.extractToTemporary()
+                }
             }
         }
 
         processByIndices(arguments, matchedIndices)
     }
 
-    private fun processByIndices(elements: MutableList<JsExpression>, matchedIndices: Iterator<Int>) {
+    private fun processByIndices(elements: MutableList<JsExpression>, matchedIndices: List<Int>) {
         var prev = 0
-        while (matchedIndices.hasNext()) {
-            val curr = matchedIndices.next()
-
+        for (curr in matchedIndices) {
             for (i in prev..curr-1) {
                 val arg = elements[i]
                 if (arg !in containsNodeWithSideEffect) continue
@@ -374,8 +381,8 @@ internal class ExpressionDecomposer private constructor(
         }
     }
 
-    private val List<JsNode>.indicesOfExtractable: Iterator<Int>
-        get() = indices.filter { get(it) in containsExtractable }.iterator()
+    private val List<JsNode>.indicesOfExtractable: List<Int>
+        get() = indices.filter { get(it) in containsExtractable }
 }
 
 /**

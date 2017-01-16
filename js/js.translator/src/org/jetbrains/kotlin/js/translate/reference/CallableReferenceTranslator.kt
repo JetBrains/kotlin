@@ -223,15 +223,7 @@ object CallableReferenceTranslator {
                                               receiver: JsExpression?
     ): JsExpression {
         val jsFunctionRef = ReferenceTranslator.translateAsValueReference(descriptor, context)
-        if (descriptor.visibility == Visibilities.LOCAL) {
-            if (receiver == null) {
-                return JsInvocation(context.namer().callableRefForLocalExtensionFunctionReference(), jsFunctionRef)
-            }
-            else {
-                return JsInvocation(context.namer().boundCallableRefForLocalExtensionFunctionReference(), receiver, jsFunctionRef)
-            }
-        }
-        else if (AnnotationsUtils.isNativeObject(descriptor)) {
+        if (AnnotationsUtils.isNativeObject(descriptor)) {
             return translateForMemberFunction(descriptor, context, receiver)
         }
         else {

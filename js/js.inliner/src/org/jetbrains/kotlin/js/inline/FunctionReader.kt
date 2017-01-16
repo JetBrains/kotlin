@@ -171,7 +171,6 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
     val params = descriptor.valueParameters
     val paramsJs = parameters
     val inlineFuns = IdentitySet<JsName>()
-    val inlineExtensionFuns = IdentitySet<JsName>()
     val offset = if (descriptor.isExtension) 1 else 0
 
     for ((i, param) in params.withIndex()) {
@@ -180,25 +179,21 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
         val type = param.type
         if (!type.isFunctionTypeOrSubtype) continue
 
-        val namesSet = if (type.isExtensionFunctionType) inlineExtensionFuns else inlineFuns
-        namesSet.add(paramsJs[i + offset].name)
+        inlineFuns.add(paramsJs[i + offset].name)
     }
 
     val visitor = object: JsVisitorWithContextImpl() {
         override fun endVisit(x: JsInvocation, ctx: JsContext<*>) {
             val qualifier: JsExpression?
-            val namesSet: Set<JsName>
 
             if (isCallInvocation(x)) {
                 qualifier = (x.qualifier as? JsNameRef)?.qualifier
-                namesSet = inlineExtensionFuns
             } else {
                 qualifier = x.qualifier
-                namesSet = inlineFuns
             }
 
             (qualifier as? JsNameRef)?.name?.let { name ->
-                if (name in namesSet) {
+                if (name in inlineFuns) {
                     x.inlineStrategy = InlineStrategy.IN_PLACE
                 }
             }

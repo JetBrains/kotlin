@@ -28,7 +28,7 @@ import kotlin.coroutines.intrinsics.*
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> = this.asDynamic().call(receiver, completion, true).facade
+): Continuation<Unit> = this.asDynamic()(receiver, completion, true).facade
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -40,7 +40,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
         receiver: R,
         completion: Continuation<T>
 ) {
-    this.asDynamic().call(receiver, completion)
+    this.asDynamic()(receiver, completion)
 }
 
 /**

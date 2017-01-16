@@ -1,3 +1,3 @@
 function bar(a, extLambda) {
-    return extLambda.call(a, 4, "boo")
+    return extLambda(a, 4, "boo")
 }

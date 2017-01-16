@@ -39,25 +39,13 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
     @TestMetadata("classLevel.kt")
     public void testClassLevel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/classLevel.kt");
-        try {
-            doTest(fileName);
-        }
-        catch (Throwable ignore) {
-            return;
-        }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        doTest(fileName);
     }
 
     @TestMetadata("classLevel2.kt")
     public void testClassLevel2() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/classLevel2.kt");
-        try {
-            doTest(fileName);
-        }
-        catch (Throwable ignore) {
-            return;
-        }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        doTest(fileName);
     }
 
     @TestMetadata("constructor.kt")
@@ -111,13 +99,7 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
     @TestMetadata("topLevelExtension.kt")
     public void testTopLevelExtension() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/callableReference/topLevelExtension.kt");
-        try {
-            doTest(fileName);
-        }
-        catch (Throwable ignore) {
-            return;
-        }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        doTest(fileName);
     }
 
     @TestMetadata("topLevelProperty.kt")

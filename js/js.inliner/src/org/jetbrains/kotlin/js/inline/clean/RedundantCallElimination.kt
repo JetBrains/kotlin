@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
+import org.jetbrains.kotlin.js.inline.util.getCallerQualifier
+import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 
-// TODO: this optimization is a little unfair. It tries to recognize pattern like this a.bind(b)(args) and
-// replace it with b.a(args). However, we can't be completely sure that `a` is a Function.
-// Using JS-independent AST should solve the issue (as well as many other issues).
-class RedundantBindElimination(private val root: JsBlock) {
+// Replaces a.foo.call(a, b) with a.foo(b)
+class RedundantCallElimination(private val root: JsBlock) {
     private var changed = false
 
     fun apply(): Boolean {
@@ -35,15 +35,18 @@ class RedundantBindElimination(private val root: JsBlock) {
             }
 
             private fun tryEliminate(invocation: JsInvocation) {
-                val qualifier = invocation.qualifier as? JsInvocation ?: return
+                if (!isCallInvocation(invocation)) return
 
-                val outerQualifier = qualifier.qualifier as? JsNameRef ?: return
-                val name = outerQualifier.ident
-                if (name != "bind") return
+                val qualifier = getCallerQualifier(invocation) as? JsNameRef ?: return
 
-                val qualifierReplacement = outerQualifier.qualifier ?: return
-                invocation.qualifier = qualifierReplacement
-                changed = true
+                val receiver = qualifier.qualifier as? JsNameRef ?: return
+                val firstArg = invocation.arguments.firstOrNull() as? JsNameRef ?: return
+
+                if (receiver.qualifier == null && receiver.name != null && firstArg.qualifier == null && receiver.name == firstArg.name) {
+                    invocation.arguments.removeAt(0)
+                    invocation.qualifier = qualifier
+                    changed = true
+                }
             }
         })
 
