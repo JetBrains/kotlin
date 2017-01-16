@@ -4790,6 +4790,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noArgType.kt")
+        public void testNoArgType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/noArgType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("paramsAndProperties.kt")
         public void testParamsAndProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPrimaryConstructorToSecondary/paramsAndProperties.kt");
