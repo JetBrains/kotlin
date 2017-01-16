@@ -32,7 +32,7 @@ fun aliasArgumentsIfNeeded(
     for ((arg, param) in arguments.zip(parameters)) {
         val paramName = param.name
 
-        val replacement = context.getFreshName(paramName).apply {
+        val replacement = context.getTemporaryName(paramName.ident).apply {
             staticRef = arg
             context.newVar(this, arg.deepCopy())
         }.makeRef()
@@ -43,7 +43,7 @@ fun aliasArgumentsIfNeeded(
     val defaultParams = parameters.subList(arguments.size, parameters.size)
     for (defaultParam in defaultParams) {
         val paramName = defaultParam.name
-        val freshName = context.getFreshName(paramName)
+        val freshName = context.getTemporaryName(paramName.ident)
         context.newVar(freshName)
 
         context.replaceName(paramName, freshName.makeRef())

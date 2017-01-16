@@ -5630,6 +5630,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("constructorLocalVar.kt")
+        public void testConstructorLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/constructorLocalVar.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("differenceInCapitalization.kt")
         public void testDifferenceInCapitalization() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/differenceInCapitalization.kt");

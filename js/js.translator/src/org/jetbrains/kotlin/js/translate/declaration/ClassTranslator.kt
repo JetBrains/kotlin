@@ -75,7 +75,8 @@ class ClassTranslator private constructor(
         val scope = context().getScopeForDescriptor(descriptor)
         val context = context().newDeclaration(descriptor)
 
-        val constructorFunction = context.createRootScopedFunction(descriptor)
+        val constructorFunction = descriptor.unsubstitutedPrimaryConstructor?.let { context.getFunctionObject(it) } ?:
+                                  context.createRootScopedFunction(descriptor)
         constructorFunction.name = context.getInnerNameForDescriptor(descriptor)
         context.addDeclarationStatement(constructorFunction.makeStmt())
         val enumInitFunction = if (descriptor.kind == ClassKind.ENUM_CLASS) createEnumInitFunction() else null
