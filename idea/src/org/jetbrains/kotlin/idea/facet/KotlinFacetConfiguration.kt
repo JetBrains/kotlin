@@ -46,17 +46,6 @@ class KotlinFacetConfiguration : FacetConfiguration {
         else {
             settings = KotlinFacetSettings()
         }
-        if (settings.useProjectSettings) {
-            with(settings.versionInfo) {
-                languageLevel = null
-                apiLevel = null
-            }
-            with(settings.compilerInfo) {
-                commonCompilerArguments = null
-                k2jsCompilerArguments = null
-                compilerSettings = null
-            }
-        }
     }
 
     @Suppress("OverridingDeprecatedMember")
