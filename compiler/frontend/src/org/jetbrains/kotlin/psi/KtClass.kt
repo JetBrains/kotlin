@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ open class KtClass : KtClassOrObject {
 }
 
 fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
-    val constructor = getPrimaryConstructor()
+    val constructor = primaryConstructor
     if (constructor != null) return constructor
     var anchor: PsiElement? = typeParameterList
     if (anchor == null) anchor = nameIdentifier
