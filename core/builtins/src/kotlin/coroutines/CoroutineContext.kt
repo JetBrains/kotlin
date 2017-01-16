@@ -17,25 +17,25 @@
 package kotlin.coroutines
 
 /**
- * Persistent context for the coroutine. It is an indexed set of [CoroutineContextElement] instances.
+ * Persistent context for the coroutine. It is an indexed set of [Element] instances.
  * An indexed set is a mix between a set and a map.
- * Every element in this set has a unique [CoroutineContextKey].
+ * Every element in this set has a unique [Key].
  */
 @SinceKotlin("1.1")
 public interface CoroutineContext {
     /**
-     * Returns an element with the given [key] in this context or `null`.
+     * Returns the element with the given [key] from this context or `null`.
      */
-    public operator fun <E : CoroutineContextElement> get(key: CoroutineContextKey<E>): E?
+    public operator fun <E : Element> get(key: Key<E>): E?
 
     /**
      * Accumulates entries of this context starting with [initial] value and applying [operation]
      * from left to right to current accumulator value and each element of this context.
      */
-    public fun <R> fold(initial: R, operation: (R, CoroutineContextElement) -> R): R
+    public fun <R> fold(initial: R, operation: (R, Element) -> R): R
 
     /**
-     * Returns a context containing elements from this context and elements from other [context].
+     * Returns a context containing elements from this context and elements from  other [context].
      * The elements from this context with the same key as in the other one are dropped.
      */
     public operator fun plus(context: CoroutineContext): CoroutineContext
@@ -44,23 +44,20 @@ public interface CoroutineContext {
      * Returns a context containing elements from this context, but without an element with
      * the specified [key].
      */
-    public fun minusKey(key: CoroutineContextKey<*>): CoroutineContext
-}
+    public fun minusKey(key: Key<*>): CoroutineContext
 
-/**
- * An element of the [CoroutineContext]. An element of the coroutine context is a singleton context by itself.
- */
-@SinceKotlin("1.1")
-public interface CoroutineContextElement : CoroutineContext {
     /**
-     * A key of this coroutine context element.
+     * An element of the [CoroutineContext]. An element of the coroutine context is a singleton context by itself.
      */
-    public val contextKey: CoroutineContextKey<*>
+    public interface Element : CoroutineContext {
+        /**
+         * A key of this coroutine context element.
+         */
+        public val key: Key<*>
+    }
+
+    /**
+     * Key for the elements of [CoroutineContext]. [E] is a type of element with this key.
+     */
+    public interface Key<E : Element>
 }
-
-/**
- * Key for the elements of [CoroutineContext]. [E] is a type of the element with this key.
- */
-@SinceKotlin("1.1")
-public interface CoroutineContextKey<E : CoroutineContextElement>
-

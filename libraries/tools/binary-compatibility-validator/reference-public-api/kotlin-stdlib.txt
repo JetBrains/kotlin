@@ -1754,11 +1754,12 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
-public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin/coroutines/CoroutineContextElement {
-	public fun <init> ()V
+public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin/coroutines/CoroutineContext$Element {
+	public fun <init> (Lkotlin/coroutines/CoroutineContext$Key;)V
 	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public fun get (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContextElement;
-	public fun minusKey (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContext;
+	public fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public fun getKey ()Lkotlin/coroutines/CoroutineContext$Key;
+	public fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
 	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 }
 
@@ -1773,9 +1774,9 @@ public final class kotlin/coroutines/CoroutinesKt {
 public final class kotlin/coroutines/EmptyCoroutineContext : kotlin/coroutines/CoroutineContext {
 	public static final field INSTANCE Lkotlin/coroutines/EmptyCoroutineContext;
 	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public fun get (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContextElement;
+	public fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
 	public fun hashCode ()I
-	public fun minusKey (Lkotlin/coroutines/CoroutineContextKey;)Lkotlin/coroutines/CoroutineContext;
+	public fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
 	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 	public fun toString ()Ljava/lang/String;
 }
