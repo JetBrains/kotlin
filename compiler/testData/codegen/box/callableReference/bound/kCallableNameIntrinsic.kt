@@ -1,5 +1,3 @@
-// Enable when callable references to builtin members is supported
-// IGNORE_BACKEND: JS
 fun box(): String {
     var state = 0
     val name = (state++)::toString.name

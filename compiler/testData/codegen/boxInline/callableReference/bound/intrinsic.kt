@@ -1,5 +1,3 @@
-// Enable when callable references to builtin members is supported
-// IGNORE_BACKEND: JS
 // FILE: 1.kt
 
 package test

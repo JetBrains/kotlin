@@ -75,14 +75,6 @@ public final class Namer {
 
     public static final String OUTER_FIELD_NAME = "$outer";
 
-    private static final String CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME = "getCallableRefForMemberFunction";
-    private static final String BOUND_CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME = "getBoundCallableRefForMemberFunction";
-    private static final String CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME = "getCallableRefForExtensionFunction";
-    private static final String BOUND_CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME = "getBoundCallableRefForExtensionFunction";
-    private static final String CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME = "getCallableRefForLocalExtensionFunction";
-    private static final String BOUND_CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME = "getBoundCallableRefForLocalExtensionFunction";
-    private static final String CALLABLE_REF_FOR_CONSTRUCTOR_NAME = "getCallableRefForConstructor";
-
     private static final String DELEGATE = "$delegate";
 
     private static final String ROOT_PACKAGE = "_";
@@ -198,15 +190,7 @@ public final class Namer {
     @NotNull
     private final JsObjectScope kotlinScope;
     @NotNull
-    private final JsName callableRefForMemberFunctionName;
-    @NotNull
-    private final JsName boundCallableRefForMemberFunctionName;
-    @NotNull
-    private final JsName callableRefForExtensionFunctionName;
-    @NotNull
-    private final JsName boundCallableRefForExtensionFunctionName;
-    @NotNull
-    private final JsName callableRefForConstructorName;
+    public static final String FUNCTION_CALLABLE_REF = "getCallableRef";
     @NotNull
     public static final String PROPERTY_CALLABLE_REF_ZERO_ARG = "getCallableRefZeroArg";
     @NotNull
@@ -225,12 +209,6 @@ public final class Namer {
         callGetProperty = kotlin("callGetter");
         callSetProperty = kotlin("callSetter");
 
-        callableRefForMemberFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
-        boundCallableRefForMemberFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
-        callableRefForExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
-        boundCallableRefForExtensionFunctionName = kotlinScope.declareName(BOUND_CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
-        callableRefForConstructorName = kotlinScope.declareName(CALLABLE_REF_FOR_CONSTRUCTOR_NAME);
-
         isTypeName = kotlinScope.declareName("isType");
     }
 
@@ -243,31 +221,6 @@ public final class Namer {
         SuggestedName suggested = new NameSuggestion().suggest(functions.iterator().next());
         assert suggested != null : "Suggested name for class members is always non-null: " + functions.iterator().next();
         return suggested.getNames().get(0);
-    }
-
-    @NotNull
-    public JsExpression callableRefForMemberFunctionReference() {
-        return kotlin(callableRefForMemberFunctionName);
-    }
-
-    @NotNull
-    public JsExpression boundCallableRefForMemberFunctionReference() {
-        return kotlin(boundCallableRefForMemberFunctionName);
-    }
-
-    @NotNull
-    public JsExpression callableRefForExtensionFunctionReference() {
-        return kotlin(callableRefForExtensionFunctionName);
-    }
-
-    @NotNull
-    public JsExpression boundCallableRefForExtensionFunctionReference() {
-        return kotlin(boundCallableRefForExtensionFunctionName);
-    }
-
-    @NotNull
-    public JsExpression callableRefForConstructorReference() {
-        return kotlin(callableRefForConstructorName);
     }
 
     @NotNull

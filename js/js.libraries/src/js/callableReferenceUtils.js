@@ -14,43 +14,9 @@
  * limitations under the License.
  */
 
-// TODO Store callable references for members in class
-Kotlin.getCallableRefForMemberFunction = function (memberName) {
-    return function () {
-        var args = [].slice.call(arguments);
-        var instance = args.shift();
-        return instance[memberName].apply(instance, args);
-    };
-};
-
-Kotlin.getBoundCallableRefForMemberFunction = function (receiver, memberName) {
-    return function () {
-        return receiver[memberName].apply(receiver, arguments);
-    };
-};
-
-// TODO Store callable references for extension functions in class
-// extFun expected receiver as the first argument
-Kotlin.getCallableRefForExtensionFunction = function (extFun) {
-    return function () {
-        return extFun.apply(null, arguments);
-    };
-};
-
-Kotlin.getBoundCallableRefForExtensionFunction = function (receiver, extFun) {
-    return function () {
-        var args = [].slice.call(arguments);
-        args.unshift(receiver);
-        return extFun.apply(null, args);
-    };
-};
-
-Kotlin.getCallableRefForConstructor = function (klass) {
-    return function () {
-        var obj = Object.create(klass.prototype);
-        klass.apply(obj, arguments);
-        return obj;
-    };
+Kotlin.getCallableRef = function(name, f) {
+    f.callableName = name;
+    return f;
 };
 
 Kotlin.getCallableRefZeroArg = function(name, getter, setter) {
