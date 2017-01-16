@@ -86,14 +86,16 @@ object KotlinToJVMBytecodeCompiler {
             mainClass: FqName?
     ) {
         val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (jarPath != null) {
             val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
             CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, mainClass, outputFiles)
+            messageCollector.report(CompilerMessageSeverity.OUTPUT,
+                                    OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath), CompilerMessageLocation.NO_LOCATION)
             return
         }
 
         val outputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) ?: File(".")
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         outputFiles.writeAll(outputDir, messageCollector)
     }
 

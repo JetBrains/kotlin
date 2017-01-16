@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.daemon.client
 
 import net.rubygrapefruit.platform.Native
 import net.rubygrapefruit.platform.ProcessLauncher
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -141,6 +144,32 @@ object KotlinCompilerClient {
                     operationsTracer).get()
     }
 
+    fun compile(compilerService: CompileService,
+                sessionId: Int,
+                targetPlatform: CompileService.TargetPlatform,
+                args: Array<out String>,
+                messageCollector: MessageCollector,
+                outputsCollector: ((File, List<File>) -> Unit)? = null,
+                compilerMode: CompilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
+                reportSeverity: ReportSeverity = ReportSeverity.INFO,
+                port: Int = SOCKET_ANY_FREE_PORT,
+                profiler: Profiler = DummyProfiler()
+    ): Int = profiler.withMeasure(this) {
+        val services = BasicCompilerServicesWithResultsFacadeServer(messageCollector, outputsCollector, port)
+        compilerService.compile(
+                sessionId,
+                args,
+                CompilationOptions(
+                        compilerMode,
+                        targetPlatform,
+                        arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.DAEMON_MESSAGE.code, ReportCategory.EXCEPTION.code, ReportCategory.OUTPUT_MESSAGE.code),
+                        reportSeverity.code,
+                        emptyArray()),
+                services,
+                null
+        ).get()
+    }
+
     val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
     data class ClientOptions(
             var stop: Boolean = false
@@ -245,8 +274,21 @@ object KotlinCompilerClient {
         if (category == DaemonReportCategory.DEBUG && !verboseReporting) return
         out?.println("[$source] ${category.name}: $message")
         messages?.add(DaemonReportMessage(category, "[$source] $message"))
+        messageCollector?.let {
+            when (category) {
+                DaemonReportCategory.DEBUG -> it.report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION)
+                DaemonReportCategory.INFO -> it.report(CompilerMessageSeverity.INFO, message, CompilerMessageLocation.NO_LOCATION)
+                DaemonReportCategory.EXCEPTION -> it.report(CompilerMessageSeverity.EXCEPTION, message, CompilerMessageLocation.NO_LOCATION)
+            }
+        }
+        compilerServices?.let {
+                when (category) {
+                    DaemonReportCategory.DEBUG -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.DEBUG, message, source)
+                    DaemonReportCategory.INFO -> it.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, message, source)
+                    DaemonReportCategory.EXCEPTION -> it.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message, source)
+                }
+        }
     }
-
 
     private fun tryFindSuitableDaemonOrNewOpts(registryDir: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, report: (DaemonReportCategory, String) -> Unit): Pair<CompileService?, DaemonJVMOptions> {
         val aliveWithOpts = walkDaemons(registryDir, compilerId, report = report)
@@ -337,7 +379,10 @@ object KotlinCompilerClient {
 
 data class DaemonReportMessage(val category: DaemonReportCategory, val message: String)
 
-class DaemonReportingTargets(val out: PrintStream? = null, val messages: MutableCollection<DaemonReportMessage>? = null)
+class DaemonReportingTargets(val out: PrintStream? = null,
+                             val messages: MutableCollection<DaemonReportMessage>? = null,
+                             val messageCollector: MessageCollector? = null,
+                             val compilerServices: CompilerServicesFacadeBase? = null)
 
 
 internal fun isProcessAlive(process: Process) =
