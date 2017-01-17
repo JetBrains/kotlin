@@ -158,7 +158,7 @@ abstract class CompletionSession(
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor, completeNonAccessible: Boolean): Boolean {
         if (!configuration.javaClassesNotToBeUsed && descriptor is ClassDescriptor) {
-            if (descriptor.importableFqName?.let { isJavaClassNotToBeUsedInKotlin(it) } == true) return false
+            if (descriptor.importableFqName?.let(::isJavaClassNotToBeUsedInKotlin) == true) return false
         }
 
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
@@ -168,6 +168,8 @@ abstract class CompletionSession(
             if (visible) return true
             return completeNonAccessible && (!descriptor.isFromLibrary() || isDebuggerContext)
         }
+
+        if (descriptor.isExcludedFromAutoImport(project)) return false
 
         return true
     }

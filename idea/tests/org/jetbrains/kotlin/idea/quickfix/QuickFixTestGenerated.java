@@ -734,6 +734,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("excludedFromImport.kt")
+        public void testExcludedFromImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/excludedFromImport.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("infixCallAndObject.kt")
         public void testInfixCallAndObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/infixCallAndObject.kt");

@@ -572,6 +572,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("NoCompletionForExcluded.kt")
+        public void testNoCompletionForExcluded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionForExcluded.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoEmptyPackage.kt")
         public void testNoEmptyPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoEmptyPackage.kt");

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.codeInsight.JavaProjectCodeInsightSettings
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMember
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
-import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.search.excludeKotlinSources
@@ -73,7 +71,7 @@ class KotlinIndicesHelper(
     private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@ {
         if (it.isHiddenInResolution(resolutionFacade.frontendService<LanguageVersionSettings>())) return@filter false
         if (!visibilityFilter(it)) return@filter false
-        if (applyExcludeSettings && isExcludedFromAutoImport(it)) return@filter false
+        if (applyExcludeSettings && it.isExcludedFromAutoImport(project)) return@filter false
         true
     }
 
@@ -427,11 +425,6 @@ class KotlinIndicesHelper(
                 }
             }
         }
-    }
-
-    private fun isExcludedFromAutoImport(descriptor: DeclarationDescriptor): Boolean {
-        val fqName = descriptor.importableFqName?.asString() ?: return false
-        return JavaProjectCodeInsightSettings.getSettings(project).isExcluded(fqName)
     }
 
     private inline fun <reified TDescriptor : Any> KtNamedDeclaration.resolveToDescriptors(): Collection<TDescriptor> {
