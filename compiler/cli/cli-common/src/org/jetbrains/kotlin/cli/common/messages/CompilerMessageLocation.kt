@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
+import java.io.Serializable
+
 data class CompilerMessageLocation private constructor(
         val path: String?,
         val line: Int,
         val column: Int,
         val lineContent: String?
-) {
+) : Serializable {
     override fun toString(): String =
             path + (if (line != -1 || column != -1) " ($line:$column)" else "")
 
@@ -36,5 +38,7 @@ data class CompilerMessageLocation private constructor(
         @JvmStatic
         fun create(path: String?, line: Int, column: Int, lineContent: String?): CompilerMessageLocation =
                 if (path == null) NO_LOCATION else CompilerMessageLocation(path, line, column, lineContent)
+
+        private val serialVersionUID: Long = 8228357578L
     }
 }
