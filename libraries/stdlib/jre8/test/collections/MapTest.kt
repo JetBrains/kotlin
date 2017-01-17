@@ -13,6 +13,10 @@ class MapTest {
         assertEquals(0, map.getOrDefault("y", 0))
         assertEquals(null, map.getOrDefault("z", 0))
         assertEquals(null, map.getOrDefault("y" as CharSequence, null))
+
+        val nonNullMap = mapOf("x" to 1)
+        assertEquals(null, nonNullMap.getOrDefault("y" as CharSequence, null))  // should pass
+        assertEquals("none", nonNullMap.getOrDefault("y" as CharSequence, "none"))  // should not compile
     }
 
     @Test fun forEach() {
