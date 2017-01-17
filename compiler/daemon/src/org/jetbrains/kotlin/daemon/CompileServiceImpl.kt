@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.daemon.incremental.*
 import org.jetbrains.kotlin.daemon.report.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.stackTraceStr
@@ -377,6 +378,7 @@ class CompileServiceImpl(
         }
         val javaSourceRoots = parsedModule.modules.flatMapTo(HashSet()) { it.getJavaSourceRoots().map { File(it.path) } }
         val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(::File) }
+        k2jvmArgs.friendPaths = parsedModule.modules.flatMap(Module::getFriendPaths).toTypedArray()
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
             ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
