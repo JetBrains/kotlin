@@ -160,7 +160,7 @@ private class UninitializedNewValueMarkerInterpreter : OptimizationBasicInterpre
     val uninitializedValuesToCopyUsages = hashMapOf<AbstractInsnNode, MutableSet<AbstractInsnNode>>()
     override fun newOperation(insn: AbstractInsnNode): BasicValue? {
         if (insn.opcode == Opcodes.NEW) {
-            uninitializedValuesToCopyUsages[insn] = mutableSetOf()
+            uninitializedValuesToCopyUsages.getOrPut(insn) { mutableSetOf() }
             return UninitializedNewValue(insn as TypeInsnNode, insn.desc)
         }
         return super.newOperation(insn)
