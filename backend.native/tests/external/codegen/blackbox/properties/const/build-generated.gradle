@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_properties_const_constFlags (type: RunExternalTest) {
+    source = "codegen/blackbox/properties/const/constFlags.kt"
+}
+
+task codegen_blackbox_properties_const_constValInAnnotationDefault (type: RunExternalTest) {
+    source = "codegen/blackbox/properties/const/constValInAnnotationDefault.kt"
+}
+
+task codegen_blackbox_properties_const_interfaceCompanion (type: RunExternalTest) {
+    source = "codegen/blackbox/properties/const/interfaceCompanion.kt"
+}
+

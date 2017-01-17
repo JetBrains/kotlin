@@ -1,0 +1,66 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_strings_ea35743 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/ea35743.kt"
+}
+
+task codegen_blackbox_strings_forInString (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/forInString.kt"
+}
+
+task codegen_blackbox_strings_interpolation (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/interpolation.kt"
+}
+
+task codegen_blackbox_strings_kt2592 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt2592.kt"
+}
+
+task codegen_blackbox_strings_kt3571 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt3571.kt"
+}
+
+task codegen_blackbox_strings_kt3652 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt3652.kt"
+}
+
+task codegen_blackbox_strings_kt5389_stringBuilderGet (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt5389_stringBuilderGet.kt"
+}
+
+task codegen_blackbox_strings_kt5956 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt5956.kt"
+}
+
+task codegen_blackbox_strings_kt881 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt881.kt"
+}
+
+task codegen_blackbox_strings_kt889 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt889.kt"
+}
+
+task codegen_blackbox_strings_kt894 (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/kt894.kt"
+}
+
+task codegen_blackbox_strings_multilineStringsWithTemplates (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/multilineStringsWithTemplates.kt"
+}
+
+task codegen_blackbox_strings_rawStrings (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/rawStrings.kt"
+}
+
+task codegen_blackbox_strings_rawStringsWithManyQuotes (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/rawStringsWithManyQuotes.kt"
+}
+
+task codegen_blackbox_strings_stringBuilderAppend (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/stringBuilderAppend.kt"
+}
+
+task codegen_blackbox_strings_stringPlusOnlyWorksOnString (type: RunExternalTest) {
+    source = "codegen/blackbox/strings/stringPlusOnlyWorksOnString.kt"
+}
+

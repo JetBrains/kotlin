@@ -1,0 +1,26 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reified_arraysReification_instanceOf (type: RunExternalTest) {
+    source = "codegen/blackbox/reified/arraysReification/instanceOf.kt"
+}
+
+task codegen_blackbox_reified_arraysReification_instanceOfArrays (type: RunExternalTest) {
+    source = "codegen/blackbox/reified/arraysReification/instanceOfArrays.kt"
+}
+
+task codegen_blackbox_reified_arraysReification_jaggedArray (type: RunExternalTest) {
+    source = "codegen/blackbox/reified/arraysReification/jaggedArray.kt"
+}
+
+task codegen_blackbox_reified_arraysReification_jaggedArrayOfNulls (type: RunExternalTest) {
+    source = "codegen/blackbox/reified/arraysReification/jaggedArrayOfNulls.kt"
+}
+
+task codegen_blackbox_reified_arraysReification_jaggedDeep (type: RunExternalTest) {
+    source = "codegen/blackbox/reified/arraysReification/jaggedDeep.kt"
+}
+
+task codegen_blackbox_reified_arraysReification_jClass (type: RunExternalTest) {
+    source = "codegen/blackbox/reified/arraysReification/jClass.kt"
+}
+

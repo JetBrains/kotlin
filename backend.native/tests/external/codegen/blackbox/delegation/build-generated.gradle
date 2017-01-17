@@ -1,0 +1,10 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_delegation_delegationToVal (type: RunExternalTest) {
+    source = "codegen/blackbox/delegation/delegationToVal.kt"
+}
+
+task codegen_blackbox_delegation_kt8154 (type: RunExternalTest) {
+    source = "codegen/blackbox/delegation/kt8154.kt"
+}
+

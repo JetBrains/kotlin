@@ -1,0 +1,10 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_instructions_swap_swapRefToSharedVarInt (type: RunExternalTest) {
+    source = "codegen/blackbox/instructions/swap/swapRefToSharedVarInt.kt"
+}
+
+task codegen_blackbox_instructions_swap_swapRefToSharedVarLong (type: RunExternalTest) {
+    source = "codegen/blackbox/instructions/swap/swapRefToSharedVarLong.kt"
+}
+

@@ -1,0 +1,26 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_closures_closureInsideClosure_localFunInsideLocalFun (type: RunExternalTest) {
+    source = "codegen/blackbox/closures/closureInsideClosure/localFunInsideLocalFun.kt"
+}
+
+task codegen_blackbox_closures_closureInsideClosure_localFunInsideLocalFunDifferentSignatures (type: RunExternalTest) {
+    source = "codegen/blackbox/closures/closureInsideClosure/localFunInsideLocalFunDifferentSignatures.kt"
+}
+
+task codegen_blackbox_closures_closureInsideClosure_propertyAndFunctionNameClash (type: RunExternalTest) {
+    source = "codegen/blackbox/closures/closureInsideClosure/propertyAndFunctionNameClash.kt"
+}
+
+task codegen_blackbox_closures_closureInsideClosure_threeLevels (type: RunExternalTest) {
+    source = "codegen/blackbox/closures/closureInsideClosure/threeLevels.kt"
+}
+
+task codegen_blackbox_closures_closureInsideClosure_threeLevelsDifferentSignatures (type: RunExternalTest) {
+    source = "codegen/blackbox/closures/closureInsideClosure/threeLevelsDifferentSignatures.kt"
+}
+
+task codegen_blackbox_closures_closureInsideClosure_varAsFunInsideLocalFun (type: RunExternalTest) {
+    source = "codegen/blackbox/closures/closureInsideClosure/varAsFunInsideLocalFun.kt"
+}
+

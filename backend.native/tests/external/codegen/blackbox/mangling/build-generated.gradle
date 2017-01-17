@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_mangling_field (type: RunExternalTest) {
+    source = "codegen/blackbox/mangling/field.kt"
+}
+
+task codegen_blackbox_mangling_fun (type: RunExternalTest) {
+    source = "codegen/blackbox/mangling/fun.kt"
+}
+
+task codegen_blackbox_mangling_internalOverride (type: RunExternalTest) {
+    source = "codegen/blackbox/mangling/internalOverride.kt"
+}
+
+task codegen_blackbox_mangling_internalOverrideSuperCall (type: RunExternalTest) {
+    source = "codegen/blackbox/mangling/internalOverrideSuperCall.kt"
+}
+
+task codegen_blackbox_mangling_noOverrideWithJava (type: RunExternalTest) {
+    source = "codegen/blackbox/mangling/noOverrideWithJava.kt"
+}
+
+task codegen_blackbox_mangling_publicOverride (type: RunExternalTest) {
+    source = "codegen/blackbox/mangling/publicOverride.kt"
+}
+
+task codegen_blackbox_mangling_publicOverrideSuperCall (type: RunExternalTest) {
+    source = "codegen/blackbox/mangling/publicOverrideSuperCall.kt"
+}
+

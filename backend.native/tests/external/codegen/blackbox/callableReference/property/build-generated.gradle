@@ -1,0 +1,106 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_callableReference_property_accessViaSubclass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/accessViaSubclass.kt"
+}
+
+task codegen_blackbox_callableReference_property_delegated (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/delegated.kt"
+}
+
+task codegen_blackbox_callableReference_property_delegatedMutable (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/delegatedMutable.kt"
+}
+
+task codegen_blackbox_callableReference_property_enumNameOrdinal (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/enumNameOrdinal.kt"
+}
+
+task codegen_blackbox_callableReference_property_extensionToArray (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/extensionToArray.kt"
+}
+
+task codegen_blackbox_callableReference_property_genericProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/genericProperty.kt"
+}
+
+task codegen_blackbox_callableReference_property_invokePropertyReference (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/invokePropertyReference.kt"
+}
+
+task codegen_blackbox_callableReference_property_javaBeanConvention (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/javaBeanConvention.kt"
+}
+
+task codegen_blackbox_callableReference_property_kClassInstanceIsInitializedFirst (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/kClassInstanceIsInitializedFirst.kt"
+}
+
+task codegen_blackbox_callableReference_property_kt12044 (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/kt12044.kt"
+}
+
+task codegen_blackbox_callableReference_property_kt12982_protectedPropertyReference (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/kt12982_protectedPropertyReference.kt"
+}
+
+task codegen_blackbox_callableReference_property_kt14330 (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/kt14330.kt"
+}
+
+task codegen_blackbox_callableReference_property_kt14330_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/kt14330_2.kt"
+}
+
+task codegen_blackbox_callableReference_property_kt15447 (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/kt15447.kt"
+}
+
+task codegen_blackbox_callableReference_property_kt6870_privatePropertyReference (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/kt6870_privatePropertyReference.kt"
+}
+
+task codegen_blackbox_callableReference_property_listOfStringsMapLength (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/listOfStringsMapLength.kt"
+}
+
+task codegen_blackbox_callableReference_property_localClassVar (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/localClassVar.kt"
+}
+
+task codegen_blackbox_callableReference_property_overriddenInSubclass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/overriddenInSubclass.kt"
+}
+
+task codegen_blackbox_callableReference_property_privateSetterInsideClass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/privateSetterInsideClass.kt"
+}
+
+task codegen_blackbox_callableReference_property_privateSetterOutsideClass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/privateSetterOutsideClass.kt"
+}
+
+task codegen_blackbox_callableReference_property_simpleExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/simpleExtension.kt"
+}
+
+task codegen_blackbox_callableReference_property_simpleMember (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/simpleMember.kt"
+}
+
+task codegen_blackbox_callableReference_property_simpleMutableExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/simpleMutableExtension.kt"
+}
+
+task codegen_blackbox_callableReference_property_simpleMutableMember (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/simpleMutableMember.kt"
+}
+
+task codegen_blackbox_callableReference_property_simpleMutableTopLevel (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/simpleMutableTopLevel.kt"
+}
+
+task codegen_blackbox_callableReference_property_simpleTopLevel (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/property/simpleTopLevel.kt"
+}
+

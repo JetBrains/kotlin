@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_ranges_nullableLoopParameter_progressionExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/nullableLoopParameter/progressionExpression.kt"
+}
+
+task codegen_blackbox_ranges_nullableLoopParameter_rangeExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/nullableLoopParameter/rangeExpression.kt"
+}
+
+task codegen_blackbox_ranges_nullableLoopParameter_rangeLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/nullableLoopParameter/rangeLiteral.kt"
+}
+

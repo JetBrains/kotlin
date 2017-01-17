@@ -1,0 +1,50 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_smartCasts_falseSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/falseSmartCast.kt"
+}
+
+task codegen_blackbox_smartCasts_genericIntersection (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/genericIntersection.kt"
+}
+
+task codegen_blackbox_smartCasts_genericSet (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/genericSet.kt"
+}
+
+task codegen_blackbox_smartCasts_implicitExtensionReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/implicitExtensionReceiver.kt"
+}
+
+task codegen_blackbox_smartCasts_implicitMemberReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/implicitMemberReceiver.kt"
+}
+
+task codegen_blackbox_smartCasts_implicitReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/implicitReceiver.kt"
+}
+
+task codegen_blackbox_smartCasts_implicitReceiverInWhen (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/implicitReceiverInWhen.kt"
+}
+
+task codegen_blackbox_smartCasts_implicitToGrandSon (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/implicitToGrandSon.kt"
+}
+
+task codegen_blackbox_smartCasts_lambdaArgumentWithoutType (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/lambdaArgumentWithoutType.kt"
+}
+
+task codegen_blackbox_smartCasts_nullSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/nullSmartCast.kt"
+}
+
+task codegen_blackbox_smartCasts_smartCastInsideIf (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/smartCastInsideIf.kt"
+}
+
+task codegen_blackbox_smartCasts_whenSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/smartCasts/whenSmartCast.kt"
+}
+

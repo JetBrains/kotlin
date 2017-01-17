@@ -1,0 +1,6 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_javaInterop_lambdaInstanceOf (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/lambdaInstanceOf.kt"
+}
+

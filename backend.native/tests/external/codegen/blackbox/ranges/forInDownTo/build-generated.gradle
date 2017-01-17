@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_ranges_forInDownTo_forIntInDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInDownTo/forIntInDownTo.kt"
+}
+
+task codegen_blackbox_ranges_forInDownTo_forIntInNonOptimizedDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInDownTo/forIntInNonOptimizedDownTo.kt"
+}
+
+task codegen_blackbox_ranges_forInDownTo_forLongInDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInDownTo/forLongInDownTo.kt"
+}
+
+task codegen_blackbox_ranges_forInDownTo_forNullableIntInDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInDownTo/forNullableIntInDownTo.kt"
+}
+

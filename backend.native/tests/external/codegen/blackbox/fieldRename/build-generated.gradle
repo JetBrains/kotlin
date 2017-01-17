@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_fieldRename_constructorAndClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/fieldRename/constructorAndClassObject.kt"
+}
+
+task codegen_blackbox_fieldRename_delegates (type: RunExternalTest) {
+    source = "codegen/blackbox/fieldRename/delegates.kt"
+}
+
+task codegen_blackbox_fieldRename_genericPropertyWithItself (type: RunExternalTest) {
+    source = "codegen/blackbox/fieldRename/genericPropertyWithItself.kt"
+}
+

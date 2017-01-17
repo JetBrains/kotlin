@@ -1,0 +1,10 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_coroutines_suspendFunctionTypeCall_manyParameters (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/suspendFunctionTypeCall/manyParameters.kt"
+}
+
+task codegen_blackbox_coroutines_suspendFunctionTypeCall_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/suspendFunctionTypeCall/simple.kt"
+}
+

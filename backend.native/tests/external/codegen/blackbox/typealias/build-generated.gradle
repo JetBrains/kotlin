@@ -1,0 +1,54 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_typealias_genericTypeAliasConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/genericTypeAliasConstructor.kt"
+}
+
+task codegen_blackbox_typealias_innerClassTypeAliasConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/innerClassTypeAliasConstructor.kt"
+}
+
+task codegen_blackbox_typealias_innerClassTypeAliasConstructorInSupertypes (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/innerClassTypeAliasConstructorInSupertypes.kt"
+}
+
+task codegen_blackbox_typealias_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/simple.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasAsBareType (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasAsBareType.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasCompanion (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasCompanion.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasConstructor.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasConstructorAccessor (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasConstructorAccessor.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasConstructorInSuperCall (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasConstructorInSuperCall.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasInAnonymousObjectType (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasInAnonymousObjectType.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasObject (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasObject.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasObjectCallable (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasObjectCallable.kt"
+}
+
+task codegen_blackbox_typealias_typeAliasSecondaryConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/typealias/typeAliasSecondaryConstructor.kt"
+}
+

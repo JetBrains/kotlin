@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_coroutines_unitTypeReturn_coroutineNonLocalReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/unitTypeReturn/coroutineNonLocalReturn.kt"
+}
+
+task codegen_blackbox_coroutines_unitTypeReturn_coroutineReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/unitTypeReturn/coroutineReturn.kt"
+}
+
+task codegen_blackbox_coroutines_unitTypeReturn_suspendNonLocalReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/unitTypeReturn/suspendNonLocalReturn.kt"
+}
+
+task codegen_blackbox_coroutines_unitTypeReturn_suspendReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/unitTypeReturn/suspendReturn.kt"
+}
+

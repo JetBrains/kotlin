@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_annotations_annotatedLambda_funExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/annotations/annotatedLambda/funExpression.kt"
+}
+
+task codegen_blackbox_annotations_annotatedLambda_lambda (type: RunExternalTest) {
+    source = "codegen/blackbox/annotations/annotatedLambda/lambda.kt"
+}
+
+task codegen_blackbox_annotations_annotatedLambda_samFunExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/annotations/annotatedLambda/samFunExpression.kt"
+}
+
+task codegen_blackbox_annotations_annotatedLambda_samLambda (type: RunExternalTest) {
+    source = "codegen/blackbox/annotations/annotatedLambda/samLambda.kt"
+}
+

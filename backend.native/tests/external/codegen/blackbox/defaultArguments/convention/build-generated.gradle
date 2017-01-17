@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_defaultArguments_convention_incWithDefaultInGetter (type: RunExternalTest) {
+    source = "codegen/blackbox/defaultArguments/convention/incWithDefaultInGetter.kt"
+}
+
+task codegen_blackbox_defaultArguments_convention_kt9140 (type: RunExternalTest) {
+    source = "codegen/blackbox/defaultArguments/convention/kt9140.kt"
+}
+
+task codegen_blackbox_defaultArguments_convention_plusAssignWithDefaultInGetter (type: RunExternalTest) {
+    source = "codegen/blackbox/defaultArguments/convention/plusAssignWithDefaultInGetter.kt"
+}
+

@@ -1,0 +1,54 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_callableReference_bound_array (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/array.kt"
+}
+
+task codegen_blackbox_callableReference_bound_companionObjectReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/companionObjectReceiver.kt"
+}
+
+task codegen_blackbox_callableReference_bound_enumEntryMember (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/enumEntryMember.kt"
+}
+
+task codegen_blackbox_callableReference_bound_kCallableNameIntrinsic (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/kCallableNameIntrinsic.kt"
+}
+
+task codegen_blackbox_callableReference_bound_kt12738 (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/kt12738.kt"
+}
+
+task codegen_blackbox_callableReference_bound_kt15446 (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/kt15446.kt"
+}
+
+task codegen_blackbox_callableReference_bound_multiCase (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/multiCase.kt"
+}
+
+task codegen_blackbox_callableReference_bound_nullReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/nullReceiver.kt"
+}
+
+task codegen_blackbox_callableReference_bound_objectReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/objectReceiver.kt"
+}
+
+task codegen_blackbox_callableReference_bound_primitiveReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/primitiveReceiver.kt"
+}
+
+task codegen_blackbox_callableReference_bound_simpleFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/simpleFunction.kt"
+}
+
+task codegen_blackbox_callableReference_bound_simpleProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/simpleProperty.kt"
+}
+
+task codegen_blackbox_callableReference_bound_syntheticExtensionOnLHS (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/bound/syntheticExtensionOnLHS.kt"
+}
+

@@ -1,0 +1,134 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_when_callProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/when/callProperty.kt"
+}
+
+task codegen_blackbox_when_emptyWhen (type: RunExternalTest) {
+    source = "codegen/blackbox/when/emptyWhen.kt"
+}
+
+task codegen_blackbox_when_exceptionOnNoMatch (type: RunExternalTest) {
+    source = "codegen/blackbox/when/exceptionOnNoMatch.kt"
+}
+
+task codegen_blackbox_when_exhaustiveBoolean (type: RunExternalTest) {
+    source = "codegen/blackbox/when/exhaustiveBoolean.kt"
+}
+
+task codegen_blackbox_when_exhaustiveBreakContinue (type: RunExternalTest) {
+    source = "codegen/blackbox/when/exhaustiveBreakContinue.kt"
+}
+
+task codegen_blackbox_when_exhaustiveWhenInitialization (type: RunExternalTest) {
+    source = "codegen/blackbox/when/exhaustiveWhenInitialization.kt"
+}
+
+task codegen_blackbox_when_exhaustiveWhenReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/when/exhaustiveWhenReturn.kt"
+}
+
+task codegen_blackbox_when_implicitExhaustiveAndReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/when/implicitExhaustiveAndReturn.kt"
+}
+
+task codegen_blackbox_when_integralWhenWithNoInlinedConstants (type: RunExternalTest) {
+    source = "codegen/blackbox/when/integralWhenWithNoInlinedConstants.kt"
+}
+
+task codegen_blackbox_when_is (type: RunExternalTest) {
+    source = "codegen/blackbox/when/is.kt"
+}
+
+task codegen_blackbox_when_kt2457 (type: RunExternalTest) {
+    source = "codegen/blackbox/when/kt2457.kt"
+}
+
+task codegen_blackbox_when_kt2466 (type: RunExternalTest) {
+    source = "codegen/blackbox/when/kt2466.kt"
+}
+
+task codegen_blackbox_when_kt5307 (type: RunExternalTest) {
+    source = "codegen/blackbox/when/kt5307.kt"
+}
+
+task codegen_blackbox_when_kt5448 (type: RunExternalTest) {
+    source = "codegen/blackbox/when/kt5448.kt"
+}
+
+task codegen_blackbox_when_longInRange (type: RunExternalTest) {
+    source = "codegen/blackbox/when/longInRange.kt"
+}
+
+task codegen_blackbox_when_matchNotNullAgainstNullable (type: RunExternalTest) {
+    source = "codegen/blackbox/when/matchNotNullAgainstNullable.kt"
+}
+
+task codegen_blackbox_when_multipleEntries (type: RunExternalTest) {
+    source = "codegen/blackbox/when/multipleEntries.kt"
+}
+
+task codegen_blackbox_when_noElseExhaustive (type: RunExternalTest) {
+    source = "codegen/blackbox/when/noElseExhaustive.kt"
+}
+
+task codegen_blackbox_when_noElseExhaustiveStatement (type: RunExternalTest) {
+    source = "codegen/blackbox/when/noElseExhaustiveStatement.kt"
+}
+
+task codegen_blackbox_when_noElseExhaustiveUnitExpected (type: RunExternalTest) {
+    source = "codegen/blackbox/when/noElseExhaustiveUnitExpected.kt"
+}
+
+task codegen_blackbox_when_noElseInStatement (type: RunExternalTest) {
+    source = "codegen/blackbox/when/noElseInStatement.kt"
+}
+
+task codegen_blackbox_when_noElseNoMatch (type: RunExternalTest) {
+    source = "codegen/blackbox/when/noElseNoMatch.kt"
+}
+
+task codegen_blackbox_when_nullableWhen (type: RunExternalTest) {
+    source = "codegen/blackbox/when/nullableWhen.kt"
+}
+
+task codegen_blackbox_when_range (type: RunExternalTest) {
+    source = "codegen/blackbox/when/range.kt"
+}
+
+task codegen_blackbox_when_sealedWhenInitialization (type: RunExternalTest) {
+    source = "codegen/blackbox/when/sealedWhenInitialization.kt"
+}
+
+task codegen_blackbox_when_switchOptimizationDense (type: RunExternalTest) {
+    source = "codegen/blackbox/when/switchOptimizationDense.kt"
+}
+
+task codegen_blackbox_when_switchOptimizationMultipleConditions (type: RunExternalTest) {
+    source = "codegen/blackbox/when/switchOptimizationMultipleConditions.kt"
+}
+
+task codegen_blackbox_when_switchOptimizationSparse (type: RunExternalTest) {
+    source = "codegen/blackbox/when/switchOptimizationSparse.kt"
+}
+
+task codegen_blackbox_when_switchOptimizationStatement (type: RunExternalTest) {
+    source = "codegen/blackbox/when/switchOptimizationStatement.kt"
+}
+
+task codegen_blackbox_when_switchOptimizationTypes (type: RunExternalTest) {
+    source = "codegen/blackbox/when/switchOptimizationTypes.kt"
+}
+
+task codegen_blackbox_when_switchOptimizationUnordered (type: RunExternalTest) {
+    source = "codegen/blackbox/when/switchOptimizationUnordered.kt"
+}
+
+task codegen_blackbox_when_typeDisjunction (type: RunExternalTest) {
+    source = "codegen/blackbox/when/typeDisjunction.kt"
+}
+
+task codegen_blackbox_when_whenArgumentIsEvaluatedOnlyOnce (type: RunExternalTest) {
+    source = "codegen/blackbox/when/whenArgumentIsEvaluatedOnlyOnce.kt"
+}
+

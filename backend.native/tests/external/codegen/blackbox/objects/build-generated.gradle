@@ -1,0 +1,174 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_objects_anonymousObjectPropertyInitialization (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/anonymousObjectPropertyInitialization.kt"
+}
+
+task codegen_blackbox_objects_classCallsProtectedInheritedByCompanion (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/classCallsProtectedInheritedByCompanion.kt"
+}
+
+task codegen_blackbox_objects_flist (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/flist.kt"
+}
+
+task codegen_blackbox_objects_initializationOrder (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/initializationOrder.kt"
+}
+
+task codegen_blackbox_objects_kt1047 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt1047.kt"
+}
+
+task codegen_blackbox_objects_kt11117 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt11117.kt"
+}
+
+task codegen_blackbox_objects_kt1136 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt1136.kt"
+}
+
+task codegen_blackbox_objects_kt1186 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt1186.kt"
+}
+
+task codegen_blackbox_objects_kt1600 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt1600.kt"
+}
+
+task codegen_blackbox_objects_kt1737 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt1737.kt"
+}
+
+task codegen_blackbox_objects_kt2398 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt2398.kt"
+}
+
+task codegen_blackbox_objects_kt2663 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt2663.kt"
+}
+
+task codegen_blackbox_objects_kt2663_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt2663_2.kt"
+}
+
+task codegen_blackbox_objects_kt2675 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt2675.kt"
+}
+
+task codegen_blackbox_objects_kt2719 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt2719.kt"
+}
+
+task codegen_blackbox_objects_kt2822 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt2822.kt"
+}
+
+task codegen_blackbox_objects_kt3238 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt3238.kt"
+}
+
+task codegen_blackbox_objects_kt3684 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt3684.kt"
+}
+
+task codegen_blackbox_objects_kt4086 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt4086.kt"
+}
+
+task codegen_blackbox_objects_kt535 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt535.kt"
+}
+
+task codegen_blackbox_objects_kt560 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt560.kt"
+}
+
+task codegen_blackbox_objects_kt694 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/kt694.kt"
+}
+
+task codegen_blackbox_objects_localFunctionInObjectInitializer_kt4516 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/localFunctionInObjectInitializer_kt4516.kt"
+}
+
+task codegen_blackbox_objects_methodOnObject (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/methodOnObject.kt"
+}
+
+task codegen_blackbox_objects_nestedDerivedClassCallsProtectedFromCompanion (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/nestedDerivedClassCallsProtectedFromCompanion.kt"
+}
+
+task codegen_blackbox_objects_nestedObjectWithSuperclass (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/nestedObjectWithSuperclass.kt"
+}
+
+task codegen_blackbox_objects_objectExtendsInnerAndReferencesOuterMember (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectExtendsInnerAndReferencesOuterMember.kt"
+}
+
+task codegen_blackbox_objects_objectInitialization_kt5523 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectInitialization_kt5523.kt"
+}
+
+task codegen_blackbox_objects_objectInLocalAnonymousObject (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectInLocalAnonymousObject.kt"
+}
+
+task codegen_blackbox_objects_objectLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectLiteral.kt"
+}
+
+task codegen_blackbox_objects_objectLiteralInClosure (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectLiteralInClosure.kt"
+}
+
+task codegen_blackbox_objects_objectVsClassInitialization_kt5291 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectVsClassInitialization_kt5291.kt"
+}
+
+task codegen_blackbox_objects_objectWithSuperclass (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectWithSuperclass.kt"
+}
+
+task codegen_blackbox_objects_objectWithSuperclassAndTrait (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/objectWithSuperclassAndTrait.kt"
+}
+
+task codegen_blackbox_objects_privateExtensionFromInitializer_kt4543 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/privateExtensionFromInitializer_kt4543.kt"
+}
+
+task codegen_blackbox_objects_privateFunctionFromClosureInInitializer_kt5582 (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/privateFunctionFromClosureInInitializer_kt5582.kt"
+}
+
+task codegen_blackbox_objects_receiverInConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/receiverInConstructor.kt"
+}
+
+task codegen_blackbox_objects_safeAccess (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/safeAccess.kt"
+}
+
+task codegen_blackbox_objects_simpleObject (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/simpleObject.kt"
+}
+
+task codegen_blackbox_objects_thisInConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/thisInConstructor.kt"
+}
+
+task codegen_blackbox_objects_useAnonymousObjectAsIterator (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/useAnonymousObjectAsIterator.kt"
+}
+
+task codegen_blackbox_objects_useImportedMember (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/useImportedMember.kt"
+}
+
+task codegen_blackbox_objects_useImportedMemberFromCompanion (type: RunExternalTest) {
+    source = "codegen/blackbox/objects/useImportedMemberFromCompanion.kt"
+}
+

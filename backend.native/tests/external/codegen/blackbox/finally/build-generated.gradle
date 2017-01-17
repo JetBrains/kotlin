@@ -1,0 +1,46 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_finally_finallyAndFinally (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/finallyAndFinally.kt"
+}
+
+task codegen_blackbox_finally_kt3549 (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/kt3549.kt"
+}
+
+task codegen_blackbox_finally_kt3706 (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/kt3706.kt"
+}
+
+task codegen_blackbox_finally_kt3867 (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/kt3867.kt"
+}
+
+task codegen_blackbox_finally_kt3874 (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/kt3874.kt"
+}
+
+task codegen_blackbox_finally_kt3894 (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/kt3894.kt"
+}
+
+task codegen_blackbox_finally_kt4134 (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/kt4134.kt"
+}
+
+task codegen_blackbox_finally_loopAndFinally (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/loopAndFinally.kt"
+}
+
+task codegen_blackbox_finally_notChainCatch (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/notChainCatch.kt"
+}
+
+task codegen_blackbox_finally_tryFinally (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/tryFinally.kt"
+}
+
+task codegen_blackbox_finally_tryLoopTry (type: RunExternalTest) {
+    source = "codegen/blackbox/finally/tryLoopTry.kt"
+}
+

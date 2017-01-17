@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_jdk_arrayList (type: RunExternalTest) {
+    source = "codegen/blackbox/jdk/arrayList.kt"
+}
+
+task codegen_blackbox_jdk_hashMap (type: RunExternalTest) {
+    source = "codegen/blackbox/jdk/hashMap.kt"
+}
+
+task codegen_blackbox_jdk_iteratingOverHashMap (type: RunExternalTest) {
+    source = "codegen/blackbox/jdk/iteratingOverHashMap.kt"
+}
+
+task codegen_blackbox_jdk_kt1397 (type: RunExternalTest) {
+    source = "codegen/blackbox/jdk/kt1397.kt"
+}
+

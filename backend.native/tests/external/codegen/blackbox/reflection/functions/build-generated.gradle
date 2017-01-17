@@ -1,0 +1,46 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_functions_declaredVsInheritedFunctions (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/declaredVsInheritedFunctions.kt"
+}
+
+task codegen_blackbox_reflection_functions_functionFromStdlib (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/functionFromStdlib.kt"
+}
+
+task codegen_blackbox_reflection_functions_functionReferenceErasedToKFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/functionReferenceErasedToKFunction.kt"
+}
+
+task codegen_blackbox_reflection_functions_genericOverriddenFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/genericOverriddenFunction.kt"
+}
+
+task codegen_blackbox_reflection_functions_instanceOfFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/instanceOfFunction.kt"
+}
+
+task codegen_blackbox_reflection_functions_javaClassGetFunctions (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/javaClassGetFunctions.kt"
+}
+
+task codegen_blackbox_reflection_functions_javaMethodsSmokeTest (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/javaMethodsSmokeTest.kt"
+}
+
+task codegen_blackbox_reflection_functions_platformName (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/platformName.kt"
+}
+
+task codegen_blackbox_reflection_functions_privateMemberFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/privateMemberFunction.kt"
+}
+
+task codegen_blackbox_reflection_functions_simpleGetFunctions (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/simpleGetFunctions.kt"
+}
+
+task codegen_blackbox_reflection_functions_simpleNames (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/functions/simpleNames.kt"
+}
+

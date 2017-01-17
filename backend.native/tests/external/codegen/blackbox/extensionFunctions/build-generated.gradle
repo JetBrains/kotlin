@@ -1,0 +1,90 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_extensionFunctions_executionOrder (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/executionOrder.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt1061 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt1061.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt1249 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt1249.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt1290 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt1290.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt1776 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt1776.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt1953 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt1953.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt1953_class (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt1953_class.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt3285 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt3285.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt3298 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt3298.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt3646 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt3646.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt3969 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt3969.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt4228 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt4228.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt475 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt475.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt5467 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt5467.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt606 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt606.kt"
+}
+
+task codegen_blackbox_extensionFunctions_kt865 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/kt865.kt"
+}
+
+task codegen_blackbox_extensionFunctions_nested2 (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/nested2.kt"
+}
+
+task codegen_blackbox_extensionFunctions_shared (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/shared.kt"
+}
+
+task codegen_blackbox_extensionFunctions_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/simple.kt"
+}
+
+task codegen_blackbox_extensionFunctions_thisMethodInObjectLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/thisMethodInObjectLiteral.kt"
+}
+
+task codegen_blackbox_extensionFunctions_virtual (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/virtual.kt"
+}
+
+task codegen_blackbox_extensionFunctions_whenFail (type: RunExternalTest) {
+    source = "codegen/blackbox/extensionFunctions/whenFail.kt"
+}
+

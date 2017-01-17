@@ -1,0 +1,6 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_diagnostics_functions_inference_kt6176 (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/inference/kt6176.kt"
+}
+

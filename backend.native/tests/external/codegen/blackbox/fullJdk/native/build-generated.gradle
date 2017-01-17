@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_fullJdk_native_nativePropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/native/nativePropertyAccessors.kt"
+}
+
+task codegen_blackbox_fullJdk_native_simpleNative (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/native/simpleNative.kt"
+}
+
+task codegen_blackbox_fullJdk_native_topLevel (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/native/topLevel.kt"
+}
+

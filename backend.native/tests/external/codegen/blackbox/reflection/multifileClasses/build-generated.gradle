@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_multifileClasses_callFunctionsInMultifileClass (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/multifileClasses/callFunctionsInMultifileClass.kt"
+}
+
+task codegen_blackbox_reflection_multifileClasses_callPropertiesInMultifileClass (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/multifileClasses/callPropertiesInMultifileClass.kt"
+}
+
+task codegen_blackbox_reflection_multifileClasses_javaFieldForVarAndConstVal (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/multifileClasses/javaFieldForVarAndConstVal.kt"
+}
+

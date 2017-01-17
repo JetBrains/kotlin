@@ -1,0 +1,66 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_mapping_types_annotationConstructorParameters (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/annotationConstructorParameters.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_array (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/array.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_constructors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/constructors.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_genericArrayElementType (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/genericArrayElementType.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_innerGenericTypeArgument (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/innerGenericTypeArgument.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_memberFunctions (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/memberFunctions.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_overrideAnyWithPrimitive (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/overrideAnyWithPrimitive.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_parameterizedTypeArgument (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/parameterizedTypeArgument.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_parameterizedTypes (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/parameterizedTypes.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_propertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/propertyAccessors.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_rawTypeArgument (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/rawTypeArgument.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_supertypes (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/supertypes.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_topLevelFunctions (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/topLevelFunctions.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_typeParameters (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/typeParameters.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_unit (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/unit.kt"
+}
+
+task codegen_blackbox_reflection_mapping_types_withNullability (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/types/withNullability.kt"
+}
+

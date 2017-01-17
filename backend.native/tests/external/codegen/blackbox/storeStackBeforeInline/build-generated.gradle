@@ -1,0 +1,22 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_storeStackBeforeInline_differentTypes (type: RunExternalTest) {
+    source = "codegen/blackbox/storeStackBeforeInline/differentTypes.kt"
+}
+
+task codegen_blackbox_storeStackBeforeInline_primitiveMerge (type: RunExternalTest) {
+    source = "codegen/blackbox/storeStackBeforeInline/primitiveMerge.kt"
+}
+
+task codegen_blackbox_storeStackBeforeInline_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/storeStackBeforeInline/simple.kt"
+}
+
+task codegen_blackbox_storeStackBeforeInline_unreachableMarker (type: RunExternalTest) {
+    source = "codegen/blackbox/storeStackBeforeInline/unreachableMarker.kt"
+}
+
+task codegen_blackbox_storeStackBeforeInline_withLambda (type: RunExternalTest) {
+    source = "codegen/blackbox/storeStackBeforeInline/withLambda.kt"
+}
+

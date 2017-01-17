@@ -1,0 +1,26 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_unaryOp_call (type: RunExternalTest) {
+    source = "codegen/blackbox/unaryOp/call.kt"
+}
+
+task codegen_blackbox_unaryOp_callNullable (type: RunExternalTest) {
+    source = "codegen/blackbox/unaryOp/callNullable.kt"
+}
+
+task codegen_blackbox_unaryOp_callWithCommonType (type: RunExternalTest) {
+    source = "codegen/blackbox/unaryOp/callWithCommonType.kt"
+}
+
+task codegen_blackbox_unaryOp_intrinsic (type: RunExternalTest) {
+    source = "codegen/blackbox/unaryOp/intrinsic.kt"
+}
+
+task codegen_blackbox_unaryOp_intrinsicNullable (type: RunExternalTest) {
+    source = "codegen/blackbox/unaryOp/intrinsicNullable.kt"
+}
+
+task codegen_blackbox_unaryOp_longOverflow (type: RunExternalTest) {
+    source = "codegen/blackbox/unaryOp/longOverflow.kt"
+}
+

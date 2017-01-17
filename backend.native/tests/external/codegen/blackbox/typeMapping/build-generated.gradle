@@ -1,0 +1,42 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_typeMapping_enhancedPrimitives (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/enhancedPrimitives.kt"
+}
+
+task codegen_blackbox_typeMapping_genericTypeWithNothing (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/genericTypeWithNothing.kt"
+}
+
+task codegen_blackbox_typeMapping_kt2831 (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/kt2831.kt"
+}
+
+task codegen_blackbox_typeMapping_kt309 (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/kt309.kt"
+}
+
+task codegen_blackbox_typeMapping_kt3286 (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/kt3286.kt"
+}
+
+task codegen_blackbox_typeMapping_kt3863 (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/kt3863.kt"
+}
+
+task codegen_blackbox_typeMapping_kt3976 (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/kt3976.kt"
+}
+
+task codegen_blackbox_typeMapping_nothing (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/nothing.kt"
+}
+
+task codegen_blackbox_typeMapping_nullableNothing (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/nullableNothing.kt"
+}
+
+task codegen_blackbox_typeMapping_typeParameterMultipleBounds (type: RunExternalTest) {
+    source = "codegen/blackbox/typeMapping/typeParameterMultipleBounds.kt"
+}
+

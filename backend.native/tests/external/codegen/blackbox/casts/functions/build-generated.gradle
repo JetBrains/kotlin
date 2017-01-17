@@ -1,0 +1,54 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_casts_functions_asFunKBig (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/asFunKBig.kt"
+}
+
+task codegen_blackbox_casts_functions_asFunKSmall (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/asFunKSmall.kt"
+}
+
+task codegen_blackbox_casts_functions_isFunKBig (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/isFunKBig.kt"
+}
+
+task codegen_blackbox_casts_functions_isFunKSmall (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/isFunKSmall.kt"
+}
+
+task codegen_blackbox_casts_functions_javaTypeIsFunK (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/javaTypeIsFunK.kt"
+}
+
+task codegen_blackbox_casts_functions_reifiedAsFunKBig (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/reifiedAsFunKBig.kt"
+}
+
+task codegen_blackbox_casts_functions_reifiedAsFunKSmall (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/reifiedAsFunKSmall.kt"
+}
+
+task codegen_blackbox_casts_functions_reifiedIsFunKBig (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/reifiedIsFunKBig.kt"
+}
+
+task codegen_blackbox_casts_functions_reifiedIsFunKSmall (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/reifiedIsFunKSmall.kt"
+}
+
+task codegen_blackbox_casts_functions_reifiedSafeAsFunKBig (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/reifiedSafeAsFunKBig.kt"
+}
+
+task codegen_blackbox_casts_functions_reifiedSafeAsFunKSmall (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/reifiedSafeAsFunKSmall.kt"
+}
+
+task codegen_blackbox_casts_functions_safeAsFunKBig (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/safeAsFunKBig.kt"
+}
+
+task codegen_blackbox_casts_functions_safeAsFunKSmall (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/functions/safeAsFunKSmall.kt"
+}
+

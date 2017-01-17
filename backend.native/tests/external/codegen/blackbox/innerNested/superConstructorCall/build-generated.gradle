@@ -1,0 +1,82 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_innerNested_superConstructorCall_deepInnerHierarchy (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/deepInnerHierarchy.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_deepLocalHierarchy (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/deepLocalHierarchy.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_innerExtendsInnerViaSecondaryConstuctor (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/innerExtendsInnerViaSecondaryConstuctor.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_innerExtendsInnerWithProperOuterCapture (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/innerExtendsInnerWithProperOuterCapture.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_innerExtendsOuter (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/innerExtendsOuter.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_kt11833_1 (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/kt11833_1.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_kt11833_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/kt11833_2.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_localClassOuterDiffersFromInnerOuter (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/localClassOuterDiffersFromInnerOuter.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_localExtendsInner (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/localExtendsInner.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_localExtendsLocalWithClosure (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/localExtendsLocalWithClosure.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_localWithClosureExtendsLocalWithClosure (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/localWithClosureExtendsLocalWithClosure.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsClassDefaultArgument (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsClassDefaultArgument.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsClassVararg (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsClassVararg.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsInner (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsInner.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsInnerDefaultArgument (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsInnerDefaultArgument.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsInnerOfLocalVarargAndDefault (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsInnerOfLocalVarargAndDefault.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsInnerOfLocalWithCapture (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsInnerOfLocalWithCapture.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsLocalCaptureInSuperCall (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsLocalCaptureInSuperCall.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectExtendsLocalWithClosure (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectExtendsLocalWithClosure.kt"
+}
+
+task codegen_blackbox_innerNested_superConstructorCall_objectOuterDiffersFromInnerOuter (type: RunExternalTest) {
+    source = "codegen/blackbox/innerNested/superConstructorCall/objectOuterDiffersFromInnerOuter.kt"
+}
+

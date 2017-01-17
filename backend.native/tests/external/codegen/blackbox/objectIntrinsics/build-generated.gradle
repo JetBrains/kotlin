@@ -1,0 +1,6 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_objectIntrinsics_objects (type: RunExternalTest) {
+    source = "codegen/blackbox/objectIntrinsics/objects.kt"
+}
+

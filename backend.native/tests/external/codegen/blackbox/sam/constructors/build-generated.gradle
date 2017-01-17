@@ -1,0 +1,50 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_sam_constructors_comparator (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/comparator.kt"
+}
+
+task codegen_blackbox_sam_constructors_filenameFilter (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/filenameFilter.kt"
+}
+
+task codegen_blackbox_sam_constructors_nonLiteralComparator (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/nonLiteralComparator.kt"
+}
+
+task codegen_blackbox_sam_constructors_nonLiteralFilenameFilter (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/nonLiteralFilenameFilter.kt"
+}
+
+task codegen_blackbox_sam_constructors_nonLiteralRunnable (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/nonLiteralRunnable.kt"
+}
+
+task codegen_blackbox_sam_constructors_nonTrivialRunnable (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/nonTrivialRunnable.kt"
+}
+
+task codegen_blackbox_sam_constructors_runnable (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/runnable.kt"
+}
+
+task codegen_blackbox_sam_constructors_runnableAccessingClosure1 (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/runnableAccessingClosure1.kt"
+}
+
+task codegen_blackbox_sam_constructors_runnableAccessingClosure2 (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/runnableAccessingClosure2.kt"
+}
+
+task codegen_blackbox_sam_constructors_sameWrapperClass (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/sameWrapperClass.kt"
+}
+
+task codegen_blackbox_sam_constructors_samWrappersDifferentFiles (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/samWrappersDifferentFiles.kt"
+}
+
+task codegen_blackbox_sam_constructors_syntheticVsReal (type: RunExternalTest) {
+    source = "codegen/blackbox/sam/constructors/syntheticVsReal.kt"
+}
+

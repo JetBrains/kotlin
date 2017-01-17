@@ -1,0 +1,22 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_types_createType_equality (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/types/createType/equality.kt"
+}
+
+task codegen_blackbox_reflection_types_createType_innerGeneric (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/types/createType/innerGeneric.kt"
+}
+
+task codegen_blackbox_reflection_types_createType_simpleCreateType (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/types/createType/simpleCreateType.kt"
+}
+
+task codegen_blackbox_reflection_types_createType_typeParameter (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/types/createType/typeParameter.kt"
+}
+
+task codegen_blackbox_reflection_types_createType_wrongNumberOfArguments (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/types/createType/wrongNumberOfArguments.kt"
+}
+

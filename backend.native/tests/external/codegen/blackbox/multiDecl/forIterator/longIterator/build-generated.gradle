@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_multiDecl_forIterator_longIterator_MultiDeclForComponentExtensions (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensions.kt"
+}
+
+task codegen_blackbox_multiDecl_forIterator_longIterator_MultiDeclForComponentExtensionsValCaptured (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensionsValCaptured.kt"
+}
+
+task codegen_blackbox_multiDecl_forIterator_longIterator_MultiDeclForComponentMemberExtensions (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensions.kt"
+}
+
+task codegen_blackbox_multiDecl_forIterator_longIterator_MultiDeclForComponentMemberExtensionsInExtensionFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt"
+}
+

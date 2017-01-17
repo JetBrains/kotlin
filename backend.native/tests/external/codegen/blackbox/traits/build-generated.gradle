@@ -1,0 +1,114 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_traits_abstractClassInheritsFromInterface (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/abstractClassInheritsFromInterface.kt"
+}
+
+task codegen_blackbox_traits_diamondPropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/diamondPropertyAccessors.kt"
+}
+
+task codegen_blackbox_traits_genericMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/genericMethod.kt"
+}
+
+task codegen_blackbox_traits_indirectlyInheritPropertyGetter (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/indirectlyInheritPropertyGetter.kt"
+}
+
+task codegen_blackbox_traits_inheritedFun (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/inheritedFun.kt"
+}
+
+task codegen_blackbox_traits_inheritedVar (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/inheritedVar.kt"
+}
+
+task codegen_blackbox_traits_inheritJavaInterface (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/inheritJavaInterface.kt"
+}
+
+task codegen_blackbox_traits_interfaceDefaultImpls (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/interfaceDefaultImpls.kt"
+}
+
+task codegen_blackbox_traits_kt1936 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt1936.kt"
+}
+
+task codegen_blackbox_traits_kt1936_1 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt1936_1.kt"
+}
+
+task codegen_blackbox_traits_kt2260 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt2260.kt"
+}
+
+task codegen_blackbox_traits_kt2399 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt2399.kt"
+}
+
+task codegen_blackbox_traits_kt2541 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt2541.kt"
+}
+
+task codegen_blackbox_traits_kt3315 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt3315.kt"
+}
+
+task codegen_blackbox_traits_kt3500 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt3500.kt"
+}
+
+task codegen_blackbox_traits_kt3579 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt3579.kt"
+}
+
+task codegen_blackbox_traits_kt3579_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt3579_2.kt"
+}
+
+task codegen_blackbox_traits_kt5393 (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt5393.kt"
+}
+
+task codegen_blackbox_traits_kt5393_property (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/kt5393_property.kt"
+}
+
+task codegen_blackbox_traits_multiple (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/multiple.kt"
+}
+
+task codegen_blackbox_traits_noPrivateDelegation (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/noPrivateDelegation.kt"
+}
+
+task codegen_blackbox_traits_syntheticAccessor (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/syntheticAccessor.kt"
+}
+
+task codegen_blackbox_traits_traitImplDelegationWithCovariantOverride (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/traitImplDelegationWithCovariantOverride.kt"
+}
+
+task codegen_blackbox_traits_traitImplDiamond (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/traitImplDiamond.kt"
+}
+
+task codegen_blackbox_traits_traitImplGenericDelegation (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/traitImplGenericDelegation.kt"
+}
+
+task codegen_blackbox_traits_traitWithPrivateExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/traitWithPrivateExtension.kt"
+}
+
+task codegen_blackbox_traits_traitWithPrivateMember (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/traitWithPrivateMember.kt"
+}
+
+task codegen_blackbox_traits_traitWithPrivateMemberAccessFromLambda (type: RunExternalTest) {
+    source = "codegen/blackbox/traits/traitWithPrivateMemberAccessFromLambda.kt"
+}
+

@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_external_jvmStaticExternal (type: RunExternalTest) {
+    source = "codegen/blackbox/external/jvmStaticExternal.kt"
+}
+
+task codegen_blackbox_external_jvmStaticExternalPrivate (type: RunExternalTest) {
+    source = "codegen/blackbox/external/jvmStaticExternalPrivate.kt"
+}
+
+task codegen_blackbox_external_withDefaultArg (type: RunExternalTest) {
+    source = "codegen/blackbox/external/withDefaultArg.kt"
+}
+

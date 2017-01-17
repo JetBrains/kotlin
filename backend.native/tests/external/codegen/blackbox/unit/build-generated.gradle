@@ -1,0 +1,46 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_unit_closureReturnsNullableUnit (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/closureReturnsNullableUnit.kt"
+}
+
+task codegen_blackbox_unit_ifElse (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/ifElse.kt"
+}
+
+task codegen_blackbox_unit_kt3634 (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/kt3634.kt"
+}
+
+task codegen_blackbox_unit_kt4212 (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/kt4212.kt"
+}
+
+task codegen_blackbox_unit_kt4265 (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/kt4265.kt"
+}
+
+task codegen_blackbox_unit_nullableUnit (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/nullableUnit.kt"
+}
+
+task codegen_blackbox_unit_nullableUnitInWhen1 (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/nullableUnitInWhen1.kt"
+}
+
+task codegen_blackbox_unit_nullableUnitInWhen2 (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/nullableUnitInWhen2.kt"
+}
+
+task codegen_blackbox_unit_nullableUnitInWhen3 (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/nullableUnitInWhen3.kt"
+}
+
+task codegen_blackbox_unit_unitClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/unitClassObject.kt"
+}
+
+task codegen_blackbox_unit_UnitValue (type: RunExternalTest) {
+    source = "codegen/blackbox/unit/UnitValue.kt"
+}
+

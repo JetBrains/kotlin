@@ -1,0 +1,278 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_regressions_arrayLengthNPE (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/arrayLengthNPE.kt"
+}
+
+task codegen_blackbox_regressions_collections (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/collections.kt"
+}
+
+task codegen_blackbox_regressions_commonSupertypeContravariant (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/commonSupertypeContravariant.kt"
+}
+
+task codegen_blackbox_regressions_commonSupertypeContravariant2 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/commonSupertypeContravariant2.kt"
+}
+
+task codegen_blackbox_regressions_doubleMerge (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/doubleMerge.kt"
+}
+
+task codegen_blackbox_regressions_floatMerge (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/floatMerge.kt"
+}
+
+task codegen_blackbox_regressions_generic (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/generic.kt"
+}
+
+task codegen_blackbox_regressions_getGenericInterfaces (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/getGenericInterfaces.kt"
+}
+
+task codegen_blackbox_regressions_hashCodeNPE (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/hashCodeNPE.kt"
+}
+
+task codegen_blackbox_regressions_internalTopLevelOtherPackage (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/internalTopLevelOtherPackage.kt"
+}
+
+task codegen_blackbox_regressions_kt10143 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt10143.kt"
+}
+
+task codegen_blackbox_regressions_kt10934 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt10934.kt"
+}
+
+task codegen_blackbox_regressions_Kt1149 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/Kt1149.kt"
+}
+
+task codegen_blackbox_regressions_kt1172 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1172.kt"
+}
+
+task codegen_blackbox_regressions_kt1202 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1202.kt"
+}
+
+task codegen_blackbox_regressions_kt13381 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt13381.kt"
+}
+
+task codegen_blackbox_regressions_kt1406 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1406.kt"
+}
+
+task codegen_blackbox_regressions_kt14447 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt14447.kt"
+}
+
+task codegen_blackbox_regressions_kt1515 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1515.kt"
+}
+
+task codegen_blackbox_regressions_kt1528 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1528.kt"
+}
+
+task codegen_blackbox_regressions_kt1568 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1568.kt"
+}
+
+task codegen_blackbox_regressions_Kt1619Test (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/Kt1619Test.kt"
+}
+
+task codegen_blackbox_regressions_kt1779 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1779.kt"
+}
+
+task codegen_blackbox_regressions_kt1800 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1800.kt"
+}
+
+task codegen_blackbox_regressions_kt1845 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1845.kt"
+}
+
+task codegen_blackbox_regressions_kt1932 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt1932.kt"
+}
+
+task codegen_blackbox_regressions_kt2017 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt2017.kt"
+}
+
+task codegen_blackbox_regressions_kt2060 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt2060.kt"
+}
+
+task codegen_blackbox_regressions_kt2210 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt2210.kt"
+}
+
+task codegen_blackbox_regressions_kt2246 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt2246.kt"
+}
+
+task codegen_blackbox_regressions_kt2318 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt2318.kt"
+}
+
+task codegen_blackbox_regressions_Kt2495Test (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/Kt2495Test.kt"
+}
+
+task codegen_blackbox_regressions_kt2509 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt2509.kt"
+}
+
+task codegen_blackbox_regressions_kt2593 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt2593.kt"
+}
+
+task codegen_blackbox_regressions_kt274 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt274.kt"
+}
+
+task codegen_blackbox_regressions_kt3046 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt3046.kt"
+}
+
+task codegen_blackbox_regressions_kt3107 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt3107.kt"
+}
+
+task codegen_blackbox_regressions_kt3421 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt3421.kt"
+}
+
+task codegen_blackbox_regressions_kt344 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt344.kt"
+}
+
+task codegen_blackbox_regressions_kt3442 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt3442.kt"
+}
+
+task codegen_blackbox_regressions_kt3587 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt3587.kt"
+}
+
+task codegen_blackbox_regressions_kt3850 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt3850.kt"
+}
+
+task codegen_blackbox_regressions_kt3903 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt3903.kt"
+}
+
+task codegen_blackbox_regressions_kt4142 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt4142.kt"
+}
+
+task codegen_blackbox_regressions_kt4259 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt4259.kt"
+}
+
+task codegen_blackbox_regressions_kt4262 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt4262.kt"
+}
+
+task codegen_blackbox_regressions_kt4281 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt4281.kt"
+}
+
+task codegen_blackbox_regressions_kt5056 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt5056.kt"
+}
+
+task codegen_blackbox_regressions_kt528 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt528.kt"
+}
+
+task codegen_blackbox_regressions_kt529 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt529.kt"
+}
+
+task codegen_blackbox_regressions_kt533 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt533.kt"
+}
+
+task codegen_blackbox_regressions_kt5395 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt5395.kt"
+}
+
+task codegen_blackbox_regressions_kt5445 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt5445.kt"
+}
+
+task codegen_blackbox_regressions_kt5445_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt5445_2.kt"
+}
+
+task codegen_blackbox_regressions_kt5786_privateWithDefault (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt5786_privateWithDefault.kt"
+}
+
+task codegen_blackbox_regressions_kt5953 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt5953.kt"
+}
+
+task codegen_blackbox_regressions_kt6153 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt6153.kt"
+}
+
+task codegen_blackbox_regressions_kt6434 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt6434.kt"
+}
+
+task codegen_blackbox_regressions_kt6434_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt6434_2.kt"
+}
+
+task codegen_blackbox_regressions_kt6485 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt6485.kt"
+}
+
+task codegen_blackbox_regressions_kt715 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt715.kt"
+}
+
+task codegen_blackbox_regressions_kt7401 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt7401.kt"
+}
+
+task codegen_blackbox_regressions_kt789 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt789.kt"
+}
+
+task codegen_blackbox_regressions_kt864 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt864.kt"
+}
+
+task codegen_blackbox_regressions_kt998 (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/kt998.kt"
+}
+
+task codegen_blackbox_regressions_nestedIntersection (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/nestedIntersection.kt"
+}
+
+task codegen_blackbox_regressions_objectCaptureOuterConstructorProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/objectCaptureOuterConstructorProperty.kt"
+}
+
+task codegen_blackbox_regressions_referenceToSelfInLocal (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/referenceToSelfInLocal.kt"
+}
+
+task codegen_blackbox_regressions_typeCastException (type: RunExternalTest) {
+    source = "codegen/blackbox/regressions/typeCastException.kt"
+}
+

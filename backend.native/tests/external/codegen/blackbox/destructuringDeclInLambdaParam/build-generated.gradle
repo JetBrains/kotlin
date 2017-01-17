@@ -1,0 +1,34 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_destructuringDeclInLambdaParam_extensionComponents (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/extensionComponents.kt"
+}
+
+task codegen_blackbox_destructuringDeclInLambdaParam_generic (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/generic.kt"
+}
+
+task codegen_blackbox_destructuringDeclInLambdaParam_inline (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/inline.kt"
+}
+
+task codegen_blackbox_destructuringDeclInLambdaParam_otherParameters (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/otherParameters.kt"
+}
+
+task codegen_blackbox_destructuringDeclInLambdaParam_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/simple.kt"
+}
+
+task codegen_blackbox_destructuringDeclInLambdaParam_stdlibUsages (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/stdlibUsages.kt"
+}
+
+task codegen_blackbox_destructuringDeclInLambdaParam_underscoreNames (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/underscoreNames.kt"
+}
+
+task codegen_blackbox_destructuringDeclInLambdaParam_withIndexed (type: RunExternalTest) {
+    source = "codegen/blackbox/destructuringDeclInLambdaParam/withIndexed.kt"
+}
+

@@ -1,0 +1,62 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_dataClasses_arrayParams (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/arrayParams.kt"
+}
+
+task codegen_blackbox_dataClasses_changingVarParam (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/changingVarParam.kt"
+}
+
+task codegen_blackbox_dataClasses_doubleParam (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/doubleParam.kt"
+}
+
+task codegen_blackbox_dataClasses_floatParam (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/floatParam.kt"
+}
+
+task codegen_blackbox_dataClasses_genericParam (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/genericParam.kt"
+}
+
+task codegen_blackbox_dataClasses_kt5002 (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/kt5002.kt"
+}
+
+task codegen_blackbox_dataClasses_mixedParams (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/mixedParams.kt"
+}
+
+task codegen_blackbox_dataClasses_multiDeclaration (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/multiDeclaration.kt"
+}
+
+task codegen_blackbox_dataClasses_multiDeclarationFor (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/multiDeclarationFor.kt"
+}
+
+task codegen_blackbox_dataClasses_nonTrivialFinalMemberInSuperClass (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/nonTrivialFinalMemberInSuperClass.kt"
+}
+
+task codegen_blackbox_dataClasses_nonTrivialMemberInSuperClass (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/nonTrivialMemberInSuperClass.kt"
+}
+
+task codegen_blackbox_dataClasses_privateValParams (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/privateValParams.kt"
+}
+
+task codegen_blackbox_dataClasses_twoValParams (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/twoValParams.kt"
+}
+
+task codegen_blackbox_dataClasses_twoVarParams (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/twoVarParams.kt"
+}
+
+task codegen_blackbox_dataClasses_unitComponent (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/unitComponent.kt"
+}
+

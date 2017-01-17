@@ -1,0 +1,62 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_ranges_forInIndices_forInCharSequenceIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forInCharSequenceIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_forInCollectionImplicitReceiverIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forInCollectionImplicitReceiverIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_forInCollectionIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forInCollectionIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_forInNonOptimizedIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forInNonOptimizedIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_forInObjectArrayIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forInObjectArrayIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_forInPrimitiveArrayIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forInPrimitiveArrayIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_forNullableIntInArrayIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forNullableIntInArrayIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_forNullableIntInCollectionIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/forNullableIntInCollectionIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_kt12983_forInGenericArrayIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/kt12983_forInGenericArrayIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_kt12983_forInGenericCollectionIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/kt12983_forInGenericCollectionIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_kt12983_forInSpecificArrayIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/kt12983_forInSpecificArrayIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_kt12983_forInSpecificCollectionIndices (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/kt12983_forInSpecificCollectionIndices.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_kt13241_Array (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/kt13241_Array.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_kt13241_CharSequence (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/kt13241_CharSequence.kt"
+}
+
+task codegen_blackbox_ranges_forInIndices_kt13241_Collection (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/forInIndices/kt13241_Collection.kt"
+}
+

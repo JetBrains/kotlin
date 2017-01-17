@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_typeParameters_declarationSiteVariance (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/typeParameters/declarationSiteVariance.kt"
+}
+
+task codegen_blackbox_reflection_typeParameters_typeParametersAndNames (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/typeParameters/typeParametersAndNames.kt"
+}
+
+task codegen_blackbox_reflection_typeParameters_upperBounds (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/typeParameters/upperBounds.kt"
+}
+

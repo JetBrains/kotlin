@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_coroutines_stackUnwinding_exception (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/stackUnwinding/exception.kt"
+}
+
+task codegen_blackbox_coroutines_stackUnwinding_inlineSuspendFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/stackUnwinding/inlineSuspendFunction.kt"
+}
+
+task codegen_blackbox_coroutines_stackUnwinding_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/stackUnwinding/simple.kt"
+}
+
+task codegen_blackbox_coroutines_stackUnwinding_suspendInCycle (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/stackUnwinding/suspendInCycle.kt"
+}
+

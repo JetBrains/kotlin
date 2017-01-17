@@ -1,0 +1,42 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_multifileClasses_callMultifileClassMemberFromOtherPackage (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/callMultifileClassMemberFromOtherPackage.kt"
+}
+
+task codegen_blackbox_multifileClasses_callsToMultifileClassFromOtherPackage (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/callsToMultifileClassFromOtherPackage.kt"
+}
+
+task codegen_blackbox_multifileClasses_constPropertyReferenceFromMultifileClass (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/constPropertyReferenceFromMultifileClass.kt"
+}
+
+task codegen_blackbox_multifileClasses_inlineMultifileClassMemberFromOtherPackage (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/inlineMultifileClassMemberFromOtherPackage.kt"
+}
+
+task codegen_blackbox_multifileClasses_multifileClassPartsInitialization (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/multifileClassPartsInitialization.kt"
+}
+
+task codegen_blackbox_multifileClasses_multifileClassWith2Files (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/multifileClassWith2Files.kt"
+}
+
+task codegen_blackbox_multifileClasses_multifileClassWithCrossCall (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/multifileClassWithCrossCall.kt"
+}
+
+task codegen_blackbox_multifileClasses_multifileClassWithPrivate (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/multifileClassWithPrivate.kt"
+}
+
+task codegen_blackbox_multifileClasses_privateConstVal (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/privateConstVal.kt"
+}
+
+task codegen_blackbox_multifileClasses_samePartNameDifferentFacades (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/samePartNameDifferentFacades.kt"
+}
+

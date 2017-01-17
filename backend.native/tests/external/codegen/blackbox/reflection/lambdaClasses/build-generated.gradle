@@ -1,0 +1,6 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_lambdaClasses_parameterNamesAndNullability (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/lambdaClasses/parameterNamesAndNullability.kt"
+}
+

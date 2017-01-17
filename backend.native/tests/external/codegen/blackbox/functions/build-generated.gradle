@@ -1,0 +1,174 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_functions_coerceVoidToArray (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/coerceVoidToArray.kt"
+}
+
+task codegen_blackbox_functions_coerceVoidToObject (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/coerceVoidToObject.kt"
+}
+
+task codegen_blackbox_functions_dataLocalVariable (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/dataLocalVariable.kt"
+}
+
+task codegen_blackbox_functions_defaultargs (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs.kt"
+}
+
+task codegen_blackbox_functions_defaultargs1 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs1.kt"
+}
+
+task codegen_blackbox_functions_defaultargs2 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs2.kt"
+}
+
+task codegen_blackbox_functions_defaultargs3 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs3.kt"
+}
+
+task codegen_blackbox_functions_defaultargs4 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs4.kt"
+}
+
+task codegen_blackbox_functions_defaultargs5 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs5.kt"
+}
+
+task codegen_blackbox_functions_defaultargs6 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs6.kt"
+}
+
+task codegen_blackbox_functions_defaultargs7 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/defaultargs7.kt"
+}
+
+task codegen_blackbox_functions_ea33909 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/ea33909.kt"
+}
+
+task codegen_blackbox_functions_fakeDescriptorWithSeveralOverridenOne (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/fakeDescriptorWithSeveralOverridenOne.kt"
+}
+
+task codegen_blackbox_functions_functionNtoString (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/functionNtoString.kt"
+}
+
+task codegen_blackbox_functions_functionNtoStringGeneric (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/functionNtoStringGeneric.kt"
+}
+
+task codegen_blackbox_functions_functionNtoStringNoReflect (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/functionNtoStringNoReflect.kt"
+}
+
+task codegen_blackbox_functions_infixRecursiveCall (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/infixRecursiveCall.kt"
+}
+
+task codegen_blackbox_functions_kt1038 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt1038.kt"
+}
+
+task codegen_blackbox_functions_kt1199 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt1199.kt"
+}
+
+task codegen_blackbox_functions_kt1413 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt1413.kt"
+}
+
+task codegen_blackbox_functions_kt1649_1 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt1649_1.kt"
+}
+
+task codegen_blackbox_functions_kt1649_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt1649_2.kt"
+}
+
+task codegen_blackbox_functions_kt1739 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt1739.kt"
+}
+
+task codegen_blackbox_functions_kt2270 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt2270.kt"
+}
+
+task codegen_blackbox_functions_kt2271 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt2271.kt"
+}
+
+task codegen_blackbox_functions_kt2280 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt2280.kt"
+}
+
+task codegen_blackbox_functions_kt2481 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt2481.kt"
+}
+
+task codegen_blackbox_functions_kt2716 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt2716.kt"
+}
+
+task codegen_blackbox_functions_kt2739 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt2739.kt"
+}
+
+task codegen_blackbox_functions_kt2929 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt2929.kt"
+}
+
+task codegen_blackbox_functions_kt3214 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt3214.kt"
+}
+
+task codegen_blackbox_functions_kt3313 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt3313.kt"
+}
+
+task codegen_blackbox_functions_kt3573 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt3573.kt"
+}
+
+task codegen_blackbox_functions_kt3724 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt3724.kt"
+}
+
+task codegen_blackbox_functions_kt395 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt395.kt"
+}
+
+task codegen_blackbox_functions_kt785 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt785.kt"
+}
+
+task codegen_blackbox_functions_kt873 (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/kt873.kt"
+}
+
+task codegen_blackbox_functions_localFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/localFunction.kt"
+}
+
+task codegen_blackbox_functions_localReturnInsideFunctionExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/localReturnInsideFunctionExpression.kt"
+}
+
+task codegen_blackbox_functions_nothisnoclosure (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/nothisnoclosure.kt"
+}
+
+task codegen_blackbox_functions_prefixRecursiveCall (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/prefixRecursiveCall.kt"
+}
+
+task codegen_blackbox_functions_recursiveCompareTo (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/recursiveCompareTo.kt"
+}
+
+task codegen_blackbox_functions_recursiveIncrementCall (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/recursiveIncrementCall.kt"
+}
+

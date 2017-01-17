@@ -1,0 +1,34 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_genericSignature_covariantOverride (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/covariantOverride.kt"
+}
+
+task codegen_blackbox_reflection_genericSignature_defaultImplsGenericSignature (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/defaultImplsGenericSignature.kt"
+}
+
+task codegen_blackbox_reflection_genericSignature_functionLiteralGenericSignature (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/functionLiteralGenericSignature.kt"
+}
+
+task codegen_blackbox_reflection_genericSignature_genericBackingFieldSignature (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/genericBackingFieldSignature.kt"
+}
+
+task codegen_blackbox_reflection_genericSignature_genericMethodSignature (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/genericMethodSignature.kt"
+}
+
+task codegen_blackbox_reflection_genericSignature_kt11121 (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/kt11121.kt"
+}
+
+task codegen_blackbox_reflection_genericSignature_kt5112 (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/kt5112.kt"
+}
+
+task codegen_blackbox_reflection_genericSignature_kt6106 (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/genericSignature/kt6106.kt"
+}
+

@@ -1,0 +1,22 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_constants_constantsInWhen (type: RunExternalTest) {
+    source = "codegen/blackbox/constants/constantsInWhen.kt"
+}
+
+task codegen_blackbox_constants_float (type: RunExternalTest) {
+    source = "codegen/blackbox/constants/float.kt"
+}
+
+task codegen_blackbox_constants_kt9532 (type: RunExternalTest) {
+    source = "codegen/blackbox/constants/kt9532.kt"
+}
+
+task codegen_blackbox_constants_long (type: RunExternalTest) {
+    source = "codegen/blackbox/constants/long.kt"
+}
+
+task codegen_blackbox_constants_privateConst (type: RunExternalTest) {
+    source = "codegen/blackbox/constants/privateConst.kt"
+}
+

@@ -1,0 +1,10 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_exclExcl_genericNull (type: RunExternalTest) {
+    source = "codegen/blackbox/exclExcl/genericNull.kt"
+}
+
+task codegen_blackbox_exclExcl_primitive (type: RunExternalTest) {
+    source = "codegen/blackbox/exclExcl/primitive.kt"
+}
+

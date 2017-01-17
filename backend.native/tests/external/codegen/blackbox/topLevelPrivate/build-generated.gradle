@@ -1,0 +1,26 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_topLevelPrivate_noPrivateNoAccessorsInMultiFileFacade (type: RunExternalTest) {
+    source = "codegen/blackbox/topLevelPrivate/noPrivateNoAccessorsInMultiFileFacade.kt"
+}
+
+task codegen_blackbox_topLevelPrivate_noPrivateNoAccessorsInMultiFileFacade2 (type: RunExternalTest) {
+    source = "codegen/blackbox/topLevelPrivate/noPrivateNoAccessorsInMultiFileFacade2.kt"
+}
+
+task codegen_blackbox_topLevelPrivate_privateInInlineNested (type: RunExternalTest) {
+    source = "codegen/blackbox/topLevelPrivate/privateInInlineNested.kt"
+}
+
+task codegen_blackbox_topLevelPrivate_privateVisibility (type: RunExternalTest) {
+    source = "codegen/blackbox/topLevelPrivate/privateVisibility.kt"
+}
+
+task codegen_blackbox_topLevelPrivate_syntheticAccessor (type: RunExternalTest) {
+    source = "codegen/blackbox/topLevelPrivate/syntheticAccessor.kt"
+}
+
+task codegen_blackbox_topLevelPrivate_syntheticAccessorInMultiFile (type: RunExternalTest) {
+    source = "codegen/blackbox/topLevelPrivate/syntheticAccessorInMultiFile.kt"
+}
+

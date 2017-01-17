@@ -1,0 +1,46 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_argumentOrder_arguments (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/arguments.kt"
+}
+
+task codegen_blackbox_argumentOrder_captured (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/captured.kt"
+}
+
+task codegen_blackbox_argumentOrder_capturedInExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/capturedInExtension.kt"
+}
+
+task codegen_blackbox_argumentOrder_defaults (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/defaults.kt"
+}
+
+task codegen_blackbox_argumentOrder_extension (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/extension.kt"
+}
+
+task codegen_blackbox_argumentOrder_extensionInClass (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/extensionInClass.kt"
+}
+
+task codegen_blackbox_argumentOrder_kt9277 (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/kt9277.kt"
+}
+
+task codegen_blackbox_argumentOrder_lambdaMigration (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/lambdaMigration.kt"
+}
+
+task codegen_blackbox_argumentOrder_lambdaMigrationInClass (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/lambdaMigrationInClass.kt"
+}
+
+task codegen_blackbox_argumentOrder_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/simple.kt"
+}
+
+task codegen_blackbox_argumentOrder_simpleInClass (type: RunExternalTest) {
+    source = "codegen/blackbox/argumentOrder/simpleInClass.kt"
+}
+

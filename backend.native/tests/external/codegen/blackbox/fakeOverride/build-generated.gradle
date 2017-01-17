@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_fakeOverride_diamondFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/fakeOverride/diamondFunction.kt"
+}
+
+task codegen_blackbox_fakeOverride_function (type: RunExternalTest) {
+    source = "codegen/blackbox/fakeOverride/function.kt"
+}
+
+task codegen_blackbox_fakeOverride_propertyGetter (type: RunExternalTest) {
+    source = "codegen/blackbox/fakeOverride/propertyGetter.kt"
+}
+
+task codegen_blackbox_fakeOverride_propertySetter (type: RunExternalTest) {
+    source = "codegen/blackbox/fakeOverride/propertySetter.kt"
+}
+

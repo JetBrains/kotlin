@@ -1,0 +1,90 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_increment_arrayElement (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/arrayElement.kt"
+}
+
+task codegen_blackbox_increment_assignPlusOnSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/assignPlusOnSmartCast.kt"
+}
+
+task codegen_blackbox_increment_augmentedAssignmentWithComplexRhs (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/augmentedAssignmentWithComplexRhs.kt"
+}
+
+task codegen_blackbox_increment_classNaryGetSet (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/classNaryGetSet.kt"
+}
+
+task codegen_blackbox_increment_classWithGetSet (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/classWithGetSet.kt"
+}
+
+task codegen_blackbox_increment_extOnLong (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/extOnLong.kt"
+}
+
+task codegen_blackbox_increment_genericClassWithGetSet (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/genericClassWithGetSet.kt"
+}
+
+task codegen_blackbox_increment_memberExtOnLong (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/memberExtOnLong.kt"
+}
+
+task codegen_blackbox_increment_mutableListElement (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/mutableListElement.kt"
+}
+
+task codegen_blackbox_increment_nullable (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/nullable.kt"
+}
+
+task codegen_blackbox_increment_postfixIncrementDoubleSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/postfixIncrementDoubleSmartCast.kt"
+}
+
+task codegen_blackbox_increment_postfixIncrementOnClass (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/postfixIncrementOnClass.kt"
+}
+
+task codegen_blackbox_increment_postfixIncrementOnClassSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/postfixIncrementOnClassSmartCast.kt"
+}
+
+task codegen_blackbox_increment_postfixIncrementOnShortSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/postfixIncrementOnShortSmartCast.kt"
+}
+
+task codegen_blackbox_increment_postfixIncrementOnSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/postfixIncrementOnSmartCast.kt"
+}
+
+task codegen_blackbox_increment_postfixNullableClassIncrement (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/postfixNullableClassIncrement.kt"
+}
+
+task codegen_blackbox_increment_postfixNullableIncrement (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/postfixNullableIncrement.kt"
+}
+
+task codegen_blackbox_increment_prefixIncrementOnClass (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/prefixIncrementOnClass.kt"
+}
+
+task codegen_blackbox_increment_prefixIncrementOnClassSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/prefixIncrementOnClassSmartCast.kt"
+}
+
+task codegen_blackbox_increment_prefixIncrementOnSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/prefixIncrementOnSmartCast.kt"
+}
+
+task codegen_blackbox_increment_prefixNullableClassIncrement (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/prefixNullableClassIncrement.kt"
+}
+
+task codegen_blackbox_increment_prefixNullableIncrement (type: RunExternalTest) {
+    source = "codegen/blackbox/increment/prefixNullableIncrement.kt"
+}
+

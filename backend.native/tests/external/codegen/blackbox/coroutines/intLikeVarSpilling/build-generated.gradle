@@ -1,0 +1,42 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_complicatedMerge (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/complicatedMerge.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_i2bResult (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/i2bResult.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_loadFromBooleanArray (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_loadFromByteArray (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/loadFromByteArray.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_noVariableInTable (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/noVariableInTable.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_sameIconst1ManyVars (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_usedInArrayStore (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/usedInArrayStore.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_usedInMethodCall (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/usedInMethodCall.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_usedInPutfield (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/usedInPutfield.kt"
+}
+
+task codegen_blackbox_coroutines_intLikeVarSpilling_usedInVarStore (type: RunExternalTest) {
+    source = "codegen/blackbox/coroutines/intLikeVarSpilling/usedInVarStore.kt"
+}
+

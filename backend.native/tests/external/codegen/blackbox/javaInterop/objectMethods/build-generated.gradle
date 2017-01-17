@@ -1,0 +1,26 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_javaInterop_objectMethods_cloneableClassWithoutClone (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/objectMethods/cloneableClassWithoutClone.kt"
+}
+
+task codegen_blackbox_javaInterop_objectMethods_cloneCallsConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/objectMethods/cloneCallsConstructor.kt"
+}
+
+task codegen_blackbox_javaInterop_objectMethods_cloneCallsSuper (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/objectMethods/cloneCallsSuper.kt"
+}
+
+task codegen_blackbox_javaInterop_objectMethods_cloneCallsSuperAndModifies (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/objectMethods/cloneCallsSuperAndModifies.kt"
+}
+
+task codegen_blackbox_javaInterop_objectMethods_cloneHashSet (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/objectMethods/cloneHashSet.kt"
+}
+
+task codegen_blackbox_javaInterop_objectMethods_cloneHierarchy (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/objectMethods/cloneHierarchy.kt"
+}
+

@@ -1,0 +1,114 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_super_basicmethodSuperClass (type: RunExternalTest) {
+    source = "codegen/blackbox/super/basicmethodSuperClass.kt"
+}
+
+task codegen_blackbox_super_basicmethodSuperTrait (type: RunExternalTest) {
+    source = "codegen/blackbox/super/basicmethodSuperTrait.kt"
+}
+
+task codegen_blackbox_super_basicproperty (type: RunExternalTest) {
+    source = "codegen/blackbox/super/basicproperty.kt"
+}
+
+task codegen_blackbox_super_enclosedFun (type: RunExternalTest) {
+    source = "codegen/blackbox/super/enclosedFun.kt"
+}
+
+task codegen_blackbox_super_enclosedVar (type: RunExternalTest) {
+    source = "codegen/blackbox/super/enclosedVar.kt"
+}
+
+task codegen_blackbox_super_innerClassLabeledSuper (type: RunExternalTest) {
+    source = "codegen/blackbox/super/innerClassLabeledSuper.kt"
+}
+
+task codegen_blackbox_super_innerClassLabeledSuper2 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/innerClassLabeledSuper2.kt"
+}
+
+task codegen_blackbox_super_innerClassLabeledSuperProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/super/innerClassLabeledSuperProperty.kt"
+}
+
+task codegen_blackbox_super_innerClassLabeledSuperProperty2 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/innerClassLabeledSuperProperty2.kt"
+}
+
+task codegen_blackbox_super_innerClassQualifiedFunctionCall (type: RunExternalTest) {
+    source = "codegen/blackbox/super/innerClassQualifiedFunctionCall.kt"
+}
+
+task codegen_blackbox_super_innerClassQualifiedPropertyAccess (type: RunExternalTest) {
+    source = "codegen/blackbox/super/innerClassQualifiedPropertyAccess.kt"
+}
+
+task codegen_blackbox_super_kt14243 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt14243.kt"
+}
+
+task codegen_blackbox_super_kt14243_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt14243_2.kt"
+}
+
+task codegen_blackbox_super_kt14243_class (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt14243_class.kt"
+}
+
+task codegen_blackbox_super_kt14243_prop (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt14243_prop.kt"
+}
+
+task codegen_blackbox_super_kt3492ClassFun (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt3492ClassFun.kt"
+}
+
+task codegen_blackbox_super_kt3492ClassProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt3492ClassProperty.kt"
+}
+
+task codegen_blackbox_super_kt3492TraitFun (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt3492TraitFun.kt"
+}
+
+task codegen_blackbox_super_kt3492TraitProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt3492TraitProperty.kt"
+}
+
+task codegen_blackbox_super_kt4173 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt4173.kt"
+}
+
+task codegen_blackbox_super_kt4173_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt4173_2.kt"
+}
+
+task codegen_blackbox_super_kt4173_3 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt4173_3.kt"
+}
+
+task codegen_blackbox_super_kt4982 (type: RunExternalTest) {
+    source = "codegen/blackbox/super/kt4982.kt"
+}
+
+task codegen_blackbox_super_multipleSuperTraits (type: RunExternalTest) {
+    source = "codegen/blackbox/super/multipleSuperTraits.kt"
+}
+
+task codegen_blackbox_super_traitproperty (type: RunExternalTest) {
+    source = "codegen/blackbox/super/traitproperty.kt"
+}
+
+task codegen_blackbox_super_unqualifiedSuper (type: RunExternalTest) {
+    source = "codegen/blackbox/super/unqualifiedSuper.kt"
+}
+
+task codegen_blackbox_super_unqualifiedSuperWithDeeperHierarchies (type: RunExternalTest) {
+    source = "codegen/blackbox/super/unqualifiedSuperWithDeeperHierarchies.kt"
+}
+
+task codegen_blackbox_super_unqualifiedSuperWithMethodsOfAny (type: RunExternalTest) {
+    source = "codegen/blackbox/super/unqualifiedSuperWithMethodsOfAny.kt"
+}
+

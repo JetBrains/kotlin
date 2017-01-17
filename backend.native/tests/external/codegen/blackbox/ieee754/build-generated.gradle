@@ -1,0 +1,78 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_ieee754_anyToReal (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/anyToReal.kt"
+}
+
+task codegen_blackbox_ieee754_comparableTypeCast (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/comparableTypeCast.kt"
+}
+
+task codegen_blackbox_ieee754_dataClass (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/dataClass.kt"
+}
+
+task codegen_blackbox_ieee754_equalsDouble (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/equalsDouble.kt"
+}
+
+task codegen_blackbox_ieee754_equalsFloat (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/equalsFloat.kt"
+}
+
+task codegen_blackbox_ieee754_equalsNullableDouble (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/equalsNullableDouble.kt"
+}
+
+task codegen_blackbox_ieee754_explicitCompareCall (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/explicitCompareCall.kt"
+}
+
+task codegen_blackbox_ieee754_explicitEqualsCall (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/explicitEqualsCall.kt"
+}
+
+task codegen_blackbox_ieee754_generic (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/generic.kt"
+}
+
+task codegen_blackbox_ieee754_greaterDouble (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/greaterDouble.kt"
+}
+
+task codegen_blackbox_ieee754_greaterFloat (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/greaterFloat.kt"
+}
+
+task codegen_blackbox_ieee754_inline (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/inline.kt"
+}
+
+task codegen_blackbox_ieee754_lessDouble (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/lessDouble.kt"
+}
+
+task codegen_blackbox_ieee754_lessFloat (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/lessFloat.kt"
+}
+
+task codegen_blackbox_ieee754_nullableAnyToReal (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/nullableAnyToReal.kt"
+}
+
+task codegen_blackbox_ieee754_safeCall (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/safeCall.kt"
+}
+
+task codegen_blackbox_ieee754_smartCastToDifferentTypes (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/smartCastToDifferentTypes.kt"
+}
+
+task codegen_blackbox_ieee754_when (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/when.kt"
+}
+
+task codegen_blackbox_ieee754_whenNoSubject (type: RunExternalTest) {
+    source = "codegen/blackbox/ieee754/whenNoSubject.kt"
+}
+

@@ -1,0 +1,10 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_sealed_objects (type: RunExternalTest) {
+    source = "codegen/blackbox/sealed/objects.kt"
+}
+
+task codegen_blackbox_sealed_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/sealed/simple.kt"
+}
+

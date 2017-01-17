@@ -1,0 +1,54 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_call_bound_companionObjectPropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/companionObjectPropertyAccessors.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_extensionFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/extensionFunction.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_extensionPropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/extensionPropertyAccessors.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_innerClassConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/innerClassConstructor.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_javaInstanceField (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/javaInstanceField.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_javaInstanceMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/javaInstanceMethod.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_jvmStaticCompanionObjectPropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/jvmStaticCompanionObjectPropertyAccessors.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_jvmStaticObjectFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/jvmStaticObjectFunction.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_jvmStaticObjectPropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/jvmStaticObjectPropertyAccessors.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_memberFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/memberFunction.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_memberPropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/memberPropertyAccessors.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_objectFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/objectFunction.kt"
+}
+
+task codegen_blackbox_reflection_call_bound_objectPropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/call/bound/objectPropertyAccessors.kt"
+}
+

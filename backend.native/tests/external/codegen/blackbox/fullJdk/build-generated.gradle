@@ -1,0 +1,26 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_fullJdk_charBuffer (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/charBuffer.kt"
+}
+
+task codegen_blackbox_fullJdk_classpath (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/classpath.kt"
+}
+
+task codegen_blackbox_fullJdk_ifInWhile (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/ifInWhile.kt"
+}
+
+task codegen_blackbox_fullJdk_intCountDownLatchExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/intCountDownLatchExtension.kt"
+}
+
+task codegen_blackbox_fullJdk_kt434 (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/kt434.kt"
+}
+
+task codegen_blackbox_fullJdk_platformTypeAssertionStackTrace (type: RunExternalTest) {
+    source = "codegen/blackbox/fullJdk/platformTypeAssertionStackTrace.kt"
+}
+

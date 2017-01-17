@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_casts_literalExpressionAsGenericArgument_binaryExpressionCast (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/literalExpressionAsGenericArgument/binaryExpressionCast.kt"
+}
+
+task codegen_blackbox_casts_literalExpressionAsGenericArgument_javaBox (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/literalExpressionAsGenericArgument/javaBox.kt"
+}
+
+task codegen_blackbox_casts_literalExpressionAsGenericArgument_labeledExpressionCast (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/literalExpressionAsGenericArgument/labeledExpressionCast.kt"
+}
+
+task codegen_blackbox_casts_literalExpressionAsGenericArgument_parenthesizedExpressionCast (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/literalExpressionAsGenericArgument/parenthesizedExpressionCast.kt"
+}
+
+task codegen_blackbox_casts_literalExpressionAsGenericArgument_superConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/literalExpressionAsGenericArgument/superConstructor.kt"
+}
+
+task codegen_blackbox_casts_literalExpressionAsGenericArgument_unaryExpressionCast (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/literalExpressionAsGenericArgument/unaryExpressionCast.kt"
+}
+
+task codegen_blackbox_casts_literalExpressionAsGenericArgument_vararg (type: RunExternalTest) {
+    source = "codegen/blackbox/casts/literalExpressionAsGenericArgument/vararg.kt"
+}
+

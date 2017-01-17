@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_nonLocalReturns_kt6895 (type: RunExternalTest) {
+    source = "codegen/blackbox/nonLocalReturns/kt6895.kt"
+}
+
+task codegen_blackbox_nonLocalReturns_kt9644let (type: RunExternalTest) {
+    source = "codegen/blackbox/nonLocalReturns/kt9644let.kt"
+}
+
+task codegen_blackbox_nonLocalReturns_use (type: RunExternalTest) {
+    source = "codegen/blackbox/nonLocalReturns/use.kt"
+}
+
+task codegen_blackbox_nonLocalReturns_useWithException (type: RunExternalTest) {
+    source = "codegen/blackbox/nonLocalReturns/useWithException.kt"
+}
+

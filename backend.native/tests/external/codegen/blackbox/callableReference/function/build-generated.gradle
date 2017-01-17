@@ -1,0 +1,166 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_callableReference_function_abstractClassMember (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/abstractClassMember.kt"
+}
+
+task codegen_blackbox_callableReference_function_booleanNotIntrinsic (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/booleanNotIntrinsic.kt"
+}
+
+task codegen_blackbox_callableReference_function_classMemberFromClass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/classMemberFromClass.kt"
+}
+
+task codegen_blackbox_callableReference_function_classMemberFromExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/classMemberFromExtension.kt"
+}
+
+task codegen_blackbox_callableReference_function_classMemberFromTopLevelStringNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/classMemberFromTopLevelStringNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_classMemberFromTopLevelStringOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/classMemberFromTopLevelStringOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_classMemberFromTopLevelUnitNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/classMemberFromTopLevelUnitNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_classMemberFromTopLevelUnitOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/classMemberFromTopLevelUnitOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_constructorFromTopLevelNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/constructorFromTopLevelNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_constructorFromTopLevelOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/constructorFromTopLevelOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_enumValueOfMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/enumValueOfMethod.kt"
+}
+
+task codegen_blackbox_callableReference_function_equalsIntrinsic (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/equalsIntrinsic.kt"
+}
+
+task codegen_blackbox_callableReference_function_extensionFromClass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/extensionFromClass.kt"
+}
+
+task codegen_blackbox_callableReference_function_extensionFromExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/extensionFromExtension.kt"
+}
+
+task codegen_blackbox_callableReference_function_extensionFromTopLevelStringNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/extensionFromTopLevelStringNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_extensionFromTopLevelStringOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/extensionFromTopLevelStringOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_extensionFromTopLevelUnitNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/extensionFromTopLevelUnitNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_extensionFromTopLevelUnitOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/extensionFromTopLevelUnitOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_genericMember (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/genericMember.kt"
+}
+
+task codegen_blackbox_callableReference_function_getArityViaFunctionImpl (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/getArityViaFunctionImpl.kt"
+}
+
+task codegen_blackbox_callableReference_function_innerConstructorFromClass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/innerConstructorFromClass.kt"
+}
+
+task codegen_blackbox_callableReference_function_innerConstructorFromExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/innerConstructorFromExtension.kt"
+}
+
+task codegen_blackbox_callableReference_function_innerConstructorFromTopLevelNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/innerConstructorFromTopLevelNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_innerConstructorFromTopLevelOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/innerConstructorFromTopLevelOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_javaCollectionsStaticMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/javaCollectionsStaticMethod.kt"
+}
+
+task codegen_blackbox_callableReference_function_nestedConstructorFromClass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/nestedConstructorFromClass.kt"
+}
+
+task codegen_blackbox_callableReference_function_nestedConstructorFromTopLevelNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/nestedConstructorFromTopLevelNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_nestedConstructorFromTopLevelOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/nestedConstructorFromTopLevelOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_newArray (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/newArray.kt"
+}
+
+task codegen_blackbox_callableReference_function_overloadedFun (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/overloadedFun.kt"
+}
+
+task codegen_blackbox_callableReference_function_overloadedFunVsVal (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/overloadedFunVsVal.kt"
+}
+
+task codegen_blackbox_callableReference_function_privateClassMember (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/privateClassMember.kt"
+}
+
+task codegen_blackbox_callableReference_function_sortListOfStrings (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/sortListOfStrings.kt"
+}
+
+task codegen_blackbox_callableReference_function_topLevelFromClass (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/topLevelFromClass.kt"
+}
+
+task codegen_blackbox_callableReference_function_topLevelFromExtension (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/topLevelFromExtension.kt"
+}
+
+task codegen_blackbox_callableReference_function_topLevelFromTopLevelStringNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/topLevelFromTopLevelStringNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_topLevelFromTopLevelStringOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/topLevelFromTopLevelStringOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_topLevelFromTopLevelUnitNoArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/topLevelFromTopLevelUnitNoArgs.kt"
+}
+
+task codegen_blackbox_callableReference_function_topLevelFromTopLevelUnitOneStringArg (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/topLevelFromTopLevelUnitOneStringArg.kt"
+}
+
+task codegen_blackbox_callableReference_function_traitImplMethodWithClassReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/traitImplMethodWithClassReceiver.kt"
+}
+
+task codegen_blackbox_callableReference_function_traitMember (type: RunExternalTest) {
+    source = "codegen/blackbox/callableReference/function/traitMember.kt"
+}
+

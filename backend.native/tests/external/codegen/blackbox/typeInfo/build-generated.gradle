@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_typeInfo_asInLoop (type: RunExternalTest) {
+    source = "codegen/blackbox/typeInfo/asInLoop.kt"
+}
+
+task codegen_blackbox_typeInfo_ifOrWhenSpecialCall (type: RunExternalTest) {
+    source = "codegen/blackbox/typeInfo/ifOrWhenSpecialCall.kt"
+}
+
+task codegen_blackbox_typeInfo_implicitSmartCastThis (type: RunExternalTest) {
+    source = "codegen/blackbox/typeInfo/implicitSmartCastThis.kt"
+}
+
+task codegen_blackbox_typeInfo_inheritance (type: RunExternalTest) {
+    source = "codegen/blackbox/typeInfo/inheritance.kt"
+}
+
+task codegen_blackbox_typeInfo_kt2811 (type: RunExternalTest) {
+    source = "codegen/blackbox/typeInfo/kt2811.kt"
+}
+
+task codegen_blackbox_typeInfo_primitiveTypeInfo (type: RunExternalTest) {
+    source = "codegen/blackbox/typeInfo/primitiveTypeInfo.kt"
+}
+
+task codegen_blackbox_typeInfo_smartCastThis (type: RunExternalTest) {
+    source = "codegen/blackbox/typeInfo/smartCastThis.kt"
+}
+

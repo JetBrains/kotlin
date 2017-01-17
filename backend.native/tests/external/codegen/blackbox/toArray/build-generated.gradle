@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_toArray_kt3177_toTypedArray (type: RunExternalTest) {
+    source = "codegen/blackbox/toArray/kt3177-toTypedArray.kt"
+}
+
+task codegen_blackbox_toArray_returnToTypedArray (type: RunExternalTest) {
+    source = "codegen/blackbox/toArray/returnToTypedArray.kt"
+}
+
+task codegen_blackbox_toArray_toArray (type: RunExternalTest) {
+    source = "codegen/blackbox/toArray/toArray.kt"
+}
+
+task codegen_blackbox_toArray_toArrayAlreadyPresent (type: RunExternalTest) {
+    source = "codegen/blackbox/toArray/toArrayAlreadyPresent.kt"
+}
+
+task codegen_blackbox_toArray_toArrayShouldBePublic (type: RunExternalTest) {
+    source = "codegen/blackbox/toArray/toArrayShouldBePublic.kt"
+}
+
+task codegen_blackbox_toArray_toArrayShouldBePublicWithJava (type: RunExternalTest) {
+    source = "codegen/blackbox/toArray/toArrayShouldBePublicWithJava.kt"
+}
+
+task codegen_blackbox_toArray_toTypedArray (type: RunExternalTest) {
+    source = "codegen/blackbox/toArray/toTypedArray.kt"
+}
+

@@ -1,0 +1,66 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_boxingOptimization_casts (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/casts.kt"
+}
+
+task codegen_blackbox_boxingOptimization_checkcastAndInstanceOf (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/checkcastAndInstanceOf.kt"
+}
+
+task codegen_blackbox_boxingOptimization_fold (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/fold.kt"
+}
+
+task codegen_blackbox_boxingOptimization_foldRange (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/foldRange.kt"
+}
+
+task codegen_blackbox_boxingOptimization_kt5493 (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/kt5493.kt"
+}
+
+task codegen_blackbox_boxingOptimization_kt5588 (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/kt5588.kt"
+}
+
+task codegen_blackbox_boxingOptimization_kt5844 (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/kt5844.kt"
+}
+
+task codegen_blackbox_boxingOptimization_kt6047 (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/kt6047.kt"
+}
+
+task codegen_blackbox_boxingOptimization_kt6842 (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/kt6842.kt"
+}
+
+task codegen_blackbox_boxingOptimization_nullCheck (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/nullCheck.kt"
+}
+
+task codegen_blackbox_boxingOptimization_progressions (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/progressions.kt"
+}
+
+task codegen_blackbox_boxingOptimization_safeCallWithElvis (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/safeCallWithElvis.kt"
+}
+
+task codegen_blackbox_boxingOptimization_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/simple.kt"
+}
+
+task codegen_blackbox_boxingOptimization_simpleUninitializedMerge (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/simpleUninitializedMerge.kt"
+}
+
+task codegen_blackbox_boxingOptimization_unsafeRemoving (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/unsafeRemoving.kt"
+}
+
+task codegen_blackbox_boxingOptimization_variables (type: RunExternalTest) {
+    source = "codegen/blackbox/boxingOptimization/variables.kt"
+}
+

@@ -1,0 +1,58 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_multifileClasses_optimized_callableRefToFun (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/callableRefToFun.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_callableRefToInternalValInline (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/callableRefToInternalValInline.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_callableRefToPrivateVal (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/callableRefToPrivateVal.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_callableRefToVal (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/callableRefToVal.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_calls (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/calls.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_deferredStaticInitialization (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/deferredStaticInitialization.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_delegatedVal (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/delegatedVal.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_initializePrivateVal (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/initializePrivateVal.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_initializePublicVal (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/initializePublicVal.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_overlappingFuns (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/overlappingFuns.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_overlappingVals (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/overlappingVals.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_valAccessFromInlinedToDifferentPackage (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/valAccessFromInlinedToDifferentPackage.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_valAccessFromInlineFunCalledFromJava (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/valAccessFromInlineFunCalledFromJava.kt"
+}
+
+task codegen_blackbox_multifileClasses_optimized_valWithAccessor (type: RunExternalTest) {
+    source = "codegen/blackbox/multifileClasses/optimized/valWithAccessor.kt"
+}
+

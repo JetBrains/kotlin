@@ -1,0 +1,54 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_privateConstructors_base (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/base.kt"
+}
+
+task codegen_blackbox_privateConstructors_captured (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/captured.kt"
+}
+
+task codegen_blackbox_privateConstructors_companion (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/companion.kt"
+}
+
+task codegen_blackbox_privateConstructors_inline (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/inline.kt"
+}
+
+task codegen_blackbox_privateConstructors_inner (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/inner.kt"
+}
+
+task codegen_blackbox_privateConstructors_kt4860 (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/kt4860.kt"
+}
+
+task codegen_blackbox_privateConstructors_secondary (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/secondary.kt"
+}
+
+task codegen_blackbox_privateConstructors_synthetic (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/synthetic.kt"
+}
+
+task codegen_blackbox_privateConstructors_withArguments (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/withArguments.kt"
+}
+
+task codegen_blackbox_privateConstructors_withDefault (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/withDefault.kt"
+}
+
+task codegen_blackbox_privateConstructors_withLinkedClasses (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/withLinkedClasses.kt"
+}
+
+task codegen_blackbox_privateConstructors_withLinkedObjects (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/withLinkedObjects.kt"
+}
+
+task codegen_blackbox_privateConstructors_withVarargs (type: RunExternalTest) {
+    source = "codegen/blackbox/privateConstructors/withVarargs.kt"
+}
+

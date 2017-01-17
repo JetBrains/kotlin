@@ -1,0 +1,114 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_ranges_literal_emptyDownto (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/emptyDownto.kt"
+}
+
+task codegen_blackbox_ranges_literal_emptyRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/emptyRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_inexactDownToMinValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/inexactDownToMinValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_inexactSteppedDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/inexactSteppedDownTo.kt"
+}
+
+task codegen_blackbox_ranges_literal_inexactSteppedRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/inexactSteppedRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_inexactToMaxValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/inexactToMaxValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_maxValueMinusTwoToMaxValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/maxValueMinusTwoToMaxValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_maxValueToMaxValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/maxValueToMaxValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_maxValueToMinValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/maxValueToMinValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_oneElementDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/oneElementDownTo.kt"
+}
+
+task codegen_blackbox_ranges_literal_oneElementRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/oneElementRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_openRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/openRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_progressionDownToMinValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/progressionDownToMinValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_progressionMaxValueMinusTwoToMaxValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/progressionMaxValueMinusTwoToMaxValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_progressionMaxValueToMaxValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/progressionMaxValueToMaxValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_progressionMaxValueToMinValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/progressionMaxValueToMinValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_progressionMinValueToMinValue (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/progressionMinValueToMinValue.kt"
+}
+
+task codegen_blackbox_ranges_literal_reversedBackSequence (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/reversedBackSequence.kt"
+}
+
+task codegen_blackbox_ranges_literal_reversedEmptyBackSequence (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/reversedEmptyBackSequence.kt"
+}
+
+task codegen_blackbox_ranges_literal_reversedEmptyRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/reversedEmptyRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_reversedInexactSteppedDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/reversedInexactSteppedDownTo.kt"
+}
+
+task codegen_blackbox_ranges_literal_reversedRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/reversedRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_reversedSimpleSteppedRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/reversedSimpleSteppedRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_simpleDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/simpleDownTo.kt"
+}
+
+task codegen_blackbox_ranges_literal_simpleRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/simpleRange.kt"
+}
+
+task codegen_blackbox_ranges_literal_simpleRangeWithNonConstantEnds (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/simpleRangeWithNonConstantEnds.kt"
+}
+
+task codegen_blackbox_ranges_literal_simpleSteppedDownTo (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/simpleSteppedDownTo.kt"
+}
+
+task codegen_blackbox_ranges_literal_simpleSteppedRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/literal/simpleSteppedRange.kt"
+}
+

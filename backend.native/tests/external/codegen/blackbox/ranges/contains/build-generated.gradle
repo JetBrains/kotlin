@@ -1,0 +1,50 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_ranges_contains_inComparableRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inComparableRange.kt"
+}
+
+task codegen_blackbox_ranges_contains_inExtensionRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inExtensionRange.kt"
+}
+
+task codegen_blackbox_ranges_contains_inIntRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inIntRange.kt"
+}
+
+task codegen_blackbox_ranges_contains_inOptimizableDoubleRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inOptimizableDoubleRange.kt"
+}
+
+task codegen_blackbox_ranges_contains_inOptimizableFloatRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inOptimizableFloatRange.kt"
+}
+
+task codegen_blackbox_ranges_contains_inOptimizableIntRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inOptimizableIntRange.kt"
+}
+
+task codegen_blackbox_ranges_contains_inOptimizableLongRange (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inOptimizableLongRange.kt"
+}
+
+task codegen_blackbox_ranges_contains_inRangeWithCustomContains (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inRangeWithCustomContains.kt"
+}
+
+task codegen_blackbox_ranges_contains_inRangeWithImplicitReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inRangeWithImplicitReceiver.kt"
+}
+
+task codegen_blackbox_ranges_contains_inRangeWithNonmatchingArguments (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inRangeWithNonmatchingArguments.kt"
+}
+
+task codegen_blackbox_ranges_contains_inRangeWithSmartCast (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/inRangeWithSmartCast.kt"
+}
+
+task codegen_blackbox_ranges_contains_rangeContainsString (type: RunExternalTest) {
+    source = "codegen/blackbox/ranges/contains/rangeContainsString.kt"
+}
+

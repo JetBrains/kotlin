@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_classLiterals_annotationClassLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/classLiterals/annotationClassLiteral.kt"
+}
+
+task codegen_blackbox_reflection_classLiterals_arrays (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/classLiterals/arrays.kt"
+}
+
+task codegen_blackbox_reflection_classLiterals_builtinClassLiterals (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/classLiterals/builtinClassLiterals.kt"
+}
+
+task codegen_blackbox_reflection_classLiterals_genericArrays (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/classLiterals/genericArrays.kt"
+}
+
+task codegen_blackbox_reflection_classLiterals_genericClass (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/classLiterals/genericClass.kt"
+}
+
+task codegen_blackbox_reflection_classLiterals_reifiedTypeClassLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/classLiterals/reifiedTypeClassLiteral.kt"
+}
+
+task codegen_blackbox_reflection_classLiterals_simpleClassLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/classLiterals/simpleClassLiteral.kt"
+}
+

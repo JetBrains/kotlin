@@ -1,0 +1,22 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_multiDecl_forRange_explicitRangeTo_MultiDeclFor (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/explicitRangeTo/MultiDeclFor.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_explicitRangeTo_MultiDeclForComponentExtensions (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentExtensions.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_explicitRangeTo_MultiDeclForComponentMemberExtensions (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensions.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_explicitRangeTo_MultiDeclForComponentMemberExtensionsInExtensionFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_explicitRangeTo_MultiDeclForValCaptured (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/explicitRangeTo/MultiDeclForValCaptured.kt"
+}
+

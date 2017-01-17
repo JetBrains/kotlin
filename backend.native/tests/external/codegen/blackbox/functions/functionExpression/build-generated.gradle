@@ -1,0 +1,18 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_functions_functionExpression_functionExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/functionExpression/functionExpression.kt"
+}
+
+task codegen_blackbox_functions_functionExpression_functionExpressionWithThisReference (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/functionExpression/functionExpressionWithThisReference.kt"
+}
+
+task codegen_blackbox_functions_functionExpression_functionLiteralExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/functionExpression/functionLiteralExpression.kt"
+}
+
+task codegen_blackbox_functions_functionExpression_underscoreParameters (type: RunExternalTest) {
+    source = "codegen/blackbox/functions/functionExpression/underscoreParameters.kt"
+}
+

@@ -1,0 +1,46 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_mapping_constructor (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/constructor.kt"
+}
+
+task codegen_blackbox_reflection_mapping_extensionProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/extensionProperty.kt"
+}
+
+task codegen_blackbox_reflection_mapping_functions (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/functions.kt"
+}
+
+task codegen_blackbox_reflection_mapping_inlineReifiedFun (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/inlineReifiedFun.kt"
+}
+
+task codegen_blackbox_reflection_mapping_mappedClassIsEqualToClassLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/mappedClassIsEqualToClassLiteral.kt"
+}
+
+task codegen_blackbox_reflection_mapping_memberProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/memberProperty.kt"
+}
+
+task codegen_blackbox_reflection_mapping_propertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/propertyAccessors.kt"
+}
+
+task codegen_blackbox_reflection_mapping_propertyAccessorsWithJvmName (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/propertyAccessorsWithJvmName.kt"
+}
+
+task codegen_blackbox_reflection_mapping_syntheticFields (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/syntheticFields.kt"
+}
+
+task codegen_blackbox_reflection_mapping_topLevelFunctionOtherFile (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/topLevelFunctionOtherFile.kt"
+}
+
+task codegen_blackbox_reflection_mapping_topLevelProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/topLevelProperty.kt"
+}
+

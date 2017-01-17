@@ -1,0 +1,10 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_mapping_fakeOverrides_javaFieldGetterSetter (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/fakeOverrides/javaFieldGetterSetter.kt"
+}
+
+task codegen_blackbox_reflection_mapping_fakeOverrides_javaMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/mapping/fakeOverrides/javaMethod.kt"
+}
+

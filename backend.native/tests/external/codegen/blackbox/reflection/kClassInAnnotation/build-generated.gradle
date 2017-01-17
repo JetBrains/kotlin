@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_reflection_kClassInAnnotation_array (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/kClassInAnnotation/array.kt"
+}
+
+task codegen_blackbox_reflection_kClassInAnnotation_arrayInJava (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/kClassInAnnotation/arrayInJava.kt"
+}
+
+task codegen_blackbox_reflection_kClassInAnnotation_basic (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/kClassInAnnotation/basic.kt"
+}
+
+task codegen_blackbox_reflection_kClassInAnnotation_basicInJava (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/kClassInAnnotation/basicInJava.kt"
+}
+
+task codegen_blackbox_reflection_kClassInAnnotation_checkcast (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/kClassInAnnotation/checkcast.kt"
+}
+
+task codegen_blackbox_reflection_kClassInAnnotation_vararg (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/kClassInAnnotation/vararg.kt"
+}
+
+task codegen_blackbox_reflection_kClassInAnnotation_varargInJava (type: RunExternalTest) {
+    source = "codegen/blackbox/reflection/kClassInAnnotation/varargInJava.kt"
+}
+

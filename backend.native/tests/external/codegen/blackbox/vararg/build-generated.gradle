@@ -1,0 +1,34 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_vararg_kt1978 (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/kt1978.kt"
+}
+
+task codegen_blackbox_vararg_kt581 (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/kt581.kt"
+}
+
+task codegen_blackbox_vararg_kt6192 (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/kt6192.kt"
+}
+
+task codegen_blackbox_vararg_kt796_797 (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/kt796_797.kt"
+}
+
+task codegen_blackbox_vararg_spreadCopiesArray (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/spreadCopiesArray.kt"
+}
+
+task codegen_blackbox_vararg_varargInFunParam (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/varargInFunParam.kt"
+}
+
+task codegen_blackbox_vararg_varargInJava (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/varargInJava.kt"
+}
+
+task codegen_blackbox_vararg_varargsAndFunctionLiterals (type: RunExternalTest) {
+    source = "codegen/blackbox/vararg/varargsAndFunctionLiterals.kt"
+}
+

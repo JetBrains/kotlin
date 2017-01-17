@@ -1,0 +1,110 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_enum_abstractMethodInEnum (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/abstractMethodInEnum.kt"
+}
+
+task codegen_blackbox_enum_abstractNestedClass (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/abstractNestedClass.kt"
+}
+
+task codegen_blackbox_enum_asReturnExpression (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/asReturnExpression.kt"
+}
+
+task codegen_blackbox_enum_classForEnumEntry (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/classForEnumEntry.kt"
+}
+
+task codegen_blackbox_enum_companionObjectInEnum (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/companionObjectInEnum.kt"
+}
+
+task codegen_blackbox_enum_emptyConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/emptyConstructor.kt"
+}
+
+task codegen_blackbox_enum_emptyEnumValuesValueOf (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/emptyEnumValuesValueOf.kt"
+}
+
+task codegen_blackbox_enum_enumInheritedFromTrait (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/enumInheritedFromTrait.kt"
+}
+
+task codegen_blackbox_enum_enumShort (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/enumShort.kt"
+}
+
+task codegen_blackbox_enum_enumWithLambdaParameter (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/enumWithLambdaParameter.kt"
+}
+
+task codegen_blackbox_enum_inclassobj (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/inclassobj.kt"
+}
+
+task codegen_blackbox_enum_inner (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/inner.kt"
+}
+
+task codegen_blackbox_enum_innerWithExistingClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/innerWithExistingClassObject.kt"
+}
+
+task codegen_blackbox_enum_inPackage (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/inPackage.kt"
+}
+
+task codegen_blackbox_enum_kt1119 (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/kt1119.kt"
+}
+
+task codegen_blackbox_enum_kt2350 (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/kt2350.kt"
+}
+
+task codegen_blackbox_enum_kt9711 (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/kt9711.kt"
+}
+
+task codegen_blackbox_enum_kt9711_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/kt9711_2.kt"
+}
+
+task codegen_blackbox_enum_modifierFlags (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/modifierFlags.kt"
+}
+
+task codegen_blackbox_enum_noClassForSimpleEnum (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/noClassForSimpleEnum.kt"
+}
+
+task codegen_blackbox_enum_objectInEnum (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/objectInEnum.kt"
+}
+
+task codegen_blackbox_enum_ordinal (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/ordinal.kt"
+}
+
+task codegen_blackbox_enum_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/simple.kt"
+}
+
+task codegen_blackbox_enum_sortEnumEntries (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/sortEnumEntries.kt"
+}
+
+task codegen_blackbox_enum_superCallInEnumLiteral (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/superCallInEnumLiteral.kt"
+}
+
+task codegen_blackbox_enum_toString (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/toString.kt"
+}
+
+task codegen_blackbox_enum_valueof (type: RunExternalTest) {
+    source = "codegen/blackbox/enum/valueof.kt"
+}
+

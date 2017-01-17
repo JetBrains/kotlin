@@ -1,0 +1,14 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_javaInterop_generics_allWildcardsOnClass (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/generics/allWildcardsOnClass.kt"
+}
+
+task codegen_blackbox_javaInterop_generics_covariantOverrideWithDeclarationSiteProjection (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/generics/covariantOverrideWithDeclarationSiteProjection.kt"
+}
+
+task codegen_blackbox_javaInterop_generics_invariantArgumentsNoWildcard (type: RunExternalTest) {
+    source = "codegen/blackbox/javaInterop/generics/invariantArgumentsNoWildcard.kt"
+}
+

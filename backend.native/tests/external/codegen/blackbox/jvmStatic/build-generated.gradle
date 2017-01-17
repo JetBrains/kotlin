@@ -1,0 +1,94 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_jvmStatic_annotations (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/annotations.kt"
+}
+
+task codegen_blackbox_jvmStatic_closure (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/closure.kt"
+}
+
+task codegen_blackbox_jvmStatic_companionObject (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/companionObject.kt"
+}
+
+task codegen_blackbox_jvmStatic_convention (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/convention.kt"
+}
+
+task codegen_blackbox_jvmStatic_default (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/default.kt"
+}
+
+task codegen_blackbox_jvmStatic_enumCompanion (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/enumCompanion.kt"
+}
+
+task codegen_blackbox_jvmStatic_explicitObject (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/explicitObject.kt"
+}
+
+task codegen_blackbox_jvmStatic_funAccess (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/funAccess.kt"
+}
+
+task codegen_blackbox_jvmStatic_importStaticMemberFromObject (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/importStaticMemberFromObject.kt"
+}
+
+task codegen_blackbox_jvmStatic_inline (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/inline.kt"
+}
+
+task codegen_blackbox_jvmStatic_inlinePropertyAccessors (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/inlinePropertyAccessors.kt"
+}
+
+task codegen_blackbox_jvmStatic_kt9897_static (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/kt9897_static.kt"
+}
+
+task codegen_blackbox_jvmStatic_object (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/object.kt"
+}
+
+task codegen_blackbox_jvmStatic_postfixInc (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/postfixInc.kt"
+}
+
+task codegen_blackbox_jvmStatic_prefixInc (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/prefixInc.kt"
+}
+
+task codegen_blackbox_jvmStatic_privateMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/privateMethod.kt"
+}
+
+task codegen_blackbox_jvmStatic_privateSetter (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/privateSetter.kt"
+}
+
+task codegen_blackbox_jvmStatic_propertyAccess (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/propertyAccess.kt"
+}
+
+task codegen_blackbox_jvmStatic_propertyAccessorsCompanion (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/propertyAccessorsCompanion.kt"
+}
+
+task codegen_blackbox_jvmStatic_propertyAccessorsObject (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/propertyAccessorsObject.kt"
+}
+
+task codegen_blackbox_jvmStatic_propertyAsDefault (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/propertyAsDefault.kt"
+}
+
+task codegen_blackbox_jvmStatic_simple (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/simple.kt"
+}
+
+task codegen_blackbox_jvmStatic_syntheticAccessor (type: RunExternalTest) {
+    source = "codegen/blackbox/jvmStatic/syntheticAccessor.kt"
+}
+

@@ -1,0 +1,66 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_statics_anonymousInitializerInClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/anonymousInitializerInClassObject.kt"
+}
+
+task codegen_blackbox_statics_anonymousInitializerIObject (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/anonymousInitializerIObject.kt"
+}
+
+task codegen_blackbox_statics_fields (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/fields.kt"
+}
+
+task codegen_blackbox_statics_functions (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/functions.kt"
+}
+
+task codegen_blackbox_statics_hidePrivateByPublic (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/hidePrivateByPublic.kt"
+}
+
+task codegen_blackbox_statics_incInClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/incInClassObject.kt"
+}
+
+task codegen_blackbox_statics_incInObject (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/incInObject.kt"
+}
+
+task codegen_blackbox_statics_inheritedPropertyInClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/inheritedPropertyInClassObject.kt"
+}
+
+task codegen_blackbox_statics_inheritedPropertyInObject (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/inheritedPropertyInObject.kt"
+}
+
+task codegen_blackbox_statics_inlineCallsStaticMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/inlineCallsStaticMethod.kt"
+}
+
+task codegen_blackbox_statics_kt8089 (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/kt8089.kt"
+}
+
+task codegen_blackbox_statics_protectedSamConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/protectedSamConstructor.kt"
+}
+
+task codegen_blackbox_statics_protectedStatic (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/protectedStatic.kt"
+}
+
+task codegen_blackbox_statics_protectedStatic2 (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/protectedStatic2.kt"
+}
+
+task codegen_blackbox_statics_protectedStaticAndInline (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/protectedStaticAndInline.kt"
+}
+
+task codegen_blackbox_statics_syntheticAccessor (type: RunExternalTest) {
+    source = "codegen/blackbox/statics/syntheticAccessor.kt"
+}
+

@@ -1,0 +1,458 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_classes_boxPrimitiveTypeInClinitOfClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/boxPrimitiveTypeInClinitOfClassObject.kt"
+}
+
+task codegen_blackbox_classes_classCompanionInitializationWithJava (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classCompanionInitializationWithJava.kt"
+}
+
+task codegen_blackbox_classes_classNamedAsOldPackageFacade (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classNamedAsOldPackageFacade.kt"
+}
+
+task codegen_blackbox_classes_classObject (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObject.kt"
+}
+
+task codegen_blackbox_classes_classObjectAsExtensionReceiver (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectAsExtensionReceiver.kt"
+}
+
+task codegen_blackbox_classes_classObjectAsStaticInitializer (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectAsStaticInitializer.kt"
+}
+
+task codegen_blackbox_classes_classObjectField (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectField.kt"
+}
+
+task codegen_blackbox_classes_classObjectInTrait (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectInTrait.kt"
+}
+
+task codegen_blackbox_classes_classObjectNotOfEnum (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectNotOfEnum.kt"
+}
+
+task codegen_blackbox_classes_classObjectsWithParentClasses (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectsWithParentClasses.kt"
+}
+
+task codegen_blackbox_classes_classObjectToString (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectToString.kt"
+}
+
+task codegen_blackbox_classes_classObjectWithPrivateGenericMember (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/classObjectWithPrivateGenericMember.kt"
+}
+
+task codegen_blackbox_classes_defaultObjectSameNamesAsInOuter (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/defaultObjectSameNamesAsInOuter.kt"
+}
+
+task codegen_blackbox_classes_delegation2 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegation2.kt"
+}
+
+task codegen_blackbox_classes_delegation3 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegation3.kt"
+}
+
+task codegen_blackbox_classes_delegation4 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegation4.kt"
+}
+
+task codegen_blackbox_classes_delegationGenericArg (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegationGenericArg.kt"
+}
+
+task codegen_blackbox_classes_delegationGenericArgUpperBound (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegationGenericArgUpperBound.kt"
+}
+
+task codegen_blackbox_classes_delegationGenericLongArg (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegationGenericLongArg.kt"
+}
+
+task codegen_blackbox_classes_delegationJava (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegationJava.kt"
+}
+
+task codegen_blackbox_classes_delegationMethodsWithArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/delegationMethodsWithArgs.kt"
+}
+
+task codegen_blackbox_classes_exceptionConstructor (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/exceptionConstructor.kt"
+}
+
+task codegen_blackbox_classes_extensionOnNamedClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/extensionOnNamedClassObject.kt"
+}
+
+task codegen_blackbox_classes_funDelegation (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/funDelegation.kt"
+}
+
+task codegen_blackbox_classes_implementComparableInSubclass (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/implementComparableInSubclass.kt"
+}
+
+task codegen_blackbox_classes_inheritance (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/inheritance.kt"
+}
+
+task codegen_blackbox_classes_inheritedInnerClass (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/inheritedInnerClass.kt"
+}
+
+task codegen_blackbox_classes_inheritedMethod (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/inheritedMethod.kt"
+}
+
+task codegen_blackbox_classes_inheritSetAndHashSet (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/inheritSetAndHashSet.kt"
+}
+
+task codegen_blackbox_classes_initializerBlock (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/initializerBlock.kt"
+}
+
+task codegen_blackbox_classes_initializerBlockDImpl (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/initializerBlockDImpl.kt"
+}
+
+task codegen_blackbox_classes_innerClass (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/innerClass.kt"
+}
+
+task codegen_blackbox_classes_interfaceCompanionInitializationWithJava (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/interfaceCompanionInitializationWithJava.kt"
+}
+
+task codegen_blackbox_classes_kt1018 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1018.kt"
+}
+
+task codegen_blackbox_classes_kt1120 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1120.kt"
+}
+
+task codegen_blackbox_classes_kt1134 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1134.kt"
+}
+
+task codegen_blackbox_classes_kt1157 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1157.kt"
+}
+
+task codegen_blackbox_classes_kt1247 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1247.kt"
+}
+
+task codegen_blackbox_classes_kt1345 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1345.kt"
+}
+
+task codegen_blackbox_classes_kt1439 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1439.kt"
+}
+
+task codegen_blackbox_classes_kt1535 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1535.kt"
+}
+
+task codegen_blackbox_classes_kt1538 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1538.kt"
+}
+
+task codegen_blackbox_classes_kt1578 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1578.kt"
+}
+
+task codegen_blackbox_classes_kt1611 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1611.kt"
+}
+
+task codegen_blackbox_classes_kt1721 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1721.kt"
+}
+
+task codegen_blackbox_classes_kt1726 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1726.kt"
+}
+
+task codegen_blackbox_classes_kt1759 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1759.kt"
+}
+
+task codegen_blackbox_classes_kt1891 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1891.kt"
+}
+
+task codegen_blackbox_classes_kt1918 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1918.kt"
+}
+
+task codegen_blackbox_classes_kt1976 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1976.kt"
+}
+
+task codegen_blackbox_classes_kt1980 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt1980.kt"
+}
+
+task codegen_blackbox_classes_kt2224 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2224.kt"
+}
+
+task codegen_blackbox_classes_kt2288 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2288.kt"
+}
+
+task codegen_blackbox_classes_kt2384 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2384.kt"
+}
+
+task codegen_blackbox_classes_kt2390 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2390.kt"
+}
+
+task codegen_blackbox_classes_kt2391 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2391.kt"
+}
+
+task codegen_blackbox_classes_kt2395 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2395.kt"
+}
+
+task codegen_blackbox_classes_kt2417 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2417.kt"
+}
+
+task codegen_blackbox_classes_kt2477 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2477.kt"
+}
+
+task codegen_blackbox_classes_kt2480 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2480.kt"
+}
+
+task codegen_blackbox_classes_kt2482 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2482.kt"
+}
+
+task codegen_blackbox_classes_kt2485 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2485.kt"
+}
+
+task codegen_blackbox_classes_kt249 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt249.kt"
+}
+
+task codegen_blackbox_classes_kt2532 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2532.kt"
+}
+
+task codegen_blackbox_classes_kt2566 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2566.kt"
+}
+
+task codegen_blackbox_classes_kt2566_2 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2566_2.kt"
+}
+
+task codegen_blackbox_classes_kt2607 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2607.kt"
+}
+
+task codegen_blackbox_classes_kt2626 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2626.kt"
+}
+
+task codegen_blackbox_classes_kt2711 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2711.kt"
+}
+
+task codegen_blackbox_classes_kt2784 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt2784.kt"
+}
+
+task codegen_blackbox_classes_kt285 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt285.kt"
+}
+
+task codegen_blackbox_classes_kt3001 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt3001.kt"
+}
+
+task codegen_blackbox_classes_kt3114 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt3114.kt"
+}
+
+task codegen_blackbox_classes_kt3414 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt3414.kt"
+}
+
+task codegen_blackbox_classes_kt343 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt343.kt"
+}
+
+task codegen_blackbox_classes_kt3546 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt3546.kt"
+}
+
+task codegen_blackbox_classes_kt454 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt454.kt"
+}
+
+task codegen_blackbox_classes_kt471 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt471.kt"
+}
+
+task codegen_blackbox_classes_kt48 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt48.kt"
+}
+
+task codegen_blackbox_classes_kt496 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt496.kt"
+}
+
+task codegen_blackbox_classes_kt500 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt500.kt"
+}
+
+task codegen_blackbox_classes_kt501 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt501.kt"
+}
+
+task codegen_blackbox_classes_kt504 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt504.kt"
+}
+
+task codegen_blackbox_classes_kt508 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt508.kt"
+}
+
+task codegen_blackbox_classes_kt5347 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt5347.kt"
+}
+
+task codegen_blackbox_classes_kt6136 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt6136.kt"
+}
+
+task codegen_blackbox_classes_kt633 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt633.kt"
+}
+
+task codegen_blackbox_classes_kt6816 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt6816.kt"
+}
+
+task codegen_blackbox_classes_kt707 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt707.kt"
+}
+
+task codegen_blackbox_classes_kt723 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt723.kt"
+}
+
+task codegen_blackbox_classes_kt725 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt725.kt"
+}
+
+task codegen_blackbox_classes_kt8011 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt8011.kt"
+}
+
+task codegen_blackbox_classes_kt8011a (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt8011a.kt"
+}
+
+task codegen_blackbox_classes_kt903 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt903.kt"
+}
+
+task codegen_blackbox_classes_kt940 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt940.kt"
+}
+
+task codegen_blackbox_classes_kt9642 (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/kt9642.kt"
+}
+
+task codegen_blackbox_classes_namedClassObject (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/namedClassObject.kt"
+}
+
+task codegen_blackbox_classes_outerThis (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/outerThis.kt"
+}
+
+task codegen_blackbox_classes_overloadBinaryOperator (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/overloadBinaryOperator.kt"
+}
+
+task codegen_blackbox_classes_overloadPlusAssign (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/overloadPlusAssign.kt"
+}
+
+task codegen_blackbox_classes_overloadPlusAssignReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/overloadPlusAssignReturn.kt"
+}
+
+task codegen_blackbox_classes_overloadPlusToPlusAssign (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/overloadPlusToPlusAssign.kt"
+}
+
+task codegen_blackbox_classes_overloadUnaryOperator (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/overloadUnaryOperator.kt"
+}
+
+task codegen_blackbox_classes_privateOuterFunctions (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/privateOuterFunctions.kt"
+}
+
+task codegen_blackbox_classes_privateOuterProperty (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/privateOuterProperty.kt"
+}
+
+task codegen_blackbox_classes_privateToThis (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/privateToThis.kt"
+}
+
+task codegen_blackbox_classes_propertyDelegation (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/propertyDelegation.kt"
+}
+
+task codegen_blackbox_classes_propertyInInitializer (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/propertyInInitializer.kt"
+}
+
+task codegen_blackbox_classes_rightHandOverride (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/rightHandOverride.kt"
+}
+
+task codegen_blackbox_classes_sealedInSameFile (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/sealedInSameFile.kt"
+}
+
+task codegen_blackbox_classes_selfcreate (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/selfcreate.kt"
+}
+
+task codegen_blackbox_classes_simpleBox (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/simpleBox.kt"
+}
+
+task codegen_blackbox_classes_superConstructorCallWithComplexArg (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/superConstructorCallWithComplexArg.kt"
+}
+
+task codegen_blackbox_classes_typedDelegation (type: RunExternalTest) {
+    source = "codegen/blackbox/classes/typedDelegation.kt"
+}
+

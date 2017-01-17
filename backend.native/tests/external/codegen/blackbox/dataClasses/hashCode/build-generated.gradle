@@ -1,0 +1,54 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_dataClasses_hashCode_alreadyDeclared (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/alreadyDeclared.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_alreadyDeclaredWrongSignature (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/alreadyDeclaredWrongSignature.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_array (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/array.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_boolean (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/boolean.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_byte (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/byte.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_char (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/char.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_double (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/double.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_float (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/float.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_genericNull (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/genericNull.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_int (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/int.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_long (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/long.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_null (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/null.kt"
+}
+
+task codegen_blackbox_dataClasses_hashCode_short (type: RunExternalTest) {
+    source = "codegen/blackbox/dataClasses/hashCode/short.kt"
+}
+

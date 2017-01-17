@@ -1,0 +1,10 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_private_arrayConvention (type: RunExternalTest) {
+    source = "codegen/blackbox/private/arrayConvention.kt"
+}
+
+task codegen_blackbox_private_kt9855 (type: RunExternalTest) {
+    source = "codegen/blackbox/private/kt9855.kt"
+}
+

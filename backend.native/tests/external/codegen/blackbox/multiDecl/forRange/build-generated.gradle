@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_multiDecl_forRange_MultiDeclFor (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/MultiDeclFor.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_MultiDeclForComponentExtensions (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/MultiDeclForComponentExtensions.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_MultiDeclForComponentMemberExtensions (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/MultiDeclForComponentMemberExtensions.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_MultiDeclForComponentMemberExtensionsInExtensionFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_MultiDeclForValCaptured (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/MultiDeclForValCaptured.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_UnderscoreNames (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/UnderscoreNames.kt"
+}
+
+task codegen_blackbox_multiDecl_forRange_UnderscoreNamesDontCallComponent (type: RunExternalTest) {
+    source = "codegen/blackbox/multiDecl/forRange/UnderscoreNamesDontCallComponent.kt"
+}
+

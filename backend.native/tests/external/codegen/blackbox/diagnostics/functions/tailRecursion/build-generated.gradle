@@ -1,0 +1,150 @@
+import org.jetbrains.kotlin.*
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_defaultArgs (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/defaultArgs.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_defaultArgsOverridden (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/defaultArgsOverridden.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_extensionTailCall (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/extensionTailCall.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_functionWithNonTailRecursions (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/functionWithNonTailRecursions.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_functionWithNoTails (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/functionWithNoTails.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_functionWithoutAnnotation (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/functionWithoutAnnotation.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_infixCall (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/infixCall.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_infixRecursiveCall (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/infixRecursiveCall.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_insideElvis (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/insideElvis.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_labeledThisReferences (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/labeledThisReferences.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_loops (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/loops.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_multilevelBlocks (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/multilevelBlocks.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_realIteratorFoldl (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/realIteratorFoldl.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_realStringEscape (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/realStringEscape.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_realStringRepeat (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/realStringRepeat.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_recursiveCallInLambda (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/recursiveCallInLambda.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_recursiveCallInLocalFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/recursiveCallInLocalFunction.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_recursiveInnerFunction (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/recursiveInnerFunction.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_returnIf (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/returnIf.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_returnInCatch (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/returnInCatch.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_returnInFinally (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/returnInFinally.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_returnInIfInFinally (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/returnInIfInFinally.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_returnInParentheses (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/returnInParentheses.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_returnInTry (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/returnInTry.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_simpleBlock (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/simpleBlock.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_simpleReturn (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/simpleReturn.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_simpleReturnWithElse (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/simpleReturnWithElse.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_sum (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/sum.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_tailCallInBlockInParentheses (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/tailCallInBlockInParentheses.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_tailCallInParentheses (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/tailCallInParentheses.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_tailRecursionInFinally (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/tailRecursionInFinally.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_thisReferences (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/thisReferences.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_unitBlocks (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/unitBlocks.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_whenWithCondition (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/whenWithCondition.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_whenWithInRange (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/whenWithInRange.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_whenWithIs (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/whenWithIs.kt"
+}
+
+task codegen_blackbox_diagnostics_functions_tailRecursion_whenWithoutCondition (type: RunExternalTest) {
+    source = "codegen/blackbox/diagnostics/functions/tailRecursion/whenWithoutCondition.kt"
+}
+
