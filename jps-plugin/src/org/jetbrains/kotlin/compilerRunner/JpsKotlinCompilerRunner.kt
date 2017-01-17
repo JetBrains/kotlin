@@ -88,14 +88,13 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             environment: JpsCompilerEnvironment
     ): ExitCode {
         environment.messageCollector.report(CompilerMessageSeverity.INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
-        val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
 
         return if (isDaemonEnabled()) {
             val daemonExitCode = compileWithDaemon(compilerClassName, compilerArgs, environment)
-            daemonExitCode ?: fallbackCompileStrategy(argsArray, compilerClassName, environment)
+            daemonExitCode ?: fallbackCompileStrategy(compilerArgs, compilerClassName, environment)
         }
         else {
-            fallbackCompileStrategy(argsArray, compilerClassName, environment)
+            fallbackCompileStrategy(compilerArgs, compilerClassName, environment)
         }
     }
 
@@ -115,12 +114,16 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             val compilerMode = CompilerMode.JPS_COMPILER
             val verbose = compilerArgs.verbose
             val options = CompilationOptions(compilerMode, targetPlatform, reportCategories(verbose), reportSeverity(verbose), requestedCompilationResults = emptyArray())
-            val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
-                          (compilerSettings?.additionalArguments?.split(" ") ?: emptyList())
-            daemon.compile(sessionId, allArgs.toTypedArray(), options, JpsCompilerServicesFacadeImpl(environment), null)
+            daemon.compile(sessionId, withAdditionalCompilerArgs(compilerArgs), options, JpsCompilerServicesFacadeImpl(environment), null)
         }
 
         return res?.get()?.let { exitCodeFromProcessExitCode(it) }
+    }
+
+    private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
+        val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
+                      (compilerSettings?.additionalArguments?.split(" ") ?: emptyList())
+        return allArgs.toTypedArray()
     }
 
     private fun reportCategories(verbose: Boolean): Array<Int> {
@@ -145,7 +148,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             }
 
     private fun fallbackCompileStrategy(
-            argsArray: Array<String>,
+            compilerArgs: CommonCompilerArguments,
             compilerClassName: String,
             environment: JpsCompilerEnvironment
     ): ExitCode {
@@ -161,7 +164,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         if (System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false").toBoolean())
             System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
-        val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, out)
+        val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, withAdditionalCompilerArgs(compilerArgs), environment, out)
 
         // exec() returns an ExitCode object, class of which is loaded with a different class loader,
         // so we take it's contents through reflection
