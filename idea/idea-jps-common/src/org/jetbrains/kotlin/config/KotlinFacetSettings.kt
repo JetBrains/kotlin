@@ -39,18 +39,14 @@ sealed class TargetPlatformKind<out Version : DescriptionAware>(
         }
     }
 
-    object JavaScript : TargetPlatformKind<NoVersion>(NoVersion, "JavaScript")
+    object JavaScript : TargetPlatformKind<DescriptionAware.NoVersion>(DescriptionAware.NoVersion, "JavaScript")
 
-    object Common : TargetPlatformKind<NoVersion>(NoVersion, "Common (experimental)")
+    object Common : TargetPlatformKind<DescriptionAware.NoVersion>(DescriptionAware.NoVersion, "Common (experimental)")
 
     companion object {
 
         val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { Jvm.JVM_PLATFORMS + JavaScript + Common }
     }
-}
-
-object NoVersion : DescriptionAware {
-    override val description = ""
 }
 
 data class KotlinVersionInfo(

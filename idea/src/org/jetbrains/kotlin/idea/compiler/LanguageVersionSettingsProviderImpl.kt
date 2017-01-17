@@ -16,15 +16,21 @@
 
 package org.jetbrains.kotlin.idea.compiler
 
-import org.jetbrains.kotlin.analyzer.LanguageVersionSettingsProvider
+import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.utils.DescriptionAware
 
-class LanguageVersionSettingsProviderImpl : LanguageVersionSettingsProvider {
+class LanguageVersionSettingsProviderImpl : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo): LanguageVersionSettings {
         return (moduleInfo as? ModuleSourceInfo)?.module?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+    }
+
+    override fun getTargetPlatform(moduleInfo: ModuleInfo): DescriptionAware {
+        return (moduleInfo as? ModuleSourceInfo)?.module?.targetPlatform?.version ?: DescriptionAware.NoVersion
     }
 }

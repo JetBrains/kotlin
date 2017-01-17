@@ -79,7 +79,7 @@ val Module.languageVersionSettings: LanguageVersionSettings
         return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
     }
 
-private val Module.targetPlatform: TargetPlatformKind<*>?
+val Module.targetPlatform: TargetPlatformKind<*>?
     get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).versionInfo.targetPlatformKind
 
 private val Module.implementsCommonModule: Boolean

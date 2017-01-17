@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.frontend.di
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
@@ -142,6 +143,8 @@ fun createContainerForLazyResolve(
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
     useInstance(languageVersionSettings)
+    //TODO: need to propagate full CompilerConfiguration to frontend
+    useInstance(CompilerConfiguration.EMPTY)
 
     useImpl<FileScopeProviderImpl>()
     useImpl<CompilerDeserializationConfiguration>()

@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.resolve.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -78,7 +81,15 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
+        val languageSettingsProvider = LanguageSettingsProvider.getInstance(project)
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
+        //TODO: need to propagate full CompilerConfiguration to frontend
+        val compilerConfiguration = CompilerConfiguration()
+        val platform = languageSettingsProvider.getTargetPlatform(moduleInfo)
+        if (platform is JvmTarget) {
+            compilerConfiguration.put(JVMConfigurationKeys.JVM_TARGET, platform)
+        }
+        compilerConfiguration.isReadOnly = true
         val container = createContainerForLazyResolveWithJava(
                 moduleContext,
                 trace,
@@ -88,9 +99,10 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 targetEnvironment,
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,
-                LanguageVersionSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo),
+                languageSettingsProvider.getLanguageVersionSettings(moduleInfo),
                 useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
-                useLazyResolve = true
+                useLazyResolve = true,
+                compilerConfiguration = compilerConfiguration
         )
 
         StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(container, moduleInfo) }

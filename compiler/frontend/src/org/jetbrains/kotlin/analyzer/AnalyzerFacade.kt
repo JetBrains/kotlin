@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.utils.DescriptionAware
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
@@ -257,14 +258,18 @@ private class DelegatingPackageFragmentProvider(
     }
 }
 
-interface LanguageVersionSettingsProvider {
+interface LanguageSettingsProvider {
     fun getLanguageVersionSettings(moduleInfo: ModuleInfo): LanguageVersionSettings
 
-    object Default : LanguageVersionSettingsProvider {
+    fun getTargetPlatform(moduleInfo: ModuleInfo): DescriptionAware
+
+    object Default : LanguageSettingsProvider {
         override fun getLanguageVersionSettings(moduleInfo: ModuleInfo) = LanguageVersionSettingsImpl.DEFAULT
+
+        override fun getTargetPlatform(moduleInfo: ModuleInfo): DescriptionAware = DescriptionAware.NoVersion
     }
 
     companion object {
-        fun getInstance(project: Project) = ServiceManager.getService(project, LanguageVersionSettingsProvider::class.java) ?: Default
+        fun getInstance(project: Project) = ServiceManager.getService(project, LanguageSettingsProvider::class.java) ?: Default
     }
 }

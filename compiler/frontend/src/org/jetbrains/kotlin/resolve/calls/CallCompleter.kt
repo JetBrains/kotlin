@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -61,7 +62,8 @@ class CallCompleter(
         private val callCheckers: Iterable<CallChecker>,
         private val builtIns: KotlinBuiltIns,
         private val fakeCallResolver: FakeCallResolver,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val compilerConfiguration: CompilerConfiguration
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -93,7 +95,7 @@ class CallCompleter(
                     else resolvedCall.call.callElement
 
             if (context.trace.wantsDiagnostics()) {
-                val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
+                val callCheckerContext = CallCheckerContext(context, languageVersionSettings, compilerConfiguration)
                 for (callChecker in callCheckers) {
                     callChecker.check(resolvedCall, reportOn, callCheckerContext)
                 }

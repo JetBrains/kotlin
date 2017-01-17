@@ -157,7 +157,7 @@ object TopDownAnalyzerFacadeForJVM {
 
             val dependenciesContainer = createContainerForTopDownAnalyzerForJvm(
                     dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, lookupTracker,
-                    packagePartProvider(dependencyScope), languageVersionSettings, moduleClassResolver
+                    packagePartProvider(dependencyScope), languageVersionSettings, moduleClassResolver, configuration
             )
 
             StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(dependenciesContainer, null) }
@@ -182,7 +182,7 @@ object TopDownAnalyzerFacadeForJVM {
                 IncrementalPackagePartProvider.create(
                         packagePartProvider(sourceScope), targetIds, incrementalComponents, storageManager
                 ),
-                languageVersionSettings, moduleClassResolver
+                languageVersionSettings, moduleClassResolver, configuration
         ).apply {
             initJvmBuiltInsForTopDownAnalysis(module, languageVersionSettings)
             StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(this, null) }

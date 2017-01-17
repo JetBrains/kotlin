@@ -305,7 +305,7 @@
     <projectService serviceInterface="org.jetbrains.kotlin.console.KotlinConsoleKeeper"
                     serviceImplementation="org.jetbrains.kotlin.console.KotlinConsoleKeeper"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.analyzer.LanguageVersionSettingsProvider"
+    <projectService serviceInterface="org.jetbrains.kotlin.analyzer.LanguageSettingsProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.compiler.LanguageVersionSettingsProviderImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"

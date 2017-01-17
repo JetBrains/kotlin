@@ -18,4 +18,8 @@ package org.jetbrains.kotlin.utils;
 
 interface DescriptionAware {
     val description: String
+
+    object NoVersion : DescriptionAware {
+        override val description = ""
+    }
 }

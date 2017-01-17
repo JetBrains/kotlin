@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.frontend.java.di
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
@@ -89,11 +90,13 @@ fun createContainerForLazyResolveWithJava(
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
         useBuiltInsProvider: Boolean,
-        useLazyResolve: Boolean
+        useLazyResolve: Boolean,
+        compilerConfiguration: CompilerConfiguration
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatform) {
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, languageVersionSettings)
 
+    useInstance(compilerConfiguration)
     useInstance(packagePartProvider)
     useInstance(moduleClassResolver)
     useInstance(declarationProviderFactory)
@@ -121,11 +124,12 @@ fun createContainerForTopDownAnalyzerForJvm(
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
-        moduleClassResolver: ModuleClassResolver
+        moduleClassResolver: ModuleClassResolver,
+        compilerConfiguration: CompilerConfiguration
 ): ComponentProvider = createContainerForLazyResolveWithJava(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
         CompilerEnvironment, lookupTracker, packagePartProvider, languageVersionSettings,
-        useBuiltInsProvider = true, useLazyResolve = false
+        useBuiltInsProvider = true, useLazyResolve = false, compilerConfiguration = compilerConfiguration
 )
 
 
