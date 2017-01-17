@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.reference
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFunctionResolvedCallWithAssert
@@ -80,7 +78,7 @@ object CallableReferenceTranslator {
             receiver: JsExpression?
     ): JsExpression {
         val realResolvedCall = expression.callableReference.getFunctionResolvedCallWithAssert(context.bindingContext())
-        val fakeExpression = constructFakeFunctionCall(expression.project, descriptor)
+        val fakeExpression = CodegenUtil.constructFakeFunctionCall(expression.project, descriptor)
 
         val fakeCall = CallMaker.makeCall(fakeExpression, null, null, fakeExpression, fakeExpression.valueArguments)
         val fakeResolvedCall = object : DelegatingResolvedCall<FunctionDescriptor>(realResolvedCall) {
@@ -116,13 +114,6 @@ object CallableReferenceTranslator {
 
         val rawCallableRef = bindIfNecessary(function, receiver)
         return wrapFunctionCallableRef(context, expression.callableReference.getReferencedName(), rawCallableRef)
-    }
-
-    private fun constructFakeFunctionCall(project: Project, referencedFunction: FunctionDescriptor): KtCallExpression {
-        val fakeFunctionCall = StringBuilder("callableReferenceFakeCall(")
-        fakeFunctionCall.append(referencedFunction.valueParameters.map { "p${it.index}" }.joinToString(", "))
-        fakeFunctionCall.append(")")
-        return KtPsiFactory(project).createExpression(fakeFunctionCall.toString()) as KtCallExpression
     }
 
     private fun translateForProperty(

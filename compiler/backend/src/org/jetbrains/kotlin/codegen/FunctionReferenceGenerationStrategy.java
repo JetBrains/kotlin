@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
@@ -74,7 +75,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
          every argument boils down to calling LOAD with the corresponding index
          */
 
-        KtCallExpression fakeExpression = constructFakeFunctionCall();
+        KtCallExpression fakeExpression = CodegenUtil.constructFakeFunctionCall(state.getProject(), referencedFunction);
         final List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
         final ReceiverValue dispatchReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getDispatchReceiverParameter());
@@ -138,20 +139,6 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         InstructionAdapter v = codegen.v;
         result.put(returnType, v);
         v.areturn(returnType);
-    }
-
-    @NotNull
-    private KtCallExpression constructFakeFunctionCall() {
-        StringBuilder fakeFunctionCall = new StringBuilder("callableReferenceFakeCall(");
-        for (Iterator<ValueParameterDescriptor> iterator = referencedFunction.getValueParameters().iterator(); iterator.hasNext(); ) {
-            ValueParameterDescriptor descriptor = iterator.next();
-            fakeFunctionCall.append("p").append(descriptor.getIndex());
-            if (iterator.hasNext()) {
-                fakeFunctionCall.append(", ");
-            }
-        }
-        fakeFunctionCall.append(")");
-        return (KtCallExpression) KtPsiFactoryKt.KtPsiFactory(state.getProject()).createExpression(fakeFunctionCall.toString());
     }
 
     private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {

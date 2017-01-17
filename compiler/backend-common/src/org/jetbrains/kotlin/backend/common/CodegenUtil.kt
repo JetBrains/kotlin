@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.descriptors.*
@@ -153,5 +154,13 @@ object CodegenUtil {
             BindingContext.EXHAUSTIVE_WHEN
         }
         return this[slice, whenExpression] == true
+    }
+
+    @JvmStatic
+    fun constructFakeFunctionCall(project: Project, referencedFunction: FunctionDescriptor): KtCallExpression {
+        val fakeFunctionCall = StringBuilder("callableReferenceFakeCall(")
+        fakeFunctionCall.append(referencedFunction.valueParameters.map { "p${it.index}" }.joinToString(", "))
+        fakeFunctionCall.append(")")
+        return KtPsiFactory(project).createExpression(fakeFunctionCall.toString()) as KtCallExpression
     }
 }
